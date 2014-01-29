@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -847,6 +848,7 @@ public class HostGeneralModel extends EntityModel
         setRequestEditEvent(new Event(requestEditEventDefinition));
         setRequestGOToEventsTabEvent(new Event(requestGOToEventsTabEventDefinition));
         setTitle(constants.generalTitle());
+        setHelpTag(HelpTag.general);
         setHashName("general"); //$NON-NLS-1$
 
         setSaveNICsConfigCommand(new UICommand("SaveNICsConfig", this)); //$NON-NLS-1$
@@ -878,6 +880,7 @@ public class HostGeneralModel extends EntityModel
         model.setVds(getEntity());
         setWindow(model);
         model.setTitle(constants.installHostTitle());
+        model.setHelpTag(HelpTag.install_host);
         model.setHashName("install_host"); //$NON-NLS-1$
         model.getOVirtISO().setIsAvailable(false);
 

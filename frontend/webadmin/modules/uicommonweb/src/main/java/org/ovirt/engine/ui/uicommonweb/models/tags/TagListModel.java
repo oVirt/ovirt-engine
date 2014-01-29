@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -428,6 +429,7 @@ public class TagListModel extends SearchableListModel
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeTagsTitle());
+        model.setHelpTag(HelpTag.remove_tag);
         model.setHashName("remove_tag"); //$NON-NLS-1$
 
         ArrayList<Object> items = new ArrayList<Object>();
@@ -486,6 +488,7 @@ public class TagListModel extends SearchableListModel
         TagModel model = new TagModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editTagTitle());
+        model.setHelpTag(HelpTag.edit_tag);
         model.setHashName("edit_tag"); //$NON-NLS-1$
         model.setIsNew(false);
         model.getName().setEntity(getSelectedItem().getName().getEntity());
@@ -513,6 +516,7 @@ public class TagListModel extends SearchableListModel
         TagModel model = new TagModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newTagTitle());
+        model.setHelpTag(HelpTag.new_tag);
         model.setHashName("new_tag"); //$NON-NLS-1$
         model.setIsNew(true);
 

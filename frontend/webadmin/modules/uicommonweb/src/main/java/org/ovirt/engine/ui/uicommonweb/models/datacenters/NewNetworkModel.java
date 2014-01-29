@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -48,6 +49,7 @@ public class NewNetworkModel extends NetworkModel {
 
     private void init() {
         setTitle(ConstantsManager.getInstance().getConstants().newLogicalNetworkTitle());
+        setHelpTag(HelpTag.new_logical_network);
         setHashName("new_logical_network"); //$NON-NLS-1$
     }
 

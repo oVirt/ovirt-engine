@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -34,6 +35,7 @@ public class HostHooksListModel extends SearchableListModel
     public HostHooksListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().hostHooksTitle());
+        setHelpTag(HelpTag.host_hooks);
         setHashName("host_hooks"); // $//$NON-NLS-1$
         setAvailableInModes(ApplicationMode.VirtOnly);
     }

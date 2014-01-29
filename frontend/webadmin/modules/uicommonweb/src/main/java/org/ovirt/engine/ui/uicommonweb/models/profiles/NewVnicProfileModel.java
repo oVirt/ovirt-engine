@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -16,6 +17,7 @@ public class NewVnicProfileModel extends VnicProfileModel {
             Guid dcId) {
         super(sourceModel, dcCompatibilityVersion, customPropertiesVisible, dcId, null);
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfileTitle());
+        setHelpTag(HelpTag.new_vnic_profile);
         setHashName("new_vnic_profile"); //$NON-NLS-1$
         getPortMirroring().setEntity(false);
     }

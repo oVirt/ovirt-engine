@@ -38,6 +38,7 @@ import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -208,6 +209,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         DataCenterGuideModel model = new DataCenterGuideModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newDataCenterGuideMeTitle());
+        model.setHelpTag(HelpTag.new_data_center___guide_me);
         model.setHashName("new_data_center_-_guide_me"); //$NON-NLS-1$
         if (getGuideContext() == null) {
             StoragePool dataCenter = (StoragePool) getSelectedItem();
@@ -276,6 +278,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         DataCenterModel model = new DataCenterModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newDataCenterTitle());
+        model.setHelpTag(HelpTag.new_data_center);
         model.setHashName("new_data_center"); //$NON-NLS-1$
         model.setIsNew(true);
 
@@ -304,6 +307,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.setEntity(dataCenter);
         model.setDataCenterId(dataCenter.getId());
         model.setTitle(constants.editDataCenterTitle());
+        model.setHelpTag(HelpTag.edit_data_center);
         model.setHashName("edit_data_center"); //$NON-NLS-1$
         model.getName().setEntity(dataCenter.getName());
 
@@ -357,6 +361,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeDataCenterTitle());
+        model.setHelpTag(HelpTag.remove_data_center);
         model.setHashName("remove_data_center"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();
@@ -381,6 +386,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().forceRemoveDataCenterTitle());
+        model.setHelpTag(HelpTag.force_remove_data_center);
         model.setHashName("force_remove_data_center"); //$NON-NLS-1$
         model.getLatch().setIsAvailable(true);
         model.getLatch().setIsChangable(true);
@@ -407,6 +413,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         final ConfirmationModel windowModel = new ConfirmationModel();
         setWindow(windowModel);
         windowModel.setTitle(ConstantsManager.getInstance().getConstants().dataCenterReInitializeTitle());
+        windowModel.setHelpTag(HelpTag.data_center_re_initialize);
         windowModel.setHashName("data_center_re-initialize"); //$NON-NLS-1$
         windowModel.getLatch().setIsAvailable(true);
         windowModel.getLatch().setIsChangable(true);
@@ -613,6 +620,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             confirmModel.setTitle(ConstantsManager.getInstance()
                     .getConstants()
                     .changeDataCenterCompatibilityVersionTitle());
+            confirmModel.setHelpTag(HelpTag.change_data_center_compatibility_version);
             confirmModel.setHashName("change_data_center_compatibility_version"); //$NON-NLS-1$
 
             final StoragePool sp = (StoragePool) getSelectedItem();
@@ -704,6 +712,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         confirmModel.setTitle(ConstantsManager.getInstance()
                 .getConstants()
                 .changeDCQuotaEnforcementModeTitle());
+        confirmModel.setHelpTag(HelpTag.change_data_center_quota_enforcement_mode);
         confirmModel.setHashName("change_data_center_quota_enforcement_mode"); //$NON-NLS-1$
         confirmModel.setMessage(ConstantsManager.getInstance()
                 .getConstants()

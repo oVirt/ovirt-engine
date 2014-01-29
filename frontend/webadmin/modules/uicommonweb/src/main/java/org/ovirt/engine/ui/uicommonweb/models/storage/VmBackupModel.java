@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
@@ -71,6 +72,7 @@ public class VmBackupModel extends ManageBackupModel {
 
     public VmBackupModel() {
         setTitle(ConstantsManager.getInstance().getConstants().vmImportTitle());
+        setHelpTag(HelpTag.vm_import);
         setHashName("vm_import"); // //$NON-NLS-1$
 
         setAppListModel(new VmAppListModel());
@@ -96,6 +98,7 @@ public class VmBackupModel extends ManageBackupModel {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeBackedUpVMsTitle());
+        model.setHelpTag(HelpTag.remove_backed_up_vm);
         model.setHashName("remove_backed_up_vm"); //$NON-NLS-1$
 
         ArrayList<String> items = new ArrayList<String>();
@@ -201,6 +204,7 @@ public class VmBackupModel extends ManageBackupModel {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance().getConstants().invalidImportTitle());
+            confirmModel.setHelpTag(HelpTag.multiple_archs_dialog);
             confirmModel.setHashName("multiple_archs_dialog"); //$NON-NLS-1$
             confirmModel.setMessage(ConstantsManager.getInstance().getConstants().invalidImportMsg());
 
@@ -240,6 +244,7 @@ public class VmBackupModel extends ManageBackupModel {
     protected ImportVmModel getImportModel() {
         ImportVmModel model = new ImportVmModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
+        model.setHelpTag(HelpTag.import_virtual_machine);
         model.setHashName("import_virtual_machine"); //$NON-NLS-1$
         model.setEntity(getEntity());
         return model;
@@ -278,6 +283,7 @@ public class VmBackupModel extends ManageBackupModel {
         Object object = objectsToClone.iterator().next();
         entity.setEntity(object);
         entity.setTitle(ConstantsManager.getInstance().getConstants().importConflictTitle());
+        entity.setHelpTag(HelpTag.import_conflict);
         entity.setHashName("import_conflict"); //$NON-NLS-1$
         UICommand command = new UICommand("onClone", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -507,6 +513,7 @@ public class VmBackupModel extends ManageBackupModel {
                                 confirmModel.setTitle(ConstantsManager.getInstance()
                                         .getConstants()
                                         .importVirtualMachinesTitle());
+                                confirmModel.setHelpTag(HelpTag.import_virtual_machine);
                                 confirmModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
                                 confirmModel.setMessage(ConstantsManager.getInstance()
                                         .getMessages()

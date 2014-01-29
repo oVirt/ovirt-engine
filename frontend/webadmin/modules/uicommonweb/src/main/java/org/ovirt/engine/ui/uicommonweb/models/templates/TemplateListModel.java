@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -336,6 +337,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         UnitVmModel model = new UnitVmModel(createBehavior(template));
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editTemplateTitle());
+        model.setHelpTag(HelpTag.edit_template);
         model.setHashName("edit_template"); //$NON-NLS-1$
         model.getVmType().setSelectedItem(template.getVmType());
 
@@ -372,6 +374,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeTemplatesTitle());
+        model.setHelpTag(HelpTag.remove_template);
         model.setHashName("remove_template"); //$NON-NLS-1$
 
         ArrayList<String> items = new ArrayList<String>();

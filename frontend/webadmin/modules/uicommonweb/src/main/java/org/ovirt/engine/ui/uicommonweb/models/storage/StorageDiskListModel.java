@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveDiskModel;
@@ -38,6 +39,7 @@ public class StorageDiskListModel extends SearchableListModel
 
     public StorageDiskListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
+        setHelpTag(HelpTag.disks);
         setHashName("disks"); //$NON-NLS-1$
 
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
@@ -137,6 +139,7 @@ public class StorageDiskListModel extends SearchableListModel
         RemoveDiskModel model = new RemoveDiskModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
+        model.setHelpTag(HelpTag.remove_disk);
         model.setHashName("remove_disk"); //$NON-NLS-1$
 
         model.getLatch().setIsAvailable(false);

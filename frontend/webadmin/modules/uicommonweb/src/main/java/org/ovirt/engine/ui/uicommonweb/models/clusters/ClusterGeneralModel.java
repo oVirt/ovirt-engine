@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.DetachGlusterHostsModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostDetailModel;
@@ -187,6 +188,7 @@ public class ClusterGeneralModel extends EntityModel {
     public ClusterGeneralModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHelpTag(HelpTag.general);
         setHashName("general"); //$NON-NLS-1$
 
         setNoOfVolumesTotal(0);
@@ -258,6 +260,7 @@ public class ClusterGeneralModel extends EntityModel {
         VDSGroup cluster = getEntity();
         ManageGlusterSwiftModel glusterSwiftModel = new ManageGlusterSwiftModel();
         glusterSwiftModel.setTitle(ConstantsManager.getInstance().getConstants().manageGlusterSwiftTitle());
+        glusterSwiftModel.setHelpTag(HelpTag.manage_gluster_swift);
         glusterSwiftModel.setHashName("manage_gluster_swift"); //$NON-NLS-1$
         setWindow(glusterSwiftModel);
 
@@ -424,6 +427,7 @@ public class ClusterGeneralModel extends EntityModel {
         final MultipleHostsModel hostsModel = new MultipleHostsModel();
         setWindow(hostsModel);
         hostsModel.setTitle(ConstantsManager.getInstance().getConstants().addMultipleHostsTitle());
+        hostsModel.setHelpTag(HelpTag.add_hosts);
         hostsModel.setHashName("add_hosts"); //$NON-NLS-1$
 
         UICommand command = new UICommand("OnSaveHosts", this); //$NON-NLS-1$
@@ -542,6 +546,7 @@ public class ClusterGeneralModel extends EntityModel {
         final DetachGlusterHostsModel hostsModel = new DetachGlusterHostsModel();
         setWindow(hostsModel);
         hostsModel.setTitle(ConstantsManager.getInstance().getConstants().detachGlusterHostsTitle());
+        hostsModel.setHelpTag(HelpTag.detach_gluster_hosts);
         hostsModel.setHashName("detach_gluster_hosts"); //$NON-NLS-1$
 
         UICommand command = new UICommand("OnDetachGlusterHosts", this); //$NON-NLS-1$

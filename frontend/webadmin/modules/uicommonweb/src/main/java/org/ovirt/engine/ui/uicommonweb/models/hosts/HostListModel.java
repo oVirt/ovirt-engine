@@ -57,6 +57,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -337,6 +338,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     public HostListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
+        setHelpTag(HelpTag.hosts);
         setHashName("hosts"); //$NON-NLS-1$
 
         setDefaultSearchString("Host:"); //$NON-NLS-1$
@@ -377,6 +379,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         TagListModel model = new TagListModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().assignTagsTitle());
+        model.setHelpTag(HelpTag.assign_tags_hosts);
         model.setHashName("assign_tags_hosts"); //$NON-NLS-1$
 
         getAttachedTagsToSelectedHosts(model);
@@ -510,6 +513,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().areYouSureTitle());
+        model.setHelpTag(HelpTag.manual_fence_are_you_sure);
         model.setHashName("manual_fence_are_you_sure"); //$NON-NLS-1$
         ArrayList<VDS> items = new ArrayList<VDS>();
         items.add((VDS) getSelectedItem());
@@ -580,6 +584,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         final NewHostModel hostModel = new NewHostModel();
         setWindow(hostModel);
         hostModel.setTitle(ConstantsManager.getInstance().getConstants().newHostTitle());
+        hostModel.setHelpTag(HelpTag.new_host);
         hostModel.setHashName("new_host"); //$NON-NLS-1$
         hostModel.getPort().setEntity(54321);
         hostModel.getOverrideIpTables().setIsAvailable(false);
@@ -734,6 +739,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 hostListModel.setWindow(hostModel);
                 hostModel.updateModelFromVds(host, dataCenters, isEditWithPMemphasis, getSystemTreeSelectedItem());
                 hostModel.setTitle(ConstantsManager.getInstance().getConstants().editHostTitle());
+                hostModel.setHelpTag(HelpTag.edit_host);
                 hostModel.setHashName("edit_host"); //$NON-NLS-1$
 
                 if (host.getPmProxyPreferences() != null) {
@@ -793,6 +799,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 ConfirmationModel confirmModel = new ConfirmationModel();
                 setConfirmWindow(confirmModel);
                 confirmModel.setTitle(ConstantsManager.getInstance().getConstants().powerManagementConfigurationTitle());
+                confirmModel.setHelpTag(HelpTag.power_management_configuration);
                 confirmModel.setHashName("power_management_configuration"); //$NON-NLS-1$
                 confirmModel.setMessage(ConstantsManager.getInstance().getConstants().youHavntConfigPmMsg());
 
@@ -1037,6 +1044,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         final ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeHostsTitle());
+        model.setHelpTag(HelpTag.remove_host);
         model.setHashName("remove_host"); //$NON-NLS-1$
 
         Set<Guid> clusters = new HashSet<Guid>();
@@ -1137,6 +1145,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().maintenanceHostsTitle());
+        model.setHelpTag(HelpTag.maintenance_host);
         model.setHashName("maintenance_host"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance()
                 .getConstants()
@@ -1210,6 +1219,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 VDS host = (VDS) hostListModel.getSelectedItem();
                 innerHostModel.updateModelFromVds(host, dataCenters, false, getSystemTreeSelectedItem());
                 innerHostModel.setTitle(ConstantsManager.getInstance().getConstants().editAndApproveHostTitle());
+                innerHostModel.setHelpTag(HelpTag.edit_and_approve_host);
                 innerHostModel.setHashName("edit_and_approve_host"); //$NON-NLS-1$
 
                 UICommand tempVar = new UICommand("OnApprove", hostListModel); //$NON-NLS-1$
@@ -1237,6 +1247,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
         model.setTitle(constants.restartHostsTitle());
+        model.setHelpTag(HelpTag.restart_host);
         model.setHashName("restart_host"); //$NON-NLS-1$
         model.setMessage(constants.areYouSureYouWantToRestartTheFollowingHostsMsg());
         ArrayList<String> items = new ArrayList<String>();
@@ -1316,6 +1327,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().stopHostsTitle());
+        model.setHelpTag(HelpTag.stop_host);
         model.setHashName("stop_host"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToStopTheFollowingHostsMsg());
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
@@ -1379,6 +1391,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         ConfigureLocalStorageModel model = new ConfigureLocalStorageModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().configureLocalStorageTitle());
+        model.setHelpTag(HelpTag.configure_local_storage);
         model.setHashName("configure_local_storage"); //$NON-NLS-1$
 
         if (host.getVdsType() == VDSType.oVirtNode) {

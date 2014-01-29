@@ -69,6 +69,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBui
 import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
@@ -101,6 +102,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     public static final Version BALLOON_DEVICE_MIN_VERSION = Version.v3_2;
     private UICommand newVMCommand;
+
+    private final static String SHUTDOWN = "Shutdown"; //$NON-NLS-1$
+    private final static String STOP     = "Stop"; //$NON-NLS-1$
+    private final static String REBOOT   = "Reboot"; //$NON-NLS-1$
 
     public UICommand getNewVmCommand() {
         return newVMCommand;
@@ -389,6 +394,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     public VmListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
+        setHelpTag(HelpTag.virtual_machines);
         setHashName("virtual_machines"); //$NON-NLS-1$
 
         setDefaultSearchString("Vms:"); //$NON-NLS-1$
@@ -465,6 +471,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         TagListModel model = new TagListModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().assignTagsTitle());
+        model.setHelpTag(HelpTag.assign_tags_vms);
         model.setHashName("assign_tags_vms"); //$NON-NLS-1$
 
         getAttachedTagsToSelectedVMs(model);
@@ -596,6 +603,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         VmGuideModel model = new VmGuideModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newVirtualMachineGuideMeTitle());
+        model.setHelpTag(HelpTag.new_virtual_machine___guide_me);
         model.setHashName("new_virtual_machine_-_guide_me"); //$NON-NLS-1$
 
         if (getGuideContext() == null) {
@@ -667,6 +675,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         UnitVmModel model = new UnitVmModel(new NewVmModelBehavior());
         model.setTitle(ConstantsManager.getInstance().getConstants().newVmTitle());
+        model.setHelpTag(HelpTag.new_vm);
         model.setHashName("new_vm"); //$NON-NLS-1$
         model.setIsNew(true);
         model.getVmType().setSelectedItem(VmType.Server);
@@ -701,6 +710,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         final ConsolePopupModel model = new ConsolePopupModel();
         model.setVmConsoles(activeVmConsoles);
+        model.setHelpTag(HelpTag.editConsole);
         model.setHashName("editConsole"); //$NON-NLS-1$
         setWindow(model);
 
@@ -745,6 +755,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance()
                 .getConstants().editVmTitle());
+        model.setHelpTag(HelpTag.edit_vm);
         model.setHashName("edit_vm"); //$NON-NLS-1$
         model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
 
@@ -776,6 +787,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         ConfirmationModel window = new ConfirmationModel();
         setWindow(window);
         window.setTitle(ConstantsManager.getInstance().getConstants().removeVirtualMachinesTitle());
+        window.setHelpTag(HelpTag.remove_virtual_machine);
         window.setHashName("remove_virtual_machine"); //$NON-NLS-1$
 
         vmsRemoveMap = new HashMap<Guid, EntityModel>();
@@ -1080,6 +1092,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 confirmModel.setTitle(ConstantsManager.getInstance()
                         .getConstants()
                         .templatesNotFoundOnExportDomainTitle());
+                confirmModel.setHelpTag(HelpTag.template_not_found_on_export_domain);
                 confirmModel.setHashName("template_not_found_on_export_domain"); //$NON-NLS-1$
 
                 confirmModel.setMessage(missingTemplatesFromVms == null ? ConstantsManager.getInstance()
@@ -1245,6 +1258,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         UnitVmModel model = new UnitVmModel(new NewTemplateVmModelBehavior(vm));
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newTemplateTitle());
+        model.setHelpTag(HelpTag.new_template);
         model.setHashName("new_template"); //$NON-NLS-1$
         model.setIsNew(true);
         model.getVmType().setSelectedItem(vm.getVmType());
@@ -1387,6 +1401,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         MigrateModel model = new MigrateModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().migrateVirtualMachinesTitle());
+        model.setHelpTag(HelpTag.migrate_virtual_machine);
         model.setHashName("migrate_virtual_machine"); //$NON-NLS-1$
         model.setVmsOnSameCluster(true);
         model.setIsAutoSelect(true);
@@ -1553,7 +1568,20 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(title);
-        model.setHashName(actionName + "_virtual_machine"); //$NON-NLS-1$
+
+        if (actionName.equals(SHUTDOWN)) {
+            model.setHelpTag(HelpTag.shutdown_virtual_machine);
+            model.setHashName("shutdown_virtual_machine"); //$NON-NLS-1$
+        }
+        else if (actionName.equals(STOP)) {
+            model.setHelpTag(HelpTag.stop_virtual_machine);
+            model.setHashName("stop_virtual_machine"); //$NON-NLS-1$
+        }
+        else if (actionName.equals(REBOOT)) {
+            model.setHelpTag(HelpTag.reboot_virtual_machine);
+            model.setHashName("reboot_virtual_machine"); //$NON-NLS-1$
+        }
+
         model.setMessage(message);
         // model.Items = SelectedItems.Cast<VM>().Select(a => a.vm_name);
         ArrayList<String> items = new ArrayList<String>();
@@ -1610,7 +1638,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private void shutdown() {
         UIConstants constants = ConstantsManager.getInstance().getConstants();
-        powerAction("Shutdown", //$NON-NLS-1$
+        powerAction(SHUTDOWN,
                     constants.shutdownVirtualMachinesTitle(),
                     constants.areYouSureYouWantToShutDownTheFollowingVirtualMachinesMsg());
     }
@@ -1626,7 +1654,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private void stop() {
         UIConstants constants = ConstantsManager.getInstance().getConstants();
-        powerAction("Stop", //$NON-NLS-1$
+        powerAction(STOP,
                     constants.stopVirtualMachinesTitle(),
                     constants.areYouSureYouWantToStopTheFollowingVirtualMachinesMsg());
     }
@@ -1642,7 +1670,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private void reboot() {
         UIConstants constants = ConstantsManager.getInstance().getConstants();
-        powerAction("Reboot", //$NON-NLS-1$
+        powerAction(REBOOT,
                     constants.rebootVirtualMachinesTitle(),
                     constants.areYouSureYouWantToRebootTheFollowingVirtualMachinesMsg());
     }
@@ -1730,6 +1758,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         AttachCdModel model = new AttachCdModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().changeCDTitle());
+        model.setHelpTag(HelpTag.change_cd);
         model.setHashName("change_cd"); //$NON-NLS-1$
 
         AttachCdModel attachCdModel = (AttachCdModel) getWindow();

@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -23,6 +24,7 @@ public class VnicProfileTemplateListModel extends SearchableListModel
 
     public VnicProfileTemplateListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
+        setHelpTag(HelpTag.templates);
         setHashName("templates"); //$NON-NLS-1$
 
         updateActionAvailability();

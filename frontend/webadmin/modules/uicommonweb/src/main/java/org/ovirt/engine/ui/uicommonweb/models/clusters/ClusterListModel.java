@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -192,6 +193,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     public ClusterListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
+        setHelpTag(HelpTag.clusters);
         setHashName("clusters"); //$NON-NLS-1$
 
         setDefaultSearchString("Cluster:"); //$NON-NLS-1$
@@ -215,6 +217,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         ClusterGuideModel model = new ClusterGuideModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newClusterGuideMeTitle());
+        model.setHelpTag(HelpTag.new_cluster___guide_me);
         model.setHashName("new_cluster_-_guide_me"); //$NON-NLS-1$
 
         if (getGuideContext() == null) {
@@ -298,6 +301,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.init(false);
         setWindow(clusterModel);
         clusterModel.setTitle(ConstantsManager.getInstance().getConstants().newClusterTitle());
+        clusterModel.setHelpTag(HelpTag.new_cluster);
         clusterModel.setHashName("new_cluster"); //$NON-NLS-1$
         clusterModel.setIsNew(true);
 
@@ -359,6 +363,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.getEnableHaReservation().setEntity(cluster.supportsHaReservation());
         setWindow(clusterModel);
         clusterModel.setTitle(ConstantsManager.getInstance().getConstants().editClusterTitle());
+        clusterModel.setHelpTag(HelpTag.edit_cluster);
         clusterModel.setHashName("edit_cluster"); //$NON-NLS-1$
         clusterModel.setOriginalName(cluster.getName());
         clusterModel.getName().setEntity(cluster.getName());
@@ -476,6 +481,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeClusterTitle());
+        model.setHelpTag(HelpTag.remove_cluster);
         model.setHashName("remove_cluster"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();
@@ -554,6 +560,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             confirmModel.setTitle(ConstantsManager.getInstance()
                     .getConstants()
                     .changeClusterCompatibilityVersionTitle());
+            confirmModel.setHelpTag(HelpTag.change_cluster_compatibility_version);
             confirmModel.setHashName("change_cluster_compatibility_version"); //$NON-NLS-1$
             UICommand tempVar = new UICommand("OnSaveConfirmCpuThreads", this); //$NON-NLS-1$
             tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -584,6 +591,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             confirmModel.setTitle(ConstantsManager.getInstance()
                     .getConstants()
                     .disableClusterCpuThreadSupportTitle());
+            confirmModel.setHelpTag(HelpTag.disable_cpu_thread_support);
             confirmModel.setHashName("disable_cpu_thread_support"); //$NON-NLS-1$
             confirmModel.setMessage(ConstantsManager.getInstance()
                     .getConstants()
@@ -647,6 +655,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         confirmModel.setTitle(ConstantsManager.getInstance()
                 .getConstants()
                 .changeCpuLevel());
+        confirmModel.setHelpTag(HelpTag.change_cpu_level);
         confirmModel.setHashName("change_cpu_level"); //$NON-NLS-1$
         confirmModel.setMessage(ConstantsManager.getInstance()
                 .getConstants()
@@ -833,6 +842,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         final MultipleHostsModel hostsModel = new MultipleHostsModel();
         setWindow(hostsModel);
         hostsModel.setTitle(ConstantsManager.getInstance().getConstants().addMultipleHostsTitle());
+        hostsModel.setHelpTag(HelpTag.add_hosts);
         hostsModel.setHashName("add_hosts"); //$NON-NLS-1$
         hostsModel.setClusterModel(clusterModel);
         hostsModel.getHosts().setItems(hostList);

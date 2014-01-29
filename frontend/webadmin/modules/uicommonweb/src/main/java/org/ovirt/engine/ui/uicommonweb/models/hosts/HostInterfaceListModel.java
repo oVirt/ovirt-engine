@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -334,6 +335,7 @@ public class HostInterfaceListModel extends SearchableListModel
     public HostInterfaceListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
+        setHelpTag(HelpTag.network_interfaces);
         setHashName("network_interfaces"); //$NON-NLS-1$
 
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
@@ -897,6 +899,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 hostInterfaceListModel.setWindow(hostInterfaceModel);
                 hostInterfaceModel.setEntity(item.getName());
                 hostInterfaceModel.setTitle(ConstantsManager.getInstance().getConstants().editNetworkInterfaceTitle());
+                hostInterfaceModel.setHelpTag(HelpTag.edit_network_interface_hosts);
                 hostInterfaceModel.setHashName("edit_network_interface_hosts"); //$NON-NLS-1$
 
                 hostInterfaceModel.setNetworks(hostInterfaceListModel.getSelectedItemsWithVlans());
@@ -1002,6 +1005,7 @@ public class HostInterfaceListModel extends SearchableListModel
         HostManagementNetworkModel managementNicModel = new HostManagementNetworkModel();
         setWindow(managementNicModel);
         managementNicModel.setTitle(ConstantsManager.getInstance().getConstants().editManagementNetworkTitle());
+        managementNicModel.setHelpTag(HelpTag.edit_management_network);
         managementNicModel.setHashName("edit_management_network"); //$NON-NLS-1$
 
         AsyncQuery _asyncQuery = new AsyncQuery();
@@ -1290,6 +1294,7 @@ public class HostInterfaceListModel extends SearchableListModel
         HostBondInterfaceModel bondModel = new HostBondInterfaceModel();
         setWindow(bondModel);
         bondModel.setTitle(ConstantsManager.getInstance().getConstants().bondNetworkInterfacesTitle());
+        bondModel.setHelpTag(HelpTag.bond_network_interfaces);
         bondModel.setHashName("bond_network_interfaces"); //$NON-NLS-1$
 
         AsyncQuery _asyncQuery = new AsyncQuery();
@@ -1738,6 +1743,7 @@ public class HostInterfaceListModel extends SearchableListModel
         HostInterfaceModel model = new HostInterfaceModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().detachNetworkInterfacesTitle());
+        model.setHelpTag(HelpTag.detach_network_interfaces);
         model.setHashName("detach_network_interfaces"); //$NON-NLS-1$
 
         VdsNetworkInterface nic = (VdsNetworkInterface) getSelectedItem();
@@ -1854,6 +1860,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 confirmModel.setTitle(ConstantsManager.getInstance()
                         .getConstants()
                         .editManagementNetworkInterfaceTitle());
+                confirmModel.setHelpTag(HelpTag.edit_management_network_interface);
                 confirmModel.setHashName("edit_management_network_interface"); //$NON-NLS-1$
                 confirmModel.setMessage(ConstantsManager.getInstance()
                         .getMessages()
@@ -2068,6 +2075,7 @@ public class HostInterfaceListModel extends SearchableListModel
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().saveNetworkConfigurationTitle());
+        model.setHelpTag(HelpTag.save_network_configuration);
         model.setHashName("save_network_configuration"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToMakeTheChangesPersistentMsg());
 

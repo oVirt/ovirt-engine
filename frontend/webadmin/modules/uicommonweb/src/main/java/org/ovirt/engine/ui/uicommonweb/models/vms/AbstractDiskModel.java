@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -755,6 +756,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
         confirmationModel.setTitle(CONSTANTS.forceStorageDomainCreation());
         confirmationModel.setMessage(CONSTANTS.lunsAlreadyPartOfSD());
+        confirmationModel.setHelpTag(HelpTag.force_lun_disk_creation);
         confirmationModel.setHashName("force_lun_disk_creation"); //$NON-NLS-1$
         confirmationModel.setItems(usedLunsMessages);
 

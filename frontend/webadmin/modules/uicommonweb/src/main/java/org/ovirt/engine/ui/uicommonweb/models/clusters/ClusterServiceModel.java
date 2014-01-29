@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -85,6 +86,7 @@ public class ClusterServiceModel extends EntityModel {
 
     public ClusterServiceModel() {
         setTitle(ConstantsManager.getInstance().getConstants().servicesTitle());
+        setHelpTag(HelpTag.services);
         setHashName("services"); //$NON-NLS-1$
 
         setActualServiceList(new ArrayList<GlusterServerService>());

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -48,6 +49,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
                 vmNicList, sourceModel,
                 new NewProfileBehavior());
         setTitle(ConstantsManager.getInstance().getConstants().newNetworkInterfaceTitle());
+        setHelpTag(HelpTag.new_network_interface_vms);
         setHashName("new_network_interface_vms"); //$NON-NLS-1$
     }
 

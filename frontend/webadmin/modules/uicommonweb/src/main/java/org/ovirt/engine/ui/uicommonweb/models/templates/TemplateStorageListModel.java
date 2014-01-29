@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.Linq.StorageDomainModelByNameComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
@@ -53,6 +54,7 @@ public class TemplateStorageListModel extends SearchableListModel
     public TemplateStorageListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
+        setHelpTag(HelpTag.storage);
         setHashName("storage"); //$NON-NLS-1$
 
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
@@ -150,6 +152,7 @@ public class TemplateStorageListModel extends SearchableListModel
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeTemplateDisksTitle());
+        model.setHelpTag(HelpTag.remove_template_disks);
         model.setHashName("remove_template_disks"); //$NON-NLS-1$
 
         ArrayList<DiskModel> disks =

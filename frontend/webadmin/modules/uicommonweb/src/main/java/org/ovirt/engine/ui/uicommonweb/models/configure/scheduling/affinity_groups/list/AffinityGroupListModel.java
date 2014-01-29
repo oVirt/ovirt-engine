@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParam
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.model.AffinityGroupModel;
@@ -31,6 +32,7 @@ public abstract class AffinityGroupListModel<T extends BusinessEntity<Guid>> ext
     public AffinityGroupListModel(VdcQueryType queryType) {
         this.queryType = queryType;
         setTitle(ConstantsManager.getInstance().getConstants().affinityGroupsTitle());
+        setHelpTag(HelpTag.affinity_groups);
         setHashName("affinity_groups"); // $//$NON-NLS-1$
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
@@ -141,6 +143,7 @@ public abstract class AffinityGroupListModel<T extends BusinessEntity<Guid>> ext
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeAffinityGroupsTitle());
+        model.setHelpTag(HelpTag.remove_affinity_groups);
         model.setHashName("remove_affinity_groups"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();

@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -632,6 +633,7 @@ public abstract class RunOnceModel extends Model
 
     public void init() {
         setTitle(ConstantsManager.getInstance().getConstants().runVirtualMachinesTitle());
+        setHelpTag(HelpTag.run_virtual_machine);
         setHashName("run_virtual_machine"); //$NON-NLS-1$
         getAttachIso().setEntity(false);
         getAttachFloppy().setEntity(false);

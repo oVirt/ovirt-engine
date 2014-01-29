@@ -6,11 +6,11 @@ import java.util.Map;
 public class DocumentationPathTranslator {
     private static Map<String, String> documentationPathMap;
 
-    public static String getPath(String hashName) {
+    public static String getPath(String helpTag) {
         String path = null;
 
-        if (hashName != null && documentationPathMap != null) {
-            path = documentationPathMap.get(hashName);
+        if (helpTag != null && documentationPathMap != null) {
+            path = documentationPathMap.get(helpTag);
         }
 
         return path;

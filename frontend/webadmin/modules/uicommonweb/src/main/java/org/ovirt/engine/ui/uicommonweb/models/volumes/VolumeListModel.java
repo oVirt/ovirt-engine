@@ -38,6 +38,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -201,6 +202,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         }
 
         VolumeModel volumeModel = new VolumeModel();
+        volumeModel.setHelpTag(HelpTag.new_volume);
         volumeModel.setHashName("new_volume"); //$NON-NLS-1$
         volumeModel.setTitle(ConstantsManager.getInstance().getConstants().newVolumeTitle());
         setWindow(volumeModel);
@@ -288,6 +290,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeVolumesTitle());
+        model.setHelpTag(HelpTag.remove_volume);
         model.setHashName("remove_volume"); //$NON-NLS-1$
         model.setNote(ConstantsManager.getInstance().getConstants().removeVolumesWarning());
 
@@ -528,6 +531,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getSelectedItem();
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().confirmStopVolumeRebalanceTitle());
+        model.setHelpTag(HelpTag.volume_rebalance_stop);
         model.setHashName("volume_rebalance_stop"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getMessages().confirmStopVolumeRebalance(
                 volumeEntity.getName()));
@@ -581,6 +585,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         setConfirmWindow(cModel);
         cModel.setTitle(ConstantsManager.getInstance().getConstants().rebalanceStatusTitle());
         cModel.startProgress(ConstantsManager.getInstance().getConstants().rebalanceStatusFetchMessage());//$NON-NLS-1$
+        cModel.setHelpTag(HelpTag.volume_rebalance_status);
         cModel.setHashName("volume_rebalance_status"); //$NON-NLS-1$
 
         final UICommand rebalanceStatusOk = new UICommand("rebalanceNotStarted", VolumeListModel.this);//$NON-NLS-1$
@@ -605,6 +610,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                                 .getConstants()
                                 .volumeRebalanceStatusTitle());
                         setWindow(rebalanceStatusModel);
+                        rebalanceStatusModel.setHelpTag(HelpTag.volume_rebalance_status);
                         rebalanceStatusModel.setHashName("volume_rebalance_status"); //$NON-NLS-1$
                         rebalanceStatusModel.getVolume().setEntity(volumeEntity.getName());
                         rebalanceStatusModel.getCluster().setEntity(volumeEntity.getVdsGroupName());
@@ -725,6 +731,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().confirmStopVolume());
+        model.setHelpTag(HelpTag.volume_stop);
         model.setHashName("volume_stop"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().stopVolumeMessage());
         model.setNote(ConstantsManager.getInstance().getConstants().stopVolumeWarning());

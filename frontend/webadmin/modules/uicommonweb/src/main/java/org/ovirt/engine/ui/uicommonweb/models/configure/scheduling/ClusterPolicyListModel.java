@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -220,6 +221,7 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeClusterPolicyTitle());
+        model.setHelpTag(HelpTag.remove_cluster_policy);
         model.setHashName("remove_cluster_policy"); //$NON-NLS-1$
         if (getSelectedItems() == null) {
             return;
@@ -262,6 +264,7 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
 
         policyUnitModel = new ManagePolicyUnitModel();
         policyUnitModel.setTitle(ConstantsManager.getInstance().getConstants().managePolicyUnits());
+        policyUnitModel.setHelpTag(HelpTag.manage_policy_units);
         policyUnitModel.setHashName("manage_policy_units"); //$NON-NLS-1$
 
         policyUnitModel.setPolicyUnits(new ListModel());

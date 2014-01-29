@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -42,6 +43,7 @@ public class NewExternalSubnetModel extends Model {
         getNetwork().setEntity(network);
 
         setTitle(ConstantsManager.getInstance().getConstants().newExternalSubnetTitle());
+        setHelpTag(HelpTag.new_external_subnet);
         setHashName("new_external_subnet"); //$NON-NLS-1$
 
         initCommands();

@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -21,6 +22,7 @@ public class DiskTemplateListModel extends SearchableListModel
     public DiskTemplateListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
+        setHelpTag(HelpTag.templates);
         setHashName("templates"); //$NON-NLS-1$
     }
 

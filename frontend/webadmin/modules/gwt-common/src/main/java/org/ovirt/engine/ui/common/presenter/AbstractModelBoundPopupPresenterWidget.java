@@ -293,8 +293,8 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
     }
 
     protected void openDocumentation(T model) {
-        String hashName = model.getHashName();
-        String documentationPath = DocumentationPathTranslator.getPath(hashName);
+        String helpTag = model.getHelpTag().name;
+        String documentationPath = DocumentationPathTranslator.getPath(helpTag);
         String documentationLibURL = model.getConfigurator().getDocumentationLibURL();
 
         WebUtils.openUrlInNewWindow("_blank", documentationLibURL + documentationPath); //$NON-NLS-1$

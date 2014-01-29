@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -91,6 +92,7 @@ public class TemplateDiskListModel extends SearchableListModel
     public TemplateDiskListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
+        setHelpTag(HelpTag.disks);
         setHashName("disks"); //$NON-NLS-1$
 
         setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$
@@ -254,6 +256,7 @@ public class TemplateDiskListModel extends SearchableListModel
         CopyDiskModel model = new CopyDiskModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().copyDisksTitle());
+        model.setHelpTag(HelpTag.copy_disk);
         model.setHashName("copy_disk"); //$NON-NLS-1$
         model.setEntity(this);
         model.init(disks);
@@ -281,6 +284,7 @@ public class TemplateDiskListModel extends SearchableListModel
         ChangeQuotaModel model = new ChangeQuotaModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().assignQuotaForDisk());
+        model.setHelpTag(HelpTag.change_quota_disks);
         model.setHashName("change_quota_disks"); //$NON-NLS-1$
         model.startProgress(null);
         model.init(disks);

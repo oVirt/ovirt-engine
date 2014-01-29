@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.common.ProgressModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -172,6 +173,23 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         sethashName(value);
         setOpenDocumentationCommand(new UICommand("OpenDocumentation", this)); //$NON-NLS-1$
         onPropertyChanged(new PropertyChangedEventArgs("HashName")); //$NON-NLS-1$
+    }
+
+    private HelpTag helpTag;
+
+    /**
+     * Set the help tag for this model. This is used to connect context-sensitive help to a model/dialog.
+     * <b>IMPORTANT</b>: only use values from {@code HelpTag}.
+     * @param helpTag unique id from {@code HelpTag}
+     */
+    public void setHelpTag(HelpTag helpTag)
+    {
+        this.helpTag = helpTag;
+    }
+
+    public HelpTag getHelpTag()
+    {
+        return helpTag;
     }
 
     /**

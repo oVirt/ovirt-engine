@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateModel;
@@ -49,6 +50,7 @@ public class TemplateBackupModel extends VmBackupModel
     public TemplateBackupModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().templateImportTitle());
+        setHelpTag(HelpTag.template_import);
         setHashName("template_import"); //$NON-NLS-1$
     }
 
@@ -67,6 +69,7 @@ public class TemplateBackupModel extends VmBackupModel
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeBackedUpTemplatesTitle());
+        model.setHelpTag(HelpTag.remove_backed_up_template);
         model.setHashName("remove_backed_up_template"); //$NON-NLS-1$
         ArrayList<String> items = new ArrayList<String>();
         for (Object a : getSelectedItems())
@@ -120,6 +123,7 @@ public class TemplateBackupModel extends VmBackupModel
     protected ImportVmModel getImportModel() {
         ImportTemplateModel model = new ImportTemplateModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().importTemplatesTitle());
+        model.setHelpTag(HelpTag.import_template);
         model.setHashName("import_template"); //$NON-NLS-1$
         return model;
     }
@@ -256,6 +260,7 @@ public class TemplateBackupModel extends VmBackupModel
                                 confirmModel.setTitle(ConstantsManager.getInstance()
                                         .getConstants()
                                         .importTemplatesTitle());
+                                confirmModel.setHelpTag(HelpTag.import_template);
                                 confirmModel.setHashName("import_template"); //$NON-NLS-1$
                                 confirmModel.setMessage(ConstantsManager.getInstance()
                                         .getMessages()

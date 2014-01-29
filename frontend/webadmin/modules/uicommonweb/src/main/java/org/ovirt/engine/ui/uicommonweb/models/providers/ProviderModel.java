@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.Uri;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -351,6 +352,7 @@ public class ProviderModel extends Model {
                 + certChainString
                 + ConstantsManager.getInstance().getConstants().doYouApproveImportingTheseCertificates());
         confirmationModel.setTitle(ConstantsManager.getInstance().getConstants().importProviderCertificatesTitle());
+        confirmationModel.setHelpTag(HelpTag.import_provider_certificates);
         confirmationModel.setHashName("import_provider_certificates"); //$NON-NLS-1$
         UICommand importChainCommand = new UICommand(CMD_IMPORT_CHAIN, this);
         importChainCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());

@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -24,6 +25,7 @@ public class RemoveVmInterfaceModel extends ConfirmationModel {
 
     public RemoveVmInterfaceModel(ListModel sourceListModel, List<VmNetworkInterface> vnics, boolean isFullMsg) {
         setTitle(ConstantsManager.getInstance().getConstants().removeNetworkInterfacesTitle());
+        setHelpTag(HelpTag.remove_network_interface_vms);
         setHashName("remove_network_interface_vms"); //$NON-NLS-1$
 
         this.sourceListModel = sourceListModel;

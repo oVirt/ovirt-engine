@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -54,6 +55,7 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
             public void executed(FrontendMultipleQueryAsyncResult result) {
                 ArrayList<VnicProfileView> vnicProfiles = new ArrayList<VnicProfileView>();
 
+                setHelpTag(HelpTag.remove_network_qos);
                 setHashName("remove_network_qos"); //$NON-NLS-1$
 
                 for (VdcQueryReturnValue returnValue : result.getReturnValues()) {

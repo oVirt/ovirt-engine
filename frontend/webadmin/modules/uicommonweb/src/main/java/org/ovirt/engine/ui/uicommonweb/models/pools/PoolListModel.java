@@ -40,6 +40,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsUnitToVmBaseB
 import org.ovirt.engine.ui.uicommonweb.builders.vm.NameUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -216,6 +217,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newPoolTitle());
+        model.setHelpTag(HelpTag.new_pool);
         model.setHashName("new_pool"); //$NON-NLS-1$
         model.getVmType().setSelectedItem(VmType.Desktop);
         model.initialize(getSystemTreeSelectedItem());
@@ -357,6 +359,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removePoolsTitle());
+        model.setHelpTag(HelpTag.remove_pool);
         model.setHashName("remove_pool"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();

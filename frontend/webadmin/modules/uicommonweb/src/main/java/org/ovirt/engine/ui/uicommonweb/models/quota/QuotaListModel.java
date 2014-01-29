@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -152,6 +153,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     protected void createQuota(boolean populateDataCenter) {
         final QuotaModel qModel = new QuotaModel();
         qModel.setTitle(ConstantsManager.getInstance().getConstants().newQuotaTitle());
+        qModel.setHelpTag(HelpTag.new_quota);
         qModel.setHashName("new_quota"); //$NON-NLS-1$
         Quota newQuota = new Quota();
         qModel.setEntity(newQuota);
@@ -381,7 +383,15 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         qModel.getDescription().setEntity(outer_quota.getDescription());
         qModel.setTitle(isClone ? ConstantsManager.getInstance().getConstants().cloneQuotaTitle()
                 : ConstantsManager.getInstance().getConstants().editQuotaTitle());
-        qModel.setHashName(isClone ? "clone_quota" : "edit_quota"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (isClone) {
+            qModel.setHelpTag(HelpTag.clone_quota);
+            qModel.setHashName("clone_quota"); //$NON-NLS-1$
+        }
+        else {
+            qModel.setHelpTag(HelpTag.edit_quota);
+            qModel.setHashName("edit_quota"); //$NON-NLS-1$
+        }
+
         UICommand command = null;
 
         if (!isClone) {
@@ -555,6 +565,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             confirmModel.setTitle(ConstantsManager.getInstance()
                     .getConstants()
                     .changeDCQuotaEnforcementModeTitle());
+            confirmModel.setHelpTag(HelpTag.set_unlimited_specific_quota);
             confirmModel.setHashName("set_unlimited_specific_quota"); //$NON-NLS-1$
             confirmModel.setMessage(ConstantsManager.getInstance()
                     .getConstants()
@@ -620,6 +631,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeQuotasTitle());
+        model.setHelpTag(HelpTag.remove_quota);
         model.setHashName("remove_quota"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();

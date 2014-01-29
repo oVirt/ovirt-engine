@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -35,6 +36,7 @@ public class QuotaUserListModel extends SearchableListModel {
 
     public QuotaUserListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().usersTitle());
+        setHelpTag(HelpTag.users);
         setHashName("users"); //$NON-NLS-1$
 
         setAddCommand(new UICommand("Add", this)); //$NON-NLS-1$
@@ -164,6 +166,7 @@ public class QuotaUserListModel extends SearchableListModel {
         AdElementListModel model = new AdElementListModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().assignUsersAndGroupsToQuotaTitle());
+        model.setHelpTag(HelpTag.assign_users_and_groups_to_quota);
         model.setHashName("assign_users_and_groups_to_quota"); //$NON-NLS-1$
         model.setIsRoleListHidden(true);
         model.getIsEveryoneSelectionHidden().setEntity(false);
@@ -188,6 +191,7 @@ public class QuotaUserListModel extends SearchableListModel {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeQuotaAssignmentFromUsersTitle());
+        model.setHelpTag(HelpTag.remove_quota_assignment_from_user);
         model.setHashName("remove_quota_assignment_from_user"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();

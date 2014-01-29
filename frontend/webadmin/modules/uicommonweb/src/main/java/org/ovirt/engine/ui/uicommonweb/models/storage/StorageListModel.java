@@ -40,6 +40,7 @@ import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -273,6 +274,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         StorageModel model = new StorageModel(new NewEditStorageModelBehavior());
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newDomainTitle());
+        model.setHelpTag(HelpTag.new_domain);
         model.setHashName("new_domain"); //$NON-NLS-1$
         model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
 
@@ -345,6 +347,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         StorageModel model = new StorageModel(new NewEditStorageModelBehavior());
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editDomainTitle());
+        model.setHelpTag(HelpTag.edit_domain);
         model.setHashName("edit_domain"); //$NON-NLS-1$
         model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
         model.setStorage(storage);
@@ -616,6 +619,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         StorageModel model = new StorageModel(new ImportStorageModelBehavior());
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().importPreConfiguredDomainTitle());
+        model.setHelpTag(HelpTag.import_pre_configured_domain);
         model.setHashName("import_pre-configured_domain"); //$NON-NLS-1$
         model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
         model.getName().setIsAvailable(false);
@@ -781,6 +785,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         RemoveStorageModel model = new RemoveStorageModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeStoragesTitle());
+        model.setHelpTag(HelpTag.remove_storage);
         model.setHashName("remove_storage"); //$NON-NLS-1$
         model.getFormat().setIsAvailable(false);
 
@@ -850,6 +855,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().destroyStorageDomainTitle());
+        model.setHelpTag(HelpTag.destroy_storage_domain);
         model.setHashName("destroy_storage_domain"); //$NON-NLS-1$
         ArrayList<String> items = new ArrayList<String>();
         items.add(((StorageDomain) getSelectedItem()).getStorageName());
@@ -1021,6 +1027,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         model.setTitle(ConstantsManager.getInstance().getConstants().forceStorageDomainCreation());
         model.setMessage(ConstantsManager.getInstance().getConstants().lunsAlreadyInUse());
+        model.setHelpTag(HelpTag.force_storage_domain_creation);
         model.setHashName("force_storage_domain_creation"); //$NON-NLS-1$
         model.setItems(usedLunsMessages);
 

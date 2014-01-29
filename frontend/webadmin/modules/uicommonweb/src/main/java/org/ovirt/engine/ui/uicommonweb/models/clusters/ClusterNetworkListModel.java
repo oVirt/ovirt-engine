@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.ClusterNewNetworkModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -83,6 +84,7 @@ public class ClusterNetworkListModel extends SearchableListModel
     public ClusterNetworkListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().logicalNetworksTitle());
+        setHelpTag(HelpTag.logical_networks);
         setHashName("logical_networks"); //$NON-NLS-1$
 
         setManageCommand(new UICommand("Manage", this)); //$NON-NLS-1$
@@ -166,6 +168,7 @@ public class ClusterNetworkListModel extends SearchableListModel
                 ClusterNetworkManageModel networkToManage = createNetworkList(dcNetworks);
                 clusterNetworkListModel.setWindow(networkToManage);
                 networkToManage.setTitle(ConstantsManager.getInstance().getConstants().assignDetachNetworksTitle());
+                networkToManage.setHelpTag(HelpTag.assign_networks);
                 networkToManage.setHashName("assign_networks"); //$NON-NLS-1$
             }
         };

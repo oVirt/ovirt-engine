@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -24,6 +25,7 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
 
     public RemoveVnicProfileModel(ListModel sourceListModel, List<VnicProfileView> profiles, boolean isFullMsg) {
         setTitle(ConstantsManager.getInstance().getConstants().removeVnicProfileTitle());
+        setHelpTag(HelpTag.remove_vnic_prfoile);
         setHashName("remove_vnic_prfoile"); //$NON-NLS-1$
 
         this.sourceListModel = sourceListModel;

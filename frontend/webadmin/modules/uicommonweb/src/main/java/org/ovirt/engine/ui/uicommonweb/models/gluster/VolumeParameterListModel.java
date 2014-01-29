@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -71,6 +72,7 @@ public class VolumeParameterListModel extends SearchableListModel {
     public VolumeParameterListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().parameterTitle());
+        setHelpTag(HelpTag.parameters);
         setHashName("parameters"); //$NON-NLS-1$
         setAddParameterCommand(new UICommand(ConstantsManager.getInstance().getConstants().AddVolume(), this));
         setEditParameterCommand(new UICommand(ConstantsManager.getInstance().getConstants().editVolume(), this));
@@ -292,6 +294,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().resetOptionVolumeTitle());
+        model.setHelpTag(HelpTag.reset_option);
         model.setHashName("reset_option"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().resetOptionVolumeMsg());
 
@@ -350,6 +353,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().resetAllOptionsTitle());
+        model.setHelpTag(HelpTag.reset_all_options);
         model.setHashName("reset_all_options"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().resetAllOptionsMsg());
 

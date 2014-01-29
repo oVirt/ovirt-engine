@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -30,6 +31,7 @@ public class NetworkHostListModel extends SearchableListModel
 
     public NetworkHostListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
+        setHelpTag(HelpTag.hosts);
         setHashName("hosts"); //$NON-NLS-1$
 
         setSetupNetworksCommand(new UICommand("SetupNetworks", this)); //$NON-NLS-1$

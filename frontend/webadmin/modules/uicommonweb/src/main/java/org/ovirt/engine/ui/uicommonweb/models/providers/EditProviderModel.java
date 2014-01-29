@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -34,6 +35,7 @@ public class EditProviderModel extends ProviderModel {
     public EditProviderModel(SearchableListModel sourceListModel, Provider provider) {
         super(sourceListModel, VdcActionType.UpdateProvider, provider);
         setTitle(ConstantsManager.getInstance().getConstants().editProviderTitle());
+        setHelpTag(HelpTag.edit_provider);
         setHashName("edit_provider"); //$NON-NLS-1$
 
         getName().setEntity(provider.getName());

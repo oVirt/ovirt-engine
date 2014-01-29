@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -237,26 +238,23 @@ public class NewClusterPolicyModel extends Model {
     }
 
     private void initTitle() {
-        String title = null;
-        String hashName = null;
         switch (commandType) {
-        case New:
-            title = ConstantsManager.getInstance().getConstants().newClusterPolicyTitle();
-            hashName = "new_cluster_policy"; //$NON-NLS-1$
-            break;
-        case Edit:
-            title = ConstantsManager.getInstance().getConstants().editClusterPolicyTitle();
-            hashName = "edit_cluster_policy"; //$NON-NLS-1$
-            break;
-        case Clone:
-            title = ConstantsManager.getInstance().getConstants().copyClusterPolicyTitle();
-            hashName = "copy_cluster_policy"; //$NON-NLS-1$
-            break;
-
+            case New:
+                setTitle(ConstantsManager.getInstance().getConstants().newClusterPolicyTitle());
+                setHelpTag(HelpTag.new_cluster_policy);
+                setHashName("new_cluster_policy"); //$NON-NLS-1$
+                break;
+            case Edit:
+                setTitle(ConstantsManager.getInstance().getConstants().editClusterPolicyTitle());
+                setHelpTag(HelpTag.edit_cluster_policy);
+                setHashName("edit_cluster_policy"); //$NON-NLS-1$
+                break;
+            case Clone:
+                setTitle(ConstantsManager.getInstance().getConstants().copyClusterPolicyTitle());
+                setHelpTag(HelpTag.copy_cluster_policy);
+                setHashName("copy_cluster_policy"); //$NON-NLS-1$
+                break;
         }
-
-        setTitle(title);
-        setHashName(hashName);
     }
 
     private boolean customPropertiesInitialized = false;
