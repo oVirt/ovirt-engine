@@ -86,6 +86,12 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
     private static final String GWT_PREFIX = "gwt-"; //$NON-NLS-1$
     private static final String MIN_WIDTH = "minWidth"; //$NON-NLS-1$
     private static final String MAX_WIDTH = "maxWidth"; //$NON-NLS-1$
+    /**
+     * The padding to the left of each action button bar, if you change this value also change the value of the
+     * left-padding in the actionPadding class in SimpleActionTable.ui.xml.
+     */
+    private static final int ACTION_PANEL_PADDING_LEFT = 5; //There seems to be no good way to determine left padding
+                                                            //No getElement().getStyle().getPaddingLeft() doesn't work.
 
     private final CascadeActionPanelCss style;
 
@@ -222,7 +228,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
     private void initializeCascadeMenuPanel() {
         if (widgetMinWidth > 0) {
             cascadePopupPanel.hide();
-            int currentWidth = actionPanel.getParent().getOffsetWidth() - siblingWidth;
+            int currentWidth = actionPanel.getParent().getOffsetWidth() - siblingWidth - ACTION_PANEL_PADDING_LEFT;
             actionPanel.getElement().getStyle().setProperty(MAX_WIDTH, currentWidth - 1, Unit.PX);
             if (currentWidth <= widgetMinWidth) {
                 cascadeButton.setVisible(true);

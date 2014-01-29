@@ -90,11 +90,15 @@
 		.subTitledButton {
 			padding-left: 30px !important;
 		}
+
+        .actionPadding {
+            padding-left: 5px;
+        }
 	</ui:style>
 
 	<g:FlowPanel addStyleNames="{style.panel}">
 		<g:HTMLPanel ui:field="barPanel" addStyleNames="{style.bar}">
-			<g:FlowPanel ui:field="actionPanel" />
+			<g:FlowPanel ui:field="actionPanel" addStyleNames="{style.actionPadding}"/>
 			<g:PushButton ui:field="nextPageButton" addStyleNames="{style.nextButtonStyle}">
 				<g:upFace image='{resources.pageNextEnable}' />
 				<g:upDisabledFace image='{resources.pageNextDisable}' />
