@@ -752,11 +752,13 @@ declare
 begin
     -- The only part we should use modulo is the 4 digit part, all the
     -- rest are really big numbers (i.e 16^8 - 1 and 16^12 - 1)
+    -- The use of round(random() * 1000 is for getting a different id
+    -- for DC/Cluster in different installations
     v_4_part_max = 65535; -- this is 16^4 -1
     v_val := nextval('uuid_sequence');
     v_4_part := lpad(to_hex(v_val % v_4_part_max), 4, '0');
     v_8_part := lpad(to_hex(v_val), 8, '0');
-    v_12_part := lpad(to_hex(v_val), 12, '0');
+    v_12_part := lpad(to_hex((v_val + (round(random() * 1000))::bigint)), 12, '0');
     return v_8_part || v_4_part || v_4_part || v_4_part || v_12_part;
 end; $procedure$
 language plpgsql;
