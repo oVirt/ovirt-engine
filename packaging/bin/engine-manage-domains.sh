@@ -7,64 +7,6 @@
 # Load the prolog:
 . "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
 
-usage() {
-	cat << __EOF__
-        engine-manage-domains -action=ACTION [-domain=DOMAIN -provider=PROVIDER -user=USER -passwordFile=PASSWORD_FILE -configFile=PATH -addPermissions -forceDelete -ldapServers=LDAP_SERVERS -changePasswordMsg -report]
-Where:
-        ACTION             	action to perform (add/edit/delete/validate/list). See details below.
-        DOMAIN             	(mandatory for add, edit and delete) the domain you wish to perform the action on.
-        PROVIDER           	(mandatory for add, optional for edit) the LDAP provider type of server used for the domain. Among the supported providers IPA, RHDS, ITDS, ActiveDirectory and OpenLDAP.
-        USER               	(optional for edit, mandatory for add) the domain user.
-        PASSWORD_FILE      	(optional for edit, mandatory for add) a file containing the password in the first line. If it's not set, the password will be read interactively
-        PATH               	(optional) use the given alternate configuration file.
-        LDAP_SERVERS       	(optional) a comma delimited list of LDAP servers to be set to the domain.
-        changePasswordMsg	(optional) Reads interactively a URL or a message to be returned to the user in case the password has expired.
-
-        Available actions:
-        add
-        Examples:
-                -action=add -domain=example.com -user=admin -provider=IPA -passwordFile=/tmp/.pwd
-                        Add a domain called example.com, using user admin with ldap server type IPA and read the password from /tmp/.pwd.
-                -action=edit -domain=example.com -provider=ActiveDirectory -passwordFile=/tmp/.new_password
-                        Edit the domain example.com, using another password file and updated the provider type to Active Directory.
-                -action=delete -domain=example.com [-forceDelete]
-                        Delete the domain example.com.
-                -forceDelete Optional parameter used in combination with -action=delete to skip confirmation of operation.
-                        Default behaviour is prompt for confirmation of delete.
-                -action=validate
-                        Validate the current configuration (go over all the domains, try to authenticate to each domain using the configured user/password.).
-                -report In combination with -action=validate will report all validation error, if occurred.
-                        Default behaviour is to exit when a validation error occurs.
-                -addPermissions In combination with -action=add/edit will add engine superuser permissions to the user.
-                        Default behaviour is not to add permissions.
-                -action=list
-                        Lists the current configuration.
-                -h
-                        Show this help.
-__EOF__
-	return 0
-}
-
-parseArgs() {
-	if [ "$#" -eq 0 ] ; then
-		usage
-		exit 1
-	fi
-	while [ -n "$1" ]; do
-		local x="$1"
-		local v="${x#*=}"
-		shift
-		case "${x}" in
-			-h|-help|--help)
-				usage
-				exit 0
-			;;
-		esac
-	done
-}
-# do this in function so we do not lose $@
-parseArgs "$@"
-
 #
 # Add this option to the java command line to enable remote debugging in
 # all IP addresses and port 8787:

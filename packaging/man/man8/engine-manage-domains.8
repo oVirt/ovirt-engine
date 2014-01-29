@@ -1,48 +1,125 @@
-.TH engine-manage-domains 8 "January 19, 2013" "" ""
+.TH engine-manage-domains 8 "April 30, 2013" "" ""
 .SH NAME
 engine-manage-domains \- Engine management domains tool
 .SH SYNOPSIS
-.B engine-manage-domains -action=ACTION [-domain=DOMAIN -provider=PROVIDER -user=USER -passwordFile=PASSWORD_FILE -configFile=PATH -addPermissions -forceDelete -report]
-
-Where:
-  ACTION             action to perform (add/edit/delete/validate/list). See details below.
-  DOMAIN             (mandatory for add, edit and delete) the domain you wish to perform the action on.
-  PROVIDER           (mandatory for add, optional for edit) the LDAP provider type of server used for the domain. Among the supported providers IPA,RHDS,ITDS,ActiveDirectory and OpenLDAP.
-  USER               (optional for edit, mandatory for add) the domain user.
-  PASSWORD_FILE      (optional for add, edit) a file containing the password in the first line. If it's not set, the password will be read interactively.
-  PATH               (optional) use the given alternate configuration file.
-
+.B usage: engine-manage-domains <action> [<args>]
+.PP
 Available actions:
-  Examples:
-      \fB\-action=add\fR \fB\-domain\fR=example.com \fB\--user\fR=admin \fB\--provider\fR=IPA \fB\--passwordFile\fR=/tmp/.pwd
-          Add a domain called example.com, using user admin with ldap server type IPA and read the password from /tmp/.pwd.
-
-      \fB\-action=edit\fR \fB\-domain\fR=example.com \fB\-provider\fR=ActiveDirectory \fB\-passwordFile\fR=/tmp/.new_password
-          Edit the domain example.com, using another password file and updated the provider type to Active Directory.
-
-      \fB\-action=delete\fR \fB\-domain\fR=example.com [-forceDelete]
-          Delete the domain example.com.
-
-      \fB\-forceDelete\fR Optional parameter used in combination with \fB\-action=delete\fR to skip confirmation of operation.
-          Default behaviour is prompt for confirmation of delete.
-
-      \fB\-action=validate\fR
-          Validate the current configuration (go over all the domains, try to authenticate to each domain using the configured user/password.).
-
-      \fB\-report\fR In combination with \fB\-action=validate\fR will report all validation error, if occurred.
-          Default behaviour is to exit when a validation error occurs.
-
-      \fB\-addPermissions\fR In combination with \fB\-action=add/edit\fR will add engine superuser permissions to the user.
-          Default behaviour is not to add permissions.
-
-      \fB\-action=list\fR
-          Lists the current configuration.
-
-      \fB\-h\fR
-          Show this help.
+.RS 4
+\fBadd\fR         add a domain using specified provider and user
+.RE
+.RS 4
+\fBedit\fR        edit an existing domain
+.RE
+.RS 4
+\fBdelete\fR      delete an existing domain
+.RE
+.RS 4
+\fBvalidate\fR    validate the current configuration
+.RE
+.RS 4
+\fBlist\fR        list the current configuration
+.RE
+.PP
+.B Add domain
+.RS 4
+engine-manage-domains add --domain=\fIDOMAIN\fR --provider=\fIPROVIDER\fR --user=\fIUSER\fR  [--add-permissions] [--config-file=\fICFG_FILE\fR] [--ldap-servers=\fISERVERS\fR] [--password-file=\fIPASS_FILE\fR] [--change-password-msg]
+.RE
+.PP
+.B Edit domain
+.RS 4
+engine-manage-domains edit --domain=\fIDOMAIN\fR [--provider=\fIPROVIDER\fR] [--user=\fIUSER\fR]  [--add-permissions] [--config-file=\fICFG_FILE\fR] [--ldap-servers=\fISERVERS\fR] [--password-file=\fIPASS_FILE\fR] [--change-password-msg]
+.RE
+.PP
+.B Delete domain
+.RS 4
+engine-manage-domains delete --domain=\fIDOMAIN\fR [--force] [--config-file=\fICFG_FILE\fR] [--password-file=\fIPASS_FILE\fR]
+.RE
+.PP
+.B Validate configuration
+.RS 4
+engine-manage-domains validate [--report] [--config-file=\fICFG_FILE\fR]
+.RE
+.PP
+.B List configuration
+.RS 4
+engine-manage-domains list [--config-file=\fICFG_FILE\fR]
+.RE
+.SH OPTIONS
+.PP
+\fB\-\-add\-permissions\fR
+.RS 4
+Add engine superuser permissions to the user.
+.RE
+.PP
+\fB\-\-change\-password\-msg\fR
+.RS 4
+Reads interactively a URL or a message to be returned to the user in case the password has expired.
+.RE
+.PP
+\fB\-\-config\-file\fR=\fICFG_FILE\fR
+.RS 4
+Use the given alternate configuration file.
+.RE
+.PP
+\fB\-\-domain\fR=\fIDOMAIN\fR
+.RS 4
+The domain you wish to perform the action on.
+.RE
+.PP
+\fB\-\-force\fR
+.RS 4
+Skip confirmation of a delete operation
+.RE
+.PP
+\fB\-\-help\fR
+.RS 4
+Show this help message and exit.
+.RE
+.PP
+\fB\-\-ldap\-servers\fR=\fISERVERS\fR
+.RS 4
+A comma delimited list of LDAP servers to be set to the domain.
+.RE
+.PP
+\fB\-\-provider\fR=\fIPROVIDER\fR
+.RS 4
+The LDAP provider type of server used for the domain.
+.RE
+.RS 8
+AD        Microsoft Active Directory
+.RE
+.RS 8
+IPA       freeIPA
+.RE
+.RS 8
+RHDS      Red Hat Directory Server
+.RE
+.RS 8
+ITDS      IBM Tivoli Directory Server
+.RE
+.RS 8
+OLDAP     OpenLDAP
+.RE
+.PP
+\fB\-\-report\fR
+.RS 4
+Report all validation error, if occured (default behaviour is to exit when a validation error occurs).
+.RE
+.PP
+\fB\-\-user\fR=\fIUSER\fR
+.RS 4
+The domain user.
+.RE
+.PP
+\fB\-\-password\-file\fR=\fIPASS_FILE\fR
+.RS 4
+A file containing the password (if it's not set, the password will be read interactively).
+.RE
 
 .SH BUGS
 Report bugs to <http://bugzilla.redhat.com>
 
 .SH COPYRIGHT
 Copyright 2010-2013 Red Hat, Inc.
+

@@ -3,6 +3,24 @@
  */
 package org.ovirt.engine.core.domains;
 
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ACTION_ADD;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ACTION_DELETE;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ACTION_EDIT;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ACTION_LIST;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ACTION_VALIDATE;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_ACTION;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_ADD_PERMISSIONS;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_CHANGE_PASSWORD_MSG;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_CONFIG_FILE;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_DOMAIN;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_FORCE;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_HELP;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_LDAP_SERVERS;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_PASSWORD_FILE;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_PROVIDER;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_REPORT;
+import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_USER;
+
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
@@ -41,8 +59,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.ldap.LdapSRVLocator;
-import org.ovirt.engine.core.utils.CLIParser;
-import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.dns.DnsSRVLocator;
 import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
 import org.ovirt.engine.core.utils.ipa.ReturnStatus;
@@ -53,14 +69,13 @@ import org.ovirt.engine.core.utils.kerberos.KrbConfCreator;
 
 public class ManageDomains {
 
-    public static final String CONF_FILE_PATH = new File(EngineLocalConfig.getInstance().getEtcDir(), "engine-manage-domains/engine-manage-domains.conf").getAbsolutePath();
     private final String WARNING_ABOUT_TO_DELETE_LAST_DOMAIN =
             "WARNING: Domain %1$s is the last domain in the configuration. After deleting it you will have to either add another domain, or to use the internal admin user in order to login.";
     private final String INFO_ABOUT_NOT_ADDING_PERMISSIONS =
             "The domain %1$s has been added to the engine as an authentication source but no users from that domain"
             + " have been granted permissions within the oVirt Manager.%n"
-            + "Users from this domain can be granted permissions by editing the domain using -action=edit and"
-            +" specifying -addPermissions or from the Web administration interface logging in as admin@internal user.";
+            + "Users from this domain can be granted permissions by editing the domain using action edit and"
+            +" specifying --add-permissions or from the Web administration interface logging in as admin@internal user.";
 
     private final String SERVICE_RESTART_MESSAGE =
             "oVirt Engine restart is required in order for the changes to take place (service ovirt-engine restart).";
@@ -79,36 +94,12 @@ public class ManageDomains {
     private ManageDomainsConfiguration utilityConfiguration;
     private ConfigurationProvider configurationProvider;
     private ManageDomainsDAOImpl daoImpl;
-    private boolean reportAllErrors;
-    private boolean addPermissions;
     private boolean useDnsLookup;
-    private boolean changePasswordMsg;
 
     private final static Logger log = Logger.getLogger(ManageDomains.class);
     private static final String DEFAULT_LDAP_SERVER_PORT = "389";
 
-    public enum Arguments {
-        action,
-        domain,
-        user,
-        passwordFile,
-        servers,
-        configFile,
-        report,
-        addPermissions,
-        provider,
-        forceDelete,
-        ldapServers,
-        changePasswordMsg,
-    }
-
-    public enum ActionType {
-        add,
-        edit,
-        delete,
-        validate,
-        list;
-    }
+    private final ManageDomainsArguments args;
 
     // This function gets the user name and the domain, and constructs the UPN as follows:
     // If the user already contains the domain (contains @), it just makes it upper-case.
@@ -137,13 +128,14 @@ public class ManageDomains {
         return returnUserName;
     }
 
-    public ManageDomains() {
+    public ManageDomains(ManageDomainsArguments args) {
+        this.args = args;
     }
 
-    public void init(String configFilePath) throws ManageDomainsResult {
+    public void init() throws ManageDomainsResult {
 
         try {
-            utilityConfiguration = new ManageDomainsConfiguration(configFilePath);
+            utilityConfiguration = new ManageDomainsConfiguration(args.get(ARG_CONFIG_FILE));
         } catch (ConfigurationException e) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_READING_CONFIGURATION, e.getMessage());
         }
@@ -184,30 +176,21 @@ public class ManageDomains {
     public static void main(String[] args) {
         initLogging();
         ManageDomains util;
-        util = new ManageDomains();
-
-        CLIParser parser = new CLIParser(args);
-
-        String configFilePath = CONF_FILE_PATH;
-        if (parser.hasArg(Arguments.configFile.name())) {
-            configFilePath = parser.getArg(Arguments.configFile.name());
-        }
-        if (parser.hasArg(Arguments.report.name())) {
-            util.reportAllErrors = true;
-        }
-        if (parser.hasArg(Arguments.addPermissions.name())) {
-            util.addPermissions = true;
-        }
-        if (parser.hasArg(Arguments.changePasswordMsg.name())) {
-            util.changePasswordMsg = true;
-        }
 
         try {
-            // it's existence is checked during the parser validation
-            util.init(configFilePath);
-            util.validate(parser);
-            util.createConfigurationProvider();
-            util.runCommand(parser);
+            ManageDomainsArguments mdArgs = new ManageDomainsArguments();
+            mdArgs.parse(args);
+
+            if (mdArgs.contains(ARG_HELP)) {
+                mdArgs.printHelp();
+                System.exit(0);
+            } else {
+                util = new ManageDomains(mdArgs);
+                // it's existence is checked during the parser validation
+                util.init();
+                util.createConfigurationProvider();
+                util.runCommand();
+            }
         } catch (ManageDomainsResult e) {
             exitOnError(e);
         }
@@ -305,49 +288,24 @@ public class ManageDomains {
         return result != null && result.getNumOfValidAddresses() > 0;
     }
 
-    private void runCommand(CLIParser parser) throws ManageDomainsResult {
-        String action = parser.getArg(Arguments.action.name());
+    private void runCommand() throws ManageDomainsResult {
+        String action = args.get(ARG_ACTION);
 
-        ActionType actionType;
-        try {
-            actionType = ActionType.valueOf(action);
-        } catch (IllegalArgumentException ex) {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ACTION, action);
-        }
-
-        if (actionType.equals(ActionType.add)) {
-            addDomain(parser);
-        } else if (actionType.equals(ActionType.edit)) {
-            editDomain(parser);
-        } else if (actionType.equals(ActionType.delete)) {
-            deleteDomain(parser.getArg(Arguments.domain.name()).toLowerCase(), parser.hasArg(Arguments.forceDelete.name()));
-        } else if (actionType.equals(ActionType.validate)) {
+        if (ACTION_ADD.equals(action)) {
+            addDomain();
+        } else if (ACTION_EDIT.equals(action)) {
+            editDomain();
+        } else if (ACTION_DELETE.equals(action)) {
+            deleteDomain();
+        } else if (ACTION_VALIDATE.equals(action)) {
             validate();
-        } else if (actionType.equals(ActionType.list)) {
+        } else if (ACTION_LIST.equals(action)) {
             getConfiguration();
-        } else {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ACTION, action);
         }
     }
 
-    protected LdapProviderType getLdapProviderType(CLIParser parser) throws ManageDomainsResult {
-
-        try {
-            return LdapProviderType.valueOfIgnoreCase(parser.getArg(Arguments.provider.name()));
-        } catch (IllegalArgumentException | NullPointerException i) {
-            // continue and print message
-        }
-
-        StringBuffer sb = new StringBuffer();
-        sb.append(parser.getArg(Arguments.provider.name()) + ". Supported provider types are:\n");
-        for (LdapProviderType t : LdapProviderType.values()) {
-            sb.append(" " + t.name() + "\n");
-        }
-        throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND, sb.toString());
-    }
-
-    protected String getChangePasswordMsg(CLIParser parser) throws ManageDomainsResult, UnsupportedEncodingException {
-        if (!changePasswordMsg) {
+    protected String getChangePasswordMsg() throws ManageDomainsResult, UnsupportedEncodingException {
+        if (!args.contains(ARG_CHANGE_PASSWORD_MSG)) {
             return null;
         }
 
@@ -360,7 +318,7 @@ public class ManageDomains {
                 URL url = new URL(changePasswordMsgStr);
                 log.debug("Validated that " + url + " is in correct format");
             } catch (MalformedURLException ex) {
-                throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND,
+                throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_VALUE,
                         "The provided value begins with a URL prefix of either http or https. However this is not a valid URL");
             }
         }
@@ -368,13 +326,12 @@ public class ManageDomains {
         return URLEncoder.encode(changePasswordMsgStr, "UTF-8");
     }
 
-    private String getPasswordInput(CLIParser parser) throws ManageDomainsResult {
+    private String getPasswordInput() throws ManageDomainsResult {
         String pass = null;
 
-        if (parser.hasArg(Arguments.passwordFile.name())) {
+        if (args.contains(ARG_PASSWORD_FILE)) {
             try {
-                String passwordFile = parser.getArg(Arguments.passwordFile.name());
-                pass = readPasswordFile(passwordFile);
+                pass = readPasswordFile(args.get(ARG_PASSWORD_FILE));
             } catch (Exception e) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_READING_PASSWORD_FILE, e.getMessage());
             }
@@ -489,8 +446,8 @@ public class ManageDomains {
         }
     }
 
-    protected List<String> getLdapServers(CLIParser parser, String domainName) throws ManageDomainsResult {
-        String argValue = parser.getArg(Arguments.ldapServers.toString().toLowerCase());
+    protected List<String> getLdapServers(String domainName) throws ManageDomainsResult {
+        String argValue = args.get(ARG_LDAP_SERVERS);
         if (StringUtils.isEmpty(argValue)) {
             LdapSRVLocator locator = new LdapSRVLocator();
             DnsSRVResult ldapDnsResult = null;
@@ -520,23 +477,23 @@ public class ManageDomains {
         return new ArrayList<String>(Arrays.asList(argValue.split(",")));
     }
 
-    public void addDomain(CLIParser parser) throws ManageDomainsResult {
+    public void addDomain() throws ManageDomainsResult {
         String authMode = LdapAuthModeEnum.GSSAPI.name();
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
         DomainsConfigurationEntry domainNameEntry =
                 new DomainsConfigurationEntry(currentDomains, DOMAIN_SEPERATOR, null);
 
-        String domainName = parser.getArg(Arguments.domain.toString()).toLowerCase();
-        String userName = parser.getArg(Arguments.user.toString());
+        String domainName = args.get(ARG_DOMAIN);
+        String userName = args.get(ARG_USER);
         if (domainNameEntry.doesDomainExist(domainName)) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.DOMAIN_ALREADY_EXISTS_IN_CONFIGURATION, domainName);
         }
-        List<String> ldapServers = getLdapServers(parser, domainName);
+        List<String> ldapServers = getLdapServers(domainName);
         validateKdcServers(authMode, domainName);
         domainNameEntry.setValueForDomain(domainName, null);
         String changePasswordUrlStr = null;
         try {
-            changePasswordUrlStr = getChangePasswordMsg(parser);
+            changePasswordUrlStr = getChangePasswordMsg();
         } catch (UnsupportedEncodingException e) {
             log.error("Error in encoding the change password message. ", e);
         }
@@ -566,13 +523,13 @@ public class ManageDomains {
                 new DomainsConfigurationEntry(currentChangePasswordUrl, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
 
-        LdapProviderType ldapProviderType = getLdapProviderType(parser);
+        LdapProviderType ldapProviderType = args.getLdapProvider();
         adUserNameEntry.setValueForDomain(domainName, userName);
-        adUserPasswordEntry.setValueForDomain(domainName, getPasswordInput(parser));
+        adUserPasswordEntry.setValueForDomain(domainName, getPasswordInput());
         authModeEntry.setValueForDomain(domainName, authMode);
         ldapProviderTypesEntry.setValueForDomain(domainName, ldapProviderType.name());
         setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
-        if (changePasswordMsg) {
+        if (args.contains(ARG_CHANGE_PASSWORD_MSG)) {
             changePasswordUrlEntry.setValueForDomain(domainName, changePasswordUrlStr);
         }
 
@@ -618,14 +575,14 @@ public class ManageDomains {
     }
 
     private void printSuccessMessage(String domainName, String action) {
-        if (addPermissions) {
+        if (args.contains(ARG_ADD_PERMISSIONS)) {
             System.out.print(String.format(SUCCESS_MESSAGE_FOR_ACTION_WITH_ADD_PERMISSIONS, "added", domainName));
         }
         System.out.println(SERVICE_RESTART_MESSAGE);
     }
 
     private void handleAddPermissions(String domainName, String userName, String userId) {
-        if (addPermissions) {
+        if (args.contains(ARG_ADD_PERMISSIONS)) {
             updatePermissionsTable(userName, domainName, userId);
         } else
         if (!userHasPermissions(userName, domainName)) {
@@ -654,13 +611,13 @@ public class ManageDomains {
         return result;
     }
 
-    public void editDomain(CLIParser parser) throws ManageDomainsResult {
+    public void editDomain() throws ManageDomainsResult {
         String authMode;
-        String domainName = parser.getArg(Arguments.domain.toString()).toLowerCase();
+        String domainName = args.get(ARG_DOMAIN);
         authMode = getDomainAuthMode(domainName);
         validateKdcServers(authMode, domainName);
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
-        String userName  = parser.getArg(Arguments.user.toString());
+        String userName  = args.get(ARG_USER);
         DomainsConfigurationEntry domainNameEntry =
                 new DomainsConfigurationEntry(currentDomains, DOMAIN_SEPERATOR, null);
 
@@ -697,7 +654,7 @@ public class ManageDomains {
         if (userName != null) {
             adUserNameEntry.setValueForDomain(domainName, userName);
         }
-        String password = getPasswordInput(parser);
+        String password = getPasswordInput();
         if (password != null) {
             adUserPasswordEntry.setValueForDomain(domainName, password);
         }
@@ -706,23 +663,23 @@ public class ManageDomains {
         DomainsConfigurationEntry ldapServersEntry =
                 new DomainsConfigurationEntry(currentLdapServersEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
-        List<String> ldapServers = getLdapServers(parser, domainName);
+        List<String> ldapServers = getLdapServers(domainName);
         // Set the the obtained LDAP servers (either from arguments or from a DNS SRV record query
         // only if the -ldapServers option is used.
 
-        if (parser.hasArg(Arguments.ldapServers.name())) {
+        if (args.contains(ARG_LDAP_SERVERS)) {
             setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
         }
         LdapProviderType ldapProviderType = null;
-        if (parser.hasArg(Arguments.provider.name())) {
-            ldapProviderType = getLdapProviderType(parser);
+        if (args.contains(ARG_PROVIDER)) {
+            ldapProviderType = args.getLdapProvider();
         }
         if (ldapProviderType != null) {
             ldapProviderTypeEntry.setValueForDomain(domainName, ldapProviderType.name());
         }
-        if (parser.hasArg(Arguments.changePasswordMsg.name())) {
+        if (args.contains(ARG_CHANGE_PASSWORD_MSG)) {
             try {
-                changePaswordUrlEntry.setValueForDomain(domainName, getChangePasswordMsg(parser));
+                changePaswordUrlEntry.setValueForDomain(domainName, getChangePasswordMsg());
             } catch (UnsupportedEncodingException e) {
                 log.error("Error in encoding the change password message. ", e);
             }
@@ -819,7 +776,7 @@ public class ManageDomains {
                 ManageDomainsResult result =
                         new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_TESTING_DOMAIN,
                                 new String[] { domain, e.getMessage() });
-                if ((isValidate && reportAllErrors) || ((domainName != null) && !domain.equals(domainName))) {
+                if ((isValidate && args.contains(ARG_REPORT)) || ((domainName != null) && !domain.equals(domainName))) {
                     System.out.println("WARNING, domain: " + domain + " may not be functional: "
                             + result.getDetailedMessage());
                 } else {
@@ -886,7 +843,7 @@ public class ManageDomains {
                     userGuid, LdapProviderType.valueOf(ldapProviderType.getValueForDomain(domain)), domainLdapServers);
             if (!result.isSuccessful()) {
                 if (isValidate || ((domainName != null) && !domain.equals(domainName))) {
-                    if (reportAllErrors) {
+                    if (args.contains(ARG_REPORT)) {
                         System.out.println("WARNING, domain: " + domain + " may not be functional: "
                                 + result.getDetailedMessage());
                     } else {
@@ -1019,13 +976,14 @@ public class ManageDomains {
         configurationProvider.setConfigValue(ConfigValues.LDAPProviderTypes,
                 ldapProviderTypeEntry);
 
-        if (changePasswordMsg) {
+        if (args.contains(ARG_CHANGE_PASSWORD_MSG)) {
             configurationProvider.setConfigValue(ConfigValues.ChangePasswordMsg, changePasswordUrlEntry);
         }
     }
 
-    public void deleteDomain(String domainName, boolean forceDelete) throws ManageDomainsResult {
+    public void deleteDomain() throws ManageDomainsResult {
 
+        String domainName = args.get(ARG_DOMAIN).toLowerCase();
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
         DomainsConfigurationEntry domainNameEntry =
                 new DomainsConfigurationEntry(currentDomains, DOMAIN_SEPERATOR, null);
@@ -1036,11 +994,11 @@ public class ManageDomains {
 
         //Prompt warning about last domain only if not "force delete", as using
         //the force delete option should remove with no confirmation/warning
-        if (domainNameEntry.getDomainNames().size() == 1 && !forceDelete) {
+        if (domainNameEntry.getDomainNames().size() == 1 && !args.contains(ARG_FORCE)) {
             System.out.println(String.format(WARNING_ABOUT_TO_DELETE_LAST_DOMAIN, domainName));
         }
 
-        if(!forceDelete && !confirmDeleteDomain(domainName)) {
+        if(!args.contains(ARG_FORCE) && !confirmDeleteDomain(domainName)) {
             return;
         }
 
@@ -1100,100 +1058,6 @@ public class ManageDomains {
             response = System.console().readLine();
         }
         return response.equals("yes");
-    }
-
-    private void validate(CLIParser parser) throws ManageDomainsResult {
-
-        if (parser.hasArg(Arguments.action.name())) {
-            String action = parser.getArg(Arguments.action.name());
-            ActionType actionType;
-            try {
-                actionType = ActionType.valueOf(action);
-            } catch (IllegalArgumentException ex) {
-                throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ACTION,
-                        action);
-            }
-            if (actionType.equals(ActionType.add)) {
-                requireArgs(parser, Arguments.domain, Arguments.user, Arguments.provider);
-                requireArgsValue(parser, Arguments.domain, Arguments.user, Arguments.provider,
-                        Arguments.passwordFile);
-                checkInvalidArgs(parser,
-                        Arguments.forceDelete);
-            } else if (actionType.equals(ActionType.edit)) {
-                requireArgs(parser, Arguments.domain);
-                requireArgsValue(parser, Arguments.domain, Arguments.user, Arguments.provider,
-                        Arguments.passwordFile);
-                checkInvalidArgs(parser,
-                        Arguments.forceDelete);
-            } else if (actionType.equals(ActionType.delete)) {
-                requireArgs(parser, Arguments.domain);
-                requireArgsValue(parser, Arguments.domain, Arguments.passwordFile);
-                checkInvalidArgs(parser);
-            } else if (actionType.equals(ActionType.validate)) {
-                checkInvalidArgs(parser,
-                        Arguments.domain,
-                        Arguments.user,
-                        Arguments.passwordFile,
-                        Arguments.forceDelete);
-            } else if (actionType.equals(ActionType.list)) {
-                checkInvalidArgs(parser,
-                        Arguments.domain,
-                        Arguments.user,
-                        Arguments.passwordFile,
-                        Arguments.forceDelete);
-            }
-        } else {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.ACTION_IS_NOT_SPECIFIED);
-        }
-        if (parser.getArgs().size() > Arguments.values().length) {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.TOO_MANY_ARGUMENTS);
-        }
-    }
-
-    private void requireArgs(CLIParser parser, Arguments... args) throws ManageDomainsResult {
-        for (Arguments arg : args) {
-            if (!parser.hasArg(arg.name())) {
-                throw new ManageDomainsResult(ManageDomainsResultEnum.ARGUMENT_IS_REQUIRED, arg.name());
-            }
-        }
-    }
-
-    /**
-     * Tests that if arguments is entered, then it has to have a value also
-     */
-    private void requireArgsValue(CLIParser parser, Arguments... args) throws ManageDomainsResult {
-        for (Arguments arg : args) {
-            if (parser.hasArg(arg.name()) && StringUtils.isEmpty(parser.getArg(arg.name()))) {
-                throw new ManageDomainsResult(ManageDomainsResultEnum.ARGUMENT_VALUE_REQUIRED, arg.name());
-            }
-        }
-    }
-
-    private void requireAtLeastOneArg(CLIParser parser, Arguments... args) throws ManageDomainsResult {
-        for (Arguments arg : args) {
-            if (parser.hasArg(arg.name())) {
-                return;
-            }
-        }
-        throw new ManageDomainsResult(ManageDomainsResultEnum.ARGUMENT_IS_REQUIRED, Arrays.deepToString(args));
-    }
-
-    private void checkInvalidArgs(CLIParser parser, Arguments... args) throws ManageDomainsResult {
-        for (Arguments arg : args) {
-            if (parser.hasArg(arg.name())) {
-                throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND, arg.name());
-            }
-        }
-
-        // check if the user has provided undefined arguments
-        Set<String> arguments = new TreeSet<String>(parser.getArgs());
-        for (Arguments arg : Arguments.values()) {
-            arguments.remove(arg.name().toLowerCase());
-        }
-        if (arguments.size() > 0){
-            throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND,
-                    arguments.toString().replaceAll("\\[", "").replaceAll("\\]", ""));
-        }
     }
 
     private static void closeQuietly(Closeable... closeables) {
