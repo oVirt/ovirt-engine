@@ -12,8 +12,10 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -79,7 +81,7 @@ public class ManageDomains {
     private boolean reportAllErrors;
     private boolean addPermissions;
     private boolean useDnsLookup;
-    private boolean changePasswordUrl;
+    private boolean changePasswordMsg;
 
     private final static Logger log = Logger.getLogger(ManageDomains.class);
     private static final String DEFAULT_LDAP_SERVER_PORT = "389";
@@ -98,7 +100,7 @@ public class ManageDomains {
         provider,
         forceDelete,
         ldapServers,
-        changePasswordUrl,
+        changePasswordMsg,
     }
 
     public enum ActionType {
@@ -197,8 +199,8 @@ public class ManageDomains {
         if (parser.hasArg(Arguments.addPermissions.name())) {
             util.addPermissions = true;
         }
-        if (parser.hasArg(Arguments.changePasswordUrl.name())) {
-            util.changePasswordUrl = true;
+        if (parser.hasArg(Arguments.changePasswordMsg.name())) {
+            util.changePasswordMsg = true;
         }
 
         try {
@@ -257,7 +259,7 @@ public class ManageDomains {
                 ldapPort = DEFAULT_LDAP_SERVER_PORT;
             }
             String changePasswordUrl =
-                    getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.ChangePasswordUrl);
+                    getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.ChangePasswordMsg);
             if (changePasswordUrl == null) {
                 changePasswordUrl = "";
             }
@@ -345,24 +347,26 @@ public class ManageDomains {
         throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND, sb.toString());
     }
 
-    protected String getChangePasswordUrl(CLIParser parser) throws ManageDomainsResult {
-        if (!changePasswordUrl) {
+    protected String getChangePasswordMsg(CLIParser parser) throws ManageDomainsResult, UnsupportedEncodingException {
+        if (!changePasswordMsg) {
             return null;
         }
 
-        String changePasswordUrl = parser.getArg(Arguments.changePasswordUrl.name());
-        if (StringUtils.isEmpty(changePasswordUrl)) {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND,
-                    "Password change URL must not be empty");
+        String changePasswordMsgStr =
+                readInteractively("Please enter message or URL to appear when user tries to login with an expired password: ",
+                        false);
+
+        if (changePasswordMsgStr.indexOf("http") == 0 || changePasswordMsgStr.indexOf("https") == 0) {
+            try {
+                URL url = new URL(changePasswordMsgStr);
+                log.debug("Validated that " + url + " is in correct format");
+            } catch (MalformedURLException ex) {
+                throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND,
+                        "The provided value begins with a URL prefix of either http or https. However this is not a valid URL");
+            }
         }
-        try {
-            URL url = new URL(changePasswordUrl);
-            log.debug("Validated that " + url + " is in correct format");
-        } catch (MalformedURLException e) {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND,
-                    "The provided string for Password change URL is not a valid URL");
-        }
-        return changePasswordUrl;
+        // As the message may contain characters like space, "," and ":" - it should be encoded
+        return URLEncoder.encode(changePasswordMsgStr, "UTF-8");
     }
 
     private String getPasswordInput(CLIParser parser) throws ManageDomainsResult {
@@ -379,7 +383,7 @@ public class ManageDomains {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.EMPTY_PASSWORD_FILE);
             }
         } else if (parser.hasArg(Arguments.interactive.name())) {
-            pass = readPasswordInteractively();
+            pass = readInteractively("Enter password:", true);
         }
 
         validatePassword(pass);
@@ -393,13 +397,16 @@ public class ManageDomains {
         }
     }
 
-    private String readPasswordInteractively() {
-        String password = null;
-        while (StringUtils.isBlank(password)) {
-            System.out.print("Enter password:");
-            password = new String(System.console().readPassword());
+    private String readInteractively(String prompt, boolean isPassword) {
+        String value = null;
+        while (StringUtils.isBlank(value)) {
+            if (isPassword) {
+                value = new String(System.console().readPassword(prompt));
+            } else {
+                value = System.console().readLine(prompt);
+            }
         }
-        return password;
+        return value;
     }
 
     private String readPasswordFile(String passwordFile) throws FileNotFoundException, IOException {
@@ -528,7 +535,12 @@ public class ManageDomains {
         List<String> ldapServers = getLdapServers(parser, domainName);
         validateKdcServers(authMode, domainName);
         domainNameEntry.setValueForDomain(domainName, null);
-        String changePasswordUrlStr = getChangePasswordUrl(parser);
+        String changePasswordUrlStr = null;
+        try {
+            changePasswordUrlStr = getChangePasswordMsg(parser);
+        } catch (UnsupportedEncodingException e) {
+            log.error("Error in encoding the change password message. ", e);
+        }
 
         String currentAdUserNameEntry = configurationProvider.getConfigValue(ConfigValues.AdUserName);
         String currentAdUserPasswordEntry = configurationProvider.getConfigValue(ConfigValues.AdUserPassword);
@@ -537,7 +549,7 @@ public class ManageDomains {
         String currentAdUserIdEntry = configurationProvider.getConfigValue(ConfigValues.AdUserId);
         String currentLDAPProviderTypes = configurationProvider.getConfigValue(ConfigValues.LDAPProviderTypes);
         String ldapServerPort = configurationProvider.getConfigValue(ConfigValues.LDAPServerPort);
-        String currentChangePasswordUrl = configurationProvider.getConfigValue(ConfigValues.ChangePasswordUrl);
+        String currentChangePasswordUrl = configurationProvider.getConfigValue(ConfigValues.ChangePasswordMsg);
 
         DomainsConfigurationEntry adUserNameEntry =
                 new DomainsConfigurationEntry(currentAdUserNameEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
@@ -561,7 +573,7 @@ public class ManageDomains {
         authModeEntry.setValueForDomain(domainName, authMode);
         ldapProviderTypesEntry.setValueForDomain(domainName, ldapProviderType.name());
         setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
-        if (changePasswordUrl) {
+        if (changePasswordMsg) {
             changePasswordUrlEntry.setValueForDomain(domainName, changePasswordUrlStr);
         }
 
@@ -644,7 +656,6 @@ public class ManageDomains {
     }
 
     public void editDomain(CLIParser parser) throws ManageDomainsResult {
-        System.out.println("editting domain");
         String authMode;
         String domainName = parser.getArg(Arguments.domain.toString()).toLowerCase();
         authMode = getDomainAuthMode(domainName);
@@ -667,7 +678,7 @@ public class ManageDomains {
         String currentAdUserIdEntry = configurationProvider.getConfigValue(ConfigValues.AdUserId);
         String currentLdapProviderTypeEntry = configurationProvider.getConfigValue(ConfigValues.LDAPProviderTypes);
         String ldapServerPort = configurationProvider.getConfigValue(ConfigValues.LDAPServerPort);
-        String currentChangePasswordUrl = configurationProvider.getConfigValue(ConfigValues.ChangePasswordUrl);
+        String currentChangePasswordUrl = configurationProvider.getConfigValue(ConfigValues.ChangePasswordMsg);
 
 
         DomainsConfigurationEntry adUserNameEntry =
@@ -710,8 +721,12 @@ public class ManageDomains {
         if (ldapProviderType != null) {
             ldapProviderTypeEntry.setValueForDomain(domainName, ldapProviderType.name());
         }
-        if (parser.hasArg(Arguments.changePasswordUrl.name())) {
-            changePaswordUrlEntry.setValueForDomain(domainName, getChangePasswordUrl(parser));
+        if (parser.hasArg(Arguments.changePasswordMsg.name())) {
+            try {
+                changePaswordUrlEntry.setValueForDomain(domainName, getChangePasswordMsg(parser));
+            } catch (UnsupportedEncodingException e) {
+                log.error("Error in encoding the change password message. ", e);
+            }
         }
 
         testConfiguration(domainName,
@@ -1005,8 +1020,8 @@ public class ManageDomains {
         configurationProvider.setConfigValue(ConfigValues.LDAPProviderTypes,
                 ldapProviderTypeEntry);
 
-        if (changePasswordUrl) {
-            configurationProvider.setConfigValue(ConfigValues.ChangePasswordUrl, changePasswordUrlEntry);
+        if (changePasswordMsg) {
+            configurationProvider.setConfigValue(ConfigValues.ChangePasswordMsg, changePasswordUrlEntry);
         }
     }
 
@@ -1039,7 +1054,7 @@ public class ManageDomains {
         String currentLdapServersEntry = configurationProvider.getConfigValue(ConfigValues.LdapServers);
         String currentAdUserId = configurationProvider.getConfigValue(ConfigValues.AdUserId);
         String ldapProviderType = configurationProvider.getConfigValue(ConfigValues.LDAPProviderTypes);
-        String changePasswordUrl = configurationProvider.getConfigValue(ConfigValues.ChangePasswordUrl);
+        String changePasswordUrl = configurationProvider.getConfigValue(ConfigValues.ChangePasswordMsg);
 
         DomainsConfigurationEntry adUserNameEntry =
                 new DomainsConfigurationEntry(currentAdUserNameEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);

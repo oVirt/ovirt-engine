@@ -2509,6 +2509,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot Login. User Password has expired. Use the following URL to change the password: ${URL}")
     String USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED();
 
+    @DefaultStringValue("Cannot login. User Password has expired. Detailed message: ${MSG}")
+    String USER_PASSWORD_EXPIRED_CHANGE_MSG_PROVIDED();
+
     @DefaultStringValue("Cannot Login. The Domain provided is not configured, please contact your system administrator.")
     String USER_CANNOT_LOGIN_DOMAIN_NOT_SUPPORTED();
 

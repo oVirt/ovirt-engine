@@ -1619,7 +1619,7 @@ public enum ConfigValues {
     HotPlugCpuSupported,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ChangePasswordUrl,
+    ChangePasswordMsg,
 
     Invalid;
 }
