@@ -271,8 +271,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
     @Override
     public void oSType_SelectedItemChanged() {
         VmTemplate template = getModel().getTemplate().getSelectedItem();
-        int osType = getModel().getOSType().getSelectedItem();
-        if (template != null) {
+        Integer osType = getModel().getOSType().getSelectedItem();
+        if (template != null && osType != null) {
             updateVirtioScsiEnabled(template.getId(), osType);
         }
     }

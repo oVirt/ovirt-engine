@@ -333,8 +333,11 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
     @Override
     public void oSType_SelectedItemChanged() {
-        int osType = getModel().getOSType().getSelectedItem();
-        updateVirtioScsiEnabled(vm.getId(), osType);
+        Integer osType = getModel().getOSType().getSelectedItem();
+
+        if (osType != null) {
+            updateVirtioScsiEnabled(vm.getId(), osType);
+        }
     }
 
     @Override
