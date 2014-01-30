@@ -566,12 +566,21 @@ done
 install -dm 755 "%{buildroot}%{engine_java}"
 while read lib_path; do
 	java_path="%{engine_java}/$(basename "${lib_path}")"
-	mv "%{buildroot}/${lib_path}" "%{buildroot}/${java_path}"
+	if ! [ -e "%{buildroot}/${java_path}" ] && [ -f "%{buildroot}/${lib_path}" ]; then
+		cp "%{buildroot}/${lib_path}" "%{buildroot}/${java_path}"
+	fi
+	rm -f "%{buildroot}/${lib_path}"
 	ln -s "${java_path}" "%{buildroot}${lib_path}"
 done << __EOF__
 %{engine_ear}/bll.jar
+%{engine_ear}/docs.war/WEB-INF/lib/branding.jar
+%{engine_ear}/legacy_restapi.war/WEB-INF/lib/branding.jar
 %{engine_ear}/lib/vdsbroker.jar
+%{engine_ear}/restapi.war/WEB-INF/lib/branding.jar
 %{engine_ear}/scheduler.jar
+%{engine_ear}/userportal.war/WEB-INF/lib/branding.jar
+%{engine_ear}/webadmin.war/WEB-INF/lib/branding.jar
+%{engine_ear}/welcome.war/WEB-INF/lib/branding.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/authentication/main/authentication.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/common/main/common.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/compat/main/compat.jar
@@ -775,6 +784,7 @@ fi
 %{engine_etc}/branding/00-ovirt.brand
 %{engine_etc}/engine.conf.d/
 %{engine_java}/authentication.jar
+%{engine_java}/branding.jar
 %{engine_java}/common.jar
 %{engine_java}/compat.jar
 %{engine_java}/utils.jar
