@@ -112,7 +112,7 @@
 										<e:EntityModelTextBoxOnlyEditor ui:field="mtuEditor" />
 									</g:HorizontalPanel>
 									<ge:ListModelSuggestBoxEditor ui:field="networkLabel" addStyleNames="{style.dependentField} {style.propertyWidth}" />
-									<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
+									<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" visible="false">
 										<e:ListModelListBoxEditor ui:field="qosEditor" addStyleNames="{style.dependentField} {style.propertyWidth}" />
 										<w:UiCommandButton ui:field="addQosButton" addStyleNames="{style.qosStyle}" />
 									</g:HorizontalPanel>

@@ -36,7 +36,7 @@
 						<e:EntityModelTextBoxEditor ui:field="address" />
 						<e:EntityModelTextBoxEditor ui:field="subnet" />
 						<e:EntityModelTextBoxEditor ui:field="gateway" />
-						<g:FlowPanel addStyleNames="{style.sectionStyle}" >
+						<g:FlowPanel addStyleNames="{style.sectionStyle}" visible="false" >
 							<ge:EntityModelCheckBoxEditor ui:field="qosOverridden" />
 							<n:NetworkQosWidget ui:field="qosWidget" />
 						</g:FlowPanel>
