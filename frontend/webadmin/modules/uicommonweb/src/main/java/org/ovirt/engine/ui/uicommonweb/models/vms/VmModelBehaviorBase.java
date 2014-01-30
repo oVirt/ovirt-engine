@@ -1145,10 +1145,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateVirtioScsiEnabled(final Guid vmId, int osId) {
-        VDSGroup cluster = getModel().getSelectedCluster();
-        Version clusterVersion = cluster != null ? cluster.getcompatibility_version() : null;
+        final VDSGroup cluster = getModel().getSelectedCluster();
+        if (cluster == null) {
+            return;
+        }
 
-        AsyncDataProvider.getDiskInterfaceList(osId, clusterVersion,
+        AsyncDataProvider.getDiskInterfaceList(osId, cluster.getcompatibility_version(),
             new AsyncQuery(getModel(), new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
