@@ -198,6 +198,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("New")
     String newNetworkQosButton();
 
+    @DefaultStringValue("Changing certain properties (e.g. VLAN, MTU) of the management network could lead to loss of connectivity to hosts in the data center, if its underlying network infrastructure isn't configured to accommodate the changes. Are you sure you want to proceed?")
+    String updateManagementNetworkWarning();
+
     @DefaultStringValue("Attach/Detach Network to/from Clusters")
     String attachDetachNetworkToFromClustersTitle();
 
