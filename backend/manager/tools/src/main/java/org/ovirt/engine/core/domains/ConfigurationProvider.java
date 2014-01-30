@@ -3,7 +3,7 @@ package org.ovirt.engine.core.domains;
 import static org.ovirt.engine.core.common.config.ConfigValues.AdUserId;
 import static org.ovirt.engine.core.common.config.ConfigValues.AdUserName;
 import static org.ovirt.engine.core.common.config.ConfigValues.AdUserPassword;
-import static org.ovirt.engine.core.common.config.ConfigValues.ChangePasswordUrl;
+import static org.ovirt.engine.core.common.config.ConfigValues.ChangePasswordMsg;
 import static org.ovirt.engine.core.common.config.ConfigValues.DomainName;
 import static org.ovirt.engine.core.common.config.ConfigValues.LDAPProviderTypes;
 import static org.ovirt.engine.core.common.config.ConfigValues.LDAPSecurityAuthentication;
@@ -44,7 +44,7 @@ public class ConfigurationProvider {
         configVals.put(AdUserId, adUserId);
         configVals.put(LDAPProviderTypes, ldapProviderTypes);
         configVals.put(LDAPServerPort, ldapServerPort);
-        configVals.put(ChangePasswordUrl, passwordChangeUrls);
+        configVals.put(ChangePasswordMsg, passwordChangeUrls);
         this.engineConfigExecutable = engineConfigExecutable;
         this.engineConfigProperties = engineConfigProperties;
     }

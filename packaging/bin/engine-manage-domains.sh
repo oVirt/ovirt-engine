@@ -11,7 +11,7 @@ usage() {
 	cat << __EOF__
 engine-manage-domains: add/edit/delete/validate/list domains
 USAGE:
-        engine-manage-domains -action=ACTION [-domain=DOMAIN -provider=PROVIDER -user=USER -passwordFile=PASSWORD_FILE -interactive -configFile=PATH -addPermissions -forceDelete -ldapServers=LDAP_SERVERS -changePasswordUrl] -report
+        engine-manage-domains -action=ACTION [-domain=DOMAIN -provider=PROVIDER -user=USER -passwordFile=PASSWORD_FILE -interactive -configFile=PATH -addPermissions -forceDelete -ldapServers=LDAP_SERVERS -changePasswordMsg] -report
 Where:
         ACTION             	action to perform (add/edit/delete/validate/list). See details below.
         DOMAIN             	(mandatory for add, edit and delete) the domain you wish to perform the action on.
@@ -21,7 +21,7 @@ Where:
         interactive        	alternative for using -passwordFile - read the password interactively.
         PATH               	(optional) use the given alternate configuration file.
         LDAP_SERVERS       	(optional) a comma delimited list of LDAP servers to be set to the domain.
-        CHANGE_PASSWORD_URL	(optional) a URL to be returned to the user in case the password has expired.
+        changePasswordMsg	(optional) Reads interactively a URL or a message to be returned to the user in case the password has expired.
 
         Available actions:
         add
@@ -101,7 +101,7 @@ AdUserId=
 LdapServers=
 LDAPProviderTypes=
 LDAPServerPort=
-ChangePasswordUrl=
+ChangePasswordMsg=
 __EOF__
 
 #

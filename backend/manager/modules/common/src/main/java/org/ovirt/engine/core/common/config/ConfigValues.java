@@ -1620,7 +1620,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ChangePasswordUrl,
+    ChangePasswordMsg,
 
     Invalid;
 }

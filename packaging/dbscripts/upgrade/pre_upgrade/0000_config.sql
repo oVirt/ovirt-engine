@@ -615,8 +615,8 @@ select fn_db_add_config_value('EnableVdsHaReservation','true','general');
 select fn_db_add_config_value('VdsHaReservationIntervalInMinutes','5','general');
 
 select fn_db_add_config_value('DefaultMaximumMigrationDowntime','0','general');
---Password URL change
-select fn_db_add_config_value('ChangePasswordUrl','','general');
+--URL or custom message to be presented upon login when the password of a user has expired.
+select fn_db_add_config_value('ChangePasswordMsg','','general');
 
 ------------------------------------------------------------------------------------
 --                  Update with override section
