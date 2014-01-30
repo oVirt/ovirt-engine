@@ -1273,3 +1273,17 @@ BEGIN
        vds_interface_view.vds_id = v_host_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+Create or replace FUNCTION RenameManagementNetwork(v_name varchar(50)) RETURNS VOID
+   AS $procedure$
+DECLARE
+    v_management_network_id UUID;
+    v_old_name  varchar(4000);
+BEGIN
+    select option_value into v_old_name from vdc_options where option_name = 'ManagementNetwork' and version = 'general';
+    select id into v_management_network_id from network where name = v_old_name;
+    perform fn_db_update_config_value('ManagementNetwork', v_name, 'general');
+    update network set name = v_name where id = v_management_network_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
