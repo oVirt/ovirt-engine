@@ -663,9 +663,7 @@ public class VmInitModel extends Model {
         if (getRootPasswordEnabled()) {
             vmInit.setRootPassword((String) getRootPassword().getEntity());
         }
-        if (getAuthorizedKeysEnabled()) {
-            vmInit.setAuthorizedKeys((String) getAuthorizedKeys().getEntity());
-        }
+        vmInit.setAuthorizedKeys((String) getAuthorizedKeys().getEntity());
         if ((Boolean) getRegenerateKeysEnabled().getEntity()) {
             vmInit.setRegenerateKeys(Boolean.TRUE);
         }
