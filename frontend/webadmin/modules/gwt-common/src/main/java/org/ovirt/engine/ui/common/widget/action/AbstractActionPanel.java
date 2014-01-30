@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.common.widget.action;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.idhandler.ProvidesElementId;
@@ -100,7 +102,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
     private final List<ActionButtonDefinition<T>> toolbarOnlyActionButtonList =
             new ArrayList<ActionButtonDefinition<T>>();
     // List of original visibility state for each button
-    private final List<Boolean> originallyVisible = new ArrayList<Boolean>();
+    private final Map<Widget, Boolean> originallyVisible = new HashMap<Widget, Boolean>();
 
     private final SearchableModelProvider<T, ?> dataProvider;
     private final EventBus eventBus;
@@ -191,9 +193,6 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
                 if (widgetMinWidth > 0) {
                     siblingWidth = calculateSiblingWidth();
                 }
-                for (int i = 0; i < contentPanel.getWidgetCount() - 1; i++) {
-                    originallyVisible.add(contentPanel.getWidget(i).isVisible());
-                }
                 initializeCascadeMenuPanel();
             }
         });
@@ -245,18 +244,17 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         boolean foundEdge = false;
         if (contentPanel.getWidgetCount() > 1) {
             for (int i = 0; i < contentPanel.getWidgetCount() - 1; i++) {
-                if (!originallyVisible.get(i)) {
-                    continue;
-                }
                 Widget widget = contentPanel.getWidget(i);
-                widget.setVisible(true); //temporarily show the widget, so we get the actual width of the widget.
-                if (foundEdge || (widgetWidth + widget.getOffsetWidth() > currentWidth)) {
-                    widget.setVisible(false);
-                    toolbarOnlyActionButtonList.get(i).setCascaded(true);
-                    foundEdge = true;
-                } else {
-                    toolbarOnlyActionButtonList.get(i).setCascaded(false);
-                    widgetWidth += widget.getOffsetWidth();
+                if (originallyVisible.get(widget)) {
+                    widget.setVisible(true); //temporarily show the widget, so we get the actual width of the widget.
+                    if (foundEdge || (widgetWidth + widget.getOffsetWidth() > currentWidth)) {
+                        widget.setVisible(false);
+                        toolbarOnlyActionButtonList.get(i).setCascaded(true);
+                        foundEdge = true;
+                    } else {
+                        toolbarOnlyActionButtonList.get(i).setCascaded(false);
+                        widgetWidth += widget.getOffsetWidth();
+                    }
                 }
             }
         }
@@ -601,6 +599,8 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
                 && buttonDef.isVisible(getSelectedItems()) && !buttonDef.isCascaded());
         button.setEnabled(buttonDef.isEnabled(getSelectedItems()));
         button.setTitle(buttonDef.getButtonToolTip() != null ? buttonDef.getButtonToolTip() : buttonDef.getTitle());
+        originallyVisible.put(button.asWidget(), buttonDef.isAccessible(getSelectedItems())
+                && buttonDef.isVisible(getSelectedItems()));
     }
 
     /**
