@@ -76,9 +76,9 @@ USAGE:
 
  To create a new user/database:
 
- create user <user> password '<password>';
+ create role <user> with login encrypted password '<password>';
  create database <database> owner <user> template template0
- encoding 'UTF8' lc_collate 'en_US.UTF-8 lc_ctype 'en_US.UTF-8';
+ encoding 'UTF8' lc_collate 'en_US.UTF-8' lc_ctype 'en_US.UTF-8';
 
  Open access in the firewall/iptables/etc. to the postgresql port,
  5432/tcp by default.
