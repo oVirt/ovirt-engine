@@ -84,6 +84,20 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
     @Source("images/os/large/ubuntu_13_10.png")
     ImageResource ubuntu_13_10LargeImage();
 
+    // ppc64 OSes large images
+
+    @Source("images/os/large/other.png")
+    ImageResource other_ppc64LargeImage();
+
+    @Source("images/os/large/other_linux.png")
+    ImageResource other_linux_ppc64LargeImage();
+
+    @Source("images/os/large/rhel_6.png")
+    ImageResource rhel_6_ppc64LargeImage();
+
+    @Source("images/os/large/sles_11.png")
+    ImageResource sles_11_ppc64LargeImage();
+
     // OS type small images
 
     // TODO remove the same resources from ApplicationResources and rename this
@@ -164,6 +178,20 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
 
     @Source("images/os/ubuntu_13_10.png")
     ImageResource ubuntu_13_10SmallImage();
+
+    // ppc64 OSes small images
+
+    @Source("images/os/other.jpg")
+    ImageResource other_ppc64SmallImage();
+
+    @Source("images/os/other_linux.jpg")
+    ImageResource other_linux_ppc64SmallImage();
+
+    @Source("images/os/rhel_6.jpg")
+    ImageResource rhel_6_ppc64SmallImage();
+
+    @Source("images/os/sles_11.png")
+    ImageResource sles_11_ppc64SmallImage();
 
     @Source("images/vmtypes/desktop_vm_icon.png")
     ImageResource desktopVmIcon();
