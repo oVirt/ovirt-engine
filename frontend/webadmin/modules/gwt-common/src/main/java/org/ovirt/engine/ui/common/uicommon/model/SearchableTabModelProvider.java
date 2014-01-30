@@ -48,6 +48,9 @@ public abstract class SearchableTabModelProvider<T, M extends SearchableListMode
                         updateData();
                     }
                 }
+                if (PropertyChangedEventArgs.Args.PROGRESS.toString().equals(pcArgs.propertyName)) {
+                    clearData();
+                }
             }
         });
     }

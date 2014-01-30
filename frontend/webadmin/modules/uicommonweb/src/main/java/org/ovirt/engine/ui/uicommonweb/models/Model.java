@@ -136,7 +136,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         if (progress != value)
         {
             progress = value;
-            onPropertyChanged(new PropertyChangedEventArgs("Progress")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs(PropertyChangedEventArgs.Args.PROGRESS.toString()));
         }
     }
 

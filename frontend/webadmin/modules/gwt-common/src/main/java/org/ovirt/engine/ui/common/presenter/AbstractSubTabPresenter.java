@@ -212,7 +212,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
-                if ("Progress".equals(pcArgs.propertyName)) { //$NON-NLS-1$
+                if (PropertyChangedEventArgs.Args.PROGRESS.toString().equals(pcArgs.propertyName)) {
                     if (modelProvider.getModel().getProgress() != null) {
                         if (getTable() != null) {
                             getTable().setLoadingState(LoadingState.LOADING);

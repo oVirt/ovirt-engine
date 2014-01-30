@@ -387,6 +387,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
             if (getIsTimerDisabled() == false)
             {
                 setIsQueryFirstTime(true);
+                onPropertyChanged(new PropertyChangedEventArgs(PropertyChangedEventArgs.Args.PROGRESS.toString()));
                 syncSearch();
                 setIsQueryFirstTime(false);
                 getTimer().start();
