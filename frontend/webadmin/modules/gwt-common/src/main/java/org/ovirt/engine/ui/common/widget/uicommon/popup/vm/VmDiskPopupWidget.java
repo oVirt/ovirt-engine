@@ -765,7 +765,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
             PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
-            if ("Progress".equals(pcArgs.propertyName)) { //$NON-NLS-1$
+            if (PropertyChangedEventArgs.Args.PROGRESS.toString().equals(pcArgs.propertyName)) {
                 externalDiskPanel.clear();
                 if (sanStorageModel.getProgress() != null) {
                     externalDiskPanel.add(progressContent);

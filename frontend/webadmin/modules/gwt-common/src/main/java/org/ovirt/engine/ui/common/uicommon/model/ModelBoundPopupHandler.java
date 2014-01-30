@@ -126,13 +126,13 @@ public class ModelBoundPopupHandler<M extends Model> {
         // Initialize popup
         popup.init(model);
 
-        // Add "Progress" property change handler to Window model
+        // Add "PROGRESS" property change handler to Window model
         model.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
 
-                if ("Progress".equals(pcArgs.propertyName)) { //$NON-NLS-1$
+                if (PropertyChangedEventArgs.Args.PROGRESS.toString().equals(pcArgs.propertyName)) { //$NON-NLS-1$
                     updatePopupProgress(model, popup);
                 }
             }
