@@ -76,7 +76,6 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put("STATUS", "status");
         columnNameDict.put("IP", "vm_ip");
         columnNameDict.put("UPTIME", "elapsed_time");
-        columnNameDict.put("DOMAIN", "vm_domain");
         columnNameDict.put("OS", "vm_os");
         columnNameDict.put("CREATIONDATE", "vm_creation_date");
         columnNameDict.put("ADDRESS", "vm_host");
