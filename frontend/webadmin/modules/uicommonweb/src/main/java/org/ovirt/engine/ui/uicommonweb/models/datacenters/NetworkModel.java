@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -46,6 +47,8 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public abstract class NetworkModel extends Model
 {
+    private static final String CMD_APPROVE = "OnApprove"; //$NON-NLS-1$
+    private static final String CMD_ABORT = "OnAbort"; //$NON-NLS-1$
     protected static final String ENGINE_NETWORK =
             (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
@@ -645,11 +648,33 @@ public abstract class NetworkModel extends Model
             return;
         }
 
+        if (isManagemet()) {
+            ConfirmationModel confirmationModel = new ConfirmationModel();
+            confirmationModel.setMessage(ConstantsManager.getInstance().getConstants().updateManagementNetworkWarning());
+            UICommand cmdOk = new UICommand(CMD_APPROVE, this);
+            cmdOk.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            cmdOk.setIsDefault(true);
+            confirmationModel.getCommands().add(cmdOk);
+            UICommand cmdCancel = new UICommand(CMD_ABORT, this);
+            cmdCancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+            cmdCancel.setIsCancel(true);
+            confirmationModel.getCommands().add(cmdCancel);
+            sourceListModel.setConfirmWindow(confirmationModel);
+        } else {
+            onApprove();
+        }
+    }
+
+    private void onApprove() {
         // Save changes.
         flush();
 
         // Execute all the required commands (detach, attach, update) to save the updates
         executeSave();
+    }
+
+    private void onAbort() {
+        sourceListModel.setConfirmWindow(null);
     }
 
     @Override
@@ -663,6 +688,11 @@ public abstract class NetworkModel extends Model
             cancel();
         } else if (command == getAddQosCommand()) {
             addQos();
+        } else if (StringHelper.stringsEqual(command.getName(), CMD_APPROVE)) {
+            onAbort();
+            onApprove();
+        } else if (StringHelper.stringsEqual(command.getName(), CMD_ABORT)) {
+            onAbort();
         }
     }
 
