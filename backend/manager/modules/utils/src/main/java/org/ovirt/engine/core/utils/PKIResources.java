@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateFactory;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -79,7 +81,7 @@ public class PKIResources {
 
     public enum Resource {
         CACertificate(EngineLocalConfig.getInstance().getPKICACert(), Format.X509_PEM_CA, null),
-        EngineCertificate(EngineLocalConfig.getInstance().getPKIEngineCert(), Format.X509_PEM, "ovirt-engine");
+        EngineCertificate(EngineLocalConfig.getInstance().getPKIEngineCert(), Format.X509_PEM, Config.<String> getValue(ConfigValues.SSHKeyAlias));
 
         private final Certificate cert;
         private final Format defaultFormat;
