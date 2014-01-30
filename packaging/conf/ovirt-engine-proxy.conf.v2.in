@@ -23,7 +23,7 @@
     </IfModule>
 
     <LocationMatch ^/(ovirt-engine($|/)|api($|/)|RHEVManagerWeb/|OvirtEngineWeb/|ca.crt$|engine.ssh.key.txt$|rhevm.ssh.key.txt$)>
-        ProxyPassMatch ajp://127.0.0.1:@JBOSS_AJP_PORT@ timeout=3600
+        ProxyPassMatch ajp://127.0.0.1:@JBOSS_AJP_PORT@ timeout=3600 retry=5
 
         <IfModule deflate_module>
             AddOutputFilterByType DEFLATE text/javascript text/css text/html text/xml text/json application/xml application/json application/x-yaml
