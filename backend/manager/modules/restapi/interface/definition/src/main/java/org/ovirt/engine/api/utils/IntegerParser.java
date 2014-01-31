@@ -3,24 +3,46 @@ package org.ovirt.engine.api.utils;
 import javax.xml.bind.DatatypeConverter;
 import java.math.BigInteger;
 
+/**
+ * This class contains methods that parse integers from strings checking and avoiding overflows of the corresponding
+ * Java integer types.
+ */
 public class IntegerParser {
+    // Max values of Java integer types:
+    private static final BigInteger MAX_SHORT = new BigInteger("32767"); // 2^(16-1)-1
+    private static final BigInteger MAX_UNSIGNED_SHORT = new BigInteger("65535"); // 2^16-1
+    private static final BigInteger MAX_INT = new BigInteger("2147483647"); // 2^(32-1)-1
+    private static final BigInteger MAX_UNSIGNED_INT = new BigInteger("4294967295"); // 2^32-1
 
-    public static int parseIntegerToShort(String value) {
-        BigInteger result =
-                DatatypeConverter.parseInteger(value);
-        if (result.longValue() > Short.MAX_VALUE) {
-            throw new InvalidValueException("Value " +value+ " greater than maximum " + Short.MAX_VALUE);
+    public static short parseShort(String value) {
+        BigInteger result = DatatypeConverter.parseInteger(value);
+        if (result.compareTo(MAX_SHORT) > 0) {
+            throw new InvalidValueException("Value " + value + " is greater than the maximum short " + MAX_SHORT);
+        }
+        return result.shortValue();
+    }
+
+    public static int parseUnsignedShort(String value) {
+        BigInteger result = DatatypeConverter.parseInteger(value);
+        if (result.compareTo(MAX_UNSIGNED_SHORT) > 0) {
+            throw new InvalidValueException("Value " + value + " is greater than maximum unsigned short " + MAX_UNSIGNED_SHORT);
         }
         return result.intValue();
     }
 
-    public static int parseIntegerToInt(String value) {
-        BigInteger result =
-                DatatypeConverter.parseInteger(value);
-        if (result.longValue() > Integer.MAX_VALUE) {
-            throw new InvalidValueException("Value " +value+ " greater than maximum " + Integer.MAX_VALUE);
+    public static int parseInt(String value) {
+        BigInteger result = DatatypeConverter.parseInteger(value);
+        if (result.compareTo(MAX_INT) > 0) {
+            throw new InvalidValueException("Value " + value +  " is greater than maximum integer " + MAX_INT);
         }
         return result.intValue();
     }
 
+    public static long parseUnsignedInt(String value) {
+        BigInteger result = DatatypeConverter.parseInteger(value);
+        if (result.compareTo(MAX_UNSIGNED_INT) > 0) {
+            throw new InvalidValueException("Value " + value +  " is greater than maximum unsigned integer " + MAX_UNSIGNED_INT);
+        }
+        return result.longValue();
+    }
 }
