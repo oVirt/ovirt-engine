@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
@@ -252,6 +253,12 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.containsKey(VdsProperties.exit_message)) {
             String exitMsg = (String) xmlRpcStruct.get(VdsProperties.exit_message);
             vm.setExitMessage(exitMsg);
+        }
+        if (xmlRpcStruct.containsKey(VdsProperties.exit_reason)) {
+            String exitReasonStr = xmlRpcStruct.get(VdsProperties.exit_reason).toString();
+            vm.setExitReason(VmExitReason.forValue(Integer.parseInt(exitReasonStr)));
+        } else {
+            vm.setExitReason(VmExitReason.Unknown);
         }
 
         // if monitorResponse returns negative it means its erroneous

@@ -69,6 +69,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private String currentCd;
     @UnchangeableByVdsm
     private String stopReason;
+    private VmExitReason exitReason;
 
     public static final String APPLICATIONS_LIST_FIELD_NAME = "appList";
     public static final String STATUS_FIELD_NAME = "status";
@@ -119,6 +120,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + (cpuName == null ? 0 : cpuName.hashCode());
         result = prime * result + (currentCd == null ? 0 : currentCd.hashCode());
         result = prime * result + (stopReason == null ? 0 : stopReason.hashCode());
+        result = prime * result + exitReason.hashCode();
         return result;
     }
 
@@ -175,7 +177,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && runOnce == other.runOnce
                 && ObjectUtils.objectsEqual(cpuName, other.cpuName)
                 && ObjectUtils.objectsEqual(currentCd, other.currentCd)
-                && ObjectUtils.objectsEqual(stopReason, other.stopReason));
+                && ObjectUtils.objectsEqual(stopReason, other.stopReason)
+                && exitReason == other.exitReason);
     }
 
     public String getExitMessage() {
@@ -237,6 +240,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         kvmEnable = true;
         session = SessionState.Unknown;
         bootSequence = BootSequence.C;
+        exitReason = VmExitReason.Unknown;
     }
 
     public String getAppList() {
@@ -550,5 +554,13 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setStopReason(String stopReason) {
         this.stopReason = stopReason;
+    }
+
+    public VmExitReason getExitReason() {
+        return exitReason;
+    }
+
+    public void setExitReason(VmExitReason value) {
+        exitReason = value;
     }
 }

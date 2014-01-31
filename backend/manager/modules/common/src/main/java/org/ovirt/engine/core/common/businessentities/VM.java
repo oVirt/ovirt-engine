@@ -658,6 +658,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.vmDynamic.setExitMessage(value);
     }
 
+    public VmExitReason getExitReason() {
+        return this.vmDynamic.getExitReason();
+    }
+
+    public void setExitReason(VmExitReason value) {
+        this.vmDynamic.setExitReason(value);
+    }
+
     /**
      * Tracking value of VM's UTC offset. Useful for long running VMs when there
      * can be significant drift over initial value computed from timeZone.
@@ -1256,6 +1264,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         setUtcDiff(vm.getUtcDiff());
         setExitStatus(vm.getExitStatus());
         setExitMessage(vm.getExitMessage());
+        setExitReason(vm.getExitReason());
         setClientIp(vm.getClientIp());
         setVmPauseStatus(vm.getPauseStatus());
         setLastWatchdogEvent(vm.getLastWatchdogEvent());

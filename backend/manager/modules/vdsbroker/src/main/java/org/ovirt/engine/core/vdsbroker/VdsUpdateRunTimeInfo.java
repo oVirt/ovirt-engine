@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
@@ -1343,7 +1344,7 @@ public class VdsUpdateRunTimeInfo {
                 }
 
                 clearVm(vmTo, vmInternalData.getVmDynamic().getExitStatus(), vmInternalData.getVmDynamic()
-                        .getExitMessage());
+                        .getExitMessage(), vmInternalData.getVmDynamic().getExitReason());
             }
 
             VmStatistics vmStatistics = getDbFacade().getVmStatisticsDao().get(vm.getId());
@@ -1445,7 +1446,8 @@ public class VdsUpdateRunTimeInfo {
                 ResourceManager.getInstance().InternalSetVmStatus(curVm,
                         VMStatus.Down,
                         vmDynamic.getExitStatus(),
-                        vmDynamic.getExitMessage());
+                        vmDynamic.getExitMessage(),
+                        vmDynamic.getExitReason());
                 addVmDynamicToList(curVm.getDynamicData());
                 addVmStatisticsToList(curVm.getStatisticsData());
                 addVmInterfaceStatisticsToList(curVm.getInterfaces());
@@ -1664,7 +1666,8 @@ public class VdsUpdateRunTimeInfo {
                 clearVm(vmToRemove,
                         VmExitStatus.Error,
                         String.format("Could not find VM %s on host, assuming it went down unexpectedly",
-                                vmToRemove.getName()));
+                                vmToRemove.getName()),
+                        VmExitReason.GenericError);
             }
 
             log.infoFormat("VM {0} ({1}) is running in db and not running in VDS {2}",
@@ -1980,13 +1983,13 @@ public class VdsUpdateRunTimeInfo {
         vmDeviceToSave.put(vmDevice.getId(), vmDevice);
     }
 
-    private void clearVm(VM vm, VmExitStatus exitStatus, String exitMessage) {
+    private void clearVm(VM vm, VmExitStatus exitStatus, String exitMessage, VmExitReason exitReason) {
         if (vm.getStatus() != VMStatus.MigratingFrom) {
             // we must check that vm.getStatus() != VMStatus.Down because if it was set to down
             // the exit status and message were set, and we don't want to override them here.
             // we will add it to _vmDynamicToSave though because it might been removed from it in #updateRepository
             if (vm.getStatus() != VMStatus.Suspended && vm.getStatus() != VMStatus.Down) {
-                ResourceManager.getInstance().InternalSetVmStatus(vm, VMStatus.Down, exitStatus, exitMessage);
+                ResourceManager.getInstance().InternalSetVmStatus(vm, VMStatus.Down, exitStatus, exitMessage, exitReason);
             }
             addVmDynamicToList(vm.getDynamicData());
             addVmStatisticsToList(vm.getStatisticsData());

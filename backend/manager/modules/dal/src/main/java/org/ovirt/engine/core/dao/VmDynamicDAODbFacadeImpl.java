@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -124,7 +125,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("is_run_once", vm.isRunOnce())
                 .addValue("cpu_name", vm.getCpuName())
                 .addValue("current_cd", vm.getCurrentCd())
-                .addValue("reason", vm.getStopReason());
+                .addValue("reason", vm.getStopReason())
+                .addValue("exit_reason", vm.getExitReason().getValue());
     }
 
     @Override
@@ -190,6 +192,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 entity.setCpuName(rs.getString("cpu_name"));
                 entity.setCurrentCd(rs.getString("current_cd"));
                 entity.setStopReason(rs.getString("reason"));
+                VmExitReason exitReason = VmExitReason.forValue(rs.getInt("exit_reason"));
+                entity.setExitReason(exitReason);
                 return entity;
             }
         };
@@ -241,7 +245,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                         .addValue("is_run_once", entity.isRunOnce())
                         .addValue("cpu_name", entity.getCpuName())
                         .addValue("current_cd", entity.getCurrentCd())
-                        .addValue("reason", entity.getStopReason());
+                        .addValue("reason", entity.getStopReason())
+                        .addValue("exit_reason", entity.getExitReason());
 
                 return paramValue;
             }

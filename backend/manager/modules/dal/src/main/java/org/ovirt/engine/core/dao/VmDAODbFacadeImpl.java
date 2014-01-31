@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -423,6 +424,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setSerialNumberPolicy(SerialNumberPolicy.forValue((Integer) rs.getObject("serial_number_policy")));
             entity.setCustomSerialNumber(rs.getString("custom_serial_number"));
             entity.setStopReason(rs.getString("reason"));
+            entity.setExitReason(VmExitReason.forValue(rs.getInt("exit_reason")));
             return entity;
         }
     }

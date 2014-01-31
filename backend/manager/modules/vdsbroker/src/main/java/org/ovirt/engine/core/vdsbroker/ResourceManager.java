@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
@@ -279,17 +280,18 @@ public class ResourceManager {
      * @param status
      */
     public void InternalSetVmStatus(VM vm, final VMStatus status) {
-        InternalSetVmStatus(vm, status, VmExitStatus.Normal);
+        InternalSetVmStatus(vm, status, VmExitStatus.Normal, StringUtils.EMPTY, VmExitReason.Unknown);
     }
 
     public void InternalSetVmStatus(VM vm, final VMStatus status, VmExitStatus exitStatus) {
-        InternalSetVmStatus(vm, status, exitStatus, StringUtils.EMPTY);
+        InternalSetVmStatus(vm, status, exitStatus, StringUtils.EMPTY, VmExitReason.Unknown);
     }
 
-    public void InternalSetVmStatus(VM vm, final VMStatus status, final VmExitStatus exitStaus, final String exitMessage) {
+    public void InternalSetVmStatus(VM vm, final VMStatus status, final VmExitStatus exitStaus, final String exitMessage, final VmExitReason exitReason) {
         vm.setStatus(status);
         vm.setExitStatus(exitStaus);
         vm.setExitMessage(exitMessage);
+        vm.setExitReason(exitReason);
         boolean isVmNotRunning = status.isNotRunning();
 
         if (isVmNotRunning || status == VMStatus.Unknown) {

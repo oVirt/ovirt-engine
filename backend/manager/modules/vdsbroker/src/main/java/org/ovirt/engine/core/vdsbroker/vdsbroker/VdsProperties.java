@@ -162,6 +162,7 @@ public final class VdsProperties {
     public static final String exit_message = "exitMessage";
     public static final String multimedia_ports = "multimediaPorts";
     public static final String monitorResponse = "monitorResponse";
+    public static final String exit_reason = "exitReason";
 
     // Disks usage configuration
     public static final String VM_DISKS_USAGE = "disksUsage";

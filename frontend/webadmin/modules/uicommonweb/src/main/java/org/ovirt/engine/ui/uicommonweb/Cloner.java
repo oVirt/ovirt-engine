@@ -136,6 +136,7 @@ public final class Cloner
         vm.setRoundedElapsedTime(instance.getRoundedElapsedTime());
         vm.setExitMessage(instance.getExitMessage());
         vm.setExitStatus(instance.getExitStatus());
+        vm.setExitReason(instance.getExitReason());
         vm.setFailBack(instance.isFailBack());
         vm.setConsoleCurrentUserName(instance.getConsoleCurentUserName());
         vm.setGuestCurrentUserName(instance.getGuestCurentUserName());
