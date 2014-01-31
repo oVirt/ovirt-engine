@@ -248,6 +248,7 @@ public class GlusterTasksSyncJobTest {
         GlusterVolumeEntity vol = new GlusterVolumeEntity();
         vol.setStatus(GlusterStatus.UP);
         vol.setId(VOL_GUIDS[i]);
+        vol.setClusterId(CLUSTER_GUIDS[1]);
         return vol;
     }
 
