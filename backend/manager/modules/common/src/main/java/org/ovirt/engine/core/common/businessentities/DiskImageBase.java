@@ -80,7 +80,7 @@ public class DiskImageBase extends Disk {
 
     @Override
     public boolean isAllowSnapshot() {
-        return !isShareable();
+        return !isShareable() && !Boolean.TRUE.equals(getReadOnly());
     }
 
     @Override
