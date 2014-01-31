@@ -111,15 +111,6 @@ public class DiskValidator {
         return DbFacade.getInstance().getVmDao();
     }
 
-    /**
-     * Check if the disk interface is supported.
-     *
-     * @param osId
-     *            Type of the OS.
-     * @param version
-     *            The cluster version.
-     * @return An error if the disk interface is not compatible with the selected operating system.
-     */
     public ValidationResult isDiskInterfaceSupported(VM vm) {
         if (vm != null) {
             if (!VmValidationUtils.isDiskInterfaceSupportedByOs(vm.getOs(), vm.getVdsGroupCompatibilityVersion(), disk.getDiskInterface())) {
