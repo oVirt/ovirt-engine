@@ -334,7 +334,9 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
         for (Guid taskId: tasksNotRunning) {
             GlusterVolumeEntity vol= getVolumeDao().getVolumeByGlusterTask(taskId);
-            if (vol != null && vol.getStatus() != GlusterStatus.UP &&  !runningTasksInClusterMap.keySet().contains((vol.getClusterId()))) {
+            if (vol != null
+                    && (vol.getStatus() != GlusterStatus.UP || !runningTasksInClusterMap.keySet()
+                            .contains(vol.getClusterId()))) {
                 // the volume is not UP. Hence gluster may not have been able to return tasks for the volume
                 // also handling the case where gluster was not able to return any tasks from this cluster - the keyset will not
                 // contain the cluster id in such case
