@@ -99,6 +99,14 @@ public class DiskValidator {
 
     }
 
+    public ValidationResult isReadOnlyPropertyCompatibleWithInterface() {
+        if (Boolean.TRUE.equals(disk.getReadOnly()) && disk.getDiskInterface() == DiskInterface.IDE) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_IDE_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
+        }
+
+        return ValidationResult.VALID;
+    }
+
     protected VmDAO getVmDAO() {
         return DbFacade.getInstance().getVmDao();
     }

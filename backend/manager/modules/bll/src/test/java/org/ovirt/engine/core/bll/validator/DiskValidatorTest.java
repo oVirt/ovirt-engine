@@ -139,4 +139,24 @@ public class DiskValidatorTest {
         initializeOsRepository(vm.getOs(), DiskInterface.VirtIO);
         assertThat(validator.isDiskInterfaceSupported(vm), failsWith(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
     }
+
+    @Test
+    public void readOnlyIsNotSupportedByDiskInterface() {
+        disk.setReadOnly(true);
+        disk.setDiskInterface(DiskInterface.IDE);
+
+        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_IDE_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR));
+    }
+
+    @Test
+    public void readOnlyIsSupportedByDiskInterface() {
+        disk.setReadOnly(true);
+        disk.setDiskInterface(DiskInterface.VirtIO);
+        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
+
+        disk.setReadOnly(false);
+        disk.setDiskInterface(DiskInterface.IDE);
+        assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
+    }
 }
