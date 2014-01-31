@@ -126,6 +126,7 @@ public class AddDiskToVmCommandTest {
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
+        when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
         when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(diskValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
         when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
@@ -588,7 +589,8 @@ public class AddDiskToVmCommandTest {
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
         when(diskLunMapDAO.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
-        assertTrue("checkIfLunDiskCanBeAdded() failed for valid iscsi lun", command.checkIfLunDiskCanBeAdded());
+        assertTrue("checkIfLunDiskCanBeAdded() failed for valid iscsi lun",
+                command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
     }
 
     @Test
@@ -598,7 +600,8 @@ public class AddDiskToVmCommandTest {
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
         disk.getLun().setLunType(StorageType.UNKNOWN);
-        assertFalse("checkIfLunDiskCanBeAdded() succeded for LUN with UNKNOWN type", command.checkIfLunDiskCanBeAdded());
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for LUN with UNKNOWN type",
+                command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_HAS_NO_VALID_TYPE));
     }
 
@@ -609,13 +612,15 @@ public class AddDiskToVmCommandTest {
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
         disk.getLun().getLunConnections().get(0).setiqn(null);
-        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null iqn", command.checkIfLunDiskCanBeAdded());
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null iqn",
+                command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
 
         clearCanDoActionMessages();
 
         disk.getLun().getLunConnections().get(0).setiqn("");
-        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with an empty iqn", command.checkIfLunDiskCanBeAdded());
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with an empty iqn",
+                command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
     }
 
@@ -626,13 +631,15 @@ public class AddDiskToVmCommandTest {
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
         disk.getLun().getLunConnections().get(0).setconnection(null);
-        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null address", command.checkIfLunDiskCanBeAdded());
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null address",
+                command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
 
         clearCanDoActionMessages();
 
         disk.getLun().getLunConnections().get(0).setconnection("");
-        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty address", command.checkIfLunDiskCanBeAdded());
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty address",
+                command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
     }
 
@@ -643,13 +650,15 @@ public class AddDiskToVmCommandTest {
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
         disk.getLun().getLunConnections().get(0).setport(null);
-        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null port", command.checkIfLunDiskCanBeAdded());
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null port",
+                command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
 
         clearCanDoActionMessages();
 
         disk.getLun().getLunConnections().get(0).setport("");
-        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty port", command.checkIfLunDiskCanBeAdded());
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty port",
+                command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
     }
 
@@ -712,7 +721,7 @@ public class AddDiskToVmCommandTest {
         mockMaxPciSlots();
 
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
-            new ArrayList<>(Arrays.asList("VirtIO")));
+                new ArrayList<>(Arrays.asList("VirtIO")));
 
         DiskValidator diskValidator = spyDiskValidator(disk);
         doReturn(true).when(diskValidator).isVirtioScsiControllerAttached(any(Guid.class));
@@ -820,6 +829,25 @@ public class AddDiskToVmCommandTest {
         mockStoragePoolIsoMap();
 
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
+    public void testCanDoFailOnAddIDEReadOnlyDisk() {
+        DiskImage disk = new DiskImage();
+        disk.setDiskInterface(DiskInterface.IDE);
+        disk.setReadOnly(true);
+
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+
+        initializeCommand(Guid.newGuid(), parameters);
+        doReturn(true).when(command).isDiskCanBeAddedToVm(any(Disk.class), any(VM.class));
+        doReturn(true).when(command).isDiskPassPciAndIdeLimit(any(Disk.class));
+
+        mockVm();
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_IDE_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
     }
 
     private void fillDiskMap(LunDisk disk, VM vm, int expectedMapSize) {

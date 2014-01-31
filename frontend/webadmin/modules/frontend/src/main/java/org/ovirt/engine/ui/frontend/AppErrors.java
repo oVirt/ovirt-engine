@@ -3057,4 +3057,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The specified iSCSI bond doesn't exist.")
     String ISCSI_BOND_NOT_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. An IDE disk can't be read-only.")
+    String ACTION_TYPE_FAILED_IDE_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR();
 }

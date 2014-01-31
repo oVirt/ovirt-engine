@@ -100,20 +100,24 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return failCanDoAction(VdcBllMessages.CANNOT_ADD_FLOATING_DISK_WITH_PLUG_VM_SET);
         }
 
+        DiskValidator diskValidator = getDiskValidator(getParameters().getDiskInfo());
+        if (!validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface())) {
+            return false;
+        }
+
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
-            return checkIfImageDiskCanBeAdded(vm);
+            return checkIfImageDiskCanBeAdded(vm, diskValidator);
         }
 
         if (DiskStorageType.LUN == getParameters().getDiskInfo().getDiskStorageType()) {
-            return checkIfLunDiskCanBeAdded();
+            return checkIfLunDiskCanBeAdded(diskValidator);
         }
 
         return true;
     }
 
-    protected boolean checkIfLunDiskCanBeAdded() {
+    protected boolean checkIfLunDiskCanBeAdded(DiskValidator diskValidator) {
         LUNs lun = ((LunDisk) getParameters().getDiskInfo()).getLun();
-        DiskValidator diskValidator = getDiskValidator(getParameters().getDiskInfo());
 
         switch (lun.getLunType()) {
         case UNKNOWN:
@@ -151,9 +155,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return true;
     }
 
-    private boolean checkIfImageDiskCanBeAdded(VM vm) {
+    private boolean checkIfImageDiskCanBeAdded(VM vm, DiskValidator diskValidator) {
         boolean returnValue;
-        DiskValidator diskValidator = getDiskValidator(getParameters().getDiskInfo());
         StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
         // vm agnostic checks
         returnValue =
