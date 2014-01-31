@@ -113,10 +113,19 @@ public class PasswordValueHelper implements ValueHelper {
             return new ValidationResult(true);
         }
         // or if we have the password in --admin-pass-file
-        if (StringUtils.isNotBlank(parser.getAdminPassFile()) && new File(parser.getAdminPassFile()).exists()) {
-            return new ValidationResult(true);
+        if (StringUtils.isNotBlank(parser.getAdminPassFile())) {
+            if (new File(parser.getAdminPassFile()).exists()) {
+                return new ValidationResult(true);
+            } else {
+                return new ValidationResult(false, String.format("The file %1$s does not exist. Cannot change password for %2$s",
+                                parser.getAdminPassFile(), key.getKey()));
+            }
         }
-        return new ValidationResult(false, getHelpNote(key));
+        return new ValidationResult(false,
+                String.format("It appears you tried to change a password for %1$s in a wrong way."
+                        +
+                        "You should use interactive mode or provide a file cotaining the password. Run the utility with --help for more information.",
+                        key.getKey()));
     }
 
     @Override
