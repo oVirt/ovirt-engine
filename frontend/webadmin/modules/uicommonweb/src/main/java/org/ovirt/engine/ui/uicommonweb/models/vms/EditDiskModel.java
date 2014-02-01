@@ -68,6 +68,8 @@ public class EditDiskModel extends AbstractDiskModel
             getIsInternal().setEntity(false);
             getSizeExtend().setIsAvailable(false);
         }
+
+        updateReadOnlyChangeability();
     }
 
     @Override

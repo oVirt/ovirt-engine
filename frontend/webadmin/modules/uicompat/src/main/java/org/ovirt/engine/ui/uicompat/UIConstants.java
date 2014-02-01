@@ -2182,5 +2182,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("VirtIO-SCSI is not supported for the selected OS")
     String cannotEnableVirtioScsiForOs();
+
+    @DefaultStringValue("An IDE disk can't be read-only.")
+    String cannotEnableIdeInterfaceForReadOnlyDisk();
 }
 
