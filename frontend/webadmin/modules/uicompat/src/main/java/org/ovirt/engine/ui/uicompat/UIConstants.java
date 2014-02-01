@@ -2194,5 +2194,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Are you sure you want to deactivate the following VM disk(s)?")
     String areYouSureYouWantDeactivateVMDisksMsg();
+
+    @DefaultStringValue("An IDE disk can't be read-only.")
+    String cannotEnableIdeInterfaceForReadOnlyDisk();
 }
 
