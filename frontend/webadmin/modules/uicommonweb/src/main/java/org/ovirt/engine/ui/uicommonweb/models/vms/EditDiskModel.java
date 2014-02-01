@@ -129,12 +129,11 @@ public class EditDiskModel extends AbstractDiskModel
 
     @Override
     public boolean validate() {
-        super.validate();
         getSizeExtend().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new NonNegativeLongNumberValidation()
         });
-        return getSizeExtend().getIsValid();
+        return super.validate() && getSizeExtend().getIsValid();
     }
 
     private void disableNonChangeableEntities() {
