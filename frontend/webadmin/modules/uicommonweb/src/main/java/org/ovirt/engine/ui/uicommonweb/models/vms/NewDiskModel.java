@@ -210,8 +210,6 @@ public class NewDiskModel extends AbstractDiskModel
 
     @Override
     public boolean validate() {
-        super.validate();
-
         if ((Boolean) getIsAttachDisk().getEntity()) {
             if (isSelectionsEmpty(getInternalAttachableDisks()) && isSelectionsEmpty(getExternalAttachableDisks())) {
                 getInvalidityReasons().add(CONSTANTS.noDisksSelected());
