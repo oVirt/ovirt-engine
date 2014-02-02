@@ -96,7 +96,7 @@ class Plugin(plugin.PluginBase):
         flags=re.VERBOSE,
         pattern=r"""
             ^
-            (?P<query>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).in-addr.arpa.
+            [\w/.-]+\.in-addr\.arpa\.
             \s+
             \d+
             \s+
@@ -104,7 +104,7 @@ class Plugin(plugin.PluginBase):
             \s+
             PTR
             \s+
-            (?P<answer>[\w.-]+)
+            (?P<answer>[\w/.-]+)
             \.
             $
         """
