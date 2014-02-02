@@ -99,7 +99,7 @@ public class CanDoActionTestUtils {
         return command.getReturnValue().getCanDoActionMessages();
     }
 
-    private static List<String> assertCanDoActionMessages(String assertionMessage,
+    public static List<String> assertCanDoActionMessages(String assertionMessage,
             CommandBase<?> command,
             VdcBllMessages message) {
         List<String> canDoActionMessages = command.getReturnValue().getCanDoActionMessages();
