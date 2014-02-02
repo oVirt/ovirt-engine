@@ -363,8 +363,12 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private SnapshotVDSCommandParameters buildLiveSnapshotParameters(Snapshot snapshot) {
-        List<Disk> pluggedDisks = getDiskDao().getAllForVm(getVm().getId(), true);
-        List<DiskImage> filteredPluggedDisks = ImagesHandler.filterImageDisks(pluggedDisks, false, true, true);
+        List<Disk> pluggedDisksForVm = getDiskDao().getAllForVm(getVm().getId(), true);
+        List<DiskImage> filteredPluggedDisksForVm = ImagesHandler.filterImageDisks(pluggedDisksForVm, false, true, true);
+
+        // 'filteredPluggedDisks' should contain only disks from 'getDisksList()' that are plugged to the VM.
+        List<DiskImage> filteredPluggedDisks = ImagesHandler.imagesIntersection(filteredPluggedDisksForVm, getDisksList());
+
         if (FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion())) {
             return new SnapshotVDSCommandParameters(getVm().getRunOnVds(),
                     getVm().getId(),
