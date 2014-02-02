@@ -55,95 +55,141 @@ public class OvfVmReader extends OvfReader {
 
     @Override
     protected void readHardwareSection(XmlNode section) {
-        XmlNodeList list = section.SelectNodes("Item");
-        for (XmlNode node : list) {
-            String resourceType = node.SelectSingleNode("rasd:ResourceType", _xmlNS).innerText;
+        for (XmlNode node : section.SelectNodes("Item")) {
 
-            if (OvfHardware.CPU.equals(resourceType)) {
-                _vm.getStaticData().setNumOfSockets(
-                        Integer.parseInt(node.SelectSingleNode("rasd:num_of_sockets", _xmlNS).innerText));
-                _vm.getStaticData().setCpuPerSocket(
-                        Integer.parseInt(node.SelectSingleNode("rasd:cpu_per_socket", _xmlNS).innerText));
-            } else if (OvfHardware.Memory.equals(resourceType)) {
-                _vm.getStaticData().setMemSizeMb(
-                        Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).innerText));
-            } else if (OvfHardware.DiskImage.equals(resourceType)) {
-                final Guid guid = new Guid(node.SelectSingleNode("rasd:InstanceId", _xmlNS).innerText);
+            switch (node.SelectSingleNode("rasd:ResourceType", _xmlNS).innerText) {
+            case OvfHardware.CPU:
+                readCpuItem(node);
+                break;
 
-                DiskImage image = LinqUtils.firstOrNull(_images, new Predicate<DiskImage>() {
-                    @Override
-                    public boolean eval(DiskImage diskImage) {
-                        return diskImage.getImageId().equals(guid);
-                    }
-                });
-                image.setId(OvfParser.GetImageGrupIdFromImageFile(node.SelectSingleNode(
-                        "rasd:HostResource", _xmlNS).innerText));
-                if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:Parent", _xmlNS).innerText)) {
-                    image.setParentId(new Guid(node.SelectSingleNode("rasd:Parent", _xmlNS).innerText));
-                }
-                if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:Template", _xmlNS).innerText)) {
-                    image.setImageTemplateId(new Guid(node.SelectSingleNode("rasd:Template", _xmlNS).innerText));
-                }
-                image.setAppList(node.SelectSingleNode("rasd:ApplicationList", _xmlNS).innerText);
+            case OvfHardware.Memory:
+                readMemoryItem(node);
+                break;
 
-                XmlNode storageNode = node.SelectSingleNode("rasd:StorageId", _xmlNS);
-                if (storageNode != null &&
-                        StringUtils.isNotEmpty(storageNode.innerText)) {
-                    image.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid(storageNode.innerText))));
-                }
-                if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).innerText)) {
-                    image.setStoragePoolId(new Guid(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).innerText));
-                }
-                final Date creationDate = OvfParser.UtcDateStringToLocaDate(
-                        node.SelectSingleNode("rasd:CreationDate", _xmlNS).innerText);
-                if (creationDate != null) {
-                    image.setCreationDate(creationDate);
-                }
-                final Date lastModified = OvfParser.UtcDateStringToLocaDate(
-                        node.SelectSingleNode("rasd:LastModified", _xmlNS).innerText);
-                if (lastModified != null) {
-                    image.setLastModified(lastModified);
-                }
-                final Date last_modified_date = OvfParser.UtcDateStringToLocaDate(
-                        node.SelectSingleNode("rasd:last_modified_date", _xmlNS).innerText);
-                if (last_modified_date != null) {
-                    image.setLastModifiedDate(last_modified_date);
-                }
-                VmDevice readDevice = readVmDevice(node, _vm.getStaticData(), image.getId(), Boolean.TRUE);
-                image.setPlugged(readDevice.getIsPlugged());
-                image.setReadOnly(readDevice.getIsReadOnly());
-            } else if (OvfHardware.Network.equals(resourceType)) {
-                VmNetworkInterface iface = getNetwotkInterface(node);
-                updateSingleNic(node, iface);
-                _vm.getInterfaces().add(iface);
-                readVmDevice(node, _vm.getStaticData(), iface.getId(), Boolean.TRUE);
-            } else if (OvfHardware.USB.equals(resourceType)) {
-                _vm.getStaticData().setUsbPolicy(
-                        UsbPolicy.forStringValue(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).innerText));
-            } else if (OvfHardware.Monitor.equals(resourceType)) {
-                _vm.getStaticData().setNumOfMonitors(
-                        Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).innerText));
-                if (node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS) != null) {
-                    _vm.setSingleQxlPci(Boolean.parseBoolean(node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS).innerText));
-                }
-                readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
-            } else if (OvfHardware.CD.equals(resourceType)) {
-                readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
-            } else if (OvfHardware.OTHER.equals(resourceType)) {
-                if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
-                        && StringUtils.isNotEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).innerText)) {
-                    VmDeviceGeneralType type = VmDeviceGeneralType.forValue(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).innerText));
-                    String device = String.valueOf(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).innerText);
-                    // special devices are treated as managed devices but still have the OTHER OVF ResourceType
-                    if (VmDeviceCommonUtils.isSpecialDevice(device, type)) {
-                        readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
-                    } else {
-                        readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.FALSE);
-                    }
-                } else {
-                    readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.FALSE);
-                }
+            case OvfHardware.DiskImage:
+                readDiskImageItem(node);
+                break;
+
+            case OvfHardware.Network:
+                readNetworkItem(node);
+                break;
+
+            case OvfHardware.USB:
+                readUsbItem(node);
+                break;
+
+            case OvfHardware.Monitor:
+                readMonitorItem(node);
+                break;
+
+            case OvfHardware.CD:
+                readCdItem(node);
+                break;
+
+            case OvfHardware.OTHER:
+                readOtherHardwareItem(node);
+                break;
             }
+        }
+    }
+
+    private void readCpuItem(XmlNode node) {
+        _vm.getStaticData().setNumOfSockets(
+                Integer.parseInt(node.SelectSingleNode("rasd:num_of_sockets", _xmlNS).innerText));
+        _vm.getStaticData().setCpuPerSocket(
+                Integer.parseInt(node.SelectSingleNode("rasd:cpu_per_socket", _xmlNS).innerText));
+    }
+
+    private void readMemoryItem(XmlNode node) {
+        _vm.getStaticData().setMemSizeMb(
+                Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).innerText));
+    }
+
+    private void readDiskImageItem(XmlNode node) {
+        final Guid guid = new Guid(node.SelectSingleNode("rasd:InstanceId", _xmlNS).innerText);
+
+        DiskImage image = LinqUtils.firstOrNull(_images, new Predicate<DiskImage>() {
+            @Override
+            public boolean eval(DiskImage diskImage) {
+                return diskImage.getImageId().equals(guid);
+            }
+        });
+        image.setId(OvfParser.GetImageGrupIdFromImageFile(node.SelectSingleNode(
+                "rasd:HostResource", _xmlNS).innerText));
+        if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:Parent", _xmlNS).innerText)) {
+            image.setParentId(new Guid(node.SelectSingleNode("rasd:Parent", _xmlNS).innerText));
+        }
+        if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:Template", _xmlNS).innerText)) {
+            image.setImageTemplateId(new Guid(node.SelectSingleNode("rasd:Template", _xmlNS).innerText));
+        }
+        image.setAppList(node.SelectSingleNode("rasd:ApplicationList", _xmlNS).innerText);
+
+        XmlNode storageNode = node.SelectSingleNode("rasd:StorageId", _xmlNS);
+        if (storageNode != null &&
+                StringUtils.isNotEmpty(storageNode.innerText)) {
+            image.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid(storageNode.innerText))));
+        }
+        if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).innerText)) {
+            image.setStoragePoolId(new Guid(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).innerText));
+        }
+        final Date creationDate = OvfParser.UtcDateStringToLocaDate(
+                node.SelectSingleNode("rasd:CreationDate", _xmlNS).innerText);
+        if (creationDate != null) {
+            image.setCreationDate(creationDate);
+        }
+        final Date lastModified = OvfParser.UtcDateStringToLocaDate(
+                node.SelectSingleNode("rasd:LastModified", _xmlNS).innerText);
+        if (lastModified != null) {
+            image.setLastModified(lastModified);
+        }
+        final Date last_modified_date = OvfParser.UtcDateStringToLocaDate(
+                node.SelectSingleNode("rasd:last_modified_date", _xmlNS).innerText);
+        if (last_modified_date != null) {
+            image.setLastModifiedDate(last_modified_date);
+        }
+        VmDevice readDevice = readVmDevice(node, _vm.getStaticData(), image.getId(), Boolean.TRUE);
+        image.setPlugged(readDevice.getIsPlugged());
+        image.setReadOnly(readDevice.getIsReadOnly());
+    }
+
+    private void readNetworkItem(XmlNode node) {
+        VmNetworkInterface iface = getNetwotkInterface(node);
+        updateSingleNic(node, iface);
+        _vm.getInterfaces().add(iface);
+        readVmDevice(node, _vm.getStaticData(), iface.getId(), Boolean.TRUE);
+    }
+
+    private void readUsbItem(XmlNode node) {
+        _vm.getStaticData().setUsbPolicy(
+                UsbPolicy.forStringValue(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).innerText));
+    }
+
+    private void readMonitorItem(XmlNode node) {
+        _vm.getStaticData().setNumOfMonitors(
+                Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).innerText));
+        if (node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS) != null) {
+            _vm.setSingleQxlPci(Boolean.parseBoolean(node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS).innerText));
+        }
+        readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
+    }
+
+    private void readCdItem(XmlNode node) {
+        readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
+    }
+
+    private void readOtherHardwareItem(XmlNode node) {
+        if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
+                && StringUtils.isNotEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).innerText)) {
+            VmDeviceGeneralType type = VmDeviceGeneralType.forValue(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).innerText));
+            String device = String.valueOf(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).innerText);
+            // special devices are treated as managed devices but still have the OTHER OVF ResourceType
+            if (VmDeviceCommonUtils.isSpecialDevice(device, type)) {
+                readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
+            } else {
+                readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.FALSE);
+            }
+        } else {
+            readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.FALSE);
         }
     }
 
