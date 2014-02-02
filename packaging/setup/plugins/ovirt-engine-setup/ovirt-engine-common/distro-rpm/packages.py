@@ -202,7 +202,7 @@ class Plugin(plugin.PluginBase):
                         p['operation'],
                         p['display_name']
                     ))
-                    if p['operation'] in ('instlal', 'update'):
+                    if p['operation'] in ('install', 'update'):
                         update.append(p['name'])
 
         return update
