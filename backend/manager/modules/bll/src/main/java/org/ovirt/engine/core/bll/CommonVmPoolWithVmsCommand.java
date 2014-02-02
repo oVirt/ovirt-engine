@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -109,6 +110,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
      */
     @Override
     protected void executeCommand() {
+        UpdateVmInitPassword();
         VmHandler.warnMemorySizeLegal(getParameters().getVmStaticData(), getVdsGroup().getcompatibility_version());
 
         Guid poolId = getPoolId();
@@ -173,6 +175,18 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         setSucceeded(!isAtLeastOneVMCreationFailed);
         VmTemplateHandler.unlockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
         getCompensationContext().resetCompensation();
+    }
+
+    private void UpdateVmInitPassword() {
+        // We are not passing the VmInit password to the UI,
+        // so we need to update the VmInit password from its template.
+        if (getParameters().getVmStaticData().getVmInit() != null &&
+                getParameters().getVmStaticData().getVmInit().isPasswordAlreadyStored()) {
+            VmBase temp = new VmBase();
+            temp.setId(getParameters().getVmStaticData().getVmtGuid());
+            VmHandler.updateVmInitFromDB(temp, false);
+            getParameters().getVmStaticData().getVmInit().setRootPassword(temp.getVmInit().getRootPassword());
+        }
     }
 
     private CommandContext createAddVmStepContext(String currentVmName) {
