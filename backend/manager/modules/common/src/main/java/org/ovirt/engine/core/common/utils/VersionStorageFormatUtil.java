@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.common.utils;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -50,7 +52,7 @@ public class VersionStorageFormatUtil {
     }
 
     private static final Map<Version, StorageFormatTypeMapper> versionToFormat =
-            new HashMap<Version, StorageFormatTypeMapper>() {
+            new TreeMap<Version, StorageFormatTypeMapper>() {
                 {
                     put(Version.v2_2, new ConstantStorageFormatTypeMapper(StorageFormatType.V1));
                     put(Version.v3_0, new V2FormatTypeMapper());
@@ -61,11 +63,33 @@ public class VersionStorageFormatUtil {
                 }
             };
 
+    private static final Map<StorageFormatType, Version> earliestVersionSupported =
+            new TreeMap<StorageFormatType, Version>() {
+                {
+                    // Since versionToFormat is sorted in ascending order of versions, we'll always put
+                    // the earliest version at the end, overriding the lower ones
+                    // This is in fact cheaper than iterating the other way and checking if the key already
+                    // exists in the map
+                    List<Map.Entry<Version, StorageFormatTypeMapper>> entries =
+                            new ArrayList<Map.Entry<Version, StorageFormatTypeMapper>>(versionToFormat.entrySet());
+                    for (int i = entries.size() - 1; i >= 0; --i) {
+                        Map.Entry<Version, StorageFormatTypeMapper> entry = entries.get(i);
+                        // iSCSI is always the strictest storage type.
+                        // If this assumption is broken, the flow should be revisited
+                        put(entry.getValue().getRequired(StorageType.ISCSI), entry.getKey());
+                    }
+                }
+            };
+
     public static StorageFormatType getPreferredForVersion(Version v, StorageType type) {
         return versionToFormat.get(v).getPreferred(type);
     }
 
     public static StorageFormatType getRequiredForVersion(Version v, StorageType type) {
         return versionToFormat.get(v).getRequired(type);
+    }
+
+    public static Version getEarliestVersionSupported (StorageFormatType type) {
+        return earliestVersionSupported.get(type);
     }
 }
