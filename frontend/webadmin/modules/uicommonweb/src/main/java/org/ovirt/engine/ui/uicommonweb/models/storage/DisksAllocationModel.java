@@ -263,7 +263,8 @@ public class DisksAllocationModel extends EntityModel
         }
 
         for (DiskModel diskModel : getDisks()) {
-            if (!diskModel.getStorageDomain().getItems().iterator().hasNext()) {
+            ListModel diskStorageDomains = diskModel.getStorageDomain();
+            if (!diskStorageDomains.getItems().iterator().hasNext() || diskStorageDomains.getSelectedItem() == null) {
                 diskModel.getStorageDomain().getInvalidityReasons().add(
                         constants.storageDomainMustBeSpecifiedInvalidReason());
                 diskModel.getStorageDomain().setIsValid(false);
