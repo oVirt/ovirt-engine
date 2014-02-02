@@ -12,6 +12,11 @@
 			font-weight: bold;
 		}
 
+        .noteLabel {
+            padding-top: 10px;
+            font-weight: normal;
+        }
+
 		.section {
 			padding-left: 15px;
 			padding-top: 15px;
@@ -41,6 +46,7 @@
 			<g:FlowPanel>
 				<g:VerticalPanel addStyleNames="{style.infoPanel}">
 					<g:Label ui:field="infoLabel"/>
+                    <g:Label ui:field="noteLabel" addStyleNames="{style.noteLabel}"/>
 				</g:VerticalPanel>
 				<g:VerticalPanel ui:field="compulsorySection" addStyleNames="{style.section}" visible="false">
 					<g:Label ui:field="compulsoryActionsLabel" addStyleNames="{style.actionsLabel}"/>
