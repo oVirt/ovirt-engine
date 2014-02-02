@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -326,6 +328,13 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getSourceVmFromDb().getId()), true, false, true);
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksToCheck);
         if (!validate(diskImagesValidator.diskImagesNotLocked())) {
+            return false;
+        }
+
+        Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(disksToCheck);
+        MultipleStorageDomainsValidator storageValidator =
+                new MultipleStorageDomainsValidator(getStoragePoolId(), storageIds);
+        if (!validate(storageValidator.allDomainsExistAndActive())) {
             return false;
         }
 
