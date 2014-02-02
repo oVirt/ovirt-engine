@@ -518,7 +518,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());
         // Load Vm Init from DB and set it to the template
-        VmHandler.updateVmInitFromDB(getParameters().getMasterVm(), true);
+        VmHandler.updateVmInitFromDB(getParameters().getMasterVm(), false);
         getVmTemplate().setVmInit(getParameters().getMasterVm().getVmInit());
         VmHandler.addVmInitToDB(getVmTemplate());
     }

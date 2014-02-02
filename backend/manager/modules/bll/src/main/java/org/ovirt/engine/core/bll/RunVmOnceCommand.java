@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.SysPrepParams;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -39,9 +40,18 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             return failCanDoAction(VdcBllMessages.VM_CANNOT_RUN_ONCE_WITH_ILLEGAL_SYSPREP_PARAM);
         }
 
-        if ((getParameters().getVmInit() != null && !OsRepositoryImpl.INSTANCE.isWindows(getVm().getOs()))
-                && !FeatureSupported.cloudInit(getVm().getVdsGroupCompatibilityVersion())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED);
+        if (getParameters().getVmInit() != null) {
+            if (!OsRepositoryImpl.INSTANCE.isWindows(getVm().getOs()) &&
+                    !FeatureSupported.cloudInit(getVm().getVdsGroupCompatibilityVersion())) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED);
+            }
+
+            if (getParameters().getVmInit().isPasswordAlreadyStored()) {
+                VmBase temp = new VmBase();
+                temp.setId(getParameters().getVmId());
+                VmHandler.updateVmInitFromDB(temp, false);
+                getParameters().getVmInit().setRootPassword(temp.getVmInit().getRootPassword());
+            }
         }
 
         return true;
