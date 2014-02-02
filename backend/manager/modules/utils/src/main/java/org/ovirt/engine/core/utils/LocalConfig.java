@@ -269,6 +269,25 @@ public class LocalConfig {
     }
 
     /**
+     * Get the value of a property given its name and an optional underscore separated suffix.
+     * if key_optionalSuffix has a value return it. otherwise return the value of key.
+     *
+     * @param key            the name of the property
+     * @param optionalSuffix the suffix of the property, not including an underscore.
+     * @param allowMissing   define the behaviour if both key and key_optionalSuffix are not associated with a value
+     * @return the value associated with key_optionalSuffix if it is defined or the one associated with key otherwise.
+     * @throws java.lang.IllegalArgumentException
+     *      if both key_optionalSuffix and key are not associated with a value and allowMissing is false.
+     */
+    public String getProperty(String key, String optionalSuffix, boolean allowMissing) {
+        String property = getProperty(key + "_" + optionalSuffix, true);
+        if (StringUtils.isEmpty(property)) {
+            property = getProperty(key, allowMissing);
+        }
+        return property;
+    }
+
+    /**
      * Get the value of a property given its name.
      *
      * @param key the name of the property

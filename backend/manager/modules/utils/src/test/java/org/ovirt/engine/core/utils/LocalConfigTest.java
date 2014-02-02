@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.io.FileInputStream;
@@ -12,17 +13,26 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class LocalConfigTest {
 
+    private static LocalConfig config;
+
+    @BeforeClass
+    static public void beforeClass() throws Exception {
+        config = new LocalConfig();
+
+        config.loadConfig(
+                URLDecoder.decode(ClassLoader.getSystemResource("localconfig.conf").getPath(), "UTF-8"),
+                "/dev/null"
+        );
+    }
+
     @Test
     public void testValid() throws Exception {
-        LocalConfig config = new LocalConfig();
-        config.loadConfig(
-            URLDecoder.decode(ClassLoader.getSystemResource("localconfig.conf").getPath(), "UTF-8"),
-            "/dev/null"
-        );
+
         List<String> res = new LinkedList<String>();
         for (Map.Entry<String, String> e : config.getProperties().entrySet()) {
             res.add(String.format("%s=%s", e.getKey(), e.getValue()));
@@ -43,7 +53,21 @@ public class LocalConfigTest {
             }
             catch (IOException e) {}
         }
+        for (Object o:res.toArray()){
+            System.out.println(o);
+        }
+        for (Object o:reference.split("\n")){
+            System.out.println(o);
+        }
 
-        assertEquals(reference.split("\n"), res.toArray());
+        assertArrayEquals(reference.split("\n"), res.toArray());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetSuffixedProperty() throws Exception {
+
+        assertEquals(config.getProperty("key00", "non_existent", false), "value0");
+        assertEquals(config.getProperty("key01", "suffixed", false), "suffixed val");
+        assertEquals(config.getProperty("non_existent", "non_existent", false), "throws exception");
     }
 }
