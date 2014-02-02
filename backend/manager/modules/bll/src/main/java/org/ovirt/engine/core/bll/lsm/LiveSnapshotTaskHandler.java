@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.lsm;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -38,6 +39,19 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
            }
        }
         return movedVmDiskIds;
+    }
+
+    private List<DiskImage> getMovedDisks() {
+        LinkedHashSet<Guid> movedDiskIds = getMovedDiskIds();
+        List<DiskImage> disks = new ArrayList<>();
+
+        for (Guid diskId : movedDiskIds) {
+            DiskImage disk = new DiskImage();
+            disk.setId(diskId);
+            disks.add(disk);
+        }
+
+        return disks;
     }
 
     @Override
@@ -137,6 +151,7 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
         params.setParentParameters(enclosingCommand.getParameters());
         params.setImagesParameters(enclosingCommand.getParameters().getImagesParameters());
         params.setTaskGroupSuccess(enclosingCommand.getParameters().getTaskGroupSuccess());
+        params.setDisks(getMovedDisks());
         params.setDiskIdsToIgnoreInChecks(getMovedDiskIds());
         params.setNeedsLocking(false);
 
