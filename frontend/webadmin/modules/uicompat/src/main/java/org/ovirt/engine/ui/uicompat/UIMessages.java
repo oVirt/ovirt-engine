@@ -342,4 +342,8 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("{0} (Thin/Dependent)")
     String vmTemplateWithThinProvisioning(String templateName);
 
+    @DefaultMessage("You are about to change the Data Center Compatibility Version. This will upgrade all the " +
+            "Storage Domains belonging to the Data Center, and make them unusable with versions older than {0}. " +
+            "Are you sure you want to continue?")
+    String youAreAboutChangeDcCompatibilityVersionWithUpgradeMsg(String version);
 }

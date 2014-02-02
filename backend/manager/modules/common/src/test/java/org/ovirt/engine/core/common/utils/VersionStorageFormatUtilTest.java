@@ -32,5 +32,15 @@ public class VersionStorageFormatUtilTest {
         assertNotNull(String.format("Missing required format for version %s in type %s", v, t), required);
 
         assertTrue("Preferred version shouldn't be smaller than the required one", preferred.compareTo(required) >= 0);
+
+        Version earliestSupported = VersionStorageFormatUtil.getEarliestVersionSupported(required);
+        assertNotNull(String.format("Missing earliest version for format %s", required), earliestSupported);
+
+        assertTrue(
+                String.format(
+                        "Earliest supported version (%s) should no be later than the version requiring this type (%s)",
+                        earliestSupported, v
+                        ),
+                v.compareTo(earliestSupported) >= 0);
     }
 }

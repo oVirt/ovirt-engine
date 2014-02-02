@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -656,9 +657,10 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                                 .getConstants()
                                 .youAreAboutChangeDcCompatibilityVersionMsg());
                     } else {
+                        Version v = VersionStorageFormatUtil.getEarliestVersionSupported(newFormat);
                         confirmModel.setMessage(ConstantsManager.getInstance()
-                                .getConstants()
-                                .youAreAboutChangeDcCompatibilityVersionWithUpgradeMsg());
+                                .getMessages()
+                                .youAreAboutChangeDcCompatibilityVersionWithUpgradeMsg(v.getValue()));
                     }
                     ((DataCenterListModel) model).stopProgress();
                 }
