@@ -42,9 +42,23 @@ public class GuideModel extends EntityModel
         }
     }
 
+    private EntityModel<String> note;
+
+    public EntityModel<String> getNote()
+    {
+        return note;
+    }
+
+    public void setNote(EntityModel<String> value)
+    {
+        note = value;
+    }
+
     public GuideModel()
     {
         setCompulsoryActions(new ObservableCollection<UICommand>());
         setOptionalActions(new ObservableCollection<UICommand>());
+        setNote(new EntityModel<String>());
+        getNote().setIsAvailable(false);
     }
 }

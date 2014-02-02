@@ -203,6 +203,9 @@ public class ClusterGuideModel extends GuideModel
             addHostAction.setIsExecutionAllowed(false);
             selectHost.getExecuteProhibitionReasons().add(hasHostReason);
             selectHost.setIsExecutionAllowed(false);
+
+            getNote().setIsAvailable(true);
+            getNote().setEntity(ConstantsManager.getInstance().getConstants().attachLocalStorageDomainToFullyConfigure());
         }
 
         getCompulsoryActions().add(addHostAction);

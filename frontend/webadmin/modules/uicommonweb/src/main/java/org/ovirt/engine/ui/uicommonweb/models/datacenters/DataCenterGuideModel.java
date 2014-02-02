@@ -507,6 +507,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     UICommand addLocalStorageAction = tempVar8;
                     getOptionalActions().add(addLocalStorageAction);
                 }
+
+                getNote().setIsAvailable(true);
+                getNote().setEntity(ConstantsManager.getInstance().getConstants().attachLocalStorageDomainToFullyConfigure());
             }
             else if (getEntity().getStatus() != StoragePoolStatus.Uninitialized)
             {

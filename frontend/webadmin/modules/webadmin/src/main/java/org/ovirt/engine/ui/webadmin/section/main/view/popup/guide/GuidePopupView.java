@@ -57,6 +57,10 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
 
     @UiField
     @Ignore
+    Label noteLabel;
+
+    @UiField
+    @Ignore
     Label optionalActionsLabel;
 
     @UiField
@@ -140,7 +144,13 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
                         }
 
                         if (!hasAllowedActions) {
-                            infoLabel.setText(message);
+                            if (!guideModel.getNote().getIsAvailable()) {
+                                infoLabel.setText(message);
+                            }
+                            else {
+                                infoLabel.setText(configurationCompleted);
+                                noteLabel.setText(guideModel.getNote().getEntity());
+                            }
                             compulsorySection.setVisible(false);
                             optionalSection.setVisible(false);
                             // Rename dialog button.
