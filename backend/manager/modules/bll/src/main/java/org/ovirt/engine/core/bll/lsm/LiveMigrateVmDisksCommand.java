@@ -276,14 +276,35 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             getReturnValue().setCanDoAction(isDiskNotShareable(parameters.getImageId())
                     && isDiskSnapshotNotPluggedToOtherVmsThatAreNotDown(parameters.getImageId())
                     && isTemplateInDestStorageDomain(parameters.getImageId(), parameters.getStorageDomainId())
-                    && validateSourceStorageDomain(parameters.getImageId())
-                    && validateDestStorage(parameters.getImageId(), parameters.getStorageDomainId()));
+                    && performStorageDomainsChecks(parameters));
 
             if (!getReturnValue().getCanDoAction()) {
                 return false;
             }
         }
 
+        return true;
+    }
+
+    private boolean performStorageDomainsChecks(LiveMigrateDiskParameters parameters) {
+        StorageDomain sourceDomain = getImageSourceDomain(parameters.getImageId());
+        StorageDomain destDomain = getStorageDomainById(parameters.getStorageDomainId(), getStoragePoolId());
+
+        return validateSourceStorageDomain(sourceDomain)
+                && validateDestStorage(destDomain)
+                && validateDestStorageAndSourceStorageOfSameTypes(destDomain, sourceDomain);
+    }
+
+    private StorageDomain getImageSourceDomain(Guid imageId) {
+        DiskImage diskImage = getDiskImageByImageId(imageId);
+        Guid domainId = diskImage.getStorageIds().get(0);
+        return getStorageDomainById(domainId, getStoragePoolId());
+    }
+
+    private boolean validateDestStorageAndSourceStorageOfSameTypes(StorageDomain destDomain, StorageDomain sourceDomain) {
+        if (destDomain.getStorageType().getStorageSubtype() != sourceDomain.getStorageType().getStorageSubtype()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DESTINATION_AND_SOURCE_STORAGE_SUB_TYPES_DIFFERENT);
+        }
         return true;
     }
 
@@ -325,22 +346,14 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return true;
     }
 
-    private boolean validateSourceStorageDomain(Guid imageId) {
-        DiskImage diskImage = getDiskImageByImageId(imageId);
-        Guid domainId = diskImage.getStorageIds().get(0);
-        StorageDomainValidator validator = getValidator(domainId, getStoragePoolId());
-
+    private boolean validateSourceStorageDomain(StorageDomain sourceDomain) {
+        StorageDomainValidator validator = new StorageDomainValidator(sourceDomain);
         return validate(validator.isDomainExistAndActive());
     }
 
-    private boolean validateDestStorage(Guid imageId, Guid destDomainId) {
-        StorageDomainValidator validator = getValidator(destDomainId, getStoragePoolId());
-
+    private boolean validateDestStorage(StorageDomain destDomain) {
+        StorageDomainValidator validator = new StorageDomainValidator(destDomain);
         return validate(validator.isDomainExistAndActive()) && validate(validator.domainIsValidDestination());
-    }
-
-    private StorageDomainValidator getValidator(Guid domainId, Guid storagePoolId) {
-        return new StorageDomainValidator(getStorageDomainById(domainId, storagePoolId));
     }
 
     protected boolean isValidSpaceRequirements() {

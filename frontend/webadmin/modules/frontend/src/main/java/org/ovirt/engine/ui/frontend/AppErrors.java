@@ -1741,6 +1741,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} is being moved or copied.")
     String ACTION_TYPE_FAILED_DISK_IS_BEING_MIGRATED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Source and target domains must both be either file domains or block domains.")
+    String ACTION_TYPE_FAILED_DESTINATION_AND_SOURCE_STORAGE_SUB_TYPES_DIFFERENT();
+
     @DefaultStringValue("Cannot ${action} ${type}. Template ${TemplateName} is being exported.")
     String ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_EXPORTED();
 

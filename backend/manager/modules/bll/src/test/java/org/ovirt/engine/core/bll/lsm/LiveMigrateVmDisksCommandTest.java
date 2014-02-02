@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.lsm;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -184,6 +186,43 @@ public class LiveMigrateVmDisksCommandTest {
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL.toString()));
+    }
+
+    @Test
+    public void canDoActionInvalidFileToBlock() {
+        canDoActionInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.NFS, StorageType.ISCSI, false);
+    }
+
+    @Test
+    public void canDoActionInvalidBlockToFile() {
+        canDoActionInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.NFS, false);
+    }
+
+    @Test
+    public void canDoActionBlockToBlock() {
+        canDoActionInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.ISCSI, true);
+    }
+
+    private void canDoActionInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType sourceType, StorageType destType, boolean shouldSucceed) {
+        createParameters();
+
+        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
+        srcStorageDomain.setStatus(StorageDomainStatus.Active);
+        srcStorageDomain.setStorageType(sourceType);
+
+        StorageDomain dstStorageDomain = initStorageDomain(dstStorageId);
+        dstStorageDomain.setStatus(StorageDomainStatus.Active);
+        dstStorageDomain.setStorageType(destType);
+
+        initDiskImage(diskImageGroupId, diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
+
+        assertEquals(command.canDoAction(), shouldSucceed);
+        if (!shouldSucceed) {
+            assertTrue(command.getReturnValue()
+                    .getCanDoActionMessages()
+                    .contains(VdcBllMessages.ACTION_TYPE_FAILED_DESTINATION_AND_SOURCE_STORAGE_SUB_TYPES_DIFFERENT.toString()));
+        }
     }
 
     @Test
