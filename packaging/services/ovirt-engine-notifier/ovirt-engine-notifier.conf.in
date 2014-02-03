@@ -70,6 +70,25 @@ FAILED_QUERIES_NOTIFICATION_RECIPIENTS=
 # messages will be sent at all during startup.
 DAYS_TO_SEND_ON_STARTUP=0
 
+#--------------#
+# Event Filter #
+#--------------#
+
+# Filter logic.
+#
+# First match algorithm for include/exclude messages.
+# Entry is message|*(subscriber|*)
+# * = all messages/all subscribers.
+# * as a subscriber should be used only for exclude.
+#
+# examples:
+# FILTER="include:VDC_START(smtp:mail@example.com) ${FILTER}"
+# FILTER="exclude:VDC_START include:*(smtp:mail1@gmail.com) ${FILTER}"
+#
+# The final filter list contains FILTER  as well as 'event_subscriber' table records.
+# database record are considered first.
+FILTER="exclude:*"
+
 #---------------------#
 # EMAIL Notifications #
 #---------------------#

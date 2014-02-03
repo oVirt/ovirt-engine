@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.notifier.transport.smtp;
 
-import org.ovirt.engine.core.common.businessentities.AuditLogEvent;
+import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
 
 import java.util.Date;
 
