@@ -2188,5 +2188,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Are you sure you want to place the following storage domain(s) into maintenance mode?")
     String areYouSureYouWantToPlaceFollowingStorageDomainsIntoMaintenanceModeMsg();
+
+    @DefaultStringValue("Deactivate VM Disk(s)")
+    String deactivateVmDisksTitle();
+
+    @DefaultStringValue("Are you sure you want to deactivate the following VM disk(s)?")
+    String areYouSureYouWantDeactivateVMDisksMsg();
 }
 

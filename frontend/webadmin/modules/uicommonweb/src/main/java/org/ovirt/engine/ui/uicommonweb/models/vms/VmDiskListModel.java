@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
@@ -443,29 +444,67 @@ public class VmDiskListModel extends VmDiskListModelBase
                 this);
     }
 
-    private void plug(boolean plug) {
-        VM vm = getEntity();
-
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems()) {
-            Disk disk = (Disk) item;
-            disk.setPlugged(plug);
-
-            paramerterList.add(new HotPlugDiskToVmParameters(vm.getId(), disk.getId()));
-        }
-
-        VdcActionType plugAction = VdcActionType.HotPlugDiskToVm;
-        if (!plug) {
-            plugAction = VdcActionType.HotUnPlugDiskFromVm;
-        }
-
-        Frontend.getInstance().runMultipleAction(plugAction, paramerterList,
+    private void plug() {
+        Frontend.getInstance().runMultipleAction(VdcActionType.HotPlugDiskToVm, createHotPlugDiskToVmParameters(true),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
                     }
                 },
                 this);
+    }
+
+    private void unplug() {
+        final ConfirmationModel model = (ConfirmationModel) getWindow();
+        model.startProgress(null);
+
+        Frontend.getInstance().runMultipleAction(VdcActionType.HotUnPlugDiskFromVm, createHotPlugDiskToVmParameters(false),
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendMultipleActionAsyncResult result) {
+                        model.stopProgress();
+                        setWindow(null);
+                    }
+                },
+                this);
+    }
+
+    private ArrayList<VdcActionParametersBase> createHotPlugDiskToVmParameters(boolean plug) {
+        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
+        VM vm = getEntity();
+
+        for (Object item : getSelectedItems()) {
+            Disk disk = (Disk) item;
+            disk.setPlugged(plug);
+
+            parametersList.add(new HotPlugDiskToVmParameters(vm.getId(), disk.getId()));
+        }
+
+        return parametersList;
+    }
+
+    private void confirmUnplug() {
+        ConfirmationModel model = new ConfirmationModel();
+        model.setTitle(ConstantsManager.getInstance().getConstants().deactivateVmDisksTitle());
+        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDeactivateVMDisksMsg());
+        model.setHashName("deactivate_vm_disk"); //$NON-NLS-1$
+        setWindow(model);
+
+        ArrayList<String> items = new ArrayList<String>();
+        for (Object selected : getSelectedItems()) {
+            items.add(((Disk) selected).getDiskAlias());
+        }
+        model.setItems(items);
+
+        UICommand unPlug = new UICommand("OnUnplug", this); //$NON-NLS-1$
+        unPlug.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        unPlug.setIsDefault(true);
+        model.getCommands().add(unPlug);
+
+        UICommand cancel = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancel.setIsCancel(true);
+        model.getCommands().add(cancel);
     }
 
     private void move()
@@ -744,12 +783,18 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
         else if (command == getPlugCommand())
         {
-            plug(true);
+            plug();
         }
         else if (command == getUnPlugCommand())
         {
-            plug(false);
-        } else if (command == getChangeQuotaCommand()) {
+            confirmUnplug();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "OnUnplug")) //$NON-NLS-1$
+        {
+            unplug();
+        }
+
+        else if (command == getChangeQuotaCommand()) {
             changeQuota();
         } else if (command.getName().equals("onChangeQuota")) { //$NON-NLS-1$
             onChangeQuota();
