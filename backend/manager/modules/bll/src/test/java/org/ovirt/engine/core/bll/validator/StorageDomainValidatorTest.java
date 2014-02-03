@@ -47,7 +47,7 @@ public class StorageDomainValidatorTest {
     public void testIsDomainExistAndActiveDomainNotUp() {
         domain.setStatus(StorageDomainStatus.InActive);
         assertEquals("Wrong failure for inactive domain",
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL,
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
                 validator.isDomainExistAndActive().getMessage());
     }
 

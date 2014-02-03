@@ -79,7 +79,7 @@ public class MultipleStorageDomainsValidatorTest {
         ValidationResult result = validator.allDomainsExistAndActive();
         assertFalse("One domain should not be active", result.isValid());
         assertEquals("Wrong validation error",
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL,
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
                 result.getMessage());
     }
 
