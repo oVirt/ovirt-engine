@@ -78,12 +78,35 @@ public class ReflectionHelper {
     }
 
     public static boolean isSet(Object o, String name) {
+        boolean set = false;
         if(o != null){
             Method m = getMethod(o, IS_SET_ROOT + name);
             Object ret = invoke(o, m);
-            return ret != null && ret instanceof Boolean && ((Boolean)ret).booleanValue();
+            if (ret != null && ret instanceof Boolean && ((Boolean) ret).booleanValue()) {
+                // (isSetX() method only tells us if the value is not null).
+                // for Strings we also have to check that the value is not empty.
+                if (getReturnType(o, name).equals(String.class)) {
+                    Object result = invoke(o, getGetter(o, name));
+                    String resultAsString = (String) result;
+                    if (!resultAsString.isEmpty()) {
+                        set = true;
+                    }
+                } else {
+                    set = true;
+                }
+            }
         }
-        return false;
+        return set;
+    }
+
+    public static Method getGetter(Object o, String name) {
+        String getterName = GET_ROOT + capitalize(name);
+        return getMethod(o, getterName);
+    }
+
+    public static Class<?> getReturnType(Object o, String name) {
+        Method getter = getGetter(o, name);
+        return getter.getReturnType();
     }
 
     public static boolean different(Object lhs, Object rhs, String name) {
