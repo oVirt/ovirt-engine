@@ -39,6 +39,7 @@ import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
+import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
@@ -101,6 +102,7 @@ public class BackendVmResource extends
     @Override
     public VM update(VM incoming) {
         validateEnums(VM.class, incoming);
+        validateParameters(incoming);
         if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
             Guid clusterId = lookupClusterId(incoming);
             if(!clusterId.toString().equals(get().getCluster().getId())){
@@ -124,6 +126,15 @@ public class BackendVmResource extends
                              new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class),
                              VdcActionType.UpdateVm,
                              new UpdateParametersProvider()));
+    }
+
+    private void validateParameters(VM incoming) {
+        if (incoming.isSetDomain() && !incoming.getDomain().isSetName()) {
+            throw new WebFaultException(null,
+                    localize(Messages.INCOMPLETE_PARAMS_REASON),
+                    localize(Messages.INCOMPLETE_PARAMS_CONDITIONAL, "Domain", "Domain name"),
+                    Response.Status.BAD_REQUEST);
+        }
     }
 
     private String getHostId(String hostName) {
