@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -235,6 +236,11 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     protected boolean canDoAction() {
         if (getVm() == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
+
+        if (!FeatureSupported.isSuspendSupportedByArchitecture(getVm().getClusterArch(),
+                getVm().getVdsGroupCompatibilityVersion())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SUSPEND_NOT_SUPPORTED);
         }
 
         if (!canRunActionOnNonManagedVm()) {

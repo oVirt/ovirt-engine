@@ -1777,6 +1777,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Selected operation system does not support VirtIO-SCSI. Please disable VirtIO-SCSI for the VM.")
     String ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Selected VM has an architecture that does not support suspension.")
+    String ACTION_TYPE_FAILED_SUSPEND_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Cannot set single display device to non Linux operating system.")
     String ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_OS_TYPE();
 
