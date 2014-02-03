@@ -1,18 +1,51 @@
 package org.ovirt.engine.core.notifier.transport;
 
-import org.ovirt.engine.core.common.businessentities.AuditLogEvent;
-import org.ovirt.engine.core.common.businessentities.AuditLogEventSubscriber;
+import org.ovirt.engine.core.notifier.dao.DispatchResult;
+import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
 
-public interface Transport {
+import java.util.HashSet;
+import java.util.Set;
+
+public abstract class Transport implements Observable {
+
+    private Set<Observer> observers = new HashSet<>();
 
     /**
-     * Sends an event to a subscriber.
      *
-     * @param auditLogEvent an audit log event
-     * @param AuditLogEventSubscriber the subscriber subscribed to receive this event.
-     * @return an EventSenderResult representing the outcome of the operation.
+     * @return the name for this transport
      */
+    public abstract String getName();
 
-    public EventSenderResult send(AuditLogEvent auditLogEvent, AuditLogEventSubscriber AuditLogEventSubscriber);
+    /**
+     *
+     * @return true if active.
+     */
+    public abstract boolean isActive();
 
+    /**
+     * Dispatches event to an address.
+     *
+     * @param event
+     *            the event to dispatch
+     * @param address
+     *            an address understood by this transport
+     */
+    public abstract void dispatchEvent(AuditLogEvent event, String address);
+
+    @Override
+    public void notifyObservers(DispatchResult data) {
+        for (Observer observer : observers) {
+            observer.update(this, data);
+        }
+    }
+
+    @Override
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
 }

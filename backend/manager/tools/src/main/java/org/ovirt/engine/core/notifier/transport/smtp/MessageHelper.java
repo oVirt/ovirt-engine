@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.notifier.transport.smtp;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.AuditLogEventType;
+import org.ovirt.engine.core.notifier.filter.AuditLogEventType;
 
 /**
  * A helper class designed to construct message parts in static structure

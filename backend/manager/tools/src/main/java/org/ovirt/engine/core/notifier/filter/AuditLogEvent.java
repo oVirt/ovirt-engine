@@ -1,9 +1,9 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.notifier.filter;
+
+import java.util.Date;
 
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.Date;
 
 public class AuditLogEvent {
 
@@ -47,6 +47,10 @@ public class AuditLogEvent {
         storagePoolId = Guid.Empty;
         storageDomainId = Guid.Empty;
         logTime = new Date(0);
+    }
+
+    public String getName() {
+        return logTypeName;
     }
 
     public long getId() {
@@ -191,5 +195,29 @@ public class AuditLogEvent {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return "AuditLogEvent{" +
+                "id=" + id +
+                ", logTypeName='" + logTypeName + '\'' +
+                ", type=" + type +
+                ", userId=" + userId +
+                ", userName='" + userName + '\'' +
+                ", vmId=" + vmId +
+                ", vmName='" + vmName + '\'' +
+                ", vmTemplateId=" + vmTemplateId +
+                ", vmTemplateName='" + vmTemplateName + '\'' +
+                ", vdsId=" + vdsId +
+                ", vdsName='" + vdsName + '\'' +
+                ", storagePoolId=" + storagePoolId +
+                ", storagePoolName='" + storagePoolName + '\'' +
+                ", storageDomainId=" + storageDomainId +
+                ", storageDomainName='" + storageDomainName + '\'' +
+                ", logTime=" + logTime +
+                ", severity=" + severity +
+                ", message='" + message + '\'' +
+                '}';
     }
 }

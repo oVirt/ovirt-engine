@@ -57,12 +57,18 @@ public class Notifier {
         NotificationProperties prop = null;
         initLogging();
 
+        NotificationService notificationService = null;
+
         try {
             prop = NotificationProperties.getInstance();
             prop.validate();
-            Smtp.validate(prop);
+            notificationService = new NotificationService(prop);
+            notificationService.registerTransport(new Smtp(prop));
+            if (!notificationService.hasTransports()) {
+                throw new RuntimeException("No transport is enabled, nothing to do");
+            }
         } catch (Exception ex) {
-            log.error("Failed to parse configuration.", ex);
+            log.error("Failed to initialize", ex);
             // print error also to stderr to be seen in console during service startup
             System.err.println(ex.getMessage());
             System.exit(1);
@@ -79,7 +85,6 @@ public class Notifier {
         Runtime.getRuntime().addShutdownHook(handler);
 
         try {
-            NotificationService notificationService = new NotificationService(prop);
             EngineMonitorService engineMonitorService = new EngineMonitorService(prop);
 
             // add notification service to scheduler with its configurable interval

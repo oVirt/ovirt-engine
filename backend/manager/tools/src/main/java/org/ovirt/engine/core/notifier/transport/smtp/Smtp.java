@@ -17,10 +17,10 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.ovirt.engine.core.common.businessentities.AuditLogEvent;
-import org.ovirt.engine.core.common.businessentities.AuditLogEventSubscriber;
+import org.ovirt.engine.core.common.EventNotificationMethod;
+import org.ovirt.engine.core.notifier.dao.DispatchResult;
+import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
 import org.ovirt.engine.core.notifier.transport.Transport;
-import org.ovirt.engine.core.notifier.transport.EventSenderResult;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 
 /**
@@ -36,7 +36,7 @@ import org.ovirt.engine.core.notifier.utils.NotificationProperties;
  * <ul><li>"from" address should include a domain, same as <code>MAIL_USER</code> property
  * <li><code>MAIL_REPLY_TO</code> specifies "replyTo" address in outgoing message
  */
-public class Smtp implements Transport {
+public class Smtp extends Transport {
 
     private static final String MAIL_SERVER = "MAIL_SERVER";
     private static final String MAIL_PORT = "MAIL_PORT";
@@ -50,7 +50,6 @@ public class Smtp implements Transport {
     private static final String MAIL_SMTP_ENCRYPTION_SSL = "ssl";
     private static final String MAIL_SMTP_ENCRYPTION_TLS = "tls";
     private static final String MAIL_RETRIES = "MAIL_RETRIES";
-    private static final String GENERIC_VALIDATION_MESSAGE = "Check configuration file, ";
 
     private static final Logger log = Logger.getLogger(Smtp.class);
     private int retries;
@@ -59,10 +58,16 @@ public class Smtp implements Transport {
     private Session session = null;
     private InternetAddress from = null;
     private InternetAddress replyTo = null;
-    private EmailAuthenticator auth;
+    private boolean active = false;
 
     public Smtp(NotificationProperties props) {
+        if (!StringUtils.isEmpty(props.getProperty(MAIL_SERVER, true))) {
+            active = true;
+            init(props);
+        }
+    }
 
+    private void init(NotificationProperties props) {
         Properties mailSessionProps =  new Properties();
 
         try {
@@ -82,121 +87,96 @@ public class Smtp implements Transport {
         }
 
         mailSessionProps.put("mail.smtp.host", props.getProperty(MAIL_SERVER));
-        mailSessionProps.put("mail.smtp.port", props.getProperty(MAIL_PORT));
-        // enable SSL
-        if (MAIL_SMTP_ENCRYPTION_SSL.equals(
-                props.getProperty(MAIL_SMTP_ENCRYPTION, true))) {
+        mailSessionProps.put("mail.smtp.port", props.validatePort(MAIL_PORT));
+
+        String encryption = props.getProperty(MAIL_SMTP_ENCRYPTION);
+        if (MAIL_SMTP_ENCRYPTION_NONE.equals(encryption)) {
+        } else if (MAIL_SMTP_ENCRYPTION_SSL.equals(encryption)) {
             mailSessionProps.put("mail.smtp.auth", "true");
             mailSessionProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
             mailSessionProps.put("mail.smtp.socketFactory.fallback", false);
-            mailSessionProps.put("mail.smtp.socketFactory.port", props.getProperty(MAIL_PORT));
-        } else if (MAIL_SMTP_ENCRYPTION_TLS.equals(
-                props.getProperty(MAIL_SMTP_ENCRYPTION, true))) {
+            mailSessionProps.put("mail.smtp.socketFactory.port", props.validatePort(MAIL_PORT));
+        } else if (MAIL_SMTP_ENCRYPTION_TLS.equals(encryption)) {
             mailSessionProps.put("mail.smtp.auth", "true");
             mailSessionProps.put("mail.smtp.starttls.enable", "true");
             mailSessionProps.put("mail.smtp.starttls.required", "true");
         }
-
-        String password = props.getProperty(MAIL_PASSWORD, true);
-        if (StringUtils.isNotEmpty(password)) {
-            auth = new EmailAuthenticator(props.getProperty(Smtp.MAIL_USER, true),
-                    password);
-            session = Session.getDefaultInstance(mailSessionProps, auth);
-        } else {
-            session = Session.getInstance(mailSessionProps);
+        else {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Illegal encryption method for %s",
+                    MAIL_SMTP_ENCRYPTION));
         }
-    }
 
-    public static void validate(NotificationProperties props) {
-        // validate mandatory and non empty properties
-        props.requireOne(MAIL_SERVER);
-        // validate MAIL_PORT
-        props.requireAll(MAIL_PORT, MAIL_RETRIES);
-        props.validateNonNegetive(MAIL_RETRIES);
-        props.validatePort(MAIL_PORT);
-
-        // validate MAIL_USER value
         String emailUser = props.getProperty(MAIL_USER, true);
-        if (StringUtils.isEmpty(emailUser) && StringUtils.isNotEmpty(props.getProperty(MAIL_PASSWORD, true))) {
+        String emailPassword = props.getProperty(MAIL_PASSWORD, true);
+        if (StringUtils.isEmpty(emailUser) && StringUtils.isNotEmpty(emailPassword)) {
             throw new IllegalArgumentException(
                     String.format(
                             "'%s' must be set when password is set",
                             MAIL_USER));
         }
-
-        if (!(MAIL_SMTP_ENCRYPTION_NONE.equals(props.getProperty(MAIL_SMTP_ENCRYPTION, true))
-                || MAIL_SMTP_ENCRYPTION_SSL.equals(props.getProperty(MAIL_SMTP_ENCRYPTION, true))
-                || MAIL_SMTP_ENCRYPTION_TLS.equals(props.getProperty(MAIL_SMTP_ENCRYPTION, true)))) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            GENERIC_VALIDATION_MESSAGE + "'%s' value has to be one of: '%s', '%s', '%s'.",
-                            MAIL_SMTP_ENCRYPTION,
-                            MAIL_SMTP_ENCRYPTION_NONE,
-                            MAIL_SMTP_ENCRYPTION_SSL,
-                            MAIL_SMTP_ENCRYPTION_TLS
-                            ));
-        }
-
-        // validate email addresses
-        for (String property : new String[] {
-                MAIL_USER,
-                MAIL_FROM,
-                MAIL_REPLY_TO }) {
-            props.validateEmail(property);
+        if (StringUtils.isNotEmpty(emailPassword)) {
+            session = Session.getDefaultInstance(mailSessionProps,
+                new EmailAuthenticator(emailUser, emailPassword));
+        } else {
+            session = Session.getInstance(mailSessionProps);
         }
     }
 
-    public EventSenderResult send(AuditLogEvent event, AuditLogEventSubscriber subscriber) {
-        EventSenderResult result = new EventSenderResult();
+    @Override
+    public String getName() {
+        return "smtp";
+    }
+
+    @Override
+    public boolean isActive() {
+        return active;
+    }
+
+    @Override
+    public void dispatchEvent(AuditLogEvent event, String address) {
+        if (StringUtils.isEmpty(address)) {
+            log.error("Address is empty, cannot distribute message." + event.getName());
+            return;
+        }
+
         EventMessageContent message = new EventMessageContent();
         message.prepareMessage(hostName, event, isBodyHtml);
 
-        String recipient = subscriber.getMethodAddress();
-
-        if (StringUtils.isEmpty(recipient)) {
-            log.error("Email recipient is not known, please check user table ( email )" +
-                    " or event_subscriber ( method_address )," +
-                    " unable to send email for subscriber " + subscriber.getSubscriberId() + "," +
-                    " message was " + message.getMessageSubject() + ":" + message.getMessageBody());
-            result.setSent(false);
-            return result;
-        }
         log.info(String.format("Send email to [%s]%n subject:%n [%s]",
-                recipient,
+                address,
                 message.getMessageSubject()));
         if (log.isDebugEnabled()) {
             log.debug(String.format("body:%n [%s]",
                     message.getMessageBody()));
         }
 
-        boolean shouldRetry = false;
-        try {
-            sendMail(recipient, message.getMessageSubject(), message.getMessageBody());
-        } catch (MessagingException ex) {
-            result.setReason(ex.getMessage());
-            shouldRetry = true;
-        }
-
-        // Attempt additional 3 retries in case of failure
-        for (int i = 0; i < retries && shouldRetry; ++i) {
-            shouldRetry = false;
+        String errorMessage = null;
+        int retry = 0;
+        boolean success = false;
+        while (!success && retry < retries) {
             try {
-                // hold the next send attempt for 30 seconds in case of a busy mail server
-                Thread.sleep(30000);
-                sendMail(recipient, message.getMessageSubject(), message.getMessageBody());
+                sendMail(address, message.getMessageSubject(), message.getMessageBody());
+                notifyObservers(DispatchResult.success(event, address, EventNotificationMethod.EMAIL));
+                success = true;
             } catch (MessagingException ex) {
-                result.setReason(ex.getMessage());
-                shouldRetry = true;
-            } catch (InterruptedException e) {
-                log.error("Failed to suspend thread for 30 seconds while trying to resend a mail message.", e);
+                errorMessage = ex.getMessage();
+            }
+
+            if (!success) {
+                try {
+                    Thread.sleep(30000);
+                } catch (InterruptedException e) {
+                    log.error("Failed to suspend thread for 30 seconds while trying to resend a mail message.", e);
+                }
+                retry++;
             }
         }
-        if (shouldRetry) {
-            result.setSent(false);
-        } else {
-            result.setSent(true);
+        // Could not send after retries.
+        if (!success) {
+            notifyObservers(DispatchResult.failure(event, address, EventNotificationMethod.EMAIL, errorMessage));
         }
-        return result;
     }
 
     /**
