@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.compat.backendcompat.XmlNodeList;
@@ -126,7 +127,15 @@ public class OvfVmReader extends OvfReader {
                 if (node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS) != null) {
                     _vm.setSingleQxlPci(Boolean.parseBoolean(node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS).innerText));
                 }
-                readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
+                if (new Version(getVersion()).compareTo(Version.v3_1) >= 0) {
+                    readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
+                } else {
+                    // before v3.1 we had just one monitor item for all the monitors so in this
+                    // case we need to add monitor devices according to the numOfMonitors field
+                    for (int i=0; i<_vm.getStaticData().getNumOfMonitors(); ++i) {
+                        readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
+                    }
+                }
             } else if (OvfHardware.CD.equals(resourceType)) {
                 readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
             } else if (OvfHardware.OTHER.equals(resourceType)) {
