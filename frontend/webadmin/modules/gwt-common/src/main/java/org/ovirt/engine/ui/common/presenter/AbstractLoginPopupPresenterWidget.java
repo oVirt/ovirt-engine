@@ -17,6 +17,10 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.safehtml.shared.UriUtils;
 
 /**
  * Base class for login popup presenter widgets.
@@ -32,12 +36,13 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
 
         void resetAndFocus();
 
-        void setErrorMessageHtml(String text);
+        void setErrorMessageHtml(SafeHtml text);
 
         void clearErrorMessage();
 
         HasUiCommandClickHandlers getLoginButton();
 
+        String getMotdAnchorHtml(String url);
     }
 
     private static final Logger logger = Logger.getLogger(AbstractLoginPopupPresenterWidget.class.getName());
@@ -159,18 +164,28 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
     }
 
     private void formatAndSetErrorMessage(String message) {
+        SafeHtml safeMessage = null;
         if (message != null) {
-            int urlIndex = message.indexOf("http");//$NON-NLS-1$
-            if (urlIndex != -1) { //$NON-NLS-1$
+            SafeHtmlBuilder builder = new SafeHtmlBuilder();
+            int urlIndex = message.indexOf("http"); //$NON-NLS-1$
+            if (urlIndex != -1) {
                 String beforeURL = message.substring(0, urlIndex);
-                String url = message.substring(urlIndex);
-                StringBuilder htmlPart = new StringBuilder();
-                htmlPart.append(beforeURL)
-                    .append("<a href=\"").append(url).append("\" target=\"_blank\">").append(url).append("</a>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                message = htmlPart.toString();
+                int afterUrlMessageIndex = message.indexOf(" ", urlIndex); //$NON-NLS-1$
+                int endIndex = afterUrlMessageIndex > -1 ? afterUrlMessageIndex : message.length();
+                //Sanitize the URL, returns # if it is not safe.
+                String url = UriUtils.sanitizeUri(message.substring(urlIndex, endIndex));
+                String motdAnchor = getView().getMotdAnchorHtml(url);
+                builder.appendEscaped(beforeURL).append(SafeHtmlUtils.fromTrustedString(motdAnchor));
+                if (endIndex < message.length()) {
+                    //There was a string after the URL append it as well.
+                    builder.appendEscaped(message.substring(endIndex));
+                }
+            } else {
+                builder.appendEscaped(message);
             }
+            safeMessage = builder.toSafeHtml();
         }
-        getView().setErrorMessageHtml(message);
+        getView().setErrorMessageHtml(safeMessage);
     }
 
     @Override
