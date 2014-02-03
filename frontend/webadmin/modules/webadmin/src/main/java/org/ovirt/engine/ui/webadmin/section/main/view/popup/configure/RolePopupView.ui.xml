@@ -35,6 +35,24 @@
 			padding-left: 1px;
 			padding-right: 2px;
 		}
+
+		.label {
+			color: #FFFFFF;
+			font-size: 12px;
+			font-weight: bold;
+			font-family: Arial,sans-serif;
+			line-height: 30px;
+		}
+
+		.nameEditor {
+			width: 290px;
+		}
+
+		.descriptionEditor {
+			position: absolute;
+			right: 2px;
+			width: 325px;
+		}
 	</ui:style>
 
 	<d:SimpleDialogPanel width="650px" height="500px">
@@ -42,8 +60,8 @@
 			<g:VerticalPanel>
 				<g:FlowPanel>
 					<g:HorizontalPanel>
-						<e:EntityModelTextBoxEditor ui:field="nameEditor" />
-						<e:EntityModelTextBoxEditor ui:field="descriptionEditor"/>
+						<e:EntityModelTextBoxEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}"/>
+						<e:EntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.descriptionEditor}"/>
 					</g:HorizontalPanel>
 					<g:HorizontalPanel addStyleNames="{style.buttonPanel}">
 						<g:Label ui:field="accountTypeLabel" addStyleNames="{style.titleLabel}"/>
