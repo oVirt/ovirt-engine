@@ -70,7 +70,7 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
     public void testCanDoActionDomainInMaintenance() {
         getDiskStorageDomain().setStatus(StorageDomainStatus.Maintenance);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
 
     @Test

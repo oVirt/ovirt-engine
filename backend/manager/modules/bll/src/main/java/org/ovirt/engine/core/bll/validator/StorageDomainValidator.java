@@ -35,8 +35,9 @@ public class StorageDomainValidator {
         if (storageDomain == null) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
-        if (storageDomain.getStatus() == null || storageDomain.getStatus() != StorageDomainStatus.Active) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+        if (storageDomain.getStatus() != StorageDomainStatus.Active) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
+                    storageDomain.getStatus().name());
         }
         return ValidationResult.VALID;
     }
