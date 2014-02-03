@@ -6,12 +6,15 @@ import org.ovirt.engine.ui.common.widget.dialog.DialogBoxWithKeyHandlers;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
@@ -24,7 +27,14 @@ import com.google.gwt.user.client.ui.ListBox;
  */
 public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBoxWithKeyHandlers> {
 
+    interface MotdAnchorTemplate extends SafeHtmlTemplates {
+        @Template("<a href=\"{0}\" target=\"blank\">{1}</a>")
+        SafeHtml anchor(String url, String text);
+    }
+
     private static final String DEFAULT_LOCALE = "default"; //$NON-NLS-1$
+
+    private static MotdAnchorTemplate template;
 
     @UiField(provided = true)
     @Ignore
@@ -96,6 +106,13 @@ public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBox
         selectedLocale.setText(localeBox.getItemText(index));
     }
 
+    MotdAnchorTemplate getTemplate() {
+        if (template == null) {
+            template = GWT.create(MotdAnchorTemplate.class);
+        }
+        return template;
+    }
+
     @Override
     public HasClickHandlers getCloseButton() {
         return null;
@@ -111,8 +128,15 @@ public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBox
         asWidget().setKeyPressHandler(keyPressHandler);
     }
 
-    protected void setErrorMessageLabel(Label errorMessage, String text) {
-            errorMessage.getElement().setInnerHTML(text);
+    protected void setErrorMessageLabel(Label errorMessage, SafeHtml text) {
+        if (text != null) {
+            errorMessage.getElement().setInnerSafeHtml(text);
+        } else {
+            errorMessage.getElement().setInnerHTML(null);
+        }
     }
 
+    public String getMotdAnchorHtml(String url) {
+        return getTemplate().anchor(url, url).asString();
+    }
 }
