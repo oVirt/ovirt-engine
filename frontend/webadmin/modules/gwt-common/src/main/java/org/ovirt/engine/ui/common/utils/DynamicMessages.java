@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.common.utils;
 
+import com.google.gwt.i18n.client.Dictionary;
+import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.safehtml.shared.UriUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -8,11 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Set;
-
-import com.google.gwt.i18n.client.Dictionary;
-import com.google.gwt.i18n.client.LocaleInfo;
-import com.google.gwt.regexp.shared.MatchResult;
-import com.google.gwt.regexp.shared.RegExp;
+import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 
 /**
  * Contains dynamic messages available to the application.
@@ -315,7 +316,12 @@ public class DynamicMessages {
      * @return The console client resources page url.
      */
     public final String consoleClientResourcesUrl() {
-        return getString(DynamicMessageKey.CONSOLE_CLIENT_RESOURCES_URL);
+        String url = getString(DynamicMessageKey.CONSOLE_CLIENT_RESOURCES_URL);
+        boolean isAbsolute = UriUtils.extractScheme(url) != null;
+
+        return isAbsolute
+                 ? url
+                 : "/" + BaseContextPathData.getInstance().getRelativePath() + url; //$NON-NLS-1$
     }
 
     /**
