@@ -107,10 +107,10 @@ public class ImportRepoImageCopyTaskHandler
 
         VmTemplate blankTemplate = DbFacade.getInstance().getVmTemplateDao().get(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         VmStatic masterVm = new VmStatic(blankTemplate);
-
+        DiskImage templateDiskImage = getEnclosingCommand().getParameters().getDiskImage();
         // Following the same convention as the glance disk name, using a GlanceTemplate prefix, followed by a short identifier
         String vmTemplateName = "GlanceTemplate-" + Guid.newGuid().toString().substring(0, 7);
-        AddVmTemplateParameters parameters = new AddVmTemplateParameters(masterVm, vmTemplateName, "Glance imported template");
+        AddVmTemplateParameters parameters = new AddVmTemplateParameters(masterVm, vmTemplateName, templateDiskImage.getDiskDescription());
         VDSGroup vdsGroup = getVdsGroup();
 
         if (vdsGroup != null) {
