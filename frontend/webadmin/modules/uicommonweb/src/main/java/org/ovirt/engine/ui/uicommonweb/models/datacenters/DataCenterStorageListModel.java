@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -791,19 +790,19 @@ public class DataCenterStorageListModel extends SearchableListModel
         {
             maintenance();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnAttach")) //$NON-NLS-1$
+        else if ("OnAttach".equals(command.getName())) //$NON-NLS-1$
         {
             onAttach();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnDetach")) //$NON-NLS-1$
+        else if ("OnDetach".equals(command.getName())) //$NON-NLS-1$
         {
             onDetach();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnMaintenance")) //$NON-NLS-1$
+        else if ("OnMaintenance".equals(command.getName())) //$NON-NLS-1$
         {
             onMaintenance();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }

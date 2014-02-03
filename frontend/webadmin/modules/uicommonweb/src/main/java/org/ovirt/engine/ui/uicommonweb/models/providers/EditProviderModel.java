@@ -120,10 +120,10 @@ public class EditProviderModel extends ProviderModel {
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), CMD_APPROVE)) {
+        if (CMD_APPROVE.equals(command.getName())) {
             cancel();
             actualSave();
-        } else if (StringHelper.stringsEqual(command.getName(), CMD_CANCEL)) {
+        } else if (CMD_CANCEL.equals(command.getName())) {
             cancel();
         }
     }

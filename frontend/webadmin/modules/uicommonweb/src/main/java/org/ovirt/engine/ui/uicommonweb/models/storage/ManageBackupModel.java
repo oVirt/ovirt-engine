@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -172,11 +171,11 @@ public abstract class ManageBackupModel extends SearchableListModel
         {
             remove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
+        else if ("CancelConfirm".equals(command.getName())) //$NON-NLS-1$
         {
             cancelConfirm();
         }

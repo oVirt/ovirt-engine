@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -774,11 +773,11 @@ public class VmDiskListModel extends VmDiskListModelBase
         {
             scanAlignment();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
+        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
         }
@@ -790,7 +789,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         {
             confirmUnplug();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnUnplug")) //$NON-NLS-1$
+        else if ("OnUnplug".equals(command.getName())) //$NON-NLS-1$
         {
             unplug();
         }

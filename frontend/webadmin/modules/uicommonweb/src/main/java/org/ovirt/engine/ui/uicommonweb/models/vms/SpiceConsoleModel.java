@@ -225,26 +225,26 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 }
             }
             if (item != null) {
-                if (StringHelper.stringsEqual(item.getCommandName(), CommandPlay)) {
+                if (CommandPlay.equals(item.getCommandName())) {
                     // use sysprep iff the vm is not initialized and vm has Win OS
                     RunVmParams tempVar = new RunVmParams(getEntity().getId());
                     tempVar.setRunAsStateless(getEntity().isStateless());
                     Frontend.getInstance().runMultipleAction(VdcActionType.RunVm,
                             new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { tempVar })));
 
-                } else if (StringHelper.stringsEqual(item.getCommandName(), CommandSuspend)) {
+                } else if (CommandSuspend.equals(item.getCommandName())) {
                     Frontend.getInstance().runMultipleAction(VdcActionType.HibernateVm,
                             new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new VmOperationParameterBase(getEntity().getId()) })));
 
-                } else if (StringHelper.stringsEqual(item.getCommandName(), CommandStop)) {
+                } else if (CommandStop.equals(item.getCommandName())) {
                     Frontend.getInstance().runMultipleAction(VdcActionType.ShutdownVm,
                             new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new ShutdownVmParameters(getEntity().getId(),
                                     true) })));
 
-                } else if (StringHelper.stringsEqual(item.getCommandName(), CommandChangeCD))                 {
+                } else if (CommandChangeCD.equals(item.getCommandName())) {
                     Frontend.getInstance().runMultipleAction(VdcActionType.ChangeDisk,
                             new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(getEntity().getId(),
-                                    StringHelper.stringsEqual(item.getText(), getEjectLabel()) ? "" : item.getText()) }))); //$NON-NLS-1$
+                                    getEjectLabel().equals(item.getText()) ? "" : item.getText()) }))); //$NON-NLS-1$
                 }
             }
         }
@@ -273,7 +273,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "Cancel")) { //$NON-NLS-1$
+        if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }
@@ -488,7 +488,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         getspice().getMenuItemSelectedEvent().addListener(this);
 
         if (StringHelper.isNullOrEmpty(getEntity().getDisplayIp())
-                || StringHelper.stringsEqual(getEntity().getDisplayIp(), "0")) //$NON-NLS-1$
+                || "0".equals(getEntity().getDisplayIp())) //$NON-NLS-1$
         {
             determineIpAndConnect(getEntity().getId());
         }

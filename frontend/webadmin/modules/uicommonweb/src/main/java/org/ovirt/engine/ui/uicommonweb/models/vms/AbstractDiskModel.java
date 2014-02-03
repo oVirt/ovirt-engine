@@ -858,13 +858,13 @@ public abstract class AbstractDiskModel extends DiskModel
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "OnSave")) { //$NON-NLS-1$
+        if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnForceSave")) { //$NON-NLS-1$
+        if ("OnForceSave".equals(command.getName())) { //$NON-NLS-1$
             onForceSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) { //$NON-NLS-1$
+        else if ("CancelConfirm".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirm();
         }
     }

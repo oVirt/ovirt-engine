@@ -456,7 +456,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             }
             tagListModel.setAttachedTagsToEntities(hostListModel.attachedTagsToEntities);
         }
-        else if (StringHelper.stringsEqual(hostListModel.getLastExecutedCommand().getName(), "OnAssignTags")) //$NON-NLS-1$
+        else if ("OnAssignTags".equals(hostListModel.getLastExecutedCommand().getName())) //$NON-NLS-1$
         {
             hostListModel.postOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
@@ -1817,59 +1817,59 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         {
             refreshCapabilities();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnAssignTags")) //$NON-NLS-1$
+        else if ("OnAssignTags".equals(command.getName())) //$NON-NLS-1$
         {
             onAssignTags();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnManualFence")) //$NON-NLS-1$
+        else if ("OnManualFence".equals(command.getName())) //$NON-NLS-1$
         {
             onManualFence();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveFalse")) //$NON-NLS-1$
+        else if ("OnSaveFalse".equals(command.getName())) //$NON-NLS-1$
         {
             onSaveFalse();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternalFromApprove")) //$NON-NLS-1$
+        else if ("OnSaveInternalFromApprove".equals(command.getName())) //$NON-NLS-1$
         {
             onSaveInternalFromApprove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternalNotFromApprove")) //$NON-NLS-1$
+        else if ("OnSaveInternalNotFromApprove".equals(command.getName())) //$NON-NLS-1$
         {
             onSaveInternalNotFromApprove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
+        else if ("CancelConfirm".equals(command.getName())) //$NON-NLS-1$
         {
             cancelConfirm();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmFocusPM")) //$NON-NLS-1$
+        else if ("CancelConfirmFocusPM".equals(command.getName())) //$NON-NLS-1$
         {
             cancelConfirmFocusPM();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
+        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnMaintenance")) //$NON-NLS-1$
+        else if ("OnMaintenance".equals(command.getName())) //$NON-NLS-1$
         {
             onMaintenance();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnApprove")) //$NON-NLS-1$
+        else if ("OnApprove".equals(command.getName())) //$NON-NLS-1$
         {
             onApprove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRestart")) //$NON-NLS-1$
+        else if ("OnRestart".equals(command.getName())) //$NON-NLS-1$
         {
             onRestart();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnStop")) //$NON-NLS-1$
+        else if ("OnStop".equals(command.getName())) //$NON-NLS-1$
         {
             onStop();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnConfigureLocalStorage")) //$NON-NLS-1$
+        else if ("OnConfigureLocalStorage".equals(command.getName())) //$NON-NLS-1$
         {
             onConfigureLocalStorage();
         }

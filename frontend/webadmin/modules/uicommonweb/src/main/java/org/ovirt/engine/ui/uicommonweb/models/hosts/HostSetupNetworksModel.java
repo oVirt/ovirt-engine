@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -969,10 +968,10 @@ public class HostSetupNetworksModel extends EntityModel {
     {
         super.executeCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "OnSetupNetworks")) //$NON-NLS-1$
+        if ("OnSetupNetworks".equals(command.getName())) //$NON-NLS-1$
         {
             onSetupNetworks();
-        } else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }

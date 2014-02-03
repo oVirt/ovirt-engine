@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -342,15 +341,15 @@ public class QuotaUserListModel extends SearchableListModel {
             remove();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAdd")) //$NON-NLS-1$
+        if ("OnAdd".equals(command.getName())) //$NON-NLS-1$
         {
             onAdd();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
+        if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
         }

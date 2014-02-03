@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -1188,31 +1187,31 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         {
             destroy();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
+        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
         {
             onSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
+        else if ("CancelConfirm".equals(command.getName())) //$NON-NLS-1$
         {
             cancelConfirm();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnImport")) //$NON-NLS-1$
+        else if ("OnImport".equals(command.getName())) //$NON-NLS-1$
         {
             onImport();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
+        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnDestroy")) //$NON-NLS-1$
+        else if ("OnDestroy".equals(command.getName())) //$NON-NLS-1$
         {
             onDestroy();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveSanStorage")) //$NON-NLS-1$
+        else if ("OnSaveSanStorage".equals(command.getName())) //$NON-NLS-1$
         {
             onSaveSanStorage();
         }
@@ -2118,31 +2117,31 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         ArrayList<Object> data = (ArrayList<Object>) context.getState();
         String key = (String) data.get(0);
 
-        if (StringHelper.stringsEqual(key, "SaveNfs")) //$NON-NLS-1$
+        if ("SaveNfs".equals(key)) //$NON-NLS-1$
         {
             saveNfsStorage(context);
         }
-        else if (StringHelper.stringsEqual(key, "SaveLocal")) //$NON-NLS-1$
+        else if ("SaveLocal".equals(key)) //$NON-NLS-1$
         {
             saveLocalStorage(context);
         }
-        else if (StringHelper.stringsEqual(key, "SavePosix")) //$NON-NLS-1$
+        else if ("SavePosix".equals(key)) //$NON-NLS-1$
         {
             savePosixStorage(context);
         }
-        else if (StringHelper.stringsEqual(key, "SaveGluster")) //$NON-NLS-1$
+        else if ("SaveGluster".equals(key)) //$NON-NLS-1$
         {
             saveGlusterStorage(context);
         }
-        else if (StringHelper.stringsEqual(key, "SaveSan")) //$NON-NLS-1$
+        else if ("SaveSan".equals(key)) //$NON-NLS-1$
         {
             saveSanStorage(context);
         }
-        else if (StringHelper.stringsEqual(key, "ImportFile")) //$NON-NLS-1$
+        else if ("ImportFile".equals(key)) //$NON-NLS-1$
         {
             importFileStorage(context);
         }
-        else if (StringHelper.stringsEqual(key, "Finish")) //$NON-NLS-1$
+        else if ("Finish".equals(key)) //$NON-NLS-1$
         {
             getWindow().stopProgress();
 

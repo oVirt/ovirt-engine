@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -273,9 +272,9 @@ public class ClusterNetworkListModel extends SearchableListModel
             manage();
         } else if (command == getSetAsDisplayCommand()) {
             setAsDisplay();
-        } else if (StringHelper.stringsEqual(command.getName(), "New")) { //$NON-NLS-1$
+        } else if ("New".equals(command.getName())) { //$NON-NLS-1$
             newEntity();
-        } else if (StringHelper.stringsEqual(command.getName(), "Cancel")) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -489,11 +488,11 @@ public abstract class VmInterfaceModel extends Model
     {
         super.executeCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
+        if ("OnSave".equals(command.getName())) //$NON-NLS-1$
         {
             onSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }

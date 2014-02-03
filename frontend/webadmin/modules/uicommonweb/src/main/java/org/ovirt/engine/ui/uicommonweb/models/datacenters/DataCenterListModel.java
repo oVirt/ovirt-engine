@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -961,31 +960,31 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         {
             recoveryStorage();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
+        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
         {
             onSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
+        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnForceRemove")) //$NON-NLS-1$
+        else if ("OnForceRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onForceRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternal")) //$NON-NLS-1$
+        else if ("OnSaveInternal".equals(command.getName())) //$NON-NLS-1$
         {
             onSaveInternal();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation")) //$NON-NLS-1$
+        else if ("CancelConfirmation".equals(command.getName())) //$NON-NLS-1$
         {
             cancelConfirmation();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRecover")) //$NON-NLS-1$
+        else if ("OnRecover".equals(command.getName())) //$NON-NLS-1$
         {
             onRecover();
         }

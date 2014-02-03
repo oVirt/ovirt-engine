@@ -584,7 +584,7 @@ public class HostInterfaceListModel extends SearchableListModel
         {
             model_PropertyChanged(sender, (PropertyChangedEventArgs) args);
         }
-        else if (sender instanceof Model && StringHelper.stringsEqual(((Model) sender).getTitle(), "InterfaceList")) //$NON-NLS-1$
+        else if (sender instanceof Model && "InterfaceList".equals(((Model) sender).getTitle())) //$NON-NLS-1$
         {
             HostManagementNetworkModel managementNetworkModel = ((HostManagementNetworkModel) getWindow());
             VdsNetworkInterface vdsNetworkInterface =
@@ -2325,52 +2325,52 @@ public class HostInterfaceListModel extends SearchableListModel
             saveNetworkConfig();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
+        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
         {
             onSave();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnEditManagementNetwork")) //$NON-NLS-1$
+        else if ("OnEditManagementNetwork".equals(command.getName())) //$NON-NLS-1$
         {
             onEditManagementNetwork();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnEditManagementNetworkConfirmation")) //$NON-NLS-1$
+        else if ("OnEditManagementNetworkConfirmation".equals(command.getName())) //$NON-NLS-1$
         {
             onEditManagementNetworkConfirmation(false);
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnEditManagementNetworkConfirmation_Bond")) //$NON-NLS-1$
+        else if ("OnEditManagementNetworkConfirmation_Bond".equals(command.getName())) //$NON-NLS-1$
         {
             onEditManagementNetworkConfirmation(true);
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnBond")) //$NON-NLS-1$
+        else if ("OnBond".equals(command.getName())) //$NON-NLS-1$
         {
             onBond();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnDetach")) //$NON-NLS-1$
+        else if ("OnDetach".equals(command.getName())) //$NON-NLS-1$
         {
             onDetach();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnConfirmManagementDetach")) //$NON-NLS-1$
+        else if ("OnConfirmManagementDetach".equals(command.getName())) //$NON-NLS-1$
         {
             onConfirmManagementDetach();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
+        else if ("CancelConfirm".equals(command.getName())) //$NON-NLS-1$
         {
             cancelConfirm();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveNetworkConfig")) //$NON-NLS-1$
+        else if ("OnSaveNetworkConfig".equals(command.getName())) //$NON-NLS-1$
         {
             onSaveNetworkConfig();
         }

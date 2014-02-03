@@ -682,22 +682,22 @@ public abstract class NetworkModel extends Model
     {
         super.executeCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "OnSave")) { //$NON-NLS-1$
+        if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
-        } else if (StringHelper.stringsEqual(command.getName(), "Cancel")) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         } else if (command == getAddQosCommand()) {
             addQos();
-        } else if (StringHelper.stringsEqual(command.getName(), CMD_APPROVE)) {
+        } else if (CMD_APPROVE.equals(command.getName())) {
             onAbort();
             onApprove();
-        } else if (StringHelper.stringsEqual(command.getName(), CMD_ABORT)) {
+        } else if (CMD_ABORT.equals(command.getName())) {
             onAbort();
         }
     }
 
     public boolean isManagemet() {
-        return StringHelper.stringsEqual(getNetwork().getName(), ENGINE_NETWORK);
+        return ENGINE_NETWORK.equals(getNetwork().getName());
     }
 
     protected abstract void initMtu();

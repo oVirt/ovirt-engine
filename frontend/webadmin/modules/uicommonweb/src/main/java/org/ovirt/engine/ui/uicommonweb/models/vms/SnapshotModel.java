@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -352,7 +351,7 @@ public class SnapshotModel extends EntityModel
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "OnSave")) { //$NON-NLS-1$
+        if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         }
     }

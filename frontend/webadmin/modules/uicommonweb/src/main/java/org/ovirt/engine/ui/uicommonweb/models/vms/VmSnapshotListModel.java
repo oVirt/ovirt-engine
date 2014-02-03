@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -799,23 +798,23 @@ public class VmSnapshotListModel extends SearchableListModel
         {
             cloneVM();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
+        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnCloneVM")) //$NON-NLS-1$
+        else if ("OnCloneVM".equals(command.getName())) //$NON-NLS-1$
         {
             onCloneVM();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnPreview")) //$NON-NLS-1$
+        else if ("OnPreview".equals(command.getName())) //$NON-NLS-1$
         {
             onPreview();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnCustomPreview")) //$NON-NLS-1$
+        else if ("OnCustomPreview".equals(command.getName())) //$NON-NLS-1$
         {
             onCustomPreview();
         }

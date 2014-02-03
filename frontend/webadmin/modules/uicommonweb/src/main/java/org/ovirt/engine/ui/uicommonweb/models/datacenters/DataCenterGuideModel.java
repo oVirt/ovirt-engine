@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -1707,83 +1706,83 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     {
         super.executeCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "AddCluster")) //$NON-NLS-1$
+        if ("AddCluster".equals(command.getName())) //$NON-NLS-1$
         {
             addCluster();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "AddHost")) //$NON-NLS-1$
+        if ("AddHost".equals(command.getName())) //$NON-NLS-1$
         {
             addHost();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "SelectHost")) //$NON-NLS-1$
+        if ("SelectHost".equals(command.getName())) //$NON-NLS-1$
         {
             selectHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "AddDataStorage")) //$NON-NLS-1$
+        if ("AddDataStorage".equals(command.getName())) //$NON-NLS-1$
         {
             addDataStorage();
         }
-        if (StringHelper.stringsEqual(command.getName(), "AttachDataStorage")) //$NON-NLS-1$
+        if ("AttachDataStorage".equals(command.getName())) //$NON-NLS-1$
         {
             attachDataStorage();
         }
-        if (StringHelper.stringsEqual(command.getName(), "AddIsoStorage")) //$NON-NLS-1$
+        if ("AddIsoStorage".equals(command.getName())) //$NON-NLS-1$
         {
             addIsoStorage();
         }
-        if (StringHelper.stringsEqual(command.getName(), "AttachIsoStorage")) //$NON-NLS-1$
+        if ("AttachIsoStorage".equals(command.getName())) //$NON-NLS-1$
         {
             attachIsoStorage();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAddCluster")) //$NON-NLS-1$
+        if ("OnAddCluster".equals(command.getName())) //$NON-NLS-1$
         {
             onAddCluster();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnSelectHost")) //$NON-NLS-1$
+        if ("OnSelectHost".equals(command.getName())) //$NON-NLS-1$
         {
             onSelectHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAddHost")) //$NON-NLS-1$
+        if ("OnAddHost".equals(command.getName())) //$NON-NLS-1$
         {
             onAddHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAddStorage")) //$NON-NLS-1$
+        if ("OnAddStorage".equals(command.getName())) //$NON-NLS-1$
         {
             onAddStorage();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "OnSaveSanStorage")) //$NON-NLS-1$
+        if ("OnSaveSanStorage".equals(command.getName())) //$NON-NLS-1$
         {
             onSaveSanStorage();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "OnAttachStorage")) //$NON-NLS-1$
+        if ("OnAttachStorage".equals(command.getName())) //$NON-NLS-1$
         {
             onAttachStorage();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "AddLocalStorage")) //$NON-NLS-1$
+        if ("AddLocalStorage".equals(command.getName())) //$NON-NLS-1$
         {
             addLocalStorage();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "OnConfirmPMHost")) //$NON-NLS-1$
+        if ("OnConfirmPMHost".equals(command.getName())) //$NON-NLS-1$
         {
             onConfirmPMHost();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
+        if ("CancelConfirm".equals(command.getName())) //$NON-NLS-1$
         {
             cancelConfirm();
         }
-        if (StringHelper.stringsEqual(command.getName(), "CancelConfirmWithFocus")) //$NON-NLS-1$
+        if ("CancelConfirmWithFocus".equals(command.getName())) //$NON-NLS-1$
         {
             cancelConfirmWithFocus();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
@@ -1795,22 +1794,22 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         ArrayList<Object> data = (ArrayList<Object>) context.getState();
         String key = (String) data.get(0);
 
-        if (StringHelper.stringsEqual(key, "SaveNfs")) //$NON-NLS-1$
+        if ("SaveNfs".equals(key)) //$NON-NLS-1$
         {
             saveNfsStorage(context);
 
         }
-        else if (StringHelper.stringsEqual(key, "SaveLocal")) //$NON-NLS-1$
+        else if ("SaveLocal".equals(key)) //$NON-NLS-1$
         {
             saveLocalStorage(context);
 
         }
-        else if (StringHelper.stringsEqual(key, "SaveSan")) //$NON-NLS-1$
+        else if ("SaveSan".equals(key)) //$NON-NLS-1$
         {
             saveSanStorage(context);
 
         }
-        else if (StringHelper.stringsEqual(key, "Finish")) //$NON-NLS-1$
+        else if ("Finish".equals(key)) //$NON-NLS-1$
         {
             getWindow().stopProgress();
 

@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -205,7 +204,7 @@ public class NetworkProfileListModel extends SearchableListModel
         else if (command == getRemoveCommand()) {
             remove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) { //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

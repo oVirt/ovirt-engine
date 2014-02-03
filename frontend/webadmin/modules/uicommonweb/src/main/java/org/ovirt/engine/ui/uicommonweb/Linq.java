@@ -1096,7 +1096,7 @@ public final class Linq
         {
             return StringHelper.stringsEqual(source.getDomain(), target.getDomain())
                     && (StringHelper.isNullOrEmpty(target.getLoginName())
-                    || StringHelper.stringsEqual(target.getLoginName(), "*") //$NON-NLS-1$
+                    || "*".equals(target.getLoginName()) //$NON-NLS-1$
                     || source.getLoginName().toLowerCase().startsWith(target.getLoginName()));
         }
     }

@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -196,10 +195,10 @@ public class StorageDiskListModel extends SearchableListModel
         if (command == getRemoveCommand()) {
             remove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) { //$NON-NLS-1$
+        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) { //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

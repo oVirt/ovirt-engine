@@ -339,7 +339,7 @@ public class HostInterfaceModel extends EntityModel
         updateCanSpecify();
 
         Network network = (Network) getNetwork().getSelectedItem();
-        setBootProtocolsAvailable((network != null && StringHelper.stringsEqual(network.getName(), "None")) ? false //$NON-NLS-1$
+        setBootProtocolsAvailable((network != null && "None".equals(network.getName())) ? false //$NON-NLS-1$
                 : true);
 
         if (getNetworks() != null)

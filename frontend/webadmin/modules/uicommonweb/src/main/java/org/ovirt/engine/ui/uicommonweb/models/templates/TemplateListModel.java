@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -668,19 +667,19 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         {
             export(ConstantsManager.getInstance().getConstants().exportTemplateTitle());
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnExport")) //$NON-NLS-1$
+        else if ("OnExport".equals(command.getName())) //$NON-NLS-1$
         {
             onExport();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
+        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
         {
             onSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
+        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
         }

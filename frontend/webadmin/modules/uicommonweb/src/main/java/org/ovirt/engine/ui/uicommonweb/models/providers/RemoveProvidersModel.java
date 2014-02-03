@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -76,9 +75,9 @@ public class RemoveProvidersModel extends ConfirmationModel {
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), CMD_REMOVE)) {
+        if (CMD_REMOVE.equals(command.getName())) {
             onRemove();
-        } else if (StringHelper.stringsEqual(command.getName(), CMD_CANCEL)) {
+        } else if (CMD_CANCEL.equals(command.getName())) {
             cancel();
         }
     }

@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -100,11 +99,11 @@ public class VmGuideModel extends GuideModel
     {
         super.executeCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "AddDisk")) //$NON-NLS-1$
+        if ("AddDisk".equals(command.getName())) //$NON-NLS-1$
         {
             addDisk();
         }
-        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }

@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -281,11 +280,11 @@ public class SystemPermissionListModel extends SearchableListModel
         {
             add();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
+        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
         {
             onSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnAttach")) //$NON-NLS-1$
+        else if ("OnAttach".equals(command.getName())) //$NON-NLS-1$
         {
             onAttach();
             getForceRefreshCommand().execute();
@@ -294,11 +293,11 @@ public class SystemPermissionListModel extends SearchableListModel
         {
             remove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
+        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }

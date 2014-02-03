@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -565,35 +564,35 @@ public class ClusterGuideModel extends GuideModel
     {
         super.executeCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "AddHost")) //$NON-NLS-1$
+        if ("AddHost".equals(command.getName())) //$NON-NLS-1$
         {
             addHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnConfirmPMHost")) //$NON-NLS-1$
+        if ("OnConfirmPMHost".equals(command.getName())) //$NON-NLS-1$
         {
             onConfirmPMHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAddHost")) //$NON-NLS-1$
+        if ("OnAddHost".equals(command.getName())) //$NON-NLS-1$
         {
             onAddHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "SelectHost")) //$NON-NLS-1$
+        if ("SelectHost".equals(command.getName())) //$NON-NLS-1$
         {
             selectHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnSelectHost")) //$NON-NLS-1$
+        if ("OnSelectHost".equals(command.getName())) //$NON-NLS-1$
         {
             onSelectHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
-        if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
+        if ("CancelConfirm".equals(command.getName())) //$NON-NLS-1$
         {
             cancelConfirm();
         }
-        if (StringHelper.stringsEqual(command.getName(), "CancelConfirmWithFocus")) //$NON-NLS-1$
+        if ("CancelConfirmWithFocus".equals(command.getName())) //$NON-NLS-1$
         {
             cancelConfirmWithFocus();
         }

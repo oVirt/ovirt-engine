@@ -1240,11 +1240,11 @@ public class HostGeneralModel extends EntityModel
         {
             goToEvents();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnInstall")) //$NON-NLS-1$
+        else if ("OnInstall".equals(command.getName())) //$NON-NLS-1$
         {
             onInstall();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }

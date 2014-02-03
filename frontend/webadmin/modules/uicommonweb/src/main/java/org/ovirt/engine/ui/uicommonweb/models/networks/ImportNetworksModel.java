@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -285,9 +284,9 @@ public class ImportNetworksModel extends Model {
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), CMD_IMPORT)) {
+        if (CMD_IMPORT.equals(command.getName())) {
             onImport();
-        } else if (StringHelper.stringsEqual(command.getName(), CMD_CANCEL)) {
+        } else if (CMD_CANCEL.equals(command.getName())) {
             cancel();
         } else if (getAddImportCommand().equals(command)) {
             addImport();

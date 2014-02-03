@@ -547,7 +547,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             }
             tagListModel.setAttachedTagsToEntities(vmListModel.attachedTagsToEntities);
         }
-        else if (StringHelper.stringsEqual(vmListModel.getLastExecutedCommand().getName(), "OnAssignTags")) //$NON-NLS-1$
+        else if ("OnAssignTags".equals(vmListModel.getLastExecutedCommand().getName())) //$NON-NLS-1$
         {
             vmListModel.postOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
@@ -2377,43 +2377,43 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             assignTags();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnAssignTags")) //$NON-NLS-1$
+        else if ("OnAssignTags".equals(command.getName())) //$NON-NLS-1$
         {
             onAssignTags();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
+        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
         {
             preSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
+        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnExport")) //$NON-NLS-1$
+        else if ("OnExport".equals(command.getName())) //$NON-NLS-1$
         {
             onExport();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnExportNoTemplates")) //$NON-NLS-1$
+        else if ("OnExportNoTemplates".equals(command.getName())) //$NON-NLS-1$
         {
             onExportNoTemplates();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation")) //$NON-NLS-1$
+        else if ("CancelConfirmation".equals(command.getName())) //$NON-NLS-1$
         {
             cancelConfirmation();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRunOnce")) //$NON-NLS-1$
+        else if ("OnRunOnce".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnNewTemplate")) //$NON-NLS-1$
+        else if ("OnNewTemplate".equals(command.getName())) //$NON-NLS-1$
         {
             onNewTemplate();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnMigrate")) //$NON-NLS-1$
+        else if ("OnMigrate".equals(command.getName())) //$NON-NLS-1$
         {
             onMigrate();
         }
@@ -2421,19 +2421,19 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             cancelMigration();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnShutdown")) //$NON-NLS-1$
+        else if ("OnShutdown".equals(command.getName())) //$NON-NLS-1$
         {
             onShutdown();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnStop")) //$NON-NLS-1$
+        else if ("OnStop".equals(command.getName())) //$NON-NLS-1$
         {
             onStop();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnReboot")) //$NON-NLS-1$
+        else if ("OnReboot".equals(command.getName())) //$NON-NLS-1$
         {
             onReboot();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnChangeCD")) //$NON-NLS-1$
+        else if ("OnChangeCD".equals(command.getName())) //$NON-NLS-1$
         {
             onChangeCD();
         }

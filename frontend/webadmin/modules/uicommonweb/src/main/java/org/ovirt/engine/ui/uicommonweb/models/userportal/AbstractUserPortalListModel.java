@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.userportal;
 import java.util.LinkedList;
 import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -68,9 +67,9 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel {
 
         if (command == getEditConsoleCommand()) {
             editConsole();
-        } else if (StringHelper.stringsEqual(command.getName(), "OnEditConsoleSave")) { //$NON-NLS-1$
+        } else if ("OnEditConsoleSave".equals(command.getName())) { //$NON-NLS-1$
             onEditConsoleSave();
-        } else if (StringHelper.stringsEqual(command.getName(), Model.CANCEL_COMMAND)) {
+        } else if (Model.CANCEL_COMMAND.equals(command.getName())) {
             cancel();
         }
     }

@@ -133,7 +133,7 @@ public class VncConsoleModel extends ConsoleModel {
                         otp64 = (String) ticketReturnValue.getActionReturnValue();
                         // Determine the display IP.
                         if (StringHelper.isNullOrEmpty(getEntity().getDisplayIp())
-                                || StringHelper.stringsEqual(getEntity().getDisplayIp(), "0")) //$NON-NLS-1$
+                                || "0".equals(getEntity().getDisplayIp())) //$NON-NLS-1$
                         {
                             AsyncQuery _asyncQuery = new AsyncQuery();
                             _asyncQuery.setModel(this);

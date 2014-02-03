@@ -359,11 +359,11 @@ public class UserEventNotifierListModel extends SearchableListModel
         {
             manageEvents();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
+        if ("OnSave".equals(command.getName())) //$NON-NLS-1$
         {
             onSave();
         }
-        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }

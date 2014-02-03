@@ -355,11 +355,11 @@ public class TemplateBackupModel extends VmBackupModel
     @Override
     public void executeCommand(UICommand command)
     {
-        if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
+        if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRestore")) //$NON-NLS-1$
+        else if ("OnRestore".equals(command.getName())) //$NON-NLS-1$
         {
             onRestore();
         } else {

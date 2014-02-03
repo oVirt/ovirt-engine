@@ -1052,35 +1052,35 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         {
             guide();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
+        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
         {
             onSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
+        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveConfirmCpuThreads")) //$NON-NLS-1$
+        else if ("OnSaveConfirmCpuThreads".equals(command.getName())) //$NON-NLS-1$
         {
             onSaveConfirmCpuThreads();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveConfirmCpuLevel")) //$NON-NLS-1$
+        else if ("OnSaveConfirmCpuLevel".equals(command.getName())) //$NON-NLS-1$
         {
             onSaveConfirmCpuLevel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternal")) //$NON-NLS-1$
+        else if ("OnSaveInternal".equals(command.getName())) //$NON-NLS-1$
         {
             onSaveInternal();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation")) //$NON-NLS-1$
+        else if ("CancelConfirmation".equals(command.getName())) //$NON-NLS-1$
         {
             cancelConfirmation();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveHosts")) //$NON-NLS-1$
+        else if ("OnSaveHosts".equals(command.getName())) //$NON-NLS-1$
         {
             onSaveHosts();
         }

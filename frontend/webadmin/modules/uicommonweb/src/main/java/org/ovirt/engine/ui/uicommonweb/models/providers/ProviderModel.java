@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -405,15 +404,15 @@ public class ProviderModel extends Model {
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), CMD_SAVE)) {
+        if (CMD_SAVE.equals(command.getName())) {
             onSave();
-        } else if (StringHelper.stringsEqual(command.getName(), CMD_TEST)) {
+        } else if (CMD_TEST.equals(command.getName())) {
             onTest();
-        } else if (StringHelper.stringsEqual(command.getName(), CMD_CANCEL)) {
+        } else if (CMD_CANCEL.equals(command.getName())) {
             cancel();
-        } else if (StringHelper.stringsEqual(command.getName(), CMD_IMPORT_CHAIN)) {
+        } else if (CMD_IMPORT_CHAIN.equals(command.getName())) {
             importChain();
-        } else if (StringHelper.stringsEqual(command.getName(), CMD_CANCEL_IMPORT)) {
+        } else if (CMD_CANCEL_IMPORT.equals(command.getName())) {
             cancelImport();
         }
     }

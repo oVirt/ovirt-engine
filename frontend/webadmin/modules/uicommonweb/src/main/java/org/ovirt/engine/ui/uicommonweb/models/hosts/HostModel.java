@@ -1301,13 +1301,13 @@ public abstract class HostModel extends Model
             String k = pair.getKey();
             String v = pair.getValue();
 
-            if (StringHelper.stringsEqual(k, PmPortKey)) {
+            if (PmPortKey.equals(k)) {
                 port.setEntity(StringHelper.isNullOrEmpty(value.get(k)) ? "" : value.get(k)); //$NON-NLS-1$
 
-            } else if (StringHelper.stringsEqual(k, PmSlotKey)) {
+            } else if (PmSlotKey.equals(k)) {
                 slot.setEntity(StringHelper.isNullOrEmpty(value.get(k)) ? "" : value.get(k)); //$NON-NLS-1$
 
-            } else if (StringHelper.stringsEqual(k, PmSecureKey)) {
+            } else if (PmSecureKey.equals(k)) {
                 secure.setEntity(Boolean.parseBoolean(value.get(k)));
 
             } else {

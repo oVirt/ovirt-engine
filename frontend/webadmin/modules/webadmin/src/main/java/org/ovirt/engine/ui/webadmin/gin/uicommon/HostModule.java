@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -196,7 +195,7 @@ public class HostModule extends AbstractGinModule {
            @Override
                 public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostInterfaceListModel source,
                         UICommand lastExecutedCommand) {
-                   if (StringHelper.stringsEqual(lastExecutedCommand.getName(), "OnEditManagementNetworkConfirmation")) { //$NON-NLS-1$
+                   if ("OnEditManagementNetworkConfirmation".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
                        return hostManagementConfirmationdetachConfirmPopupProvider.get();
                    }
                    return super.getConfirmModelPopup(source, lastExecutedCommand);

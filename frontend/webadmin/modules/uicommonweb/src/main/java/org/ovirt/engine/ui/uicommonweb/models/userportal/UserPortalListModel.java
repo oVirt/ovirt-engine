@@ -490,23 +490,23 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         {
             newTemplate();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
+        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRunOnce")) //$NON-NLS-1$
+        else if ("OnRunOnce".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnChangeCD")) //$NON-NLS-1$
+        else if ("OnChangeCD".equals(command.getName())) //$NON-NLS-1$
         {
             onChangeCD();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnNewTemplate")) //$NON-NLS-1$
+        else if ("OnNewTemplate".equals(command.getName())) //$NON-NLS-1$
         {
             onNewTemplate();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
+        else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
         {
             onSave();
         }
@@ -930,7 +930,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         AttachCdModel model = (AttachCdModel) getWindow();
         model.startProgress(null);
         String isoName =
-                (StringHelper.stringsEqual(model.getIsoImage().getSelectedItem().toString(), ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
+                (model.getIsoImage().getSelectedItem().toString().equals(ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem().toString();
 
         Frontend.getInstance().runAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),

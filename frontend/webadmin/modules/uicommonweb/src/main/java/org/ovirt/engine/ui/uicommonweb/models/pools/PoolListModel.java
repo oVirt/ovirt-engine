@@ -595,15 +595,15 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         {
             remove();
         }
-        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
+        if ("OnSave".equals(command.getName())) //$NON-NLS-1$
         {
             onSave();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
+        if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
         }

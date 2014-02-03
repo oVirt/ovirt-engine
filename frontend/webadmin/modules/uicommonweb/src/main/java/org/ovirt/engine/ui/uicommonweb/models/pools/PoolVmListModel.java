@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -213,11 +212,11 @@ public class PoolVmListModel extends VmListModel
         {
             detach();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnDetach")) //$NON-NLS-1$
+        if ("OnDetach".equals(command.getName())) //$NON-NLS-1$
         {
             onDetach();
         }
-        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
