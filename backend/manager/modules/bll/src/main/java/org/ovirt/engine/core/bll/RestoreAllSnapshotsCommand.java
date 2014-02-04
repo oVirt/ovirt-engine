@@ -297,7 +297,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
                 targetSnapshot,
                 targetSnapshot.getId(),
-                getParameters().getDisks(),
+                null,
                 getCompensationContext(), getVm().getVdsGroupCompatibilityVersion(), getCurrentUser());
         getSnapshotDao().remove(targetSnapshot.getId());
         // add active snapshot with status locked, so that other commands that depend on the VM's snapshots won't run in parallel
@@ -305,7 +305,6 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 getVm(),
                 SnapshotStatus.LOCKED,
                 targetSnapshot.getMemoryVolume(),
-                getParameters().getDisks(),
                 getCompensationContext());
     }
 
