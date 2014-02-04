@@ -14,6 +14,7 @@ import org.ovirt.engine.api.resource.SnapshotNicsResource;
 import org.ovirt.engine.api.resource.SnapshotResource;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
+import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -62,7 +63,7 @@ public class BackendSnapshotResource extends AbstractBackendActionableResource<S
                 action,
                 PollingType.JOB);
         if (response.getStatus()==Response.Status.OK.getStatusCode()) {
-            RestoreAllSnapshotsParameters restoreParams = new RestoreAllSnapshotsParameters(parentId, guid);
+            RestoreAllSnapshotsParameters restoreParams = new RestoreAllSnapshotsParameters(parentId, SnapshotActionEnum.COMMIT);
             restoreParams.setCorrelationId(RESTORE_SNAPSHOT_CORRELATION_ID);
             Response response2 = doAction(VdcActionType.RestoreAllSnapshots,
                     restoreParams,

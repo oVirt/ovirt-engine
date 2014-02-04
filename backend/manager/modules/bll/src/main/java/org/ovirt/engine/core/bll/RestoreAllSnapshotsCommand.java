@@ -58,7 +58,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters> extends VmCommand<T> implements QuotaStorageDependent {
 
     private final Set<Guid> snapshotsToRemove = new HashSet<Guid>();
-    private Snapshot targetSnapshot;
+    private Snapshot snapshot;
     List<DiskImage> imagesToRestore = new ArrayList<>();
 
     /**
@@ -90,21 +90,13 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             }
         }
 
-        // The snapshot being restored to
-        Snapshot targetSnapshot = getSnapshotDao().get(getSnapshotId());
-
-        if (targetSnapshot == null) {
-            throw new VdcBLLException(VdcBllErrors.ENGINE, "Can't find target snapshot by id: "
-                    + getSnapshotId());
-        }
-
-        restoreSnapshotAndRemoveObsoleteSnapshots(targetSnapshot);
+        restoreSnapshotAndRemoveObsoleteSnapshots(getSnapshot());
 
         boolean succeeded = true;
         for (DiskImage image : imagesToRestore) {
             if (image.getImageStatus() != ImageStatus.ILLEGAL) {
                 ImagesContainterParametersBase params = new RestoreFromSnapshotParameters(image.getImageId(),
-                        getVmId(), targetSnapshot, removedSnapshotId);
+                        getVmId(), getSnapshot(), removedSnapshotId);
                 VdcReturnValueBase returnValue = runAsyncTask(VdcActionType.RestoreFromSnapshot, params);
                 // Save the first fault
                 if (succeeded && !returnValue.getSucceeded()) {
@@ -121,15 +113,36 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             deleteOrphanedImages();
         } else {
             getVmStaticDAO().incrementDbGeneration(getVm().getId());
-            getSnapshotDao().updateStatus(getSnapshotId(), SnapshotStatus.OK);
+            getSnapshotDao().updateStatus(getSnapshot().getId(), SnapshotStatus.OK);
             unlockVm();
         }
 
         setSucceeded(succeeded);
     }
 
-    private Guid getSnapshotId() {
-        return getParameters().getDstSnapshotId();
+    private Snapshot getSnapshot() {
+        if (snapshot == null) {
+            switch (getParameters().getSnapshotAction()) {
+            case UNDO:
+                snapshot = getSnapshotDao().get(getVmId(), SnapshotType.PREVIEW);
+                break;
+            case COMMIT:
+                snapshot = getSnapshotDao().get(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW);
+                break;
+            case RESTORE_STATELESS:
+                snapshot = getSnapshotDao().get(getVmId(), SnapshotType.STATELESS);
+                break;
+            default:
+                log.errorFormat("The Snapshot Action {0} is not valid", getParameters().getSnapshotAction());
+            }
+
+            // We initialize the snapshotId in the parameters so we can use it in the endVmCommand
+            // to unlock the snapshot, after the task that creates the snapshot finishes.
+            if (snapshot != null) {
+                getParameters().setSnapshotId(snapshot.getId());
+            }
+        }
+        return snapshot;
     }
 
     protected void removeSnapshotsFromDB() {
@@ -257,18 +270,15 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             restoreConfiguration(targetSnapshot);
             break;
 
-        // Currently UI sends the "in preview" snapshot to restore when "Commit" is pressed.
         case REGULAR:
-            if (SnapshotStatus.IN_PREVIEW == targetSnapshot.getStatus()) {
-                prepareToDeletePreviewBranch();
+            prepareToDeletePreviewBranch();
 
-                // Set the active snapshot's images as target images for restore, because they are what we keep.
-                getParameters().setImages(imagesFromActiveSnapshot);
-                imagesToRestore = ImagesHandler.imagesIntersection(imagesFromActiveSnapshot, imagesFromPreviewSnapshot);
-                updateSnapshotIdForSkipRestoreImages(
-                        ImagesHandler.imagesSubtract(imagesFromActiveSnapshot, imagesToRestore), activeSnapshotId);
-                break;
-            }
+            // Set the active snapshot's images as target images for restore, because they are what we keep.
+            getParameters().setImages(imagesFromActiveSnapshot);
+            imagesToRestore = ImagesHandler.imagesIntersection(imagesFromActiveSnapshot, imagesFromPreviewSnapshot);
+            updateSnapshotIdForSkipRestoreImages(
+                    ImagesHandler.imagesSubtract(imagesFromActiveSnapshot, imagesToRestore), activeSnapshotId);
+            break;
         default:
             throw new VdcBLLException(VdcBllErrors.ENGINE, "No support for restoring to snapshot type: "
                     + targetSnapshot.getType());
@@ -344,8 +354,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     }
 
     private List<DiskImage> getImagesList() {
-        if (getParameters().getImages() == null && !getSnapshotId().equals(Guid.Empty)) {
-            getParameters().setImages(getDiskImageDao().getAllSnapshotsForVmSnapshot(getSnapshotId()));
+        if (getParameters().getImages() == null && !getSnapshot().getId().equals(Guid.Empty)) {
+            getParameters().setImages(getDiskImageDao().getAllSnapshotsForVmSnapshot(getSnapshot().getId()));
         }
         return getParameters().getImages();
     }
@@ -365,8 +375,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
-            Snapshot snapshot = getSnapshotDao().get(getSnapshotId());
-            if (snapshot != null) {
+            if (getSnapshot() != null) {
                 jobProperties.put(VdcObjectType.Snapshot.name().toLowerCase(), snapshot.getDescription());
             }
         }
@@ -383,18 +392,16 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             return false;
         }
 
-        if (Guid.Empty.equals(getSnapshotId())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
-        }
-
         SnapshotsValidator snapshotValidator = createSnapshotValidator();
-        VmValidator vmValidator = createVmValidator(getVm());
-        if (!validate(snapshotValidator.snapshotExists(getVmId(), getSnapshotId())) ||
+        if (!validate(snapshotValidator.snapshotExists(getSnapshot()))
+                || !validate(snapshotValidator.snapshotExists(getVmId(), getSnapshot().getId())) ||
                 !validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             return false;
         }
-
-        targetSnapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+        if (Guid.Empty.equals(getSnapshot().getId())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
+        }
+        VmValidator vmValidator = createVmValidator(getVm());
 
         MultipleStorageDomainsValidator storageValidator = createStorageDomainValidator();
         if (!validate(storageValidator.allDomainsExistAndActive()) ||
@@ -402,13 +409,12 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 !performImagesChecks() ||
                 !validate(vmValidator.vmDown()) ||
                 // if the user choose to commit a snapshot - the vm cant have disk snapshots attached to other vms.
-                (targetSnapshot.getType() == SnapshotType.REGULAR && !validate(vmValidator.vmNotHavingDeviceSnapshotsAttachedToOtherVms(false)))) {
+                (getSnapshot()).getType() == SnapshotType.REGULAR && !validate(vmValidator.vmNotHavingDeviceSnapshotsAttachedToOtherVms(false))) {
             return false;
         }
 
-        Snapshot snapshot = getSnapshotDao().get(getSnapshotId());
-        if (snapshot.getType() == SnapshotType.REGULAR
-                && snapshot.getStatus() != SnapshotStatus.IN_PREVIEW) {
+        if (getSnapshot().getType() == SnapshotType.REGULAR
+                && getSnapshot().getStatus() != SnapshotStatus.IN_PREVIEW) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW);
         }
 
@@ -478,7 +484,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     @Override
     protected void endVmCommand() {
         // if we got here, the target snapshot exists for sure
-        getSnapshotDao().updateStatus(getSnapshotId(), SnapshotStatus.OK);
+        getSnapshotDao().updateStatus(getParameters().getSnapshotId(), SnapshotStatus.OK);
 
         super.endVmCommand();
     }

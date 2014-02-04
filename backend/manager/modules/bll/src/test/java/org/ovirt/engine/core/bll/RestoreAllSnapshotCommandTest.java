@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -120,6 +121,8 @@ public class RestoreAllSnapshotCommandTest {
     @Test
     public void canDoActionFailsOnSnapshotTypeRegularNotInPreview() {
         mockSnapshotExists();
+        mockSnapshot = new Snapshot();
+        when(snapshotDao.exists(any(Guid.class), any(Guid.class))).thenReturn(true);
         mockSnapshotFromDb();
         mockSnapshot.setType(SnapshotType.REGULAR);
         mockSnapshot.setStatus(SnapshotStatus.OK);
@@ -145,11 +148,12 @@ public class RestoreAllSnapshotCommandTest {
     private void mockSnapshotFromDb() {
         mockSnapshot = new Snapshot();
         mockSnapshot.setType(SnapshotType.STATELESS);
-        when(snapshotDao.get(any(Guid.class))).thenReturn(mockSnapshot);
+        when(snapshotDao.get(any(Guid.class), any(SnapshotType.class), any(SnapshotStatus.class))).thenReturn(mockSnapshot);
+        when(snapshotDao.get(any(Guid.class), any(SnapshotType.class))).thenReturn(mockSnapshot);
     }
 
     private void initSpyCommand() {
-        RestoreAllSnapshotsParameters parameters = new RestoreAllSnapshotsParameters(vmId, dstSnapshotId);
+        RestoreAllSnapshotsParameters parameters = new RestoreAllSnapshotsParameters(vmId, SnapshotActionEnum.COMMIT);
         List<DiskImage> diskImageList = createDiskImageList();
         parameters.setImages(diskImageList);
         doReturn(ValidationResult.VALID).when(storageValidator).allDomainsExistAndActive();

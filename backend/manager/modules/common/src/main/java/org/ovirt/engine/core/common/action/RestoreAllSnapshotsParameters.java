@@ -3,20 +3,22 @@ package org.ovirt.engine.core.common.action;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RestoreAllSnapshotsParameters extends TryBackToAllSnapshotsOfVmParameters implements java.io.Serializable {
+public class RestoreAllSnapshotsParameters extends VmOperationParameterBase implements java.io.Serializable {
     private static final long serialVersionUID = -8756081739745132849L;
 
     private List<DiskImage> images;
+    private SnapshotActionEnum snapshotAction;
 
-    public RestoreAllSnapshotsParameters(Guid vmId, Guid dstSnapshotId) {
-        super(vmId, dstSnapshotId);
-    }
+    // We need to keep the snapshot id in the parameters for the tasks,
+    // so we can unlock it when the restore finishes.
+    private Guid snapshotId;
 
-    public RestoreAllSnapshotsParameters(Guid vmId, Guid dstSnapshotId, List<DiskImage> images) {
-        this(vmId, dstSnapshotId);
-        this.images = images;
+    public RestoreAllSnapshotsParameters(Guid vmId, SnapshotActionEnum snapshotAction) {
+        super(vmId);
+        this.snapshotAction = snapshotAction;
     }
 
     public List<DiskImage> getImages() {
@@ -28,5 +30,21 @@ public class RestoreAllSnapshotsParameters extends TryBackToAllSnapshotsOfVmPara
     }
 
     public RestoreAllSnapshotsParameters() {
+    }
+
+    public SnapshotActionEnum getSnapshotAction() {
+        return snapshotAction;
+    }
+
+    public void setSnapshotAction(SnapshotActionEnum snapshotAction) {
+        this.snapshotAction = snapshotAction;
+    }
+
+    public Guid getSnapshotId() {
+        return snapshotId;
+    }
+
+    public void setSnapshotId(Guid snapshotId) {
+        this.snapshotId = snapshotId;
     }
 }
