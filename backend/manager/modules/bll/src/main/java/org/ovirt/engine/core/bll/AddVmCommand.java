@@ -264,40 +264,33 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean canAddVm(ArrayList<String> reasons, Collection<StorageDomain> destStorages) {
         VmStatic vmStaticFromParams = getParameters().getVmStaticData();
-        boolean returnValue =
-                canAddVm(reasons, vmStaticFromParams.getName(), getStoragePoolId(), vmStaticFromParams.getPriority());
+        if (!canAddVm(reasons, vmStaticFromParams.getName(), getStoragePoolId(), vmStaticFromParams.getPriority())) {
+            return false;
+        }
 
-        if (returnValue) {
-            List<ValidationError> validationErrors = validateCustomProperties(vmStaticFromParams);
-            if (!validationErrors.isEmpty()) {
-                VmPropertiesUtils.getInstance().handleCustomPropertiesError(validationErrors, reasons);
-                returnValue = false;
-            }
+        List<ValidationError> validationErrors = validateCustomProperties(vmStaticFromParams);
+        if (!validationErrors.isEmpty()) {
+            VmPropertiesUtils.getInstance().handleCustomPropertiesError(validationErrors, reasons);
+            return false;
         }
 
         // check that template image and vm are on the same storage pool
-        if (returnValue
-                && shouldCheckSpaceInStorageDomains()) {
+        if (shouldCheckSpaceInStorageDomains()) {
             if (!getStoragePoolId().equals(getStoragePoolIdFromSourceImageContainer())) {
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH.toString());
-                returnValue = false;
-            } else {
-                for (StorageDomain domain : destStorages) {
-                    StorageDomainValidator storageDomainValidator = new StorageDomainValidator(domain);
-                    if (!validate(storageDomainValidator.isDomainExistAndActive())) {
-                        return false;
-                    }
-                    if (!validate(storageDomainValidator.isDomainWithinThresholds())
-                            || !validate(storageDomainValidator.isDomainHasSpaceForRequest(getNeededDiskSize(domain.getId())))) {
-                        return false;
-                    }
-                }
+                return false;
+            }
+            for (StorageDomain domain : destStorages) {
+               StorageDomainValidator storageDomainValidator = new StorageDomainValidator(domain);
+               if (!validate(storageDomainValidator.isDomainExistAndActive())) {
+                   return false;
+               }
+            }
+            if (!validateSpaceRequirements()) {
+                return false;
             }
         }
-        if (returnValue) {
-            returnValue = isDedicatedVdsOnSameCluster(vmStaticFromParams);
-        }
-        return returnValue;
+        return isDedicatedVdsOnSameCluster(vmStaticFromParams);
     }
 
     protected boolean shouldCheckSpaceInStorageDomains() {
@@ -336,6 +329,34 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                         && canAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
                         && hostToRunExist();
         return returnValue;
+    }
+
+    /**
+     * Check if destination storage has enough space
+     * @return
+     */
+    protected boolean validateSpaceRequirements() {
+        for (Map.Entry<Guid, List<DiskImage>> sdImageEntry : storageToDisksMap.entrySet()) {
+            StorageDomain destStorageDomain = destStorages.get(sdImageEntry.getKey());
+            StorageDomainValidator storageDomainValidator = createStorageDomainValidator(destStorageDomain);
+            if (!validateDomainsThreshold(storageDomainValidator) ||
+                !validateFreeSpace(storageDomainValidator, destStorageDomain)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected StorageDomainValidator createStorageDomainValidator(StorageDomain storageDomain) {
+        return new StorageDomainValidator(storageDomain);
+    }
+
+    private boolean validateDomainsThreshold(StorageDomainValidator storageDomainValidator) {
+        return validate(storageDomainValidator.isDomainWithinThresholds());
+    }
+
+    protected boolean validateFreeSpace(StorageDomainValidator storageDomainValidator, StorageDomain domain) {
+        return validate(storageDomainValidator.isDomainHasSpaceForRequest(getNeededDiskSize(domain.getId())));
     }
 
     protected boolean checkSingleQxlDisplay() {

@@ -8,6 +8,7 @@ import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -28,6 +29,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -64,6 +66,10 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 @SuppressWarnings("serial")
 public class AddVmCommandTest {
 
+    private static final Guid STORAGE_DOMAIN_ID_1 = Guid.newGuid();
+    private static final Guid STORAGE_DOMAIN_ID_2 = Guid.newGuid();
+    private static final int NUM_OF_DISKS_1 = 3;
+    private static final int NUM_OF_DISKS_2 = 3;
     private static final int REQUIRED_DISK_SIZE_GB = 10;
     private static final int AVAILABLE_SPACE_GB = 11;
     private static final int USED_SPACE_GB = 4;
@@ -72,6 +78,7 @@ public class AddVmCommandTest {
     private static final Guid STORAGE_DOMAIN_ID = Guid.newGuid();
     private VmTemplate vmTemplate = null;
     private VDSGroup vdsGroup = null;
+    private StorageDomainValidator storageDomainValidator;
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule();
@@ -215,6 +222,23 @@ public class AddVmCommandTest {
                 new ArrayList<>(Arrays.asList("VirtIO_SCSI")));
         assertTrue("isVirtioScsiEnabled hasn't been defaulted to true on cluster >= 3.3.", cmd.isVirtioScsiEnabled());
     }
+
+    @Test
+    public void validateSpaceAndThreshold() {
+        AddVmCommand<VmManagementParametersBase> command = setupCanAddVmTests(0, 0);
+        assertTrue(command.validateSpaceRequirements());
+    }
+
+    @Test
+    public void validateSpaceNotWithinThreshold() throws Exception {
+        AddVmCommand<VmManagementParametersBase> command = setupCanAddVmTests(0, 0);
+        storageDomainValidator = mock(StorageDomainValidator.class);
+        doReturn((new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN))).
+               when(storageDomainValidator).isDomainWithinThresholds();
+        doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
+        assertFalse(command.validateSpaceRequirements());
+    }
+
 
     private void mockDisplayTypes(int osId, Version clusterVersion) {
         Map<Integer, Map<Version, List<DisplayType>>> displayTypeMap = new HashMap<>();
@@ -498,8 +522,40 @@ public class AddVmCommandTest {
         mockDAOs(cmd);
         mockBackend(cmd);
         doReturn(new VDSGroup()).when(cmd).getVdsGroup();
+        generateStorageToDisksMap(cmd);
+        initDestSDs(cmd);
+        storageDomainValidator = mock(StorageDomainValidator.class);
+        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
+        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainHasSpaceForRequest(any(int.class));
+        doReturn(storageDomainValidator).when(cmd).createStorageDomainValidator(any(StorageDomain.class));
         return cmd;
     }
+
+     private void generateStorageToDisksMap(AddVmCommand<VmManagementParametersBase> command) {
+        command.storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
+        command.storageToDisksMap.put(STORAGE_DOMAIN_ID_1, generateDisksList(NUM_OF_DISKS_1));
+        command.storageToDisksMap.put(STORAGE_DOMAIN_ID_2, generateDisksList(NUM_OF_DISKS_2));
+    }
+
+    private List<DiskImage> generateDisksList(int size) {
+        List<DiskImage> disksList = new ArrayList<>();
+        for (int i = 0; i < size; ++i) {
+            DiskImage diskImage = new DiskImage();
+            diskImage.setImageId(Guid.newGuid());
+            disksList.add(diskImage);
+        }
+        return disksList;
+    }
+
+    private void initDestSDs(AddVmCommand<VmManagementParametersBase> command) {
+        StorageDomain sd1 = new StorageDomain();
+        StorageDomain sd2 = new StorageDomain();
+        sd1.setId(STORAGE_DOMAIN_ID_1);
+        sd2.setId(STORAGE_DOMAIN_ID_2);
+        command.destStorages.put(STORAGE_DOMAIN_ID_1, sd1);
+        command.destStorages.put(STORAGE_DOMAIN_ID_2, sd2);
+    }
+
 
     private <T extends VmManagementParametersBase> void mockUninterestingMethods(AddVmCommand<T> spy) {
         doReturn(true).when(spy).isVmNameValidLength(Matchers.<VM> any(VM.class));
