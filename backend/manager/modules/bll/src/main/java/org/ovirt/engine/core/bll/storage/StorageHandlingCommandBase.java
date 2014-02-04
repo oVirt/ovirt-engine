@@ -158,7 +158,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected boolean isStorageDomainTypeCorrect(StorageDomain storageDomain) {
-        if (storageDomain.isLocal() != getStoragePool().isLocal()) {
+        if (!isStorageDomainOfTypeIsoOrExport(storageDomain) && storageDomain.isLocal() != getStoragePool().isLocal()) {
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_STORAGE_TYPE_NOT_MATCH);
             return false;
         }
