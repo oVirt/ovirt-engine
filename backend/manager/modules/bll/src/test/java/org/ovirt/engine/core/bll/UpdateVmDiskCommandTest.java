@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -62,6 +63,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -78,6 +80,8 @@ public class UpdateVmDiskCommandTest {
 
     private Guid diskImageGuid = Guid.newGuid();
     private Guid vmId = Guid.newGuid();
+    private Guid sdId = Guid.newGuid();
+    private Guid spId = Guid.newGuid();
 
     @Mock
     private VmDAO vmDAO;
@@ -101,6 +105,8 @@ public class UpdateVmDiskCommandTest {
     private StoragePoolDAO storagePoolDao;
     @Mock
     private StorageDomainStaticDAO storageDomainStaticDao;
+    @Mock
+    private StorageDomainDAO storageDomainDao;
     @Mock
     private DbFacade dbFacade;
     @Mock
@@ -406,6 +412,36 @@ public class UpdateVmDiskCommandTest {
                 VdcBllMessages.ACTION_TYPE_FAILED_IDE_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
     }
 
+    @Test
+    public void testResize() {
+        DiskImage oldDisk = createDiskImage();
+        when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
+
+        StorageDomain sd = new StorageDomain();
+        sd.setAvailableDiskSize(Integer.MAX_VALUE);
+        sd.setStatus(StorageDomainStatus.Active);
+        when(storageDomainDao.getForStoragePool(sdId, spId)).thenReturn(sd);
+
+        UpdateVmDiskParameters parameters = createParameters();
+        ((DiskImage) parameters.getDiskInfo()).setSize(oldDisk.getSize() * 2);
+        initializeCommand(parameters);
+
+        assertTrue(command.validateCanResizeDisk());
+    }
+
+    @Test
+    public void testFaultyResize() {
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+
+        UpdateVmDiskParameters parameters = createParameters();
+        ((DiskImage) parameters.getDiskInfo()).setSize(parameters.getDiskInfo().getSize() / 2);
+        initializeCommand(parameters);
+
+        assertFalse(command.validateCanResizeDisk());
+        CanDoActionTestUtils.assertCanDoActionMessages
+                ("wrong failure", command, VdcBllMessages.ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL);
+    }
+
     private void initializeCommand(UpdateVmDiskParameters params) {
         initializeCommand(params, Collections.singletonList(createVmStatusDown()));
     }
@@ -432,6 +468,7 @@ public class UpdateVmDiskCommandTest {
         doReturn(diskImageDao).when(command).getDiskImageDao();
         doReturn(storagePoolDao).when(command).getStoragePoolDAO();
         doReturn(storageDomainStaticDao).when(command).getStorageDomainStaticDAO();
+        doReturn(storageDomainDao).when(command).getStorageDomainDAO();
         doReturn(vmStaticDAO).when(command).getVmStaticDAO();
         doReturn(baseDiskDao).when(command).getBaseDiskDao();
         doReturn(imageDao).when(command).getImageDao();
@@ -578,6 +615,8 @@ public class UpdateVmDiskCommandTest {
         disk.setId(diskImageGuid);
         disk.setSize(100000L);
         disk.setDiskInterface(DiskInterface.VirtIO);
+        disk.setStorageIds(new ArrayList<>(Collections.singleton(sdId)));
+        disk.setStoragePoolId(spId);
         return disk;
     }
 

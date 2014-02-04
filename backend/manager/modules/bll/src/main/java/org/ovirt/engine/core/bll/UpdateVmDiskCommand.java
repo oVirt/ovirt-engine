@@ -264,7 +264,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return true;
     }
 
-    private boolean validateCanResizeDisk() {
+    protected boolean validateCanResizeDisk() {
         DiskImage newDiskImage = (DiskImage) getNewDisk();
 
         if (vmDeviceForVm.getSnapshotId() != null) {
@@ -287,13 +287,21 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 }
             }
 
-            long additionalDiskSpaceInGB = newDiskImage.getSizeInGigabytes() - oldDiskImage.getSizeInGigabytes();
             StorageDomain storageDomain = getStorageDomainDAO().getForStoragePool(
                     newDiskImage.getStorageIds().get(0), newDiskImage.getStoragePoolId());
             StorageDomainValidator storageDomainValidator = new StorageDomainValidator(storageDomain);
 
-            return validate(storageDomainValidator.isDomainExistAndActive()) &&
-                    validate(storageDomainValidator.isDomainHasSpaceForRequest(additionalDiskSpaceInGB));
+            if (!validate(storageDomainValidator.isDomainExistAndActive())) {
+                return false;
+            }
+
+            // For size allocation validation, we'll create a dummy with the additional size required.
+            // That way, the validator can hold all the logic about storage types.
+            long additionalDiskSpaceInGB = newDiskImage.getSizeInGigabytes() - oldDiskImage.getSizeInGigabytes();
+            DiskImage dummyForValidation = DiskImage.copyOf(newDiskImage);
+            dummyForValidation.setSizeInGigabytes(additionalDiskSpaceInGB);
+
+            return validate(storageDomainValidator.hasSpaceForNewDisk(dummyForValidation));
         }
 
         return true;
