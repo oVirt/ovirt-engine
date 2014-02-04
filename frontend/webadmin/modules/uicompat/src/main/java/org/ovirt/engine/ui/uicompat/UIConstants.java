@@ -1356,7 +1356,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Could not read templates from Export Domain")
     String couldNotReadTemplatesFromExportDomainMsg();
 
-    @DefaultStringValue("The following templates are missing on the target Export Domain:")
+    @DefaultStringValue("Warning: the following templates are missing on the target Export Domain, do you wish to continue anyway?")
     String theFollowingTemplatesAreMissingOnTargetExportDomainMsg();
 
     @DefaultStringValue("There are no active Data-Centers in the system.")
