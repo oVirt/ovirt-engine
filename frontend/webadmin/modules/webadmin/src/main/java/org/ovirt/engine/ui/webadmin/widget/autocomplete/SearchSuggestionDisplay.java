@@ -123,7 +123,7 @@ public final class SearchSuggestionDisplay extends DefaultSuggestionDisplay {
     @Override
     protected void moveSelectionDown() {
         // Make sure that the menu is actually showing and focus the selected item
-        if (suggestionPopup.isShowing()) {
+        if (suggestionPopup != null && suggestionPopup.isShowing()) {
             suggestionsTable.focusItemByIndex(suggestionsTable.getSelectedItemIndex());
 
             if (suggestionsTable.getSelectedItemIndex() == 0) {

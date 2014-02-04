@@ -889,7 +889,7 @@ public class CommonModel extends ListModel
                 }
                 else if (vmList.isSearchStringMatch(source))
                 {
-                    prefix.argvalue = "Vms: Hosts.name = " + model.getTitle(); //$NON-NLS-1$
+                    prefix.argvalue = "Vms: Host = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (templateList.isSearchStringMatch(source))
                 {

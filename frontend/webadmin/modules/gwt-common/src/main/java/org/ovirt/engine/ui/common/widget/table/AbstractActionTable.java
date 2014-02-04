@@ -100,6 +100,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     // Table container's horizontal scroll position, used to align table header with main table
     private int tableContainerHorizontalScrollPosition = 0;
 
+    private boolean doAutoSelect;
+
     public AbstractActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerResources, EventBus eventBus, ClientStorage clientStorage) {
         super(dataProvider, eventBus);
@@ -151,6 +153,10 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             public void setRowData(int start, List<? extends T> values) {
                 super.setRowData(start, values);
                 selectionModel.resolveChanges();
+                if (values.size() == 1 && selectionModel.getSelectedList().isEmpty() && doAutoSelect) {
+                    selectionModel.setSelected(values.get(0), true);
+                    doAutoSelect = false;
+                }
                 updateTableControls();
             }
 
@@ -163,6 +169,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                         @Override
                         public void execute() {
                             enforceScrollPosition();
+                            doAutoSelect = true;
                         }
                     });
                 }
@@ -367,6 +374,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
         // Reset main table container's scroll position
         enforceScrollPosition();
+        this.doAutoSelect = true;
     }
 
     void enforceScrollPosition() {
