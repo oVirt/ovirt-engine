@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.authentication.provisional;
 
-import org.ovirt.engine.core.authentication.Configuration;
-import org.ovirt.engine.core.authentication.ConfigurationException;
 import org.ovirt.engine.core.authentication.Directory;
 import org.ovirt.engine.core.authentication.DirectoryFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapBroker;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
+import org.ovirt.engine.core.extensions.mgr.Configuration;
+import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
 
 /**
  * This is the factory for the bridge between the new directory interface and the existing LDAP infrastructure. It

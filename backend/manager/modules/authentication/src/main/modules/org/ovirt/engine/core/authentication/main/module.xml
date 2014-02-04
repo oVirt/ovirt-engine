@@ -11,6 +11,7 @@
     <module name="javax.servlet.api"/>
     <module name="org.apache.commons.lang"/>
     <module name="org.ovirt.engine.core.common"/>
+    <module name="org.ovirt.engine.core.extension-manager"/>
     <module name="org.slf4j"/>
   </dependencies>
 

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.authentication;
+package org.ovirt.engine.core.extensions.mgr;
 
 /**
  * This interface is to be implemented by the classes that create objects using a configuration file.

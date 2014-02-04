@@ -37,6 +37,11 @@
     </dependency>
     <dependency>
       <groupId>${engine.groupId}</groupId>
+      <artifactId>extension-manager</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
       <artifactId>utils</artifactId>
       <version>${engine.version}</version>
     </dependency>

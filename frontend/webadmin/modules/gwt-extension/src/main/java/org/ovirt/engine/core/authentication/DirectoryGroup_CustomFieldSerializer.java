@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.authentication;
 
+import org.ovirt.engine.core.common.utils.ExternalId;
+
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamReader;
 import com.google.gwt.user.client.rpc.SerializationStreamWriter;
-import org.ovirt.engine.core.common.utils.ExternalId;
 
 /**
  * We use a custom serializer for directory groups because we want to avoid having no args constructor.

@@ -2,6 +2,9 @@ package org.ovirt.engine.core.authentication;
 
 import java.util.List;
 
+import org.ovirt.engine.core.extensions.mgr.Configuration;
+import org.ovirt.engine.core.extensions.mgr.Manager;
+
 /**
  * The authenticator manager is responsible for managing a collection of authenticator objects.
  */

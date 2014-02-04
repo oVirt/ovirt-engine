@@ -2,8 +2,8 @@ package org.ovirt.engine.core.authentication.nop;
 
 import org.ovirt.engine.core.authentication.Authenticator;
 import org.ovirt.engine.core.authentication.AuthenticatorFactory;
-import org.ovirt.engine.core.authentication.Configuration;
-import org.ovirt.engine.core.authentication.ConfigurationException;
+import org.ovirt.engine.core.extensions.mgr.Configuration;
+import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

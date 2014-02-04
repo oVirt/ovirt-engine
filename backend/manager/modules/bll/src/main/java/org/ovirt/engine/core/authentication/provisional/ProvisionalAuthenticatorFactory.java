@@ -2,10 +2,10 @@ package org.ovirt.engine.core.authentication.provisional;
 
 import org.ovirt.engine.core.authentication.Authenticator;
 import org.ovirt.engine.core.authentication.AuthenticatorFactory;
-import org.ovirt.engine.core.authentication.Configuration;
-import org.ovirt.engine.core.authentication.ConfigurationException;
 import org.ovirt.engine.core.bll.adbroker.LdapBroker;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
+import org.ovirt.engine.core.extensions.mgr.Configuration;
+import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 

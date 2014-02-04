@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.authentication;
+package org.ovirt.engine.core.extensions.mgr;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;

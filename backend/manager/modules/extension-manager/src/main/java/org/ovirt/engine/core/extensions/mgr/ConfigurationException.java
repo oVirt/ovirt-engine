@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.authentication;
+package org.ovirt.engine.core.extensions.mgr;
 
 public class ConfigurationException extends RuntimeException {
     public ConfigurationException() {

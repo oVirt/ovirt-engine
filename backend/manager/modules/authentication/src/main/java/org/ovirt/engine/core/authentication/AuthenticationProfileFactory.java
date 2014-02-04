@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.authentication;
 
+import org.ovirt.engine.core.extensions.mgr.Configuration;
+import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
+import org.ovirt.engine.core.extensions.mgr.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

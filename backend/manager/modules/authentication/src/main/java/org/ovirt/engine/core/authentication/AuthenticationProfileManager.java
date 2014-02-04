@@ -2,6 +2,10 @@ package org.ovirt.engine.core.authentication;
 
 import java.util.List;
 
+import org.ovirt.engine.core.extensions.mgr.Configuration;
+import org.ovirt.engine.core.extensions.mgr.Factory;
+import org.ovirt.engine.core.extensions.mgr.Manager;
+
 /**
  * The authentication profile manager is responsible for managing a set of authentication profiles.
  */

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.authentication;
+package org.ovirt.engine.core.extensions.mgr;
 
 import java.io.File;
 import java.io.FileInputStream;
