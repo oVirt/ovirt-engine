@@ -89,6 +89,10 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 macAddedToPool = addMacToPool(getMacAddress());
             }
 
+            if (mustChangeAddress(oldIface.getType(), getInterface().getType())) {
+                getVmDeviceDao().clearDeviceAddress(getInterface().getId());
+            }
+
             getInterface().setSpeed(VmInterfaceType.forValue(getInterface().getType()).getSpeed());
 
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -275,6 +279,17 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         return permissionList;
+    }
+
+    /**
+     * Check if address must be changed after change NIC type
+     * @param oldType - Old nic type
+     * @param newType - New nic type
+     * @return
+     */
+    private boolean mustChangeAddress (int oldType, int newType) {
+        int spaprVlanType = VmInterfaceType.spaprVlan.getValue();
+        return oldType == spaprVlanType ^ newType == spaprVlanType;
     }
 
     private boolean isVnicProfileChanged(VmNic oldNic, VmNic newNic) {
