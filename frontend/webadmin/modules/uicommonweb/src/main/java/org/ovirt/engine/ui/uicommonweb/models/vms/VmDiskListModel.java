@@ -191,22 +191,6 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
     }
 
-    private boolean isScanAlignmentEnabled;
-
-    public boolean getIsScanAlignmentEnabled()
-    {
-        return isScanAlignmentEnabled;
-    }
-
-    private void setIsScanAlignmentEnabled(boolean value)
-    {
-        if (isScanAlignmentEnabled != value)
-        {
-            isScanAlignmentEnabled = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsScanAlignmentEnabled")); //$NON-NLS-1$
-        }
-    }
-
     public boolean isExtendImageSizeEnabled() {
         return (getEntity() != null) ?
                 VdcActionUtils.canExecute(Arrays.asList(getEntity()), VM.class, VdcActionType.ExtendImageSize) : false;
@@ -575,9 +559,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         getMoveCommand().setIsExecutionAllowed(atLeastOneDiskSelected()
                 && (isMoveCommandAvailable() || isLiveMoveCommandAvailable()));
 
-        updateGetAlignmentCommandAvailability();
-
-        updateScanAlignmentEnabled();
+        updateScanAlignmentCommandAvailability();
 
         getPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(true));
 
@@ -701,33 +683,23 @@ public class VmDiskListModel extends VmDiskListModelBase
         return true;
     }
 
-    private void updateGetAlignmentCommandAvailability() {
-        getScanAlignmentCommand().setIsExecutionAllowed(false);
+    private void updateScanAlignmentCommandAvailability() {
+        boolean isExecutionAllowed = true;
+        if (getSelectedItems() != null && getEntity() != null) {
+            ArrayList<Disk> disks = Linq.<Disk> cast(getSelectedItems());
+            for (Disk disk : disks) {
 
-        if (!getIsScanAlignmentEnabled()) {
-            return;
-        }
-
-        if (getSelectedItems() == null || getSelectedItems().size() != 1) {
-            return; // leave the command disabled
-        }
-
-        ArrayList<Disk> disks =
-                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
-
-        for (Disk disk : disks)
-        {
-            if (!isImageDiskOK(disk)) {
-                return; // leave the command disabled
+                if (!(disk instanceof LunDisk) && !isDiskOnBlockDevice(disk)) {
+                    isExecutionAllowed = false;
+                    break;
+                }
             }
         }
-
-        final VM vm = getEntity();
-        if (vm == null) {
-            return; // leave the command disabled
+        else {
+            isExecutionAllowed = false;
         }
-
-        getScanAlignmentCommand().setIsExecutionAllowed(true);
+        getScanAlignmentCommand().setIsExecutionAllowed(isExecutionAllowed);
+        //onPropertyChanged(new PropertyChangedEventArgs("IsScanAlignmentEnabled")); //$NON-NLS-1$
     }
 
     @Override
@@ -815,15 +787,6 @@ public class VmDiskListModel extends VmDiskListModelBase
                         dcCompatibilityVersion);
             }
         }), vm.getStoragePoolId());
-    }
-
-    private void updateScanAlignmentEnabled() {
-        if (getSelectedItem() == null) {
-            setIsScanAlignmentEnabled(false);
-            return;
-        }
-
-        setIsScanAlignmentEnabled((getSelectedItem() instanceof LunDisk || isDiskOnBlockDevice((Disk) getSelectedItem())));
     }
 
     private boolean isDiskOnBlockDevice(Disk disk) {
