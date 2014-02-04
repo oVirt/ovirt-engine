@@ -504,6 +504,7 @@ public class ClusterGuideModel extends GuideModel
         if (model.getUserPassword().getEntity() != null) {
             vdsActionParams.setPassword((String) model.getUserPassword().getEntity());
         }
+        vdsActionParams.setAuthMethod(model.getAuthenticationMethod());
         vdsActionParams.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
         vdsActionParams.setRebootAfterInstallation(((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService());
 
