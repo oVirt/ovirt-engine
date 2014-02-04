@@ -511,8 +511,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         else
                         {
                             model.getDefaultHost().setItems(hosts);
-                            model.getDefaultHost().setSelectedItem(oldDefaultHost != null ? Linq.firstOrDefault(hosts,
-                                    new Linq.HostPredicate(oldDefaultHost.getId())) : Linq.firstOrDefault(hosts));
+
+                            if (oldDefaultHost != null) {
+                                // Trying to get host object from hosts list
+                                oldDefaultHost = Linq.firstOrDefault(hosts, new Linq.HostPredicate(oldDefaultHost.getId()));
+                            }
+
+                            // If found 'oldDefaultHost' in existing list, select it;
+                            // otherwise, select first in hosts list.
+                            model.getDefaultHost().setSelectedItem(oldDefaultHost != null ?
+                                    oldDefaultHost : Linq.firstOrDefault(hosts));
                         }
                         changeDefualtHost();
 
