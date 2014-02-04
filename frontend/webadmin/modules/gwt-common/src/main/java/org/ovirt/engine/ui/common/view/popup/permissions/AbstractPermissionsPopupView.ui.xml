@@ -14,7 +14,9 @@
 
 		.goButton {
 			float: left;
+			height: 25px;
 			margin-left: 5px;
+			margin-top: 3px;
 		}
 
 		.searchItemsPanel {
@@ -26,16 +28,25 @@
 
 		.searchStringEditor {
 			width: 250px;
+			height: 18px;
 			margin-left: 5px;
+			margin-top: 3px;
+			margin-bottom: 3px;
+		}
+
+		.domainSelection {
+			width: 300px;
+			height: 30px;
 		}
 
 		.everyonePanel {
-			height: 5%;
+			height: 30px;
 			margin-top: 3px;
 		}
 
 		.searchStringPanel {
-			height: 5%;
+			width: 660px;
+			height: 30px;
 		}
 
 		.rolePanel {
@@ -62,7 +73,7 @@
 					</g:HorizontalPanel>
 				</g:SimplePanel>
 				<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.searchStringPanel}">
-					<e:ListModelListBoxEditor label="{constants.searchPermissionsPopup}" ui:field="domainSelection" />
+					<e:ListModelListBoxEditor addStyleNames="{style.domainSelection}" label="{constants.searchPermissionsPopup}" ui:field="domainSelection" />
 					<e:TextBoxChanger addStyleNames="{style.searchStringEditor}" ui:field="searchStringEditor" />
 					<w:UiCommandButton ui:field="searchButton" addStyleNames="{style.goButton}" />
 				</g:HorizontalPanel>
