@@ -25,8 +25,8 @@ import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.businessentities.UnchangeableByVdsm;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.UnchangeableByVdsm;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -59,6 +59,8 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVmStatsVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
@@ -514,6 +516,18 @@ public class VdsUpdateRunTimeInfo {
             if (_vds.getStatus() != VDSStatus.PreparingForMaintenance) {
                 throw e;
             }
+        } catch (ClassCastException cce) {
+            // This should occur only if the vdsm API is not the same as the cluster API (version mismatch)
+            log.error(String.format("Failure to refresh Vds %s runtime info. Incorrect vdsm version for cluster %s",
+                    _vds.getName(),
+                    _vds.getVdsGroupName()), cce);
+            if (_vds.getStatus() != VDSStatus.PreparingForMaintenance && _vds.getStatus() != VDSStatus.Maintenance) {
+                ResourceManager.getInstance().runVdsCommand(VDSCommandType.SetVdsStatus,
+                        new SetVdsStatusVDSCommandParameters(_vds.getId(), VDSStatus.Error));
+            }
+        } catch (Throwable t) {
+            log.error("Failure to refresh Vds runtime info", t);
+            throw t;
         }
         moveVDSToMaintenanceIfNeeded();
     }
