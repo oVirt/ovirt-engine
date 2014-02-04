@@ -15,6 +15,7 @@ import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -135,8 +136,8 @@ public class BackendSnapshotResourceTest extends AbstractBackendSubResourceTest<
         return setUpActionExpectations(
                 VdcActionType.RestoreAllSnapshots,
                 RestoreAllSnapshotsParameters.class,
-                new String[] { "VmId", "DstSnapshotId" },
-                new Object[] { VM_ID, SNAPSHOT_ID },
+                new String[] { "VmId", "SnapshotAction" },
+                new Object[] { VM_ID, SnapshotActionEnum.COMMIT },
                 true,
                 true,
                 null,

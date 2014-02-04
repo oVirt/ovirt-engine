@@ -173,6 +173,7 @@
 		<include name="common/businessentities/VmWatchdogType.java" />
 		<include name="common/businessentities/InstanceType.java" />
 		<include name="common/businessentities/ImageType.java" />
+		<include name="common/businessentities/SnapshotActionEnum.java"/>
 		<include name="common/job/*.java" />
 
 		<!-- Quota -->

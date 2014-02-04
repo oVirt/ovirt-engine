@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -55,12 +56,12 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
                 /**
                  * restore all snapshots
                  */
-                RestoreAllSnapshotsParameters tempVar = new RestoreAllSnapshotsParameters(getVm().getId(), snapshotId);
-                tempVar.setShouldBeLogged(false);
-                tempVar.setImages(imagesList);
+                RestoreAllSnapshotsParameters restoreParameters = new RestoreAllSnapshotsParameters(getVm().getId(), SnapshotActionEnum.RESTORE_STATELESS);
+                restoreParameters.setShouldBeLogged(false);
+                restoreParameters.setImages(imagesList);
                 VdcReturnValueBase vdcReturn =
                         Backend.getInstance().runInternalAction(VdcActionType.RestoreAllSnapshots,
-                                tempVar,
+                                restoreParameters,
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
                 returnVal = vdcReturn.getSucceeded();
             }

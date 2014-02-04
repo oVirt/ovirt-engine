@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -372,7 +373,7 @@ public class VmSnapshotListModel extends SearchableListModel
             Snapshot snapshot = getPreview();
 
             Frontend.getInstance().runAction(VdcActionType.RestoreAllSnapshots,
-                    new RestoreAllSnapshotsParameters(vm.getId(), snapshot.getId()),
+                    new RestoreAllSnapshotsParameters(vm.getId(), SnapshotActionEnum.UNDO),
                     null,
                     null);
         }
@@ -386,7 +387,7 @@ public class VmSnapshotListModel extends SearchableListModel
             Snapshot snapshot = getInPreview();
 
             Frontend.getInstance().runAction(VdcActionType.RestoreAllSnapshots,
-                    new RestoreAllSnapshotsParameters(vm.getId(), snapshot.getId()),
+                    new RestoreAllSnapshotsParameters(vm.getId(), SnapshotActionEnum.COMMIT),
                     null,
                     null);
         }
