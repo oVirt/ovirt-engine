@@ -135,7 +135,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
         if (!vmsDiskOrSnapshotPluggedTo.isEmpty()) {
             // only virtual drive size can be updated when VMs is running
-            if (isAtLeastOneVmIsNotDown(vmsDiskOrSnapshotPluggedTo) && shouldUpdatePropertiesOtherThanSize()) {
+            if (isAtLeastOneVmIsNotDown(vmsDiskOrSnapshotPluggedTo) && shouldUpdatePropertiesOtherThanSizeAndAlias()) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             }
 
@@ -524,7 +524,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                vmDeviceForVm.getSnapshotId() == null && getNewDisk().getSize() != getOldDisk().getSize();
     }
 
-    private boolean shouldUpdatePropertiesOtherThanSize() {
+    private boolean shouldUpdatePropertiesOtherThanSizeAndAlias() {
         return shouldUpdateDiskProperties() || shouldUpdateImageProperties();
     }
 
@@ -535,8 +535,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 getOldDisk().isWipeAfterDelete() != getNewDisk().isWipeAfterDelete() ||
                 getOldDisk().isShareable() != getNewDisk().isShareable() ||
                 getOldDisk().getSgio() != getNewDisk().getSgio() ||
-                !StringUtils.equals(getOldDisk().getDiskDescription(), getNewDisk().getDiskDescription()) ||
-                !StringUtils.equals(getOldDisk().getDiskAlias(), getNewDisk().getDiskAlias());
+                !StringUtils.equals(getOldDisk().getDiskDescription(), getNewDisk().getDiskDescription());
     }
 
     private boolean shouldUpdateImageProperties() {
