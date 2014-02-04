@@ -3144,7 +3144,8 @@ public final class AsyncDataProvider {
                 Arrays.asList(new DiskInterface[] {
                         DiskInterface.IDE,
                         DiskInterface.VirtIO,
-                        DiskInterface.VirtIO_SCSI
+                        DiskInterface.VirtIO_SCSI,
+                        DiskInterface.SPAPR_VSCSI
                 }));
 
         return diskInterfaces;
