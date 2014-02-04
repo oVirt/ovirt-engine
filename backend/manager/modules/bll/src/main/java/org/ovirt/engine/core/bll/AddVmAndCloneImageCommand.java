@@ -123,17 +123,15 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
 
     @Override
     protected boolean canDoAction() {
-        boolean retValue = false;
         if (super.canDoAction()) {
             for (DiskImage diskImage : getDiskImagesToBeCloned()) {
-                retValue = checkImageConfiguration(diskImage);
-                if (!retValue) {
-                    break;
+                if (!checkImageConfiguration(diskImage)) {
+                    return false;
                 }
             }
-            retValue = true;
+            return true;
         }
-        return retValue;
+        return false;
     }
 
     protected abstract boolean checkImageConfiguration(DiskImage diskImage);
