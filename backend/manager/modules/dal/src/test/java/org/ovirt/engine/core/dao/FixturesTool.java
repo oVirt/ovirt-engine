@@ -33,6 +33,11 @@ public class FixturesTool {
     protected static final Guid STORAGE_POOL_RHEL6_LOCALFS = new Guid("386bffd1-e7ed-4b08-bce9-d7df10f8c9a2");
 
     /**
+     * Predefined storage pool serving Fedora VMs.
+     */
+    protected static final Guid STORAGE_POOL_FEDORA = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
+
+    /**
      * Predefined NFS master storage domain.
      */
     protected static final Guid STORAGE_DOAMIN_NFS_MASTER = new Guid("c2211b56-8869-41cd-84e1-78d7cb96f31d");
@@ -150,6 +155,16 @@ public class FixturesTool {
      * </ul>
      */
     protected static final Guid VM_RHEL5_POOL_51 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356");
+
+    /**
+     * Predefined VM for testing with the following properties :
+     * <ul>
+     * <li>VM name: rhel5-pool-52</li>
+     * <li>Vds group: rhel6.iscsi (b399944a-81ab-4ec5-8266-e19ba7c3c9d1)</li>
+     * <li>Based on template: 1 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li>
+     * </ul>
+     */
+    protected static final Guid VM_RHEL5_POOL_52 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5002");
 
     /**
      * Predefined VM for testing with the following properties :

@@ -22,13 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmDAOTest extends BaseDAOTestCase {
-    private static final Guid VDS_STATIC_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
-    private static final Guid VDS_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
-    private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
-    private static final Guid STORAGE_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
-    private static final Guid POOL_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
-    private static final Guid VM_TO_UPDATE_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5002");
-
     private static final int VM_COUNT = 7;
     private VmDAO dao;
     private VM existingVm;
@@ -42,21 +35,19 @@ public class VmDAOTest extends BaseDAOTestCase {
         super.setUp();
 
         dao = dbFacade.getVmDao();
-        existingVm = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
+        existingVm = dao.get(FixturesTool.VM_RHEL5_POOL_57);
         existingVm.setStatus(VMStatus.Up);
-        vmtemplate = dbFacade.getVmTemplateDao().get(
-                new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
-        existingTemplate = dbFacade.getVmTemplateDao().get(
-                new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
+        vmtemplate = dbFacade.getVmTemplateDao().get(FixturesTool.VM_TEMPLATE_RHEL5);
+        existingTemplate = dbFacade.getVmTemplateDao().get(FixturesTool.VM_TEMPLATE_RHEL5);
 
         newVm = new VM();
         newVm.setId(Guid.newGuid());
-        newVm.setVdsGroupId(VDS_GROUP_ID);
+        newVm.setVdsGroupId(FixturesTool.VDS_GROUP_RHEL6_ISCSI);
         newVm.setVmtGuid(vmtemplate.getId());
 
         newVmStatic = new VmStatic();
         newVmStatic.setName("New Virtual Machine");
-        newVmStatic.setVdsGroupId(VDS_GROUP_ID);
+        newVmStatic.setVdsGroupId(FixturesTool.VDS_GROUP_RHEL6_ISCSI);
         newVmStatic.setVmtGuid(vmtemplate.getId());
     }
 
@@ -273,7 +264,7 @@ public class VmDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForStorageDomain() {
-        List<VM> result = dao.getAllForStorageDomain(STORAGE_DOMAIN_ID);
+        List<VM> result = dao.getAllForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -284,7 +275,7 @@ public class VmDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForUser() {
-        List<VM> result = dao.getAllForUser(USER_ID);
+        List<VM> result = dao.getAllForUser(FixturesTool.USER_EXISTING_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -295,7 +286,7 @@ public class VmDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForUsersWithGroupsAndUserRoles() {
-        List<VM> result = dao.getAllForUserWithGroupsAndUserRoles(USER_ID);
+        List<VM> result = dao.getAllForUserWithGroupsAndUserRoles(FixturesTool.USER_EXISTING_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -306,7 +297,7 @@ public class VmDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllRunningForVds() {
-        Map<Guid, VM> result = dao.getAllRunningByVds(VDS_STATIC_ID);
+        Map<Guid, VM> result = dao.getAllRunningByVds(FixturesTool.VDS_RHEL6_NFS_SPM);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -317,7 +308,7 @@ public class VmDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void getAllRunningOnOrMigratingToVds() {
-        List<VM> result = dao.getAllRunningOnOrMigratingToVds(VDS_STATIC_ID);
+        List<VM> result = dao.getAllRunningOnOrMigratingToVds(FixturesTool.VDS_RHEL6_NFS_SPM);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -328,7 +319,7 @@ public class VmDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllActiveForStorageDomain() {
-        List<VM> result = dao.getAllActiveForStorageDomain(STORAGE_DOMAIN_ID);
+        List<VM> result = dao.getAllActiveForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -339,7 +330,7 @@ public class VmDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForVdsGroup() {
-        List<VM> result = dao.getAllForVdsGroup(VDS_GROUP_ID);
+        List<VM> result = dao.getAllForVdsGroup(FixturesTool.VDS_GROUP_RHEL6_ISCSI);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -431,7 +422,7 @@ public class VmDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAllForVmPool() {
-        List<VM> result = dao.getAllForVmPool(POOL_ID);
+        List<VM> result = dao.getAllForVmPool(FixturesTool.STORAGE_POOL_FEDORA);
 
         assertNotNull(result);
         assertEquals("wrong number of VMs attached to pool", 2, result.size());
@@ -464,7 +455,7 @@ public class VmDAOTest extends BaseDAOTestCase {
     @Test
     public void testUpdateOriginalTemplateName() {
         dao.updateOriginalTemplateName(
-                new Guid("1b85420c-b84c-4f29-997e-0eb674b40b82"),
+                FixturesTool.VM_TEMPLATE_RHEL6_2,
                 "renamed"
         );
 
@@ -496,7 +487,7 @@ public class VmDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testAllRunningByCluster() {
-        List<VM> result = dao.getAllRunningByCluster(VDS_GROUP_ID);
+        List<VM> result = dao.getAllRunningByCluster(FixturesTool.VDS_GROUP_RHEL6_ISCSI);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -506,6 +497,6 @@ public class VmDAOTest extends BaseDAOTestCase {
     public void testGetVmIdsForVersionUpdate() {
         List<Guid> vmIdsToUpdate = dao.getVmIdsForVersionUpdate(FixturesTool.VM_TEMPLATE_RHEL5);
 
-        assertTrue(vmIdsToUpdate.contains(VM_TO_UPDATE_ID));
+        assertTrue(vmIdsToUpdate.contains(FixturesTool.VM_RHEL5_POOL_52));
     }
 }
