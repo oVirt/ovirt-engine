@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -195,7 +194,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         List<VmNic> allInterfaces = new ArrayList<>(interfaces);
         allInterfaces.remove(oldIface);
         allInterfaces.add(getInterface());
-        VmStatic vm = getVmStaticDAO().get(getVmId());
 
         if (!pciAndIdeWithinLimit(getVm(), allInterfaces)) {
             return false;
@@ -212,7 +210,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 || !validate(nicValidator.isCompatibleWithOs())
                 || !validate(nicValidator.emptyNetworkValid())
                 || !validate(nicValidator.hotUpdatePossible())
-                || !validate(nicValidator.profileValid(vm.getVdsGroupId()))) {
+                || !validate(nicValidator.profileValid(getVm().getVdsGroupId()))) {
             return false;
         }
 
