@@ -199,7 +199,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
      *            The result to check
      */
     private static void assertPluggedGetAllForVMResult(List<Disk> disks) {
-        Integer numberOfDisks = 2;
+        Integer numberOfDisks = 5;
         assertEquals("VM should have " + numberOfDisks + " plugged disk", numberOfDisks.intValue(), disks.size());
     }
 

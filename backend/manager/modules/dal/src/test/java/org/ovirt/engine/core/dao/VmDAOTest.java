@@ -151,7 +151,7 @@ public class VmDAOTest extends BaseDAOTestCase {
         Map<Boolean, List<VM>> result = dao.getForDisk(FixturesTool.IMAGE_GROUP_ID, true);
 
         assertNotNull(result);
-        assertEquals("wrong number of VMs with unplugged image", 1, result.get(false).size());
+        assertEquals("wrong number of VMs with unplugged image", 1, result.get(Boolean.TRUE).size());
     }
 
     /**
@@ -260,14 +260,26 @@ public class VmDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures that getting all VMs for a storage domain works as expected.
+     * Ensures that getting all VMs for a storage domain works as expected for a domain without VMs.
      */
     @Test
-    public void testGetAllForStorageDomain() {
+    public void testGetAllForStorageDomainWithVms() {
         List<VM> result = dao.getAllForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        assertEquals(FixturesTool.VM_RHEL5_POOL_57, result.get(0).getId());
+    }
+
+    /**
+     * Ensures that getting all VMs for a storage domain works as expected for a domain without VMs.
+     */
+    @Test
+    public void testGetAllForStorageDomainWithoutVMs() {
+        List<VM> result = dao.getAllForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD6);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     /**

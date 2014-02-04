@@ -5060,7 +5060,7 @@
             <value>1</value>
             <null/>
             <value>true</value>
-            <value>false</value>
+            <value>true</value>
             <value>false</value>
             <value>alias</value>
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
