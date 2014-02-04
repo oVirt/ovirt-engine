@@ -46,7 +46,7 @@ public enum ConfigValues {
 
     /**
      * Timeout for establishment of connections with hosts. This should be quite
-     * small, a few secones at most, as it the TCP handshake with hosts should
+     * small, a few seconds at most, as it the TCP handshake with hosts should
      * be very quick in most networks.
      */
     @TypeConverterAttribute(Integer.class)
