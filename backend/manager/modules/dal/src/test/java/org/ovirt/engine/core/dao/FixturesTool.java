@@ -54,6 +54,11 @@ public class FixturesTool {
     protected static final Guid STORAGE_DOAMIN_SCALE_SD5 = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
 
     /**
+     * Predefined scale storage domain.
+     */
+    protected static final Guid STORAGE_DOAMIN_SCALE_SD6 = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ac");
+
+    /**
      * Predefined vds group.
      */
     protected static final Guid VDS_GROUP_RHEL6_ISCSI = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");

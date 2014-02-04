@@ -167,10 +167,12 @@ public interface VmDAO extends DAO {
     List<VM> getAllForStorageDomain(Guid storageDomain);
 
     /**
-     * Retrieves all running VMs for the given storage domain.
+     * Retrieves all running VMs that require the given storage domain to be active.
+     * In other words, this method returns a list of VMs that have plugged disks that reside
+     * on the given storage domain.
      *
      * @param storageDomain
-     *            the storage domain
+     *            the storage domain's ID
      * @return the running VMs
      */
     List<VM> getAllActiveForStorageDomain(Guid storageDomain);
