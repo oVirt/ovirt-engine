@@ -219,11 +219,6 @@ public class DataCenterStorageListModel extends SearchableListModel
 
     public void onMaintenance()
     {
-        // Frontend.RunMultipleActions(VdcActionType.DeactivateStorageDomain,
-        // SelectedItems.Cast<storage_domains>()
-        // .Select(a => (VdcActionParametersBase)new StorageDomainPoolParametersBase(a.id, Entity.id))
-        // .ToList()
-        // );
         ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
         for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems()))
         {
@@ -269,11 +264,6 @@ public class DataCenterStorageListModel extends SearchableListModel
 
     public void activate()
     {
-        // Frontend.RunMultipleActions(VdcActionType.ActivateStorageDomain,
-        // SelectedItems.Cast<storage_domains>()
-        // .Select(a => (VdcActionParametersBase)new StorageDomainPoolParametersBase(a.id, Entity.id))
-        // .ToList()
-        // );
         ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
         for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems()))
         {
@@ -338,7 +328,6 @@ public class DataCenterStorageListModel extends SearchableListModel
                                     : new ArrayList<StorageDomain>();
                     for (StorageDomain a : list)
                     {
-                        // if (Linq.All<storage_domains>(items, delegate(storage_domains b) { return b.id != a.id; }))
                         if (!Linq.isSDItemExistInList(items, a.getId()))
                         {
                             EntityModel tempVar = new EntityModel();
@@ -474,11 +463,6 @@ public class DataCenterStorageListModel extends SearchableListModel
             return;
         }
 
-        // var items = model.Items
-        // .Cast<EntityModel>()
-        // .Where(Selector.GetIsSelected)
-        // .Select(a => (storage_domains)a.Entity)
-        // .ToList();
         ArrayList<StorageDomain> items = new ArrayList<StorageDomain>();
         for (EntityModel a : Linq.<EntityModel> cast(model.getItems()))
         {
@@ -490,11 +474,6 @@ public class DataCenterStorageListModel extends SearchableListModel
 
         if (items.size() > 0)
         {
-            // Frontend.RunMultipleActions(VdcActionType.AttachStorageDomainToPool,
-            // items
-            // .Select(a => (VdcActionParametersBase)new StorageDomainPoolParametersBase(a.id, Entity.id))
-            // .ToList()
-            // );
             ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
             for (StorageDomain a : items)
             {
