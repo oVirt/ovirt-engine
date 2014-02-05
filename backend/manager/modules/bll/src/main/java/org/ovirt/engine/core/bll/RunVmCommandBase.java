@@ -54,8 +54,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         IVdsAsyncCommand, RunVmDelayer {
 
     private static Log log = LogFactory.getLog(RunVmCommandBase.class);
-    protected boolean _isRerun = false;
-    protected VDS _destinationVds;
+    protected boolean _isRerun;
     private SnapshotsValidator snapshotsValidator=new SnapshotsValidator();
     private final List<Guid> runVdsList = new ArrayList<Guid>();
 

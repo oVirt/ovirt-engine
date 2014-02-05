@@ -13,12 +13,12 @@ import org.ovirt.engine.core.compat.Guid;
 public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> extends MigrateVmCommand<T> {
     public MigrateVmToServerCommand(T parameters) {
         super(parameters);
-        setVdsDestinationId(parameters.getVdsId());
+        setDestinationVdsId(parameters.getVdsId());
     }
 
     @Override
     protected boolean canDoAction() {
-        Guid destinationId = getVdsDestinationId();
+        Guid destinationId = getDestinationVdsId();
         VDS vds = getVdsDAO().get(destinationId);
         if (vds == null) {
             return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
@@ -55,6 +55,6 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
 
     @Override
     protected List<Guid> getVdsWhiteList() {
-        return Arrays.asList(getVdsDestinationId());
+        return Arrays.asList(getDestinationVdsId());
     }
 }

@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class MigrateVmParameters extends VmOperationParameterBase {
     private static final long serialVersionUID = -7523728706659584319L;
-    protected boolean forceMigrationForNonMigratableVM;
+    protected boolean forceMigrationForNonMigratableVm;
     ArrayList<Guid> initialHosts;
     protected Date startTime;
 
@@ -21,7 +21,7 @@ public class MigrateVmParameters extends VmOperationParameterBase {
     public MigrateVmParameters(boolean forceMigrationForNonMigratableVM, Guid vmId) {
         super(vmId);
 
-        setForceMigrationForNonMigratableVM(forceMigrationForNonMigratableVM);
+        setForceMigrationForNonMigratableVm(forceMigrationForNonMigratableVM);
     }
 
     public MigrateVmParameters(InternalMigrateVmParameters internalMigrateVmParameters) {
@@ -32,12 +32,12 @@ public class MigrateVmParameters extends VmOperationParameterBase {
         setParentCommand(internalMigrateVmParameters.getParentCommand());
     }
 
-    public boolean isForceMigrationForNonMigratableVM() {
-        return forceMigrationForNonMigratableVM;
+    public boolean isForceMigrationForNonMigratableVm() {
+        return forceMigrationForNonMigratableVm;
     }
 
-    public void setForceMigrationForNonMigratableVM(boolean forceMigrationForNonMigratableVM) {
-        this.forceMigrationForNonMigratableVM = forceMigrationForNonMigratableVM;
+    public void setForceMigrationForNonMigratableVm(boolean forceMigrationForNonMigratableVm) {
+        this.forceMigrationForNonMigratableVm = forceMigrationForNonMigratableVm;
     }
 
     public ArrayList<Guid> getInitialHosts() {

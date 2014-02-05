@@ -639,7 +639,7 @@ public class BackendVmResourceTest
     public void testMigrateWithHostId() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.MigrateVmToServer,
                                            MigrateVmToServerParameters.class,
-                                           new String[] { "VmId", "VdsId", "ForceMigrationForNonMigratableVM" },
+                                           new String[] { "VmId", "VdsId", "ForceMigrationForNonMigratableVm" },
                                            new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE }));
 
         Action action = new Action();
@@ -654,7 +654,7 @@ public class BackendVmResourceTest
 
         setUriInfo(setUpActionExpectations(VdcActionType.MigrateVmToServer,
                                            MigrateVmToServerParameters.class,
-                                           new String[] { "VmId", "VdsId", "ForceMigrationForNonMigratableVM" },
+                                           new String[] { "VmId", "VdsId", "ForceMigrationForNonMigratableVm" },
                                            new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE }));
 
         Action action = new Action();
@@ -667,7 +667,7 @@ public class BackendVmResourceTest
     public void testMigrateNoHost() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.MigrateVm,
                 MigrateVmParameters.class,
-                new String[] { "VmId", "ForceMigrationForNonMigratableVM" },
+                new String[] { "VmId", "ForceMigrationForNonMigratableVm" },
                 new Object[] { GUIDS[0], Boolean.FALSE }));
 
         verifyActionResponse(resource.migrate(new Action()));

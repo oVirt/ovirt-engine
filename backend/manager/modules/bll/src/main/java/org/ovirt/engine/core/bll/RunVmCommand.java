@@ -94,11 +94,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     /** This flag is used to indicate that the disks might be dirty since the memory
      *  from the active snapshot was restored so the memory should not be used */
     private boolean memoryFromSnapshotIrrelevant;
+    private VDS cachedDestinationVds;
 
     private Guid cachedActiveIsoDomainId;
 
     public static final String ISO_PREFIX = "iso://";
     public static final String STATELESS_SNAPSHOT_DESCRIPTION = "stateless snapshot";
+
+    private static final Log log = LogFactory.getLog(RunVmCommand.class);
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
@@ -113,17 +116,23 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected VDS getDestinationVds() {
-        if (_destinationVds == null) {
-            Guid vdsId =
-                    getParameters().getDestinationVdsId() != null ? getParameters().getDestinationVdsId()
-                            : getVm().getDedicatedVmForVds() != null ? new Guid(getVm().getDedicatedVmForVds()
-                                    .toString())
-                                    : null;
+        if (cachedDestinationVds == null) {
+            Guid vdsId = null;
+
+            if (getVm().getDedicatedVmForVds() != null) {
+                vdsId = getVm().getDedicatedVmForVds();
+            }
+
+            // destination VDS ID is stronger than the dedicated VDS
+            if (getParameters().getDestinationVdsId() != null) {
+                vdsId = getParameters().getDestinationVdsId();
+            }
+
             if (vdsId != null) {
-                _destinationVds = getVdsDAO().get(vdsId);
+                cachedDestinationVds = getVdsDAO().get(vdsId);
             }
         }
-        return _destinationVds;
+        return cachedDestinationVds;
     }
 
     private void initRunVmCommand() {
@@ -283,7 +292,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             } else if (!isInternalExecution() && !_isRerun
                     && getVm().getStatus() != VMStatus.Suspended
                     && isStatelessSnapshotExistsForVm()
-                    && !isVMPartOfManualPool()) {
+                    && !isVmPartOfManualPool()) {
                 removeVmStatlessImages();
             } else {
                 runVm();
@@ -922,8 +931,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return permissionList;
     }
 
-    private static final Log log = LogFactory.getLog(RunVmCommand.class);
-
     @Override
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
     }
@@ -941,7 +948,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return list;
     }
 
-    private boolean isVMPartOfManualPool() {
+    private boolean isVmPartOfManualPool() {
         if (getVm().getVmPoolId() == null) {
             return false;
         }
