@@ -147,6 +147,9 @@ public class BackendVmDisksResource
                 parameters.setStorageDomainId(storageDomainId);
             }
         }
+        if (disk.isSetActive()) {
+            parameters.setPlugDiskToVm(disk.isActive());
+        }
         return parameters;
     }
 
