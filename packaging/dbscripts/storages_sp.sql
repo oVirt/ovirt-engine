@@ -119,6 +119,16 @@ BEGIN
         WHERE  storage_pool_id = v_id);
     delete FROM vm_static where vm_guid in (select vm_guid from vms where storage_pool_id = v_id);
 
+    -- Delete vm pools as empty pools are not supported
+    -- Get (and keep) a shared lock with "right to upgrade to exclusive"
+    select vm_pool_id INTO v_val FROM vm_pools where vm_pool_id in (select vm_pool_id from vm_pools_view where storage_pool_id = v_id) FOR UPDATE;
+    DELETE
+    FROM   vm_pools
+    WHERE  vm_pool_id IN (
+        SELECT vm_pool_id
+        FROM   vm_pools_view
+        WHERE  storage_pool_id = v_id);
+
 	-- Get (and keep) a shared lock with "right to upgrade to exclusive"
 	-- in order to force locking parent before children
    select   id INTO v_val FROM storage_pool  WHERE id = v_id     FOR UPDATE;

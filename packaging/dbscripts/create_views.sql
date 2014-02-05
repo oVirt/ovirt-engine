@@ -836,7 +836,7 @@ CREATE OR REPLACE VIEW vm_pools_view AS
  vm_pools.spice_proxy as spice_proxy
    FROM vm_pools
    JOIN vds_groups ON vm_pools.vds_group_id = vds_groups.vds_group_id
-   JOIN storage_pool ON storage_pool.id = vds_groups.storage_pool_id;
+   LEFT JOIN storage_pool ON storage_pool.id = vds_groups.storage_pool_id;
 
 
 
