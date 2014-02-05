@@ -36,6 +36,10 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public class SetupNetworksCommand<T extends SetupNetworksParameters> extends VdsCommand<T> {
 
+    public static enum SETUP_NETWORKS_RESOLUTION {
+        NO_CHANGES_DETECTED;
+    };
+
     /** Time between polling attempts, to prevent flooding the host/network. */
     private static final long POLLING_BREAK = 500;
     private static final List<VDSStatus> SUPPORTED_HOST_STATUSES =
@@ -87,6 +91,14 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         if (noChangesDetected()) {
             if (!getModifiedInterfaces().isEmpty()) {
                 updateModifiedInterfaces();
+            }
+
+            log.infoFormat("No changes were detected in setup networks for host {0} (ID: {1})",
+                    getVdsName(),
+                    getVdsId());
+
+            if (isInternalExecution()) {
+                setActionReturnValue(SETUP_NETWORKS_RESOLUTION.NO_CHANGES_DETECTED);
             }
 
             setSucceeded(true);
