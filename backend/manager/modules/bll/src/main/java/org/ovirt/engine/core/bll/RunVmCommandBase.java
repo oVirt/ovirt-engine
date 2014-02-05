@@ -119,18 +119,20 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             // if there was no rerun attempt in the previous executeAction call and the command
             // wasn't done because canDoAction check returned false..
             if (!_isRerun && !getReturnValue().getCanDoAction()) {
-                failedToRunVm();
+                runningFailed();
             }
 
             // signal the caller that a rerun was made
             _isRerun = true;
         } else {
-            Backend.getInstance().getResourceManager().RemoveAsyncRunningCommand(getVmId());
-            failedToRunVm();
+            runningFailed();
         }
     }
 
-    protected void failedToRunVm() {
+    protected void runningFailed() {
+        Backend.getInstance().getResourceManager().RemoveAsyncRunningCommand(getVmId());
+        _isRerun = false;
+        setSucceeded(false);
         log();
         processVmPoolOnStopVm();
         ExecutionHandler.setAsyncJob(getExecutionContext(), false);

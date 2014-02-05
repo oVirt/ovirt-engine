@@ -253,9 +253,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         else {
             setCommandShouldBeLogged(false);
-            setSucceeded(false);
-            _isRerun = false;
-            failedToRunVm();
+            runningFailed();
         }
     }
 
@@ -869,11 +867,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     @Override
-    protected void failedToRunVm() {
+    protected void runningFailed() {
         if (memoryFromSnapshotIrrelevant) {
             removeMemoryFromActiveSnapshot();
         }
-        super.failedToRunVm();
+        super.runningFailed();
     }
 
     private void removeMemoryFromActiveSnapshot() {
