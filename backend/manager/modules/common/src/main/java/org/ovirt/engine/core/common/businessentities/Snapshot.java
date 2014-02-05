@@ -271,7 +271,7 @@ public class Snapshot extends IVdcQueryable implements BusinessEntityWithStatus<
         BROKEN
     }
 
-    public enum SnapshotType {
+    public static enum SnapshotType {
         REGULAR("Regular"),
         ACTIVE("Active"),
         STATELESS("Stateless"),
@@ -283,6 +283,7 @@ public class Snapshot extends IVdcQueryable implements BusinessEntityWithStatus<
             this.typeName = typeName;
         }
 
+        @Override
         public String toString() {
             return typeName;
         }
