@@ -793,7 +793,7 @@ CREATE OR REPLACE VIEW vm_pools_view AS
  SELECT vm_pools.vm_pool_id, vm_pools.vm_pool_name, vm_pools.vm_pool_description, vm_pools.vm_pool_comment, vm_pools.vm_pool_type, vm_pools.parameters, vm_pools.prestarted_vms, vm_pools.vds_group_id, vds_groups.name AS vds_group_name, storage_pool.name as storage_pool_name, storage_pool.id as storage_pool_id, vm_pools.max_assigned_vms_per_user as max_assigned_vms_per_user
    FROM vm_pools
    JOIN vds_groups ON vm_pools.vds_group_id = vds_groups.vds_group_id
-   JOIN storage_pool ON storage_pool.id = vds_groups.storage_pool_id;
+   LEFT JOIN storage_pool ON storage_pool.id = vds_groups.storage_pool_id;
 
 
 
