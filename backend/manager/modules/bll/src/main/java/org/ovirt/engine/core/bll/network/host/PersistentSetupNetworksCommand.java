@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.host;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
+import org.ovirt.engine.core.bll.network.host.SetupNetworksCommand.SETUP_NETWORKS_RESOLUTION;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -25,7 +26,8 @@ public class PersistentSetupNetworksCommand<T extends SetupNetworksParameters> e
     @Override
     protected void executeCommand() {
         VdcReturnValueBase returnValue = getBackend().runInternalAction(VdcActionType.SetupNetworks, getParameters());
-        if (returnValue.getSucceeded()) {
+        if (returnValue.getSucceeded()
+                && SETUP_NETWORKS_RESOLUTION.NO_CHANGES_DETECTED != returnValue.getActionReturnValue()) {
             returnValue =
                     getBackend().runInternalAction(VdcActionType.CommitNetworkChanges,
                             new VdsActionParameters(getParameters().getVdsId()));
