@@ -328,8 +328,8 @@ public class BookmarkListModel extends SearchableListModel
         if (returnValue != null && returnValue.getSucceeded())
         {
             cancel();
-            // Cancel() triggers a force refresh
-            // getSearchCommand().Execute();
+            //Refresh the bookmarks.
+            getSearchCommand().execute();
         }
 
         privateItemSavedEvent.raise(this, EventArgs.EMPTY);
