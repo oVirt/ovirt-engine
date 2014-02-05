@@ -807,7 +807,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.NETWORK_HOST_USING_WRONG_CLUSER_VLAN, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.NETWORK_HOST_MISSING_CLUSER_VLAN, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.NETWORK_COMMINT_NETWORK_CHANGES, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.NETWORK_COMMINT_NETWORK_CHANGES_FAILED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.NETWORK_COMMINT_NETWORK_CHANGES_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.MAC_POOL_EMPTY, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.MAC_ADDRESS_IS_IN_USE, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.MAC_ADDRESS_IS_IN_USE_UNPLUG, AuditLogSeverity.WARNING);
