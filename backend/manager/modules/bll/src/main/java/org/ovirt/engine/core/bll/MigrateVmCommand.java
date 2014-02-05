@@ -52,7 +52,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     /**
      * this property is used for audit log events
      */
-    public String getVdsDestination() {
+    public final String getDestinationVdsName() {
         return getDestinationVds() != null ? getDestinationVds().getName() : null;
     }
 
