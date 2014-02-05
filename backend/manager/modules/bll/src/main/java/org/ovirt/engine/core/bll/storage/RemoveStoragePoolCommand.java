@@ -326,7 +326,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             }
             for (StorageDomain domain : poolDomains) {
                 // check that there are no images on data domains
-                if ((domain.getStorageDomainType() == StorageDomainType.Data || domain.getStorageDomainType() == StorageDomainType.Master)
+                if (domain.getStorageDomainType().isDataDomain()
                         && getDbFacade().getDiskImageDao().getAllSnapshotsForStorageDomain(domain.getId()).size() != 0) {
                     return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_IMAGES);
                 }

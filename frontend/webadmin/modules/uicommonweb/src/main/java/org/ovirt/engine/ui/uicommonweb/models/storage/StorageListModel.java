@@ -804,8 +804,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 removeStorageModel.getHostList().setItems(hosts);
                 removeStorageModel.getHostList().setSelectedItem(Linq.firstOrDefault(hosts));
                 removeStorageModel.getFormat()
-                        .setIsAvailable(storage.getStorageDomainType() == StorageDomainType.ISO
-                                || storage.getStorageDomainType() == StorageDomainType.ImportExport);
+                        .setIsAvailable(storage.getStorageDomainType().isIsoOrImportExportDomain());
 
                 if (hosts.isEmpty()) {
                     UICommand tempVar = createCancelCommand("Cancel"); //$NON-NLS-1$
@@ -841,7 +840,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             RemoveStorageDomainParameters tempVar = new RemoveStorageDomainParameters(storage.getId());
             tempVar.setVdsId(host.getId());
-            tempVar.setDoFormat((storage.getStorageDomainType() == StorageDomainType.Data || storage.getStorageDomainType() == StorageDomainType.Master) ? true
+            tempVar.setDoFormat(storage.getStorageDomainType().isDataDomain() ? true
                 : (Boolean) model.getFormat().getEntity());
 
             Frontend.getInstance().runAction(VdcActionType.RemoveStorageDomain, tempVar, null, this);
@@ -1079,8 +1078,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             StorageDomain storage = (StorageDomain) getSelectedItem();
             boolean isBackupStorage = storage.getStorageDomainType() == StorageDomainType.ImportExport;
             boolean isDataStorage =
-                    storage.getStorageDomainType() == StorageDomainType.Data
-                            || storage.getStorageDomainType() == StorageDomainType.Master;
+                    storage.getStorageDomainType().isDataDomain();
             boolean isImageStorage =
                      storage.getStorageDomainType() == StorageDomainType.Image ||
                      storage.getStorageDomainType() == StorageDomainType.ISO;
@@ -1158,7 +1156,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
         boolean isInMaintenance = (storageDomain.getStatus() == StorageDomainStatus.Maintenance);
         boolean isUnattached = (storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
-        boolean isDataDomain = (storageDomain.getStorageDomainType() == StorageDomainType.Data) || (storageDomain.getStorageDomainType() == StorageDomainType.Master);
+        boolean isDataDomain = storageDomain.getStorageDomainType().isDataDomain();
         boolean isBlockStorage = storageDomain.getStorageType().isBlockDomain();
 
         isEditAvailable = isActive || isBlockStorage || ((isInMaintenance || isUnattached) && isDataDomain);

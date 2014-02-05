@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -359,7 +358,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         for (StorageDomain storageDomain : (ArrayList<StorageDomain>) returnValue)
                         {
                             if (storageDomain.getStatus() == StorageDomainStatus.Active
-                                    && (storageDomain.getStorageDomainType() == StorageDomainType.Data || storageDomain.getStorageDomainType() == StorageDomainType.Master))
+                                    && storageDomain.getStorageDomainType().isDataDomain())
                             {
                                 activeStorageDomainList.add(storageDomain);
                             }

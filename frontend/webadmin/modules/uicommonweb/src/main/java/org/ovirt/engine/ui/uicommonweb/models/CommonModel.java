@@ -6,7 +6,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
@@ -386,9 +385,7 @@ public class CommonModel extends ListModel
         if (type == SystemTreeItemType.Storage && entity != null)
         {
             StorageDomain storage = (StorageDomain) entity;
-            isDataStorage =
-                    storage.getStorageDomainType() == StorageDomainType.Data
-                            || storage.getStorageDomainType() == StorageDomainType.Master;
+            isDataStorage = storage.getStorageDomainType().isDataDomain();
         }
 
         diskList.setIsAvailable(type == SystemTreeItemType.DataCenter

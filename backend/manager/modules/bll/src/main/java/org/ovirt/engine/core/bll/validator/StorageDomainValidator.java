@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
@@ -43,8 +42,7 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult domainIsValidDestination() {
-        if (storageDomain.getStorageDomainType() == StorageDomainType.ISO
-                || storageDomain.getStorageDomainType() == StorageDomainType.ImportExport) {
+        if (storageDomain.getStorageDomainType().isIsoOrImportExportDomain()) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
         return ValidationResult.VALID;

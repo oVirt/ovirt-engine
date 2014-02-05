@@ -241,7 +241,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
 
     private boolean isStorageDomainOfTypeIsoOrExport(StorageDomain storageDomain) {
-        return storageDomain.getStorageDomainType() == StorageDomainType.ISO || storageDomain.getStorageDomainType() == StorageDomainType.ImportExport;
+        return storageDomain.getStorageDomainType().isIsoOrImportExportDomain();
     }
 
     /**
@@ -379,8 +379,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
      * @return
      */
     protected boolean isStorageDomainFormatCorrectForDC(StorageDomain storageDomain, StoragePool storagePool) {
-        if (storageDomain.getStorageDomainType() == StorageDomainType.ISO
-                || storageDomain.getStorageDomainType() == StorageDomainType.ImportExport) {
+        if (storageDomain.getStorageDomainType().isIsoOrImportExportDomain()) {
             return true;
         }
         Set<StorageFormatType> supportedFormatsSet =

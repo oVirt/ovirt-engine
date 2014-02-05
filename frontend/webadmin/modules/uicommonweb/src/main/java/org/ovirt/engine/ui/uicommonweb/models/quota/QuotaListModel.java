@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -233,8 +232,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                         ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
                         QuotaStorage quotaStorage;
                         for (StorageDomain storage : storageList) {
-                            if (!storage.getStorageDomainType().equals(StorageDomainType.Master)
-                                    && !storage.getStorageDomainType().equals(StorageDomainType.Data)) {
+                            if (!storage.getStorageDomainType().isDataDomain()) {
                                 continue;
                             }
                             quotaStorage = new QuotaStorage();
@@ -504,8 +502,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                 ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
                                 QuotaStorage quotaStorage;
                                 for (StorageDomain storage : storageList) {
-                                    if (!storage.getStorageDomainType().equals(StorageDomainType.Master)
-                                            && !storage.getStorageDomainType().equals(StorageDomainType.Data)) {
+                                    if (!storage.getStorageDomainType().isDataDomain()) {
                                         continue;
                                     }
                                     quotaStorage = new QuotaStorage();

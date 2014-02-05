@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -425,8 +424,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     return false;
                 }
 
-                if (storage.getStorageDomainType() == StorageDomainType.ImportExport
-                        || storage.getStorageDomainType() == StorageDomainType.ISO) {
+                if (storage.getStorageDomainType().isIsoOrImportExportDomain()) {
 
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                     return false;

@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -197,7 +196,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     }
 
     protected boolean isDomainInEditState(StorageDomain storageDomain) {
-        boolean isEditable = (storageDomain.getStorageDomainType() == StorageDomainType.Data || storageDomain.getStorageDomainType() == StorageDomainType.Master)
+        boolean isEditable = storageDomain.getStorageDomainType().isDataDomain()
                 && (storageDomain.getStatus() == StorageDomainStatus.Maintenance || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
         return isEditable;
     }

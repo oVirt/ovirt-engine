@@ -285,8 +285,7 @@ public final class Linq
 
     public static boolean isDataActiveStorageDomain(StorageDomain storageDomain)
     {
-        boolean isData = storageDomain.getStorageDomainType() == StorageDomainType.Data ||
-                storageDomain.getStorageDomainType() == StorageDomainType.Master;
+        boolean isData = storageDomain.getStorageDomainType().isDataDomain();
 
         boolean isActive = isActiveStorageDomain(storageDomain);
 

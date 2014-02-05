@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -52,7 +51,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                             new Predicate<StorageDomain>() {
                                 @Override
                                 public boolean eval(StorageDomain a) {
-                                    return (a.getStorageDomainType() != StorageDomainType.ISO && a.getStorageDomainType() != StorageDomainType.ImportExport)
+                                    return (!a.getStorageDomainType().isIsoOrImportExportDomain())
                                             && (a.getStatus() != null) && (a.getStatus() == StorageDomainStatus.Active);
                                 }
                             });

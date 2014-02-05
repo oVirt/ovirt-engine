@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.EditableOnVm;
 import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -690,8 +689,7 @@ public class VmHandler {
             long reservedSizeForDisks = domain2reservedSpaceInDomain.containsKey(currDomain) ?
                     domain2reservedSpaceInDomain.get(currDomain) : 0;
             long sizeNeeded = sizeRequested + reservedSizeForDisks;
-            if ((currDomain.getStorageDomainType().equals(StorageDomainType.Master)
-                    || currDomain.getStorageDomainType().equals(StorageDomainType.Data))
+            if (currDomain.getStorageDomainType().isDataDomain()
                     && currDomain.getStatus() == StorageDomainStatus.Active
                     && doesStorageDomainHaveSpaceForRequest(currDomain, sizeNeeded)) {
                 return currDomain;

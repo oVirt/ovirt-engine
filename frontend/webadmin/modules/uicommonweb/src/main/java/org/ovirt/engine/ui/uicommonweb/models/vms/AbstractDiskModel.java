@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -372,9 +371,7 @@ public abstract class AbstractDiskModel extends DiskModel
                 ArrayList<StorageDomain> filteredStorageDomains = new ArrayList<StorageDomain>();
                 for (StorageDomain a : storageDomains)
                 {
-                    if (a.getStorageDomainType() != StorageDomainType.ISO
-                            && a.getStorageDomainType() != StorageDomainType.ImportExport
-                            && a.getStatus() == StorageDomainStatus.Active)
+                    if (!a.getStorageDomainType().isIsoOrImportExportDomain() && a.getStatus() == StorageDomainStatus.Active)
                     {
                         filteredStorageDomains.add(a);
                     }

@@ -356,8 +356,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         ArrayList<StorageDomain> attachedDataStorages = new ArrayList<StorageDomain>();
         for (StorageDomain a : attachedStorageDomains)
         {
-            if (a.getStorageDomainType() == StorageDomainType.Data
-                    || a.getStorageDomainType() == StorageDomainType.Master)
+            if (a.getStorageDomainType().isDataDomain())
             {
                 attachedDataStorages.add(a);
             }
