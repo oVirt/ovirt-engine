@@ -24,10 +24,4 @@ public class FullUnitToVmBaseBuilder extends CompositeBuilder<UnitVmModel, VmBas
                 new UsbPolicyUnitToVmBaseBuilder()
         );
     }
-
-    @Override
-    protected void postBuild(UnitVmModel model, VmBase vm) {
-        vm.setComment(model.getComment().getEntity());
-        vm.setDescription(model.getDescription().getEntity());
-    }
 }

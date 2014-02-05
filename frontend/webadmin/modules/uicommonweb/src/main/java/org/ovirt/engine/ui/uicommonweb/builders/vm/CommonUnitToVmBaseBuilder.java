@@ -22,6 +22,8 @@ public class CommonUnitToVmBaseBuilder extends CompositeBuilder<UnitVmModel, VmB
     @Override
     protected void postBuild(UnitVmModel model, VmBase vm) {
         vm.setAutoStartup(model.getIsHighlyAvailable().getEntity());
+        vm.setComment(model.getComment().getEntity());
+        vm.setDescription(model.getDescription().getEntity());
         vm.setPriority(model.getPriority().getSelectedItem().getEntity());
         vm.setRunAndPause(model.getIsRunAndPause().getEntity());
         vm.setStateless(model.getIsStateless().getEntity());

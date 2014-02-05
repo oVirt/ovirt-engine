@@ -151,6 +151,8 @@ public class BaseVmListModelTest {
         assertTrue(vm.isAutoStartup());
         assertEquals(QUOTA_ID, vm.getQuotaId());
         assertEquals(PRIORITY, vm.getPriority());
+        assertEquals(DESCRIPTION, vm.getDescription());
+        assertEquals(COMMENT, vm.getComment());
     }
 
     /**
@@ -172,8 +174,6 @@ public class BaseVmListModelTest {
 
         assertEquals(HOST_ID, vm.getDedicatedVmForVds());
         assertEquals(VM_NAME, vm.getName());
-        assertEquals(DESCRIPTION, vm.getDescription());
-        assertEquals(COMMENT, vm.getComment());
         assertEquals(USB_POLICY, vm.getUsbPolicy());
 
     }

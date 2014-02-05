@@ -66,7 +66,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     @EditableField
     private boolean disabled;
 
-    public VmTemplate(int childCount, Date creationDate, String description, int memSizeMb, String name,
+    public VmTemplate(int childCount, Date creationDate, String description, String comment, int memSizeMb, String name,
             int numOfSockets, int cpuPerSocket, int osId, Guid vdsGroupId, Guid vmtGuid,
             int numOfMonitors, boolean singleQxlPci, int status, int usbPolicy, String timeZone, int niceLevel,
             int cpuShares, boolean failBack, BootSequence defaultBootSequence, VmType vmType,
@@ -82,7 +82,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 osId,
                 creationDate,
                 description,
-                "",
+                comment,
                 memSizeMb,
                 numOfSockets,
                 cpuPerSocket,
