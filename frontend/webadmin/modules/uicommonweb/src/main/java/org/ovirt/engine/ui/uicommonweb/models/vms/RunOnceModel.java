@@ -651,7 +651,7 @@ public abstract class RunOnceModel extends Model
         setIsWindowsOS(AsyncDataProvider.isWindowsOsType(vm.getVmOsId()));
         getIsVmFirstRun().setEntity(!vm.isInitialized());
 
-        initVmInitEnabled(vm.getVmInit());
+        initVmInitEnabled(vm.getVmInit(), vm.isInitialized());
         getVmInit().init(vm.getStaticData());
 
         setCustomPropertiesKeysList(customPropertiesKeysList);
@@ -678,12 +678,12 @@ public abstract class RunOnceModel extends Model
                 vncProtocol : qxlProtocol);
     }
 
-    private void initVmInitEnabled(VmInit vmInit) {
+    private void initVmInitEnabled(VmInit vmInit, boolean isInitialized) {
         if (vmInit == null) {
             getIsCloudInitEnabled().setEntity(false);
             getIsSysprepEnabled().setEntity(false);
             getAttachFloppy().setEntity(false);
-        } else {
+        } else if (!isInitialized) {
             if (getIsWindowsOS()) {
                 getIsSysprepEnabled().setEntity(true);
                 getAttachFloppy().setEntity(true);

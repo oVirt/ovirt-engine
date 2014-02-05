@@ -292,7 +292,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         kernelParamsEditor.setLabel(constants.runOncePopupKernelParamsLabel());
 
         // Cloud Init
-        cloudInitEnabledEditor.setLabel(constants.runOncePopupCloudInitLabe());
+        cloudInitEnabledEditor.setLabel(constants.runOncePopupCloudInitLabel());
 
         // WindowsSysprep
         sysprepToEnableLabel.setText(constants.runOnceSysPrepToEnableLabel());
