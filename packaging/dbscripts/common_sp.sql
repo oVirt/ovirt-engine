@@ -337,7 +337,7 @@ BEGIN
    -- bytes:
    v_external_id := decode(replace(v_user_id::text, '-', ''), 'hex');
 
-insert into users(user_id,external_id,name,domain,username,groups,active) select input_uuid, v_external_id, v_name, v_domain, v_user_name,'',true where not exists (select user_id,name,domain,username,groups,active from users where user_id = input_uuid);
+insert into users(user_id,external_id,name,domain,username,groups,active,last_admin_check_status) select input_uuid, v_external_id, v_name, v_domain, v_user_name,'',true,true where not exists (select user_id,name,domain,username,groups,active from users where user_id = input_uuid);
 
 insert into permissions(id,role_id,ad_element_id,object_id,object_type_id) select v_permission_id, '00000000-0000-0000-0000-000000000001', input_uuid, getGlobalIds('system'), 1 where not exists(select role_id,ad_element_id,object_id,object_type_id from permissions where role_id = '00000000-0000-0000-0000-000000000001' and ad_element_id = input_uuid and object_id= getGlobalIds('system') and object_type_id = 1);
 END; $BODY$
