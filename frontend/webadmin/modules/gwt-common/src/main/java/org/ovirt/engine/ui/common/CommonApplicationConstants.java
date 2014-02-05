@@ -155,7 +155,7 @@ public interface CommonApplicationConstants extends Constants {
     String runOncePopupBootSequenceLabel();
 
     @DefaultStringValue("Use Cloud-Init")
-    String runOncePopupCloudInitLabe();
+    String runOncePopupCloudInitLabel();
 
     @DefaultStringValue("VM Hostname")
     String cloudInitHostnameLabel();
