@@ -169,33 +169,44 @@ To expose CSS class defined in ui.xml template via <ui:style> element:
 MAINTENANCE - ADDING A BRANDED MESSAGE
 --------------------------------------
 
-All branded messages feed into the application via the host page and then via the
-ApplicationDynamicMessages classes. To added a new branded message to the application:
+All branded messages feed into the application via the host page and then
+via the ApplicationDynamicMessages classes. To add a new branded message
+to the application:
 
-1. add a property to messages.properties or external_messages.properties in the form of
-    obrand.webadmin.my_new_message=BrandX Message
-    obrand.userportal.my_new_message=BrandX Message
-  You'll need to add one for both webadmin and userportal if you want the message
-  exposed to both applications.
-  NOTE: Use messages.properties for any messages that will need to be translated into
-  other languages. Use external_messages.properties for anything else, like URLs.
-2. in DynamicMessages.java, add a key to the DynamicMessageKey enum for your property.
-3. in DynamicMessages.java, add a getter for your property. Use the existing getters
-  as examples.
-4a. If the message will be exposed to webadmin, add a constant to the webadmin copy
-  of ApplicationConstants.java. This will be used as a fallback if the branding files
-  are missing. Example:
-    @DefaultStringValue("BrandX Message")
-    String myNewMessage();
-4b. If the message will be exposed to webadmin, repeat 4a for userportal's copy of
-  ApplicationConstants.java.
-5a. If the message will be exposed to webadmin, add an addFallback() call in webadmin's
-  copy of ApplicationDynamicMessages.java. Use existing calls as examples.
-5b. If the message will be exposed to webadmin, repeat 5a for userportal's copy of
-  ApplicationDynamicMessages.java.
+1.  add a property to messages.properties or external_messages.properties
+    in the form of:
+      obrand.webadmin.my_new_message=BrandX Message
+      obrand.userportal.my_new_message=BrandX Message
+    You'll need to add one for both webadmin and userportal if you want
+    the message exposed to both applications. If you want the same message
+    in both user portal and webadmin you can use obrand.common.my_new_message
+    and it will be available in both. If you want to use the same key but
+    have different message you can use the above.
+    NOTE: Use messages.properties for any messages that will need to be
+    translated into other languages. Use external_messages.properties for
+    anything else, like URLs.
+2.  in DynamicMessages.java, add a key to the DynamicMessageKey enum for
+    your property.
+3.  in DynamicMessages.java, add a getter for your property. Use the existing
+    getters as examples.
+4a. If the message will be exposed to webadmin, add a constant to the webadmin
+    copy of ApplicationConstants.java. This will be used as a fallback if the
+    branding files are missing. Example:
+      @DefaultStringValue("BrandX Message")
+      String myNewMessage();
+4b. If the message will be exposed to userportal, repeat 4a for userportal's
+    copy of ApplicationConstants.java.
+5a. If the message will be exposed to webadmin, add an addFallback() call in
+    webadmin's copy of ApplicationDynamicMessages.java. Use existing calls as
+    examples.
+5b. If the message will be exposed to userportal, repeat 5a for userportal's
+    copy of ApplicationDynamicMessages.java.
 
-You can now use an injected ApplicationDynamicMessages to access the branded messages.
+You can now use an injected ApplicationDynamicMessages to access the branded
+messages.
+
 Example:
   Anchor x = new Anchor(dynamicMessages.myNewMessage());
+
 See HeaderView.java for a real-world example.
 
