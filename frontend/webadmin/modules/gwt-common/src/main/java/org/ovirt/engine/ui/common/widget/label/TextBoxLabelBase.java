@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.ValueBoxBase;
 public abstract class TextBoxLabelBase<T> extends ValueBoxBase<T> {
 
     private T value;
+    private String tooltipCaption;
 
     private TextBoxLabelBase(Renderer<T> renderer, Parser<T> parser) {
         super(Document.get().createTextInputElement(), renderer, parser);
@@ -53,6 +54,16 @@ public abstract class TextBoxLabelBase<T> extends ValueBoxBase<T> {
     }
 
     @Override
+    public void setText(String text) {
+        super.setText(text);
+        String renderedText = text;
+        if (getTooltipCaption() != null) {
+            renderedText = getTooltipCaption() + ": " + renderedText; //$NON-NLS-1$
+        }
+        setTitle(renderedText);
+    }
+
+    @Override
     public T getValueOrThrow() throws ParseException {
         // Suppress rendered text parsing logic,
         // return the value that was set previously
@@ -75,5 +86,14 @@ public abstract class TextBoxLabelBase<T> extends ValueBoxBase<T> {
             }
         }, MouseDownEvent.getType());
     }
+
+    public String getTooltipCaption() {
+        return tooltipCaption;
+    }
+
+    public void setTooltipCaption(String tooltipCaption) {
+        this.tooltipCaption = tooltipCaption;
+    }
+
 
 }

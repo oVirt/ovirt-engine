@@ -13,7 +13,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 public class TextBoxLabel extends TextBoxLabelBase<String> {
 
     private boolean hasFocus = false;
-    private String tooltipCaption;
 
     public TextBoxLabel() {
         super(new EmptyValueRenderer<String>() {
@@ -68,12 +67,6 @@ public class TextBoxLabel extends TextBoxLabelBase<String> {
         final int cursorPosition = getCursorPos();
         final int selectionLength = getSelectionLength();
 
-        String renderedText = text;
-        if (getTooltipCaption() != null) {
-            renderedText = getTooltipCaption() + ": " + renderedText; //$NON-NLS-1$
-        }
-        setTitle(renderedText);
-
         if (hasFocus) {
             // Needs to be deferred, because the setSelection works
             // only after the element has been attached to the document
@@ -86,14 +79,6 @@ public class TextBoxLabel extends TextBoxLabelBase<String> {
                 }
             });
         }
-    }
-
-    public String getTooltipCaption() {
-        return tooltipCaption;
-    }
-
-    public void setTooltipCaption(String tooltipCaption) {
-        this.tooltipCaption = tooltipCaption;
     }
 
 }
