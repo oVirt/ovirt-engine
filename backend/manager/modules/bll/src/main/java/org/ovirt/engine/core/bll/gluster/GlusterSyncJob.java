@@ -467,7 +467,12 @@ public class GlusterSyncJob extends GlusterJob {
         }
 
         for (GlusterBrickEntity brick : volume.getBricks()) {
-            if (brick.getServerId() == null) {
+            if (brick == null) {
+                log.warnFormat("Volume {0} contains a apparently corrupt brick(s). " +
+                        "Hence will not add it to engine at this point.",
+                        volume.getName());
+                return;
+            } else if (brick.getServerId() == null) {
                 log.warnFormat("Volume {0} contains brick(s) from unknown hosts. " +
                         "Hence will not add it to engine at this point.",
                         volume.getName());
