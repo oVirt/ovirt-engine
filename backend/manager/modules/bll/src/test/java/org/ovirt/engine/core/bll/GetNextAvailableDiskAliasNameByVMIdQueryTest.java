@@ -35,10 +35,10 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
     }
 
     @Test
-    public void testExecuteQuery() throws Exception {
+    public void testExecuteQueryVmWithNoDisks() throws Exception {
         mockDAOForQuery();
         vm = mockVmAndReturnFromDAO();
-        String diskAliasName = VM_NAME + "_Disk1";
+        String diskAliasName = ImagesHandler.getDefaultDiskAlias(vm.getName(), "1");
 
         // Execute query.
         getQuery().executeQueryCommand();
@@ -56,18 +56,47 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
     }
 
     @Test
-    public void testExecuteQueryWithOneImage() throws Exception {
+    public void testExecuteQueryVmWithMultipleDisks() throws Exception {
         mockDAOForQuery();
         vm = mockVmAndReturnFromDAO();
-        Map<Guid, Disk> diskMap = vm.getDiskMap();
-        DiskImage diskImage = new DiskImage();
-        diskImage.setImageId(Guid.newGuid());
-        diskMap.put(diskImage.getId(), diskImage);
-        String diskAliasName = VM_NAME + "_Disk2";
+        populateVmDiskMap(vm, 5);
+        String expectedDiskAlias = ImagesHandler.getDefaultDiskAlias(vm.getName(), "6");
 
-        // Execute query.
         getQuery().executeQueryCommand();
-        assertEquals(diskAliasName, getQuery().getQueryReturnValue().getReturnValue());
+        assertEquals(expectedDiskAlias, getQuery().getQueryReturnValue().getReturnValue());
+    }
+
+    /**
+     * When removing a disk from VM with n disks the default disk alias will be VM_DISK{n} yet this alias is already
+     * taken since we created n disks to begin with, this test asserts that the suggested alias returned by this query
+     * will be VM_DISK{n+1}
+     */
+    @Test
+    public void testExecuteQueryNotOverlappingExisting() throws Exception {
+        mockDAOForQuery();
+        vm = mockVmAndReturnFromDAO();
+        populateVmDiskMap(vm, 5);
+
+        vm.getDiskMap().remove(vm.getDiskMap().entrySet().iterator().next());
+
+        String expectedDiskAlias = ImagesHandler.getDefaultDiskAlias(vm.getName(), "6");
+
+        getQuery().executeQueryCommand();
+        assertEquals(expectedDiskAlias, getQuery().getQueryReturnValue().getReturnValue());
+    }
+
+    /**
+     * Populates the VM disk map with the amount of disks specified, each with a default disk alias
+     */
+    private void populateVmDiskMap(VM vm, int numOfDisks) {
+        Map<Guid, Disk> diskMap = vm.getDiskMap();
+
+        for (Integer i = 0; i < numOfDisks; i++) {
+            DiskImage diskImage = new DiskImage();
+            diskImage.setId(Guid.newGuid());
+            diskImage.setDiskAlias(ImagesHandler.getDefaultDiskAlias(vm.getName(), i.toString()));
+            diskMap.put(diskImage.getId(), diskImage);
+        }
     }
 
    /**
