@@ -81,6 +81,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, List<DiskImage>> sourceImageDomainsImageMap;
     private boolean isVmInDb;
+    private boolean pendingAsyncTasks;
 
     private static final String BASE_TEMPLATE_VERSION_NAME = "base version";
     private static Map<Guid, String> updateVmsJobIdMap = new ConcurrentHashMap<Guid, String>();
@@ -154,7 +155,15 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE : AuditLogType.USER_FAILED_ADD_VM_TEMPLATE;
+            if (isVmInDb) {
+                if (pendingAsyncTasks) {
+                    return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE : AuditLogType.USER_FAILED_ADD_VM_TEMPLATE;
+                } else {
+                    return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_SUCCESS : AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_FAILURE;
+                }
+            } else {
+                return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_SUCCESS : AuditLogType.USER_ADD_VM_TEMPLATE_FAILURE;
+            }
 
         case END_SUCCESS:
             return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_SUCCESS
@@ -275,7 +284,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         // means that there are no asynchronous tasks to execute and that we can
         // end the command synchronously
-        boolean pendingAsyncTasks = !getReturnValue().getVdsmTaskIdList().isEmpty();
+        pendingAsyncTasks = !getReturnValue().getVdsmTaskIdList().isEmpty();
         if (!pendingAsyncTasks) {
             endSuccessfullySynchronous();
         }

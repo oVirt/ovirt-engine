@@ -612,6 +612,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_MOVED_VM_FINISHED_FAILURE, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_FAILED_MOVE_VM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_ADD_VM_TEMPLATE_FAILURE, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.USER_ADD_VM_TEMPLATE_SUCCESS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_FAILURE, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_REMOVE_VM_TEMPLATE_FINISHED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_ADD_VM_TEMPLATE, AuditLogSeverity.ERROR);
