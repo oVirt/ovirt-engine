@@ -122,13 +122,13 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     }
 
     @Override
-    public void reportCompleted() {
+    protected void endExecutionMonitoring() {
         ExecutionContext executionContext = getExecutionContext();
         executionContext.setShouldEndJob(true);
-        boolean success =
+        boolean runAndPausedSucceeded =
                 Boolean.TRUE.equals(getParameters().getRunAndPause())
                         && getVmDynamicDao().get(getVmId()).getStatus() == VMStatus.Paused;
-        ExecutionHandler.endJob(executionContext, success);
+        ExecutionHandler.endJob(executionContext, runAndPausedSucceeded);
     }
 
     @Override

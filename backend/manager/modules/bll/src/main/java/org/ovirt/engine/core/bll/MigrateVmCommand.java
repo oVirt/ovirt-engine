@@ -383,8 +383,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             if (getVdsDestinationId() != null) {
                 decreasePendingVms(getVdsDestinationId());
             }
-
-            freeLock();
         }
     }
 
