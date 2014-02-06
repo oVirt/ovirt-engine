@@ -249,11 +249,11 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             logTaskStartedFromCLI(cluster, task, vol);
         } catch (Exception e) {
             log.error(e);
-            throw new VdcBLLException(VdcBllErrors.GeneralException, e.getMessage());
-        } finally {
+            // Release the lock only if there is any exception,
+            // otherwise the lock will be released once the task is completed
             releaseLock(vol.getId());
+            throw new VdcBLLException(VdcBllErrors.GeneralException, e.getMessage());
         }
-
     }
 
     private void logTaskStartedFromCLI(VDSGroup cluster, GlusterAsyncTask task, GlusterVolumeEntity vol) {
