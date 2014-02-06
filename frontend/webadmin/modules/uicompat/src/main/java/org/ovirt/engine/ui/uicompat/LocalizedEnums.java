@@ -98,7 +98,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionGroup___EDIT_HOST_CONFIGURATION();
 
-    String ActionGroup___MANIPUTLATE_HOST();
+    String ActionGroup___MANIPULATE_HOST();
 
     String ActionGroup___CONFIGURE_HOST_NETWORK();
 

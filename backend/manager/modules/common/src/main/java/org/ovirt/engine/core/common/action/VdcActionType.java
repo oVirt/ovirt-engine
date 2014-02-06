@@ -57,11 +57,11 @@ public enum VdcActionType {
     AddVds(101, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
     UpdateVds(102, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
     RemoveVds(103, ActionGroup.DELETE_HOST, false, QuotaDependency.NONE),
-    RestartVds(104, ActionGroup.MANIPUTLATE_HOST, QuotaDependency.NONE),
+    RestartVds(104, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
     VdsNotRespondingTreatment(105, QuotaDependency.NONE),
     MaintenanceVds(106, QuotaDependency.NONE),
-    MaintenanceNumberOfVdss(107, ActionGroup.MANIPUTLATE_HOST, false, QuotaDependency.NONE),
-    ActivateVds(108, ActionGroup.MANIPUTLATE_HOST, QuotaDependency.NONE),
+    MaintenanceNumberOfVdss(107, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
+    ActivateVds(108, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
     InstallVds(109, QuotaDependency.NONE),
     ClearNonResponsiveVdsVms(110, QuotaDependency.NONE),
     ApproveVds(112, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
@@ -71,13 +71,13 @@ public enum VdcActionType {
     AddVdsSpmId(119, QuotaDependency.NONE),
     ForceSelectSPM(120, QuotaDependency.NONE),
     // Fencing (including RestartVds above)
-    StartVds(121, ActionGroup.MANIPUTLATE_HOST, QuotaDependency.NONE),
-    StopVds(122, ActionGroup.MANIPUTLATE_HOST, QuotaDependency.NONE),
+    StartVds(121, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
+    StopVds(122, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
     HandleVdsVersion(124, QuotaDependency.NONE),
     ChangeVDSCluster(125, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
-    RefreshHostCapabilities(126, ActionGroup.MANIPUTLATE_HOST, false, QuotaDependency.NONE),
+    RefreshHostCapabilities(126, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
     SshSoftFencing(127, QuotaDependency.NONE),
-    VdsPowerDown(128, ActionGroup.MANIPUTLATE_HOST, QuotaDependency.NONE),
+    VdsPowerDown(128, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
 
     // Network
     UpdateNetworkToVdsInterface(149, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
@@ -227,7 +227,7 @@ public enum VdcActionType {
     AddStoragePoolWithStorages(951, ActionGroup.CREATE_STORAGE_POOL, QuotaDependency.NONE),
     RemoveStoragePool(957, ActionGroup.DELETE_STORAGE_POOL, QuotaDependency.NONE),
     UpdateStoragePool(958, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, QuotaDependency.NONE),
-    FenceVdsManualy(959, ActionGroup.MANIPUTLATE_HOST, false, QuotaDependency.NONE),
+    FenceVdsManualy(959, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
     AddExistingFileStorageDomain(960, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     AddStorageServerConnection(1000, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     UpdateStorageServerConnection(1001, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
@@ -322,7 +322,7 @@ public enum VdcActionType {
     AddInternalJob(1850, false, QuotaDependency.NONE),
     AddInternalStep(1851, false, QuotaDependency.NONE),
 
-    UpdateMomPolicy(1900, ActionGroup.MANIPUTLATE_HOST, false, QuotaDependency.NONE),
+    UpdateMomPolicy(1900, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
 
     // Affinity Groups
     AddAffinityGroup(1950, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),

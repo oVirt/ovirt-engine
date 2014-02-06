@@ -46,7 +46,7 @@ public enum ActionGroup {
     CREATE_HOST(100, RoleType.ADMIN, VdcObjectType.VDS, true),
     EDIT_HOST_CONFIGURATION(101, RoleType.ADMIN, VdcObjectType.VDS, true),
     DELETE_HOST(102, RoleType.ADMIN, VdcObjectType.VDS, true),
-    MANIPUTLATE_HOST(103, RoleType.ADMIN, VdcObjectType.VDS, true),
+    MANIPULATE_HOST(103, RoleType.ADMIN, VdcObjectType.VDS, true),
     CONFIGURE_HOST_NETWORK(104, RoleType.ADMIN, VdcObjectType.VDS, true),
     // templates actions groups
     CREATE_TEMPLATE(200, RoleType.USER, VdcObjectType.VmTemplate, false, ApplicationMode.VirtOnly),

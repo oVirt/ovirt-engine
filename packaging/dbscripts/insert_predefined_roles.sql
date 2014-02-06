@@ -41,7 +41,7 @@ RETURNS VOID
    v_CREATE_HOST INTEGER;
    v_EDIT_HOST_CONFIGURATION INTEGER;
    v_DELETE_HOST INTEGER;
-   v_MANIPUTLATE_HOST INTEGER;
+   v_MANIPULATE_HOST INTEGER;
    v_CONFIGURE_HOST_NETWORK INTEGER;
    v_CREATE_TEMPLATE INTEGER;
    v_EDIT_TEMPLATE_PROPERTIES INTEGER;
@@ -119,7 +119,7 @@ BEGIN
    v_CREATE_HOST := 100;
    v_EDIT_HOST_CONFIGURATION := 101;
    v_DELETE_HOST := 102;
-   v_MANIPUTLATE_HOST := 103;
+   v_MANIPULATE_HOST := 103;
    v_CONFIGURE_HOST_NETWORK := 104;
    v_CREATE_TEMPLATE := 200;
    v_EDIT_TEMPLATE_PROPERTIES := 201;
@@ -178,7 +178,7 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_MANIP
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CREATE_HOST);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_EDIT_HOST_CONFIGURATION);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_DELETE_HOST);
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_MANIPUTLATE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_MANIPULATE_HOST);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CONFIGURE_HOST_NETWORK);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CREATE_TEMPLATE);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_EDIT_TEMPLATE_PROPERTIES);
@@ -248,7 +248,7 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_VM
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CREATE_HOST);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_EDIT_HOST_CONFIGURATION);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_DELETE_HOST);
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_MANIPUTLATE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_MANIPULATE_HOST);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CONFIGURE_HOST_NETWORK);
 -- clusters actions groups
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CREATE_CLUSTER);
@@ -289,7 +289,7 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CREATE_HOST);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_EDIT_HOST_CONFIGURATION);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_DELETE_HOST);
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_MANIPUTLATE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_MANIPULATE_HOST);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CONFIGURE_HOST_NETWORK);
 -- clusters actions groups
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CREATE_CLUSTER);
@@ -323,7 +323,7 @@ INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_child
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_CREATE_HOST);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_EDIT_HOST_CONFIGURATION);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_DELETE_HOST);
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_MANIPUTLATE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_MANIPULATE_HOST);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_CONFIGURE_HOST_NETWORK);
 -- storage domains actions groups
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_CREATE_STORAGE_DOMAIN);
@@ -338,7 +338,7 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_MANIP
 
 INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_NETWORK_ADMIN_ID,'NetworkAdmin','Administrator Role, permission for all operations on a specific Logical Network',true,1,true;
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,v_CONFIGURE_HOST_NETWORK);
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,v_MANIPUTLATE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,v_MANIPULATE_HOST);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,v_CONFIGURE_CLUSTER_NETWORK);
 
 -------------

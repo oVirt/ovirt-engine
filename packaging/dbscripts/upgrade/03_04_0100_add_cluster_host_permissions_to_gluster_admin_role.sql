@@ -46,7 +46,7 @@ INSERT INTO roles_groups(role_id,action_group_id) SELECT v_GLUSTER_ADMIN_ROLE_ID
 WHERE not exists (SELECT role_id, action_group_id FROM roles_groups
         WHERE role_id=v_GLUSTER_ADMIN_ROLE_ID and action_group_id=102);
 
---MANIPUTLATE_HOST
+--MANIPULATE_HOST
 INSERT INTO roles_groups(role_id,action_group_id) SELECT v_GLUSTER_ADMIN_ROLE_ID, 103
 WHERE not exists (SELECT role_id, action_group_id FROM roles_groups
         WHERE role_id=v_GLUSTER_ADMIN_ROLE_ID and action_group_id=103);

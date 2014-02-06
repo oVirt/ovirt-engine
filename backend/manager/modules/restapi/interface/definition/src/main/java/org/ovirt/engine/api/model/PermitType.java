@@ -37,7 +37,7 @@ public enum PermitType {
     CREATE_HOST,
     EDIT_HOST_CONFIGURATION,
     DELETE_HOST,
-    MANIPUTLATE_HOST,
+    MANIPULATE_HOST,
     CONFIGURE_HOST_NETWORK,
     // templates actions groups
     CREATE_TEMPLATE,

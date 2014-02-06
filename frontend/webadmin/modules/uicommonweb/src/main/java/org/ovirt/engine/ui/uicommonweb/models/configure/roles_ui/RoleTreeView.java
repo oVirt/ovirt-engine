@@ -197,7 +197,7 @@ public class RoleTreeView
                                 getConstants().allowToRemoveExistingHostFromTheClusterRoleTreeTooltip()),
                         new RoleNode(ActionGroup.EDIT_HOST_CONFIGURATION,
                                 getConstants().allowToEditHostPropertiesRoleTreeTooltip()),
-                        new RoleNode(ActionGroup.MANIPUTLATE_HOST,
+                        new RoleNode(ActionGroup.MANIPULATE_HOST,
                                 getConstants().allowToChangeHostStatusRoleTreeTooltip()),
                         new RoleNode(ActionGroup.CONFIGURE_HOST_NETWORK,
                                 getConstants().allowToConfigureHostsNetworkPhysicalInterfacesRoleTreeTooltip()) }));

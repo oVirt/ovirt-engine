@@ -104,7 +104,7 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
         List<PermissionSubject> permissions = new ArrayList<PermissionSubject>();
         permissions.add(new PermissionSubject(getParameters().getPreferredSPMId(),
                 VdcObjectType.VDS,
-                ActionGroup.MANIPUTLATE_HOST));
+                ActionGroup.MANIPULATE_HOST));
         return permissions;
     }
 }

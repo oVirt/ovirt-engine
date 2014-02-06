@@ -78,8 +78,8 @@ public class PermitMapper {
             return PermitType.EDIT_HOST_CONFIGURATION;
         case DELETE_HOST:
             return PermitType.DELETE_HOST;
-        case MANIPUTLATE_HOST:
-            return PermitType.MANIPUTLATE_HOST;
+        case MANIPULATE_HOST:
+            return PermitType.MANIPULATE_HOST;
         case CONFIGURE_HOST_NETWORK:
             return PermitType.CONFIGURE_HOST_NETWORK;
         case CREATE_TEMPLATE:
@@ -234,8 +234,8 @@ public class PermitMapper {
             return ActionGroup.EDIT_HOST_CONFIGURATION;
         case DELETE_HOST:
             return ActionGroup.DELETE_HOST;
-        case MANIPUTLATE_HOST:
-            return ActionGroup.MANIPUTLATE_HOST;
+        case MANIPULATE_HOST:
+            return ActionGroup.MANIPULATE_HOST;
         case CONFIGURE_HOST_NETWORK:
             return ActionGroup.CONFIGURE_HOST_NETWORK;
         case CREATE_TEMPLATE:

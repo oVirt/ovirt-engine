@@ -85,7 +85,7 @@ PERFORM fn_db_add_action_group_to_role(v_NETWORK_ADMIN_ID ,9);
 -- Add CONFIGURE_TEMPLATE_NETWORK
 PERFORM fn_db_add_action_group_to_role(v_NETWORK_ADMIN_ID ,204);
 
--- Delete MANIPUTLATE_HOST
+-- Delete MANIPULATE_HOST
 DELETE FROM roles_groups WHERE role_id = v_NETWORK_ADMIN_ID AND action_group_id = 103;
 
 ------------------------
