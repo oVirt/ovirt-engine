@@ -86,16 +86,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
     }
 
-    protected void failedToMigrate() {
-        try {
-            determineMigrationFailureForAuditLog();
-            runningFailed();
-        }
-        finally {
-            freeLock();
-        }
-    }
-
     protected void initVdss() {
         setVdsIdRef(getVm().getRunOnVds());
         VDS destVds = getDestinationVds();
@@ -362,27 +352,18 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
          // make Vm property to null in order to refresh it from db
         setVm(null);
 
+        determineMigrationFailureForAuditLog();
+
         // if vm is up and rerun is called then it got up on the source, try to rerun
         if (getVm() != null && getVm().getStatus() == VMStatus.Up) {
-            determineMigrationFailureForAuditLog();
             setVdsDestinationId(null);
             super.rerun();
         } else {
             // vm went down on the destination and source, migration failed.
-            failedToMigrate();
+            runningFailed();
             // signal the caller that a rerun was made so that it won't log
             // the failure message again
             _isRerun = true;
-        }
-    }
-
-    @Override
-    public void runningSucceded() {
-        try {
-            super.runningSucceded();
-        }
-        finally {
-            freeLock();
         }
     }
 
