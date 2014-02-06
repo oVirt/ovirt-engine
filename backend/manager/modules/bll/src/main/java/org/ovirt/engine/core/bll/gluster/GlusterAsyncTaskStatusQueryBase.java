@@ -116,15 +116,18 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
             asyncTask.setTaskParameters(taskParameters);
 
             List<Step> stepsList = getStepDao().getStepsByExternalId(asyncTask.getTaskId());
+            // if step has already ended, do not update status.
+            if (stepsList != null && !stepsList.isEmpty() && stepsList.get(0).getEndTime() != null) {
+                asyncTask.setStatus(status.getStatusSummary().getStatus());
+                asyncTask.setMessage(GlusterTaskUtils.getInstance().getSummaryMessage(status.getStatusSummary()));
+                getGlusterTaskUtils().updateSteps(getClusterDao().get(clusterId), asyncTask, stepsList);
 
-            asyncTask.setStatus(status.getStatusSummary().getStatus());
-            asyncTask.setMessage(GlusterTaskUtils.getInstance().getSummaryMessage(status.getStatusSummary()));
-            getGlusterTaskUtils().updateSteps(getClusterDao().get(clusterId), asyncTask, stepsList);
-
-            // release the volume lock if the task is completed
-            if (getGlusterTaskUtils().hasTaskCompleted(asyncTask)) {
-                getGlusterTaskUtils().releaseLock(volume.getId());
+                // release the volume lock if the task is completed
+                if (getGlusterTaskUtils().hasTaskCompleted(asyncTask)) {
+                    getGlusterTaskUtils().releaseLock(volume.getId());
+                }
             }
+
         }
     }
 }
