@@ -233,18 +233,28 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     @Override
     public void reportCompleted() {
-        ExecutionContext executionContext = getExecutionContext();
-        if (executionContext != null && executionContext.isMonitored()
-                && !executionContext.isCompleted()) {
-            switch (executionContext.getExecutionMethod()) {
-            case AsJob:
-                ExecutionHandler.endJob(executionContext, false);
-                break;
-            case AsStep:
-                ExecutionHandler.endStep(executionContext, executionContext.getStep(), false);
-                break;
-            default:
+        try {
+            ExecutionContext executionContext = getExecutionContext();
+            if (executionContext != null && executionContext.isMonitored()
+                    && !executionContext.isCompleted()) {
+                endExecutionMonitoring();
             }
+        }
+        finally {
+            freeLock();
+        }
+    }
+
+    protected void endExecutionMonitoring() {
+        ExecutionContext executionContext = getExecutionContext();
+        switch (executionContext.getExecutionMethod()) {
+        case AsJob:
+            ExecutionHandler.endJob(executionContext, false);
+            break;
+        case AsStep:
+            ExecutionHandler.endStep(executionContext, executionContext.getStep(), false);
+            break;
+        default:
         }
     }
 
@@ -295,14 +305,12 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         decreasePendingVms(vdsId, vm.getNumOfCpus(), vm.getMinAllocatedMem(), vm.getName());
     }
 
-    protected void decreasePendingVms(Guid vdsId, int numOfCpus, int minAllocatedMem, String vmName) {
+    private void decreasePendingVms(Guid vdsId, int numOfCpus, int minAllocatedMem, String vmName) {
         getVdsDynamicDao().updatePartialVdsDynamicCalc(vdsId, 0, -numOfCpus, -minAllocatedMem, 0, 0);
         getBlockingQueue(vdsId).offer(Boolean.TRUE);
 
-        if (log.isDebugEnabled()) {
-            log.debugFormat("Decreasing vds {0} pending vcpu count by {1} and vmem size by {2} (Vm: {3})",
-                    vdsId, numOfCpus, minAllocatedMem, vmName);
-        }
+        log.debugFormat("Decreasing vds {0} pending vcpu count by {1} and vmem size by {2} (Vm: {3})",
+                vdsId, numOfCpus, minAllocatedMem, vmName);
     }
 
     protected VdsDynamicDAO getVdsDynamicDao() {

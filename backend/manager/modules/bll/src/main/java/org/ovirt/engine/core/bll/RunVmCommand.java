@@ -946,13 +946,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     @Override
-    public void reportCompleted() {
+    protected void endExecutionMonitoring() {
         if (getVm().isRunAndPause() && getVmDynamicDao().get(getVmId()).getStatus() == VMStatus.Paused) {
             final ExecutionContext executionContext = getExecutionContext();
             executionContext.setShouldEndJob(true);
             ExecutionHandler.endJob(executionContext, true);
         } else {
-            super.reportCompleted();
+            super.endExecutionMonitoring();
         }
     }
 
