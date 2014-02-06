@@ -23,6 +23,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     public AddImageFromScratchCommand(T parameters) {
         super(parameters);
         setVmId(getParameters().getMasterVmId());
+        getParameters().setCommandType(getActionType());
     }
 
     protected AddImageFromScratchCommand(Guid commandId) {
@@ -65,11 +66,19 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                addDiskImageToDb(mNewCreatedDiskImage, getCompensationContext());
+                if (!getParameters().isShouldRemainIllegalOnFailedExecution()) {
+                    addDiskImageToDb(mNewCreatedDiskImage, getCompensationContext());
+                } else {
+                    addDiskImageToDb(mNewCreatedDiskImage, null);
+                    getCompensationContext().snapshotEntityStatus(mNewCreatedDiskImage.getImage(), ImageStatus.ILLEGAL);
+                }
                 return null;
             }
         });
         freeLock();
+        if (getParameters().isShouldRemainIllegalOnFailedExecution()) {
+            getReturnValue().setActionReturnValue(mNewCreatedDiskImage);
+        }
         processImageInIrs();
         getReturnValue().setActionReturnValue(mNewCreatedDiskImage);
         setSucceeded(true);
@@ -108,8 +117,13 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     @Override
     protected void endWithFailure() {
         if (getDestinationDiskImage() != null) {
-            DbFacade.getInstance().getDiskImageDynamicDao().remove(getDestinationDiskImage().getImageId());
+            if (getParameters().isShouldRemainIllegalOnFailedExecution()) {
+                setImageStatus(ImageStatus.ILLEGAL);
+            } else {
+                DbFacade.getInstance().getDiskImageDynamicDao().remove(getDestinationDiskImage().getImageId());
+                super.endWithFailure();
+            }
         }
-        super.endWithFailure();
+
     }
 }

@@ -8,6 +8,7 @@ public class AddImageFromScratchParameters extends ImagesActionsParametersBase {
     private static final long serialVersionUID = 8249273209551108387L;
     private Guid masterVmId;
     private DiskImageBase diskInfo;
+    private boolean shouldRemainIllegalOnFailedExecution;
 
     public AddImageFromScratchParameters() {
         masterVmId = Guid.Empty;
@@ -33,5 +34,13 @@ public class AddImageFromScratchParameters extends ImagesActionsParametersBase {
 
     public void setDiskInfo(DiskImageBase diskInfo) {
         this.diskInfo = diskInfo;
+    }
+
+    public boolean isShouldRemainIllegalOnFailedExecution() {
+        return shouldRemainIllegalOnFailedExecution;
+    }
+
+    public void setShouldRemainIllegalOnFailedExecution(boolean shouldRemainIllegalOnFailedExecution) {
+        this.shouldRemainIllegalOnFailedExecution = shouldRemainIllegalOnFailedExecution;
     }
 }

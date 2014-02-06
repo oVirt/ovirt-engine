@@ -8,6 +8,7 @@ public class AddDiskParameters extends VmDiskOperationParameterBase {
     private Guid vmSnapshotId;
     private Guid storageDomainId;
     private Boolean plugDiskToVm;
+    private boolean shouldRemainIllegalOnFailedExecution;
 
     public AddDiskParameters() {
         storageDomainId = Guid.Empty;
@@ -40,5 +41,13 @@ public class AddDiskParameters extends VmDiskOperationParameterBase {
 
     public void setPlugDiskToVm(Boolean plugDiskToVm) {
         this.plugDiskToVm = plugDiskToVm;
+    }
+
+    public boolean isShouldRemainIllegalOnFailedExecution() {
+        return shouldRemainIllegalOnFailedExecution;
+    }
+
+    public void setShouldRemainIllegalOnFailedExecution(boolean shouldRemainIllegalOnFailedExecution) {
+        this.shouldRemainIllegalOnFailedExecution = shouldRemainIllegalOnFailedExecution;
     }
 }
