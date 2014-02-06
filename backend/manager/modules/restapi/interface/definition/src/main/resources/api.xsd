@@ -3160,9 +3160,15 @@
   </xs:complexType>
 
   <xs:complexType name="GuestNicsConfiguration">
-      <xs:sequence>
-          <xs:element name="nics" type="GuestNicConfiguration" minOccurs="0" maxOccurs="unbounded" />
-      </xs:sequence>
+    <xs:sequence>
+      <xs:element name="nic" type="GuestNicConfiguration" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="Nics"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="host_nic_states" type="HostNICStates"/>
