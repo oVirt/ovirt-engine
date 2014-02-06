@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -79,6 +80,7 @@ public class ManageDomains {
     private boolean reportAllErrors;
     private boolean addPermissions;
     private boolean useDnsLookup;
+    private boolean ldapServers;
 
     private final static Logger log = Logger.getLogger(ManageDomains.class);
     private static final String DEFAULT_LDAP_SERVER_PORT = "389";
@@ -194,6 +196,10 @@ public class ManageDomains {
         }
         if (parser.hasArg(Arguments.addPermissions.name())) {
             util.addPermissions = true;
+        }
+
+        if (parser.hasArg(Arguments.ldapServers.name())) {
+            util.ldapServers = true;
         }
 
         try {
@@ -699,6 +705,12 @@ public class ManageDomains {
             try {
                 log.info("Creating kerberos configuration for domain(s): " + gssapiDomainsString);
                 useDnsLookup = utilityConfiguration.getUseDnsLookup();
+                if (!ldapServers && useDnsLookup) {
+                    // The arguments do not contain a list of ldap servers, the
+                    // kerberos configuration should not be created according to it if
+                    // useDnsLookup is set to true as in this case the kdc and the domain_realm info
+                    ldapServersPerGSSAPIDomains = Collections.emptyMap();
+                }
                 krbConfCreator = new KrbConfCreator(gssapiDomainsString, useDnsLookup, ldapServersPerGSSAPIDomains);
                 StringBuffer buffer = null;
                 buffer = krbConfCreator.parse("y");
