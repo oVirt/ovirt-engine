@@ -39,6 +39,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -720,6 +721,13 @@ public class ManageDomains {
             try {
                 log.info("Creating kerberos configuration for domain(s): " + gssapiDomainsString);
                 useDnsLookup = utilityConfiguration.getUseDnsLookup();
+                if (!args.contains(ARG_LDAP_SERVERS) && useDnsLookup) {
+                    // The arguments do not contain a list of ldap servers, the
+                    // kerberos configuration should not be created according to it if
+                    // useDnsLookup is set to true as in this case the kdc and the domain_realm information
+                    // will be resolved by DNS during kerberos negotiation.
+                    ldapServersPerGSSAPIDomains = Collections.emptyMap();
+                }
                 krbConfCreator = new KrbConfCreator(gssapiDomainsString, useDnsLookup, ldapServersPerGSSAPIDomains);
                 StringBuffer buffer = null;
                 buffer = krbConfCreator.parse("y");
