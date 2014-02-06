@@ -130,13 +130,18 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     protected void runningFailed() {
-        Backend.getInstance().getResourceManager().RemoveAsyncRunningCommand(getVmId());
-        _isRerun = false;
-        setSucceeded(false);
-        log();
-        processVmPoolOnStopVm();
-        ExecutionHandler.setAsyncJob(getExecutionContext(), false);
-        ExecutionHandler.endJob(getExecutionContext(), false);
+        try {
+            Backend.getInstance().getResourceManager().RemoveAsyncRunningCommand(getVmId());
+            _isRerun = false;
+            setSucceeded(false);
+            log();
+            processVmPoolOnStopVm();
+            ExecutionHandler.setAsyncJob(getExecutionContext(), false);
+            ExecutionHandler.endJob(getExecutionContext(), false);
+        }
+        finally {
+            freeLock();
+        }
     }
 
     protected void processVmPoolOnStopVm() {
@@ -155,31 +160,36 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      */
     @Override
     public void runningSucceded() {
-        setSucceeded(true);
-        setActionReturnValue(VMStatus.Up);
-        log();
-        ExecutionHandler.setAsyncJob(getExecutionContext(), false);
-        ExecutionHandler.endJob(getExecutionContext(), true);
-        notifyHostsVmFailed();
+        try {
+            setSucceeded(true);
+            setActionReturnValue(VMStatus.Up);
+            log();
+            ExecutionHandler.setAsyncJob(getExecutionContext(), false);
+            ExecutionHandler.endJob(getExecutionContext(), true);
+            notifyHostsVmFailed();
 
-        if (getVm().getLastVdsRunOn() == null || !getVm().getLastVdsRunOn().equals(getCurrentVdsId())) {
-            getVm().setLastVdsRunOn(getCurrentVdsId());
+            if (getVm().getLastVdsRunOn() == null || !getVm().getLastVdsRunOn().equals(getCurrentVdsId())) {
+                getVm().setLastVdsRunOn(getCurrentVdsId());
+            }
+
+            if (StringUtils.isNotEmpty(getVm().getHibernationVolHandle())) {
+                removeVmHibernationVolumes();
+
+                // In order to prevent a race where VdsUpdateRuntimeInfo saves the Vm Dynamic as UP prior to execution of
+                // this method (which is a part of the cached VM command,
+                // so the state this method is aware to is RESTORING, in case of RunVmCommand after the VM got suspended.
+                // In addition, as the boolean return value of HandleHIbernateVm is ignored here, it is safe to set the
+                // status to up.
+                getVm().setStatus(VMStatus.Up);
+                getVm().setHibernationVolHandle(null);
+                Backend.getInstance()
+                .getResourceManager()
+                .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
+                        new UpdateVmDynamicDataVDSCommandParameters(getCurrentVdsId(), getVm().getDynamicData()));
+            }
         }
-
-        if (StringUtils.isNotEmpty(getVm().getHibernationVolHandle())) {
-            removeVmHibernationVolumes();
-
-            // In order to prevent a race where VdsUpdateRuntimeInfo saves the Vm Dynamic as UP prior to execution of
-            // this method (which is a part of the cached VM command,
-            // so the state this method is aware to is RESTORING, in case of RunVmCommand after the VM got suspended.
-            // In addition, as the boolean return value of HandleHIbernateVm is ignored here, it is safe to set the
-            // status to up.
-            getVm().setStatus(VMStatus.Up);
-            getVm().setHibernationVolHandle(null);
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                            new UpdateVmDynamicDataVDSCommandParameters(getCurrentVdsId(), getVm().getDynamicData()));
+        finally {
+            freeLock();
         }
     }
 

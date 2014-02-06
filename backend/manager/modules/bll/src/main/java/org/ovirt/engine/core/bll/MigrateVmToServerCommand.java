@@ -49,7 +49,10 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
      */
     @Override
     public void rerun() {
-        failedToMigrate();
+        // make VM property to null in order to refresh it from db
+        setVm(null);
+        determineMigrationFailureForAuditLog();
+        runningFailed();
     }
 
     @Override
