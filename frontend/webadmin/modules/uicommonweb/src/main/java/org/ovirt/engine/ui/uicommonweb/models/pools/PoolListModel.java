@@ -322,6 +322,8 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         model.getCommands().add(command);
 
                         model.setTitle(ConstantsManager.getInstance().getConstants().editPoolTitle());
+                        model.setHelpTag(HelpTag.edit_pool);
+                        model.setHashName("edit_pool"); //$NON-NLS-1$
                         model.initialize(getSystemTreeSelectedItem());
                         model.getName().setEntity(pool.getName());
                         model.getDescription().setEntity(pool.getVmPoolDescription());
