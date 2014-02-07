@@ -113,15 +113,14 @@ public class HelpTagJsonServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Matcher m = REQUEST_PATTERN.matcher(request.getRequestURI());
+        String content = "{}"; //$NON-NLS-1$
         if (m.matches() && cachedJson.containsKey(m.group(REQUEST_PATTERN_KEY_GROUP))) {
-            response.setContentType("application/json"); //$NON-NLS-1$
-            PrintStream printStream = new PrintStream(response.getOutputStream());
-            printStream.print(cachedJson.get(m.group(REQUEST_PATTERN_KEY_GROUP)));
-            printStream.flush();
+            content = cachedJson.get(m.group(REQUEST_PATTERN_KEY_GROUP));
         }
-        else {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
+        response.setContentType("application/json"); //$NON-NLS-1$
+        PrintStream printStream = new PrintStream(response.getOutputStream());
+        printStream.print(content);
+        printStream.flush();
     }
 
     protected static JsonNode merge(JsonNode destination, JsonNode source) {

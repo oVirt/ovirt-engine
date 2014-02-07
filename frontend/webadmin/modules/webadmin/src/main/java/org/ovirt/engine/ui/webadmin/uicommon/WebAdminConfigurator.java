@@ -100,7 +100,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
     protected void fetchDocumentationFile() {
         // TODO: don't hard code webadmin application name here
-        fetchFile(getDocumentationBaseURL() + "webadmin.json", documentationFileFetchedEvent); //$NON-NLS-1$
+        fetchFile(getHelpTagMappingBaseURL() + "webadmin.json", documentationFileFetchedEvent); //$NON-NLS-1$
     }
 
 }
