@@ -146,6 +146,8 @@ public enum HelpTag {
 
     edit_network_qos("edit_network_qos", "'Data Centers' main tab -> 'Network QoS' sub-tab -> 'Edit Network QoS' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    edit_pool("edit_pool", "Pools Tab > Edit Pool"), //$NON-NLS-1$ //$NON-NLS-2$
+
     edit_provider("edit_provider", "[Neutron integration] 'Providers' main tab -> 'Edit Provider' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
     edit_tag("edit_tag", "Main > tags > Edit Tag"), //$NON-NLS-1$ //$NON-NLS-2$
