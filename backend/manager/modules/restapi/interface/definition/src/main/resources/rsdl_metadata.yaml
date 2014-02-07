@@ -15,6 +15,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
       Filter: {value: true|false, required: false}
+      All-Content: {value: true|false, required: false}
 - name: /vms/{vm:id}|rel=get
   description: get the virtual machine in the system for the given virtual machine id
   request:
@@ -24,6 +25,7 @@ actions:
     urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
+      All-Content: {value: true|false, required: false}
 - name: /vms/{vm:id}|rel=delete
   description: deletes the virtual machine in the system for the given virtual machine id
   request:
@@ -681,7 +683,8 @@ actions:
       signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
-    headers: {}
+    headers:
+      All-Content: {value: true|false, required: false}
 - name: /vms/{vm:id}/nics/{nic:id}|rel=get
   description: get the details of a network interface for a given virtual machine
   request:
@@ -689,7 +692,8 @@ actions:
       parameterType: null
       signatures: []
     urlparams: {}
-    headers: {}
+    headers:
+      All-Content: {value: true|false, required: false}
 - name: /vms/{vm:id}/nics/{nic:id}|rel=delete
   description: remove the network interface from the given virtual machine
   request:
@@ -3296,6 +3300,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
       Filter: {value: true|false, required: false}
+      All-Content: {value: true|false, required: false}
 - name: /templates/{template:id}|rel=get
   description: get the details of the specified template in the system
   request:
@@ -3305,6 +3310,7 @@ actions:
     urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
+      All-Content: {value: true|false, required: false}
 - name: /templates/{template:id}|rel=delete
   description: delete the specified template in the system
   request:
