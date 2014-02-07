@@ -64,8 +64,8 @@ public class HelpTagJsonServlet extends HttpServlet {
         File configFile = new File(configFilePath);
         if (configFile.exists() && configFile.canRead()) {
             Properties p = new Properties();
-            try {
-                p.load(new FileInputStream(configFile));
+            try (FileInputStream fis = new FileInputStream(configFile)) {
+                p.load(fis);
                 properties = p.entrySet();
             }
             catch (IOException e) {
