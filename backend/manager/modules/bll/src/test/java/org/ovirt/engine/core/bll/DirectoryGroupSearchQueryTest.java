@@ -26,10 +26,7 @@ public class DirectoryGroupSearchQueryTest extends DirectorySearchQueryTestBase 
         // Check that the directory was used to perform the expected LDAP query:
         String expectedFilter =
             "(&($LDAP_GROUP_CATEGORY) (|" +
-                "($GIVENNAME=" + NAME + ")" +
-                "(sn=" + NAME + ")" +
-                "($USER_ACCOUNT_NAME=" + NAME + ")" +
-                "($PRINCIPAL_NAME=" + NAME + ")" +
+                "($CN=" + NAME + ")" +
             "))";
         verify(directoryMock, atLeastOnce()).queryGroups(expectedFilter);
     }

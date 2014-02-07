@@ -194,10 +194,15 @@ public class BackendGroupsResource
 
         // Try to find a group that matches the name contained in the model:
         if (groupModel.isSetName()) {
+            String groupName = groupModel.getName();
+            if (groupName.startsWith(directoryName + "/")) {
+                int lastSlash = groupName.lastIndexOf("/");
+                groupName = groupName.substring(lastSlash + 1);
+            }
             return getEntity(
                 DirectoryGroup.class,
                 SearchType.DirectoryGroup,
-                getDirectoryGroupSearchPattern(groupModel.getName(), directoryName)
+                getDirectoryGroupSearchPattern(groupName, directoryName)
             );
         }
 
