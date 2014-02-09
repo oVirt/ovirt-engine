@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 @NonTransactiveCommandAttribute(forceCompensation=true)
+@LockIdNameAttribute
 public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCommandBase<T> {
 
     protected ShutdownVmCommand(Guid commandId) {
@@ -73,7 +75,10 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
             StopVmParameters stopVmParams = new StopVmParameters(getVmId(), StopVmTypeEnum.CANNOT_SHUTDOWN);
             // stopVmParams.ParametersCurrentUser = CurrentUser;
             stopVmParams.setSessionId(getParameters().getSessionId());
-            Backend.getInstance().runInternalAction(VdcActionType.StopVm, stopVmParams);
+            Backend.getInstance().runInternalAction(
+                    VdcActionType.StopVm,
+                    stopVmParams,
+                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
         }
 
         setSucceeded(true);
