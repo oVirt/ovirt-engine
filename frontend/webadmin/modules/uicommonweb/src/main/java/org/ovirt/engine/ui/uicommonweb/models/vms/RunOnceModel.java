@@ -891,7 +891,7 @@ public abstract class RunOnceModel extends Model
                         }
                         getSysPrepDomainName().setItems(domains);
                         String selectedDomain = (oldDomain != null) ? oldDomain : Linq.firstOrDefault(domains);
-                        if (!StringHelper.stringsEqual(selectedDomain, "")) { //$NON-NLS-1$
+                        if (!StringHelper.isNullOrEmpty(selectedDomain)) {
                             getSysPrepDomainName().setSelectedItem(selectedDomain);
                         }
                     }
