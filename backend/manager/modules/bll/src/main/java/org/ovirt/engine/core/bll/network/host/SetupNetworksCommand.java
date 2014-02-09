@@ -97,7 +97,10 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                     getVdsName(),
                     getVdsId());
 
-            setActionReturnValue(SETUP_NETWORKS_RESOLUTION.NO_CHANGES_DETECTED);
+            if (isInternalExecution()) {
+                setActionReturnValue(SETUP_NETWORKS_RESOLUTION.NO_CHANGES_DETECTED);
+            }
+
             setSucceeded(true);
             return;
         }
