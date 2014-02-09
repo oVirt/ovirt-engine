@@ -56,6 +56,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected boolean _isRerun;
     private SnapshotsValidator snapshotsValidator=new SnapshotsValidator();
     private final List<Guid> runVdsList = new ArrayList<Guid>();
+    private Guid lastDecreasedVds;
 
     protected RunVmCommandBase(Guid commandId) {
         super(commandId);
@@ -78,7 +79,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     @Override
     public void rerun() {
-        decreasePendingVms(getCurrentVdsId());
+        decreasePendingVms();
 
         setSucceeded(false);
         setVm(null);
@@ -126,6 +127,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     protected void runningFailed() {
         try {
+            decreasePendingVms();
             Backend.getInstance().getResourceManager().RemoveAsyncRunningCommand(getVmId());
             _isRerun = false;
             setSucceeded(false);
@@ -156,6 +158,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     @Override
     public void runningSucceded() {
         try {
+            decreasePendingVms();
             setSucceeded(true);
             setActionReturnValue(VMStatus.Up);
             log();
@@ -227,7 +230,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     @Override
-    public void reportCompleted() {
+    public final void reportCompleted() {
         try {
             ExecutionContext executionContext = getExecutionContext();
             if (executionContext != null && executionContext.isMonitored()
@@ -295,7 +298,16 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         return true;
     }
 
-    protected void decreasePendingVms(Guid vdsId) {
+    protected void decreasePendingVms() {
+        decreasePendingVms(getCurrentVdsId());
+    }
+
+    private void decreasePendingVms(Guid vdsId) {
+        if (vdsId == null || vdsId.equals(lastDecreasedVds)) {
+            // do not decrease twice..
+            return;
+        }
+
         VM vm = getVm();
         decreasePendingVms(vdsId, vm.getNumOfCpus(), vm.getMinAllocatedMem(), vm.getName());
     }
@@ -304,6 +316,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         getVdsDynamicDao().updatePartialVdsDynamicCalc(vdsId, 0, -numOfCpus, -minAllocatedMem, 0, 0);
         getBlockingQueue(vdsId).offer(Boolean.TRUE);
 
+        lastDecreasedVds = vdsId;
         log.debugFormat("Decreasing vds {0} pending vcpu count by {1} and vmem size by {2} (Vm: {3})",
                 vdsId, numOfCpus, minAllocatedMem, vmName);
     }
