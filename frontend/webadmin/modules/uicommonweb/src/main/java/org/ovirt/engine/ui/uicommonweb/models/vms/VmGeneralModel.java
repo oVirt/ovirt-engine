@@ -577,7 +577,7 @@ public class VmGeneralModel extends EntityModel
         setHasTimeZone(AsyncDataProvider.isWindowsOsType(vm.getVmOsId()));
         setTimeZone(vm.getTimeZone());
 
-        setHasCustomProperties(!StringHelper.stringsEqual(vm.getCustomProperties(), "")); //$NON-NLS-1$
+        setHasCustomProperties(!StringHelper.isNullOrEmpty(vm.getCustomProperties()));
         setCustomProperties(getHasCustomProperties() ? "Configured" : "Not-Configured"); //$NON-NLS-1$ //$NON-NLS-2$
 
         setCompatibilityVersion(vm.getVdsGroupCompatibilityVersion() != null ?
