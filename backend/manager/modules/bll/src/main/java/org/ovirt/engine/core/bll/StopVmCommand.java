@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
+@LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation=true)
 public class StopVmCommand<T extends StopVmParameters> extends StopVmCommandBase<T> {
     public StopVmCommand(T stopVmParams) {
