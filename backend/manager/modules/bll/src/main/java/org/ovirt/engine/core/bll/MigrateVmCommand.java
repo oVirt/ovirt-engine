@@ -372,20 +372,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
     }
 
-    @Override
-    public void reportCompleted() {
-        try {
-            super.reportCompleted();
-        }
-        finally {
-            // Decrement the pending counters here as this is the only place which
-            // is called consistently regardless of the migration result.
-            if (getVdsDestinationId() != null) {
-                decreasePendingVms(getVdsDestinationId());
-            }
-        }
-    }
-
     /**
      * Log that the migration had failed with the error code that is in the VDS and needs to be retrieved.
      */
