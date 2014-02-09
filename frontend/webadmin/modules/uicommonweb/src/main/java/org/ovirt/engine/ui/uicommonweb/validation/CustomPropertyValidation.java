@@ -54,7 +54,7 @@ public class CustomPropertyValidation implements IValidation
 
         String[] split;
 
-        if (value == null || StringHelper.stringsEqual(((String) (value)).trim(), "")) //$NON-NLS-1$
+        if (value == null || ((String) value).trim().isEmpty())
         {
             split = new String[0];
         }
