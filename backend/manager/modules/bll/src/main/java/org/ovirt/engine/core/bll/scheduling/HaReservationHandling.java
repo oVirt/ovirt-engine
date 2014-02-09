@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -32,7 +33,7 @@ public class HaReservationHandling {
      *         impacting performance.
      */
     public boolean checkHaReservationStatusForCluster(VDSGroup cluster, List<VDS> failedHosts) {
-        List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAllForVdsGroup(cluster.getId());
+        List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
 
         // No hosts, return true
         if (hosts == null || hosts.isEmpty()) {
