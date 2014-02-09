@@ -86,14 +86,8 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                 }
             }
         } else {
-            if (_problematicVds.getStatus() == VDSStatus.Connecting) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_INTERMITENT_CONNECTIVITY);
-
-            } else {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_NOT_MATCH_VALID_STATUS);
-            }
+            returnValue = false;
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_NOT_MATCH_VALID_STATUS);
         }
         return returnValue;
     }
@@ -150,6 +144,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         case NonResponsive:
         case Reboot:
         case Installing:
+        case Connecting:
             result = true;
             break;
         default:
