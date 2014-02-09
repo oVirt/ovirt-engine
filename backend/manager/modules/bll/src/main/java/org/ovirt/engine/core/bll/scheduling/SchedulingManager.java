@@ -23,6 +23,7 @@ import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscoveryT
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerFactory;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -787,7 +788,8 @@ public class SchedulingManager {
                         logable.setVdsGroupId(cluster.getId());
                         logable.addCustomValue("ClusterName", cluster.getName());
 
-                        String failedHostsStr = StringUtils.join(returnedFailedHosts, ", ");
+                        String failedHostsStr = StringUtils.join(Entities.objectNames(returnedFailedHosts), ", ");
+
                         logable.addCustomValue("Hosts", failedHostsStr);
                         AlertDirector.Alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION);
                         log.infoFormat("Cluster: {0} fail to pass HA reservation check.", cluster.getName());
