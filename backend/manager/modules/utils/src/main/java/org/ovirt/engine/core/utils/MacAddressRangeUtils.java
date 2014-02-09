@@ -11,11 +11,11 @@ public class MacAddressRangeUtils {
     private static final long MAC_ADDRESS_MULTICAST_BIT = 0x010000000000L;
     private static final int HEX_RADIX = 16;
 
-    public static List<String> initRange(String start, String end) {
-        return innerInitRange(start, end, false);
+    public static List<String> initRange(String start, String end, int size) {
+        return innerInitRange(start, end, size);
     }
 
-    private static List<String> innerInitRange(String start, String end, boolean stopOnFirst) {
+    private static List<String> innerInitRange(String start, String end, int stopAfter) {
         String parsedRangeStart = StringUtils.remove(start, ':');
         String parsedRangeEnd = StringUtils.remove(end, ':');
         if (parsedRangeEnd == null || parsedRangeStart == null) {
@@ -37,7 +37,7 @@ public class MacAddressRangeUtils {
             String value = String.format("%012x", i);
             macAddresses.add(StringUtils.join(value.split("(?<=\\G..)"), ':'));
 
-            if (stopOnFirst) {
+            if (stopAfter-- <= 0) {
                 return macAddresses;
             }
         }
@@ -46,6 +46,6 @@ public class MacAddressRangeUtils {
     }
 
     public static boolean isRangeValid(String start, String end) {
-        return !innerInitRange(start, end, true).isEmpty();
+        return !innerInitRange(start, end, 1).isEmpty();
     }
 }

@@ -26,6 +26,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class MacPoolManager {
 
+    private static final Integer MAX_MACS_IN_POOL = Config.<Integer> getValue(ConfigValues.MaxMacsCountInPool);
     private static final String INIT_ERROR_MSG = "{0}: Error in initializing MAC Addresses pool manager.";
     private static final MacPoolManager INSTANCE = new MacPoolManager();
 
@@ -72,8 +73,8 @@ public class MacPoolManager {
                 try {
                     initRanges(ranges);
                 } catch (MacPoolExceededMaxException e) {
-                    log.errorFormat("{0}: MAC Pool range exceeded maximum number of mac pool addressed. "
-                            + "Please check Mac Pool configuration.", instanceId());
+                    log.errorFormat("{0}: MAC Pool range exceeded maximum number of mac pool addresses ({1}). "
+                            + "Please check Mac Pool configuration.", instanceId(), MAX_MACS_IN_POOL);
                 }
             }
 
@@ -83,7 +84,9 @@ public class MacPoolManager {
                 forceAddMac(iface.getMacAddress());
             }
             initialized = true;
-            log.infoFormat("{0}: Finished initializing", instanceId());
+            log.infoFormat("{0}: Finished initializing. Available MACs in pool: {1}",
+                    instanceId(),
+                    availableMacs.size());
         } catch (Exception ex) {
             log.errorFormat(INIT_ERROR_MSG, instanceId(), ex);
         } finally {
@@ -120,9 +123,10 @@ public class MacPoolManager {
     }
 
     private boolean initRange(String start, String end) {
-        List<String> macAddresses = MacAddressRangeUtils.initRange(start, end);
+        List<String> macAddresses = MacAddressRangeUtils.initRange(start, end, MAX_MACS_IN_POOL);
 
-        if (macAddresses.size() + availableMacs.size() > Config.<Integer> getValue(ConfigValues.MaxMacsCountInPool)) {
+        if (macAddresses.size() + availableMacs.size() > MAX_MACS_IN_POOL) {
+            availableMacs.addAll(macAddresses.subList(0, MAX_MACS_IN_POOL - availableMacs.size()));
             throw new MacPoolExceededMaxException();
         }
 
