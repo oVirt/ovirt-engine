@@ -123,18 +123,6 @@ public final class StringHelper {
         return trim(s, chars);
     }
 
-    // ------------------------------------------------------------------------------------
-    // This method is used for string equality comparisons when the option
-    // 'Use helper 'stringsEqual' method to handle null strings' is selected
-    // (The Java String 'equals' method can't be called on a null instance).
-    // ------------------------------------------------------------------------------------
-    public static boolean stringsEqual(String s1, String s2) {
-        if (s1 == null && s2 == null)
-            return true;
-        else
-            return s1 != null && s1.equals(s2);
-    }
-
     public static boolean stringsEqualIgnoreCase(String s1, String s2) {
         if (s1 == null && s2 == null)
             return true;

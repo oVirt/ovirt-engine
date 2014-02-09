@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -272,7 +272,7 @@ public class VmInterfaceListModel extends SearchableListModel
         List<VmGuestAgentInterface> selectionInterfaces = new ArrayList<VmGuestAgentInterface>();
 
         for (VmGuestAgentInterface guestInterface : getGuestAgentData()) {
-            if (StringHelper.stringsEqual(guestInterface.getMacAddress(),
+            if (ObjectUtils.objectsEqual(guestInterface.getMacAddress(),
                     ((VmNetworkInterface) selectedItem).getMacAddress())) {
                 selectionInterfaces.add(guestInterface);
             }

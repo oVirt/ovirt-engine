@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -98,12 +98,12 @@ public abstract class StorageModelBehavior extends Model
         super.eventRaised(ev, sender, args);
 
         if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
+                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
         {
             getModel().frontend_QueryStarted();
         }
         else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
+                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
         {
             getModel().frontend_QueryComplete();
         }

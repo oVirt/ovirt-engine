@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -153,7 +152,7 @@ public class HostGeneralModel extends EntityModel
 
     public void setOS(String value)
     {
-        if (!StringHelper.stringsEqual(os, value))
+        if (!ObjectUtils.objectsEqual(os, value))
         {
             os = value;
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
@@ -169,7 +168,7 @@ public class HostGeneralModel extends EntityModel
 
     public void setKernelVersion(String value)
     {
-        if (!StringHelper.stringsEqual(kernelVersion, value))
+        if (!ObjectUtils.objectsEqual(kernelVersion, value))
         {
             kernelVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("KernelVersion")); //$NON-NLS-1$
@@ -185,7 +184,7 @@ public class HostGeneralModel extends EntityModel
 
     public void setKvmVersion(String value)
     {
-        if (!StringHelper.stringsEqual(kvmVersion, value))
+        if (!ObjectUtils.objectsEqual(kvmVersion, value))
         {
             kvmVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("KvmVersion")); //$NON-NLS-1$
@@ -230,7 +229,7 @@ public class HostGeneralModel extends EntityModel
 
     public void setSpiceVersion(String value)
     {
-        if (!StringHelper.stringsEqual(spiceVersion, value))
+        if (!ObjectUtils.objectsEqual(spiceVersion, value))
         {
             spiceVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("SpiceVersion")); //$NON-NLS-1$
@@ -259,7 +258,7 @@ public class HostGeneralModel extends EntityModel
 
     public void setIScsiInitiatorName(String value)
     {
-        if (!StringHelper.stringsEqual(iScsiInitiatorName, value))
+        if (!ObjectUtils.objectsEqual(iScsiInitiatorName, value))
         {
             iScsiInitiatorName = value;
             onPropertyChanged(new PropertyChangedEventArgs("IScsiInitiatorName")); //$NON-NLS-1$
@@ -382,7 +381,7 @@ public class HostGeneralModel extends EntityModel
 
     public void setCpuType(String value)
     {
-        if (!StringHelper.stringsEqual(cpuType, value))
+        if (!ObjectUtils.objectsEqual(cpuType, value))
         {
             cpuType = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuType")); //$NON-NLS-1$
@@ -398,7 +397,7 @@ public class HostGeneralModel extends EntityModel
 
     public void setCpuModel(String value)
     {
-        if (!StringHelper.stringsEqual(cpuModel, value))
+        if (!ObjectUtils.objectsEqual(cpuModel, value))
         {
             cpuModel = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuModel")); //$NON-NLS-1$

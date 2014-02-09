@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
@@ -126,7 +126,7 @@ public class UserPortalItemModel extends EntityModel {
 
     public void setName(String value)
     {
-        if (!StringHelper.stringsEqual(name, value))
+        if (!ObjectUtils.objectsEqual(name, value))
         {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
@@ -142,7 +142,7 @@ public class UserPortalItemModel extends EntityModel {
 
     public void setDescription(String value)
     {
-        if (!StringHelper.stringsEqual(description, value))
+        if (!ObjectUtils.objectsEqual(description, value))
         {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$

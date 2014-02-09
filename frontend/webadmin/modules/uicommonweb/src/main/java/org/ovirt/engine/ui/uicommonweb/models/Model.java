@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.List;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
@@ -204,7 +204,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
 
     public Model setTitle(String value)
     {
-        if (!StringHelper.stringsEqual(title, value))
+        if (!ObjectUtils.objectsEqual(title, value))
         {
             title = value;
             onPropertyChanged(new PropertyChangedEventArgs("Title")); //$NON-NLS-1$
@@ -315,7 +315,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
 
     public void setChangeProhibitionReason(String value)
     {
-        if (!StringHelper.stringsEqual(privateChangeProhibitionReason, value)) {
+        if (!ObjectUtils.objectsEqual(privateChangeProhibitionReason, value)) {
             privateChangeProhibitionReason = value;
             onPropertyChanged(new PropertyChangedEventArgs("ChangeProhibitionReason")); //$NON-NLS-1$
         }
@@ -410,7 +410,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
 
     public void setMessage(String value)
     {
-        if (!StringHelper.stringsEqual(message, value))
+        if (!ObjectUtils.objectsEqual(message, value))
         {
             message = value;
             onPropertyChanged(new PropertyChangedEventArgs("Message")); //$NON-NLS-1$

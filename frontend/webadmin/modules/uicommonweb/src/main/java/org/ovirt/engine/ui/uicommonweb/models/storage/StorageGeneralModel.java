@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -74,7 +74,7 @@ public class StorageGeneralModel extends EntityModel
 
     public void setPath(String value)
     {
-        if (!StringHelper.stringsEqual(path, value))
+        if (!ObjectUtils.objectsEqual(path, value))
         {
             path = value;
             onPropertyChanged(new PropertyChangedEventArgs("Path")); //$NON-NLS-1$
@@ -88,7 +88,7 @@ public class StorageGeneralModel extends EntityModel
     }
 
     public void setVfsType(String vfsType) {
-        if (!StringHelper.stringsEqual(this.vfsType, vfsType)) {
+        if (!ObjectUtils.objectsEqual(this.vfsType, vfsType)) {
             this.vfsType = vfsType;
             onPropertyChanged(new PropertyChangedEventArgs("VfsType")); //$NON-NLS-1$
         }
@@ -101,7 +101,7 @@ public class StorageGeneralModel extends EntityModel
     }
 
     public void setMountOptions(String mountOptions) {
-        if (!StringHelper.stringsEqual(this.mountOptions, mountOptions)) {
+        if (!ObjectUtils.objectsEqual(this.mountOptions, mountOptions)) {
             this.mountOptions = mountOptions;
             onPropertyChanged(new PropertyChangedEventArgs("MountOptions")); //$NON-NLS-1$
         }

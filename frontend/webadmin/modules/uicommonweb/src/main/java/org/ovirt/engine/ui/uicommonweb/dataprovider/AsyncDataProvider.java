@@ -128,6 +128,7 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameter
 import org.ovirt.engine.core.common.queries.gluster.GlusterServiceQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.MapWithDefaults;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
@@ -2791,7 +2792,7 @@ public final class AsyncDataProvider {
                         // (note that choosing one of them will break the bond):
                         for (VdsNetworkInterface i : interfaceList)
                         {
-                            if (StringHelper.stringsEqual(i.getBondName(), originalInterface.getName()))
+                            if (ObjectUtils.objectsEqual(i.getBondName(), originalInterface.getName()))
                             {
                                 ifacesOptions.add(i);
                             }
@@ -2837,7 +2838,7 @@ public final class AsyncDataProvider {
                                             // ifacesOptions.AddRange(interfaceList.Where(a => a.bond_name ==
                                             // vlanParent.name).ToList());
                                             for (VdsNetworkInterface i : interfaceList) {
-                                                if (StringHelper.stringsEqual(i.getBondName(), vlanParent.getName())) {
+                                                if (ObjectUtils.objectsEqual(i.getBondName(), vlanParent.getName())) {
                                                     ifacesOptions.add(i);
                                                 }
                                             }

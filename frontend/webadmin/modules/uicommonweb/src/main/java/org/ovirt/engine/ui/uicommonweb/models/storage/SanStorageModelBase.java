@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -240,7 +240,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     public void setSelectedLunWarning(String value)
     {
-        if (!StringHelper.stringsEqual(selectedLunWarning, value))
+        if (!ObjectUtils.objectsEqual(selectedLunWarning, value))
         {
             selectedLunWarning = value;
             onPropertyChanged(new PropertyChangedEventArgs("SelectedLunWarning")); //$NON-NLS-1$
@@ -304,12 +304,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             useUserAuth_EntityChanged(sender, args);
         }
         else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
+                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
         {
             frontend_QueryStarted();
         }
         else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
+                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
         {
             frontend_QueryComplete();
         }

@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -56,7 +57,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setName(String value)
     {
-        if (!StringHelper.stringsEqual(name, value))
+        if (!ObjectUtils.objectsEqual(name, value))
         {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
@@ -72,7 +73,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setDescription(String value)
     {
-        if (!StringHelper.stringsEqual(description, value))
+        if (!ObjectUtils.objectsEqual(description, value))
         {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
@@ -88,7 +89,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setTemplate(String value)
     {
-        if (!StringHelper.stringsEqual(template, value))
+        if (!ObjectUtils.objectsEqual(template, value))
         {
             template = value;
             onPropertyChanged(new PropertyChangedEventArgs("Template")); //$NON-NLS-1$
@@ -104,7 +105,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setDefinedMemory(String value)
     {
-        if (!StringHelper.stringsEqual(definedMemory, value))
+        if (!ObjectUtils.objectsEqual(definedMemory, value))
         {
             definedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefinedMemory")); //$NON-NLS-1$
@@ -120,7 +121,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setMinAllocatedMemory(String value)
     {
-        if (!StringHelper.stringsEqual(minAllocatedMemory, value))
+        if (!ObjectUtils.objectsEqual(minAllocatedMemory, value))
         {
             minAllocatedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("MinAllocatedMemory")); //$NON-NLS-1$
@@ -136,7 +137,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setOS(String value)
     {
-        if (!StringHelper.stringsEqual(os, value))
+        if (!ObjectUtils.objectsEqual(os, value))
         {
             os = value;
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
@@ -152,7 +153,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setDefaultDisplayType(String value)
     {
-        if (!StringHelper.stringsEqual(defaultDisplayType, value))
+        if (!ObjectUtils.objectsEqual(defaultDisplayType, value))
         {
             defaultDisplayType = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType")); //$NON-NLS-1$
@@ -168,7 +169,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setOrigin(String value)
     {
-        if (!StringHelper.stringsEqual(origin, value))
+        if (!ObjectUtils.objectsEqual(origin, value))
         {
             origin = value;
             onPropertyChanged(new PropertyChangedEventArgs("Origin")); //$NON-NLS-1$
@@ -252,7 +253,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setUsbPolicy(String value)
     {
-        if (!StringHelper.stringsEqual(usbPolicy, value))
+        if (!ObjectUtils.objectsEqual(usbPolicy, value))
         {
             usbPolicy = value;
             onPropertyChanged(new PropertyChangedEventArgs("UsbPolicy")); //$NON-NLS-1$
@@ -268,7 +269,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setCpuInfo(String value)
     {
-        if (!StringHelper.stringsEqual(cpuInfo, value))
+        if (!ObjectUtils.objectsEqual(cpuInfo, value))
         {
             cpuInfo = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuInfo")); //$NON-NLS-1$
@@ -300,7 +301,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setPriority(String value)
     {
-        if (!StringHelper.stringsEqual(priority, value))
+        if (!ObjectUtils.objectsEqual(priority, value))
         {
             priority = value;
             onPropertyChanged(new PropertyChangedEventArgs("Priority")); //$NON-NLS-1$
@@ -332,7 +333,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setAlert(String value)
     {
-        if (!StringHelper.stringsEqual(alert, value))
+        if (!ObjectUtils.objectsEqual(alert, value))
         {
             alert = value;
             onPropertyChanged(new PropertyChangedEventArgs("Alert")); //$NON-NLS-1$
@@ -348,7 +349,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setDomain(String value)
     {
-        if (!StringHelper.stringsEqual(domain, value))
+        if (!ObjectUtils.objectsEqual(domain, value))
         {
             domain = value;
             onPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
@@ -364,7 +365,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setStorageDomain(String value)
     {
-        if (!StringHelper.stringsEqual(storageDomain, value))
+        if (!ObjectUtils.objectsEqual(storageDomain, value))
         {
             storageDomain = value;
             onPropertyChanged(new PropertyChangedEventArgs("StorageDomain")); //$NON-NLS-1$
@@ -380,7 +381,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setTimeZone(String value)
     {
-        if (!StringHelper.stringsEqual(timeZone, value))
+        if (!ObjectUtils.objectsEqual(timeZone, value))
         {
             timeZone = value;
             onPropertyChanged(new PropertyChangedEventArgs("TimeZone")); //$NON-NLS-1$
@@ -412,7 +413,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setDefaultHost(String value)
     {
-        if (!StringHelper.stringsEqual(defaultHost, value))
+        if (!ObjectUtils.objectsEqual(defaultHost, value))
         {
             defaultHost = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefaultHost")); //$NON-NLS-1$
@@ -444,7 +445,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setCustomProperties(String value)
     {
-        if (!StringHelper.stringsEqual(customProperties, value))
+        if (!ObjectUtils.objectsEqual(customProperties, value))
         {
             customProperties = value;
             onPropertyChanged(new PropertyChangedEventArgs("CustomProperties")); //$NON-NLS-1$
@@ -460,7 +461,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setVmId(String value)
     {
-        if (!StringHelper.stringsEqual(vmId, value))
+        if (!ObjectUtils.objectsEqual(vmId, value))
         {
             vmId = value;
             onPropertyChanged(new PropertyChangedEventArgs("VmId")); //$NON-NLS-1$
@@ -476,7 +477,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setFqdn(String value)
     {
-        if (!StringHelper.stringsEqual(fqdn, value))
+        if (!ObjectUtils.objectsEqual(fqdn, value))
         {
             fqdn = value;
             onPropertyChanged(new PropertyChangedEventArgs("FQDN")); //$NON-NLS-1$
@@ -492,7 +493,7 @@ public class VmGeneralModel extends EntityModel
 
     public void setCompatibilityVersion(String value)
     {
-        if (!StringHelper.stringsEqual(compatibilityVersion, value))
+        if (!ObjectUtils.objectsEqual(compatibilityVersion, value))
         {
             compatibilityVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("CompatibilityVersion")); //$NON-NLS-1$

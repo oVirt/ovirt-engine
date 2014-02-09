@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.RefObject;
@@ -800,7 +801,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 {
                     for (Network network : networksByCluster)
                     {
-                        if (StringHelper.stringsEqual(network.getName(), item.getNetworkName()))
+                        if (ObjectUtils.objectsEqual(network.getName(), item.getNetworkName()))
                         {
                             networksToAdd.add(network);
                             if (selectedNetwork == null)
@@ -933,7 +934,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     hostInterfaceModel.getBondingOptions().setItems(list);
                     for (int i = 0; i < list.size(); i++)
                     {
-                        if (StringHelper.stringsEqual(list.get(i).getKey(), item.getBondOptions()))
+                        if (ObjectUtils.objectsEqual(list.get(i).getKey(), item.getBondOptions()))
                         {
                             selectBondingOpt = list.get(i);
                             containsSelectBondingOpt = true;
@@ -942,7 +943,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     }
                     if (containsSelectBondingOpt == false)
                     {
-                        if (StringHelper.stringsEqual(item.getBondOptions(), AsyncDataProvider.getDefaultBondingOption()))
+                        if (ObjectUtils.objectsEqual(item.getBondOptions(), AsyncDataProvider.getDefaultBondingOption()))
                         {
                             selectBondingOpt = defaultItem;
                         }
@@ -1076,7 +1077,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             managementModel.getBondingOptions().setItems(list);
                             for (int i = 0; i < list.size(); i++)
                             {
-                                if (StringHelper.stringsEqual(list.get(i).getKey(), item.getBondOptions()))
+                                if (ObjectUtils.objectsEqual(list.get(i).getKey(), item.getBondOptions()))
                                 {
                                     selectBondingOpt = list.get(i);
                                     containsSelectBondingOpt = true;
@@ -1085,7 +1086,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             }
                             if (containsSelectBondingOpt == false)
                             {
-                                if (StringHelper.stringsEqual(item.getBondOptions(),
+                                if (ObjectUtils.objectsEqual(item.getBondOptions(),
                                         AsyncDataProvider.getDefaultBondingOption()))
                                 {
                                     selectBondingOpt = defaultItem;
@@ -1961,7 +1962,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             bondWithVlans = true;
                             for (HostVLan vLan : item.getVLans())
                             {
-                                if (StringHelper.stringsEqual(network.getName(), vLan.getNetworkName()))
+                                if (ObjectUtils.objectsEqual(network.getName(), vLan.getNetworkName()))
                                 {
                                     vLanAttached = true;
                                     break;
@@ -1976,7 +1977,7 @@ public class HostInterfaceListModel extends SearchableListModel
             {
                 for (VdsNetworkInterface item : getSelectedItemsWithVlans())
                 {
-                    if (item.getVlanId() != null && StringHelper.stringsEqual(item.getNetworkName(), network.getName()))
+                    if (item.getVlanId() != null && ObjectUtils.objectsEqual(item.getNetworkName(), network.getName()))
                     {
                         isUpdateVlan = true;
                         break;

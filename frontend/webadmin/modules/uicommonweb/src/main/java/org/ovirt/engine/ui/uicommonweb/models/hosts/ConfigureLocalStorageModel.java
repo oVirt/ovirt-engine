@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ListUtils;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -165,10 +166,10 @@ public class ConfigureLocalStorageModel extends Model {
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDataCenter().getVersion()) {
             dataCenterVersion_SelectedItemChanged();
         } else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), frontendHash)) {
+                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), frontendHash)) {
             frontend_QueryStarted();
         } else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), frontendHash)) {
+                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), frontendHash)) {
             frontend_QueryComplete();
         }
     }

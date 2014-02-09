@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -1402,7 +1403,7 @@ public class ClusterModel extends EntityModel
             getCPU().setSelectedItem(null);
             for (ServerCpu a : getCPU().getItems())
             {
-                if (StringHelper.stringsEqual(a.getCpuName(), getEntity().getcpu_name()))
+                if (ObjectUtils.objectsEqual(a.getCpuName(), getEntity().getcpu_name()))
                 {
                     getCPU().setSelectedItem(a);
                     break;

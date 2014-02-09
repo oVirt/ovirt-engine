@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -59,7 +59,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
     public void setGetLUNsFailure(String value)
     {
-        if (!StringHelper.stringsEqual(getLUNsFailure, value))
+        if (!ObjectUtils.objectsEqual(getLUNsFailure, value))
         {
             getLUNsFailure = value;
             onPropertyChanged(new PropertyChangedEventArgs("GetLUNsFailure")); //$NON-NLS-1$

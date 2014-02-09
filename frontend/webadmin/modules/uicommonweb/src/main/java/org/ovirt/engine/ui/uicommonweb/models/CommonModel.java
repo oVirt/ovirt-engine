@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
@@ -1206,7 +1207,7 @@ public class CommonModel extends ListModel
 
     public void setSearchStringPrefix(String value)
     {
-        if (!StringHelper.stringsEqual(searchStringPrefix, value))
+        if (!ObjectUtils.objectsEqual(searchStringPrefix, value))
         {
             searchStringPrefix = value;
             searchStringPrefixChanged();
@@ -1240,7 +1241,7 @@ public class CommonModel extends ListModel
 
     public void setSearchString(String value, boolean checkIfNewValue)
     {
-        if (!checkIfNewValue || !StringHelper.stringsEqual(searchString, value))
+        if (!checkIfNewValue || !ObjectUtils.objectsEqual(searchString, value))
         {
             searchString = value;
             searchStringChanged();

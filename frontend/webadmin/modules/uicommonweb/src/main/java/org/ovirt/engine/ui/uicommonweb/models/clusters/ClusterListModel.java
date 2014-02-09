@@ -22,8 +22,8 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -613,7 +613,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     private ServerCpu getVdsGroupServerCpu(ClusterModel model, VDSGroup vdsGroup) {
         ServerCpu retVal = null;
         for (ServerCpu cpu : model.getCPU().getItems()) {
-            if (StringHelper.stringsEqual(cpu.getCpuName(), vdsGroup.getcpu_name())) {
+            if (ObjectUtils.objectsEqual(cpu.getCpuName(), vdsGroup.getcpu_name())) {
                 retVal = cpu;
                 break;
             }

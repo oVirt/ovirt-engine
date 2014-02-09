@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -69,7 +69,7 @@ public class PoolGeneralModel extends EntityModel
 
     public void setName(String value)
     {
-        if (!StringHelper.stringsEqual(name, value))
+        if (!ObjectUtils.objectsEqual(name, value))
         {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
@@ -85,7 +85,7 @@ public class PoolGeneralModel extends EntityModel
 
     public void setDescription(String value)
     {
-        if (!StringHelper.stringsEqual(description, value))
+        if (!ObjectUtils.objectsEqual(description, value))
         {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
@@ -117,7 +117,7 @@ public class PoolGeneralModel extends EntityModel
 
     public void setDefaultDisplayType(String value)
     {
-        if (!StringHelper.stringsEqual(defaultDisplayType, value))
+        if (!ObjectUtils.objectsEqual(defaultDisplayType, value))
         {
             defaultDisplayType = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType")); //$NON-NLS-1$
@@ -133,7 +133,7 @@ public class PoolGeneralModel extends EntityModel
 
     public void setOrigin(String value)
     {
-        if (!StringHelper.stringsEqual(origin, value))
+        if (!ObjectUtils.objectsEqual(origin, value))
         {
             origin = value;
             onPropertyChanged(new PropertyChangedEventArgs("Origin")); //$NON-NLS-1$
@@ -149,7 +149,7 @@ public class PoolGeneralModel extends EntityModel
 
     public void setTemplate(String value)
     {
-        if (!StringHelper.stringsEqual(template, value))
+        if (!ObjectUtils.objectsEqual(template, value))
         {
             template = value;
             onPropertyChanged(new PropertyChangedEventArgs("Template")); //$NON-NLS-1$
@@ -197,7 +197,7 @@ public class PoolGeneralModel extends EntityModel
 
     public void setDefinedMemory(String value)
     {
-        if (!StringHelper.stringsEqual(definedMemory, value))
+        if (!ObjectUtils.objectsEqual(definedMemory, value))
         {
             definedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefinedMemory")); //$NON-NLS-1$
@@ -213,7 +213,7 @@ public class PoolGeneralModel extends EntityModel
 
     public void setMinAllocatedMemory(String value)
     {
-        if (!StringHelper.stringsEqual(minAllocatedMemory, value))
+        if (!ObjectUtils.objectsEqual(minAllocatedMemory, value))
         {
             minAllocatedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("MinAllocatedMemory")); //$NON-NLS-1$
@@ -261,7 +261,7 @@ public class PoolGeneralModel extends EntityModel
 
     public void setUsbPolicy(String value)
     {
-        if (!StringHelper.stringsEqual(usbPolicy, value))
+        if (!ObjectUtils.objectsEqual(usbPolicy, value))
         {
             usbPolicy = value;
             onPropertyChanged(new PropertyChangedEventArgs("UsbPolicy")); //$NON-NLS-1$
@@ -277,7 +277,7 @@ public class PoolGeneralModel extends EntityModel
 
     public void setDomain(String value)
     {
-        if (!StringHelper.stringsEqual(domain, value))
+        if (!ObjectUtils.objectsEqual(domain, value))
         {
             domain = value;
             onPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
@@ -293,7 +293,7 @@ public class PoolGeneralModel extends EntityModel
 
     public void setTimeZone(String value)
     {
-        if (!StringHelper.stringsEqual(timeZone, value))
+        if (!ObjectUtils.objectsEqual(timeZone, value))
         {
             timeZone = value;
             onPropertyChanged(new PropertyChangedEventArgs("TimeZone")); //$NON-NLS-1$
@@ -309,7 +309,7 @@ public class PoolGeneralModel extends EntityModel
 
     public void setCpuInfo(String value)
     {
-        if (!StringHelper.stringsEqual(cpuInfo, value))
+        if (!ObjectUtils.objectsEqual(cpuInfo, value))
         {
             cpuInfo = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuInfo")); //$NON-NLS-1$
@@ -341,7 +341,7 @@ public class PoolGeneralModel extends EntityModel
 
     public void setDefaultHost(String value)
     {
-        if (!StringHelper.stringsEqual(defaultHost, value))
+        if (!ObjectUtils.objectsEqual(defaultHost, value))
         {
             defaultHost = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefaultHost")); //$NON-NLS-1$
@@ -367,7 +367,7 @@ public class PoolGeneralModel extends EntityModel
     private String quotaName;
 
     public void setQuotaName(String value) {
-        if (!StringHelper.stringsEqual(defaultHost, value)) {
+        if (!ObjectUtils.objectsEqual(defaultHost, value)) {
             this.quotaName = value;
             onPropertyChanged(new PropertyChangedEventArgs("QuotaName")); //$NON-NLS-1$
         }

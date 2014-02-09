@@ -47,8 +47,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -1816,7 +1816,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
 
         String isoName =
-                (StringHelper.stringsEqual(model.getIsoImage().getSelectedItem().toString(), ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
+                (ObjectUtils.objectsEqual(model.getIsoImage().getSelectedItem().toString(), ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem().toString();
 
         model.startProgress(null);
@@ -2144,7 +2144,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         // TODO: Patch!
         String isoName = model.getTitle();
-        if (StringHelper.stringsEqual(isoName, ConstantsManager.getInstance()
+        if (ObjectUtils.objectsEqual(isoName, ConstantsManager.getInstance()
                 .getConstants()
                 .noCds()))
         {
@@ -2160,7 +2160,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ChangeDisk,
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(vm.getId(),
-                        StringHelper.stringsEqual(isoName, ConsoleModel.getEjectLabel()) ? "" : isoName) })), //$NON-NLS-1$
+                        ObjectUtils.objectsEqual(isoName, ConsoleModel.getEjectLabel()) ? "" : isoName) })), //$NON-NLS-1$
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

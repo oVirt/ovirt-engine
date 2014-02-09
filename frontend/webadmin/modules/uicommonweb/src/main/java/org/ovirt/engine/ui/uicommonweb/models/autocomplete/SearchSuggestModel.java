@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
@@ -145,7 +146,7 @@ public class SearchSuggestModel extends SearchableListModel
                     boolean skipItem = false;
                     for (String value : getFilter())
                     {
-                        if (StringHelper.stringsEqual(value.toLowerCase(), item.toLowerCase()))
+                        if (ObjectUtils.objectsEqual(value.toLowerCase(), item.toLowerCase()))
                         {
                             skipItem = true;
                             break;

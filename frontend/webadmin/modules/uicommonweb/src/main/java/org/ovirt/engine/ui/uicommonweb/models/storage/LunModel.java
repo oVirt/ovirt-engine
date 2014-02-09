@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.LunStatus;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -21,7 +21,7 @@ public class LunModel extends EntityModel
 
     public void setLunId(String value)
     {
-        if (!StringHelper.stringsEqual(lunId, value))
+        if (!ObjectUtils.objectsEqual(lunId, value))
         {
             lunId = value;
             onPropertyChanged(new PropertyChangedEventArgs("LunId")); //$NON-NLS-1$
@@ -37,7 +37,7 @@ public class LunModel extends EntityModel
 
     public void setVendorId(String value)
     {
-        if (!StringHelper.stringsEqual(vendorId, value))
+        if (!ObjectUtils.objectsEqual(vendorId, value))
         {
             vendorId = value;
             onPropertyChanged(new PropertyChangedEventArgs("VendorId")); //$NON-NLS-1$
@@ -53,7 +53,7 @@ public class LunModel extends EntityModel
 
     public void setProductId(String value)
     {
-        if (!StringHelper.stringsEqual(productId, value))
+        if (!ObjectUtils.objectsEqual(productId, value))
         {
             productId = value;
             onPropertyChanged(new PropertyChangedEventArgs("ProductId")); //$NON-NLS-1$
@@ -69,7 +69,7 @@ public class LunModel extends EntityModel
 
     public void setSerial(String value)
     {
-        if (!StringHelper.stringsEqual(serial, value))
+        if (!ObjectUtils.objectsEqual(serial, value))
         {
             serial = value;
             onPropertyChanged(new PropertyChangedEventArgs("Serial")); //$NON-NLS-1$

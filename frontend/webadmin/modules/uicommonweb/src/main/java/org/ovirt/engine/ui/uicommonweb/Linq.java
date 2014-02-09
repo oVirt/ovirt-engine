@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -367,7 +368,7 @@ public final class Linq
     {
         for (NetworkInterface i : items)
         {
-            if (StringHelper.stringsEqual(i.getName(), name))
+            if (ObjectUtils.objectsEqual(i.getName(), name))
             {
                 return i;
             }
@@ -379,7 +380,7 @@ public final class Linq
     {
         for (VdsNetworkInterface i : items)
         {
-            if (StringHelper.stringsEqual(i.getNetworkName(), name))
+            if (ObjectUtils.objectsEqual(i.getNetworkName(), name))
             {
                 return i;
             }
@@ -454,7 +455,7 @@ public final class Linq
     {
         for (Network n : items)
         {
-            if (StringHelper.stringsEqual(n.getName(), name))
+            if (ObjectUtils.objectsEqual(n.getName(), name))
             {
                 return n;
             }
@@ -515,7 +516,7 @@ public final class Linq
     {
         for (VdcReturnValueBase i : items)
         {
-            if (StringHelper.stringsEqual(i.getDescription(), description))
+            if (ObjectUtils.objectsEqual(i.getDescription(), description))
             {
                 return i;
             }
@@ -820,7 +821,7 @@ public final class Linq
         @Override
         public boolean match(TimeZoneModel source)
         {
-            return StringHelper.stringsEqual(source.getTimeZoneKey(), timeZone);
+            return ObjectUtils.objectsEqual(source.getTimeZoneKey(), timeZone);
         }
     }
 
@@ -836,7 +837,7 @@ public final class Linq
         @Override
         public boolean match(ServerCpu source)
         {
-            return StringHelper.stringsEqual(source.getCpuName(), cpuName);
+            return ObjectUtils.objectsEqual(source.getCpuName(), cpuName);
         }
     }
 
@@ -1060,7 +1061,7 @@ public final class Linq
         @Override
         public boolean match(LunModel source)
         {
-            return StringHelper.stringsEqual(source.getLunId(), lun.getLunId());
+            return ObjectUtils.objectsEqual(source.getLunId(), lun.getLunId());
         }
     }
 
@@ -1076,9 +1077,9 @@ public final class Linq
         @Override
         public boolean match(SanTargetModel source)
         {
-            return StringHelper.stringsEqual(source.getName(), target.getName())
-                    && StringHelper.stringsEqual(source.getAddress(), target.getAddress())
-                    && StringHelper.stringsEqual(source.getPort(), target.getPort());
+            return ObjectUtils.objectsEqual(source.getName(), target.getName())
+                    && ObjectUtils.objectsEqual(source.getAddress(), target.getAddress())
+                    && ObjectUtils.objectsEqual(source.getPort(), target.getPort());
         }
     }
 
@@ -1094,7 +1095,7 @@ public final class Linq
         @Override
         public boolean match(DbUser source)
         {
-            return StringHelper.stringsEqual(source.getDomain(), target.getDomain())
+            return ObjectUtils.objectsEqual(source.getDomain(), target.getDomain())
                     && (StringHelper.isNullOrEmpty(target.getLoginName())
                     || "*".equals(target.getLoginName()) //$NON-NLS-1$
                     || source.getLoginName().toLowerCase().startsWith(target.getLoginName()));

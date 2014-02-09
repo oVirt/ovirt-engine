@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.List;
 
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -49,7 +49,7 @@ public class SanTargetModel extends EntityModel
 
     public void setAddress(String value)
     {
-        if (!StringHelper.stringsEqual(address, value))
+        if (!ObjectUtils.objectsEqual(address, value))
         {
             address = value;
             onPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
@@ -65,7 +65,7 @@ public class SanTargetModel extends EntityModel
 
     public void setPort(String value)
     {
-        if (!StringHelper.stringsEqual(port, value))
+        if (!ObjectUtils.objectsEqual(port, value))
         {
             port = value;
             onPropertyChanged(new PropertyChangedEventArgs("Port")); //$NON-NLS-1$
@@ -81,7 +81,7 @@ public class SanTargetModel extends EntityModel
 
     public void setName(String value)
     {
-        if (!StringHelper.stringsEqual(name, value))
+        if (!ObjectUtils.objectsEqual(name, value))
         {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$

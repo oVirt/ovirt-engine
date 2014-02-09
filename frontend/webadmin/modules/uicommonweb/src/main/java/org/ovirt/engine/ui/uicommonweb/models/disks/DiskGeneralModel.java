@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -25,7 +25,7 @@ public class DiskGeneralModel extends EntityModel
 
     public void setAlias(String value)
     {
-        if (!StringHelper.stringsEqual(privateAlias, value))
+        if (!ObjectUtils.objectsEqual(privateAlias, value))
         {
             privateAlias = value;
             onPropertyChanged(new PropertyChangedEventArgs("Alias")); //$NON-NLS-1$
@@ -41,7 +41,7 @@ public class DiskGeneralModel extends EntityModel
 
     public void setDescription(String value)
     {
-        if (!StringHelper.stringsEqual(privateDescription, value))
+        if (!ObjectUtils.objectsEqual(privateDescription, value))
         {
             privateDescription = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
@@ -57,7 +57,7 @@ public class DiskGeneralModel extends EntityModel
 
     public void setStorageDomain(String value)
     {
-        if (!StringHelper.stringsEqual(privateStorageDomain, value))
+        if (!ObjectUtils.objectsEqual(privateStorageDomain, value))
         {
             privateStorageDomain = value;
             onPropertyChanged(new PropertyChangedEventArgs("Storage Domain")); //$NON-NLS-1$
@@ -73,7 +73,7 @@ public class DiskGeneralModel extends EntityModel
 
     public void setDiskId(String value)
     {
-        if (!StringHelper.stringsEqual(diskId, value))
+        if (!ObjectUtils.objectsEqual(diskId, value))
         {
             diskId = value;
             onPropertyChanged(new PropertyChangedEventArgs("ID")); //$NON-NLS-1$
@@ -89,7 +89,7 @@ public class DiskGeneralModel extends EntityModel
 
     public void setLunId(String value)
     {
-        if (!StringHelper.stringsEqual(privateLunId, value))
+        if (!ObjectUtils.objectsEqual(privateLunId, value))
         {
             privateLunId = value;
             onPropertyChanged(new PropertyChangedEventArgs("LUN ID")); //$NON-NLS-1$
@@ -105,7 +105,7 @@ public class DiskGeneralModel extends EntityModel
 
     public void setAlignment(String value)
     {
-        if (!StringHelper.stringsEqual(privateAlignment, value)) {
+        if (!ObjectUtils.objectsEqual(privateAlignment, value)) {
             privateAlignment = value;
             onPropertyChanged(new PropertyChangedEventArgs("Alignment")); //$NON-NLS-1$
         }
@@ -120,7 +120,7 @@ public class DiskGeneralModel extends EntityModel
 
     public void setQuotaName(String value)
     {
-        if (!StringHelper.stringsEqual(privateQuotaName, value))
+        if (!ObjectUtils.objectsEqual(privateQuotaName, value))
         {
             privateQuotaName = value;
             onPropertyChanged(new PropertyChangedEventArgs("Quota Name")); //$NON-NLS-1$

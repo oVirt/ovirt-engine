@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -89,7 +89,7 @@ public class VmItemBehavior extends ItemBehavior {
 
         // TODO: Patch!
         String imageName = model.getTitle();
-        if (StringHelper.stringsEqual(imageName, ConstantsManager.getInstance()
+        if (ObjectUtils.objectsEqual(imageName, ConstantsManager.getInstance()
                 .getConstants()
                 .noCds()))
         {
@@ -97,7 +97,7 @@ public class VmItemBehavior extends ItemBehavior {
         }
 
         Frontend.getInstance().runAction(VdcActionType.ChangeDisk,
-                new ChangeDiskCommandParameters(entity.getId(), StringHelper.stringsEqual(imageName,
+                new ChangeDiskCommandParameters(entity.getId(), ObjectUtils.objectsEqual(imageName,
                         ConsoleModel.getEjectLabel()) ? "" : imageName)); //$NON-NLS-1$
     }
 

@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.common;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -19,7 +19,7 @@ public class SelectionTreeNodeModel extends EntityModel
 
     public void setDescription(String value)
     {
-        if (!StringHelper.stringsEqual(description, value))
+        if (!ObjectUtils.objectsEqual(description, value))
         {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
@@ -120,7 +120,7 @@ public class SelectionTreeNodeModel extends EntityModel
 
     public void setTooltip(String value)
     {
-        if (!StringHelper.stringsEqual(tooltip, value))
+        if (!ObjectUtils.objectsEqual(tooltip, value))
         {
             tooltip = value;
             onPropertyChanged(new PropertyChangedEventArgs("Tooltip")); //$NON-NLS-1$

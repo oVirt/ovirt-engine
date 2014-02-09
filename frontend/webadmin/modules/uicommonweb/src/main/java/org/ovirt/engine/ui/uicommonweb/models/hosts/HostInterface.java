@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -47,7 +47,7 @@ public class HostInterface extends Model
 
     public void setName(String value)
     {
-        if (!StringHelper.stringsEqual(name, value))
+        if (!ObjectUtils.objectsEqual(name, value))
         {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
@@ -63,7 +63,7 @@ public class HostInterface extends Model
 
     public void setAddress(String value)
     {
-        if (!StringHelper.stringsEqual(address, value))
+        if (!ObjectUtils.objectsEqual(address, value))
         {
             address = value;
             onPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
@@ -79,7 +79,7 @@ public class HostInterface extends Model
 
     public void setMAC(String value)
     {
-        if (!StringHelper.stringsEqual(mac, value))
+        if (!ObjectUtils.objectsEqual(mac, value))
         {
             mac = value;
             onPropertyChanged(new PropertyChangedEventArgs("MAC")); //$NON-NLS-1$

@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -289,7 +290,7 @@ public class UnitVmModel extends Model {
 
     public void setCPUNotification(String value)
     {
-        if (!StringHelper.stringsEqual(cpuNotification, value))
+        if (!ObjectUtils.objectsEqual(cpuNotification, value))
         {
             cpuNotification = value;
             onPropertyChanged(new PropertyChangedEventArgs("CPUNotification")); //$NON-NLS-1$
@@ -1529,12 +1530,12 @@ public class UnitVmModel extends Model {
         super.eventRaised(ev, sender, args);
 
         if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
+                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
         {
             frontend_QueryStarted();
         }
         else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
+                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
         {
             frontend_QueryComplete();
         }
@@ -2599,7 +2600,7 @@ public class UnitVmModel extends Model {
     }
 
     public void setPrestartedVmsHint(String value) {
-        if (!StringHelper.stringsEqual(prestartedVmsHint, value)) {
+        if (!ObjectUtils.objectsEqual(prestartedVmsHint, value)) {
             prestartedVmsHint = value;
             onPropertyChanged(new PropertyChangedEventArgs("PrestartedVmsHint")); //$NON-NLS-1$
         }

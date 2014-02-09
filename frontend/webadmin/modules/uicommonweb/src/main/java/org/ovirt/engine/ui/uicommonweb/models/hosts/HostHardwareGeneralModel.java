@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -31,7 +31,7 @@ public class HostHardwareGeneralModel extends EntityModel
 
     public void setHardwareManufacturer(String value)
     {
-        if (!StringHelper.stringsEqual(hardwareManufacturer, value))
+        if (!ObjectUtils.objectsEqual(hardwareManufacturer, value))
         {
             hardwareManufacturer = value;
             onPropertyChanged(new PropertyChangedEventArgs("manufacturer")); //$NON-NLS-1$
@@ -47,7 +47,7 @@ public class HostHardwareGeneralModel extends EntityModel
 
     public void setHardwareProductName(String value)
     {
-        if (!StringHelper.stringsEqual(hardwareProductName, value))
+        if (!ObjectUtils.objectsEqual(hardwareProductName, value))
         {
             hardwareProductName = value;
             onPropertyChanged(new PropertyChangedEventArgs("productName")); //$NON-NLS-1$
@@ -63,7 +63,7 @@ public class HostHardwareGeneralModel extends EntityModel
 
     public void setHardwareSerialNumber(String value)
     {
-        if (!StringHelper.stringsEqual(hardwareSerialNumber, value))
+        if (!ObjectUtils.objectsEqual(hardwareSerialNumber, value))
         {
             hardwareSerialNumber = value;
             onPropertyChanged(new PropertyChangedEventArgs("serialNumber")); //$NON-NLS-1$
@@ -79,7 +79,7 @@ public class HostHardwareGeneralModel extends EntityModel
 
     public void setHardwareVersion(String value)
     {
-        if (!StringHelper.stringsEqual(hardwareVersion, value))
+        if (!ObjectUtils.objectsEqual(hardwareVersion, value))
         {
             hardwareVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("hardwareVersion")); //$NON-NLS-1$
@@ -95,7 +95,7 @@ public class HostHardwareGeneralModel extends EntityModel
 
     public void setHardwareUUID(String value)
     {
-        if (!StringHelper.stringsEqual(hardwareUUID, value))
+        if (!ObjectUtils.objectsEqual(hardwareUUID, value))
         {
             hardwareUUID = value;
             onPropertyChanged(new PropertyChangedEventArgs("uuid")); //$NON-NLS-1$
@@ -112,7 +112,7 @@ public class HostHardwareGeneralModel extends EntityModel
     @SuppressWarnings("deprecation")
     public void setHardwareFamily(String value)
     {
-        if (!StringHelper.stringsEqual(hardwareFamily, value))
+        if (!ObjectUtils.objectsEqual(hardwareFamily, value))
         {
             hardwareFamily = value;
             onPropertyChanged(new PropertyChangedEventArgs("family")); //$NON-NLS-1$

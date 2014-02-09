@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -39,7 +39,7 @@ public class ConfirmationModel extends ListModel
     }
 
     public void setForceLabel(String forceLabel) {
-        if (!StringHelper.stringsEqual(getForceLabel(), forceLabel))
+        if (!ObjectUtils.objectsEqual(getForceLabel(), forceLabel))
         {
             this.forceLabel = forceLabel;
             onPropertyChanged(new PropertyChangedEventArgs("ForceLabel")); //$NON-NLS-1$
@@ -55,7 +55,7 @@ public class ConfirmationModel extends ListModel
 
     public void setNote(String value)
     {
-        if (!StringHelper.stringsEqual(note, value))
+        if (!ObjectUtils.objectsEqual(note, value))
         {
             note = value;
             onPropertyChanged(new PropertyChangedEventArgs("Note")); //$NON-NLS-1$

@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.Match;
 import org.ovirt.engine.core.compat.Regex;
@@ -201,7 +202,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
 
     public void setSearchString(String value)
     {
-        if (!StringHelper.stringsEqual(searchString, value))
+        if (!ObjectUtils.objectsEqual(searchString, value))
         {
             searchString = value;
             searchStringChanged();

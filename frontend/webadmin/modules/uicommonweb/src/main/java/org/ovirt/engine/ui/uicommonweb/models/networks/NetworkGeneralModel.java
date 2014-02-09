@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -80,7 +80,7 @@ public class NetworkGeneralModel extends EntityModel
     }
 
     public void setName(String value) {
-        if (!StringHelper.stringsEqual(name, value))
+        if (!ObjectUtils.objectsEqual(name, value))
         {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
@@ -92,7 +92,7 @@ public class NetworkGeneralModel extends EntityModel
     }
 
     public void setRole(String value) {
-        if (!StringHelper.stringsEqual(role, value))
+        if (!ObjectUtils.objectsEqual(role, value))
         {
             role = value;
             onPropertyChanged(new PropertyChangedEventArgs("Role")); //$NON-NLS-1$
@@ -137,7 +137,7 @@ public class NetworkGeneralModel extends EntityModel
 
     public void setDescription(String value)
     {
-        if (!StringHelper.stringsEqual(description, value))
+        if (!ObjectUtils.objectsEqual(description, value))
         {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$

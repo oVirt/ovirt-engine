@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -42,7 +42,7 @@ public class TemplateGeneralModel extends EntityModel {
     }
 
     public void setName(String value) {
-        if (!StringHelper.stringsEqual(name, value)) {
+        if (!ObjectUtils.objectsEqual(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
@@ -55,7 +55,7 @@ public class TemplateGeneralModel extends EntityModel {
     }
 
     public void setDescription(String value) {
-        if (!StringHelper.stringsEqual(description, value)) {
+        if (!ObjectUtils.objectsEqual(description, value)) {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
@@ -88,7 +88,7 @@ public class TemplateGeneralModel extends EntityModel {
     }
 
     public void setHostCluster(String value) {
-        if (!StringHelper.stringsEqual(hostCluster, value)) {
+        if (!ObjectUtils.objectsEqual(hostCluster, value)) {
             hostCluster = value;
             onPropertyChanged(new PropertyChangedEventArgs("HostCluster")); //$NON-NLS-1$
         }
@@ -101,7 +101,7 @@ public class TemplateGeneralModel extends EntityModel {
     }
 
     public void setDefinedMemory(String value) {
-        if (!StringHelper.stringsEqual(definedMemory, value)) {
+        if (!ObjectUtils.objectsEqual(definedMemory, value)) {
             definedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefinedMemory")); //$NON-NLS-1$
         }
@@ -114,7 +114,7 @@ public class TemplateGeneralModel extends EntityModel {
     }
 
     public void setCpuInfo(String value) {
-        if (!StringHelper.stringsEqual(cpuInfo, value)) {
+        if (!ObjectUtils.objectsEqual(cpuInfo, value)) {
             cpuInfo = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuInfo")); //$NON-NLS-1$
         }
@@ -127,7 +127,7 @@ public class TemplateGeneralModel extends EntityModel {
     }
 
     public void setOS(String value) {
-        if (!StringHelper.stringsEqual(os, value)) {
+        if (!ObjectUtils.objectsEqual(os, value)) {
             os = value;
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
@@ -140,7 +140,7 @@ public class TemplateGeneralModel extends EntityModel {
     }
 
     public void setDefaultDisplayType(String value) {
-        if (!StringHelper.stringsEqual(defaultDisplayType, value)) {
+        if (!ObjectUtils.objectsEqual(defaultDisplayType, value)) {
             defaultDisplayType = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType")); //$NON-NLS-1$
         }
@@ -153,7 +153,7 @@ public class TemplateGeneralModel extends EntityModel {
     }
 
     public void setOrigin(String value) {
-        if (!StringHelper.stringsEqual(origin, value)) {
+        if (!ObjectUtils.objectsEqual(origin, value)) {
             origin = value;
             onPropertyChanged(new PropertyChangedEventArgs("Origin")); //$NON-NLS-1$
         }
@@ -179,7 +179,7 @@ public class TemplateGeneralModel extends EntityModel {
     }
 
     public void setPriority(String value) {
-        if (!StringHelper.stringsEqual(priority, value)) {
+        if (!ObjectUtils.objectsEqual(priority, value)) {
             priority = value;
             onPropertyChanged(new PropertyChangedEventArgs("Priority")); //$NON-NLS-1$
         }
@@ -257,7 +257,7 @@ public class TemplateGeneralModel extends EntityModel {
     }
 
     public void setDomain(String value) {
-        if (!StringHelper.stringsEqual(domain, value)) {
+        if (!ObjectUtils.objectsEqual(domain, value)) {
             domain = value;
             onPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
         }
@@ -270,7 +270,7 @@ public class TemplateGeneralModel extends EntityModel {
     }
 
     public void setTimeZone(String value) {
-        if (!StringHelper.stringsEqual(timeZone, value)) {
+        if (!ObjectUtils.objectsEqual(timeZone, value)) {
             timeZone = value;
             onPropertyChanged(new PropertyChangedEventArgs("TimeZone")); //$NON-NLS-1$
         }
@@ -296,7 +296,7 @@ public class TemplateGeneralModel extends EntityModel {
     }
 
     public void setUsbPolicy(String value) {
-        if (!StringHelper.stringsEqual(usbPolicy, value)) {
+        if (!ObjectUtils.objectsEqual(usbPolicy, value)) {
             usbPolicy = value;
             onPropertyChanged(new PropertyChangedEventArgs("UsbPolicy")); //$NON-NLS-1$
         }

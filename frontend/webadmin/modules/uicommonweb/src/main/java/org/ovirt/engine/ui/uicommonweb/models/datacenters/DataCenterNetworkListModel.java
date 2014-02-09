@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -202,7 +202,7 @@ public class DataCenterNetworkListModel extends SearchableListModel
         for (Object item : selectedItems)
         {
             Network network = (Network) item;
-            if (StringHelper.stringsEqual(network.getName(), ENGINE_NETWORK))
+            if (ObjectUtils.objectsEqual(network.getName(), ENGINE_NETWORK))
             {
                 anyEngine = true;
                 break;
