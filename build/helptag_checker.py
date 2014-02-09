@@ -89,12 +89,12 @@ def findHashNamesWithoutHelpTag(sourcedir):
                     '_'
                 )
                 if (
-                    lines[i-1].find('.' + hashname) == -1 or
-                    lines[i-1].find('setHelpTag') == -1
+                    lines[i - 1].find('.' + hashname) == -1 or
+                    lines[i - 1].find('setHelpTag') == -1
                 ):
                     warning(
                         "helptag hashname mismatch: %s\n%s%s\n"
-                        % (fname, lines[i-1], lines[i])
+                        % (fname, lines[i - 1], lines[i])
                     )
 
 
