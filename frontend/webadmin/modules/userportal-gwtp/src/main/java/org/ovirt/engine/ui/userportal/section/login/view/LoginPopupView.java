@@ -117,9 +117,6 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     private int popupLeft = 0;
     private int popupTop = 0;
 
-    // This is true by default. If no message exists then the tooltip is hidden
-    private boolean hasMessageOfTheDay = true;
-
     @Inject
     public LoginPopupView(EventBus eventBus,
             ClientAgentType clientAgentType,
@@ -173,9 +170,17 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
                 if (message != null && !message.isEmpty()) {
                     tooltip.setHTML(templates.userMessageOfTheDay(message));
                     tooltipPanel.setWidget(tooltip);
+                    tooltipPanel.setModal(false);
+                    final int errorHeight = errorMessagePanel.isVisible() ? errorMessage.getOffsetHeight() - 2 : 0;
+                    tooltipPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+                        @Override
+                        public void setPosition(int offsetWidth, int offsetHeight) {
+                            // Putting the tooltip in the center of the login dialog, right underneath it
+                            tooltipPanel.setPopupPosition(popupLeft - (offsetWidth / 2), popupTop + (popup.getOffsetHeight() / 2 + errorHeight));
+                        }
+                    });
                 } else {
                     tooltipPanel.hide();
-                    hasMessageOfTheDay = false;
                 }
 
             }
@@ -185,7 +190,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     }
 
     private void setToolTipPositionAndShow() {
-        // We set those as the absoulute left and top values
+        // We set those as the absolute left and top values
         // are different in subsequent calls, so we anchor them to the first ones that aren't zero
         // It is a workaround to a strange behavior
         if (popupLeft == 0) {
@@ -194,17 +199,6 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
 
         if (popupTop == 0) {
             popupTop = popup.getAbsoluteTop();
-        }
-
-        if (hasMessageOfTheDay) {
-            final int errorHeight = errorMessagePanel.isVisible() ? errorMessage.getOffsetHeight() - 2 : 0;
-            tooltipPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
-                @Override
-                public void setPosition(int offsetWidth, int offsetHeight) {
-                    // Putting the tooltip in the center of the login dialog, right underneath it
-                    tooltipPanel.setPopupPosition(popupLeft - (offsetWidth / 2), popupTop + (popup.getOffsetHeight() / 2 + errorHeight));
-                }
-            });
         }
     }
 
@@ -260,6 +254,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     @Override
     public void clearErrorMessage() {
         setErrorMessageHtml(null);
+        tooltipPanel.hide();
     }
 
     @Override
