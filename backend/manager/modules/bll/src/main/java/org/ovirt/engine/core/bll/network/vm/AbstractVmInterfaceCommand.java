@@ -92,8 +92,9 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
                 : ValidationResult.VALID;
     }
 
-    protected boolean updateVnicForBackwardCompatibility() {
+    protected boolean updateVnicForBackwardCompatibility(VmNic oldNic) {
         if (!validate(VnicProfileHelper.updateNicForBackwardCompatibility(getParameters().getInterface(),
+                oldNic,
                 getParameters().getNetworkName(),
                 getParameters().isPortMirroring(),
                 getVm().getStaticData(),
@@ -102,6 +103,10 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         }
 
         return true;
+    }
+
+    protected boolean updateVnicForBackwardCompatibility() {
+        return updateVnicForBackwardCompatibility(null);
     }
 
     protected ValidationResult vmStatusLegal(VMStatus status) {
