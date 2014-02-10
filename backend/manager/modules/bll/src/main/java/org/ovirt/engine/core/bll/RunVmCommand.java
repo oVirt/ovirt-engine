@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -94,7 +93,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     /** This flag is used to indicate that the disks might be dirty since the memory
      *  from the active snapshot was restored so the memory should not be used */
     private boolean memoryFromSnapshotIrrelevant;
-    private VDS cachedDestinationVds;
 
     private Guid cachedActiveIsoDomainId;
 
@@ -114,25 +112,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         initRunVmCommand();
     }
 
-    @Override
-    protected VDS getDestinationVds() {
-        if (cachedDestinationVds == null) {
-            Guid vdsId = null;
-
-            if (getVm().getDedicatedVmForVds() != null) {
-                vdsId = getVm().getDedicatedVmForVds();
-            }
-
-            // destination VDS ID is stronger than the dedicated VDS
-            if (getParameters().getDestinationVdsId() != null) {
-                vdsId = getParameters().getDestinationVdsId();
-            }
-
-            if (vdsId != null) {
-                cachedDestinationVds = getVdsDAO().get(vdsId);
-            }
-        }
-        return cachedDestinationVds;
+    protected Guid getPredefinedVdsIdToRunOn() {
+        return getVm().getDedicatedVmForVds();
     }
 
     private void initRunVmCommand() {
@@ -625,14 +606,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected boolean getVdsToRunOn() {
-        // use destination vds or default vds or none
-        VDS destinationVds = getDestinationVds();
         Guid vdsToRunOn =
                 SchedulingManager.getInstance().schedule(getVdsGroup(),
                         getVm(),
                         getRunVdssList(),
                         getVdsWhiteList(),
-                        destinationVds == null ? null : destinationVds.getId(),
+                        getPredefinedVdsIdToRunOn(),
                         new ArrayList<String>(),
                         new VdsFreeMemoryChecker(this),
                         getCorrelationId());
@@ -755,7 +734,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getStoragePool(),
                 getRunVdssList(),
                 getVdsWhiteList(),
-                getDestinationVds() != null ? getDestinationVds().getId() : null,
+                getPredefinedVdsIdToRunOn(),
                 getVdsGroup())) {
             return false;
         }

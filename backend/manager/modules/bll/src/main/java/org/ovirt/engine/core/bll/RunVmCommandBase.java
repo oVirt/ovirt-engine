@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -65,8 +64,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     public RunVmCommandBase(T parameters) {
         super(parameters);
     }
-
-    protected abstract VDS getDestinationVds();
 
     public SnapshotsValidator getSnapshotsValidator() {
         return snapshotsValidator;

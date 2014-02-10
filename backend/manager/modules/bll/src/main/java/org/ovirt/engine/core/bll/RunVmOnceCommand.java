@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SysPrepParams;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -55,6 +54,14 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         }
 
         return true;
+    }
+
+    @Override
+    protected Guid getPredefinedVdsIdToRunOn() {
+        // destination VDS ID has priority over the dedicated VDS
+        return getParameters().getDestinationVdsId() != null ?
+            getParameters().getDestinationVdsId()
+            : super.getPredefinedVdsIdToRunOn();
     }
 
     /**
@@ -122,11 +129,10 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
 
     @Override
     protected List<Guid> getVdsWhiteList() {
-        VDS destinationVds = getDestinationVds();
-        if (destinationVds != null) {
-            return Arrays.asList(destinationVds.getId());
-        }
-        return super.getVdsWhiteList();
+        Guid predefinedDestinationVdsId = getPredefinedVdsIdToRunOn();
+        return predefinedDestinationVdsId != null ?
+                Arrays.asList(predefinedDestinationVdsId)
+                : super.getVdsWhiteList();
     }
 
     @Override

@@ -37,10 +37,8 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
 
-    /** The ID of the VDS the VM is going to migrate to */
-    private Guid destinationVdsId;
-    /** Cache the result of {@link #getDestinationVds()} */
-    private VDS cachedDestinationVds;
+    /** The VDS that the VM is going to migrate to */
+    private VDS destinationVds;
 
     /** Used to log the migration error. */
     private VdcBllErrors migrationErrorCode;
@@ -53,7 +51,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
      * this property is used for audit log events
      */
     public final String getDestinationVdsName() {
-        return getDestinationVds() != null ? getDestinationVds().getName() : null;
+        VDS destinationVds = getDestinationVds();
+        return destinationVds != null ? destinationVds.getName() : null;
     }
 
     /**
@@ -72,12 +71,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     /**
      * Returns the VDS that the VM is about to migrate to
      */
-    @Override
     protected VDS getDestinationVds() {
-        if (cachedDestinationVds == null && destinationVdsId != null) {
-            cachedDestinationVds = getVdsDAO().get(destinationVdsId);
-        }
-        return cachedDestinationVds;
+        return destinationVds;
     }
 
     @Override
@@ -91,13 +86,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     protected void initVdss() {
         setVdsIdRef(getVm().getRunOnVds());
-        VDS destVds = getDestinationVds();
         Guid vdsToRunOn =
                 SchedulingManager.getInstance().schedule(getVdsGroup(),
                         getVm(),
                         getVdsBlackList(),
                         getVdsWhiteList(),
-                        destVds == null ? null : destVds.getId(),
+                        getDestinationVdsId(),
                         new ArrayList<String>(),
                         new VdsFreeMemoryChecker(this),
                         getCorrelationId());
@@ -106,10 +100,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             getRunVdssList().add(vdsToRunOn);
         }
         VmHandler.updateVmGuestAgentVersion(getVm());
-        // make _destinationVds null in order to refresh it from db in case it
-        // changed.
-        cachedDestinationVds = null;
-        if (destinationVdsId != null && destinationVdsId.equals(Guid.Empty)) {
+
+        if (vdsToRunOn != null && vdsToRunOn.equals(Guid.Empty)) {
             throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_CANT_ALLOC_VDS_MIGRATION);
         }
 
@@ -126,12 +118,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     private void perform() {
-        getVm().setMigratingToVds(destinationVdsId);
+        getVm().setMigratingToVds(getDestinationVdsId());
 
         getParameters().setStartTime(new Date());
 
         // Starting migration at src VDS
-        boolean connectToLunDiskSuccess = connectLunDisks(destinationVdsId);
+        boolean connectToLunDiskSuccess = connectLunDisks(getDestinationVdsId());
         if (connectToLunDiskSuccess) {
             setActionReturnValue(Backend
                     .getInstance()
@@ -157,7 +149,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 getDestinationVds().getHostName(),
                 getDestinationVds().getPort());
 
-        return new MigrateVDSCommandParameters(getVdsId(), getVmId(), srcVdsHost, destinationVdsId,
+        return new MigrateVDSCommandParameters(getVdsId(), getVmId(), srcVdsHost, getDestinationVdsId(),
                 dstVdsHost, MigrationMethod.ONLINE, isTunnelMigrationUsed(), getMigrationNetworkIp(), getVds().getVdsGroupCompatibilityVersion(),
                 getMaximumMigrationDowntime());
     }
@@ -275,11 +267,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     protected Guid getDestinationVdsId() {
-        return destinationVdsId;
+        VDS destinationVds = getDestinationVds();
+        return destinationVds != null ? destinationVds.getId() : null;
     }
 
-    protected void setDestinationVdsId(Guid value) {
-        destinationVdsId = value;
+    protected void setDestinationVdsId(Guid vdsId) {
+        destinationVds = vdsId != null ? getVdsDAO().get(vdsId) : null;
     }
 
     @Override
