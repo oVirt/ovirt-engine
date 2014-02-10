@@ -81,8 +81,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     @Override
     public void rerun() {
-        Guid vdsId = getDestinationVds() != null ? getDestinationVds().getId() : getCurrentVdsId();
-        decreasePendingVms(vdsId);
+        decreasePendingVms(getCurrentVdsId());
 
         setSucceeded(false);
         setVm(null);
