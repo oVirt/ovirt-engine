@@ -23,6 +23,10 @@ COMMAND_DIFF = 'diff'
 COMMAND_TEMPLATE = 'template'
 FORMAT_JSON = 'json'
 FORMAT_INI = 'ini'
+TYPE_WEBADMIN = 'webadmin'
+TYPE_USERPORTAL = 'userportal'
+TYPE_COMMON = 'common'
+TYPE_UNKNOWN = 'unknown'
 HELPTAG_SECTION = 'helptags'
 
 __RE_HELPTAG = re.compile(
@@ -33,6 +37,8 @@ __RE_HELPTAG = re.compile(
         \(
             \s*
             "(?P<name>[^"]+)"
+            \s*,\s*
+            HelpTagType\.(?P<type>%s|%s|%s|%s)
             \s*
             (
                 ,\s*
@@ -42,6 +48,11 @@ __RE_HELPTAG = re.compile(
         \)
         \s*
     """
+    %
+    (
+        TYPE_WEBADMIN.upper(), TYPE_USERPORTAL.upper(), TYPE_COMMON.upper(),
+        TYPE_UNKNOWN.upper(),
+    )
 )
 
 
@@ -60,7 +71,7 @@ def loadTags(file, format):
     return ret
 
 
-def codeTags(filename):
+def codeTags(filename, type):
     """
     look for help tags in the source code.
     """
@@ -72,10 +83,14 @@ def codeTags(filename):
                 comment = ""
                 m = __RE_HELPTAG.match(line)
                 if m:
-                    name = m.group("name")
-                    if m.group("comment"):
-                        comment = m.group("comment")
-                    tags[name] = comment
+                    if (
+                        m.group("type") == type.upper() or
+                        m.group("type") == TYPE_COMMON.upper()
+                    ):
+                        name = m.group("name")
+                        if m.group("comment"):
+                            comment = m.group("comment")
+                        tags[name] = comment
     return tags
 
 
@@ -123,6 +138,14 @@ def main():
         ),
     )
     parser.add_argument(
+        '--type',
+        metavar='COMMAND',
+        dest='type',
+        choices=[TYPE_WEBADMIN, TYPE_USERPORTAL],
+        help='Type (%(choices)s)',
+        required=True
+    )
+    parser.add_argument(
         '--sourcefile',
         metavar='FILE',
         dest='sourcefile',
@@ -161,7 +184,7 @@ def main():
     )
     args = parser.parse_args()
 
-    neededTags = codeTags(args.sourcefile)
+    neededTags = codeTags(args.sourcefile, args.type)
 
     if args.command == COMMAND_TEMPLATE:
         produceTemplate(
