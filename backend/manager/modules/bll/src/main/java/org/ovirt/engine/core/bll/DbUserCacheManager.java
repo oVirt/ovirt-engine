@@ -214,13 +214,18 @@ public class DbUserCacheManager {
         StringBuilder groupIdsBuffer = new StringBuilder();
         boolean first = true;
         for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
-            DbGroup dbGroup = groupsMap.get(directoryGroup.getId());
             if (!first) {
                 groupNamesBuffer.append(',');
-                groupIdsBuffer.append(dbGroup.getId());
+                groupIdsBuffer.append(',');
             }
-            groupNamesBuffer.append(directoryGroup.getName());
-            groupIdsBuffer.append(directoryGroup.getId());
+            DbGroup dbGroup = groupsMap.get(directoryGroup.getId());
+            if (dbGroup != null) {
+                groupNamesBuffer.append(dbGroup.getName());
+                groupIdsBuffer.append(dbGroup.getExternalId());
+            } else {
+                groupNamesBuffer.append(directoryGroup.getName());
+                groupIdsBuffer.append(directoryGroup.getId());
+            }
             first = false;
         }
         String groupNames = groupNamesBuffer.toString();
