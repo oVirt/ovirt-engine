@@ -376,6 +376,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is previewing a Snapshot.")
     String ACTION_TYPE_FAILED_VM_IN_PREVIEW();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following VMs are previewing a snapshot: ${vms}.")
+    String ACTION_TYPE_FAILED_STORAGE_DELETE_VMS_IN_PREVIEW();
+
     @DefaultStringValue("Cannot ${action} ${type}. The following VM's disks snapshots are attached to other VMs (Disk Alias/Snapshot Description/VM attached to):\n\n ${disksInfo} \n\nPlease detach them from those VMs and try again.")
     String ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM();
 
@@ -669,6 +672,12 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The Storage Domain already contains the target disk(s).")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following VMs/Templates are delete protected: ${vms}.")
+    String ACTION_TYPE_FAILED_STORAGE_DELETE_PROTECTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following VMs/Templates are attached to pool: ${vms}.")
+    String ACTION_TYPE_FAILED_STORAGE_VMS_IN_POOL();
 
     @DefaultStringValue("Cannot ${action} ${type}. The Storage Domain name is already in use.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST();
@@ -1285,6 +1294,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Storage Domain doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. There are VMs which contain disks related to other storage domains. The VMs are: ${vms}.")
+    String ACTION_TYPE_FAILED_STORAGE_CONTAINS_VMS_WITH_DISKS_ON_OTHER_DOMAINS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. There are Templates which contain disks related to other storage domains. The Templates are: ${vmTemplates}.")
+    String ACTION_TYPE_FAILED_STORAGE_CONTAINS_TEMPLATES_WITH_DISKS_ON_OTHER_DOMAINS();
+
     @DefaultStringValue("Cannot ${action} ${type}. Cannot change Storage Domain type.")
     String ACTION_TYPE_FAILED_CANNOT_CHANGE_STORAGE_DOMAIN_TYPE();
 
@@ -1308,9 +1323,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The following LUNs are already used by DirectLUN disks: ${lunIds}.")
     String ACTION_TYPE_FAILED_LUNS_ALREADY_USED_BY_DISKS();
-
-    @DefaultStringValue("Cannot detach a non empty Storage Domain.\n-Please remove all VMs / Templates / Disks and try again.")
-    String ERROR_CANNOT_DETACH_STORAGE_DOMAIN_WITH_IMAGES();
 
     @DefaultStringValue("Cannot remove Data Center while it contains disks.\n-Please remove them first.")
     String ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_IMAGES();

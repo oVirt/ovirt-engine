@@ -32,7 +32,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
@@ -83,9 +82,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         if (getStoragePoolIsoMap() == null) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.STORAGE_DOMAIN_NOT_ATTACHED_TO_STORAGE_POOL);
-        } else if (hasImages()) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DETACH_STORAGE_DOMAIN_WITH_IMAGES);
         } else if (!isRemoveLast
                 && isMaster()) {
 
@@ -412,10 +408,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected ImageDao getImageDao() {
         return getDbFacade().getImageDao();
-    }
-
-    protected DiskImageDAO getDiskImageDao() {
-        return getDbFacade().getDiskImageDao();
     }
 
     protected StorageDomainOvfInfoDao getStorageDomainOvfInfoDao() {

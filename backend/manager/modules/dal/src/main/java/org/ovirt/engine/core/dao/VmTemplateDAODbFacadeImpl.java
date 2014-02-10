@@ -151,6 +151,13 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
     }
 
     @Override
+    public List<VmTemplate> getAllTemplatesWithDisksOnOtherStorageDomain(Guid storageDomainGuid) {
+        return getCallsHandler().executeReadList("GetAllVmTemplatesWithDisksOnOtherStorageDomain",
+                VMTemplateRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("storage_domain_id", storageDomainGuid));
+    }
+
+    @Override
     public void save(VmTemplate template) {
         getCallsHandler().executeModification("InsertVmTemplate", getInsertOrUpdateParameters(template));
     }

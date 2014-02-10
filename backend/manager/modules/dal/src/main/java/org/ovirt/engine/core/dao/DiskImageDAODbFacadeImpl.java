@@ -123,6 +123,16 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 parameterSource);
     }
 
+    @Override
+    public List<DiskImage> getAllForStorageDomain(Guid storageDomainId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("storage_domain_id", storageDomainId);
+
+        return getCallsHandler().executeReadList("GetAllForStorageDomain",
+                DiskImageRowMapper.instance,
+                parameterSource);
+    }
+
     protected static class DiskImageRowMapper extends AbstractDiskRowMapper<DiskImage> {
 
         public static final DiskImageRowMapper instance = new DiskImageRowMapper();

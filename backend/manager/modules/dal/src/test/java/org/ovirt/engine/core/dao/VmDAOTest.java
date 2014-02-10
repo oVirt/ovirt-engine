@@ -521,4 +521,16 @@ public class VmDAOTest extends BaseDAOTestCase {
 
         assertTrue(vmIdsToUpdate.contains(FixturesTool.VM_RHEL5_POOL_52));
     }
+
+    /**
+     * Ensures that there are no VMs with disks on different storage domains.
+     */
+    @Test
+    public void testGetAllVMsWithDisksOnOtherStorageDomain() {
+        List<VM> result = dao.getAllVMsWithDisksOnOtherStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
 }

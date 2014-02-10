@@ -1,15 +1,20 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
@@ -94,6 +99,39 @@ public class StorageDomainValidator {
 
     private static Integer getLowDiskSpaceThreshold() {
         return Config.<Integer> getValue(ConfigValues.FreeSpaceCriticalLowInGB);
+    }
+
+    // TODO: Validation should be removed once we support detach of storage domain with VMs containing multiple disks
+    // resides on different storage domains.
+    public ValidationResult hasVmsWithDisksOnOtherStorageDomains() {
+        // If there are VMs with disks on other storage domain we should block the operation.
+        List<VM> vms = getDbFacade().getVmDao().getAllVMsWithDisksOnOtherStorageDomain(storageDomain.getId());
+
+        if (!vms.isEmpty()) {
+            List<String> entityNames = new ArrayList<>();
+            for (VM vm : vms) {
+                entityNames.add(vm.getName());
+            }
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONTAINS_VMS_WITH_DISKS_ON_OTHER_DOMAINS,
+                    String.format("$vms %1$s", StringUtils.join(entityNames, ",")));
+        }
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult hasTempaltesWithDisksOnOtherStorageDomains() {
+        // If there are Templates with disks on other storage domain we should block the operation.
+        List<VmTemplate> vmTemplates =
+                getDbFacade().getVmTemplateDao().getAllTemplatesWithDisksOnOtherStorageDomain(storageDomain.getId());
+
+        if (!vmTemplates.isEmpty()) {
+            List<String> entityNames = new ArrayList<>();
+            for (VmTemplate vmTemplate : vmTemplates) {
+                entityNames.add(vmTemplate.getName());
+            }
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONTAINS_TEMPLATES_WITH_DISKS_ON_OTHER_DOMAINS,
+                    String.format("$vmTemplates %1$s", StringUtils.join(entityNames, ",")));
+        }
+        return ValidationResult.VALID;
     }
 
     public ValidationResult hasSpaceForNewDisks(Collection<DiskImage> diskImages) {

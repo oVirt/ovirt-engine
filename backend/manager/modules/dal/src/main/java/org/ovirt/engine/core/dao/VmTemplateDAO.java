@@ -185,4 +185,14 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
      *             id of the latest template version in the chain
      */
     VmTemplate getTemplateWithLatestVersionInChain(Guid id);
+
+    /**
+     * Retrieves all templates which contains disks on other Storage Domain other then the storageDomain GUID.
+     *
+     * @param storageDomainGuid
+     *            the storage domain GUID
+     * @return List of Templates
+     */
+    List<VmTemplate> getAllTemplatesWithDisksOnOtherStorageDomain(Guid storageDomainGuid);
+
 }

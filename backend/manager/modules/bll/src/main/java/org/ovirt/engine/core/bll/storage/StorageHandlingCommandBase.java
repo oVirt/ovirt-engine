@@ -8,13 +8,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -26,6 +31,9 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -37,8 +45,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDAO;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -47,6 +57,10 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class StorageHandlingCommandBase<T extends StoragePoolParametersBase> extends CommandBase<T> {
+    private List<VM> vmsForStorageDomain;
+    private List<VmTemplate> templatesForStorageDomain;
+    private List<DiskImage> diskImagesForStorageDomain;
+
     public StorageHandlingCommandBase(T parameters) {
         super(parameters);
         init(parameters);
@@ -103,6 +117,27 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return ret;
     }
 
+    protected List<VM> getVMsForStorageDomain(Guid storageDomainId) {
+        if (vmsForStorageDomain == null) {
+            vmsForStorageDomain = getVmDAO().getAllForStorageDomain(storageDomainId);
+        }
+        return vmsForStorageDomain;
+    }
+
+    protected List<VmTemplate> getTemplatesForStorageDomain(Guid storageDomainId) {
+        if (templatesForStorageDomain == null) {
+            templatesForStorageDomain = getVmTemplateDAO().getAllForStorageDomain(storageDomainId);
+        }
+        return templatesForStorageDomain;
+    }
+
+    protected List<DiskImage> getDiskImagesForStorageDomain(Guid storageDomainId) {
+        if (diskImagesForStorageDomain == null) {
+            diskImagesForStorageDomain = getDiskImageDao().getAllForStorageDomain(storageDomainId);
+        }
+        return diskImagesForStorageDomain;
+    }
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     protected boolean initializeVds() {
         boolean returnValue = true;
@@ -133,6 +168,112 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             return false;
         }
         return true;
+    }
+
+    protected boolean canDetachStorageDomainWithVmsAndDisks(StorageDomain storageDomain) {
+        if (!storageDomain.getStorageDomainType().isDataDomain()) {
+            return true;
+        }
+        StorageDomainValidator storageValidator = new StorageDomainValidator(storageDomain);
+        if (!validate(storageValidator.hasVmsWithDisksOnOtherStorageDomains()) ||
+                !validate(storageValidator.hasTempaltesWithDisksOnOtherStorageDomains())) {
+            return false;
+        }
+
+        List<VM> vmRelatedToDomain = getVMsForStorageDomain(storageDomain.getId());
+        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
+        boolean succeeded = true;
+        List<String> entitiesDeleteProtected = new ArrayList<>();
+        List<String> vmsInPool = new ArrayList<>();
+        List<String> vmsInPreview = new ArrayList<>();
+        for (VM vm : vmRelatedToDomain) {
+            if (vm.isDeleteProtected()) {
+                entitiesDeleteProtected.add(vm.getName());
+            }
+            if (vm.getVmPoolId() != null) {
+                vmsInPool.add(vm.getName());
+            }
+            if (!snapshotsValidator.vmNotInPreview(vm.getId()).isValid()) {
+                vmsInPreview.add(vm.getName());
+            }
+        }
+
+        List<VmTemplate> templatesRelatedToDomain = getTemplatesForStorageDomain(storageDomain.getId());
+        for (VmTemplate vmTemplate : templatesRelatedToDomain) {
+            if (vmTemplate.isDeleteProtected()) {
+                entitiesDeleteProtected.add(vmTemplate.getName());
+            }
+        }
+
+        if (!entitiesDeleteProtected.isEmpty()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DELETE_PROTECTED);
+            addCanDoActionMessage(String.format("$vms %1$s", StringUtils.join(entitiesDeleteProtected, ",")));
+            succeeded = false;
+        }
+        if (!vmsInPool.isEmpty()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_VMS_IN_POOL);
+            addCanDoActionMessage(String.format("$vms %1$s", StringUtils.join(vmsInPool, ",")));
+            succeeded = false;
+        }
+        if (!vmsInPreview.isEmpty()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DELETE_VMS_IN_PREVIEW);
+            addCanDoActionMessage(String.format("$vms %1$s", StringUtils.join(vmsInPreview, ",")));
+            succeeded = false;
+        }
+        return succeeded;
+    }
+
+    protected void detachStorageDomainWithEntities(StorageDomain storageDomain) {
+        // Check if we have entities related to the Storage Domain.
+        List<VM> vmsForStorageDomain = getVMsForStorageDomain(storageDomain.getId());
+        List<VmTemplate> vmTemplatesForStorageDomain = getTemplatesForStorageDomain(storageDomain.getId());
+        List<DiskImage> disksForStorageDomain = getDiskImageDao().getAllForStorageDomain(storageDomain.getId());
+        removeEntitiesFromStorageDomain(vmsForStorageDomain, vmTemplatesForStorageDomain, disksForStorageDomain, storageDomain.getId());
+    }
+
+    /**
+     * Remove all related entities of the Storage Domain from the DB.
+     */
+    private void removeEntitiesFromStorageDomain(final List<VM> vmsForStorageDomain,
+            final List<VmTemplate> vmTemplatesForStorageDomain,
+            final List<DiskImage> disksForStorageDomain,
+            final Guid storageDomainId) {
+        if (!vmsForStorageDomain.isEmpty() || !vmTemplatesForStorageDomain.isEmpty() || !disksForStorageDomain.isEmpty()) {
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
+                @Override
+                public Object runInTransaction() {
+                    for (VM vm : vmsForStorageDomain) {
+                        getUnregisteredOVFDataDao().saveOVFData(new OvfEntityData(
+                                vm.getId(),
+                                vm.getName(),
+                                VmEntityType.VM,
+                                vm.getClusterArch(),
+                                vm.getVdsGroupCompatibilityVersion(),
+                                storageDomainId,
+                                null,
+                                null));
+                    }
+
+                    for (VmTemplate vmTemplate : vmTemplatesForStorageDomain) {
+                        getUnregisteredOVFDataDao().saveOVFData(new OvfEntityData(
+                                vmTemplate.getId(),
+                                vmTemplate.getName(),
+                                VmEntityType.TEMPLATE,
+                                vmTemplate.getClusterArch(),
+                                getVdsGroupDAO().get(vmTemplate.getVdsGroupId()).getcompatibility_version(),
+                                storageDomainId,
+                                null,
+                                null));
+                    }
+                    getStorageDomainDAO().removeEntitesFromStorageDomain(storageDomainId);
+                    return null;
+                }
+            });
+        }
+    }
+
+    protected UnregisteredOVFDataDAO getUnregisteredOVFDataDao() {
+        return getDbFacade().getUnregisteredOVFDataDao();
     }
 
     protected boolean checkStoragePoolStatus(StoragePoolStatus status) {
@@ -477,6 +618,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return getDbFacade().getStorageDomainDynamicDao();
     }
 
+    protected DiskImageDAO getDiskImageDao() {
+        return getDbFacade().getDiskImageDao();
+    }
 
     /* Transaction methods */
 

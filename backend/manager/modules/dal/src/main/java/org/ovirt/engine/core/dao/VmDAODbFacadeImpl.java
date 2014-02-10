@@ -79,6 +79,13 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
+    public List<VM> getAllVMsWithDisksOnOtherStorageDomain(Guid storageDomainGuid) {
+        return getCallsHandler().executeReadList("GetAllVMsWithDisksOnOtherStorageDomain",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("storage_domain_id", storageDomainGuid));
+    }
+
+    @Override
     public List<VM> getVmsListForDisk(Guid id, boolean includeVmsSnapshotAttachedTo) {
         List<VM> result = new ArrayList<>();
         List<Pair<VM, VmDevice>> vms = getVmsWithPlugInfo(id);

@@ -301,6 +301,15 @@ public interface VmDAO extends DAO {
     List<VM> getAllRunningByCluster(Guid clusterId);
 
     /**
+     * Retrieves all VM names which contains disks on other Storage Domain other then the storageDomain GUID.
+     *
+     * @param storageDomainGuid
+     *            the storage domain GUID
+     * @return List of VMs
+     */
+    List<VM> getAllVMsWithDisksOnOtherStorageDomain(Guid storageDomainGuid);
+
+    /**
      * Retrieves all ids of vms that are candidate for version update for this base template:
      * template_version_number is set to null
      * status is down

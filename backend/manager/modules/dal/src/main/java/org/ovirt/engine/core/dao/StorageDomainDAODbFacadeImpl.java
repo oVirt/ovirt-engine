@@ -124,6 +124,12 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
+    public void removeEntitesFromStorageDomain(Guid id) {
+        getCallsHandler().executeModification("Remove_Entities_From_storage_domain", getCustomMapSqlParameterSource()
+                .addValue("storage_domain_id", id));
+    }
+
+    @Override
     public List<StorageDomain> getAllStorageDomainsByImageId(Guid imageId) {
         return getCallsHandler().executeReadList("Getstorage_domains_List_By_ImageId",
                 StorageDomainRowMapper.instance, getCustomMapSqlParameterSource()

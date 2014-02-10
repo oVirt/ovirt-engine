@@ -425,6 +425,34 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         assertNull(getDbFacade().getBaseDiskDao().get(FixturesTool.DISK_ID));
     }
 
+    /**
+     * Asserts that the existing Storage Domain exists and has VMs and VM Templates, the after remove asserts
+     * that the existing domain is removed along with the VM and VM Templates
+     */
+    @Test
+    public void testRemoveEntitesFromStorageDomain() {
+        List<VM> vms = getDbFacade().getVmDao().getAllForStorageDomain(EXISTING_DOMAIN_ID);
+        List<VmTemplate> templates = getDbFacade().getVmTemplateDao().getAllForStorageDomain(EXISTING_DOMAIN_ID);
+        BaseDisk diskImage = getDbFacade().getBaseDiskDao().get(FixturesTool.DISK_ID);
+
+        assertNotNull(diskImage);
+        assertFalse(vms.isEmpty());
+        assertFalse(templates.isEmpty());
+
+        assertNotNull(dao.get(EXISTING_DOMAIN_ID));
+
+        dao.removeEntitesFromStorageDomain(existingDomain.getId());
+
+        for (VM vm : vms) {
+            assertNull(getDbFacade().getVmDao().get(vm.getId()));
+        }
+
+        for (VmTemplate template : templates) {
+            assertNull(getDbFacade().getVmTemplateDao().get(template.getId()));
+        }
+        assertNull(getDbFacade().getBaseDiskDao().get(FixturesTool.DISK_ID));
+    }
+
     @Test
     public void testAllByConnectionId() {
         List<StorageDomain> domains = dao.getAllByConnectionId(new Guid("0cc146e8-e5ed-482c-8814-270bc48c297f"));

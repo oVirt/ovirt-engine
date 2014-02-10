@@ -160,6 +160,14 @@ public interface StorageDomainDAO extends DAO, SearchDAO<StorageDomain>, AutoRec
     void remove(Guid id);
 
     /**
+     * Removes entities from storage domain.
+     *
+     * @param id
+     *            the storage domain
+     */
+    void removeEntitesFromStorageDomain(Guid id);
+
+    /**
      * Retrieves all storage domains for the specified connection.
      * @param storagePoolId
      *            The storage pool id

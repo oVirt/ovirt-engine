@@ -1040,12 +1040,6 @@ LANGUAGE plpgsql;
 
 
 
-
-
-
-
-
-
 Create or replace FUNCTION GetVmsByAdGroupNames(v_ad_group_names VARCHAR(250)) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
@@ -1081,9 +1075,25 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-
-
-
+Create or replace FUNCTION GetAllVMsWithDisksOnOtherStorageDomain(v_storage_domain_id UUID) RETURNS SETOF vms STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT DISTINCT vms.*
+      FROM vms
+      INNER JOIN (SELECT vm_static.vm_guid
+                  FROM vm_static
+                  INNER JOIN vm_device vd ON vd.vm_id = vm_static.vm_guid
+                  INNER JOIN images i ON i.image_group_id = vd.device_id
+                  INNER JOIN (SELECT image_id
+                              FROM image_storage_domain_map
+                              WHERE image_storage_domain_map.storage_domain_id = v_storage_domain_id) isd_map
+                              ON i.image_guid = isd_map.image_id WHERE entity_type = 'VM') vms_with_disks_on_storage_domain ON vms.vm_guid = vms_with_disks_on_storage_domain.vm_guid
+      INNER JOIN vm_device vd ON vd.vm_id = vms.vm_guid
+      INNER JOIN images i ON i.image_group_id = vd.device_id
+      INNER JOIN image_storage_domain_map on i.image_guid = image_storage_domain_map.image_id
+      WHERE image_storage_domain_map.storage_domain_id != v_storage_domain_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetActiveVmsByStorageDomainId(v_storage_domain_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$

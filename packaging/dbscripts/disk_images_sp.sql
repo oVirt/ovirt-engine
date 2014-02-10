@@ -154,6 +154,16 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetAllForStorageDomain(v_storage_domain_id UUID)
+RETURNS SETOF images_storage_domain_view STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT images_storage_domain_view.*
+      FROM  images_storage_domain_view
+      WHERE active AND images_storage_domain_view.storage_id = v_storage_domain_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
 
 Create or replace FUNCTION GetImagesWhichHaveNoDisk(v_vm_id UUID)
 RETURNS SETOF images_storage_domain_view STABLE

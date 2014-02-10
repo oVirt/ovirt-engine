@@ -635,13 +635,10 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-
-
-Create or replace FUNCTION Force_Delete_storage_domain(v_storage_domain_id UUID)
+Create or replace FUNCTION Remove_Entities_From_storage_domain(v_storage_domain_id UUID)
 RETURNS VOID
    AS $procedure$
 BEGIN
-
    BEGIN
       -- Creating a temporary table which will give all the images and the disks which resids on only the specified storage domain. (copied template disks on multiple storage domains will not be part of this table)
       CREATE TEMPORARY TABLE STORAGE_DOMAIN_MAP_TABLE AS select image_guid as image_id,disk_id
@@ -695,16 +692,12 @@ BEGIN
    delete FROM images where image_guid in (select image_id from STORAGE_DOMAIN_MAP_TABLE);
    delete FROM vm_interface where vmt_guid in(select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
    delete FROM permissions where object_id in (select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
-   delete FROM permissions where object_id = v_storage_domain_id;
    delete FROM vm_static where vm_guid in(select vm_id as vm_guid from VM_IDS_TEMPORARY_TABLE where entity_type <> 'TEMPLATE');
 
    -- Delete pools and snapshots of pools based on templates from the storage domain to be removed
    delete FROM snapshots where vm_id in (select vm_guid FROM vm_static where vmt_guid in (select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE));
    delete FROM vm_static where vmt_guid in (select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
-
    delete FROM vm_static where vm_guid in(select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
-   delete FROM storage_domain_dynamic where id  = v_storage_domain_id;
-   delete FROM storage_domain_static where id  = v_storage_domain_id;
 
    -- Deletes the disks which the only storage domain they are reside on, is the storage domain.
    DELETE FROM base_disks WHERE  disk_id IN (SELECT disk_id FROM STORAGE_DOMAIN_MAP_TABLE);
@@ -714,6 +707,18 @@ BEGIN
 
 END; $procedure$
 LANGUAGE plpgsql;
+
+Create or replace FUNCTION Force_Delete_storage_domain(v_storage_domain_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+   PERFORM Remove_Entities_From_storage_domain(v_storage_domain_id);
+   delete FROM permissions where object_id = v_storage_domain_id;
+   delete FROM storage_domain_dynamic where id = v_storage_domain_id;
+   delete FROM storage_domain_static where id = v_storage_domain_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
 
 Create or replace FUNCTION Getstorage_domains_List_By_storageDomainId(v_storage_domain_id UUID)
 RETURNS SETOF storage_domains STABLE

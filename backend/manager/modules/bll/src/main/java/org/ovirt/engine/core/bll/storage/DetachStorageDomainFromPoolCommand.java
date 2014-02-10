@@ -57,6 +57,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
             @Override
             public Object runInTransaction() {
+                detachStorageDomainWithEntities(getStorageDomain());
                 StoragePoolIsoMap mapToRemove = getStorageDomain().getStoragePoolIsoMapData();
                 getCompensationContext().snapshotEntity(mapToRemove);
                 DbFacade.getInstance()
@@ -84,9 +85,10 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
 
     @Override
     protected boolean canDoAction() {
-        return canDetachDomain(getParameters().getDestroyingPool(),
-                getParameters().getRemoveLast(),
-                isInternalExecution());
+        return canDetachStorageDomainWithVmsAndDisks(getStorageDomain()) &&
+                canDetachDomain(getParameters().getDestroyingPool(),
+                        getParameters().getRemoveLast(),
+                        isInternalExecution());
     }
 
     @Override

@@ -98,4 +98,13 @@ public interface DiskImageDAO extends ReadDao<DiskImage, Guid> {
      * @return List of images (empty if none found).
      */
     List<DiskImage> getImagesWithNoDisk(Guid vmId);
+
+    /**
+     * Return all images that resides on the Storage Domain.
+     *
+     * @param storageDomainId
+     *            The Storage Domain to be fetched entities from.
+     * @return List of DiskImages related to the Storage Domain.
+     */
+    List<DiskImage> getAllForStorageDomain(Guid storageDomainId);
 }
