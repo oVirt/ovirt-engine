@@ -262,20 +262,24 @@ public class SchedulingManager {
             if (vdsList == null || vdsList.size() == 0) {
                 return null;
             }
+
+            Guid bestHost = null;
+
             // in case a default destination host was specified, and
             // it passed filters return it
             if (destHostId != null) {
                 for (VDS vds : vdsList) {
                     if (destHostId.equals(vds.getId())) {
-                        return destHostId;
+                        bestHost = destHostId;
+                        break;
                     }
                 }
             }
-            if (policy.getFunctions() == null || policy.getFunctions().isEmpty()) {
-                return vdsList.get(0).getId();
+            if (bestHost == null && (policy.getFunctions() == null
+                    || policy.getFunctions().isEmpty())) {
+                bestHost = vdsList.get(0).getId();
             }
-            Guid bestHost = null;
-            if (shouldWeighClusterHosts(cluster, vdsList)) {
+            if (bestHost == null && shouldWeighClusterHosts(cluster, vdsList)) {
                 bestHost = runFunctions(policy.getFunctions(), vdsList, vm, parameters);
             }
             if (bestHost == null && vdsList.size() > 0) {
