@@ -110,6 +110,7 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
     @Test
     public void testAddVnicProfile() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpNetworkQueryExpectations();
         setUpCreationExpectations(VdcActionType.AddVnicProfile,
                 VnicProfileParameters.class,
                 new String[] {},
@@ -134,11 +135,13 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
 
     @Test
     public void testAddVnicProfileCantDo() throws Exception {
+        setUpNetworkQueryExpectations();
         doTestBadAddVnicProfile(false, true, CANT_DO);
     }
 
     @Test
     public void testAddVnicProfileFailure() throws Exception {
+        setUpNetworkQueryExpectations();
         doTestBadAddVnicProfile(true, false, FAILURE);
     }
 
@@ -311,6 +314,9 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
     protected org.ovirt.engine.core.common.businessentities.network.VnicProfile getEntity(int index) {
         return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.network.VnicProfile.class),
                 index);
+    }
+
+    protected void setUpNetworkQueryExpectations() {
     }
 
     static org.ovirt.engine.core.common.businessentities.network.VnicProfile setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.network.VnicProfile entity,
