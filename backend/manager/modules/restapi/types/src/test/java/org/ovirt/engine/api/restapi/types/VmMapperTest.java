@@ -91,7 +91,7 @@ public class VmMapperTest extends
         from.setPlacementPolicy(new VmPlacementPolicy());
         from.getPlacementPolicy().setHost(new Host());
         from.getPlacementPolicy().getHost().setId(Guid.Empty.toString());
-        for (GuestNicConfiguration guestNic: from.getInitialization().getNics().getNics()) {
+        for (GuestNicConfiguration guestNic : from.getInitialization().getNicConfigurations().getNicConfigurations()) {
             guestNic.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class).value());
         }
         return from;
