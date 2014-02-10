@@ -54,4 +54,4 @@ is uri relative to the package, for example:
     }
 
 The index file can be generated out of source code or compared to source
-code using build/doctag.py tool available within engine source repository.
+code using build/helptag.py tool available within engine source repository.
