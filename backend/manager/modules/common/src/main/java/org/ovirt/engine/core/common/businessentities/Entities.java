@@ -97,7 +97,9 @@ public class Entities {
         if (entities != null && !entities.isEmpty()) {
             Set<String> names = new HashSet<String>();
             for (E e : entities) {
-                names.add(e.getName());
+                if (e != null) {
+                    names.add(e.getName());
+                }
             }
             return names;
         } else {
