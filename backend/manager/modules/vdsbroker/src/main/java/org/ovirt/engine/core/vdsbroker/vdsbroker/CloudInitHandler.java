@@ -34,7 +34,6 @@ public class CloudInitHandler {
     private String interfaces;
 
     private final String passwordKey = "password";
-    private final String customScript = "customScript";
 
     private enum CloudInitFileMode {
         FILE,
@@ -60,7 +59,6 @@ public class CloudInitHandler {
                 storeNetwork();
                 storeTimeZone();
                 storeRootPassword();
-                storeCustomScript();
             } catch (IllegalArgumentException ex) {
                 throw new IllegalArgumentException("Malformed input", ex);
             }
@@ -71,6 +69,10 @@ public class CloudInitHandler {
 
         String metaDataStr = mapToJson(metaData);
         String userDataStr = mapToYaml(userData);
+
+        if (vmInit.getCustomScript() != null) {
+            userDataStr += vmInit.getCustomScript();
+        }
 
         // add #cloud-config for user data file head
         if (StringUtils.isNotBlank(userDataStr)) {
@@ -181,12 +183,6 @@ public class CloudInitHandler {
         if (!StringUtils.isEmpty(vmInit.getRootPassword())) {
             // Note that this is in plain text in the config disk
             userData.put(passwordKey, vmInit.getRootPassword());
-        }
-    }
-
-    private void storeCustomScript() {
-        if (!StringUtils.isEmpty(vmInit.getCustomScript())) {
-            userData.put(customScript, vmInit.getCustomScript());
         }
     }
 
