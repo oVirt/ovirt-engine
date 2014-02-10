@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jaxb:bindings
+  xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+  version="2.0">
+
+  <jaxb:globalBindings generateIsSetMethod="true">
+    <!-- Replace the default int JAXB parser with one that checks the
+         values don't overflow the corresponding Java types: -->
+    <jaxb:javaType
+      name="int"
+      xmlType="xs:int"
+      parseMethod="org.ovirt.engine.api.utils.IntegerParser.parseInt"
+      />
+    <jaxb:javaType
+      name="long"
+      xmlType="xs:unsignedInt"
+      parseMethod="org.ovirt.engine.api.utils.IntegerParser.parseUnsignedInt"
+      />
+    <jaxb:javaType
+      name="short"
+      xmlType="xs:short"
+      parseMethod="org.ovirt.engine.api.utils.IntegerParser.parseShort"
+      />
+    <jaxb:javaType
+      name="int"
+      xmlType="xs:unsignedShort"
+      parseMethod="org.ovirt.engine.api.utils.IntegerParser.parseUnsignedShort"
+      />
+  </jaxb:globalBindings>
+
+</jaxb:bindings>
