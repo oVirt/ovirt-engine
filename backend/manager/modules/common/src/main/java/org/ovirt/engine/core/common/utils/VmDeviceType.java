@@ -15,6 +15,8 @@ public enum VmDeviceType {
     QXL("qxl"),
     CIRRUS("cirrus"),
     VGA("vga"),
+    SPICE("spice"),
+    VNC("vnc"),
     SOUND("sound"),
     ICH6("ich6"),
     AC97("ac97"),

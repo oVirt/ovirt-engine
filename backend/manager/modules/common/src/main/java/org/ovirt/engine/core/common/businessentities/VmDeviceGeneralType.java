@@ -22,6 +22,11 @@ public enum VmDeviceGeneralType {
     VIDEO,
 
     /**
+     * A graphics framebuffer type
+     */
+    GRAPHICS,
+
+    /**
      * A sound card or PC speaker
      */
     SOUND,

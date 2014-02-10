@@ -3466,4 +3466,14 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("CIDR bad format, expected:\n x.x.x.x/y  where:\n x belongs to [0,255] \n y belongs to [0,32] \n both inclusive")
     String BAD_CIDR_FORMAT();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Device must be specified.")
+    String ACTION_TYPE_FAILED_DEVICE_MUST_BE_SPECIFIED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Graphics Device Type must be specified.")
+    String ACTION_TYPE_FAILED_GRAPHIC_TYPE_MUST_BE_SPECIFIED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Graphics device ID or VM/Template ID is null.")
+    String ACTION_TYPE_REMOVE_GRAPHICS_DEV_INVALID_PARAMS();
+
 }

@@ -381,6 +381,11 @@ public enum VdcActionType {
     UpdateRngDevice(2151, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
     RemoveRngDevice(2152, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
 
+    // Graphics Device CRUD
+    AddGraphicsDevice(2250, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+    UpdateGraphicsDevice(2251, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+    RemoveGraphicsDevice(2252, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+
     // Audit Log
     RemoveAuditLogById(2100, false, QuotaDependency.NONE),
     ClearAllDismissedAuditLogs(2101, false, QuotaDependency.NONE),
