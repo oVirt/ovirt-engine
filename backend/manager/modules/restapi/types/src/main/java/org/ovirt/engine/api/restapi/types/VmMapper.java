@@ -993,9 +993,9 @@ public class VmMapper {
             entity.setCustomScript(model.getCustomScript());
         }
 
-        if (model.isSetNics()) {
+        if (model.isSetNicConfigurations()) {
             List<VmInitNetwork> networks = new ArrayList<VmInitNetwork>();
-            for(GuestNicConfiguration nic: model.getNics().getNics()) {
+            for (GuestNicConfiguration nic : model.getNicConfigurations().getNicConfigurations()) {
                 networks.add(map(nic, null));
             }
             entity.setNetworks(networks);
@@ -1039,9 +1039,9 @@ public class VmMapper {
             model.setCustomScript(entity.getCustomScript());
         }
         if (entity.getNetworks() != null) {
-            model.setNics(new GuestNicsConfiguration());
+            model.setNicConfigurations(new GuestNicsConfiguration());
             for (VmInitNetwork network : entity.getNetworks()) {
-                model.getNics().getNics().add(map(network, null));
+                model.getNicConfigurations().getNicConfigurations().add(map(network, null));
             }
         }
         return model;

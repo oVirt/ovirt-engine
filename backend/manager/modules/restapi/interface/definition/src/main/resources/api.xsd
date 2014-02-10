@@ -2522,7 +2522,7 @@
         <xs:element name="regenerate_ssh_keys" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
         <xs:element name="dns_servers" type="xs:string" minOccurs="0" maxOccurs="1"/>
         <xs:element name="dns_search" type="xs:string" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="nics" type="GuestNicsConfiguration" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="nic_configurations" minOccurs="0" maxOccurs="1"/>
         <xs:element name="windows_license_key" type="xs:string" minOccurs="0" maxOccurs="1"/>
         <xs:element name="root_password" type="xs:string" minOccurs="0" maxOccurs="1"/>
         <xs:element name="custom_script" type="xs:string" minOccurs="0" maxOccurs="1"/>
@@ -3147,9 +3147,9 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="guest_nic_configuration" type="GuestNicConfiguration"/>
+  <xs:element name="nic_configuration" type="GuestNicConfiguration"/>
 
-  <xs:element name="guest_nics_configuation" type="GuestNicsConfiguration"/>
+  <xs:element name="nic_configurations" type="GuestNicsConfiguration"/>
 
   <xs:complexType name="GuestNicConfiguration">
     <xs:sequence>
@@ -3162,10 +3162,10 @@
 
   <xs:complexType name="GuestNicsConfiguration">
     <xs:sequence>
-      <xs:element name="nic" type="GuestNicConfiguration" minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="nic_configuration" minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:appinfo>
-            <jaxb:property name="Nics"/>
+            <jaxb:property name="NicConfigurations"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
