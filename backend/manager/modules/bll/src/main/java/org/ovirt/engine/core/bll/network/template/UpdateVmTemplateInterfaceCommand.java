@@ -50,10 +50,6 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
             return false;
         }
 
-        if (!updateVnicForBackwardCompatibility()) {
-            return false;
-        }
-
         // Interface oldIface = interfaces.First(i => i.id ==
         // AddVmInterfaceParameters.Interface.id);
         VmNic oldIface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNic>() {
@@ -62,6 +58,15 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
                 return i.getId().equals(getParameters().getInterface().getId());
             }
         });
+
+        if (oldIface == null) {
+            addCanDoActionMessage(VdcBllMessages.VM_INTERFACE_NOT_EXIST);
+            return false;
+        }
+
+        if (!updateVnicForBackwardCompatibility(oldIface)) {
+            return false;
+        }
 
         Version clusterCompatibilityVersion = getVdsGroup().getcompatibility_version();
         VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), clusterCompatibilityVersion, getVmTemplate().getOsId());
