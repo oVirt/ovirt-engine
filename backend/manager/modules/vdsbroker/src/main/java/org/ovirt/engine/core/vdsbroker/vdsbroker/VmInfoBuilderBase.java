@@ -198,29 +198,23 @@ public abstract class VmInfoBuilderBase {
     }
 
     protected void buildVmTimeZone() {
-        // send vm_dynamic.utc_diff if exist, if not send vm_static.time_zone
-        if (vm.getUtcDiff() != null) {
-            createInfo.put(VdsProperties.utc_diff, vm.getUtcDiff().toString());
+        // get vm timezone
+        String timeZone = getTimeZoneForVm(vm);
+
+        String javaZoneId = null;
+        if (osRepository.isWindows(vm.getOs())) {
+            // convert to java & calculate offset
+            javaZoneId = WindowsJavaTimezoneMapping.windowsToJava.get(timeZone);
         } else {
-            // get vm timezone
-            String timeZone = getTimeZoneForVm(vm);
-
-            int offset = 0;
-            String javaZoneId = null;
-
-            if (osRepository.isWindows(vm.getOs())) {
-                // convert to java & calculate offset
-                javaZoneId = WindowsJavaTimezoneMapping.windowsToJava.get(timeZone);
-            } else {
-                javaZoneId = timeZone;
-            }
-
-            if (javaZoneId != null) {
-                offset = (TimeZone.getTimeZone(javaZoneId).getOffset(
-                        new Date().getTime()) / 1000);
-            }
-            createInfo.put(VdsProperties.utc_diff, "" + offset);
+            javaZoneId = timeZone;
         }
+
+        int offset = 0;
+        if (javaZoneId != null) {
+            offset = (TimeZone.getTimeZone(javaZoneId).getOffset(
+                    new Date().getTime()) / 1000);
+        }
+        createInfo.put(VdsProperties.utc_diff, "" + offset);
     }
 
     private String getTimeZoneForVm(VM vm) {

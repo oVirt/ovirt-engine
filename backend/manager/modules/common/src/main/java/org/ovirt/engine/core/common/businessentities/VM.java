@@ -650,6 +650,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.vmDynamic.setExitMessage(value);
     }
 
+    /**
+     * Tracking value of VM's UTC offset. Useful for long running VMs when there
+     * can be significant drift over initial value computed from timeZone.
+     * Note that this value is no longer being used when
+     * starting VMs (The timeZone field is used to calculate that offset) and is kept
+     * in sync with value reported by VDSM only for debugging purposes.
+     * {@see VmInfoBuilderBase#buildVmTimeZone()}
+     */
     public Integer getUtcDiff() {
         return this.vmDynamic.getUtcDiff();
     }
@@ -1254,9 +1262,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         setAcpiEnable(vm.getAcpiEnable());
         setGuestCurrentUserName(vm.getGuestCurrentUserName());
         setWin2kHackEnable(vm.getWin2kHackEnable());
-        if (SimpleDependecyInjector.getInstance().get(OsRepository.class).isLinux(getVmOsId())) {
-            setUtcDiff(vm.getUtcDiff());
-        }
+        setUtcDiff(vm.getUtcDiff());
         setExitStatus(vm.getExitStatus());
         setExitMessage(vm.getExitMessage());
         setClientIp(vm.getClientIp());
