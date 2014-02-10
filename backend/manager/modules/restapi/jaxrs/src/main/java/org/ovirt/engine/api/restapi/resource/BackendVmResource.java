@@ -252,29 +252,7 @@ public class BackendVmResource extends
             VM vm = action.getVm();
             validateEnums(VM.class, vm);
             actionType = VdcActionType.RunVmOnce;
-            params = map(vm, map(map(getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(guid), id, true), new VM()),
-                                 new RunVmOnceParams(guid)));
-            if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()) {
-                validateParameters(vm.getPlacementPolicy(), "host.id|name");
-                params.setDestinationVdsId(getHostId(vm.getPlacementPolicy().getHost()));
-            }
-            if (vm.isSetInitialization() && vm.getInitialization().isSetCloudInit()) {
-                CloudInit cloudInit = vm.getInitialization().getCloudInit();
-                // currently only 'root' user is supported, alert the user if other user sent
-                if (cloudInit.isSetAuthorizedKeys()) {
-                    for (AuthorizedKey authKey : cloudInit.getAuthorizedKeys().getAuthorizedKeys()) {
-                        if (!"root".equals(authKey.getUser().getUserName())) {
-                            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-.entity("Currently only the user 'root' is supported for authorized keys")
-.build());
-                        }
-                    }
-                }
-                params.setInitializationType(InitializationType.CloudInit);
-                ((RunVmOnceParams) params).setVmInit(
-                        getMapper(CloudInit.class, VmInit.class)
-                                .map(cloudInit, null));
-            }
+            params = createRunVmOnceParams(vm);
         } else {
             actionType = VdcActionType.RunVm;
             params = new RunVmParams(guid);
@@ -283,6 +261,34 @@ public class BackendVmResource extends
             params.setRunAndPause(true);
         }
         return doAction(actionType, params, action);
+    }
+
+    private RunVmOnceParams createRunVmOnceParams(VM vm) {
+        RunVmOnceParams params = map(vm, map(map(getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(guid), id, true), new VM()),
+                new RunVmOnceParams(guid)));
+        if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()) {
+            validateParameters(vm.getPlacementPolicy(), "host.id|name");
+            params.setDestinationVdsId(getHostId(vm.getPlacementPolicy().getHost()));
+        }
+        if (vm.isSetInitialization() && vm.getInitialization().isSetCloudInit()) {
+            CloudInit cloudInit = vm.getInitialization().getCloudInit();
+            // currently only 'root' user is supported, alert the user if other user sent
+            if (cloudInit.isSetAuthorizedKeys()) {
+                for (AuthorizedKey authKey : cloudInit.getAuthorizedKeys().getAuthorizedKeys()) {
+                    if (!"root".equals(authKey.getUser().getUserName())) {
+                        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                                .entity("Currently only the user 'root' is supported for authorized keys")
+                                .build());
+                    }
+                }
+            }
+            params.setInitializationType(InitializationType.CloudInit);
+            ((RunVmOnceParams) params).setVmInit(
+                    getMapper(CloudInit.class, VmInit.class)
+                    .map(cloudInit, null));
+        }
+
+        return params;
     }
 
     @Override

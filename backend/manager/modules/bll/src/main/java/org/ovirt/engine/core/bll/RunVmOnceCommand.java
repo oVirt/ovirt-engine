@@ -9,10 +9,13 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SysPrepParams;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -148,4 +151,26 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         }
     }
 
+    @Override
+    protected boolean isVmRunningOnNonDefaultVds() {
+        return getParameters().getDestinationVdsId() == null
+                && super.isVmRunningOnNonDefaultVds();
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        final List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
+
+        // check, if user can override default target host for VM
+        if (getVm() != null) {
+            final Guid destinationVdsId = getParameters().getDestinationVdsId();
+            if (destinationVdsId != null && !destinationVdsId.equals(getVm().getDedicatedVmForVds())) {
+                permissionList.add(new PermissionSubject(getParameters().getVmId(),
+                    VdcObjectType.VM,
+                    ActionGroup.EDIT_ADMIN_VM_PROPERTIES));
+            }
+        }
+
+        return permissionList;
+    }
 }

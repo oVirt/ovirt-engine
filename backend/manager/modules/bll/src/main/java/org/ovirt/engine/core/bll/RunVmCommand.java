@@ -525,11 +525,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             } else {
                 return getSucceeded() ?
                         (VMStatus) getActionReturnValue() == VMStatus.Up ?
-                                getParameters() != null && getParameters().getDestinationVdsId() == null
-                                        && getVm().getDedicatedVmForVds() != null
-                                        && !getVm().getRunOnVds().equals(getVm().getDedicatedVmForVds()) ?
-                                                AuditLogType.USER_RUN_VM_ON_NON_DEFAULT_VDS :
-                                                (isStatelessSnapshotExistsForVm() ? AuditLogType.USER_RUN_VM_AS_STATELESS : AuditLogType.USER_RUN_VM)
+                               isVmRunningOnNonDefaultVds() ?
+                                       AuditLogType.USER_RUN_VM_ON_NON_DEFAULT_VDS
+                                       : (isStatelessSnapshotExistsForVm() ?
+                                               AuditLogType.USER_RUN_VM_AS_STATELESS
+                                               : AuditLogType.USER_RUN_VM)
                                 : _isRerun ?
                                         AuditLogType.VDS_INITIATED_RUN_VM
                                         : getTaskIdList().size() > 0 ?
@@ -557,6 +557,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             // false':
             return AuditLogType.UNASSIGNED;
         }
+    }
+
+    protected boolean isVmRunningOnNonDefaultVds() {
+        return getVm().getDedicatedVmForVds() != null
+                && !getVm().getRunOnVds().equals(getVm().getDedicatedVmForVds());
     }
 
     protected void initVm() {
@@ -895,16 +900,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             permissionList.add(new PermissionSubject(getParameters().getVmId(),
                 VdcObjectType.VM,
                 ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
-        }
-
-        // check, if user can override default target host for VM
-        if (getVm() != null) {
-            final Guid destinationVdsId = getParameters().getDestinationVdsId();
-            if (destinationVdsId != null && !destinationVdsId.equals(getVm().getDedicatedVmForVds())) {
-                permissionList.add(new PermissionSubject(getParameters().getVmId(),
-                    VdcObjectType.VM,
-                    ActionGroup.EDIT_ADMIN_VM_PROPERTIES));
-            }
         }
 
         return permissionList;

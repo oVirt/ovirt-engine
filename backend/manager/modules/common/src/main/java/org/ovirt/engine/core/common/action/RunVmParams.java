@@ -20,7 +20,6 @@ public class RunVmParams extends VmOperationParameterBase {
     private String floppyPath;
     private String clientIp;
     private DbUser requestingUser;
-    private Guid destinationVdsId;
     private InitializationType initializationType;
     private Boolean runAsStateless;
     private String initrdUrl;
@@ -38,14 +37,6 @@ public class RunVmParams extends VmOperationParameterBase {
         diskPath = "";
         kvmEnable = true;
         acpiEnable = true;
-    }
-
-    public Guid getDestinationVdsId() {
-        return destinationVdsId;
-    }
-
-    public void setDestinationVdsId(Guid value) {
-        destinationVdsId = value;
     }
 
     public BootSequence getBootSequence() {

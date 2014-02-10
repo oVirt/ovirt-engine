@@ -11,12 +11,10 @@ public class RunVmOnceParams extends RunVmParams {
     private static final long serialVersionUID = -4968552684343593622L;
 
     private String sysPrepDomainName;
-
     private String sysPrepUserName;
-
     private String sysPrepPassword;
-
     private VmInit vmInit;
+    private Guid destinationVdsId;
 
     @NullOrStringContainedInConfigValueList(configValue = ConfigValues.VncKeyboardLayoutValidValues,
             groups = { StartEntity.class }, message = "VALIDATION.VM.INVALID_KEYBOARD_LAYOUT")
@@ -69,4 +67,11 @@ public class RunVmOnceParams extends RunVmParams {
         this.vncKeyboardLayout = vncKeyboardLayout;
     }
 
+    public Guid getDestinationVdsId() {
+        return destinationVdsId;
+    }
+
+    public void setDestinationVdsId(Guid destinationVdsId) {
+        this.destinationVdsId = destinationVdsId;
+    }
 }
