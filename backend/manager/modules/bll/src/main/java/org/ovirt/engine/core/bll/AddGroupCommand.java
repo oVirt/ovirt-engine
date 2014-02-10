@@ -38,11 +38,10 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
         ExternalId id = getParameters().getId();
         Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
         if (directory == null) {
-            if (directoryGroup == null) {
-                addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
-                return false;
-            }
+            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
+            return false;
         }
+
         directoryGroup = directory.findGroup(id);
         if (directoryGroup == null) {
             addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
