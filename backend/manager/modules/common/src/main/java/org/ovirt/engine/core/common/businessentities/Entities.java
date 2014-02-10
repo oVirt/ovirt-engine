@@ -75,10 +75,10 @@ public class Entities {
         }
     }
 
-    public static <E extends Nameable> Set<String> objectNames(List<E> entityList) {
-        if (entityList != null && !entityList.isEmpty()) {
+    public static <E extends Nameable> Set<String> objectNames(Collection<E> entities) {
+        if (entities != null && !entities.isEmpty()) {
             Set<String> names = new HashSet<String>();
-            for (E e : entityList) {
+            for (E e : entities) {
                 names.add(e.getName());
             }
             return names;
