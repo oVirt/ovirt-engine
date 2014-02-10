@@ -15,13 +15,12 @@ Create or replace FUNCTION insertevent_notification_hist(v_audit_log_id BIGINT,
 	v_method_type  CHAR(10),
 	v_reason CHAR(255) ,
 	v_sent_at TIMESTAMP WITH TIME ZONE,
-	v_status BOOLEAN,
-	v_subscriber_id VARCHAR(100))
+	v_status BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO event_notification_hist(audit_log_id, event_name, method_type, reason, sent_at, status, subscriber_id)
-	VALUES(v_audit_log_id, v_event_name, v_method_type, v_reason, v_sent_at, v_status, v_subscriber_id::uuid);
+INSERT INTO event_notification_hist(audit_log_id, event_name, method_type, reason, sent_at, status)
+	VALUES(v_audit_log_id, v_event_name, v_method_type, v_reason, v_sent_at, v_status);
 END; $procedure$
 LANGUAGE plpgsql;
 

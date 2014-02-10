@@ -244,7 +244,6 @@ public class EventsManager {
             cs.setString(4, sendResult.getReason());
             cs.setTimestamp(5, new java.sql.Timestamp(new Date().getTime()));
             cs.setBoolean(6, sendResult.isSent());
-            cs.setString(7, subscriber.getSubscriberId() != null ? subscriber.getSubscriberId().toString() : null);
             cs.executeUpdate();
         } catch (SQLException e) {
             throw new NotificationServiceException("Could not insert event notification history event", e);
