@@ -152,10 +152,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        if (!updateVnicForBackwardCompatibility()) {
-            return false;
-        }
-
         if (getVm() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
             return false;
@@ -180,6 +176,10 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         if (oldIface == null || oldVmDevice == null) {
             addCanDoActionMessage(VdcBllMessages.VM_INTERFACE_NOT_EXIST);
+            return false;
+        }
+
+        if (!updateVnicForBackwardCompatibility(oldIface)) {
             return false;
         }
 

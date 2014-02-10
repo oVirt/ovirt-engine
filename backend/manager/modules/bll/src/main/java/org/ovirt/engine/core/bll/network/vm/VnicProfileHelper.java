@@ -154,17 +154,46 @@ public class VnicProfileHelper {
         }
     }
 
+    /**
+     * Since the network name and port mirroring attributed were replaced on the {@link VmNic} with the vnic profile id,
+     * a certain logic should be applied to translate a given usage of the former api to the expected one.
+     *
+     * @param nic
+     *            the candidate nic to apply the logic for
+     * @param oldNic
+     *            the existing nic
+     * @param networkName
+     *            the network name to be configured for the nic
+     * @param portMirroring
+     *            indicator if port mirroring should be configured for the network
+     * @param vm
+     *            the vm which contains the nic
+     * @param user
+     *            the user which execute the action
+     * @return
+     */
     public static ValidationResult updateNicForBackwardCompatibility(VmNic nic,
+            VmNic oldNic,
             String networkName,
             boolean portMirroring,
             VmBase vm,
             VdcUser user) {
 
+        // if network wasn't provided, no need for backward compatibility logic
         if (networkName == null) {
             return ValidationResult.VALID;
         }
 
-        // empty network name is considered as an empty network
+        // if the network was provided but unchanged, use the provided vnic profile id
+        if (oldNic != null && oldNic.getVnicProfileId() != null) {
+            VnicProfile oldProfile = getVnicProfileDao().get(oldNic.getVnicProfileId());
+            Network oldNetwork = getNetworkDao().get(oldProfile.getNetworkId());
+            if (StringUtils.equals(networkName, oldNetwork.getName())) {
+                return ValidationResult.VALID;
+            }
+        }
+
+        // empty network name is considered as an empty (unlinked) network
         if ("".equals(networkName)) {
             if (portMirroring) {
                 return new ValidationResult(VdcBllMessages.PORT_MIRRORING_REQUIRES_NETWORK);
@@ -174,6 +203,7 @@ public class VnicProfileHelper {
             }
         }
 
+        // if the network was provided with changed name, resolve a suitable profile for it
         Network network = getNetworkDao().getByNameAndCluster(networkName, vm.getVdsGroupId());
         if (network == null) {
             return new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);

@@ -47,8 +47,9 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
                 : new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_VM_CANNOT_BE_SET);
     }
 
-    protected boolean updateVnicForBackwardCompatibility() {
+    protected boolean updateVnicForBackwardCompatibility(VmNic oldNic) {
         if (!validate(VnicProfileHelper.updateNicForBackwardCompatibility(getParameters().getInterface(),
+                oldNic,
                 getParameters().getNetworkName(),
                 getParameters().isPortMirroring(),
                 getVmTemplate(),
@@ -59,4 +60,7 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
         return true;
     }
 
+    protected boolean updateVnicForBackwardCompatibility() {
+        return updateVnicForBackwardCompatibility(null);
+    }
 }
