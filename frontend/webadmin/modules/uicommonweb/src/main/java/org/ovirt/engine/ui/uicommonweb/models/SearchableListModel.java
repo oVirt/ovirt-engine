@@ -737,7 +737,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
     }
 
     @Override
-    public void setItems(Iterable<T> value)
+    public void setItems(Collection<T> value)
     {
         if (items != value)
         {
@@ -833,7 +833,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
             public void onSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
-                searchableListModel.setItems((Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                searchableListModel.setItems((Collection) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 

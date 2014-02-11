@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class UserPortalTemplateEventListModel extends TemplateEventListModel {
     }
 
     @Override
-    public void setItems(Iterable value) {
+    public void setItems(Collection value) {
         List<AuditLog> list = (List<AuditLog>) value;
         if (list != null) {
             Collections.sort(list, Collections.reverseOrder(new Linq.AuditLogComparer()));

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.Collection;
 import java.util.List;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
@@ -93,14 +94,14 @@ public class ListModel<T> extends EntityModel<T>
         }
     }
 
-    protected Iterable<T> items;
+    protected Collection<T> items;
 
-    public Iterable<T> getItems()
+    public Collection<T> getItems()
     {
         return items;
     }
 
-    public void setItems(Iterable<T> value)
+    public void setItems(Collection<T> value)
     {
         if (items != value)
         {
@@ -249,7 +250,7 @@ public class ListModel<T> extends EntityModel<T>
         setSelectedItems(null);
     }
 
-    protected void itemsChanging(Iterable<T> newValue, Iterable<T> oldValue)
+    protected void itemsChanging(Collection<T> newValue, Collection<T> oldValue)
     {
         IProvideCollectionChangedEvent notifier =
                 (IProvideCollectionChangedEvent) ((oldValue instanceof IProvideCollectionChangedEvent) ? oldValue

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -257,7 +258,7 @@ public class VmDiskListModel extends VmDiskListModelBase
     }
 
     @Override
-    public void setItems(Iterable value)
+    public void setItems(Collection value)
     {
         ArrayList<Disk> disks =
                 value != null ? Linq.<Disk> cast(value) : new ArrayList<Disk>();

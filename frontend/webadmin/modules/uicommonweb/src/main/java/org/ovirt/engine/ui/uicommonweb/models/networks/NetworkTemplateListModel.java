@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -74,7 +75,7 @@ public class NetworkTemplateListModel extends SearchableListModel
     }
 
     @Override
-    public void setItems(Iterable value) {
+    public void setItems(Collection value) {
         if (value != null) {
             List<PairQueryable<VmNetworkInterface, VmTemplate>> itemList =
                     (List<PairQueryable<VmNetworkInterface, VmTemplate>>) value;

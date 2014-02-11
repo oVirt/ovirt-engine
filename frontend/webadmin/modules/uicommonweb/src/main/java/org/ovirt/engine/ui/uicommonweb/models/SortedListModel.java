@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -13,7 +14,7 @@ public class SortedListModel extends ListModel {
     }
 
     @Override
-    public void setItems(Iterable value) {
+    public void setItems(Collection value) {
         SortedSet items = new TreeSet(comparator);
         for (Object item : value) {
             items.add(item);

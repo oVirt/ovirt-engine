@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -72,7 +73,7 @@ public class RolePermissionListModel extends SearchableListModel
             public void onSuccess(Object model, Object ReturnValue)
             {
                 RolePermissionListModel permissionListModel = (RolePermissionListModel) model;
-                permissionListModel.setItems((Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                permissionListModel.setItems((Collection) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -279,7 +280,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     }
 
     @Override
-    public void setItems(Iterable value) {
+    public void setItems(Collection value) {
         genVersionToBaseTemplate(value);
         super.setItems(value);
     }

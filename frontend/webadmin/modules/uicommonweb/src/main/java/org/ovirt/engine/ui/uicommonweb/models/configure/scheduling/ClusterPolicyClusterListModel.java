@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.scheduling;
 
+import java.util.Collection;
+
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -23,7 +25,7 @@ public class ClusterPolicyClusterListModel extends SearchableListModel {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 ClusterPolicyClusterListModel clusterPolicyClusterListModel = (ClusterPolicyClusterListModel) model;
-                clusterPolicyClusterListModel.setItems((Iterable) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                clusterPolicyClusterListModel.setItems((Collection) ((VdcQueryReturnValue) returnValue).getReturnValue());
             }
         });
 

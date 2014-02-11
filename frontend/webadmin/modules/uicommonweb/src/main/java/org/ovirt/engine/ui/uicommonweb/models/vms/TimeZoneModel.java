@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +12,9 @@ import java.util.Map;
 
 
 public class TimeZoneModel {
-    private static final Map<TimeZoneType, Iterable<TimeZoneModel>> cachedTimeZoneModels = new HashMap<TimeZoneType, Iterable<TimeZoneModel>>();
+    private static final Map<TimeZoneType, Collection<TimeZoneModel>> cachedTimeZoneModels = new HashMap<TimeZoneType, Collection<TimeZoneModel>>();
 
-    public static Iterable<TimeZoneModel> getTimeZones(TimeZoneType timeZoneType) {
+    public static Collection<TimeZoneModel> getTimeZones(TimeZoneType timeZoneType) {
         return cachedTimeZoneModels.get(timeZoneType);
     }
 

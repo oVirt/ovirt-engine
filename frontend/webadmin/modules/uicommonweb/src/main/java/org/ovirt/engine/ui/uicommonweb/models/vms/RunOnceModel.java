@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public abstract class RunOnceModel extends Model
@@ -825,9 +826,9 @@ public abstract class RunOnceModel extends Model
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        Iterable<VmNetworkInterface> nics =
-                                (Iterable<VmNetworkInterface>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        Iterable<VmNetworkInterface> pluggedNics =
+                        Collection<VmNetworkInterface> nics =
+                                (Collection<VmNetworkInterface>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        Collection<VmNetworkInterface> pluggedNics =
                                 Linq.where(nics, new Linq.IPredicate<VmNetworkInterface>() {
 
                                     @Override

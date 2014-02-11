@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -26,7 +27,7 @@ public class UserPortalTemplateListModel extends TemplateListModel
         AsyncDataProvider.getAllVmTemplates(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                ((UserPortalTemplateListModel) model).setItems((Iterable) returnValue);
+                ((UserPortalTemplateListModel) model).setItems((Collection) returnValue);
             }
         }), getIsQueryFirstTime());
     }

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -537,13 +538,13 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 StorageModel storageModel = (StorageModel) model;
-                Iterable<VDS> hosts = (Iterable<VDS>) returnValue;
+                Collection<VDS> hosts = (Collection<VDS>) returnValue;
                 storageModel.postUpdateHost(hosts);
             }
         }, getHash()), dataCenterId, localFsOnly);
     }
 
-    public void postUpdateHost(Iterable<VDS> hosts)
+    public void postUpdateHost(Collection<VDS> hosts)
     {
         // Filter hosts
         hosts = Linq.where(hosts, new Linq.HostStatusPredicate(VDSStatus.Up));

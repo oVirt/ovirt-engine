@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -157,13 +158,13 @@ public class HostInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    public Iterable getItems()
+    public Collection getItems()
     {
         return super.items;
     }
 
     @Override
-    public void setItems(Iterable value)
+    public void setItems(Collection value)
     {
         if (items != value)
         {

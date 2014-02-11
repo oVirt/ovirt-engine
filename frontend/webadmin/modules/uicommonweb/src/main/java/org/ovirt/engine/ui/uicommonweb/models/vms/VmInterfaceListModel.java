@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -293,7 +294,7 @@ public class VmInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    public void setItems(Iterable value) {
+    public void setItems(Collection value) {
         super.setItems(value);
         if (getSelectedItem() == null && (getSelectedItems() == null || getSelectedItems().size() == 0)) {
             if (value != null && value.iterator().hasNext()) {

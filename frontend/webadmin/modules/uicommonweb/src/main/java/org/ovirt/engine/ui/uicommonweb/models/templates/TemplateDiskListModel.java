@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -139,7 +140,7 @@ public class TemplateDiskListModel extends SearchableListModel
     }
 
     @Override
-    public void setItems(final Iterable value)
+    public void setItems(final Collection value)
     {
         if (ignoreStorageDomains) {
             setDisks(value);

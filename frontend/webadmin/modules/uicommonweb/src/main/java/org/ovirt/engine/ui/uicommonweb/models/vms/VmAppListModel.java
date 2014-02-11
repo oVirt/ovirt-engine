@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -21,13 +22,13 @@ public class VmAppListModel extends SearchableListModel
 {
 
     @Override
-    public Iterable getItems()
+    public Collection getItems()
     {
         return items;
     }
 
     @Override
-    public void setItems(Iterable value)
+    public void setItems(Collection value)
     {
         if (items != value)
         {

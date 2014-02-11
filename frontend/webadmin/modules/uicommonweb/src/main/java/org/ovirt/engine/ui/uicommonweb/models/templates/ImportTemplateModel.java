@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -51,7 +52,7 @@ public class ImportTemplateModel extends ImportVmModel
     }
 
     @Override
-    public void setItems(final Iterable value, final Guid storageDomainId)
+    public void setItems(final Collection value, final Guid storageDomainId)
     {
         String vmt_guidKey = "_VMT_ID ="; //$NON-NLS-1$
         String orKey = " or "; //$NON-NLS-1$

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -232,7 +233,7 @@ public class VmSnapshotListModel extends SearchableListModel
     }
 
     @Override
-    public void setItems(Iterable value)
+    public void setItems(Collection value)
     {
         ArrayList<Snapshot> snapshots =
                 value != null ? Linq.<Snapshot> cast(value) : new ArrayList<Snapshot>();

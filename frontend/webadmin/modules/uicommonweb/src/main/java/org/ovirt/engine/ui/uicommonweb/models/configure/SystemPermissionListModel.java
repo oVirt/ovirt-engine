@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -78,7 +79,7 @@ public class SystemPermissionListModel extends SearchableListModel
             public void onSuccess(Object model, Object ReturnValue)
             {
                 SystemPermissionListModel systemPermissionListModel = (SystemPermissionListModel) model;
-                systemPermissionListModel.setItems((Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                systemPermissionListModel.setItems((Collection) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
         VdcQueryParametersBase params = new VdcQueryParametersBase();

@@ -2942,7 +2942,7 @@ public final class AsyncDataProvider {
                     return new ArrayList<Provider>();
                 }
                 List<Provider> providers =
-                        Linq.toList(Linq.filterProvidersByProvidedType((Iterable<Provider>) returnValue, providedEntity));
+                        Linq.toList(Linq.filterProvidersByProvidedType((Collection<Provider>) returnValue, providedEntity));
                 Collections.sort(providers, new NameableComparator());
                 return providers;
             }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.profile;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -33,7 +34,7 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstances
 
     private static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
 
-    private Iterable<VnicProfileView> vnicProfiles;
+    private Collection<VnicProfileView> vnicProfiles;
     private final List<VmNetworkInterface> vnics;
     private int realEntryCount;
 

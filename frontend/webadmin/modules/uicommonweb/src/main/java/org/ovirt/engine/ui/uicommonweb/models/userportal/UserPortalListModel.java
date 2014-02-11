@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -299,7 +300,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     @Override
-    public void setItems(Iterable value)
+    public void setItems(Collection value)
     {
         if (items != value)
         {

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -588,7 +589,7 @@ public final class Linq
         return true;
     }
 
-    public static <TSource> Iterable<TSource> where(Iterable<TSource> source, IPredicate<TSource> predicate)
+    public static <TSource> Collection<TSource> where(Collection<TSource> source, IPredicate<TSource> predicate)
     {
         ArrayList<TSource> list = new ArrayList<TSource>();
 
@@ -1262,9 +1263,9 @@ public final class Linq
         }
     }
 
-    public final static <T extends Disk> Iterable<T> filterDisksByStorageType(
-            Iterable<Disk> source, final DiskStorageType diskStorageType) {
-        return (Iterable<T>) where(source, new IPredicate<Disk>() {
+    public final static <T extends Disk> Collection<T> filterDisksByStorageType(
+            Collection<Disk> source, final DiskStorageType diskStorageType) {
+        return (Collection<T>) where(source, new IPredicate<Disk>() {
             @Override
             public boolean match(Disk source) {
                 return source.getDiskStorageType() == diskStorageType;
@@ -1272,7 +1273,7 @@ public final class Linq
         });
     }
 
-    public final static Iterable<Provider> filterProvidersByProvidedType(Iterable<Provider> source,
+    public final static Collection<Provider> filterProvidersByProvidedType(Collection<Provider> source,
             final VdcObjectType type) {
         return where(source, new IPredicate<Provider>() {
 

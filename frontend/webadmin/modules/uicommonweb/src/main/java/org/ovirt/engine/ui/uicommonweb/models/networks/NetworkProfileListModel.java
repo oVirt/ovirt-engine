@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -184,7 +185,7 @@ public class NetworkProfileListModel extends SearchableListModel
     }
 
     @Override
-    public void setItems(Iterable value) {
+    public void setItems(Collection value) {
         if (value != null) {
             Collections.sort((List<VnicProfileView>) value, new Linq.VnicProfileViewComparator());
         }

@@ -268,7 +268,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     private void doUpdateTimeZone(final String selectedTimeZone) {
-        final Iterable<TimeZoneModel> timeZones = TimeZoneModel.getTimeZones(getTimeZoneType());
+        final Collection<TimeZoneModel> timeZones = TimeZoneModel.getTimeZones(getTimeZoneType());
         getModel().getTimeZone().setItems(timeZones);
         getModel().getTimeZone().setSelectedItem(Linq.firstOrDefault(timeZones, new Linq.TimeZonePredicate(selectedTimeZone)));
         getModel().getTimeZone().setChangeProhibitionReason(constants.timeZoneNotChangeableForLinuxVms());

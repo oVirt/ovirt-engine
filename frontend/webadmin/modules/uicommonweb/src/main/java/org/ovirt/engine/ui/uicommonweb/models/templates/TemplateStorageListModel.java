@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
@@ -49,7 +50,7 @@ public class TemplateStorageListModel extends SearchableListModel
     }
 
     ArrayList<StorageDomainModel> storageDomainModels;
-    Iterable value;
+    Collection value;
 
     public TemplateStorageListModel()
     {
@@ -91,7 +92,7 @@ public class TemplateStorageListModel extends SearchableListModel
     }
 
     @Override
-    public void setItems(Iterable value)
+    public void setItems(Collection value)
     {
         if (storageDomainModels != null)
         {

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.tags;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
@@ -108,13 +109,13 @@ public class TagListModel extends SearchableListModel
     }
 
     @Override
-    public Iterable getItems()
+    public Collection getItems()
     {
         return items;
     }
 
     @Override
-    public void setItems(Iterable value)
+    public void setItems(Collection value)
     {
         if (items != value)
         {

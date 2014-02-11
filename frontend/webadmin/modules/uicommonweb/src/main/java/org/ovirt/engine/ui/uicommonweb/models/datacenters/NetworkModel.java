@@ -57,7 +57,7 @@ public abstract class NetworkModel extends Model
     private EntityModel export;
     private ListModel externalProviders;
     private ListModel<String> networkLabel;
-    private Iterable<String> dcLabels;
+    private Collection<String> dcLabels;
     private EntityModel privateComment;
     private EntityModel privateVLanTag;
     private EntityModel privateIsStpEnabled;
@@ -513,7 +513,7 @@ public abstract class NetworkModel extends Model
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                Iterable<NetworkQoS> qos = (Iterable<NetworkQoS>) returnValue;
+                Collection<NetworkQoS> qos = (Collection<NetworkQoS>) returnValue;
                 getQos().setItems(qos);
                 getQos().setSelectedItem(Linq.findNetworkQosById(qos, getNetwork().getQosId()));
             }
@@ -724,7 +724,7 @@ public abstract class NetworkModel extends Model
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        dcLabels = (Iterable<String>) returnValue;
+                        dcLabels = (Collection<String>) returnValue;
                         stopProgress();
                         onExportChanged();
                     }

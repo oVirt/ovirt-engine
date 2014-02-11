@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -31,7 +32,7 @@ public class VmDiskListModelBase extends SearchableListModel
 
     @SuppressWarnings("rawtypes")
     @Override
-    public void setItems(Iterable value)
+    public void setItems(Collection value)
     {
         ArrayList<Disk> disks = value != null ? Linq.<Disk> cast(value) : new ArrayList<Disk>();
         ArrayList<Disk> filteredDisks = new ArrayList<Disk>();

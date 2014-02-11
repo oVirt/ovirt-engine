@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -137,7 +138,7 @@ public class NetworkClusterListModel extends SearchableListModel
     }
 
     @Override
-    public void setItems(Iterable value) {
+    public void setItems(Collection value) {
         Collections.sort((List<PairQueryable<VDSGroup, NetworkCluster>>) value,
                 new Comparator<PairQueryable<VDSGroup, NetworkCluster>>() {
 

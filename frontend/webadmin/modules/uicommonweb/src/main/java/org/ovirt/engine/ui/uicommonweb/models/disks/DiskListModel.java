@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.disks;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
@@ -208,7 +209,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     @Override
-    public void setItems(Iterable value)
+    public void setItems(Collection value)
     {
         if (value == null) {
             super.setItems(null);
