@@ -17,6 +17,7 @@ import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.CloudInit;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.CpuMode;
 import org.ovirt.engine.api.model.CpuTopology;
@@ -701,6 +702,14 @@ public class VmMapper {
             case OVF:            return ConfigurationType.OVF;
             default:                return null;
         }
+    }
+
+    public static VM map(String configuration, ConfigurationType type, VM vm) {
+        vm.setInitialization(new Initialization());
+        vm.getInitialization().setConfiguration(new Configuration());
+        vm.getInitialization().getConfiguration().setData(configuration);
+        vm.getInitialization().getConfiguration().setType(type.value());
+        return vm;
     }
 
     @Mapping(from = org.ovirt.engine.api.model.VmDeviceType.class, to = VmDeviceType.class)
