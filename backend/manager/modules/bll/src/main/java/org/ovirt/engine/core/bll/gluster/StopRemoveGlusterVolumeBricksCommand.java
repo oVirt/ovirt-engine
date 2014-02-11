@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -65,15 +67,18 @@ public class StopRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBas
                         new GlusterVolumeRemoveBricksVDSParameters(getUpServer().getId(),
                                 volume.getName(),
                                 getParameters().getBricks()));
+
         setSucceeded(returnValue.getSucceeded());
         if (!getSucceeded()) {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_FAILED, returnValue.getVdsError().getMessage());
             return;
         }
 
-        endStepJobAborted();
+        GlusterVolumeTaskStatusEntity rebalanceStatusEntity =
+                (GlusterVolumeTaskStatusEntity) returnValue.getReturnValue();
+        endStepJobAborted(GlusterTaskUtils.getInstance().getSummaryMessage(rebalanceStatusEntity.getStatusSummary()));
         releaseVolumeLock();
-        getReturnValue().setActionReturnValue(returnValue.getReturnValue());
+        getReturnValue().setActionReturnValue(rebalanceStatusEntity);
     }
 
     @Override

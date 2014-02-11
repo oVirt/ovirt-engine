@@ -1031,13 +1031,15 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeRemoveBricksStop(String volumeName,
+    public GlusterVolumeTaskReturnForXmlRpc glusterVolumeRemoveBricksStop(String volumeName,
             String[] brickDirectories,
             int replicaCount) {
         try {
-            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeRemoveBrickStop(volumeName,
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeRemoveBrickStop(volumeName,
                     brickDirectories,
-                    replicaCount));
+                    replicaCount);
+            GlusterVolumeTaskReturnForXmlRpc wrapper = new GlusterVolumeTaskReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }

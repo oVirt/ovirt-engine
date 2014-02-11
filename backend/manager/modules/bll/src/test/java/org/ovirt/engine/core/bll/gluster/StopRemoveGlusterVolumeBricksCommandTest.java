@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
@@ -84,7 +85,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
         when(cmd.getBackend()).thenReturn(backend);
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
-        doNothing().when(cmd).endStepJobAborted();
+        doNothing().when(cmd).endStepJobAborted(any(String.class));
         doNothing().when(cmd).releaseVolumeLock();
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
@@ -92,14 +93,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         } else {
-            GlusterAsyncTask task = new GlusterAsyncTask();
-            task.setMessage("successful");
-            task.setStatus(JobExecutionStatus.FINISHED);
-            task.setStepId(Guid.newGuid());
-            task.setTaskId(Guid.newGuid());
-            task.setType(GlusterTaskType.REMOVE_BRICK);
-
-            vdsReturnValue.setReturnValue(task);
+            vdsReturnValue.setReturnValue(new GlusterVolumeTaskStatusEntity());
         }
 
         when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.StopRemoveGlusterVolumeBricks),
@@ -129,7 +123,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 
-        verify(cmd, times(1)).endStepJobAborted();
+        verify(cmd, times(1)).endStepJobAborted(any(String.class));
         verify(cmd, times(1)).releaseVolumeLock();
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_STOP);
     }
@@ -144,7 +138,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 
-        verify(cmd, never()).endStepJobAborted();
+        verify(cmd, never()).endStepJobAborted(any(String.class));
         verify(cmd, never()).releaseVolumeLock();
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_STOP_FAILED);
     }

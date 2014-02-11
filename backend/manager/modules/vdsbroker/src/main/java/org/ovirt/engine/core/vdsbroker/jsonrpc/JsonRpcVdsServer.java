@@ -1046,7 +1046,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeRemoveBricksStop(String volumeName,
+    public GlusterVolumeTaskReturnForXmlRpc glusterVolumeRemoveBricksStop(String volumeName,
             String[] brickList,
             int replicaCount) {
         JsonRpcRequest request =
@@ -1055,7 +1055,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("replicaCount", replicaCount)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new GlusterVolumeTaskReturnForXmlRpc(response);
     }
 
     @Override

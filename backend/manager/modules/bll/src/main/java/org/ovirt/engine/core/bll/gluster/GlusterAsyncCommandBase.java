@@ -54,12 +54,12 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
         addCanDoActionMessage(String.format("$vdsGroup %1$s", getVdsGroupName()));
     }
 
-    protected Map<String, String> getStepMessageMap(JobExecutionStatus status) {
+    protected Map<String, String> getStepMessageMap(JobExecutionStatus status, String jobInfo) {
         Map<String, String> values = new HashMap<String, String>();
         values.put(GlusterConstants.CLUSTER, getVdsGroupName());
         values.put(GlusterConstants.VOLUME, getGlusterVolumeName());
         values.put(GlusterConstants.JOB_STATUS, status.toString());
-        values.put(GlusterConstants.JOB_INFO, " ");
+        values.put(GlusterConstants.JOB_INFO, jobInfo == null ? " " : jobInfo);
         return values;
     }
 
@@ -75,11 +75,11 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
                         getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
                         getStepType(),
                         ExecutionMessageDirector.resolveStepMessage(getStepType(),
-                                getStepMessageMap(JobExecutionStatus.STARTED)));
+                                getStepMessageMap(JobExecutionStatus.STARTED, null)));
     }
 
-    protected void endStepJobAborted() {
-        endStepJob(JobExecutionStatus.ABORTED, getStepMessageMap(JobExecutionStatus.ABORTED), false);
+    protected void endStepJobAborted(String jobInfo) {
+        endStepJob(JobExecutionStatus.ABORTED, getStepMessageMap(JobExecutionStatus.ABORTED, jobInfo), false);
     }
 
     protected void endStepJob(JobExecutionStatus status, Map<String, String> stepMessageMap, boolean exitStatus) {
@@ -88,8 +88,7 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
         Step step = getStepDao().getStepsByExternalId(asyncTask.getTaskId()).get(0);
         step.setStatus(status);
         step.setEndTime(new Date());
-        step.setDescription(ExecutionMessageDirector.resolveStepMessage(getStepType(),
-                stepMessageMap));
+        step.setDescription(ExecutionMessageDirector.resolveStepMessage(getStepType(), stepMessageMap));
         JobRepositoryFactory.getJobRepository().updateStep(step);
 
         ExecutionContext finalContext = ExecutionHandler.createFinalizingContext(step.getId());

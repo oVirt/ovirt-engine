@@ -86,12 +86,12 @@ public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandB
     }
 
     protected void endStepJobCommitted() {
-        endStepJob(JobExecutionStatus.FINISHED, getStepMessageMap(JobExecutionStatus.FINISHED), true);
+        endStepJob(JobExecutionStatus.FINISHED, getStepMessageMap(JobExecutionStatus.FINISHED, null), true);
     }
 
     @Override
-    protected Map<String, String> getStepMessageMap(JobExecutionStatus status) {
-        Map<String, String> stepMessageMap = super.getStepMessageMap(status);
+    protected Map<String, String> getStepMessageMap(JobExecutionStatus status, String jobInfo) {
+        Map<String, String> stepMessageMap = super.getStepMessageMap(status, jobInfo);
         stepMessageMap.put(GlusterConstants.JOB_STATUS, "COMMITTED");
         return stepMessageMap;
     }

@@ -226,7 +226,7 @@ public interface IVdsServer {
             int replicaCount,
             Boolean forceRemove);
 
-    StatusOnlyReturnForXmlRpc glusterVolumeRemoveBricksStop(String volumeName,
+    GlusterVolumeTaskReturnForXmlRpc glusterVolumeRemoveBricksStop(String volumeName,
             String[] brickList,
             int replicaCount);
 

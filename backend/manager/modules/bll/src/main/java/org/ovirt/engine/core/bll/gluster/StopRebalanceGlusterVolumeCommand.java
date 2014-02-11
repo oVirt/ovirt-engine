@@ -69,11 +69,12 @@ public class StopRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<G
         JobExecutionStatus stepStatus = rebalanceStatusEntity.getStatusSummary().getStatus();
         if (stepStatus != null) {
             endStepJob(stepStatus,
-                    getStepMessageMap(stepStatus),
+                    getStepMessageMap(stepStatus,
+                            GlusterTaskUtils.getInstance().getSummaryMessage(rebalanceStatusEntity.getStatusSummary())),
                     GlusterTaskUtils.getInstance().isTaskSuccess(stepStatus));
 
         } else {
-            endStepJob(JobExecutionStatus.ABORTED, getStepMessageMap(JobExecutionStatus.ABORTED), false);
+            endStepJob(JobExecutionStatus.ABORTED, getStepMessageMap(JobExecutionStatus.ABORTED, null), false);
         }
         releaseVolumeLock();
         setSucceeded(vdsReturnaValue.getSucceeded());

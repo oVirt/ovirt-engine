@@ -151,7 +151,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 
-        verify(cmd, never()).endStepJobAborted();
+        verify(cmd, never()).endStepJobCommitted();
         verify(cmd, never()).releaseVolumeLock();
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_COMMIT_FAILED);
     }
