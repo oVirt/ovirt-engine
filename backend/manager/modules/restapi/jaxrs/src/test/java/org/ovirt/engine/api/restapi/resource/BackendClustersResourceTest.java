@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -196,9 +197,12 @@ public class BackendClustersResourceTest extends
     @Test
     public void testAddClusterNamedDataCenter() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations("Datacenter: name=" + NAMES[1],
-                                   SearchType.StoragePool,
-                                   setUpStoragePool(1));
+
+        setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolByDatacenterName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[1] },
+                setUpStoragePool(1));
 
         setUpCreationExpectations(VdcActionType.AddVdsGroup,
                                   VdsGroupOperationParameters.class,
@@ -234,9 +238,11 @@ public class BackendClustersResourceTest extends
 
     private void doTestBadAddClusterNamedDataCenter(boolean canDo, boolean success, String detail)
             throws Exception {
-        setUpGetEntityExpectations("Datacenter: name=" + NAMES[1],
-                                   SearchType.StoragePool,
-                                   setUpStoragePool(1));
+        setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolByDatacenterName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[1] },
+                setUpStoragePool(1));
 
         setUriInfo(setUpActionExpectations(VdcActionType.AddVdsGroup,
                                            VdsGroupOperationParameters.class,

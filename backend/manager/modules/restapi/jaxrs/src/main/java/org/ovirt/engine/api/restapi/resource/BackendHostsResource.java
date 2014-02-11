@@ -9,6 +9,7 @@ import javax.ws.rs.core.UriInfo;
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Certificate;
+import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.Statistic;
@@ -26,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -34,6 +36,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendHostsResource extends AbstractBackendCollectionResource<Host, VDS> implements
         HostsResource {
 
+    private static final String DEFAULT_NAME = "Default";
     static final String[] SUB_COLLECTIONS = { "storage", "nics", "tags", "permissions", "statistics", "hooks" };
     static final String GLUSTERONLY_MODE_COLLECTIONS_TO_HIDE = "storage";
 
@@ -174,13 +177,22 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     }
 
     private Guid getClusterId(Host host) {
-        return host.isSetCluster() && host.getCluster().isSetId()
-               ? new Guid(host.getCluster().getId())
-               : getEntity(VDSGroup.class,
-                           SearchType.Cluster,
-                           "Cluster: name="
-                           + (host.isSetCluster() && host.getCluster().isSetName()
-                              ? host.getCluster().getName()
-                              : "Default")).getId();
+        if (host.isSetCluster()) {
+            Cluster cluster = host.getCluster();
+            if (cluster.isSetId()) {
+                return new Guid(cluster.getId());
+            }
+            if (cluster.isSetName()) {
+                return getClusterIdByName(cluster.getName());
+            }
+        }
+        return getClusterIdByName(DEFAULT_NAME);
+    }
+
+    private Guid getClusterIdByName(String name) {
+        return getEntity(VDSGroup.class,
+                VdcQueryType.GetVdsGroupByName,
+                new NameQueryParameters(name),
+                "Cluster: name=" + name).getId();
     }
 }

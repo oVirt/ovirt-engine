@@ -19,14 +19,13 @@ import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
 
 public abstract class AbstractBackendActionableResource <R extends BaseResource, Q /* extends IVdcQueryable */ >
     extends AbstractBackendSubResource<R, Q> {
@@ -224,7 +223,17 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
 
     protected Guid lookupStorageDomainIdByName(String name) {
         if (!isFiltered()) {
-            return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class, SearchType.StorageDomain, "Storage: name=" + name).getId();
+            StorageDomainStatic storageDomain =
+                    getEntity(org.ovirt.engine.core.common.businessentities.StorageDomainStatic.class,
+                    VdcQueryType.GetStorageDomainByName,
+                    new NameQueryParameters(name),
+                    "Storage: name=" + name);
+
+            if (storageDomain != null) {
+                return storageDomain.getId();
+            }
+
+            return null;
         }
         else {
             List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains =

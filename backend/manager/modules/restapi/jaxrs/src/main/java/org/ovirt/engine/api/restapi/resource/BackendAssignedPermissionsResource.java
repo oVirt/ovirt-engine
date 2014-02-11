@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Permissions;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -157,10 +156,9 @@ public class BackendAssignedPermissionsResource
     }
 
     private List<DbUser> lookupUsers() {
-        if (isFiltered()) {
-            return getBackendCollection(DbUser.class, VdcQueryType.GetAllDbUsers, new VdcQueryParametersBase());
-        }
-        return asCollection(DbUser.class, getEntity(List.class, SearchType.DBUser, "users:"));
+        VdcQueryParametersBase queryParams = new VdcQueryParametersBase();
+        queryParams.setFiltered(isFiltered());
+        return getBackendCollection(DbUser.class, VdcQueryType.GetAllDbUsers, queryParams);
     }
 
     /**

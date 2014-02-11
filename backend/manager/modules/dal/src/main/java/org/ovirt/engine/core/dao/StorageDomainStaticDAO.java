@@ -18,8 +18,19 @@ public interface StorageDomainStaticDAO extends GenericDao<StorageDomainStatic, 
     StorageDomainStatic getByName(String name);
 
     /**
+     * Retrieves the instance with the specified name.
+     * @param name
+     *            the domain name
+     * @param userId
+     *            the user id
+     * @param filtered
+     *            should the query use the user id
+     * @return the domain
+     */
+    StorageDomainStatic getByName(String name, Guid userId, boolean filtered);
+
+    /**
      * Retrieves all storage domains for the given storage pool.
-     *
      * @param pool
      *            the pool
      * @return the list of domains

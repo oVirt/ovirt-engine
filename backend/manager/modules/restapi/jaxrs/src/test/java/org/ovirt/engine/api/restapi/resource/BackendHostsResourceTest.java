@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendHostsResourceTest
@@ -170,9 +171,13 @@ public class BackendHostsResourceTest
     @Test
     public void testAddHost() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations("Cluster: name=Default",
-                                   SearchType.Cluster,
-                                   setUpVDSGroup(GUIDS[1]));
+
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { "Default" },
+                setUpVDSGroup(GUIDS[1]));
+
         setUpGetCertificateInfo();
         setUpCreationExpectations(VdcActionType.AddVds,
                                   AddVdsActionParameters.class,
@@ -198,9 +203,13 @@ public class BackendHostsResourceTest
     @Test
     public void testAddHostClusterByName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations("Cluster: name=" + NAMES[1],
-                                   SearchType.Cluster,
-                                   setUpVDSGroup(GUIDS[1]));
+
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[1] },
+                setUpVDSGroup(GUIDS[1]));
+
         setUpGetCertificateInfo();
         setUpCreationExpectations(VdcActionType.AddVds,
                                   AddVdsActionParameters.class,
@@ -277,9 +286,11 @@ public class BackendHostsResourceTest
     }
 
     private void doTestBadAddHost(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations("Cluster: name=Default",
-                                   SearchType.Cluster,
-                                   setUpVDSGroup(GUIDS[1]));
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { "Default" },
+                setUpVDSGroup(GUIDS[1]));
 
         setUriInfo(setUpActionExpectations(VdcActionType.AddVds,
                                            AddVdsActionParameters.class,

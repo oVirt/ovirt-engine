@@ -9,8 +9,8 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -82,7 +82,10 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
     }
 
     protected VDSGroup lookupClusterByName(String name) {
-        return getEntity(VDSGroup.class, SearchType.Cluster, "Cluster: name=" + name);
+        return getEntity(VDSGroup.class,
+                VdcQueryType.GetVdsGroupByName,
+                new NameQueryParameters(name),
+                "Cluster: name=" + name);
     }
 
     protected VDSGroup lookupClusterById(String id) {

@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -84,9 +84,12 @@ public class BackendAttachedStorageDomainsResourceTest
         setUriInfo(setUpBasicUriExpectations());
 
         setUpGetConnection(1);
-        setUpGetEntityExpectations("Storage: name=" + NAMES[0],
-                                   SearchType.StorageDomain,
-                                   getEntity(0));
+
+        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[0] },
+                getEntityStatic(0));
 
         setUpCreationExpectations(VdcActionType.AttachStorageDomainToPool,
                                   DetachStorageDomainFromPoolParameters.class,
@@ -99,7 +102,7 @@ public class BackendAttachedStorageDomainsResourceTest
                                   StorageDomainAndPoolQueryParameters.class,
                                   new String[] { "StorageDomainId", "StoragePoolId" },
                                   new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
-                                  getEntity(0));
+                getEntity(0));
 
         StorageDomain model = new StorageDomain();
         model.setName(NAMES[0]);
@@ -280,6 +283,18 @@ public class BackendAttachedStorageDomainsResourceTest
         return entities;
     }
 
+    protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getStaticEntity(int index) {
+        org.ovirt.engine.core.common.businessentities.StorageDomainStatic entity =
+                control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomainStatic.class);
+        return setUpEntityExpectations(entity, index, StorageType.NFS);
+    }
+
+    protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getEntityStatic(int index) {
+        org.ovirt.engine.core.common.businessentities.StorageDomainStatic entity =
+                control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomainStatic.class);
+        return setUpEntityExpectations(entity, index, StorageType.NFS);
+    }
+
     @Override
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getEntity(int index) {
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
@@ -289,6 +304,16 @@ public class BackendAttachedStorageDomainsResourceTest
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getEntity(int index, StorageType storageType) {
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
         return setUpEntityExpectations(entity, index, storageType);
+    }
+
+    static org.ovirt.engine.core.common.businessentities.StorageDomainStatic setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomainStatic entity,
+            int index,
+            StorageType storageType) {
+        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
+        expect(entity.getStorageDomainType()).andReturn(StorageDomainType.Master).anyTimes();
+        expect(entity.getStorageType()).andReturn(storageType).anyTimes();
+        expect(entity.getStorage()).andReturn(GUIDS[0].toString()).anyTimes();
+        return entity;
     }
 
     static org.ovirt.engine.core.common.businessentities.StorageDomain setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomain entity, int index, StorageType storageType) {

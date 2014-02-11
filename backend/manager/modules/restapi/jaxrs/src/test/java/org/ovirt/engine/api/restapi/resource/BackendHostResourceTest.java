@@ -47,9 +47,9 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
@@ -219,18 +219,22 @@ public class BackendHostResourceTest
     public void testUpdateWithClusterName() throws Exception {
         String clusterName = "Default";
         setUpGetEntityExpectations(3);
-        setUpGetEntityExpectations(
-                "Cluster: name=" + clusterName,
-                SearchType.Cluster,
+
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { clusterName },
                 getVdsGroup(clusterName, GUIDS[1]));
-                setUriInfo(setUpActionExpectations(VdcActionType.ChangeVDSCluster,
+
+        setUriInfo(setUpActionExpectations(VdcActionType.ChangeVDSCluster,
                 ChangeVDSClusterParameters.class,
                 new String[] { "ClusterId", "VdsId" },
-                new Object[] { GUIDS[1],  GUIDS[0]},
+                new Object[] { GUIDS[1], GUIDS[0] },
                 true,
                 true,
                 new VdcReturnValueBase(),
                 false));
+
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                 UpdateVdsActionParameters.class,
                 new String[] { "RootPassword" },

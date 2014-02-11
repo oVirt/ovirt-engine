@@ -18,9 +18,9 @@ import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -110,8 +110,10 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
             pool = parent.getEntity(StoragePool.class, VdcQueryType.GetStoragePoolById,
                     new IdQueryParameters(new Guid(id)), "Datacenter: id=" + id);
         } else {
-            pool = parent.getEntity(StoragePool.class, SearchType.StoragePool, "Datacenter: name="
-                    + cluster.getDataCenter().getName());
+            String clusterName = cluster.getDataCenter().getName();
+            pool = parent.getEntity(StoragePool.class, VdcQueryType.GetStoragePoolByDatacenterName,
+                    new NameQueryParameters(clusterName), "Datacenter: name="
+                            + clusterName);
             cluster.getDataCenter().setId(pool.getId().toString());
         }
         return pool;

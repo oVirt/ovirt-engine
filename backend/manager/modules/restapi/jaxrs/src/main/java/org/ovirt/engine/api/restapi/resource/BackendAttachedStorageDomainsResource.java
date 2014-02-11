@@ -13,8 +13,8 @@ import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -88,9 +88,10 @@ public class BackendAttachedStorageDomainsResource
     }
 
     protected Guid lookupStorageDomainIdByName(String name) {
-        return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
-                         SearchType.StorageDomain,
-                         "Storage: name=" + name).getId();
+        return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomainStatic.class,
+                VdcQueryType.GetStorageDomainByName,
+                new NameQueryParameters(name),
+                "Storage: name=" + name).getId();
     }
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomain  lookupStorageDomainById(Guid storageDomainId) {

@@ -28,10 +28,10 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -132,9 +132,11 @@ public class BackendStorageDomainTemplateResourceTest
 
     @Test
     public void testImportWithStorageDomainName() throws Exception {
-        setUpGetEntityExpectations("Storage: name=" + NAMES[2],
-                                   SearchType.StorageDomain,
-                                   getStorageDomain(2));
+        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[2] },
+                getStorageDomainStatic(2));
 
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
         StorageDomain storageDomain = new StorageDomain();
@@ -146,9 +148,11 @@ public class BackendStorageDomainTemplateResourceTest
 
     @Test
     public void testImportWithClusterName() throws Exception {
-        setUpGetEntityExpectations("Cluster: name=" + NAMES[1],
-                                   SearchType.Cluster,
-                                   getCluster(1));
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[1] },
+                getCluster(1));
 
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
@@ -335,6 +339,13 @@ public class BackendStorageDomainTemplateResourceTest
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(int idx) {
         org.ovirt.engine.core.common.businessentities.StorageDomain dom = new org.ovirt.engine.core.common.businessentities.StorageDomain();
+        dom.setId(GUIDS[idx]);
+        return dom;
+    }
+
+    protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getStorageDomainStatic(int idx) {
+        org.ovirt.engine.core.common.businessentities.StorageDomainStatic dom =
+                new org.ovirt.engine.core.common.businessentities.StorageDomainStatic();
         dom.setId(GUIDS[idx]);
         return dom;
     }

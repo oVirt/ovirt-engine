@@ -385,9 +385,17 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
-
-
+Create or replace FUNCTION Getstorage_domain_staticByNameFiltered(v_name VARCHAR(250), v_user_id UUID, v_is_filtered BOOLEAN)
+RETURNS SETOF storage_domain_static STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM storage_domain_static sds
+   WHERE storage_name = v_name  AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                     FROM   user_storage_domain_permissions_view
+                                     WHERE  user_id = v_user_id AND entity_id = sds.id));
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION Getstorage_domain_staticBystorage_pool_id(v_storage_pool_id UUID)
 RETURNS SETOF storage_domain_static_view STABLE
@@ -432,7 +440,6 @@ BEGIN
 
 END; $procedure$
 LANGUAGE plpgsql;
-
 
 Create or replace FUNCTION Getstorage_domains_by_storage_pool_id_with_permitted_action (v_user_id UUID, v_action_group_id integer, v_storage_pool_id UUID)
 RETURNS SETOF storage_domains STABLE

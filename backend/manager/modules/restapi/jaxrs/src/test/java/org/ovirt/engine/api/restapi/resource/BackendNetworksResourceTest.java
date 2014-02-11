@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -132,9 +133,12 @@ public class BackendNetworksResourceTest
     @Test
     public void testAddNetworkWithNamedDataCenter() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations("Datacenter: name=" + NAMES[1],
-                                   SearchType.StoragePool,
-                                   setUpStoragePool(DATA_CENTER_ID));
+
+        setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolByDatacenterName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[1] },
+                setUpStoragePool(DATA_CENTER_ID));
 
         setUpCreationExpectations(VdcActionType.AddNetwork,
                                   AddNetworkStoragePoolParameters.class,

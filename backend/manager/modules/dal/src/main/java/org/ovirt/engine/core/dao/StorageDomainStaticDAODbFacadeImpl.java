@@ -30,6 +30,16 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
     }
 
     @Override
+    public StorageDomainStatic getByName(String name, Guid userId, boolean filtered) {
+        return getCallsHandler().executeRead("Getstorage_domain_staticByNameFiltered",
+                StorageDomainStaticRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("name", name)
+                        .addValue("user_id", userId)
+                        .addValue("filtered", filtered));
+    }
+
+    @Override
     public List<StorageDomainStatic> getAllForStoragePool(Guid id) {
         return getCallsHandler().executeReadList("Getstorage_domain_staticBystorage_pool_id",
                 StorageDomainStaticRowMapper.instance,

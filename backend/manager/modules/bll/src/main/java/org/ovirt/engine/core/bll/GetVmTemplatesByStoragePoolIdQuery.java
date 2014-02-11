@@ -4,11 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetVmTemplatesByStoragePoolIdQuery<P extends IdQueryParameters>
@@ -20,24 +16,17 @@ public class GetVmTemplatesByStoragePoolIdQuery<P extends IdQueryParameters>
     @Override
     protected void executeQueryCommand() {
         StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(getParameters().getId());
-        SearchParameters p = new SearchParameters(String.format("Templates: DataCenter = %1$s", pool.getName()),
-                SearchType.VmTemplate);
-        p.setMaxCount(Integer.MAX_VALUE);
-        VdcQueryReturnValue returnValue = Backend.getInstance().runInternalQuery(VdcQueryType.Search, p);
-
-        if (returnValue != null && returnValue.getSucceeded()) {
-            List<VmTemplate> templateList = returnValue.getReturnValue();
+        List<VmTemplate> templateList = DbFacade.getInstance().getVmTemplateDao().getAllForStorageDomain(pool.getId());
             // Load VmInit and disks
-            for(VmTemplate template: templateList) {
-                VmHandler.updateVmInitFromDB(template, true);
-                VmTemplateHandler.updateDisksFromDb(template);
-            }
-            VmTemplate blank = DbFacade.getInstance().getVmTemplateDao()
-                    .get(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
-            if (!templateList.contains(blank)) {
-                templateList.add(0, blank);
-            }
-            getQueryReturnValue().setReturnValue(templateList);
+        for (VmTemplate template : templateList) {
+            VmHandler.updateVmInitFromDB(template, true);
+            VmTemplateHandler.updateDisksFromDb(template);
         }
+        VmTemplate blank = DbFacade.getInstance().getVmTemplateDao()
+                .get(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
+        if (!templateList.contains(blank)) {
+            templateList.add(0, blank);
+        }
+        getQueryReturnValue().setReturnValue(templateList);
     }
 }

@@ -32,8 +32,8 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -344,9 +344,11 @@ public class BackendVmDiskResourceTest
                     Collections.singletonList(getStorageDomain(2)));
         }
         else {
-            setUpGetEntityExpectations("Storage: name=" + NAMES[2],
-                    SearchType.StorageDomain,
-                    getStorageDomain(2));
+            setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainByName,
+                    NameQueryParameters.class,
+                    new String[] { "Name" },
+                    new Object[] { NAMES[2] },
+                    getStorageDomainStatic(2));
         }
 
         setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
@@ -371,6 +373,14 @@ public class BackendVmDiskResourceTest
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(int idx) {
         org.ovirt.engine.core.common.businessentities.StorageDomain dom = new org.ovirt.engine.core.common.businessentities.StorageDomain();
+        dom.setId(GUIDS[idx]);
+        dom.setStorageName(NAMES[idx]);
+        return dom;
+    }
+
+    protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getStorageDomainStatic(int idx) {
+        org.ovirt.engine.core.common.businessentities.StorageDomainStatic dom =
+                new org.ovirt.engine.core.common.businessentities.StorageDomainStatic();
         dom.setId(GUIDS[idx]);
         dom.setStorageName(NAMES[idx]);
         return dom;

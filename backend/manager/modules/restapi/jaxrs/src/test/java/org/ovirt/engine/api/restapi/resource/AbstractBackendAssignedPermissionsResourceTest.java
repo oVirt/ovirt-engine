@@ -17,9 +17,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Permissions;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -63,11 +61,12 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     @Test
     public void testRemove() throws Exception {
         setUpGetEntityExpectations(2, GUIDS[0], getEntity(0));
-        setUpGetEntityExpectations(VdcQueryType.Search,
-                                   SearchParameters.class,
-                                   new String[] {"SearchPattern", "SearchTypeValue"},
-                                   new Object[] {"users:", SearchType.DBUser},
-                                   getUsers());
+        setUpEntityQueryExpectations(VdcQueryType.GetAllDbUsers,
+                VdcQueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                getUsers());
+
         setUriInfo(setUpActionExpectations(VdcActionType.RemovePermission,
                                            PermissionsOperationsParameters.class,
                                            new String[] { "Permission.Id" },
@@ -79,21 +78,23 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
 
     @Test
     public void testRemoveCantDo() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.Search,
-                                   SearchParameters.class,
-                                   new String[] {"SearchPattern", "SearchTypeValue"},
-                                   new Object[] {"users:", SearchType.DBUser},
-                                   getUsers());
+        setUpEntityQueryExpectations(VdcQueryType.GetAllDbUsers,
+                VdcQueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                getUsers());
+
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
     public void testRemoveFailed() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.Search,
-                                   SearchParameters.class,
-                                   new String[] {"SearchPattern", "SearchTypeValue"},
-                                   new Object[] {"users:", SearchType.DBUser},
-                                   getUsers());
+        setUpEntityQueryExpectations(VdcQueryType.GetAllDbUsers,
+                VdcQueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                getUsers());
+
         doTestBadRemove(true, false, FAILURE);
     }
 

@@ -13,8 +13,8 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -45,7 +45,11 @@ public abstract class AbstractBackendStorageDomainContentsResource<C extends Bas
     }
 
     protected Guid lookupStorageDomainIdByName(String name) {
-        return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class, SearchType.StorageDomain, "Storage: name=" + name).getId();
+        return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomainStatic.class,
+                VdcQueryType.GetStorageDomainByName,
+                new NameQueryParameters(name),
+                "Storage: name=" + name).getId();
+
     }
 
     public Guid getDataCenterId(Guid storageDomainId) {

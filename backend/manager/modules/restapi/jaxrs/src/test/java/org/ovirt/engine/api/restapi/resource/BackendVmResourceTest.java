@@ -732,9 +732,11 @@ public class BackendVmResourceTest
 
     @Test
     public void testExportWithStorageDomainName() throws Exception {
-        setUpGetEntityExpectations("Storage: name=" + NAMES[2],
-                SearchType.StorageDomain,
-                getStorageDomain(2));
+        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[2] },
+                getStorageDomainStatic(2));
 
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setName(NAMES[2]);
@@ -788,9 +790,11 @@ public class BackendVmResourceTest
 
     @Test
     public void testMoveWithStorageDomainName() throws Exception {
-        setUpGetEntityExpectations("Storage: name=" + NAMES[2],
-                SearchType.StorageDomain,
-                getStorageDomain(2));
+        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[2] },
+                getStorageDomainStatic(2));
 
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setName(NAMES[2]);
@@ -950,6 +954,14 @@ public class BackendVmResourceTest
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(int idx) {
         org.ovirt.engine.core.common.businessentities.StorageDomain dom = new org.ovirt.engine.core.common.businessentities.StorageDomain();
+        dom.setId(GUIDS[idx]);
+        dom.setStorageName(NAMES[idx]);
+        return dom;
+    }
+
+    protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getStorageDomainStatic(int idx) {
+        org.ovirt.engine.core.common.businessentities.StorageDomainStatic dom =
+                new org.ovirt.engine.core.common.businessentities.StorageDomainStatic();
         dom.setId(GUIDS[idx]);
         dom.setStorageName(NAMES[idx]);
         return dom;

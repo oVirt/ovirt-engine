@@ -45,10 +45,10 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -159,7 +159,10 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     protected VDSGroup lookupClusterByName(String name) {
-        return getEntity(VDSGroup.class, SearchType.Cluster, "Cluster: name=" + name);
+        return getEntity(VDSGroup.class,
+                VdcQueryType.GetVdsGroupByName,
+                new NameQueryParameters(name),
+                "Cluster: name=" + name);
     }
 
     @Override

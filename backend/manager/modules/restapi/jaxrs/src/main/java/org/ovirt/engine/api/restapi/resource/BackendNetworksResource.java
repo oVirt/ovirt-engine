@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -98,9 +99,11 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
     }
 
     protected Guid getDataCenterId(Network network) {
-        return getEntity(StoragePool.class,
-                         SearchType.StoragePool,
-                         "Datacenter: name=" + network.getDataCenter().getName()).getId();
+        String networkName = network.getDataCenter().getName();
+        return getEntity(StoragePool.class, VdcQueryType.GetStoragePoolByDatacenterName,
+                new NameQueryParameters(networkName), "Datacenter: name="
+                        + networkName).getId();
+
     }
 
     @Override

@@ -52,10 +52,12 @@ public class BackendResource extends BaseBackendResource {
     public static final String POPULATE = "All-Content";
     public static final String JOB_ID_CONSTRAINT = "JobId";
     public static final String STEP_ID_CONSTRAINT = "StepId";
+
+    @Deprecated
     protected <T> T getEntity(Class<T> clz, SearchType searchType, String constraint) {
         try {
             VdcQueryReturnValue result = runQuery(VdcQueryType.Search,
-                                                          new SearchParameters(constraint, searchType));
+                    new SearchParameters(constraint, searchType));
             if (!result.getSucceeded()) {
                 backendFailure(result.getExceptionString());
             }

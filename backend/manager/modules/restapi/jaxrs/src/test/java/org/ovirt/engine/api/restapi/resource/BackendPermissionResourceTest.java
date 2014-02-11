@@ -12,10 +12,9 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Permissions;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendPermissionResourceTest
@@ -65,11 +64,13 @@ public class BackendPermissionResourceTest
     @Test
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(VdcQueryType.Search,
-                                   SearchParameters.class,
-                                   new String[] {"SearchPattern", "SearchTypeValue"},
-                                   new Object[] {"users:", SearchType.DBUser},
-                                   getUsers());
+
+        setUpEntityQueryExpectations(VdcQueryType.GetAllDbUsers,
+                VdcQueryParametersBase.class,
+                new String[] { "Refresh", "Filtered" },
+                new Object[] { true, false },
+                getUsers());
+
         setUpGetEntityExpectations();
 
         control.replay();
