@@ -346,7 +346,7 @@ public class ManageDomainsArguments {
                 LdapProviderType.valueOfIgnoreCase(get(ARG_PROVIDER));
             } catch (IllegalArgumentException | NullPointerException ex) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_VALUE,
-                        String.format("Invalid provider, valid providers are %s",
+                        String.format("Invalid provider, valid providers are: '%s'.",
                             StringUtils.join(
                                     new String[] { PROV_AD, PROV_IPA, PROV_RHDS, PROV_ITDS, PROV_OLDAP },
                                     ", ")));
