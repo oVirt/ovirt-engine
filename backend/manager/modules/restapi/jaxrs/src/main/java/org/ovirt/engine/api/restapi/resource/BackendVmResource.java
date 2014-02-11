@@ -369,6 +369,7 @@ public class BackendVmResource extends
     protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
         parent.setConsoleDevice(model);
         parent.setVirtioScsiController(model);
+        parent.setVmOvfConfiguration(model, entity);
         return model;
     }
 

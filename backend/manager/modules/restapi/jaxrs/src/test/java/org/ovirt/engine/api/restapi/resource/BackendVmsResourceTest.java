@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
+import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -235,6 +236,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 0);
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[]{0});
+        setUpGetVmOvfExpectations(new int[]{0});
         setUpGetCertuficateExpectations(1, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
@@ -282,6 +284,7 @@ public class BackendVmsResourceTest
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpGetPayloadExpectations(2, 0);
         setUpGetConsoleExpectations(new int[]{0, 0});
+        setUpGetVmOvfExpectations(new int[]{0, 0});
         setUpGetVirtioScsiExpectations(new int[]{0, 0});
         setUpGetBallooningExpectations(2, 0);
         setUpGetCertuficateExpectations(2, 0);
@@ -338,6 +341,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(2, 0);
         setUpGetBallooningExpectations(2, 0);
         setUpGetConsoleExpectations(new int[]{0, 0});
+        setUpGetVmOvfExpectations(new int[]{0, 0});
         setUpGetVirtioScsiExpectations(new int[]{0, 0});
         setUpGetCertuficateExpectations(2, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
@@ -389,6 +393,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(2, 0);
         setUpGetBallooningExpectations(2, 0);
         setUpGetConsoleExpectations(new int[]{0, 0});
+        setUpGetVmOvfExpectations(new int[]{0, 0});
         setUpGetVirtioScsiExpectations(new int[]{0, 0});
         setUpGetCertuficateExpectations(2, 0);
         setUpHttpHeaderExpectations("Expect", "201-created");
@@ -487,6 +492,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetConsoleExpectations(new int[]{1, 2});
+        setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
@@ -535,6 +541,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
         setUpGetConsoleExpectations(new int[]{0, 2});
+        setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
         setUpEntityQueryExpectations(VdcQueryType.GetVmConfigurationBySnapshot,
                 IdQueryParameters.class,
@@ -569,6 +576,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetConsoleExpectations(new int[]{1, 2});
+        setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
@@ -607,6 +615,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
         setUpGetConsoleExpectations(new int[]{1, 2});
+        setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -643,6 +652,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
         setUpGetConsoleExpectations(new int[]{2});
+        setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
         VM model = createModel(null);
         org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
@@ -680,6 +690,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
         setUpGetConsoleExpectations(new int[]{2});
+        setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
         VM model = createModel(null);
         org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
@@ -774,6 +785,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetConsoleExpectations(new int[]{1, 2});
+        setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
         setUpGetCertuficateExpectations(1, 2);
         setUpGetEntityExpectations("Hosts: name=" + NAMES[1],
@@ -825,6 +837,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetConsoleExpectations(new int[]{1, 2});
+        setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
@@ -865,6 +878,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetConsoleExpectations(new int[]{1, 2});
+        setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
@@ -926,6 +940,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
         setUpGetConsoleExpectations(new int[]{1, 2});
+        setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -977,6 +992,7 @@ public class BackendVmsResourceTest
         setUpGetCertuficateExpectations(1, 2);
 
         setUpGetConsoleExpectations(new int[]{1, 2});
+        setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -1047,6 +1063,7 @@ public class BackendVmsResourceTest
             setUpGetPayloadExpectations(3);
             setUpGetBallooningExpectations(3);
             setUpGetConsoleExpectations(new int[]{0, 1, 2});
+            setUpGetVmOvfExpectations(new int[]{0, 1, 2});
             setUpGetVirtioScsiExpectations(new int[]{0, 1, 2});
             setUpGetCertuficateExpectations(3);
         }
@@ -1065,6 +1082,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(3);
         setUpGetBallooningExpectations(3);
         setUpGetConsoleExpectations(new int[]{0, 1, 2});
+        setUpGetVmOvfExpectations(new int[]{0, 1, 2});
         setUpGetVirtioScsiExpectations(new int[]{0, 1, 2});
         setUpGetCertuficateExpectations(3);
         setUpQueryExpectations("");
@@ -1412,4 +1430,13 @@ public class BackendVmsResourceTest
         }
     }
 
+    private void setUpGetVmOvfExpectations(int ... idxs) throws Exception {
+        for (int i = 0; i < idxs.length; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetVmOvfByVmId,
+                    GetVmOvfByVmIdParameters.class,
+                    new String[] { "Id", "RequiredGeneration" },
+                    new Object[] { GUIDS[idxs[i]], 0L },
+                    "configuration");
+        }
+    }
 }

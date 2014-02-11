@@ -63,6 +63,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -168,7 +169,8 @@ public class BackendVmResourceTest
             populates.add("true");
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
             setUpGetConsoleExpectations(new int[]{0});
-            setUpGetVirtioScsiExpectations(new int[] {0});
+            setUpGetVirtioScsiExpectations(new int[]{0});
+            setUpGetVmOvfExpectations(new int[]{0});
         }
         setUpGetEntityExpectations(1);
         setUpGetPayloadExpectations(0, 1);
@@ -209,7 +211,8 @@ public class BackendVmResourceTest
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
-        setUpGetConsoleExpectations(new int[] {0});
+        setUpGetConsoleExpectations(new int[]{0});
+        setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
@@ -235,7 +238,8 @@ public class BackendVmResourceTest
 
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
-        setUpGetConsoleExpectations(new int[] {0});
+        setUpGetConsoleExpectations(new int[]{0});
+        setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
@@ -277,6 +281,7 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
         setUpGetConsoleExpectations(new int[]{0});
+        setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
         setUpGetEntityExpectations("Hosts: name=" + NAMES[1],
                 SearchType.VDS,
@@ -313,7 +318,8 @@ public class BackendVmResourceTest
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
-        setUpGetConsoleExpectations(new int[] {0});
+        setUpGetConsoleExpectations(new int[]{0});
+        setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
         setUriInfo(setUpActionExpectations(VdcActionType.ChangeVMCluster,
                                            ChangeVMClusterParameters.class,
@@ -955,4 +961,13 @@ public class BackendVmResourceTest
         }
     }
 
+    private void setUpGetVmOvfExpectations(int ... idxs) throws Exception {
+        for (int i = 0; i < idxs.length; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetVmOvfByVmId,
+                    GetVmOvfByVmIdParameters.class,
+                    new String[] { "Id", "RequiredGeneration" },
+                    new Object[] { GUIDS[idxs[i]], 0L },
+                    "configuration");
+        }
+    }
 }

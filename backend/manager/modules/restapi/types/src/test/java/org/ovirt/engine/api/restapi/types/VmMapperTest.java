@@ -162,6 +162,20 @@ public class VmMapperTest extends
         assertEquals(payload.getVolumeId(), vmPayload.getVolumeId());
     }
 
+
+    @Test
+    public void ovfConfigurationMap() {
+        String ovfConfig = "config";
+        ConfigurationType configurationType = ConfigurationType.OVF;
+        VM model = new VM();
+        VmMapper.map(ovfConfig, ConfigurationType.OVF, model);
+        assertNotNull(model.getInitialization());
+        assertNotNull(model.getInitialization().getConfiguration());
+        assertEquals(model.getInitialization().getConfiguration().getData(), ovfConfig);
+        assertEquals(ConfigurationType.fromValue(model.getInitialization().getConfiguration().getType()),
+                configurationType);
+    }
+
     @Test
     public void testGustIp() {
         org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();

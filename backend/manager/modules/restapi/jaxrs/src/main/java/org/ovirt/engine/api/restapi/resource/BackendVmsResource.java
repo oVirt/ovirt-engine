@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -13,9 +14,9 @@ import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.DetailHelper.Detail;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Certificate;
-import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
+import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Display;
@@ -50,6 +51,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
+import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -540,6 +542,21 @@ public class BackendVmsResource extends
         vm.getMemoryPolicy().setBallooning(balloonEnabled);
     }
 
+    protected VM setVmOvfConfiguration (VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
+        VdcQueryReturnValue queryReturnValue =
+                runQuery(VdcQueryType.GetVmOvfByVmId,
+                        new GetVmOvfByVmIdParameters(entity.getId(), entity.getDbGeneration()));
+
+        if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {
+            String configuration = queryReturnValue.getReturnValue();
+            return VmMapper.map(configuration,
+                    ConfigurationType.OVF,
+                    model);
+        }
+
+        return model;
+    }
+
     protected void setConsoleDevice(VM model) {
         if (!model.isSetConsole()) {
             model.setConsole(new Console());
@@ -585,6 +602,7 @@ public class BackendVmsResource extends
         setConsoleDevice(model);
         setVirtioScsiController(model);
         setCertificateInfo(model);
+        setVmOvfConfiguration(model, entity);
         return model;
     }
 
