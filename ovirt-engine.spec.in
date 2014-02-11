@@ -278,6 +278,9 @@ if [ $1 -eq 2 ] ; then
 	%systemd_postun
 fi
 %endif
+%if %{ovirt_install_systemv}
+chkconfig --add ovirt-engine
+%endif
 
 %preun backend
 %if %{ovirt_install_systemd}
@@ -287,6 +290,7 @@ fi
 %if %{ovirt_install_systemv}
 if [ $1 -eq 0 ]; then
 	service ovirt-engine stop > /dev/null 2>&1 || true
+	chkconfig --del ovirt-engine
 fi
 %endif
 
@@ -407,6 +411,10 @@ Provides:	%{name}-tools-common = %{version}-%{release}
 %if %{ovirt_install_systemd}
 %systemd_post ovirt-engine-notifier.service
 %endif
+%if %{ovirt_install_systemv}
+chkconfig --add ovirt-engine-notifier
+%endif
+
 %if %{ovirt_install_poms}
 %update_maven_depmap
 %endif
@@ -427,6 +435,7 @@ Provides:	%{name}-tools-common = %{version}-%{release}
 %if %{ovirt_install_systemv}
 if [ $1 -eq 0 ]; then
 	service ovirt-engine-notifier stop > /dev/null 2>&1 || true
+	chkconfig --del ovirt-engine-notifier
 fi
 %endif
 
@@ -453,6 +462,9 @@ Requires(postun):	systemd
 %if %{ovirt_install_systemd}
 %systemd_post ovirt-websocket-proxy.service
 %endif
+%if %{ovirt_install_systemv}
+chkconfig --add ovirt-websocket-proxy
+%endif
 
 %postun websocket-proxy
 %if %{ovirt_install_systemd}
@@ -467,6 +479,7 @@ Requires(postun):	systemd
 %if %{ovirt_install_systemv}
 if [ $1 -eq 0 ]; then
 	service ovirt-websocket-proxy stop > /dev/null 2>&1 || true
+	chkconfig --del ovirt-websocket-proxy
 fi
 %endif
 
