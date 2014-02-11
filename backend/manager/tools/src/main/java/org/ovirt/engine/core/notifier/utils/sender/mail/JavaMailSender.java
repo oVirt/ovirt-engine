@@ -50,6 +50,7 @@ public class JavaMailSender {
                 aMailProps.getProperty(NotificationProperties.MAIL_SMTP_ENCRYPTION, true))) {
             mailSessionProps.put("mail.smtp.auth", "true");
             mailSessionProps.put("mail.smtp.starttls.enable", "true");
+            mailSessionProps.put("mail.smtp.starttls.required", "true");
         }
 
         String password = aMailProps.getProperty(NotificationProperties.MAIL_PASSWORD, true);
