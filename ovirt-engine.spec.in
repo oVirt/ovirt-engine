@@ -267,28 +267,8 @@ Requires(postun):	systemd
 
 %post backend
 
-#
-# ovirt-engine<=3.2 created files at /usr among
-# others are the jboss index files.
-# we must remove these or application will not start.
-# TODO: remove in 3.4
-#
-find "%{engine_data}" -name '*.index' -exec rm "{}" \; || true
-
 %if %{ovirt_install_systemd}
 %systemd_post ovirt-engine.service
-
-#
-# In 3.2 installations we did not handle postun section correctly.
-# It means that the systemd daemon is not reloaded when 3.2 package
-# is upgraded. This leads to an 'unstartable' ovirt-engine service
-# when we upgrade to 3.3. As such, during the upgrade to 3.3 we need to
-# reload the systemd daemon.
-# TODO: remove in 3.4
-#
-if [ $1 -eq 2 ] ; then
-	%systemd_postun
-fi
 %endif
 
 %preun backend
