@@ -164,55 +164,72 @@ public class ManageDomainsArguments {
 
     /**
      * Configures argument parser and returns its instance
+     *
+     * @param action specified action
      */
-    private ExtendedCliParser initParser() {
+    private ExtendedCliParser initParser(String action) {
         ExtendedCliParser parser = new ExtendedCliParser();
-
-        parser.addArg(new ArgumentBuilder()
-                .longName(ARG_ADD_PERMISSIONS)
-                .build());
-
-        parser.addArg(new ArgumentBuilder()
-                .longName(ARG_CHANGE_PASSWORD_MSG)
-                .build());
 
         parser.addArg(new ArgumentBuilder()
                 .longName(ARG_CONFIG_FILE)
                 .valueRequied(true)
                 .build());
 
-        parser.addArg(new ArgumentBuilder()
-                .longName(ARG_DOMAIN)
-                .valueRequied(true)
-                .build());
+        if (ACTION_ADD.equals(action) || ACTION_EDIT.equals(action)) {
+            parser.addArg(new ArgumentBuilder()
+                    .longName(ARG_DOMAIN)
+                    .valueRequied(true)
+                    .build());
 
-        parser.addArg(new ArgumentBuilder()
-                .longName(ARG_FORCE)
-                .build());
+            parser.addArg(new ArgumentBuilder()
+                    .longName(ARG_PROVIDER)
+                    .valueRequied(true)
+                    .build());
 
-        parser.addArg(new ArgumentBuilder()
-                .longName(ARG_LDAP_SERVERS)
-                .valueRequied(true)
-                .build());
+            parser.addArg(new ArgumentBuilder()
+                    .longName(ARG_USER)
+                    .valueRequied(true)
+                    .build());
 
-        parser.addArg(new ArgumentBuilder()
-                .longName(ARG_PASSWORD_FILE)
-                .valueRequied(true)
-                .build());
+            parser.addArg(new ArgumentBuilder()
+                    .longName(ARG_ADD_PERMISSIONS)
+                    .build());
 
-        parser.addArg(new ArgumentBuilder()
-                .longName(ARG_PROVIDER)
-                .valueRequied(true)
-                .build());
+            parser.addArg(new ArgumentBuilder()
+                    .longName(ARG_LDAP_SERVERS)
+                    .valueRequied(true)
+                    .build());
 
-        parser.addArg(new ArgumentBuilder()
-                .longName(ARG_REPORT)
-                .build());
+            parser.addArg(new ArgumentBuilder()
+                    .longName(ARG_PASSWORD_FILE)
+                    .valueRequied(true)
+                    .build());
 
-        parser.addArg(new ArgumentBuilder()
-                .longName(ARG_USER)
-                .valueRequied(true)
-                .build());
+            parser.addArg(new ArgumentBuilder()
+                    .longName(ARG_CHANGE_PASSWORD_MSG)
+                    .build());
+
+        } else if (ACTION_DELETE.equals(action)) {
+            parser.addArg(new ArgumentBuilder()
+                    .longName(ARG_DOMAIN)
+                    .valueRequied(true)
+                    .build());
+
+            parser.addArg(new ArgumentBuilder()
+                    .longName(ARG_FORCE)
+                    .build());
+
+            parser.addArg(new ArgumentBuilder()
+                    .longName(ARG_PASSWORD_FILE)
+                    .valueRequied(true)
+                    .build());
+
+        } else if (ACTION_VALIDATE.equals(action)) {
+            parser.addArg(new ArgumentBuilder()
+                    .longName(ARG_REPORT)
+                    .build());
+
+        }
 
         return parser;
     }
@@ -258,7 +275,7 @@ public class ManageDomainsArguments {
         if (args.length > 1) {
             // entered more args than just action, parse them
             try {
-                ExtendedCliParser parser = initParser();
+                ExtendedCliParser parser = initParser(args[0]);
                 argMap = parser.parse(args, 1, args.length);
             } catch (IllegalArgumentException ex) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.ARGUMENT_PARSING_ERROR, ex.getMessage());
