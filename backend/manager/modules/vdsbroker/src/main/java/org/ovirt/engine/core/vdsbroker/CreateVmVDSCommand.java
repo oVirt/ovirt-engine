@@ -73,13 +73,15 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
 
     private CreateVDSCommand<?> initCreateVDSCommand(VM vm) throws Exception {
         if (vm.isSysprepUsed()) {
+            String domain = (vm.getVmInit() != null && vm.getVmInit().getDomain() != null) ?
+                    vm.getVmInit().getDomain() : "";
             // use answer file to run after sysprep.
             CreateVmFromSysPrepVDSCommandParameters createVmFromSysPrepParam =
                     new CreateVmFromSysPrepVDSCommandParameters(
                             getVdsId(),
                             vm,
                             vm.getName(),
-                            vm.getVmInit().getDomain());
+                            domain);
             createVmFromSysPrepParam.setSysPrepParams(getParameters().getSysPrepParams());
             return new CreateVmFromSysPrepVDSCommand<CreateVmFromSysPrepVDSCommandParameters>(createVmFromSysPrepParam);
         }
