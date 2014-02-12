@@ -1,14 +1,14 @@
 #!/bin/sh
 #
-# Start/stop oVirt Engine
+# Start/stop oVirt WebSocket Proxy
 #
 # chkconfig: - 65 34
-# description: oVirt Engine
-# pidfile: /var/run/ovirt-engine.pid
+# description: oVirt WebSocket Proxy
+# pidfile: /var/run/ovirt-websocket-proxy.pid
 
 ### BEGIN INIT INFO
-# Provides: ovirt-engine
-# Short-Description: oVirt Engine
+# Provides: ovirt-websocket-proxy
+# Short-Description: oVirt Engine WebSocket Proxy
 ### END INIT INFO
 
 # Source function library.
