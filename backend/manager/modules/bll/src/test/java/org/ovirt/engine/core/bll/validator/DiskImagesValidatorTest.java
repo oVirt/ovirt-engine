@@ -122,16 +122,37 @@ public class DiskImagesValidatorTest {
 
     @Test
     public void diskImagesAlreadyExistBothExist() {
-        doReturn(true).when(validator).isDiskExists(any(Guid.class));
+        doReturn(new DiskImage()).when(validator).getExistingDisk(any(Guid.class));
         assertThat(validator.diskImagesAlreadyExist(),
                 both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
                         (hasItem(createAliasReplacements(disk1, disk2)))));
     }
 
+    /**
+     * Test a case when the two validated disks exists and have a null disk alias, in that case the disk aliases in
+     * the CDA message should be taken from the disks existing on the setup
+     */
+    @Test
+    public void diskImagesAlreadyDiskInImportWithNullAlias() {
+        disk1.setDiskAlias(null);
+        disk2.setDiskAlias(null);
+        DiskImage existingImage1 = new DiskImage();
+        existingImage1.setDiskAlias("existingDiskAlias1");
+        DiskImage existingImage2 = new DiskImage();
+        existingImage2.setDiskAlias("existingDiskAlias2");
+
+        doReturn(existingImage1).when(validator).getExistingDisk(disk1.getId());
+        doReturn(existingImage2).when(validator).getExistingDisk(disk2.getId());
+        assertThat(validator.diskImagesAlreadyExist(),
+                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
+                        (hasItem(createAliasReplacements(existingImage1, existingImage2)))));
+    }
+
+
     @Test
     public void diskImagesAlreadyExistOneExist() {
-        doReturn(true).when(validator).isDiskExists(disk1.getId());
-        doReturn(false).when(validator).isDiskExists(disk2.getId());
+        doReturn(new DiskImage()).when(validator).getExistingDisk(disk1.getId());
+        doReturn(null).when(validator).getExistingDisk(disk2.getId());
         assertThat(validator.diskImagesAlreadyExist(),
                 both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
                         (hasItem(createAliasReplacements(disk1)))));
@@ -139,7 +160,7 @@ public class DiskImagesValidatorTest {
 
     @Test
     public void diskImagesAlreadyExistBothDoesntExist() {
-        doReturn(false).when(validator).isDiskExists(any(Guid.class));
+        doReturn(null).when(validator).getExistingDisk(any(Guid.class));
         assertEquals(validator.diskImagesAlreadyExist(), ValidationResult.VALID);
     }
 

@@ -49,6 +49,10 @@ public class DiskImagesValidator {
         return diskImagesNotInStatus(ImageStatus.LOCKED, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }
 
+    protected DiskImage getExistingDisk(Guid id) {
+        return getDbFacade().getDiskImageDao().get(id);
+    }
+
     protected boolean isDiskExists(Guid id) {
         return DbFacade.getInstance().getBaseDiskDao().exists(id);
     }
@@ -62,8 +66,9 @@ public class DiskImagesValidator {
 
         List<String> existingDisksAliases = new ArrayList<String>();
         for (DiskImage diskImage : diskImages) {
-            if (isDiskExists(diskImage.getId())) {
-                existingDisksAliases.add(diskImage.getDiskAlias());
+            DiskImage existingDisk = getExistingDisk(diskImage.getId());
+            if (existingDisk != null) {
+                existingDisksAliases.add(diskImage.getDiskAlias().isEmpty() ? existingDisk.getDiskAlias() : diskImage.getDiskAlias());
             }
         }
 
