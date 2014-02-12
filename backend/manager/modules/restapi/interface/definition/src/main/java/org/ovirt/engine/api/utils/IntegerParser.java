@@ -15,6 +15,9 @@ public class IntegerParser {
     private static final BigInteger MAX_UNSIGNED_INT = new BigInteger("4294967295"); // 2^32-1
 
     public static short parseShort(String value) {
+        if (value.trim().equals("")) {
+            value = "0";
+        }
         BigInteger result = DatatypeConverter.parseInteger(value);
         if (result.compareTo(MAX_SHORT) > 0) {
             throw new InvalidValueException("Value " + value + " is greater than the maximum short " + MAX_SHORT);
@@ -23,6 +26,9 @@ public class IntegerParser {
     }
 
     public static int parseUnsignedShort(String value) {
+        if (value.trim().equals("")) {
+            value = "0";
+        }
         BigInteger result = DatatypeConverter.parseInteger(value);
         if (result.compareTo(MAX_UNSIGNED_SHORT) > 0) {
             throw new InvalidValueException("Value " + value + " is greater than maximum unsigned short " + MAX_UNSIGNED_SHORT);
@@ -31,6 +37,9 @@ public class IntegerParser {
     }
 
     public static int parseInt(String value) {
+        if (value.trim().equals("")) {
+            value = "0";
+        }
         BigInteger result = DatatypeConverter.parseInteger(value);
         if (result.compareTo(MAX_INT) > 0) {
             throw new InvalidValueException("Value " + value +  " is greater than maximum integer " + MAX_INT);
@@ -39,6 +48,9 @@ public class IntegerParser {
     }
 
     public static long parseUnsignedInt(String value) {
+        if (value.trim().equals("")) {
+            value = "0";
+        }
         BigInteger result = DatatypeConverter.parseInteger(value);
         if (result.compareTo(MAX_UNSIGNED_INT) > 0) {
             throw new InvalidValueException("Value " + value +  " is greater than maximum unsigned integer " + MAX_UNSIGNED_INT);
