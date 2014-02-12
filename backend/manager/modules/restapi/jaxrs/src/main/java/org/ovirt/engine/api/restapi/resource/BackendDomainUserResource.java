@@ -4,7 +4,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.DomainUserResource;
-import org.ovirt.engine.core.authentication.DirectoryUser;
+import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ExternalId;

@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.resource.UserResource;
 import org.ovirt.engine.api.resource.UsersResource;
-import org.ovirt.engine.core.authentication.DirectoryUser;
+import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;

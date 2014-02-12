@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
-import org.ovirt.engine.core.authentication.DirectoryGroup;
+import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.compat.Guid;
 

@@ -32,7 +32,7 @@
     </dependency>
     <dependency>
       <groupId>${engine.groupId}</groupId>
-      <artifactId>authentication</artifactId>
+      <artifactId>aaa</artifactId>
       <version>${engine.version}</version>
     </dependency>
     <dependency>

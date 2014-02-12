@@ -23,7 +23,7 @@
     <!-- Perform authentication: -->
     <filter>
       <filter-name>AuthenticationFilter</filter-name>
-      <filter-class>org.ovirt.engine.core.authentication.AuthenticationFilter</filter-class>
+      <filter-class>org.ovirt.engine.core.aaa.AuthenticationFilter</filter-class>
     </filter>
     <filter-mapping>
       <filter-name>AuthenticationFilter</filter-name>

@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.ovirt.engine.core.authentication.DirectoryGroup;
+import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;

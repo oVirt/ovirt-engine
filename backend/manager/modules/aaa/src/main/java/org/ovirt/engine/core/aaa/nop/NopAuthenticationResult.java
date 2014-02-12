@@ -1,0 +1,22 @@
+package org.ovirt.engine.core.aaa.nop;
+
+import java.util.Collections;
+import java.util.List;
+
+import org.ovirt.engine.core.aaa.AuthenticationResult;
+
+public class NopAuthenticationResult extends AuthenticationResult {
+
+    public NopAuthenticationResult() {
+    }
+
+    @Override
+    public boolean isSuccessful() {
+        return true;
+    }
+
+    @Override
+    public List<String> resolveMessage() {
+        return Collections.emptyList();
+    }
+}

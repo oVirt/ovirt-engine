@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.authentication.Directory;
-import org.ovirt.engine.core.authentication.DirectoryGroup;
-import org.ovirt.engine.core.authentication.DirectoryManager;
-import org.ovirt.engine.core.authentication.DirectoryUser;
+import org.ovirt.engine.core.aaa.Directory;
+import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.core.aaa.DirectoryManager;
+import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.config.Config;

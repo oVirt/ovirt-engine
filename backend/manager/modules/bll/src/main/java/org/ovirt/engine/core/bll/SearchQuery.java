@@ -6,11 +6,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.ovirt.engine.core.authentication.Directory;
-import org.ovirt.engine.core.authentication.DirectoryGroup;
-import org.ovirt.engine.core.authentication.DirectoryManager;
-import org.ovirt.engine.core.authentication.DirectoryUser;
-import org.ovirt.engine.core.authentication.provisional.ProvisionalDirectory;
+import org.ovirt.engine.core.aaa.Directory;
+import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.core.aaa.DirectoryManager;
+import org.ovirt.engine.core.aaa.DirectoryUser;
+import org.ovirt.engine.core.aaa.provisional.ProvisionalDirectory;
 import org.ovirt.engine.core.bll.adbroker.LdapBroker;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryData;

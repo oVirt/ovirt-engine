@@ -29,7 +29,7 @@
     <module>services</module>
     <module>docs</module>
     <module>welcome</module>
-    <module>authentication</module>
+    <module>aaa</module>
     <module>extension-manager</module>
   </modules>
 

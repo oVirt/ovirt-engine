@@ -3,10 +3,10 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.authentication.Directory;
-import org.ovirt.engine.core.authentication.DirectoryManager;
-import org.ovirt.engine.core.authentication.DirectoryUser;
-import org.ovirt.engine.core.authentication.DirectoryUtils;
+import org.ovirt.engine.core.aaa.Directory;
+import org.ovirt.engine.core.aaa.DirectoryManager;
+import org.ovirt.engine.core.aaa.DirectoryUser;
+import org.ovirt.engine.core.aaa.DirectoryUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;

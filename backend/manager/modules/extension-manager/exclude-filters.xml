@@ -1,0 +1,42 @@
+<FindBugsFilter>
+    <!--
+      findbugs complains that file is an unwritten field.
+      This is meant to be - the file field is initialized at the CTOR
+      findbugs reason:
+      UwF: Unwritten field (UWF_UNWRITTEN_FIELD)
+     -->
+
+
+     <Match>
+       <Class name="org.ovirt.engine.core.aaa.Configuration$Root"/>
+       <Field name="file"/>
+       <Bug code="UwF"/>
+     </Match>
+
+     <!--
+      findbugs complains about inconsistent synchronization.
+      This is a false report
+      findbugs reason:
+      IS: Inconsistent synchronization (IS2_INCONSISTENT_SYNC)
+     -->
+
+
+     <Match>
+       <Class name="org.ovirt.engine.core.aaa.Manager" />
+       <Field name="factoriesByType"/>
+       <Bug code="IS"/>
+     </Match>
+
+     <!--
+      findbugs complains about inconsistent synchronization.
+      This is a false report
+      findbugs reason:
+      IS: Inconsistent synchronization (IS2_INCONSISTENT_SYNC)
+     -->
+
+     <Match>
+       <Class name="org.ovirt.engine.core.aaa.Manager" />
+       <Field name="objectsByName"/>
+       <Bug code="IS"/>
+     </Match>
+</FindBugsFilter>

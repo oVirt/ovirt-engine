@@ -8,8 +8,8 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.core.authentication.DirectoryStub;
-import org.ovirt.engine.core.authentication.DirectoryUser;
+import org.ovirt.engine.core.aaa.DirectoryStub;
+import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 

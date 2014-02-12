@@ -2,8 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import javax.validation.constraints.Size;
 
-import org.ovirt.engine.core.authentication.DirectoryGroup;
-import org.ovirt.engine.core.authentication.DirectoryUser;
+import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;

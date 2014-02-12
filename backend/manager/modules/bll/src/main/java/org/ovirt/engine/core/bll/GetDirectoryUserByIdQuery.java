@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.authentication.Directory;
-import org.ovirt.engine.core.authentication.DirectoryManager;
-import org.ovirt.engine.core.authentication.DirectoryUser;
+import org.ovirt.engine.core.aaa.Directory;
+import org.ovirt.engine.core.aaa.DirectoryManager;
+import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.utils.ExternalId;
 

@@ -20,5 +20,5 @@
          GWT client, and those that are used have special versions or custom
          field serializers to overcome the GWT serialization limitations. All
          in all they don't need to have a no args constructor: -->
-    <suppress checks="checks.NoArgConstructorCheck" files="org/ovirt/engine/core/authentication/.*"/>
+    <suppress checks="checks.NoArgConstructorCheck" files="org/ovirt/engine/core/aaa/.*"/>
 </suppressions>

@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
-import org.ovirt.engine.core.authentication.DirectoryGroup;
-import org.ovirt.engine.core.authentication.DirectoryStub;
+import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.core.aaa.DirectoryStub;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 

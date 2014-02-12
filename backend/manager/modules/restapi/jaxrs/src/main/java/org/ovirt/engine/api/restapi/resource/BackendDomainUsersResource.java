@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.resource.DomainUserResource;
 import org.ovirt.engine.api.resource.DomainUsersResource;
-import org.ovirt.engine.core.authentication.DirectoryUser;
+import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.utils.ExternalId;
 
