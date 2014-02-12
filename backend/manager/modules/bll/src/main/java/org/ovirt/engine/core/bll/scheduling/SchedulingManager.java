@@ -260,41 +260,20 @@ public class SchedulingManager {
                             true,
                             correlationId);
 
-            if (vdsList == null || vdsList.size() == 0) {
+            if (vdsList == null || vdsList.isEmpty()) {
                 return null;
             }
 
-            Guid bestHost = null;
+            Guid bestHost = selectBestHost(cluster, vm, destHostId, vdsList, policy, parameters);
 
-            // in case a default destination host was specified, and
-            // it passed filters return it
-            if (destHostId != null) {
-                for (VDS vds : vdsList) {
-                    if (destHostId.equals(vds.getId())) {
-                        bestHost = destHostId;
-                        break;
-                    }
-                }
-            }
-            if (bestHost == null && (policy.getFunctions() == null
-                    || policy.getFunctions().isEmpty())) {
-                bestHost = vdsList.get(0).getId();
-            }
-            if (bestHost == null && shouldWeighClusterHosts(cluster, vdsList)) {
-                bestHost = runFunctions(policy.getFunctions(), vdsList, vm, parameters);
-            }
-            if (bestHost == null && vdsList.size() > 0) {
-                bestHost = vdsList.get(0).getId();
-            }
-            if (bestHost != null) {
-                getVdsDynamicDao().updatePartialVdsDynamicCalc(
-                        bestHost,
-                        1,
-                        vm.getNumOfCpus(),
-                        vm.getMinAllocatedMem(),
-                        0,
-                        0);
-            }
+            getVdsDynamicDao().updatePartialVdsDynamicCalc(
+                    bestHost,
+                    1,
+                    vm.getNumOfCpus(),
+                    vm.getMinAllocatedMem(),
+                    0,
+                    0);
+
             return bestHost;
         } catch (InterruptedException e) {
             log.error("interrupted", e);
@@ -307,6 +286,38 @@ public class SchedulingManager {
             }
             log.debugFormat("Scheduling ended, correlation Id: {0}", correlationId);
         }
+    }
+
+    /**
+     * @param destHostId - used for RunAt preselection, overrides the ordering in vdsList
+     * @param vdsList - presorted list of hosts (better hosts first) that are available
+     */
+    private Guid selectBestHost(VDSGroup cluster,
+            VM vm,
+            Guid destHostId,
+            List<VDS> vdsList,
+            ClusterPolicy policy,
+            Map<String, String> parameters) {
+        // in case a default destination host was specified and
+        // it passed filters, return it
+        if (destHostId != null) {
+            for (VDS vds : vdsList) {
+                if (destHostId.equals(vds.getId())) {
+                    return destHostId;
+                }
+            }
+        }
+
+        List<Pair<Guid, Integer>> functions = policy.getFunctions();
+        if (functions != null && !functions.isEmpty()
+                && shouldWeighClusterHosts(cluster, vdsList)) {
+            Guid bestHostByFunctions = runFunctions(functions, vdsList, vm, parameters);
+            if (bestHostByFunctions != null) {
+                return bestHostByFunctions;
+            }
+        }
+
+        return vdsList.get(0).getId();
     }
 
     /**
@@ -381,10 +392,7 @@ public class SchedulingManager {
                         false,
                         null);
 
-        if (vdsList == null || vdsList.size() == 0) {
-            return false;
-        }
-        return true;
+        return vdsList != null && !vdsList.isEmpty();
     }
 
     static List<Guid> getEntityIds(List<? extends BusinessEntity<Guid>> entities) {
@@ -404,7 +412,7 @@ public class SchedulingManager {
     }
 
     protected void updateInitialHostList(List<VDS> vdsList, List<Guid> list, boolean contains) {
-        if (list != null && list.size() > 0) {
+        if (list != null && !list.isEmpty()) {
             List<VDS> toRemoveList = new ArrayList<VDS>();
             Set<Guid> listSet = new HashSet<Guid>(list);
             for (VDS vds : vdsList) {
@@ -448,13 +456,13 @@ public class SchedulingManager {
 
         if (shouldRunExternalFilters
                 && Config.<Boolean> getValue(ConfigValues.ExternalSchedulerEnabled)
-                && externalFilters.size() > 0
+                && !externalFilters.isEmpty()
                 && hostList != null
-                && hostList.size() > 0) {
+                && !hostList.isEmpty()) {
             hostList = runExternalFilters(externalFilters, hostList, vm, parameters, messages, correlationId, result);
         }
 
-        if (hostList == null || hostList.size() == 0) {
+        if (hostList == null || hostList.isEmpty()) {
             messages.add(VdcBllMessages.SCHEDULING_ALL_HOSTS_FILTERED_OUT.name());
             messages.addAll(result.getReasonMessages());
         }
@@ -586,14 +594,12 @@ public class SchedulingManager {
         });
     }
 
-    protected Guid runFunctions(ArrayList<Pair<Guid, Integer>> functions,
+    protected Guid runFunctions(List<Pair<Guid, Integer>> functions,
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters) {
-        ArrayList<Pair<PolicyUnitImpl, Integer>> internalScoreFunctions =
-                new ArrayList<Pair<PolicyUnitImpl, Integer>>();
-        ArrayList<Pair<PolicyUnitImpl, Integer>> externalScoreFunctions =
-                new ArrayList<Pair<PolicyUnitImpl, Integer>>();
+        List<Pair<PolicyUnitImpl, Integer>> internalScoreFunctions = new ArrayList<>();
+        List<Pair<PolicyUnitImpl, Integer>> externalScoreFunctions = new ArrayList<>();
 
         for (Pair<Guid, Integer> pair : functions) {
             PolicyUnitImpl currentPolicy = policyUnits.get(pair.getFirst());
@@ -608,7 +614,7 @@ public class SchedulingManager {
 
         Map<Guid, Integer> hostCostTable = runInternalFunctions(internalScoreFunctions, hostList, vm, parameters);
 
-        if (Config.<Boolean> getValue(ConfigValues.ExternalSchedulerEnabled) && externalScoreFunctions.size() > 0) {
+        if (Config.<Boolean> getValue(ConfigValues.ExternalSchedulerEnabled) && !externalScoreFunctions.isEmpty()) {
             runExternalFunctions(externalScoreFunctions, hostList, vm, parameters, hostCostTable);
         }
         Entry<Guid, Integer> bestHostEntry = null;
@@ -623,7 +629,7 @@ public class SchedulingManager {
         return bestHostEntry.getKey();
     }
 
-    private Map<Guid, Integer> runInternalFunctions(ArrayList<Pair<PolicyUnitImpl, Integer>> functions,
+    private Map<Guid, Integer> runInternalFunctions(List<Pair<PolicyUnitImpl, Integer>> functions,
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters) {
@@ -642,7 +648,7 @@ public class SchedulingManager {
         return hostCostTable;
     }
 
-    private void runExternalFunctions(ArrayList<Pair<PolicyUnitImpl, Integer>> functions,
+    private void runExternalFunctions(List<Pair<PolicyUnitImpl, Integer>> functions,
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters,
