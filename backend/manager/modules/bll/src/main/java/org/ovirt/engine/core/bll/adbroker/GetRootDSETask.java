@@ -59,15 +59,10 @@ public class GetRootDSETask implements Callable<Boolean> {
                     rootDSE = domainObject.getRootDSE();
                     if (rootDSE == null) {
                         GetRootDSE query = createGetRootDSE(ldapURI);
-                        ldapProviderType =
-                                (ldapProviderType == LdapProviderType.general ? query.autoDetectLdapProviderType(domainName)
-                                        : ldapProviderType);
-                        if (ldapProviderType != LdapProviderType.general) {
-                            Attributes rootDseRecords = query.getDomainAttributes(ldapProviderType, domainName);
-                            if (rootDseRecords != null) {
-                                setRootDSE(domainObject, ldapProviderType, rootDseRecords);
-                                baseDNExist = true;
-                            }
+                        Attributes rootDseRecords = query.getDomainAttributes(ldapProviderType, domainName);
+                        if (rootDseRecords != null) {
+                            setRootDSE(domainObject, ldapProviderType, rootDseRecords);
+                            baseDNExist = true;
                         } else {
                             log.errorFormat("Couldn't deduce provider type for domain {0}", domainName);
                             throw new AuthenticationResultException(AuthenticationResult.CONNECTION_ERROR,

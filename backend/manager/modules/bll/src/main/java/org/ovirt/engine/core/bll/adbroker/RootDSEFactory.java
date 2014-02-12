@@ -20,9 +20,8 @@ public class RootDSEFactory {
             return new ITDSRootDSE(rootDseRecords);
         case openLdap:
             return new DefaultRootDSE(rootDseRecords);
-        case general:
         default:
-            return new GeneralRootDSE(rootDseRecords);
+            throw new IllegalArgumentException("Invalid LDAP provider type.");
         }
 
     }
