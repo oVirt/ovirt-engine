@@ -42,7 +42,7 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
      */
     @Size(min = 0, max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE, groups = { CreateEntity.class })
     @ValidI18NName(message = "VALIDATION.DISK.ALIAS.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
-    private String diskAlias;
+    private String diskAlias = "";
 
     /**
      * The description of the disk.
@@ -144,7 +144,7 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
     }
 
     public void setDiskAlias(String diskAlias) {
-        this.diskAlias = diskAlias;
+        this.diskAlias = diskAlias == null ? "" : diskAlias;
     }
 
     public boolean isShareable() {
