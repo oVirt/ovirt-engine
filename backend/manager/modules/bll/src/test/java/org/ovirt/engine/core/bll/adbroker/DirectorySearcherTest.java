@@ -123,7 +123,7 @@ public class DirectorySearcherTest extends AbstractLdapTest {
         final Domain domain = new Domain("");
         domain.setLdapServers(urls);
         domain.setLdapServers(urls);
-        domain.setLdapProviderType(LdapProviderType.general);
+        domain.setLdapProviderType(LdapProviderType.openLdap);
         return domain;
     }
 

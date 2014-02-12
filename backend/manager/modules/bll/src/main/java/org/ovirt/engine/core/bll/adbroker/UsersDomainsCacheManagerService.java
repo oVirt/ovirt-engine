@@ -166,8 +166,7 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
             domainName = domainName.toLowerCase();
             domainsUsersInfoByUserNameAndDomainName.put(domainName, new ConcurrentHashMap<String, UserDomainInfo>());
             Domain domain = new Domain(domainName);
-            domain.setLdapProviderType(domainLDAPProviders.get(domainName) == null ? LdapProviderType.general
-                    : domainLDAPProviders.get(domainName));
+            domain.setLdapProviderType(domainLDAPProviders.get(domainName));
             domain.setLdapSecurityAuthentication(getDomainSecurityAuthentication(domainName));
             domainsByName.put(domainName, domain);
             domain.setUserName(userPerDomain.get(domainName));

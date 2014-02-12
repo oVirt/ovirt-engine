@@ -44,7 +44,6 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
         Map<LdapQueryType, LdapQueryMetadata> dsHashMap = setDSMap();
         Map<LdapQueryType, LdapQueryMetadata> itdsHashMap = setITDSMap();
         Map<LdapQueryType, LdapQueryMetadata> openLdapHashMap = setOpenLdapMap();
-        Map<LdapQueryType, LdapQueryMetadata> generalHashMap = setGeneralProviderMap();
 
         queryMetadataMap = new HashMap<LdapProviderType, Map<LdapQueryType, LdapQueryMetadata>>();
         queryMetadataMap.put(LdapProviderType.activeDirectory, adHashMap);
@@ -52,8 +51,6 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
         queryMetadataMap.put(LdapProviderType.rhds, dsHashMap);
         queryMetadataMap.put(LdapProviderType.itds, itdsHashMap);
         queryMetadataMap.put(LdapProviderType.openLdap, openLdapHashMap);
-        queryMetadataMap.put(LdapProviderType.general, generalHashMap);
-
         instance = new LdapQueryMetadataFactoryImpl();
     }
 

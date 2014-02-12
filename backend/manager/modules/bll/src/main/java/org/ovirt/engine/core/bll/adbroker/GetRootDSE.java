@@ -105,36 +105,6 @@ public class GetRootDSE {
         return new InitialDirContext(env);
     }
 
-    /**
-     * Try to detect which LDAP server type this domain is working with. Since the rootDSE attributes are not standard
-     * nor compulsory the result is somewhat fragile, therefore deprecated.
-     * @param domain
-     * @return {@link LdapProviderType} of this domain.
-     * @throws NamingException
-     */
-    @Deprecated
-    public LdapProviderType autoDetectLdapProviderType(String domain) throws NamingException {
-        log.infoFormat("Trying to auto-detect the LDAP provider type for domain {0}", domain);
-        LdapProviderType retVal = LdapProviderType.general;
-        Attributes attributes = getDomainAttributes(LdapProviderType.general, domain);
-        if (attributes != null) {
-            if (attributes.get(ADRootDSEAttributes.domainControllerFunctionality.name()) != null) {
-                retVal = LdapProviderType.activeDirectory;
-            } else if (attributes.get(RHDSRootDSEAttributes.vendorName.name()) != null) {
-                String vendorName = (String) attributes.get(RHDSRootDSEAttributes.vendorName.name()).get(0);
-                if (vendorName.equals(LdapProviderType.ipa.getLdapVendorName())) {
-                    retVal = LdapProviderType.ipa;
-                } else if (vendorName.equals(LdapProviderType.rhds.getLdapVendorName())) {
-                    retVal = LdapProviderType.rhds;
-                } else if (vendorName.equals(LdapProviderType.itds.getLdapVendorName())) {
-                    retVal = LdapProviderType.itds;
-                }
-            }
-        }
-        log.infoFormat("Provider type is {0}", retVal.name());
-        updateProviderTypeInConfig(domain, retVal.name());
-        return retVal;
-    }
 
     private void updateProviderTypeInConfig(String domain, String type) {
         String[] types = Config.<String> getValue(ConfigValues.LDAPProviderTypes).split(",");
