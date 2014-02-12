@@ -32,6 +32,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -446,6 +447,7 @@ public class ManageDomains {
     }
 
     protected List<String> getLdapServers(String domainName) throws ManageDomainsResult {
+        ArrayList<String> servers = new ArrayList<String>();
         String argValue = args.get(ARG_LDAP_SERVERS);
         if (StringUtils.isEmpty(argValue)) {
             LdapSRVLocator locator = new LdapSRVLocator();
@@ -464,16 +466,34 @@ public class ManageDomains {
                         ManageDomainsResultEnum.NO_LDAP_SERVERS_FOR_DOMAIN, domainName);
 
             }
-            ArrayList<String> result = new ArrayList<String>();
             for (int counter = 0; counter < ldapDnsResult.getNumOfValidAddresses(); counter++) {
                 // In case the address provides a port, don't keep it, we currently assume only the port
                 // defined at ConfigValues.ldapServerPort is being used.
                 String[] addressParts = ldapDnsResult.getAddresses()[counter].split(":");
-                result.add(addressParts[0]);
+                servers.add(addressParts[0]);
             }
-            return result;
+        } else {
+            servers = new ArrayList<String>(Arrays.asList(argValue.split(",")));
+            for (String server : servers) {
+                try {
+                    for (InetAddress ip : InetAddress.getAllByName(server)) {
+                        ip.getCanonicalHostName();
+                        log.debug(String.format(
+                                "Successfuly resolved IP '%s' for server '%s'",
+                                ip.getHostAddress(),
+                                server));
+                    }
+                } catch (Exception ex) {
+                    String msg = String.format(
+                            "Cannot resolve LDAP server hostname '%s'. Details: %s,",
+                            server,
+                            ex.getMessage());
+                    log.warn(msg, ex);
+                    System.err.println(msg);
+                }
+            }
         }
-        return new ArrayList<String>(Arrays.asList(argValue.split(",")));
+        return servers;
     }
 
     public void addDomain() throws ManageDomainsResult {
