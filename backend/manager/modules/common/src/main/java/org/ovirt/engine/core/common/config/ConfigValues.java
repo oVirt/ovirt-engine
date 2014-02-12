@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.EngineWorkingMode;
+import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 
 public enum ConfigValues {
     @Reloadable
@@ -1652,6 +1653,18 @@ public enum ConfigValues {
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"undefined\":\"true\",\"x86_64\":\"true\",\"ppc64\":\"false\"}")
     IsSuspendSupported,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    SerialNumberPolicySupported,
+
+    @TypeConverterAttribute(SerialNumberPolicy.class)
+    @DefaultValueAttribute("HOST_ID")
+    DefaultSerialNumberPolicy,
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("Dummy serial number.")
+    DefaultCustomSerialNumber,
 
     Invalid;
 }

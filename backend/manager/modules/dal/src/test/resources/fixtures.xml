@@ -611,6 +611,8 @@
         <column>cluster_policy_custom_properties</column>
         <column>architecture</column>
         <column>spice_proxy</column>
+        <column>serial_number_policy</column>
+        <column>custom_serial_number</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>rhel6.iscsi</value>
@@ -633,6 +635,8 @@
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80"}</value>
             <value>1</value>
             <null/>
+            <null />
+            <null />
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
@@ -656,6 +660,8 @@
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80"}</value>
             <value>1</value>
             <null/>
+            <value>0</value>
+            <null />
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
@@ -679,6 +685,8 @@
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80"}</value>
             <value>1</value>
             <null/>
+            <value>1</value>
+            <null />
         </row>
         <row>
             <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
@@ -702,6 +710,8 @@
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80"}</value>
             <value>1</value>
             <null/>
+            <value>2</value>
+            <value>my custom serial number</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -725,6 +735,8 @@
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
             <value>1</value>
             <null/>
+            <null />
+            <null />
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7d</value>
@@ -748,6 +760,8 @@
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
             <value>1</value>
             <null/>
+            <null />
+            <null />
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7e</value>
@@ -771,6 +785,8 @@
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
             <value>1</value>
             <null/>
+            <null />
+            <null />
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7f</value>
@@ -794,6 +810,8 @@
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
             <value>1</value>
             <null/>
+            <null />
+            <null />
         </row>
         <row>
             <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
@@ -817,6 +835,8 @@
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
             <value>1</value>
             <null/>
+            <null />
+            <null />
         </row>
     </table>
 
@@ -1533,6 +1553,8 @@
         <column>migration_downtime</column>
         <column>template_version_number</column>
         <column>template_version_name</column>
+        <column>serial_number_policy</column>
+        <column>custom_serial_number</column>
 
         <!-- Templates -->
         <row>
@@ -1587,6 +1609,8 @@
             <value>123</value>
             <value>1</value>
             <null />
+            <value>0</value>
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -1640,6 +1664,8 @@
             <value>0</value>
             <value>1</value>
             <value>ver 1</value>
+            <null />
+            <value>Serial number: 123456</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
@@ -1693,6 +1719,8 @@
             <null />
             <value>1</value>
             <null />
+            <value>2</value>
+            <value>RHVSN: 09123</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
@@ -1746,6 +1774,8 @@
             <value>500</value>
             <value>1</value>
             <null />
+            <value>1</value>
+            <null />
         </row>
          <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
@@ -1796,6 +1826,8 @@
             <value>guest_agent</value>
             <null />
             <null />
+            <null />
+            <value>1</value>
             <null />
             <value>1</value>
             <null />
@@ -1852,6 +1884,8 @@
             <null />
             <value>1</value>
             <null />
+            <null />
+            <null />
         </row>
          <row>
             <value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
@@ -1904,6 +1938,8 @@
             <null />
             <null />
             <value>1</value>
+            <null />
+            <null />
             <null />
         </row>
         <row>
@@ -1958,6 +1994,8 @@
             <null />
             <value>2</value>
             <value>verver</value>
+            <null />
+            <null />
         </row>
 
         <!-- VMS -->
@@ -2013,6 +2051,8 @@
             <value>1234</value>
             <value>1</value>
             <null />
+            <value>2</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -2066,6 +2106,8 @@
             <null />
             <null />
             <null />
+            <null />
+            <value>VSN 1234</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
@@ -2119,6 +2161,8 @@
             <null />
             <value>1</value>
             <null />
+            <value>2</value>
+            <value>My very specific serial number</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -2172,6 +2216,8 @@
             <null />
             <value>1</value>
             <null />
+            <null />
+            <value>Custom serial number</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -2225,6 +2271,8 @@
             <null />
             <value>1</value>
             <null />
+            <value>1</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -2273,6 +2321,8 @@
             <null />
             <null />
             <value>guest_agent</value>
+            <null />
+            <null />
             <null />
             <null />
             <null />
@@ -2331,6 +2381,8 @@
             <null />
             <null />
             <null />
+            <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
@@ -2379,6 +2431,8 @@
             <null />
             <null />
             <value>guest_agent</value>
+            <null />
+            <null />
             <null />
             <null />
             <null />
@@ -2436,6 +2490,8 @@
             <null />
             <null />
             <value>1</value>
+            <null />
+            <value>0</value>
             <null />
         </row>
     </table>

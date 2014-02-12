@@ -333,6 +333,18 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteEndElement();
         }
         writeVmInit();
+
+        if (vmBase.getSerialNumberPolicy() != null) {
+            _writer.WriteStartElement("SerialNumberPolicy");
+            _writer.WriteRaw(String.valueOf(vmBase.getSerialNumberPolicy().getValue()));
+            _writer.WriteEndElement();
+        }
+
+        if (vmBase.getCustomSerialNumber() != null) {
+            _writer.WriteStartElement("CustomSerialNumber");
+            _writer.WriteRaw(vmBase.getCustomSerialNumber());
+            _writer.WriteEndElement();
+        }
     }
 
     protected abstract void writeAppList();

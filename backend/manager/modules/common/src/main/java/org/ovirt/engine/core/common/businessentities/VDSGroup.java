@@ -7,6 +7,7 @@ import javax.validation.constraints.Size;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
+import org.ovirt.engine.core.common.validation.annotation.ValidSerialNumberPolicy;
 import org.ovirt.engine.core.common.validation.annotation.ValidUri;
 import org.ovirt.engine.core.common.validation.annotation.ValidVdsGroup;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -15,8 +16,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 @ValidVdsGroup(groups = { CreateEntity.class })
-
-public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable, Commented {
+@ValidSerialNumberPolicy(groups = {CreateEntity.class, UpdateEntity.class})
+public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable, Commented, HasSerialNumberPolicy {
 
     private static final long serialVersionUID = 5659359762655478095L;
 
@@ -86,6 +87,11 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private ArchitectureType architecture;
     private OptimizationType optimizationType;
+
+    private SerialNumberPolicy serialNumberPolicy;
+
+    @Size(max = BusinessEntitiesDefinitions.VM_SERIAL_NUMBER_SIZE)
+    private String customSerialNumber;
 
     public VDSGroup() {
         migrateOnError = MigrateOnErrorOptions.YES;
@@ -327,6 +333,22 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         this.spiceProxy = spiceProxy;
     }
 
+    public String getCustomSerialNumber() {
+        return customSerialNumber;
+    }
+
+    public void setCustomSerialNumber(String customSerialNumber) {
+        this.customSerialNumber = customSerialNumber;
+    }
+
+    public SerialNumberPolicy getSerialNumberPolicy() {
+        return serialNumberPolicy;
+    }
+
+    public void setSerialNumberPolicy(SerialNumberPolicy serialNumberPolicy) {
+        this.serialNumberPolicy = serialNumberPolicy;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -354,6 +376,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (enableKsm ? 1231 : 1237);
         result = prime * result + (enableBallooning ? 1231 : 1237);
         result = prime * result + ((optimizationType == null) ? 0 : optimizationType.hashCode());
+        result = prime * result + (serialNumberPolicy == null ? 0 : serialNumberPolicy.hashCode());
+        result = prime * result + (customSerialNumber == null ? 0 : customSerialNumber.hashCode());
         return result;
     }
 
@@ -393,7 +417,9 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && enableKsm == other.enableKsm
                 && enableBallooning == other.enableBallooning
                 && detectEmulatedMachine == other.detectEmulatedMachine
-                && optimizationType == other.optimizationType);
+                && optimizationType == other.optimizationType)
+                && serialNumberPolicy == other.serialNumberPolicy
+                && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber);
     }
 
 }

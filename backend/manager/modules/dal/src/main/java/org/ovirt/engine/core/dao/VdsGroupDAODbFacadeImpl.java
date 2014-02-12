@@ -8,6 +8,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
+import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.compat.Guid;
@@ -196,7 +197,10 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("enable_balloon", group.isEnableBallooning())
                 .addValue("optimization_type", group.getOptimizationType())
                 .addValue("enable_ksm", group.isEnableKsm())
-                .addValue("spice_proxy", group.getSpiceProxy());
+                .addValue("spice_proxy", group.getSpiceProxy())
+                .addValue("serial_number_policy", group.getSerialNumberPolicy() == null ? null : group.getSerialNumberPolicy().getValue())
+                .addValue("custom_serial_number", group.getCustomSerialNumber());
+
         return parameterSource;
     }
 
@@ -240,6 +244,9 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setArchitecture(ArchitectureType.forValue(rs.getInt("architecture")));
             entity.setOptimizationType(OptimizationType.from(rs.getInt("optimization_type")));
             entity.setSpiceProxy(rs.getString("spice_proxy"));
+            entity.setSerialNumberPolicy(SerialNumberPolicy.forValue((Integer) rs.getObject("serial_number_policy")));
+            entity.setCustomSerialNumber(rs.getString("custom_serial_number"));
+
             return entity;
         }
     }

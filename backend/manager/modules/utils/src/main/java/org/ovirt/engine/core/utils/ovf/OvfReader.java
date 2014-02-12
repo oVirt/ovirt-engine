@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -506,6 +507,20 @@ public abstract class OvfReader implements IOvfBuilder {
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 vmBase.setMigrationDowntime(Integer.parseInt(node.innerText));
+            }
+        }
+
+        node = content.SelectSingleNode("SerialNumberPolicy");
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.innerText)) {
+                vmBase.setSerialNumberPolicy(SerialNumberPolicy.forValue(Integer.parseInt(node.innerText)));
+            }
+        }
+
+        node = content.SelectSingleNode("CustomSerialNumber");
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.innerText)) {
+                vmBase.setCustomSerialNumber(node.innerText);
             }
         }
 

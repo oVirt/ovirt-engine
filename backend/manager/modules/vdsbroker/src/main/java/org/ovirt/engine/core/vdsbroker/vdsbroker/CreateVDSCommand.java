@@ -76,6 +76,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         builder.buildVmWatchdog();
         builder.buildVmVirtioScsi();
         builder.buildUnmanagedDevices();
+        builder.buildVmSerialNumber();
     }
 
     private static Log log = LogFactory.getLog(CreateVDSCommand.class);

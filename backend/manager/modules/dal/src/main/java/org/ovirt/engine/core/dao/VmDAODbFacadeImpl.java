@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -419,6 +420,8 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setUseLatestVersion(rs.getObject("template_version_number") ==
                     VmStaticDAODbFacadeImpl.USE_LATEST_VERSION_NUMBER_INDICATOR);
             entity.setCurrentCd(rs.getString("current_cd"));
+            entity.setSerialNumberPolicy(SerialNumberPolicy.forValue((Integer) rs.getObject("serial_number_policy")));
+            entity.setCustomSerialNumber(rs.getString("custom_serial_number"));
             return entity;
         }
     }

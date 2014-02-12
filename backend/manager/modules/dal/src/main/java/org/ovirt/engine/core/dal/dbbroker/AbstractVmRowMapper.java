@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -49,6 +50,8 @@ public abstract class AbstractVmRowMapper<T extends VmBase> implements RowMapper
         entity.setRunAndPause(rs.getBoolean("is_run_and_pause"));
         entity.setCreatedByUserId(Guid.createGuidFromString(rs.getString("created_by_user_id")));
         entity.setMigrationDowntime((Integer) rs.getObject("migration_downtime"));
+        entity.setSerialNumberPolicy(SerialNumberPolicy.forValue((Integer) rs.getObject("serial_number_policy")));
+        entity.setCustomSerialNumber(rs.getString("custom_serial_number"));
     }
 
 }

@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -43,7 +44,9 @@ public abstract class VmInfoBuilderBase {
     protected VM vm;
     // IDE supports only 4 slots , slot 2 is preserved by VDSM to the CDROM
     protected int[] ideIndexSlots = new int[] { 0, 1, 3 };
+
     protected OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    private VDSGroup vdsGroup;
 
     private static class DiskImageByBootAndSnapshotComparator implements Comparator<Disk>, Serializable {
         private static final long serialVersionUID = 4732164571328497830L;
@@ -79,10 +82,7 @@ public abstract class VmInfoBuilderBase {
         }
         final String compatibilityVersion = vm.getVdsGroupCompatibilityVersion().toString();
         addCpuPinning(compatibilityVersion);
-        createInfo.put(VdsProperties.emulatedMachine, DbFacade.getInstance()
-                .getVdsGroupDao()
-                .get(vm.getVdsGroupId())
-                .getEmulatedMachine());
+        createInfo.put(VdsProperties.emulatedMachine, getVdsGroup().getEmulatedMachine());
         // send cipher suite and spice secure channels parameters only if ssl
         // enabled.
         if (Config.<Boolean> getValue(ConfigValues.SSLEnabled)) {
@@ -275,6 +275,10 @@ public abstract class VmInfoBuilderBase {
         return DbFacade.getInstance().getVmDeviceDao().get(new VmDeviceId(diskId, vmId));
     }
 
+    public void buildVmSerialNumber() {
+        new VmSerialNumberBuilder(vm, getVdsGroup(), createInfo).buildVmSerialNumber();
+    }
+
     protected abstract void buildVmVideoCards();
 
     protected abstract void buildVmCD();
@@ -320,4 +324,11 @@ public abstract class VmInfoBuilderBase {
             return featureName;
         }
     };
+
+    protected VDSGroup getVdsGroup() {
+        if (vdsGroup == null) {
+            vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vm.getVdsGroupId());
+        }
+        return vdsGroup;
+    }
 }

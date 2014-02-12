@@ -55,6 +55,8 @@
 		<include name="common/businessentities/ArchitectureType.java" />
         <include name="common/businessentities/IscsiBond.java" />
         <include name="common/businessentities/HaMaintenanceMode.java" />
+    <include name="common/businessentities/HasSerialNumberPolicy.java" />
+    <include name="common/businessentities/SerialNumberPolicy.java" />
 
 		<!-- Network business entities -->
 		<include name="common/businessentities/network/VdsNetworkInterface.java" />

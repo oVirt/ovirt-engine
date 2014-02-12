@@ -214,6 +214,8 @@ public final class Cloner
         vm.setOriginalTemplateName(instance.getOriginalTemplateName());
         vm.setMigrationDowntime(instance.getMigrationDowntime());
         vm.setUseLatestVersion(instance.isUseLatestVersion());
+        vm.setSerialNumberPolicy(instance.getSerialNumberPolicy());
+        vm.setCustomSerialNumber(instance.getCustomSerialNumber());
 
         return vm;
     }
@@ -299,6 +301,8 @@ public final class Cloner
         obj.setEmulatedMachine(instance.getEmulatedMachine());
         obj.setDetectEmulatedMachine(instance.isDetectEmulatedMachine());
         obj.setArchitecture(instance.getArchitecture());
+        obj.setSerialNumberPolicy(instance.getSerialNumberPolicy());
+        obj.setCustomSerialNumber(instance.getCustomSerialNumber());
 
         return obj;
     }
@@ -428,6 +432,8 @@ public final class Cloner
         obj.setTemplateVersionNumber(instance.getTemplateVersionNumber());
         obj.setBaseTemplateId(instance.getBaseTemplateId());
         obj.setTemplateVersionName(instance.getTemplateVersionName());
+        obj.setSerialNumberPolicy(instance.getSerialNumberPolicy());
+        obj.setCustomSerialNumber(instance.getCustomSerialNumber());
 
         return obj;
     }
@@ -465,6 +471,8 @@ public final class Cloner
         obj.setName(instance.getName());
         obj.setVmtGuid(instance.getVmtGuid());
         obj.setUseLatestVersion(instance.isUseLatestVersion());
+        obj.setSerialNumberPolicy(instance.getSerialNumberPolicy());
+        obj.setCustomSerialNumber(instance.getCustomSerialNumber());
 
         return obj;
     }

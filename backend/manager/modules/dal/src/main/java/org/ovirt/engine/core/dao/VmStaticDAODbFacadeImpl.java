@@ -98,7 +98,9 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("original_template_id", vm.getOriginalTemplateGuid())
                 .addValue("migration_downtime", vm.getMigrationDowntime())
                 .addValue("template_version_number", vm.isUseLatestVersion() ?
-                        USE_LATEST_VERSION_NUMBER_INDICATOR : DONT_USE_LATEST_VERSION_NUMBER_INDICATOR);
+                        USE_LATEST_VERSION_NUMBER_INDICATOR : DONT_USE_LATEST_VERSION_NUMBER_INDICATOR)
+                .addValue("serial_number_policy", vm.getSerialNumberPolicy() == null ? null : vm.getSerialNumberPolicy().getValue())
+                .addValue("custom_serial_number", vm.getCustomSerialNumber());
     }
 
     @Override

@@ -1705,4 +1705,20 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
     public void setVmInit(VmInit vmInit) {
         this.vmStatic.setVmInit(vmInit);
     }
+
+    public SerialNumberPolicy getSerialNumberPolicy() {
+        return vmStatic.getSerialNumberPolicy();
+    }
+
+    public void setSerialNumberPolicy(SerialNumberPolicy serialNumberPolicy) {
+        vmStatic.setSerialNumberPolicy(serialNumberPolicy);
+    }
+
+    public String getCustomSerialNumber() {
+        return vmStatic.getCustomSerialNumber();
+    }
+
+    public void setCustomSerialNumber(String customSerialNumber) {
+        vmStatic.setCustomSerialNumber(customSerialNumber);
+    }
 }

@@ -194,7 +194,9 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("template_type", template.getTemplateType().name())
                 .addValue("migration_downtime", template.getMigrationDowntime())
                 .addValue("base_template_id", template.getBaseTemplateId())
-                .addValue("template_version_name", template.getTemplateVersionName());
+                .addValue("template_version_name", template.getTemplateVersionName())
+                .addValue("serial_number_policy", template.getSerialNumberPolicy() == null ? null : template.getSerialNumberPolicy().getValue())
+                .addValue("custom_serial_number", template.getCustomSerialNumber());
     }
 
     @Override

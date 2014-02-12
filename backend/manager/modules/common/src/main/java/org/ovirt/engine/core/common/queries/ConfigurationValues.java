@@ -117,7 +117,8 @@ public enum ConfigurationValues {
     DefaultMaximumMigrationDowntime,
     IsMigrationSupported(ConfigAuthType.User),
     IsMemorySnapshotSupported(ConfigAuthType.User),
-    IsSuspendSupported(ConfigAuthType.User);
+    IsSuspendSupported(ConfigAuthType.User),
+    SerialNumberPolicySupported;
 
     public static enum ConfigAuthType {
         Admin,

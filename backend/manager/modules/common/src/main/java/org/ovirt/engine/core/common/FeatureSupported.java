@@ -278,4 +278,13 @@ public class FeatureSupported {
     public static boolean isSuspendSupportedByArchitecture(ArchitectureType architecture, Version version) {
         return supportedInConfig(ConfigValues.IsSuspendSupported, version, architecture);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if get file stats is supported for the given version.
+     */
+    public static boolean serialNumberPolicy(Version version) {
+        return supportedInConfig(ConfigValues.SerialNumberPolicySupported, version);
+    }
 }

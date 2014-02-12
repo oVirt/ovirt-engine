@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.annotation.NullOrStringContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
+import org.ovirt.engine.core.common.validation.annotation.ValidSerialNumberPolicy;
 import org.ovirt.engine.core.common.validation.annotation.ValidTimeZone;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
@@ -27,7 +28,8 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 @ValidTimeZone(groups = {CreateEntity.class, UpdateEntity.class, ImportEntity.class, StartEntity.class})
-public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Nameable, Commented {
+@ValidSerialNumberPolicy(groups = {CreateEntity.class, UpdateEntity.class, ImportEntity.class, StartEntity.class})
+public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Nameable, Commented, HasSerialNumberPolicy {
     private static final long serialVersionUID = 1078548170257965614L;
 
     @EditableField
@@ -286,6 +288,20 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableField
     private VmInit vmInit;
 
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    private SerialNumberPolicy serialNumberPolicy;
+
+    /**
+     * Serial number used when {@link serialNumberPolicy} is set to {@link SerialNumberPolicy.CUSTOM}
+     */
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    @Size(max = BusinessEntitiesDefinitions.VM_SERIAL_NUMBER_SIZE)
+    private String customSerialNumber;
+
     public VmBase(VmBase vmBase) {
         this(vmBase.getName(),
                 vmBase.getId(),
@@ -328,7 +344,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.getDedicatedVmForVds(),
                 vmBase.getDefaultDisplayType(),
                 vmBase.getMigrationDowntime(),
-                vmBase.getVmInit());
+                vmBase.getVmInit(),
+                vmBase.getSerialNumberPolicy(),
+                vmBase.getCustomSerialNumber());
     }
 
     public VmBase(
@@ -373,7 +391,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             Guid dedicatedVmForVds,
             DisplayType defaultDisplayType,
             Integer migrationDowntime,
-            VmInit vmInit) {
+            VmInit vmInit,
+            SerialNumberPolicy serialNumberPolicy,
+            String customSerialNumber) {
         this();
         this.name = name;
         this.id = id;
@@ -417,6 +437,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.dedicatedVmForVds = dedicatedVmForVds;
         this.migrationDowntime = migrationDowntime;
         this.vmInit = vmInit;
+        this.serialNumberPolicy = serialNumberPolicy;
+        this.customSerialNumber = customSerialNumber;
     }
 
     public long getDbGeneration() {
@@ -752,6 +774,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((createdByUserId == null) ? 0 : createdByUserId.hashCode());
         result = prime * result + ((defaultDisplayType == null) ? 0 : defaultDisplayType.hashCode());
         result = prime * result + ((migrationDowntime == null) ? 0 : migrationDowntime.hashCode());
+        result = prime * result + ((serialNumberPolicy == null) ? 0 : serialNumberPolicy.hashCode());
+        result = prime * result + ((customSerialNumber == null) ? 0 : customSerialNumber.hashCode());
         return result;
     }
 
@@ -801,7 +825,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && ObjectUtils.objectsEqual(vncKeyboardLayout, other.vncKeyboardLayout)
                 && ObjectUtils.objectsEqual(createdByUserId, other.createdByUserId)
                 && cpuShares == other.cpuShares
-                && ObjectUtils.objectsEqual(migrationDowntime, other.migrationDowntime));
+                && ObjectUtils.objectsEqual(migrationDowntime, other.migrationDowntime))
+                && serialNumberPolicy == other.serialNumberPolicy
+                && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber);
     }
 
     public Guid getQuotaId() {
@@ -939,5 +965,21 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public void setVmInit(VmInit vmInit) {
         this.vmInit = vmInit;
+    }
+
+    public SerialNumberPolicy getSerialNumberPolicy() {
+        return serialNumberPolicy;
+    }
+
+    public void setSerialNumberPolicy(SerialNumberPolicy serialNumberPolicy) {
+        this.serialNumberPolicy = serialNumberPolicy;
+    }
+
+    public String getCustomSerialNumber() {
+        return customSerialNumber;
+    }
+
+    public void setCustomSerialNumber(String customSerialNumber) {
+        this.customSerialNumber = customSerialNumber;
     }
 }

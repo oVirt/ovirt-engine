@@ -228,6 +228,11 @@ select fn_db_add_config_value('DefaultRouteSupported','false','3.0');
 select fn_db_add_config_value('DefaultRouteSupported','false','3.1');
 select fn_db_add_config_value('DefaultRouteSupported','false','3.2');
 select fn_db_add_config_value('DefaultRouteSupported','false','3.3');
+select fn_db_add_config_value('SerialNumberPolicySupported','false','3.0');
+select fn_db_add_config_value('SerialNumberPolicySupported','false','3.1');
+select fn_db_add_config_value('SerialNumberPolicySupported','false','3.2');
+select fn_db_add_config_value('SerialNumberPolicySupported','false','3.3');
+select fn_db_add_config_value('SerialNumberPolicySupported','false','3.4');
 
 -- by default use no proxy
 select fn_db_add_config_value('SpiceProxyDefault','','general');
@@ -640,6 +645,9 @@ select fn_db_add_config_value('VdsHaReservationIntervalInMinutes','5','general')
 select fn_db_add_config_value('DefaultMaximumMigrationDowntime','0','general');
 --URL or custom message to be presented upon login when the password of a user has expired.
 select fn_db_add_config_value('ChangePasswordMsg','','general');
+
+select fn_db_add_config_value('DefaultSerialNumberPolicy','HOST_ID','general');
+select fn_db_add_config_value('DefaultCustomSerialNumber','Dummy serial number.','general');
 
 ------------------------------------------------------------------------------------
 --                  Update with override section

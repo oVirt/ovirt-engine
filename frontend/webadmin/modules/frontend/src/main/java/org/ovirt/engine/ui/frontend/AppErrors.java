@@ -3093,4 +3093,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. An IDE disk can't be read-only.")
     String ACTION_TYPE_FAILED_IDE_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Custom serial number must be non-empty when \"Custom\" serial number policy is specified.")
+    String ACTION_TYPE_FAILED_INVALID_SERIAL_NUMBER();
 }
