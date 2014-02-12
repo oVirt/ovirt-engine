@@ -72,6 +72,10 @@ public class DiskImage extends DiskImageBase implements IImage {
         return !getActive();
     }
 
+    public void setDiskSnapshot(boolean diskSnapshot) {
+        setActive(!diskSnapshot);
+    }
+
     @JsonIgnore
     public Guid getSnapshotId() {
         return isDiskSnapshot() ? getVmSnapshotId() : null;

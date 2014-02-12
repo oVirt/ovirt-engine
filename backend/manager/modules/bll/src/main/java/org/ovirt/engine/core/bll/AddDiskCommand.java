@@ -82,6 +82,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return false;
         }
 
+        Disk diskInfo = getParameters().getDiskInfo();
+        if (diskInfo.getDiskStorageType() == DiskStorageType.IMAGE) {
+            getDiskImageInfo().setDiskSnapshot(false);
+        }
+
         VM vm = getVm();
 
         if (vm != null) {
