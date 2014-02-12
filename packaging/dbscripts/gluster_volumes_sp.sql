@@ -297,9 +297,10 @@ Create or replace FUNCTION GetGlusterTaskByGlusterVolumeGuid(v_volume_id UUID)
     RETURNS SETOF gluster_volume_task_steps STABLE
        AS $procedure$
 BEGIN
-       RETURN QUERY SELECT *
-       FROM  gluster_volume_task_steps
-       WHERE volume_id = v_volume_id
+       RETURN QUERY SELECT gluster_volume_task_steps.*
+       FROM  gluster_volume_task_steps, gluster_volumes vol
+       WHERE volume_id = v_volume_id AND vol.id = volume_id
+       AND job_status = 'STARTED' OR (job_status != 'STARTED' AND external_id = vol.task_id)
        ORDER BY job_start_time desc LIMIT 1;
 END; $procedure$
 LANGUAGE plpgsql;
