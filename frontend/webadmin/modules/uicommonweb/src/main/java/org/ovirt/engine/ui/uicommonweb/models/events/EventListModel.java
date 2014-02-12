@@ -102,8 +102,6 @@ public class EventListModel extends ListWithDetailsModel
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
-
-        setIsTimerDisabled(true);
     }
 
     @Override
@@ -139,6 +137,11 @@ public class EventListModel extends ListWithDetailsModel
 
     protected void forceRefreshWithoutTimers() {
         getRefreshCommand().execute();
+    }
+
+    @Override
+    protected boolean handleRefreshActiveModel(RefreshActiveModelEvent event) {
+        return false;
     }
 
     protected void refreshModel()

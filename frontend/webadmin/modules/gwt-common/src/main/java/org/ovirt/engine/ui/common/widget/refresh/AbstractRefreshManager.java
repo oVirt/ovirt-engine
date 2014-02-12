@@ -12,11 +12,11 @@ import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
+import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent;
+import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent.GridTimerStateChangeEventHandler;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -102,16 +102,20 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
 
     private void updateTimer() {
         final GridTimer modelTimer = getModelTimer();
+        modelTimer.setRefreshRate(readRefreshRate());
 
         if (statusUpdateHandlerRegistration != null) {
             statusUpdateHandlerRegistration.removeHandler();
         }
-        statusUpdateHandlerRegistration = modelTimer.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+        statusUpdateHandlerRegistration =
+                modelTimer.addGridTimerStateChangeEventHandler(new GridTimerStateChangeEventHandler() {
+
             @Override
-            public void onValueChange(ValueChangeEvent<Integer> event) {
+            public void onGridTimerStateChange(GridTimerStateChangeEvent event) {
                 onRefresh(modelTimer.getTimerRefreshStatus());
             }
         });
+
         modelTimer.resume();
     }
 
@@ -166,7 +170,6 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
 
     public void setCurrentRefreshRate(int newRefreshRate) {
         saveRefreshRate(newRefreshRate);
-        getModelTimer().setRefreshRate(readRefreshRate());
         updateTimer();
     }
 
@@ -207,4 +210,5 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
     public void fireEvent(GwtEvent<?> event) {
         eventBus.fireEvent(event);
     }
+
 }

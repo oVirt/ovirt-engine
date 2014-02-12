@@ -24,4 +24,9 @@ public class EventFirstRowModelProvider extends EventModelProvider {
         super.updateDataProvider(firstRowData);
     }
 
+    @Override
+    protected boolean reusesModel() {
+        return true;
+    }
+
 }

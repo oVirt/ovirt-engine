@@ -44,13 +44,14 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
                 TabModelProvider.this.onCommonModelChange();
             }
         });
-        eventBus.addHandler(CleanupModelEvent.getType(), new CleanupModelEvent.CleanupModelHandler() {
 
+        // Add handler to clean up model
+        eventBus.addHandler(CleanupModelEvent.getType(), new CleanupModelEvent.CleanupModelHandler() {
             @Override
             public void onCleanupModel(CleanupModelEvent event) {
-                if (hasModel()) {
-                    //Setting eventbus to null will also unregister the handlers.
-                    getModel().setEventBus(null);
+                if (hasModel() && !reusesModel()) {
+                    // Calling unsetEventbus will also unregister the handlers
+                    getModel().unsetEventBus();
                 }
             }
         });
@@ -88,7 +89,20 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
                 }
             }
         });
-        getModel().setEventBus(getEventBus());
+
+        // Initialize model if necessary
+        if (!reusesModel()) {
+            getModel().setEventBus(getEventBus());
+        }
+    }
+
+    /**
+     * Override this and return true if your model provider uses the same model as another model provider.
+     * This way this model provider will not try to initialize the model again.
+     * @return {@code true if the provider re-uses a model}, {@code false otherwise}
+     */
+    protected boolean reusesModel() {
+        return false;
     }
 
     @SuppressWarnings("unchecked")

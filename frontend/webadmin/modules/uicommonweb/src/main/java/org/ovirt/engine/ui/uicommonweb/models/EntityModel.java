@@ -19,8 +19,8 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 
 @SuppressWarnings("unused")
-public class EntityModel<T> extends Model implements HasHandlers
-{
+public class EntityModel<T> extends Model implements HasHandlers {
+
     /**
      * The GWT event bus.
      */
@@ -189,16 +189,28 @@ public class EntityModel<T> extends Model implements HasHandlers
      * @param eventBus The {@code EventBus}, can be null.
      */
     public final void setEventBus(EventBus eventBus) {
+        assert eventBus != null : "EventBus cannot be null"; //$NON-NLS-1$
+        assert this.eventBus == null : "EventBus is already set"; //$NON-NLS-1$
         this.eventBus = eventBus;
-        if (eventBus == null) {
-            unregisterHandlers();
-        } else {
-            registerHandlers();
-        }
+        registerHandlers();
     }
 
+    /**
+     * Unset the GWT event bus, use this when cleaning up models.
+     */
+    public final void unsetEventBus() {
+        unregisterHandlers();
+        this.eventBus = null;
+    }
+
+    /**
+     * Register handlers after the {@code EventBus} has been set.
+     * <p>
+     * Make sure to use {@link #registerHandler} to ensure proper
+     * handler cleanup when {@link #unsetEventBus} is called.
+     */
     protected void registerHandlers() {
-        // No-op, sub classes override.
+        // No-op, override as necessary
     }
 
     /**
@@ -236,4 +248,5 @@ public class EntityModel<T> extends Model implements HasHandlers
     public void fireEvent(GwtEvent<?> event) {
         getEventBus().fireEvent(event);
     }
+
 }

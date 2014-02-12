@@ -36,6 +36,7 @@ import org.ovirt.engine.ui.uicommonweb.ReportCommand;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent.GridTimerStateChangeEventHandler;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -44,8 +45,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 /**
@@ -356,10 +355,11 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
      * for when the timer does become active (changing main tabs).
      */
     private void addTimerChangeHandler() {
-        timerChangeHandler = timer.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+        timerChangeHandler = timer.addGridTimerStateChangeEventHandler(new GridTimerStateChangeEventHandler() {
+
             @Override
-            public void onValueChange(ValueChangeEvent<Integer> event) {
-                int newInterval = event.getValue();
+            public void onGridTimerStateChange(GridTimerStateChangeEvent event) {
+                int newInterval = event.getRefreshRate();
                 if (timer.isActive()) {
                     //Immediately adjust timer and restart if it was active.
                     if (newInterval != timer.getRefreshRate()) {
@@ -967,17 +967,23 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
         return getListName();
     }
 
+    protected boolean handleRefreshActiveModel(RefreshActiveModelEvent event) {
+        return true;
+    }
+
     @Override
     protected void registerHandlers() {
-        //Register to listen for operation complete events.
+        // Register to listen for operation complete events.
         registerHandler(getEventBus().addHandler(RefreshActiveModelEvent.getType(),
                 new RefreshActiveModelHandler() {
             @Override
             public void onRefreshActiveModel(RefreshActiveModelEvent event) {
-                if (getTimer().isActive()) { //Only if we are active should we refresh.
-                    syncSearch();
+                if (getTimer().isActive()) { // Only if we are active should we refresh.
+                    if (handleRefreshActiveModel(event)) {
+                        syncSearch();
+                    }
                     if (event.isDoFastForward()) {
-                        //Start the fast refresh.
+                        // Start the fast refresh.
                         getTimer().fastForward();
                     }
                 }

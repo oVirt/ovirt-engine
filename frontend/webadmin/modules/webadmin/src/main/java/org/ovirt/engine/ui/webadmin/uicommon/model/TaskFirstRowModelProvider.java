@@ -31,4 +31,9 @@ public class TaskFirstRowModelProvider extends TaskModelProvider {
         super.updateDataProvider(firstRowData);
     }
 
+    @Override
+    protected boolean reusesModel() {
+        return true;
+    }
+
 }

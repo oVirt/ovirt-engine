@@ -24,4 +24,9 @@ public class AlertFirstRowModelProvider extends AlertModelProvider {
         super.updateDataProvider(firstRowData);
     }
 
+    @Override
+    protected boolean reusesModel() {
+        return true;
+    }
+
 }

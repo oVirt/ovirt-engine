@@ -2271,9 +2271,9 @@ public class HostInterfaceListModel extends SearchableListModel
             // disable subtab refresh for pre-3.1 clusters, to avoid interfering with row selection
             setIsTimerDisabled(isLessThan31);
             if (isLessThan31) {
-                getTimer().stop();
+                getTimer().stopWithNotification();
             } else {
-                getTimer().start();
+                getTimer().startWithNotification();
             }
         }
     }
