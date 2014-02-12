@@ -2607,6 +2607,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Mount path is illegal, please use [IP:/path or FQDN:/path] convention.")
     String VALIDATION_STORAGE_CONNECTION_INVALID();
 
+    @DefaultStringValue("Invalid value for port, should be an integer greater than 0.")
+    String VALIDATION_STORAGE_CONNECTION_INVALID_PORT();
+
     @DefaultStringValue("NFS Retransmissions should be between 0 and 32767")
     String VALIDATION_STORAGE_CONNECTION_NFS_RETRANS();
 

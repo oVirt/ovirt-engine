@@ -66,10 +66,12 @@ public class AddStorageServerConnectionCommandTest {
     private StorageServerConnections createISCSIConnection(String connection,
             StorageType type,
             String iqn,
+            String port,
             String user,
             String password) {
         StorageServerConnections connectionDetails = populateBasicConnectionDetails(connection, type);
         connectionDetails.setiqn(iqn);
+        connectionDetails.setport(port);
         connectionDetails.setuser_name(user);
         connectionDetails.setpassword(password);
         return connectionDetails;
@@ -110,11 +112,41 @@ public class AddStorageServerConnectionCommandTest {
     @Test
     public void addISCSIEmptyIqn() {
         StorageServerConnections newISCSIConnection =
-                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "user1", "mypassword123");
+                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "3650", "user1", "mypassword123");
         parameters.setStorageServerConnection(newISCSIConnection);
         parameters.setVdsId(Guid.Empty);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
+    }
+
+    @Test
+    public void addISCSIEmptyPort() {
+        StorageServerConnections newISCSIConnection =
+                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "", "user1", "mypassword123");
+        parameters.setStorageServerConnection(newISCSIConnection);
+        parameters.setVdsId(Guid.Empty);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
+    }
+
+    @Test
+    public void addISCSIInvalidPort() {
+        StorageServerConnections newISCSIConnection =
+                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "-3650", "user1", "mypassword123");
+        parameters.setStorageServerConnection(newISCSIConnection);
+        parameters.setVdsId(Guid.Empty);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
+    }
+
+    @Test
+    public void addISCSIInvalidPortWithCharacters() {
+        StorageServerConnections newISCSIConnection =
+                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "abc", "user1", "mypassword123");
+        parameters.setStorageServerConnection(newISCSIConnection);
+        parameters.setVdsId(Guid.Empty);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
     }
 
     @Test
@@ -123,6 +155,7 @@ public class AddStorageServerConnectionCommandTest {
                 createISCSIConnection("10.35.16.25",
                         StorageType.ISCSI,
                         "iqn.2013-04.myhat.com:aaa-target1",
+                        "3650",
                         "user1",
                         "mypassword123");
         parameters.setStorageServerConnection(newISCSIConnection);
@@ -231,6 +264,7 @@ public class AddStorageServerConnectionCommandTest {
                 createISCSIConnection("",
                         StorageType.ISCSI,
                         "iqn.2013-04.myhat.com:aaa-target1",
+                        "3650",
                         "user1",
                         "mypassword123");
         parameters.setStorageServerConnection(newISCSIConnection);
@@ -241,8 +275,8 @@ public class AddStorageServerConnectionCommandTest {
 
     @Test
     public void isConnWithSameDetailsExist() {
-       StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "user1", "mypassword123");
-       StorageServerConnections  existingConn = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "user1", "mypassword123");
+       StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3650", "user1", "mypassword123");
+       StorageServerConnections  existingConn = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3650", "user1", "mypassword123");
        existingConn.setid(Guid.newGuid().toString());
 
        List<StorageServerConnections> connections = new ArrayList<>();

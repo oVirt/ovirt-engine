@@ -88,6 +88,11 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
             return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
         }
 
+        if (paramConnection.getstorage_type() == StorageType.ISCSI
+                && !isValidStorageConnectionPort(paramConnection.getport())) {
+            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
+        }
+
         if (checkIsConnectionFieldEmpty(paramConnection)) {
             return false;
         }

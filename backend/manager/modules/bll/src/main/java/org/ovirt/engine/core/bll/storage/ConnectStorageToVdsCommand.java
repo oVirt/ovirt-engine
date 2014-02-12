@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -60,5 +61,9 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
                 .getItem(getConnection().getstorage_type())
                 .isConnectSucceeded(result, connections),
                 Integer.parseInt(result.values().iterator().next()));
+    }
+
+    protected boolean isValidStorageConnectionPort(String port) {
+         return !StringUtils.isEmpty(port) && StringUtils.isNumeric(port) && Integer.parseInt(port) > 0;
     }
 }
