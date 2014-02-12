@@ -6,15 +6,19 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 public class NotificationPropertiesTest {
 
     private static NotificationProperties prop = null;
 
     @BeforeClass
-    static public void beforeClass() {
+    static public void beforeClass() throws UnsupportedEncodingException {
+        NotificationProperties.release();
         NotificationProperties.setDefaults(
-            "src/test/resources/conf/notifier-prop-test.conf",
-            "src/test/resources/conf/missing.conf"
+                URLDecoder.decode(ClassLoader.getSystemResource("conf/notifier-prop-test.conf").getPath(), "UTF-8"),
+                ""
         );
         prop = NotificationProperties.getInstance();
         assertNotNull(prop);
