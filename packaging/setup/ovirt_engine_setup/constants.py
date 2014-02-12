@@ -924,7 +924,6 @@ class ConfigEnv(object):
         answerfile=True,
         summary=True,
         description=_('NFS export ACL'),
-        postinstallfile=True,
     )
     def ISO_DOMAIN_NFS_ACL(self):
         return 'OVESETUP_CONFIG/isoDomainACL'
