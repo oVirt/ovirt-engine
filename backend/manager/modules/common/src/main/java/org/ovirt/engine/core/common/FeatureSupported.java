@@ -74,7 +74,7 @@ public class FeatureSupported {
      * @return <code>true</code> if anti MAC spoofing is supported for the version, <code>false</code> if it's not.
      */
     public static boolean antiMacSpoofing(Version version) {
-        return supportedInConfig(ConfigValues.EnableMACAntiSpoofingFilterRules, version);
+        return supportedInConfig(ConfigValues.MacAntiSpoofingFilterRulesSupported, version);
     }
 
     /**

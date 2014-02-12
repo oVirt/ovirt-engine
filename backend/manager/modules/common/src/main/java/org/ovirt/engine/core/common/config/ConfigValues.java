@@ -1118,6 +1118,11 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     EnableMACAntiSpoofingFilterRules,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    MacAntiSpoofingFilterRulesSupported,
+
     // Gluster peer status command
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("gluster peer status --xml")

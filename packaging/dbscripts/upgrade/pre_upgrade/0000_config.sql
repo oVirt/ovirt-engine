@@ -360,8 +360,9 @@ select fn_db_add_config_value('NumberOfUSBSlots','4','general');
 select fn_db_add_config_value('NumberVmRefreshesBeforeSave','5','general');
 select fn_db_add_config_value('SupportBridgesReportByVDSM','false','3.0');
 select fn_db_add_config_value('SupportBridgesReportByVDSM','false','3.1');
-select fn_db_add_config_value('EnableMACAntiSpoofingFilterRules','false', '3.0');
-select fn_db_add_config_value('EnableMACAntiSpoofingFilterRules','false', '3.1');
+select fn_db_add_config_value('MacAntiSpoofingFilterRulesSupported','false', '3.0');
+select fn_db_add_config_value('MacAntiSpoofingFilterRulesSupported','false', '3.1');
+select fn_db_add_config_value('EnableMACAntiSpoofingFilterRules','true', 'general');
 select fn_db_add_config_value('GlusterFsStorageEnabled','false','3.0');
 select fn_db_add_config_value('GlusterFsStorageEnabled','false','3.1');
 select fn_db_add_config_value('GlusterFsStorageEnabled','false','3.2');
@@ -901,6 +902,8 @@ select fn_db_delete_config_value('AverageToPeakRatio','general');
 select fn_db_delete_config_value('AverageToBurstRatio','general');
 select fn_db_delete_config_value('DocsURL','general');
 select fn_db_delete_config_value('VirtIoScsiUnsupportedOsList','general');
+select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.0');
+select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.1');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
