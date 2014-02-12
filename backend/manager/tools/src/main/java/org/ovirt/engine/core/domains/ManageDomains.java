@@ -303,15 +303,15 @@ public class ManageDomains {
         }
     }
 
-    protected String getChangePasswordMsg() throws ManageDomainsResult, UnsupportedEncodingException {
+    protected String getChangePasswordMsg(boolean edit) throws ManageDomainsResult, UnsupportedEncodingException {
         if (!args.contains(ARG_CHANGE_PASSWORD_MSG)) {
             return null;
         }
-
+        String emptyValueDescription = edit ? " (Not providing a value will cause the existing value to be reset)" : "";
         String changePasswordMsgStr =
-                readInteractively("Please enter message or URL to appear when user tries to login with an expired password: ",
-                        false);
-
+                System.console()
+                        .readLine("Please enter message or URL to appear when user tries to login with an expired password"
+                                + emptyValueDescription + ":");
         if (changePasswordMsgStr.indexOf("http") == 0 || changePasswordMsgStr.indexOf("https") == 0) {
             try {
                 URL url = new URL(changePasswordMsgStr);
@@ -322,7 +322,7 @@ public class ManageDomains {
             }
         }
         // As the message may contain characters like space, "," and ":" - it should be encoded
-        return URLEncoder.encode(changePasswordMsgStr, "UTF-8");
+        return StringUtils.isNotEmpty(changePasswordMsgStr) ? URLEncoder.encode(changePasswordMsgStr, "UTF-8") : "";
     }
 
     private String getPasswordInput() throws ManageDomainsResult {
@@ -490,12 +490,6 @@ public class ManageDomains {
         List<String> ldapServers = getLdapServers(domainName);
         validateKdcServers(authMode, domainName);
         domainNameEntry.setValueForDomain(domainName, null);
-        String changePasswordUrlStr = null;
-        try {
-            changePasswordUrlStr = getChangePasswordMsg();
-        } catch (UnsupportedEncodingException e) {
-            log.error("Error in encoding the change password message. ", e);
-        }
 
         String currentAdUserNameEntry = configurationProvider.getConfigValue(ConfigValues.AdUserName);
         String currentAdUserPasswordEntry = configurationProvider.getConfigValue(ConfigValues.AdUserPassword);
@@ -528,12 +522,7 @@ public class ManageDomains {
         authModeEntry.setValueForDomain(domainName, authMode);
         ldapProviderTypesEntry.setValueForDomain(domainName, ldapProviderType.name());
         setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
-        if (args.contains(ARG_CHANGE_PASSWORD_MSG)) {
-            changePasswordUrlEntry.setValueForDomain(domainName, changePasswordUrlStr);
-        }
-
-
-
+        handleChangePasswordMsg(domainName, changePasswordUrlEntry, false);
         testConfiguration(domainName,
                 domainNameEntry,
                 adUserNameEntry,
@@ -676,13 +665,8 @@ public class ManageDomains {
         if (ldapProviderType != null) {
             ldapProviderTypeEntry.setValueForDomain(domainName, ldapProviderType.name());
         }
-        if (args.contains(ARG_CHANGE_PASSWORD_MSG)) {
-            try {
-                changePaswordUrlEntry.setValueForDomain(domainName, getChangePasswordMsg());
-            } catch (UnsupportedEncodingException e) {
-                log.error("Error in encoding the change password message. ", e);
-            }
-        }
+
+        handleChangePasswordMsg(domainName, changePaswordUrlEntry, true);
 
         testConfiguration(domainName,
                 domainNameEntry,
@@ -709,6 +693,25 @@ public class ManageDomains {
                 changePaswordUrlEntry);
 
         printSuccessMessage(domainName, "edited");
+    }
+
+    private void handleChangePasswordMsg(String domainName,
+            DomainsConfigurationEntry changePaswordUrlEntry,
+            boolean edit)
+            throws ManageDomainsResult {
+        if (args.contains(ARG_CHANGE_PASSWORD_MSG)) {
+            try {
+                String changePasswordMsgStr = getChangePasswordMsg(edit);
+                if (StringUtils.isNotBlank(changePasswordMsgStr)) {
+                    changePaswordUrlEntry.setValueForDomain(domainName, changePasswordMsgStr);
+                } else {
+                    changePaswordUrlEntry.removeValueForDomain(domainName);
+                }
+
+            } catch (UnsupportedEncodingException e) {
+                log.error("Error in encoding the change password message. ", e);
+            }
+        }
     }
 
     private void createKerberosConfiguration(DomainsConfigurationEntry gssapiDomains, Map<String, List<String>> ldapServersPerGSSAPIDomains) throws ManageDomainsResult {
