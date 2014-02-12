@@ -51,23 +51,45 @@ class Plugin(plugin.PluginBase):
         """,
     )
 
-    def _read_and_find_path(self, conf, path):
-        index = None
-        content = None
+    def _getContentRemovePath(self, conf, path):
+        old_line = None
+        new_content = []
         if os.path.exists(conf):
             with open(conf, 'r') as f:
                 content = f.read().splitlines()
-            for i, line in enumerate(content):
-                matcher = self._RE_EXPORTS_LINE.match(line)
+            for l in content:
+                matcher = self._RE_EXPORTS_LINE.match(l)
                 if matcher and matcher.group('path') == path:
-                    index = i
-                    break
-        return content, index
+                    old_line = l
+                else:
+                    new_content.append(l)
+        return new_content, old_line
+
+    def _getContentAppendLine(self, conf, new):
+        path = self._RE_EXPORTS_LINE.match(new).group('path')
+        new_content = []
+        found = False
+        if os.path.exists(conf):
+            with open(conf, 'r') as f:
+                content = f.read().splitlines()
+            for l in content:
+                matcher = self._RE_EXPORTS_LINE.match(l)
+                if matcher and matcher.group('path') == path:
+                    new_content.append(new)
+                    found = True
+                else:
+                    new_content.append(l)
+        if not found:
+            new_content.append(new)
+        return new_content
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._enabled = True
-        self._conf = None
+        self._source = None
+        self._destination = None
+        self._move = False
+        self._generate = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -86,12 +108,6 @@ class Plugin(plugin.PluginBase):
             osetupcons.CoreEnv.DEVELOPER_MODE
         ]
         self.command.detect('exportfs')
-
-        if os.path.exists(osetupcons.FileLocations.NFS_EXPORT_DIR):
-            self._conf = osetupcons.FileLocations.OVIRT_NFS_EXPORT_FILE
-        else:
-            self._conf = osetupcons.FileLocations.NFS_EXPORT_FILE
-
         self.environment[
             osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
         ].append(osetupcons.FileLocations.NFS_EXPORT_FILE)
@@ -101,9 +117,38 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _validation(self):
-        self._enabled = self.environment[
-            osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
-        ] is not None
+        if os.path.exists(osetupcons.FileLocations.OVIRT_NFS_EXPORT_FILE):
+            self._source = self._destination = (
+                osetupcons.FileLocations.OVIRT_NFS_EXPORT_FILE
+            )
+        elif os.path.exists(osetupcons.FileLocations.NFS_EXPORT_DIR):
+            self._source = osetupcons.FileLocations.NFS_EXPORT_FILE
+            self._destination = osetupcons.FileLocations.OVIRT_NFS_EXPORT_FILE
+
+            content, old_line = self._getContentRemovePath(
+                self._source,
+                self.environment[
+                    osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                ],
+            )
+            self._move = old_line is not None
+        elif os.path.exists(osetupcons.FileLocations.NFS_EXPORT_FILE):
+            self.source = self._destination = (
+                osetupcons.FileLocations.NFS_EXPORT_FILE
+            )
+
+        self._generate = (
+            self.environment[
+                osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+            ] is not None and
+            self.environment[
+                osetupcons.ConfigEnv.ISO_DOMAIN_NFS_ACL
+            ] is not None
+        )
+
+        self.logger.debug('move=%s, generate=%s', self._move, self._generate)
+
+        self._enabled = self._move or self._generate
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
@@ -113,79 +158,74 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _misc(self):
-        """
-        Assume that if /etc/exports.d exists we have exports.d support.
-        Always create single exports.d entry for our engine, no matter
-        what we had before.
-        In /etc/exports make sure we have our own path.
-        """
-        uninstall_files = []
-        exports_uninstall_group = self.environment[
-            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
-        ].createGroup(
-            group='exportfs',
-            description='NFS exports configuration',
-            optional=True
-        )
-        exports_uninstall_group.addFiles(
-            group='exportfs',
-            fileList=uninstall_files,
-        )
-        path = self.environment[
-            osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
-        ]
         new_line = '{path}\t{acl}'.format(
-            path=path,
+            path=self.environment[
+                osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+            ],
             acl=self.environment[
                 osetupcons.ConfigEnv.ISO_DOMAIN_NFS_ACL
             ],
         )
-        exports_content, exports_index = (
-            self._read_and_find_path(
-                osetupcons.FileLocations.NFS_EXPORT_FILE,
-                path
+        do_generate = self._generate
+
+        if self._move:
+            content, old_line = self._getContentRemovePath(
+                self._source,
+                self.environment[
+                    osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                ],
             )
-        )
-        if self._conf == osetupcons.FileLocations.OVIRT_NFS_EXPORT_FILE:
-            if exports_index is not None:
-                # This probably means that in a previous setup we added
-                # the path to /etc/exports instead of creating our
-                # own file in /etc/exports.d as we do now. Delete the
-                # line from /etc/exports.
-                # The transaction below does not pass modifiedList
-                # nor do we call addChanges - we do not revert this
-                # fix on cleanup.
-                del exports_content[exports_index]
-                self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-                    filetransaction.FileTransaction(
-                        name=osetupcons.FileLocations.NFS_EXPORT_FILE,
-                        content=exports_content,
-                    )
+            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                filetransaction.FileTransaction(
+                    name=self._source,
+                    content=content,
+                    modifiedList=self.environment[
+                        otopicons.CoreEnv.MODIFIED_FILES
+                    ],
                 )
-            content = [
-                '# This file is automatically generated by engine-setup.',
-                '# Please do not edit manually.',
-                new_line,
-            ]
-        else:
-            changes = {'added': new_line}
-            if exports_index is not None:
-                old_line = exports_content.pop(exports_index)
-                changes['removed'] = old_line
-            content = exports_content
-            content.append(new_line)
+            )
+
+            if not self._generate:
+                self.environment[
+                    osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+                ].append(self._destination)
+                do_generate = True
+                new_line = old_line
+
+        self.logger.debug('generate=%s, line=%s', self._generate, new_line)
+
+        if do_generate:
+            uninstall_files = []
+
+            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                filetransaction.FileTransaction(
+                    name=self._destination,
+                    content=self._getContentAppendLine(
+                        self._destination,
+                        new_line,
+                    ),
+                    modifiedList=uninstall_files,
+                )
+            )
+
+            exports_uninstall_group = self.environment[
+                osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+            ].createGroup(
+                group='exportfs',
+                description='NFS exports configuration',
+                optional=True
+            )
+            exports_uninstall_group.addFiles(
+                group='exportfs',
+                fileList=uninstall_files,
+            )
+
+        if self._generate:
             exports_uninstall_group.addChanges(
                 group='exportfs',
-                filename=self._conf,
-                changes=[changes],
+                filename=self._destination,
+                changes=[{'added': new_line}],
             )
-        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-            filetransaction.FileTransaction(
-                name=self._conf,
-                content=content,
-                modifiedList=uninstall_files,
-            )
-        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
