@@ -29,8 +29,6 @@ public class RsdlManager {
     private static final String GENERAL_METADATA_DESCRIPTION = "These options are valid for entire application.";
 
     private static final String METADATA_FILE_NAME = "/rsdl_metadata.yaml";
-    private static final String RSDL_FILE_NAME = "/rsdl.xml";
-    private static final String GLUSTER_RSDL_FILE_NAME = "/rsdl_gluster.xml";
 
     public static void main(String[] args) throws ClassNotFoundException, IOException {
         System.out.println("Generating RSDL files...");
@@ -52,12 +50,20 @@ public class RsdlManager {
         serializeRsdl(rsdl, outputFileName);
     }
 
-    public RSDL loadRsdl(ApplicationMode applicationMode) throws IOException {
-        InputStream stream =
-                applicationMode == ApplicationMode.GlusterOnly ?
-                        this.getClass().getResourceAsStream(GLUSTER_RSDL_FILE_NAME) :
-                        this.getClass().getResourceAsStream(RSDL_FILE_NAME);
-        return JAXB.unmarshal(stream, RSDL.class);
+    public static RSDL loadRsdl(ApplicationMode applicationMode) throws IOException {
+        String fileName =
+                applicationMode == ApplicationMode.AllModes ? ("/" + RsdlIOManager.RSDL_RESOURCE_NAME)
+                        : ("/" + RsdlIOManager.GLUSTER_RSDL_RESOURCE_NAME);
+        InputStream rsdlAsStrem = null;
+        try {
+            rsdlAsStrem = RsdlIOManager.loadAsStream(fileName);
+            return JAXB.unmarshal(rsdlAsStrem, RSDL.class);
+        } finally {
+            if (rsdlAsStrem != null) {
+                rsdlAsStrem.close();
+            }
+        }
+
     }
 
     private static void serializeRsdl(RSDL rsdl, String rsdlLocation) {

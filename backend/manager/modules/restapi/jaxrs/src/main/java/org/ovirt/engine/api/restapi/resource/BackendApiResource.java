@@ -273,8 +273,7 @@ public class BackendApiResource
 
     public synchronized RSDL getRSDL() throws ClassNotFoundException, IOException {
         if (rsdl == null) {
-            RsdlManager rsdlManager = new RsdlManager();
-            rsdl = rsdlManager.loadRsdl(getCurrent().get(ApplicationMode.class));
+            rsdl = RsdlManager.loadRsdl(getCurrent().get(ApplicationMode.class));
         }
         return rsdl;
     }

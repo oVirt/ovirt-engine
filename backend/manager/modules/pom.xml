@@ -45,7 +45,7 @@
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
-         <excludes>**/RsdlManager.java</excludes>
+          <excludes>**/RsdlManager.java,**/RsdlIOManager.java</excludes>
         </configuration>
       </plugin>
     </plugins>
