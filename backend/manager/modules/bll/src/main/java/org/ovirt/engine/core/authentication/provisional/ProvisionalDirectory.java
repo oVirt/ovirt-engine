@@ -32,7 +32,7 @@ public class ProvisionalDirectory implements Directory {
      */
     private static final long serialVersionUID = 1L;
 
-    private Log log = LogFactory.getLog(ProvisionalDirectory.class);
+    private static final Log log = LogFactory.getLog(ProvisionalDirectory.class);
 
     /**
      * The name of the domain.
