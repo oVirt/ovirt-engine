@@ -16,6 +16,7 @@ import java.util.Map;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.AuditLogType;
 
 
 //@RunWith(PowerMockRunner.class)
@@ -126,5 +127,22 @@ public class AuditLogDirectorTest {
 
         String resolvedMessage = AuditLogDirector.resolveMessage(message, logable);
         Assert.assertEquals(expectedResolved, resolvedMessage);
+    }
+
+    /**
+     * Test the correctness of the severity structure rewrite
+     * This test will be removed together with the severity map
+     * that is to be replaced by using the severity field from AuditLogType
+     */
+    @Test
+    public void testSeverityRewrite() {
+        for (AuditLogType value : AuditLogType.values()) {
+            Assert.assertEquals(
+                    String.format("Severity for %1s does not match. Type uses %2s and Director uses %3s.",
+                            value.toString(),
+                            value.getSeverity().toString(),
+                            AuditLogDirector.getSeverityForMessage(value).toString()),
+                    value.getSeverity(), AuditLogDirector.getSeverityForMessage(value));
+        }
     }
 }

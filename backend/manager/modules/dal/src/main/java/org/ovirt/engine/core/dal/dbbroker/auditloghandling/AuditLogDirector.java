@@ -34,7 +34,6 @@ public final class AuditLogDirector {
     static {
         initMessages();
         initSeverities();
-        checkSeverities();
     }
 
     private static void initSeverities() {
@@ -570,6 +569,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_REBOOT_VM, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_REBOOT_VM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_ADD_VM, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_FAILED_REMOVE_VM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_ADD_VM_STARTED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_ADD_VM_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_ADD_VM_FINISHED_FAILURE, AuditLogSeverity.ERROR);
@@ -913,6 +913,16 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.ISCSI_BOND_REMOVE_FAILED, AuditLogSeverity.ERROR);
     }
 
+    static AuditLogSeverity getSeverityForMessage(AuditLogType messageType) {
+        AuditLogSeverity severity =  severities.get(messageType);
+        if (severity == null) {
+            severity = AuditLogSeverity.NORMAL;
+            log.warnFormat("AuditLogType: {0} not have severity. Assumed Normal",
+                    messageType.toString());
+        }
+        return severity;
+    }
+
     private static void initMessages() {
         ResourceBundle bundle = readMessagesFromBundle();
 
@@ -955,17 +965,6 @@ public final class AuditLogDirector {
         }
     }
 
-    private static void checkSeverities() {
-        AuditLogType[] values = AuditLogType.values();
-        if (values.length != severities.size()) {
-            for (AuditLogType value : values) {
-                if (!severities.containsKey(value)) {
-                    log.warnFormat("AuditLogType: {0} not have severity. Assumed Normal", value.toString());
-                }
-            }
-        }
-    }
-
     /**
      * Gets the message.
      * @param logType
@@ -1000,7 +999,7 @@ public final class AuditLogDirector {
     private static void saveToDb(AuditLogableBase auditLogable, AuditLogType logType, String loggerString) {
         String message = null;
         String resolvedMessage = null;
-        AuditLogSeverity severity = severities.get(logType);
+        AuditLogSeverity severity = logType.getSeverity();
         if (severity == null) {
             severity = AuditLogSeverity.NORMAL;
             log.infoFormat("No severity for {0} audit log type, assuming Normal severity", logType);
