@@ -412,11 +412,26 @@ changeDBConf() {
 }
 
 generatePgPass() {
+	local password="${ENGINE_DB_PASSWORD}"
 	MYPGPASS="${TEMP_FOLDER}/.pgpass"
+
 	touch "${MYPGPASS}" || logdie "Can't touch ${MYPGPASS}"
 	chmod 0600 "${MYPGPASS}" || logdie "Can't chmod ${MYPGPASS}"
+
+	#
+	# we need client side psql library
+	# version as at least in rhel for 8.4
+	# the password within pgpassfile is
+	# not escaped.
+	# the simplest way is to checkout psql
+	# utility version.
+	#
+	if ! psql -V | grep -q ' 8\.'; then
+		password="$(echo "${password}" | sed -e 's/\\/\\\\/g' -e 's/:/\\:/g')"
+	fi
+
 	cat > "${MYPGPASS}" << __EOF__
-${ENGINE_DB_HOST}:${ENGINE_DB_PORT}:${ENGINE_DB_DATABASE}:${ENGINE_DB_USER}:${ENGINE_DB_PASSWORD}
+${ENGINE_DB_HOST}:${ENGINE_DB_PORT}:${ENGINE_DB_DATABASE}:${ENGINE_DB_USER}:${password}
 __EOF__
 }
 

@@ -36,10 +36,29 @@ from ovirt_engine_setup import util as osetuputil
 @util.export
 class Plugin(plugin.PluginBase):
     """DB pgpass plugin."""
+
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
+        self._plainPassword = None
 
     def _createTempPgPass(self):
+        #
+        # we need client side psql library
+        # version as at least in rhel for 8.4
+        # the password within pgpassfile is
+        # not escaped.
+        # the simplest way is to checkout psql
+        # utility version.
+        #
+        if self._plainPassword is None:
+            rc, stdout, stderr = self.execute(
+                args=(
+                    self.command.get('psql'),
+                    '-V',
+                ),
+            )
+            self._plainPassword = ' 8.' in stdout[0]
+
         pgpass = None
         if self.environment[
             osetupcons.DBEnv.PGPASS_FILE
@@ -69,9 +88,13 @@ class Plugin(plugin.PluginBase):
                         port=self.environment[osetupcons.DBEnv.PORT],
                         database=self.environment[osetupcons.DBEnv.DATABASE],
                         user=self.environment[osetupcons.DBEnv.USER],
-                        password=osetuputil.escape(
-                            self.environment[osetupcons.DBEnv.PASSWORD],
-                            ':\\',
+                        password=(
+                            self.environment[osetupcons.DBEnv.PASSWORD]
+                            if self._plainPassword
+                            else osetuputil.escape(
+                                self.environment[osetupcons.DBEnv.PASSWORD],
+                                ':\\',
+                            )
                         ),
                     ),
                 )

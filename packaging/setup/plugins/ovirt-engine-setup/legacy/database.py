@@ -63,13 +63,53 @@ class Plugin(plugin.PluginBase):
             ])
             legacy_user = config.get('ENGINE_DB_USER')
             self.logger.debug('legacy ENGINE_DB_USER: %s' % legacy_user)
+
+            #
+            # we need client side psql library
+            # version as at least in rhel for 8.4
+            # the password within pgpassfile is
+            # not escaped.
+            # the simplest way is to checkout psql
+            # utility version.
+            #
+            # we are at too early stage to use commands
+            # so we hardcode path in this case.
+            #
+            psql = self.command.get('psql', optional=True)
+            if not psql:
+                psql = '/usr/bin/psql'
+            rc, stdout, stderr = self.execute(
+                args=(
+                    psql,
+                    '-V',
+                ),
+            )
+            plainPassword = ' 8.' in stdout[0]
             with open(
                 osetupcons.FileLocations.LEGACY_PSQL_PASS_FILE,
                 'r',
             ) as f:
                 for l in f:
-                    l = l.rstrip('\n')
-                    d = l.split(':')
+                    if plainPassword:
+                        d = l.rstrip('\n').split(':', 4)
+                    else:
+                        if l and l[-1] != '\n':
+                            l += '\n'
+                        d = []
+                        escape = False
+                        s = ''
+                        for c in l:
+                            if escape:
+                                escape = False
+                                s += c
+                            else:
+                                if c == ':' or c == '\n':
+                                    d.append(s)
+                                    s = ''
+                                elif c == '\\':
+                                    escape = True
+                                else:
+                                    s += c
                     if len(d) == 5 and d[3] == legacy_user:
                         self._dbenv = {
                             osetupcons.DBEnv.HOST: d[0],
