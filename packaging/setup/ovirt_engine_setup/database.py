@@ -304,6 +304,8 @@ class Statement(base.Base):
 @util.export
 class OvirtUtils(base.Base):
 
+    _plainPassword = None
+
     @property
     def environment(self):
         return self._environment
@@ -332,6 +334,24 @@ class OvirtUtils(base.Base):
         self.command.detect('psql')
 
     def createPgPass(self):
+
+        #
+        # we need client side psql library
+        # version as at least in rhel for 8.4
+        # the password within pgpassfile is
+        # not escaped.
+        # the simplest way is to checkout psql
+        # utility version.
+        #
+        if type(self)._plainPassword is None:
+            rc, stdout, stderr = self._plugin.execute(
+                args=(
+                    self.command.get('psql'),
+                    '-V',
+                ),
+            )
+            type(self)._plainPassword = ' 8.' in stdout[0]
+
         fd, pgpass = tempfile.mkstemp()
         atexit.register(os.unlink, pgpass)
         with os.fdopen(fd, 'w') as f:
@@ -344,9 +364,13 @@ class OvirtUtils(base.Base):
                     port=self.environment[self._dbenvkeys['port']],
                     database=self.environment[self._dbenvkeys['database']],
                     user=self.environment[self._dbenvkeys['user']],
-                    password=outil.escape(
-                        self.environment[self._dbenvkeys['password']],
-                        ':\\',
+                    password=(
+                        self.environment[self._dbenvkeys['password']]
+                        if type(self)._plainPassword
+                        else outil.escape(
+                            self.environment[self._dbenvkeys['password']],
+                            ':\\',
+                        )
                     ),
                 ),
             )
