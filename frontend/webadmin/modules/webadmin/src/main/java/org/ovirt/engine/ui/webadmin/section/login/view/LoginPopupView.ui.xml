@@ -37,6 +37,8 @@
 			font-style: italic;
 			text-align: center;
 			vertical-align: middle;
+            width: 430px;
+            word-wrap: break-word;
 		}
 
 		.buttonBar {
