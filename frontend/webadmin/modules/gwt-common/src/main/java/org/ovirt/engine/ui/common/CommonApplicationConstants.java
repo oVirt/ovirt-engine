@@ -1624,6 +1624,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Attach a VirtIO-SCSI controller when running the VM")
     String isVirtioScsiEnabledInfo();
 
+    @DefaultStringValue("Cloud-Init YAML sections, please refer to: http://www.ovirt.org/Features/vm-init-persistent#Custom_Script")
+    String customScriptInfo();
+
     @DefaultStringValue("VirtIO-SCSI can be enabled from Resource Allocation tab on VM dialog")
     String diskInterfaceInfo();
 

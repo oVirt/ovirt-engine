@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ClientBundle;
@@ -14,12 +15,16 @@ import com.google.gwt.user.client.ui.IndexedPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
+
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.ComboBox;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaEditor;
@@ -36,6 +41,9 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import java.util.Map;
 
 public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitModel> implements IndexedPanel {
+
+    private static final CommonApplicationTemplates applicationTemplates = GWT.create(CommonApplicationTemplates.class);
+    private static final CommonApplicationResources applicationResources = GWT.create(CommonApplicationResources.class);
 
     interface Driver extends SimpleBeanEditorDriver<VmInitModel, VmInitWidget> {
     }
@@ -122,6 +130,9 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @Path(value = "customScript.entity")
     @WithElementId
     EntityModelTextAreaEditor customScriptEditor;
+
+    @UiField(provided = true)
+    public InfoIcon customScriptInfoIcon;
 
     @UiField
     @Path(value = "regenerateKeysEnabled.entity")
@@ -260,6 +271,9 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         style.ensureInjected();
 
         this.customizableStyle = style;
+
+        customScriptInfoIcon =
+                new InfoIcon(applicationTemplates.italicText(constants.customScriptInfo()), applicationResources);
 
         initCheckBoxEditors();
         initListBoxEditors();

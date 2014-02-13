@@ -48,6 +48,11 @@
 			display: none !important;
 		}
 
+        .customScriptInfoIconStyle {
+            display: inline;
+            float: left;
+      }
+
 	</ui:style>
 
 	<g:FlowPanel addStyleNames="{style.verticalPanel}" ui:field="mainPanel">
@@ -107,6 +112,7 @@
 
             <d:AdvancedParametersExpander ui:field="customScriptExpander" addStyleNames="{style.verticalPanel}"/>
             <g:FlowPanel ui:field="customScriptExpanderContent" >
+                <d:InfoIcon ui:field="customScriptInfoIcon" addStyleNames="{style.customScriptInfoIconStyle}" />
                 <e:EntityModelTextAreaEditor ui:field="customScriptEditor"
                                              labelStyleName="{style.displayNone}" />
             </g:FlowPanel>
