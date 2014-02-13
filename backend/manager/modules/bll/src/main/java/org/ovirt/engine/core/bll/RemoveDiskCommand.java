@@ -318,6 +318,10 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
+            if (getDisk().getDiskStorageType() == DiskStorageType.LUN) {
+                return getSucceeded() ? AuditLogType.USER_FINISHED_REMOVE_DISK_NO_DOMAIN
+                        : AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK_NO_DOMAIN;
+            }
             return getSucceeded() ? AuditLogType.USER_FINISHED_REMOVE_DISK
                     : AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK;
         default:

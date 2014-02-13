@@ -443,6 +443,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_MOVED_VM_DISK_FINISHED_FAILURE, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_FINISHED_REMOVE_DISK, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.USER_FINISHED_REMOVE_DISK_NO_DOMAIN, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK_NO_DOMAIN, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.IRS_FAILURE, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.IRS_DISK_SPACE_LOW_ERROR, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.IRS_DISK_SPACE_LOW, AuditLogSeverity.WARNING);
