@@ -91,12 +91,13 @@ class Plugin(plugin.PluginBase):
                 new_content.append(line)
         new_content.extend(just_add)
 
-        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-            filetransaction.FileTransaction(
-                name=filename,
-                content=new_content
+        if new_content != old_content:
+            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                filetransaction.FileTransaction(
+                    name=filename,
+                    content=new_content
+                )
             )
-        )
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
