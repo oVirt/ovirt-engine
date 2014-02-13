@@ -48,7 +48,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.xml.parsers.FactoryConfigurationError;
 
@@ -438,8 +437,7 @@ public class ManageDomains {
         DomainsConfigurationEntry adUserNameEntry =
                 new DomainsConfigurationEntry(currentAdUserNameEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
-        Set<String> domainNames = new TreeSet<String>(domainNameEntry.getDomainNames());
-        for (String domain : domainNames) {
+        for (String domain : createDomainNameList(domainNameEntry.getDomainNames(), true)) {
             String authMode = getDomainAuthMode(domain);
             String userName = adUserNameEntry.getValueForDomain(domain);
 
@@ -778,11 +776,7 @@ public class ManageDomains {
             boolean isValidate,
             List<String> ldapServers) throws ManageDomainsResult {
 
-        Set<Entry<String, String>> gssapiDomainValues = gssapiDomains.getValues();
-
-        for (Entry<String, String> currDomain : gssapiDomainValues) {
-            String domain = currDomain.getKey();
-
+        for (String domain : createDomainNameList(gssapiDomains.getDomainNames(), isValidate)) {
             String currUserName = users.getValueForDomain(domain);
             users.setValueForDomain(domain, constructUPN(currUserName, domain));
             try {
@@ -800,7 +794,7 @@ public class ManageDomains {
                 userIds.setValueForDomain(domain, userGuid.toString());
                 if (isValidate) {
                     System.out.println("Domain " + domain + " is valid.");
-                    System.out.println("The configured user for domain " + domain + " is " + currUserName);
+                    System.out.println("The configured user for domain " + domain + " is " + currUserName + "\n");
                 }
                 log.info("Successfully tested kerberos configuration for domain: " + domain);
             } catch (Exception e) {
@@ -863,10 +857,8 @@ public class ManageDomains {
             Map<String, List<String>>  ldapServersMapPerDomainMap,
             boolean isValidate) throws ManageDomainsResult {
 
-        Set<Entry<String, String>> simpleDomainValues = simpleDomains.getValues();
         StringBuffer userGuid = new StringBuffer();
-        for (Entry<String, String> currDomain : simpleDomainValues) {
-            String domain = currDomain.getKey();
+        for (String domain : createDomainNameList(simpleDomains.getDomainNames(), isValidate)) {
             List<String> domainLdapServers = ldapServersMapPerDomainMap.get(domain);
             ManageDomainsResult result = checkSimple(domain,
                     users.getValueForDomain(domain),
@@ -1166,5 +1158,22 @@ public class ManageDomains {
                     ex.getMessage());
         }
         return propFile.getAbsolutePath();
+    }
+
+    /**
+     * Creates list of domains names
+     *
+     * @param entries
+     *            set of domain entries
+     * @param sorted
+     *            {@code true} if called domains should be sorted by name, otherwise {@code false}
+     * @return list of domains names
+     */
+    private List<String> createDomainNameList(Set<String> entries, boolean sorted) {
+        List<String> names = new ArrayList<>(entries);
+        if (sorted) {
+            Collections.sort(names);
+        }
+        return names;
     }
 }
