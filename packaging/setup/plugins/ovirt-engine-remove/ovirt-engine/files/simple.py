@@ -287,10 +287,6 @@ class Plugin(plugin.PluginBase):
         priority=plugin.Stages.PRIORITY_LOW,
     )
     def _misc(self):
-        self.logger.info(_('Reverting changes to files'))
-        for f in self._tomodifylines:
-            if os.path.exists(f):
-                self._revertChanges(f, self._lines[f])
         self.logger.info(_('Removing files'))
         for f in self._toremove:
             if os.path.exists(f):
@@ -308,6 +304,11 @@ class Plugin(plugin.PluginBase):
             elif os.path.islink(f):
                 # dead link
                 self._safeDelete(f)
+
+        self.logger.info(_('Reverting changes to files'))
+        for f in self._tomodifylines:
+            if os.path.exists(f):
+                self._revertChanges(f, self._lines[f])
 
         for info in self._infos:
             self._safeDelete(info)
