@@ -144,17 +144,7 @@ public class LunDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<LUNs, S
 
             @Override
             public MapSqlParameterSource map(LUNs lun) {
-                MapSqlParameterSource paramValue = new MapSqlParameterSource()
-                        .addValue("lun_id", lun.getLUN_id())
-                        .addValue("physical_volume_id", lun.getphysical_volume_id())
-                        .addValue("volume_group_id", lun.getvolume_group_id())
-                        .addValue("serial", lun.getSerial())
-                        .addValue("lun_mapping", lun.getLunMapping())
-                        .addValue("vendor_id", lun.getVendorId())
-                        .addValue("product_id", lun.getProductId())
-                        .addValue("device_size", lun.getDeviceSize());
-
-                return paramValue;
+                return createFullParametersMapper(lun);
             }
         };
     }
