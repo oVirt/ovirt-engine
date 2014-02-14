@@ -3,6 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 xmlns:g="urn:import:com.google.gwt.user.client.ui"
 xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+xmlns:v="urn:import:org.ovirt.engine.ui.common.widget"
 xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
 xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 
@@ -58,11 +59,11 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 				</g:FlowPanel>
 
 				<g:FlowPanel ui:field="spicePanel" addStyleNames="{style.protocolPanel}">
-					<g:Label text="{constants.consoleInvocation}" addStyleNames="{style.labelStyle}" />
-					<e:EntityModelRadioButtonEditor ui:field="spiceAutoImplRadioButton" title="{constants.spiceInvokeAuto}"/>
-					<e:EntityModelRadioButtonEditor ui:field="spiceNativeImplRadioButton" title="{constants.spiceInvokeNative}"/>
-					<e:EntityModelRadioButtonEditor ui:field="spicePluginImplRadioButton" title="{constants.spiceInvokePlugin}"/>
-					<e:EntityModelRadioButtonEditor ui:field="spiceHtml5ImplRadioButton" title="{constants.spiceInvokeHtml5}"/>
+                    <v:WidgetWithInfo ui:field="spiceHeadline" />
+					<e:EntityModelRadioButtonEditor ui:field="spiceAutoImplRadioButton"/>
+					<e:EntityModelRadioButtonEditor ui:field="spiceNativeImplRadioButton"/>
+					<e:EntityModelRadioButtonEditor ui:field="spicePluginImplRadioButton"/>
+					<e:EntityModelRadioButtonEditor ui:field="spiceHtml5ImplRadioButton"/>
 
 					<g:Label ui:field="spiceTitle" text="{constants.spiceOptions}" addStyleNames="{style.labelStyle}" />
 					<w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteSpice" />
@@ -80,14 +81,15 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 				</g:FlowPanel>
 
 				<g:FlowPanel ui:field="vncPanel" addStyleNames="{style.protocolPanel}">
-					<g:Label text="{constants.consoleInvocation}" addStyleNames="{style.labelStyle}" />
-					<e:EntityModelRadioButtonEditor ui:field="vncNativeImplRadioButton" title="{constants.nativeClient}"/>
-					<e:EntityModelRadioButtonEditor ui:field="noVncImplRadioButton" title="{constants.noVnc}"/>
+                    <v:WidgetWithInfo ui:field="vncHeadline" />
+					<e:EntityModelRadioButtonEditor ui:field="vncNativeImplRadioButton" />
+					<e:EntityModelRadioButtonEditor ui:field="noVncImplRadioButton"/>
+                    <g:Label ui:field="vncTitle" text="{constants.vncOptions}" addStyleNames="{style.labelStyle}" />
                     <w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteVnc" />
 				</g:FlowPanel>
 
 				<g:FlowPanel ui:field="rdpPanel" addStyleNames="{style.protocolPanel}">
-                    <g:Label text="{constants.consoleInvocation}" addStyleNames="{style.labelStyle}" />
+                    <v:WidgetWithInfo ui:field="rdpHeadline" />
 					<e:EntityModelRadioButtonEditor ui:field="rdpAutoImplRadioButton" />
 					<e:EntityModelRadioButtonEditor ui:field="rdpNativeImplRadioButton" />
 					<e:EntityModelRadioButtonEditor ui:field="rdpPluginImplRadioButton" />
