@@ -50,6 +50,12 @@ NOTIFIER_STOP_INTERVAL=1
 # Interval (in seconds) between iterations of dispatching messages to subscribers. Default is 120 seconds.
 INTERVAL_IN_SECONDS=120
 
+#
+# Idle task interval
+# Interval in seconds to perform low priority tasks.
+#
+IDLE_INTERVAL=30
+
 # Amount of days to keep dispatched events on history table. If 0, events remain on history table for ever.
 DAYS_TO_KEEP_HISTORY=0
 
@@ -118,6 +124,9 @@ MAIL_FROM=
 
 # Specifies 'reply-to' address on sent mail in RFC822 format.
 MAIL_REPLY_TO=
+
+# Interval to send smtp messages per # of IDLE_INTERVAL
+MAIL_SEND_INTERVAL=1
 
 # Amount of times to attempt sending an email before failing.
 MAIL_RETRIES=4

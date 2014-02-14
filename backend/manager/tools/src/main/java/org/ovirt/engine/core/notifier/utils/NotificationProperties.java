@@ -25,6 +25,12 @@ public class NotificationProperties extends LocalConfig {
     public static final String SSL_IGNORE_HOST_VERIFICATION = "SSL_IGNORE_HOST_VERIFICATION";
 
     /**
+     * Idle task interval
+     * Interval in seconds to perform low priority tasks.
+     */
+    public static final String IDLE_INTERVAL = "IDLE_INTERVAL";
+
+    /**
      * Comma separated list of recipients to be informed in case the notification service cannot connect to the DB. can
      * be empty.
      */
@@ -102,25 +108,16 @@ public class NotificationProperties extends LocalConfig {
                 ENGINE_TIMEOUT_IN_SECONDS,
                 INTERVAL_IN_SECONDS,
                 IS_HTTPS_PROTOCOL,
-                REPEAT_NON_RESPONSIVE_NOTIFICATION);
+                REPEAT_NON_RESPONSIVE_NOTIFICATION,
+                IDLE_INTERVAL);
 
         // validate non negative args
         for (String property : new String[] {
                 DAYS_TO_KEEP_HISTORY,
                 DAYS_TO_SEND_ON_STARTUP,
-                FAILED_QUERIES_NOTIFICATION_THRESHOLD }) {
-            final String stringVal = getProperty(property);
-            try {
-                int value = Integer.parseInt(stringVal);
-                if (value < 0) {
-                    throw new NumberFormatException();
-                }
-            } catch (NumberFormatException exception) {
-                throw new IllegalArgumentException(
-                        String.format(
-                                "'%s' must be a non negative integer.",
-                                property));
-            }
+                FAILED_QUERIES_NOTIFICATION_THRESHOLD,
+                IDLE_INTERVAL }) {
+            validateNonNegetive(property);
         }
     }
 
