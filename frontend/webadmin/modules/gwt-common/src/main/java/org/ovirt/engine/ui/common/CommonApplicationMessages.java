@@ -123,7 +123,7 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("User: {0} with Role: {1}")
     SafeHtml userWithRole(String userName, String roleName);
 
-    @DefaultMessage("Role: {0} on User {1}")
+    @DefaultMessage("Role: {0} on User: {1}")
     SafeHtml roleOnUser(String roleName, String userName);
 
     @DefaultMessage("Map control-alt-del shortcut to {0}")
