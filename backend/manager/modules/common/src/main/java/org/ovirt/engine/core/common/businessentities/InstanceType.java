@@ -1,18 +1,17 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
+
+import java.util.List;
 
 /**
  * This interface describe InstanceType
  * when creating an instance from instance type
  * the instance type fields override the vm fields.
- *
+ * <p/>
  * NOTE: the following devices are part of instance type and not represented here:
  * Smart card, Payload, Balloon, Sound card
- *
  */
 public interface InstanceType extends BusinessEntity<Guid>, Nameable {
 
@@ -69,6 +68,22 @@ public interface InstanceType extends BusinessEntity<Guid>, Nameable {
     Boolean getTunnelMigration();
 
     void setTunnelMigration(Boolean value);
+
+    void setSingleQxlPci(boolean value);
+
+    boolean getSingleQxlPci();
+
+    boolean isSmartcardEnabled();
+
+    void setSmartcardEnabled(boolean smartcardEnabled);
+
+    public MigrationSupport getMigrationSupport();
+
+    public void setMigrationSupport(MigrationSupport migrationSupport);
+
+    public void setMigrationDowntime(Integer migrationDowntime);
+
+    public Integer getMigrationDowntime();
 
     // TODO: these should be add as well
     // userdefined_properties
