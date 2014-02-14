@@ -20,6 +20,7 @@ import org.ovirt.engine.core.authentication.provisional.ProvisionalDirectory;
 import org.ovirt.engine.core.bll.adbroker.LdapBroker;
 import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
+import org.ovirt.engine.core.bll.adbroker.UsersDomainsCacheManagerService;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -76,6 +77,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             AuthenticationProfileManager.getInstance().loadFiles(authDir);
         }
 
+        UsersDomainsCacheManagerService.getInstance().init();
         AsyncTaskManager.getInstance().initAsyncTaskManager();
         ResourceManager.getInstance().init();
         OvfDataUpdater.getInstance().initOvfDataUpdater();

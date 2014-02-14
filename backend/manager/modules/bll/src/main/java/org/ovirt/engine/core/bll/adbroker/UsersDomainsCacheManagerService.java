@@ -8,33 +8,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Local;
-import javax.ejb.Singleton;
-import javax.ejb.DependsOn;
-import javax.ejb.Startup;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.DbUserCacheManager;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.generic.DomainsPasswordMap;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.ldap.LdapSRVLocator;
 import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.kerberos.KerberosUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 
 // Here we use a Singleton bean
@@ -44,12 +31,6 @@ import org.ovirt.engine.core.utils.kerberos.KerberosUtils;
 // business and timeout methods in the singleton.
 // The developer of the singleton is responsible for ensuring that the state of the singleton is synchronized across all clients.
 // The @DependsOn annotation is in order to make sure it is started after the stated beans are initialized
-@Singleton
-@Startup
-@DependsOn({"Backend", "Scheduler", "KerberosManager"})
-@Local(UsersDomainsCacheManager.class)
-@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager {
 
     private static Log log = LogFactory.getLog(UsersDomainsCacheManagerService.class);
@@ -69,6 +50,8 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
     public void addDomain(Domain domain) {
         domainsByName.put(domain.getName(), domain);
     }
+
+    private static volatile UsersDomainsCacheManagerService instance = null;
 
     private void fillLdapServersMap() {
         String ldapServerPerDomainEntry = Config.<String> getValue(ConfigValues.LdapServers);
@@ -139,16 +122,7 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
         }
     }
 
-    @PostConstruct
-    public void postConstruct() {
-        create();
-    }
-
-    /**
-     * This method is called upon the bean creation as part
-     * of the management Service bean lifecycle.
-     */
-    public void create() {
+    public void init() {
 
         log.info("Start initializing " + getClass().getSimpleName());
         String authMethod = Config.<String> getValue(ConfigValues.AuthenticationMethod);
@@ -272,8 +246,15 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
         }
     }
 
-    public static UsersDomainsCacheManager getInstance() {
-        return EjbUtils.<UsersDomainsCacheManager> findBean(BeanType.USERS_DOMAINS_CACHE, BeanProxyType.LOCAL);
+    public static UsersDomainsCacheManagerService getInstance() {
+        if (instance == null) {
+            synchronized (UsersDomainsCacheManagerService.class) {
+                if (instance == null) {
+                    instance = new UsersDomainsCacheManagerService();
+                }
+            }
+        }
+        return instance;
     }
 
     @Override
