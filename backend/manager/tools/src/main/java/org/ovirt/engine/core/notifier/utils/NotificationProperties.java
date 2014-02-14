@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.notifier.utils;
 
-import java.net.InetAddress;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;
@@ -122,9 +121,6 @@ public class NotificationProperties extends LocalConfig {
         validateCommon();
 
         validateSmtp();
-        if (isConfigured(MAIL_SERVER)) {
-            validateSmtpAvailability();
-        }
     }
 
     private void validateCommon() {
@@ -212,24 +208,6 @@ public class NotificationProperties extends LocalConfig {
 
     public boolean isConfigured(String property) {
         return !StringUtils.isEmpty(getProperty(property, true));
-    }
-
-    // Availability
-    private void validateSmtpAvailability() {
-        // try to resolve MAIL_SERVER host
-        validateHost(MAIL_SERVER, getProperty(MAIL_SERVER));
-    }
-
-    private void validateHost(String propName, String propVal) {
-        try {
-            InetAddress.getAllByName(propVal);
-        } catch (Exception ex) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            GENERIC_MESSAGE + "cannot verify '%s' value",
-                            propName),
-                    ex);
-        }
     }
 
     private void requireAll(String... mandatoryProperties) {
