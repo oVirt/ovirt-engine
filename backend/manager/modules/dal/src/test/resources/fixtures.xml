@@ -252,7 +252,7 @@
 
     <table name="LUNS">
         <column>physical_volume_id</column>
-        <column>LUN_id</column>
+        <column>lun_id</column>
         <column>volume_group_id</column>
         <column>serial</column>
         <column>lun_mapping</column>
@@ -297,7 +297,7 @@
     </table>
 
     <table name="LUN_storage_server_connection_map">
-        <column>LUN_id</column>
+        <column>lun_id</column>
         <column>storage_server_connection</column>
         <row>
             <value>1IET_00180001</value>

@@ -25,7 +25,7 @@ public class LunDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<LUNs, S
         @Override
         public LUNs mapRow(ResultSet rs, int rowNum) throws SQLException {
             LUNs entity = new LUNs();
-            entity.setLUN_id(rs.getString("LUN_id"));
+            entity.setLUN_id(rs.getString("lun_id"));
             entity.setphysical_volume_id(rs.getString("physical_volume_id"));
             entity.setvolume_group_id(rs.getString("volume_group_id"));
             entity.setSerial(rs.getString("serial"));
@@ -47,7 +47,7 @@ public class LunDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<LUNs, S
     @Override
     public LUNs get(String id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("LUN_id", id);
+                .addValue("lun_id", id);
 
         return getCallsHandler().executeRead("GetLUNByLUNId", MAPPER, parameterSource);
     }
@@ -80,7 +80,7 @@ public class LunDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<LUNs, S
 
     @Override
     protected MapSqlParameterSource createIdParameterMapper(String id) {
-        return getCustomMapSqlParameterSource().addValue("LUN_id", id);
+        return getCustomMapSqlParameterSource().addValue("lun_id", id);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class LunDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<LUNs, S
     @Override
     public void save(LUNs lun) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("LUN_id", lun.getLUN_id())
+                .addValue("lun_id", lun.getLUN_id())
                 .addValue("physical_volume_id", lun.getphysical_volume_id())
                 .addValue("volume_group_id", lun.getvolume_group_id())
                 .addValue("serial", lun.getSerial())
@@ -106,7 +106,7 @@ public class LunDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<LUNs, S
     @Override
     public void update(LUNs lun) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("LUN_id", lun.getLUN_id())
+                .addValue("lun_id", lun.getLUN_id())
                 .addValue("physical_volume_id", lun.getphysical_volume_id())
                 .addValue("volume_group_id", lun.getvolume_group_id())
                 .addValue("serial", lun.getSerial())
@@ -121,7 +121,7 @@ public class LunDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<LUNs, S
     @Override
     public void remove(String id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("LUN_id", id);
+                .addValue("lun_id", id);
 
         getCallsHandler().executeModification("DeleteLUN", parameterSource);
     }

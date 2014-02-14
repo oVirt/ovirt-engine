@@ -29,7 +29,7 @@ public class StorageServerConnectionLunMapDAODbFacadeImpl extends BaseDAODbFacad
         @Override
         public LUN_storage_server_connection_map mapRow(ResultSet rs, int rowNum) throws SQLException {
             LUN_storage_server_connection_map entity = new LUN_storage_server_connection_map();
-            entity.setLunId(rs.getString("LUN_id"));
+            entity.setLunId(rs.getString("lun_id"));
             entity.setstorage_server_connection(rs.getString("storage_server_connection"));
             return entity;
         }
@@ -37,7 +37,7 @@ public class StorageServerConnectionLunMapDAODbFacadeImpl extends BaseDAODbFacad
 
     @Override
     public LUN_storage_server_connection_map get(LUN_storage_server_connection_map_id id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("lUN_id", id.lunId).addValue(
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("lun_id", id.lunId).addValue(
                 "storage_server_connection", id.storageServerConnection);
 
         return getCallsHandler().executeRead("GetLUN_storage_server_connection_mapByLUNBystorage_server_conn",
@@ -47,7 +47,7 @@ public class StorageServerConnectionLunMapDAODbFacadeImpl extends BaseDAODbFacad
 
     @Override
     public void save(LUN_storage_server_connection_map map) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("lUN_id", map.getLunId())
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("lun_id", map.getLunId())
                 .addValue("storage_server_connection", map.getstorage_server_connection());
 
         getCallsHandler().executeModification("InsertLUN_storage_server_connection_map", parameterSource);
