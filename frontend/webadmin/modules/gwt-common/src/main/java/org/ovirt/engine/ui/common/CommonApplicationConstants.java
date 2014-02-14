@@ -1469,17 +1469,36 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("SPICE Options")
     String spiceOptions();
 
-    @DefaultStringValue("If there is a SPICE plugin installed in your browser, it is used for invoking the console session. Otherwise SPICE configuration file is downloaded.")
+    @DefaultStringValue("VNC Options")
+    String vncOptions();
+
+    @DefaultStringValue("If there is a SPICE plugin installed in your browser, it is used for invoking the console " +
+            "session.Otherwise SPICE configuration file is downloaded which will automatically launch locally " +
+            "installed Remote Viewer (found under \"Console Client Resources\" page.).")
     String spiceInvokeAuto();
 
-    @DefaultStringValue("Downloads a SPICE configuration file to be opened by a SPICE client installed on your system.")
-    String spiceInvokeNative();
+    @DefaultStringValue("Downloads a console configuration file to be opened by Remote Viewer application installed on " +
+            "your system (found under \"Console Client Resources\" page.).")
+    String consoleInvokeNative();
 
     @DefaultStringValue("Uses SPICE browser plugin for invoking console session. For this you must have SPICE console plugin installed in your browser.")
     String spiceInvokePlugin();
 
-    @DefaultStringValue("Uses SPICE HTML5 client that runs inside your browser.")
+    @DefaultStringValue("Uses SPICE HTML5 client that runs inside your browser. This client is a Technology preview and it's possible some functions (e.g. keyboard layouts) will not work as expected.")
     String spiceInvokeHtml5();
+
+    @DefaultStringValue("Uses noVnc client that runs inside your browser. ")
+    String invokeNoVnc();
+
+    @DefaultStringValue("Uses RDP browser plugin if supported. Otherwise switches to \"Native client\" invocation.")
+    String rdpInvokeAuto();
+
+    @DefaultStringValue("Downloads a console configuration file to be opened by Remote Desktop client application on " +
+            "your system.")
+    String rdpInvokeNative();
+
+    @DefaultStringValue("Uses browser plugin to invoke the RDP session (MS Internet Explorer only) .")
+    String rdpInvokePlugin();
 
     @DefaultStringValue("Console Invocation")
     String consoleInvocation();

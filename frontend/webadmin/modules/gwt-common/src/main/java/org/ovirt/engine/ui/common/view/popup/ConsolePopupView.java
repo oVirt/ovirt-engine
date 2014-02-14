@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.view.popup;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -8,6 +9,7 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.popup.ConsolePopupPresenterWidget;
 import org.ovirt.engine.ui.common.utils.DynamicMessages;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.WidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.console.EntityModelValueCheckBoxEditor;
@@ -46,6 +48,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     interface Style extends CssResource {
         String remapCADContentWidget();
         String consoleResourcesLink();
+        String labelStyle();
     }
 
     @UiField
@@ -138,6 +141,15 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
     @UiField
     FlowPanel spicePanel;
+
+    @UiField(provided = true)
+    WidgetWithInfo spiceHeadline;
+
+    @UiField(provided = true)
+    WidgetWithInfo vncHeadline;
+
+    @UiField(provided = true)
+    WidgetWithInfo rdpHeadline;
 
     @UiField
     FlowPanel vncPanel;
@@ -325,6 +337,19 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         vncRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         vncRadioButton.setLabel(constants.vnc());
 
+        Label spiceInvocationLabel = new Label();
+        spiceInvocationLabel.setText(constants.consoleInvocation());
+        Label vncInvocationLabel = new Label();
+        vncInvocationLabel.setText(constants.consoleInvocation());
+        Label rdpInvocationLabel = new Label();
+        rdpInvocationLabel.setText(constants.consoleInvocation());
+        spiceHeadline = new WidgetWithInfo(spiceInvocationLabel);
+        spiceHeadline.setExplanation(SafeHtmlUtils.fromTrustedString(createSpiceInvocationInfo()));
+        vncHeadline= new WidgetWithInfo(vncInvocationLabel);
+        vncHeadline.setExplanation(SafeHtmlUtils.fromTrustedString(createVncInvocationInfo()));
+        rdpHeadline= new WidgetWithInfo(rdpInvocationLabel);
+        rdpHeadline.setExplanation(SafeHtmlUtils.fromTrustedString(createRdpInvocationInfo()));
+
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
@@ -336,6 +361,47 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         remapCtrlAltDeleteSpice.getContentWidgetContainer().addStyleName(style.remapCADContentWidget());
         remapCtrlAltDeleteVnc.getContentWidgetContainer().addStyleName(style.remapCADContentWidget());
         asWidget().addStatusWidget(clientConsoleResourcesUrl);
+        spiceInvocationLabel.addStyleName(style.labelStyle());
+        vncInvocationLabel.addStyleName(style.labelStyle());
+        rdpInvocationLabel.addStyleName(style.labelStyle());
+    }
+
+    private String createSpiceInvocationInfo() {
+        return new KeyValueHtmlRowMaker(constants.auto(), constants.spiceInvokeAuto())
+                .append(constants.nativeClient(), constants.consoleInvokeNative())
+                .append(constants.browserPlugin(), constants.spiceInvokePlugin())
+                .append(constants.spiceHtml5(), constants.spiceInvokeHtml5()).toString();
+    }
+
+    private String createVncInvocationInfo() {
+        return new KeyValueHtmlRowMaker(constants.nativeClient(), constants.consoleInvokeNative())
+                .append(constants.noVnc(), constants.invokeNoVnc())
+                .toString();
+    }
+
+    private String createRdpInvocationInfo() {
+        return new KeyValueHtmlRowMaker(constants.auto(), constants.rdpInvokeAuto())
+                .append(constants.nativeClient(), constants.rdpInvokeNative())
+                .append(constants.browserPlugin(), constants.rdpInvokePlugin())
+                .toString();
+    }
+
+    private class KeyValueHtmlRowMaker {
+
+        private String html;
+
+        private KeyValueHtmlRowMaker(String key, String val) {
+            html = "<b>" + key + "</b>: " + val;// $NON-NLS-1$// $NON-NLS-2$
+        }
+
+        public KeyValueHtmlRowMaker append(String key, String val) {
+            html += "<br/>" + new KeyValueHtmlRowMaker(key, val).toString();// $NON-NLS-1$
+            return this;
+        }
+
+        public String toString() {
+            return html;
+        }
     }
 
     @SuppressWarnings("unchecked")
