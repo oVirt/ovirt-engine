@@ -14,6 +14,8 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -29,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
+import org.ovirt.engine.core.notifier.utils.ShutdownHook;
 import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
@@ -202,11 +205,30 @@ public class EngineMonitorService implements Runnable {
         }
     }
 
+    @Override
+    public void run() {
+        ShutdownHook shutdownHook = ShutdownHook.getInstance();
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        shutdownHook.addScheduledExecutorService(exec);
+        shutdownHook.addServiceHandler(
+            exec.scheduleWithFixedDelay(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        mainLogic();
+                    }
+                },
+                1,
+                prop.getLong(NotificationProperties.ENGINE_INTERVAL_IN_SECONDS),
+                TimeUnit.SECONDS
+            )
+        );
+    }
+
     /**
      * The service monitor the status of the JBoss server using its Health servlet
      */
-    @Override
-    public void run() {
+    private void mainLogic() {
         try {
             monitorEngineServerStatus();
         } catch (Throwable e) {

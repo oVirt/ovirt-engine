@@ -2,12 +2,6 @@ package org.ovirt.engine.core.notifier;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.FactoryConfigurationError;
 
@@ -23,9 +17,6 @@ import org.ovirt.engine.core.notifier.utils.NotificationProperties;
  */
 public class Notifier {
     private static final Logger log = Logger.getLogger(Notifier.class);
-
-    private static ScheduledExecutorService notifyScheduler = Executors.newSingleThreadScheduledExecutor();
-    private static ScheduledExecutorService monitorScheduler = Executors.newSingleThreadScheduledExecutor();
 
     /**
      * Command line argument, that tells Notifier to validate properties only (it exits after validation)
@@ -58,11 +49,13 @@ public class Notifier {
         initLogging();
 
         NotificationService notificationService = null;
+        EngineMonitorService engineMonitorService = null;
 
         try {
             prop = NotificationProperties.getInstance();
             prop.validate();
             notificationService = new NotificationService(prop);
+            engineMonitorService = new EngineMonitorService(prop);
             notificationService.registerTransport(new Smtp(prop));
             if (!notificationService.hasTransports()) {
                 throw new RuntimeException("No transport is enabled, nothing to do");
@@ -79,62 +72,13 @@ public class Notifier {
             System.exit(0);
         }
 
-        NotifierSignalHandler handler = new NotifierSignalHandler();
-        handler.addScheduledExecutorService(notifyScheduler);
-        handler.addScheduledExecutorService(monitorScheduler);
-        Runtime.getRuntime().addShutdownHook(handler);
-
         try {
-            EngineMonitorService engineMonitorService = new EngineMonitorService(prop);
-
-            // add notification service to scheduler with its configurable interval
-            handler.addServiceHandler(notifyScheduler.scheduleWithFixedDelay(notificationService,
-                    1,
-                    prop.getLong(NotificationProperties.INTERVAL_IN_SECONDS),
-                    TimeUnit.SECONDS));
-
-            // add engine monitor service to scheduler with its configurable interval
-            handler.addServiceHandler(monitorScheduler.scheduleWithFixedDelay(engineMonitorService,
-                    1,
-                    prop.getLong(NotificationProperties.ENGINE_INTERVAL_IN_SECONDS),
-                    TimeUnit.SECONDS));
+            notificationService.run();
+            engineMonitorService.run();
         } catch (Exception e) {
             log.error("Failed to run the event notification service. ", e);
             // flag exit code to calling script after threads shut down.
             System.exit(1);
-        }
-    }
-
-    /**
-     * Class designed to handle a proper shutdown in case of an external signal which was registered was caught by the
-     * program.
-     */
-    public static class NotifierSignalHandler extends Thread {
-        private List<ScheduledFuture<?>> serviceHandler = new ArrayList<ScheduledFuture<?>>();
-        private List<ScheduledExecutorService> scheduler = new ArrayList<ScheduledExecutorService>();
-
-        @Override
-        public void run() {
-            log.info("Preparing for shutdown after receiving signal " );
-            if (serviceHandler.size() > 0) {
-                for (ScheduledFuture<?> scheduled : serviceHandler) {
-                    scheduled.cancel(true);
-                }
-            }
-            if (scheduler.size() > 0) {
-                for (ScheduledExecutorService executer : scheduler) {
-                    executer.shutdown();
-                }
-            }
-            log.info("Event Notification service was shutdown");
-        }
-
-        public void addScheduledExecutorService(ScheduledExecutorService scheduler) {
-            this.scheduler.add(scheduler);
-        }
-
-        public void addServiceHandler(ScheduledFuture<?> serviceHandler) {
-            this.serviceHandler.add(serviceHandler);
         }
     }
 }

@@ -4,7 +4,10 @@ package org.ovirt.engine.core.notifier.transport.smtp;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.mail.Address;
 import javax.mail.Authenticator;
@@ -49,10 +52,14 @@ public class Smtp extends Transport {
     private static final String MAIL_SMTP_ENCRYPTION_NONE = "none";
     private static final String MAIL_SMTP_ENCRYPTION_SSL = "ssl";
     private static final String MAIL_SMTP_ENCRYPTION_TLS = "tls";
+    private static final String MAIL_SEND_INTERVAL = "MAIL_SEND_INTERVAL";
     private static final String MAIL_RETRIES = "MAIL_RETRIES";
 
     private static final Logger log = Logger.getLogger(Smtp.class);
     private int retries;
+    private int sendIntervals;
+    private int lastSendInterval = 0;
+    private final Queue<DispatchAttempt> sendQueue = new LinkedBlockingQueue<>();
     private String hostName;
     private boolean isBodyHtml = false;
     private Session session = null;
@@ -78,6 +85,7 @@ public class Smtp extends Transport {
         }
 
         retries = props.validateNonNegetive(MAIL_RETRIES);
+        sendIntervals = props.validateNonNegetive(MAIL_SEND_INTERVAL);
         isBodyHtml = props.getBoolean(HTML_MESSAGE_FORMAT, false);
         from = props.validateEmail(MAIL_FROM);
         replyTo = props.validateEmail(MAIL_REPLY_TO);
@@ -138,44 +146,45 @@ public class Smtp extends Transport {
     public void dispatchEvent(AuditLogEvent event, String address) {
         if (StringUtils.isEmpty(address)) {
             log.error("Address is empty, cannot distribute message." + event.getName());
-            return;
         }
-
-        EventMessageContent message = new EventMessageContent();
-        message.prepareMessage(hostName, event, isBodyHtml);
-
-        log.info(String.format("Send email to [%s]%n subject:%n [%s]",
-                address,
-                message.getMessageSubject()));
-        if (log.isDebugEnabled()) {
-            log.debug(String.format("body:%n [%s]",
-                    message.getMessageBody()));
+        else {
+            sendQueue.add(new DispatchAttempt(event, address));
         }
+    }
 
-        String errorMessage = null;
-        int retry = 0;
-        boolean success = false;
-        while (!success && retry < retries) {
-            try {
-                sendMail(address, message.getMessageSubject(), message.getMessageBody());
-                notifyObservers(DispatchResult.success(event, address, EventNotificationMethod.EMAIL));
-                success = true;
-            } catch (MessagingException ex) {
-                errorMessage = ex.getMessage();
-            }
+    @Override
+    public void idle() {
+        if (lastSendInterval++ >= sendIntervals) {
+            lastSendInterval = 0;
 
-            if (!success) {
+            Iterator<DispatchAttempt> iterator = sendQueue.iterator();
+            while (iterator.hasNext()) {
+                DispatchAttempt attempt = iterator.next();
                 try {
-                    Thread.sleep(30000);
-                } catch (InterruptedException e) {
-                    log.error("Failed to suspend thread for 30 seconds while trying to resend a mail message.", e);
+                    EventMessageContent message = new EventMessageContent();
+                    message.prepareMessage(hostName, attempt.event, isBodyHtml);
+
+                    log.info(String.format("Send email to [%s]%n subject:%n [%s]",
+                            attempt.address,
+                            message.getMessageSubject()));
+                    if (log.isDebugEnabled()) {
+                        log.debug(String.format("body:%n [%s]",
+                                message.getMessageBody()));
+                    }
+                    sendMail(attempt.address, message.getMessageSubject(), message.getMessageBody());
+                    notifyObservers(DispatchResult.success(attempt.event, attempt.address, EventNotificationMethod.EMAIL));
+                    iterator.remove();
+                } catch (Exception ex) {
+                    attempt.retries++;
+                    if (attempt.retries >= retries) {
+                        notifyObservers(DispatchResult.failure(attempt.event,
+                                attempt.address,
+                                EventNotificationMethod.EMAIL,
+                                ex.getMessage()));
+                        iterator.remove();
+                    }
                 }
-                retry++;
             }
-        }
-        // Could not send after retries.
-        if (!success) {
-            notifyObservers(DispatchResult.failure(event, address, EventNotificationMethod.EMAIL, errorMessage));
         }
     }
 
@@ -242,5 +251,15 @@ public class Smtp extends Transport {
             return new PasswordAuthentication(userName, password);
         }
     }
+
+    private class DispatchAttempt {
+         public final AuditLogEvent event;
+         public final String address;
+         public int retries = 0;
+         private DispatchAttempt(AuditLogEvent event, String address) {
+             this.event = event;
+             this.address = address;
+         }
+     }
 }
 

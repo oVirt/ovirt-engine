@@ -32,6 +32,13 @@ public abstract class Transport implements Observable {
      */
     public abstract void dispatchEvent(AuditLogEvent event, String address);
 
+    /**
+     * Upon an idle call a transport performs background tasks if needed.
+     * A default empty implementation is provided.
+     */
+    public void idle() {
+    }
+
     @Override
     public void notifyObservers(DispatchResult data) {
         for (Observer observer : observers) {

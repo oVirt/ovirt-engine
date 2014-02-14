@@ -3,6 +3,9 @@ package org.ovirt.engine.core.notifier;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -12,6 +15,7 @@ import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
 import org.ovirt.engine.core.notifier.filter.FirstMatchSimpleFilter;
 import org.ovirt.engine.core.notifier.transport.Transport;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
+import org.ovirt.engine.core.notifier.utils.ShutdownHook;
 
 /**
  * Responsible for an execution of the service for the current events in the system which should be notified to the
@@ -40,7 +44,6 @@ public class NotificationService implements Runnable {
         this.eventsManager = new EventsManager();
         firstMatchSimpleFilter = new FirstMatchSimpleFilter();
         configurationFilters = FirstMatchSimpleFilter.parse(prop.getProperty(FILTER));
-        markOldEventsAsProcessed();
     }
 
     private void markOldEventsAsProcessed() {
@@ -59,11 +62,44 @@ public class NotificationService implements Runnable {
         return !transports.isEmpty();
     }
 
+    @Override
+    public void run() {
+        markOldEventsAsProcessed();
+        ShutdownHook shutdownHook = ShutdownHook.getInstance();
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        shutdownHook.addScheduledExecutorService(exec);
+        shutdownHook.addServiceHandler(
+            exec.scheduleWithFixedDelay(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        mainLogic();
+                    }
+                },
+                1,
+                prop.getLong(NotificationProperties.INTERVAL_IN_SECONDS),
+                TimeUnit.SECONDS
+            )
+        );
+        shutdownHook.addServiceHandler(
+            exec.scheduleWithFixedDelay(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        idle();
+                    }
+                },
+                1,
+                prop.getLong(NotificationProperties.IDLE_INTERVAL),
+                TimeUnit.SECONDS
+            )
+        );
+    }
+
     /**
      * Executes event notification to subscribers
      */
-    @Override
-    public void run() {
+    private void mainLogic() {
         try {
             try {
                 log.debug("Start event notification service iteration");
@@ -106,6 +142,14 @@ public class NotificationService implements Runnable {
         } catch (Throwable t) {
             log.error(String.format("Failed to run the service."), t);
         }
+    }
+
+    private void idle() {
+        log.debug("Begin idle iteration");
+        for (Transport transport : transports) {
+            transport.idle();
+        }
+        log.debug("Finished idle iteration");
     }
 
     private void deleteObsoleteHistoryData() throws SQLException {
