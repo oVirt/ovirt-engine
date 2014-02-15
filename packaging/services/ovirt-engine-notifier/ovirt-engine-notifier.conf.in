@@ -100,6 +100,9 @@ MAIL_FROM=
 # Specifies 'reply-to' address on sent mail in RFC822 format.
 MAIL_REPLY_TO=
 
+# Amount of times to attempt sending an email before failing.
+MAIL_RETRIES=4
+
 #----------------------------------#
 # Engine Monitoring Configuration: #
 #----------------------------------#
