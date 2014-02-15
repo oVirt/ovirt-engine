@@ -49,9 +49,11 @@ public class Smtp implements Transport {
     private static final String MAIL_SMTP_ENCRYPTION_NONE = "none";
     private static final String MAIL_SMTP_ENCRYPTION_SSL = "ssl";
     private static final String MAIL_SMTP_ENCRYPTION_TLS = "tls";
+    private static final String MAIL_RETRIES = "MAIL_RETRIES";
     private static final String GENERIC_VALIDATION_MESSAGE = "Check configuration file, ";
 
     private static final Logger log = Logger.getLogger(Smtp.class);
+    private int retries;
     private String hostName;
     private boolean isBodyHtml = false;
     private Session session = null;
@@ -70,6 +72,7 @@ public class Smtp implements Transport {
             hostName = "localhost";
         }
 
+        retries = props.validateNonNegetive(MAIL_RETRIES);
         isBodyHtml = props.getBoolean(HTML_MESSAGE_FORMAT, false);
         from = props.validateEmail(MAIL_FROM);
         replyTo = props.validateEmail(MAIL_REPLY_TO);
@@ -108,7 +111,8 @@ public class Smtp implements Transport {
         // validate mandatory and non empty properties
         props.requireOne(MAIL_SERVER);
         // validate MAIL_PORT
-        props.requireAll(MAIL_PORT);
+        props.requireAll(MAIL_PORT, MAIL_RETRIES);
+        props.validateNonNegetive(MAIL_RETRIES);
         props.validatePort(MAIL_PORT);
 
         // validate MAIL_USER value
@@ -174,7 +178,7 @@ public class Smtp implements Transport {
         }
 
         // Attempt additional 3 retries in case of failure
-        for (int i = 0; i < 3 && shouldRetry; ++i) {
+        for (int i = 0; i < retries && shouldRetry; ++i) {
             shouldRetry = false;
             try {
                 // hold the next send attempt for 30 seconds in case of a busy mail server
