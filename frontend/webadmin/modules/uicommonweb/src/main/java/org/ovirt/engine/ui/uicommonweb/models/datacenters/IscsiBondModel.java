@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -88,7 +89,7 @@ public class IscsiBondModel extends Model {
     }
 
     private void initializeStorageTargetsList() {
-        AsyncDataProvider.getAllDataCenterStorageConnections(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 ArrayList<StorageServerConnections> selected = new ArrayList<StorageServerConnections>();
@@ -106,7 +107,7 @@ public class IscsiBondModel extends Model {
                 model.getStorageTargets().setItems(conns);
                 model.getStorageTargets().setSelectedItems(selected);
             }
-        }), getStoragePool().getId());
+        }), getStoragePool().getId(), StorageType.ISCSI);
     }
 
     @Override
