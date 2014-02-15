@@ -908,7 +908,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     }
 
     private void updateIscsiBondListAvailability(StoragePool storagePool) {
-        AsyncDataProvider.getAllDataCenterStorageConnections(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -925,7 +925,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
                 iscsiBondListModel.setIsAvailable(hasIscsiStorage);
             }
-        }), storagePool.getId());
+        }), storagePool.getId(), StorageType.ISCSI);
     }
 
     @Override

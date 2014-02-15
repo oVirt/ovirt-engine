@@ -88,6 +88,7 @@ import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameter
 import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
+import org.ovirt.engine.core.common.queries.GetConnectionsByDataCenterAndStorageTypeParameters;
 import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
@@ -2507,16 +2508,18 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetNetworksByDataCenterId, params, aQuery);
     }
 
-    public static void getAllDataCenterStorageConnections(AsyncQuery aQuery, Guid storagePoolId) {
+    public static void getStorageConnectionsByDataCenterIdAndStorageType(AsyncQuery aQuery,
+                                                                         Guid storagePoolId,
+                                                                         StorageType storageType) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (ArrayList<StorageServerConnections>) source : new ArrayList<StorageServerConnections>();
+                return source;
             }
         };
-        IdQueryParameters params = new IdQueryParameters(storagePoolId);
-        Frontend.getInstance().runQuery(VdcQueryType.GetConnectableStorageServerConnectionsByStoragePoolId, params, aQuery);
+        GetConnectionsByDataCenterAndStorageTypeParameters params = new GetConnectionsByDataCenterAndStorageTypeParameters(storagePoolId, storageType);
+        Frontend.getInstance().runQuery(VdcQueryType.GetConnectionsByDataCenterAndStorageType, params, aQuery);
     }
 
     public static void getRedirectServletReportsPage(AsyncQuery aQuery) {
