@@ -15,7 +15,7 @@ public class Tags implements Serializable {
 
     private Guid id;
 
-    @Size(max = BusinessEntitiesDefinitions.TAG_NAME_SIZE)
+    @Size(min = 1, max = BusinessEntitiesDefinitions.TAG_NAME_SIZE)
     @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS_I18N, message = "VALIDATION.TAGS.INVALID_TAG_NAME")
     private String name;
 
