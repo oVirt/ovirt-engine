@@ -43,33 +43,6 @@ public class NotificationProperties extends LocalConfig {
      */
     public static final String DAYS_TO_SEND_ON_STARTUP = "DAYS_TO_SEND_ON_STARTUP";
 
-    /**
-     * Email parameters
-     */
-    public static final String MAIL_SERVER = "MAIL_SERVER";
-    public static final String MAIL_PORT = "MAIL_PORT";
-    public static final String MAIL_USER = "MAIL_USER";
-    public static final String MAIL_PASSWORD = "MAIL_PASSWORD";
-    public static final String MAIL_SMTP_ENCRYPTION = "MAIL_SMTP_ENCRYPTION";
-    public static final String MAIL_FROM = "MAIL_FROM";
-    public static final String MAIL_REPLY_TO = "MAIL_REPLY_TO";
-    public static final String HTML_MESSAGE_FORMAT = "HTML_MESSAGE_FORMAT";
-
-    /**
-     * No SMTP transport encryption (plain SMTP)
-     */
-    public static final String MAIL_SMTP_ENCRYPTION_NONE = "none";
-
-    /**
-     * SMTP transport encryption using SSL (SMTPS)
-     */
-    public static final String MAIL_SMTP_ENCRYPTION_SSL = "ssl";
-
-    /**
-     * SMTP transport encryption using TLS (SMTP with STARTTLS)
-     */
-    public static final String MAIL_SMTP_ENCRYPTION_TLS = "tls";
-
     private static final String GENERIC_MESSAGE = "Check configuration file, ";
 
     // Default files for defaults and overridden values:
@@ -119,8 +92,6 @@ public class NotificationProperties extends LocalConfig {
      */
     public void validate() {
         validateCommon();
-
-        validateSmtp();
     }
 
     private void validateCommon() {
@@ -132,8 +103,6 @@ public class NotificationProperties extends LocalConfig {
                 INTERVAL_IN_SECONDS,
                 IS_HTTPS_PROTOCOL,
                 REPEAT_NON_RESPONSIVE_NOTIFICATION);
-        // validate mandatory and non empty properties
-        requireOne(MAIL_SERVER);
 
         // validate non negative args
         for (String property : new String[] {
@@ -155,62 +124,11 @@ public class NotificationProperties extends LocalConfig {
         }
     }
 
-    private void validateSmtp() {
-        // validate MAIL_PORT
-        requireAll(MAIL_PORT);
-        boolean mailPortValid = false;
-        try {
-            int port = new Integer(getProperty(MAIL_PORT));
-            if (port > 0 && port < 65536) {
-                mailPortValid = true;
-            }
-        } catch (NumberFormatException ex) {
-        }
-        if (!mailPortValid) {
-            throw new IllegalArgumentException(
-                    String.format("Check configuration file, MAIL_PORT value has to be in range from 1 to 65535,"
-                            + " currently '%s'",
-                            getProperty(MAIL_PORT)));
-        }
-
-        // validate MAIL_USER value
-        String emailUser = getProperty(MAIL_USER, true);
-        if (StringUtils.isEmpty(emailUser)
-                && (MAIL_SMTP_ENCRYPTION_SSL.equals(getProperty(MAIL_SMTP_ENCRYPTION, true))
-                        || MAIL_SMTP_ENCRYPTION_TLS.equals(getProperty(MAIL_SMTP_ENCRYPTION, true))
-                        || StringUtils.isNotEmpty(getProperty(MAIL_PASSWORD, true)))) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            "'%s' must be set when SSL or TLS is enabled or when password is set",
-                            MAIL_USER));
-        }
-
-        if (!isSmtpEncryptionOptionValid()) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            GENERIC_MESSAGE + "'%s' value has to be one of: '%s', '%s', '%s'.",
-                            MAIL_SMTP_ENCRYPTION,
-                            MAIL_SMTP_ENCRYPTION_NONE,
-                            MAIL_SMTP_ENCRYPTION_SSL,
-                            MAIL_SMTP_ENCRYPTION_TLS
-                            ));
-        }
-
-        // validate email addresses
-        for (String property : new String[] {
-                MAIL_USER,
-                MAIL_FROM,
-                MAIL_REPLY_TO }) {
-            String candidate = getProperty(property);
-            validateEmail(property, candidate);
-        }
-    }
-
     public boolean isConfigured(String property) {
         return !StringUtils.isEmpty(getProperty(property, true));
     }
 
-    private void requireAll(String... mandatoryProperties) {
+    public void requireAll(String... mandatoryProperties) {
         for (String property : mandatoryProperties) {
             if (StringUtils.isEmpty(getProperty(property, true))) {
                 throw new IllegalArgumentException(
@@ -221,7 +139,7 @@ public class NotificationProperties extends LocalConfig {
         }
     }
 
-    private void requireOne(String... mandatoryProperties) {
+    public void requireOne(String... mandatoryProperties) {
         boolean provided = false;
         for (String property : mandatoryProperties) {
             if (isConfigured(property)) {
@@ -242,26 +160,56 @@ public class NotificationProperties extends LocalConfig {
         }
     }
 
-    private void validateEmail(String propName, String propVal) {
-        if (!StringUtils.isEmpty(propVal)) {
-            try {
-                new InternetAddress(propVal);
-            } catch (Exception ex) {
-                throw new IllegalArgumentException(
-                        String.format(
-                                GENERIC_MESSAGE + "invalid format in '%s'",
-                                propName),
-                        ex);
-            }
+    public int validateInteger(String property) {
+        try {
+            return Integer.parseInt(getProperty(property));
+        } catch (NumberFormatException exception) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "'%s' must be an integer.",
+                            property));
         }
     }
 
-    /**
-     * Returns {@code true} if mail transport encryption type is correctly specified, otherwise {@code false}
-     */
-    public boolean isSmtpEncryptionOptionValid() {
-        return MAIL_SMTP_ENCRYPTION_NONE.equals(getProperty(MAIL_SMTP_ENCRYPTION, true))
-                || MAIL_SMTP_ENCRYPTION_SSL.equals(getProperty(MAIL_SMTP_ENCRYPTION, true))
-                || MAIL_SMTP_ENCRYPTION_TLS.equals(getProperty(MAIL_SMTP_ENCRYPTION, true));
+    public int validateNonNegetive(String property) {
+        int value = validateInteger(property);
+        if (value < 0) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "'%s' must be a non negative integer.",
+                            property));
+        }
+        return value;
+    }
+
+    public int validatePort(String property) {
+        int value = validateInteger(property);
+        if (value < 1 || value > 0xffff) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "'%s' must be a a valid port.",
+                            property));
+        }
+        return value;
+    }
+
+    public InternetAddress validateEmail(String property) {
+        try {
+            InternetAddress ret = null;
+
+            String value = getProperty(property);
+
+            if (!StringUtils.isEmpty(value)) {
+                ret = new InternetAddress(value);
+            }
+
+            return ret;
+        } catch (Exception ex) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            GENERIC_MESSAGE + "invalid format in '%s'",
+                            property),
+                    ex);
+        }
     }
 }
