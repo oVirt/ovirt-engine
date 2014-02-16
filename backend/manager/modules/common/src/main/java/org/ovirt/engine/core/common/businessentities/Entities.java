@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * General utility class for common entities functions
@@ -59,6 +60,23 @@ public class Entities {
         } else {
             return Collections.emptyMap();
         }
+    }
+
+    public static <E extends VmNetworkInterface> Map<Guid, List<E>> vmInterfacesByVmId(List<E> vnics) {
+        if (vnics == null || vnics.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<Guid, List<E>> map = new HashMap<Guid, List<E>>();
+        for (E vnic : vnics) {
+            if (!map.containsKey(vnic.getVmId())) {
+                map.put(vnic.getVmId(), new ArrayList<E>());
+            }
+
+            map.get(vnic.getVmId()).add(vnic);
+        }
+
+        return map;
     }
 
     public static <E extends VdsNetworkInterface> Map<String, E> hostInterfacesByNetworkName(Collection<E> entityList) {
