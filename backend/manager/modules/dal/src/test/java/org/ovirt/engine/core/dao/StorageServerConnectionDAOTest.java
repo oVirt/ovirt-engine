@@ -91,8 +91,43 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
      * Ensures that a set of records are returned.
      */
     @Test
-    public void testgetAllConnectableStorageSeverConnectionl() {
+    public void testGetAllConnectableStorageSeverConnections() {
         List<StorageServerConnections> result = dao.getAllConnectableStorageSeverConnection(EXISTING_STORAGE_POOL_ID);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    public void testGetConnectableBlockStorageConnections() {
+        List<StorageServerConnections> conns =
+                dao.getConnectableStorageConnectionsByStorageType(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER, StorageType.ISCSI);
+
+        assertNotNull(conns);
+        assertEquals(2, conns.size());
+
+        for (StorageServerConnections conn : conns) {
+            assertEquals(StorageType.ISCSI, conn.getstorage_type());
+        }
+    }
+
+    @Test
+    public void testGetConnectableFileStorageConnectionsByStorageType() {
+        List<StorageServerConnections> conns =
+                dao.getConnectableStorageConnectionsByStorageType(FixturesTool.STORAGE_POOL_NFS_2, StorageType.NFS);
+
+        assertNotNull(conns);
+        assertEquals(1, conns.size());
+
+        for (StorageServerConnections conn : conns) {
+            assertEquals(StorageType.NFS, conn.getstorage_type());
+        }
+    }
+
+    @Test
+    public void testGetConnectableStorageConnectionsByStorageType() {
+        List<StorageServerConnections> result =
+                dao.getConnectableStorageConnectionsByStorageType(EXISTING_STORAGE_POOL_ID, null);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
