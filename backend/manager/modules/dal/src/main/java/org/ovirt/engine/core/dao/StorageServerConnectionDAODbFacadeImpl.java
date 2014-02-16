@@ -48,10 +48,17 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
 
     @Override
     public List<StorageServerConnections> getAllConnectableStorageSeverConnection(Guid pool) {
-        return getCallsHandler().executeReadList("GetAllConnectableStorageSeverConnection",
+        return getConnectableStorageConnectionsByStorageType(pool, null);
+    }
+
+    @Override
+    public List<StorageServerConnections> getConnectableStorageConnectionsByStorageType(Guid pool,
+                                                                                        StorageType storageType) {
+        return getCallsHandler().executeReadList("GetConnectableStorageConnectionsByStorageType",
                 mapper,
                 getCustomMapSqlParameterSource()
-                        .addValue("storage_pool_id", pool));
+                        .addValue("storage_pool_id", pool)
+                        .addValue("storage_type", (storageType != null) ? storageType.getValue() : null));
     }
 
     @Override
