@@ -57,6 +57,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private AuditLogType errorType = AuditLogType.USER_FAILED_UPDATE_VDS;
 
+    private List<VdsNetworkInterface> hostNics;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      * @param commandId
@@ -123,7 +125,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
         if (FeatureSupported.hostNetworkQos(getSourceCluster().getcompatibility_version())
                 && !FeatureSupported.hostNetworkQos(getTargetCluster().getcompatibility_version())) {
-            for (VdsNetworkInterface iface : getDbFacade().getInterfaceDao().getAllInterfacesForVds(vds.getId())) {
+            for (VdsNetworkInterface iface : getHostNics()) {
                 if (iface.getQos() != null) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
                             String.format("$ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED_LIST %s",
@@ -132,7 +134,29 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         }
 
+        if (!targetClusterSupportsSetupNetworks() && hostHasLabeledNics()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_LABELS_NOT_SUPPORTED);
+        }
+
         return true;
+    }
+
+    private boolean hostHasLabeledNics() {
+        for (VdsNetworkInterface nic : getHostNics()) {
+            if (NetworkUtils.isLabeled(nic)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private List<VdsNetworkInterface> getHostNics() {
+        if (hostNics == null) {
+            hostNics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(getVdsId());
+        }
+
+        return hostNics;
     }
 
     private boolean hasUpServer(VDSGroup cluster) {
@@ -219,11 +243,15 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             getVdsSpmIdMapDAO().removeByVdsAndStoragePool(getVds().getId(), getSourceCluster().getStoragePoolId());
         }
 
-        if (NetworkHelper.setupNetworkSupported(getTargetCluster().getcompatibility_version())) {
+        if (targetClusterSupportsSetupNetworks()) {
             configureNetworks();
         }
 
         setSucceeded(true);
+    }
+
+    private boolean targetClusterSupportsSetupNetworks() {
+        return NetworkHelper.setupNetworkSupported(getTargetCluster().getcompatibility_version());
     }
 
     private void configureNetworks() {

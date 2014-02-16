@@ -2446,6 +2446,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Host Network QoS is not supported in the cluster's compatibility version, but QoS was configured on the following network(s): ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED_LIST}.")
     String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Network labels are not supported in the cluster's compatibility version, but are configured on the host's interfaces.")
+    String ACTION_TYPE_FAILED_HOST_NETWORK_LABELS_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Updating the virtual machine interface while the virtual machine is running is not supported for clusters of version ${clusterVersion}.")
     String HOT_VM_INTERFACE_UPDATE_IS_NOT_SUPPORTED();
 
