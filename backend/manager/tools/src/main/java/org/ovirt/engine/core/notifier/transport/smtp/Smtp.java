@@ -3,8 +3,17 @@ package org.ovirt.engine.core.notifier.transport.smtp;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Date;
+import java.util.Properties;
 
+import javax.mail.Address;
+import javax.mail.Authenticator;
+import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -29,36 +38,69 @@ import org.ovirt.engine.core.notifier.utils.NotificationProperties;
  */
 public class Smtp implements Transport {
 
-    public static final String MAIL_SERVER = "MAIL_SERVER";
-    public static final String MAIL_PORT = "MAIL_PORT";
-    public static final String MAIL_USER = "MAIL_USER";
-    public static final String MAIL_PASSWORD = "MAIL_PASSWORD";
-    public static final String MAIL_FROM = "MAIL_FROM";
-    public static final String MAIL_REPLY_TO = "MAIL_REPLY_TO";
-    public static final String HTML_MESSAGE_FORMAT = "HTML_MESSAGE_FORMAT";
-    public static final String MAIL_SMTP_ENCRYPTION = "MAIL_SMTP_ENCRYPTION";
-    public static final String MAIL_SMTP_ENCRYPTION_NONE = "none";
-    public static final String MAIL_SMTP_ENCRYPTION_SSL = "ssl";
-    public static final String MAIL_SMTP_ENCRYPTION_TLS = "tls";
+    private static final String MAIL_SERVER = "MAIL_SERVER";
+    private static final String MAIL_PORT = "MAIL_PORT";
+    private static final String MAIL_USER = "MAIL_USER";
+    private static final String MAIL_PASSWORD = "MAIL_PASSWORD";
+    private static final String MAIL_FROM = "MAIL_FROM";
+    private static final String MAIL_REPLY_TO = "MAIL_REPLY_TO";
+    private static final String HTML_MESSAGE_FORMAT = "HTML_MESSAGE_FORMAT";
+    private static final String MAIL_SMTP_ENCRYPTION = "MAIL_SMTP_ENCRYPTION";
+    private static final String MAIL_SMTP_ENCRYPTION_NONE = "none";
+    private static final String MAIL_SMTP_ENCRYPTION_SSL = "ssl";
+    private static final String MAIL_SMTP_ENCRYPTION_TLS = "tls";
     private static final String GENERIC_VALIDATION_MESSAGE = "Check configuration file, ";
 
     private static final Logger log = Logger.getLogger(Smtp.class);
-    private JavaMailSender mailSender;
     private String hostName;
     private boolean isBodyHtml = false;
+    private Session session = null;
+    private InternetAddress from = null;
+    private InternetAddress replyTo = null;
+    private EmailAuthenticator auth;
 
     public Smtp(NotificationProperties props) {
-        mailSender = new JavaMailSender(props);
-        String isBodyHtmlStr = props.getProperty(HTML_MESSAGE_FORMAT);
-        if (StringUtils.isNotEmpty(isBodyHtmlStr)) {
-            isBodyHtml = Boolean.valueOf(isBodyHtmlStr);
-        }
+
+        Properties mailSessionProps =  new Properties();
 
         try {
             hostName = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
             Smtp.log.error("Failed to resolve machine name, using localhost instead.", e);
             hostName = "localhost";
+        }
+
+        isBodyHtml = props.getBoolean(HTML_MESSAGE_FORMAT, false);
+        from = props.validateEmail(MAIL_FROM);
+        replyTo = props.validateEmail(MAIL_REPLY_TO);
+
+        if (log.isTraceEnabled()) {
+            mailSessionProps.put("mail.debug", "true");
+        }
+
+        mailSessionProps.put("mail.smtp.host", props.getProperty(MAIL_SERVER));
+        mailSessionProps.put("mail.smtp.port", props.getProperty(MAIL_PORT));
+        // enable SSL
+        if (MAIL_SMTP_ENCRYPTION_SSL.equals(
+                props.getProperty(MAIL_SMTP_ENCRYPTION, true))) {
+            mailSessionProps.put("mail.smtp.auth", "true");
+            mailSessionProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            mailSessionProps.put("mail.smtp.socketFactory.fallback", false);
+            mailSessionProps.put("mail.smtp.socketFactory.port", props.getProperty(MAIL_PORT));
+        } else if (MAIL_SMTP_ENCRYPTION_TLS.equals(
+                props.getProperty(MAIL_SMTP_ENCRYPTION, true))) {
+            mailSessionProps.put("mail.smtp.auth", "true");
+            mailSessionProps.put("mail.smtp.starttls.enable", "true");
+            mailSessionProps.put("mail.smtp.starttls.required", "true");
+        }
+
+        String password = props.getProperty(MAIL_PASSWORD, true);
+        if (StringUtils.isNotEmpty(password)) {
+            auth = new EmailAuthenticator(props.getProperty(Smtp.MAIL_USER, true),
+                    password);
+            session = Session.getDefaultInstance(mailSessionProps, auth);
+        } else {
+            session = Session.getInstance(mailSessionProps);
         }
     }
 
@@ -125,7 +167,7 @@ public class Smtp implements Transport {
 
         boolean shouldRetry = false;
         try {
-            mailSender.send(recipient, message.getMessageSubject(), message.getMessageBody());
+            sendMail(recipient, message.getMessageSubject(), message.getMessageBody());
         } catch (MessagingException ex) {
             result.setReason(ex.getMessage());
             shouldRetry = true;
@@ -137,7 +179,7 @@ public class Smtp implements Transport {
             try {
                 // hold the next send attempt for 30 seconds in case of a busy mail server
                 Thread.sleep(30000);
-                mailSender.send(recipient, message.getMessageSubject(), message.getMessageBody());
+                sendMail(recipient, message.getMessageSubject(), message.getMessageBody());
             } catch (MessagingException ex) {
                 result.setReason(ex.getMessage());
                 shouldRetry = true;
@@ -151,6 +193,70 @@ public class Smtp implements Transport {
             result.setSent(true);
         }
         return result;
+    }
+
+    /**
+     * Sends a message to a recipient using pre-configured mail session, either as a plan text message or as a html
+     * message body
+     * @param recipient
+     *            a recipient mail address
+     * @param messageSubject
+     *            the subject of the message
+     * @param messageBody
+     *            the body of the message
+     * @throws MessagingException
+     */
+    private void sendMail(String recipient, String messageSubject, String messageBody) throws MessagingException {
+        try {
+            Message msg = new MimeMessage(session);
+            msg.setFrom(from);
+            InternetAddress address = new InternetAddress(recipient);
+            msg.setRecipient(Message.RecipientType.TO, address);
+            if (replyTo != null) {
+                msg.setReplyTo(new Address[] { replyTo });
+            }
+            msg.setSubject(messageSubject);
+            if (isBodyHtml){
+                msg.setContent(String.format("<html><head><title>%s</title></head><body><p>%s</body></html>",
+                        messageSubject,
+                        messageBody), "text/html");
+            } else {
+                msg.setText(messageBody);
+            }
+            msg.setSentDate(new Date());
+            javax.mail.Transport.send(msg);
+        } catch (MessagingException mex) {
+            StringBuilder errorMsg = new StringBuilder("Failed to send message ");
+            if (from != null) {
+                errorMsg.append(" from " + from.toString());
+            }
+            if (StringUtils.isNotBlank(recipient)) {
+                errorMsg.append(" to " + recipient);
+            }
+            if (StringUtils.isNotBlank(messageSubject)) {
+                errorMsg.append(" with subject " + messageSubject);
+            }
+            errorMsg.append(" due to to error: " + mex.getMessage());
+            log.error(errorMsg.toString(), mex);
+            throw mex;
+        }
+    }
+
+    /**
+     * An implementation of the {@link Authenticator}, holds the authentication credentials for a network connection.
+     */
+    private class EmailAuthenticator extends Authenticator {
+        private String userName;
+        private String password;
+        public EmailAuthenticator(String userName, String password) {
+            this.userName = userName;
+            this.password = password;
+        }
+
+        @Override
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(userName, password);
+        }
     }
 }
 
