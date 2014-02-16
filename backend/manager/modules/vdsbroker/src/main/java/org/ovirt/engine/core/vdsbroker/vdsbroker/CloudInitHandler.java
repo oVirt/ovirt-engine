@@ -70,7 +70,7 @@ public class CloudInitHandler {
         String metaDataStr = mapToJson(metaData);
         String userDataStr = mapToYaml(userData);
 
-        if (vmInit.getCustomScript() != null) {
+        if (vmInit != null && vmInit.getCustomScript() != null) {
             userDataStr += vmInit.getCustomScript();
         }
 
