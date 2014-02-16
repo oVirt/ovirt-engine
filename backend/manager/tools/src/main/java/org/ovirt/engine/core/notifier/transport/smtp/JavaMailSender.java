@@ -37,25 +37,25 @@ public class JavaMailSender {
     public JavaMailSender(NotificationProperties aMailProps) {
         Properties mailSessionProps = setCommonProperties(aMailProps);
 
-        mailSessionProps.put("mail.smtp.host", aMailProps.getProperty(NotificationProperties.MAIL_SERVER));
-        mailSessionProps.put("mail.smtp.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT));
+        mailSessionProps.put("mail.smtp.host", aMailProps.getProperty(Smtp.MAIL_SERVER));
+        mailSessionProps.put("mail.smtp.port", aMailProps.getProperty(Smtp.MAIL_PORT));
         // enable SSL
-        if (NotificationProperties.MAIL_SMTP_ENCRYPTION_SSL.equals(
-                aMailProps.getProperty(NotificationProperties.MAIL_SMTP_ENCRYPTION, true))) {
+        if (Smtp.MAIL_SMTP_ENCRYPTION_SSL.equals(
+                aMailProps.getProperty(Smtp.MAIL_SMTP_ENCRYPTION, true))) {
             mailSessionProps.put("mail.smtp.auth", "true");
             mailSessionProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
             mailSessionProps.put("mail.smtp.socketFactory.fallback", false);
-            mailSessionProps.put("mail.smtp.socketFactory.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT));
-        } else if (NotificationProperties.MAIL_SMTP_ENCRYPTION_TLS.equals(
-                aMailProps.getProperty(NotificationProperties.MAIL_SMTP_ENCRYPTION, true))) {
+            mailSessionProps.put("mail.smtp.socketFactory.port", aMailProps.getProperty(Smtp.MAIL_PORT));
+        } else if (Smtp.MAIL_SMTP_ENCRYPTION_TLS.equals(
+                aMailProps.getProperty(Smtp.MAIL_SMTP_ENCRYPTION, true))) {
             mailSessionProps.put("mail.smtp.auth", "true");
             mailSessionProps.put("mail.smtp.starttls.enable", "true");
             mailSessionProps.put("mail.smtp.starttls.required", "true");
         }
 
-        String password = aMailProps.getProperty(NotificationProperties.MAIL_PASSWORD, true);
+        String password = aMailProps.getProperty(Smtp.MAIL_PASSWORD, true);
         if (StringUtils.isNotEmpty(password)) {
-            auth = new EmailAuthenticator(aMailProps.getProperty(NotificationProperties.MAIL_USER, true),
+            auth = new EmailAuthenticator(aMailProps.getProperty(Smtp.MAIL_USER, true),
                     password);
             this.session = Session.getDefaultInstance(mailSessionProps, auth);
         } else {
@@ -75,7 +75,7 @@ public class JavaMailSender {
             mailSessionProps.put("mail.debug", "true");
         }
 
-        isBodyHtml = aMailProps.getBoolean(NotificationProperties.HTML_MESSAGE_FORMAT, false);
+        isBodyHtml = aMailProps.getBoolean(Smtp.HTML_MESSAGE_FORMAT, false);
 
         return mailSessionProps;
     }

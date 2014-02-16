@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.ovirt.engine.core.notifier.transport.smtp.Smtp;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 
 /**
@@ -59,6 +60,7 @@ public class Notifier {
         try {
             prop = NotificationProperties.getInstance();
             prop.validate();
+            Smtp.validate(prop);
         } catch (Exception ex) {
             log.error("Failed to parse configuration.", ex);
             // print error also to stderr to be seen in console during service startup

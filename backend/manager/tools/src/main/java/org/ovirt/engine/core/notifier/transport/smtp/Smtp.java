@@ -29,6 +29,19 @@ import org.ovirt.engine.core.notifier.utils.NotificationProperties;
  */
 public class Smtp implements Transport {
 
+    public static final String MAIL_SERVER = "MAIL_SERVER";
+    public static final String MAIL_PORT = "MAIL_PORT";
+    public static final String MAIL_USER = "MAIL_USER";
+    public static final String MAIL_PASSWORD = "MAIL_PASSWORD";
+    public static final String MAIL_FROM = "MAIL_FROM";
+    public static final String MAIL_REPLY_TO = "MAIL_REPLY_TO";
+    public static final String HTML_MESSAGE_FORMAT = "HTML_MESSAGE_FORMAT";
+    public static final String MAIL_SMTP_ENCRYPTION = "MAIL_SMTP_ENCRYPTION";
+    public static final String MAIL_SMTP_ENCRYPTION_NONE = "none";
+    public static final String MAIL_SMTP_ENCRYPTION_SSL = "ssl";
+    public static final String MAIL_SMTP_ENCRYPTION_TLS = "tls";
+    private static final String GENERIC_VALIDATION_MESSAGE = "Check configuration file, ";
+
     private static final Logger log = Logger.getLogger(Smtp.class);
     private JavaMailSender mailSender;
     private String hostName;
@@ -36,7 +49,7 @@ public class Smtp implements Transport {
 
     public Smtp(NotificationProperties props) {
         mailSender = new JavaMailSender(props);
-        String isBodyHtmlStr = props.getProperty(NotificationProperties.HTML_MESSAGE_FORMAT);
+        String isBodyHtmlStr = props.getProperty(HTML_MESSAGE_FORMAT);
         if (StringUtils.isNotEmpty(isBodyHtmlStr)) {
             isBodyHtml = Boolean.valueOf(isBodyHtmlStr);
         }
@@ -46,6 +59,44 @@ public class Smtp implements Transport {
         } catch (UnknownHostException e) {
             Smtp.log.error("Failed to resolve machine name, using localhost instead.", e);
             hostName = "localhost";
+        }
+    }
+
+    public static void validate(NotificationProperties props) {
+        // validate mandatory and non empty properties
+        props.requireOne(MAIL_SERVER);
+        // validate MAIL_PORT
+        props.requireAll(MAIL_PORT);
+        props.validatePort(MAIL_PORT);
+
+        // validate MAIL_USER value
+        String emailUser = props.getProperty(MAIL_USER, true);
+        if (StringUtils.isEmpty(emailUser) && StringUtils.isNotEmpty(props.getProperty(MAIL_PASSWORD, true))) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "'%s' must be set when password is set",
+                            MAIL_USER));
+        }
+
+        if (!(MAIL_SMTP_ENCRYPTION_NONE.equals(props.getProperty(MAIL_SMTP_ENCRYPTION, true))
+                || MAIL_SMTP_ENCRYPTION_SSL.equals(props.getProperty(MAIL_SMTP_ENCRYPTION, true))
+                || MAIL_SMTP_ENCRYPTION_TLS.equals(props.getProperty(MAIL_SMTP_ENCRYPTION, true)))) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            GENERIC_VALIDATION_MESSAGE + "'%s' value has to be one of: '%s', '%s', '%s'.",
+                            MAIL_SMTP_ENCRYPTION,
+                            MAIL_SMTP_ENCRYPTION_NONE,
+                            MAIL_SMTP_ENCRYPTION_SSL,
+                            MAIL_SMTP_ENCRYPTION_TLS
+                            ));
+        }
+
+        // validate email addresses
+        for (String property : new String[] {
+                MAIL_USER,
+                MAIL_FROM,
+                MAIL_REPLY_TO }) {
+            props.validateEmail(property);
         }
     }
 
