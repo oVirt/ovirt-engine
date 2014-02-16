@@ -410,6 +410,16 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
 
             for (String label : nic.getLabels()) {
+                // remove labeled networks originated in source cluster but not assigned to target cluster
+                List<Network> sourceLabeledNetworks = sourceNetworksByLabel.get(label);
+                if (sourceLabeledNetworks != null) {
+                    for (Network net : sourceLabeledNetworks) {
+                        if (configuredNetworkNotAssignedToCluster(targetNetworksByName, nicsByNetwork, net)) {
+                            removeNetworkFromParameters(params, nic, net);
+                        }
+                    }
+                }
+
                 // configure networks by target cluster assignment
                 List<Network> targetLabeledNetworks = targetNetworksByLabel.get(label);
                 if (targetLabeledNetworks != null) {
@@ -418,16 +428,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                                 && !nicsByNetwork.containsKey(net.getName())) {
                             configureNetwork(nic, params.getInterfaces(), net);
                         } else if (configuredNetworkNotAssignedToCluster(targetNetworksByName, nicsByNetwork, net)) {
-                            removeNetworkFromParameters(params, nic, net);
-                        }
-                    }
-                }
-
-                // remove labeled networks originated in source cluster but not assigned to target cluster
-                List<Network> sourceLabeledNetworks = sourceNetworksByLabel.get(label);
-                if (sourceLabeledNetworks != null) {
-                    for (Network net : sourceLabeledNetworks) {
-                        if (configuredNetworkNotAssignedToCluster(targetNetworksByName, nicsByNetwork, net)) {
                             removeNetworkFromParameters(params, nic, net);
                         }
                     }
