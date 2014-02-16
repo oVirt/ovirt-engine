@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 
@@ -136,14 +134,10 @@ public enum ActionGroup {
     private boolean allowsViewingChildren;
     private int applicationMode;
     private static final HashMap<Integer, ActionGroup> map = new HashMap<Integer, ActionGroup>(ActionGroup.values().length);
-    private static final List<ActionGroup> userActionsGroup = new ArrayList<ActionGroup>();
 
     static {
         for (ActionGroup t : ActionGroup.values()) {
             map.put(t.id, t);
-            if (RoleType.USER == t.roleType) {
-                userActionsGroup.add(t);
-            }
         }
     }
 
@@ -175,10 +169,6 @@ public enum ActionGroup {
 
     public static ActionGroup forValue(int value) {
         return map.get(value);
-    }
-
-    public static List<ActionGroup> getAllUserActionGroups() {
-        return userActionsGroup;
     }
 
     public int getAvailableInModes() {
