@@ -38,7 +38,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IteratorUtils;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -672,28 +671,18 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
     protected boolean getNextSearchPageAllowed()
     {
         if (!getSearchNextPageCommand().getIsAvailable() || getItems() == null
-                || IteratorUtils.moveNext(getItems().iterator()) == false)
+                || getItems().iterator().hasNext())
         {
             return false;
         }
 
         boolean retValue = true;
 
-        // ** TODO: Inefficient performance-wise! If 'Items' was ICollection or IList
-        // ** it would be better, since we could simply check its 'Count' property.
-
         int pageSize = getSearchPageSize();
 
         if (pageSize > 0)
         {
-            Iterator e = getItems().iterator();
-            int itemsCountInCurrentPage = 0;
-            while (IteratorUtils.moveNext(e))
-            {
-                itemsCountInCurrentPage++;
-            }
-
-            if (itemsCountInCurrentPage < pageSize)
+            if (getItems().size() < pageSize)
             {
                 // current page contains results quantity smaller than
                 // the pageSize -> there is no next page:
