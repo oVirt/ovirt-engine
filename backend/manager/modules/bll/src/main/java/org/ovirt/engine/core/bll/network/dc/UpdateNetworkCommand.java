@@ -27,10 +27,12 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -228,10 +230,17 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
         public ValidationResult networkNotUsedByRunningVms() {
             List<VM> runningVms = new ArrayList<>();
+            List<VmNetworkInterface> vnics = getDbFacade().getVmNetworkInterfaceDao().getAllForNetwork(network.getId());
+            Map<Guid, List<VmNetworkInterface>> vnicsByVmId = Entities.vmInterfacesByVmId(vnics);
 
             for (VM vm : getVms()) {
                 if (vm.isRunningOrPaused()) {
-                    runningVms.add(vm);
+                    for (VmNetworkInterface nic : vnicsByVmId.get(vm.getId())) {
+                        if (nic.isPlugged() && nic.isLinked()) {
+                            runningVms.add(vm);
+                            break;
+                        }
+                    }
                 }
             }
 
