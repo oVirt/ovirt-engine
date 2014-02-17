@@ -527,7 +527,7 @@ public abstract class AbstractDiskModel extends DiskModel
         setVolumeFormat(AsyncDataProvider.getDiskVolumeFormat(volumeType, storageType));
     }
 
-    private void updateVolumeType(StorageType storageType) {
+    private void setDefaultVolumeType(StorageType storageType) {
         getVolumeType().setSelectedItem(storageType.isBlockDomain() ? VolumeType.Preallocated : VolumeType.Sparse);
         volumeType_SelectedItemChanged();
     }
@@ -738,8 +738,8 @@ public abstract class AbstractDiskModel extends DiskModel
 
     private void storageDomain_SelectedItemChanged() {
         StorageDomain selectedStorage = (StorageDomain) getStorageDomain().getSelectedItem();
-        if (selectedStorage != null) {
-            updateVolumeType(selectedStorage.getStorageType());
+        if (selectedStorage != null && getIsNew()) {
+            setDefaultVolumeType(selectedStorage.getStorageType());
         }
         updateQuota((StoragePool) getDataCenter().getSelectedItem());
     }
