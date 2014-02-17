@@ -46,7 +46,9 @@ public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extend
             DbGroup dbGroup = DbFacade.getInstance().getDbGroupDao().get(getGroupId());
             if (dbGroup != null) {
                 Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(dbGroup.getDomain());
-                mGroup = directory.findGroup(dbGroup.getExternalId());
+                if (directory != null) {
+                    mGroup = directory.findGroup(dbGroup.getExternalId());
+                }
             }
         }
         return mGroup;
