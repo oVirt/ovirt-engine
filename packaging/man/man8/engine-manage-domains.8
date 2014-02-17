@@ -23,12 +23,12 @@ Available actions:
 .PP
 .B Add domain
 .RS 4
-engine-manage-domains add --domain=\fIDOMAIN\fR --provider=\fIPROVIDER\fR --user=\fIUSER\fR  [--add-permissions] [--config-file=\fICFG_FILE\fR] [--ldap-servers=\fISERVERS\fR] [--password-file=\fIPASS_FILE\fR] [--change-password-msg]
+engine-manage-domains add --domain=\fIDOMAIN\fR --provider=\fIPROVIDER\fR --user=\fIUSER\fR  [--add-permissions] [--config-file=\fICFG_FILE\fR] [--ldap-servers=\fISERVERS\fR] [--resolve-kdc] [--password-file=\fIPASS_FILE\fR] [--change-password-msg]
 .RE
 .PP
 .B Edit domain
 .RS 4
-engine-manage-domains edit --domain=\fIDOMAIN\fR [--provider=\fIPROVIDER\fR] [--user=\fIUSER\fR]  [--add-permissions] [--config-file=\fICFG_FILE\fR] [--ldap-servers=\fISERVERS\fR] [--password-file=\fIPASS_FILE\fR] [--change-password-msg]
+engine-manage-domains edit --domain=\fIDOMAIN\fR [--provider=\fIPROVIDER\fR] [--user=\fIUSER\fR]  [--add-permissions] [--config-file=\fICFG_FILE\fR] [--ldap-servers=\fISERVERS\fR] [--resolve-kdc] [--password-file=\fIPASS_FILE\fR] [--change-password-msg]
 .RE
 .PP
 .B Delete domain
@@ -105,6 +105,11 @@ oldap     OpenLDAP
 \fB\-\-report\fR
 .RS 4
 Report all validation error, if occured (default behaviour is to exit when a validation error occurs).
+.RE
+.PP
+\fB\-\-resolve-kdc\fR
+.RS 4
+Resolve KDC servers using DNS (don't assume they are the same as LDAP servers).
 .RE
 .PP
 \fB\-\-user\fR=\fIUSER\fR

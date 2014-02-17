@@ -132,6 +132,11 @@ public class ManageDomainsArguments {
     public static final String ARG_REPORT = "--report";
 
     /**
+     * Resolve KDC servers (don't suppose they are the same LDAP servers)
+     */
+    public static final String ARG_RESOLVE_KDC = "--resolve-kdc";
+
+    /**
      * Username
      */
     public static final String ARG_USER = "--user";
@@ -198,6 +203,10 @@ public class ManageDomainsArguments {
             parser.addArg(new ArgumentBuilder()
                     .longName(ARG_LDAP_SERVERS)
                     .valueRequied(true)
+                    .build());
+
+            parser.addArg(new ArgumentBuilder()
+                    .longName(ARG_RESOLVE_KDC)
                     .build());
 
             parser.addArg(new ArgumentBuilder()
