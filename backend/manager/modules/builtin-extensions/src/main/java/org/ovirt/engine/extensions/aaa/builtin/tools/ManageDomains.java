@@ -19,6 +19,7 @@ import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArgumen
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_PASSWORD_FILE;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_PROVIDER;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_REPORT;
+import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_RESOLVE_KDC;
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_USER;
 
 import java.io.BufferedReader;
@@ -734,11 +735,13 @@ public class ManageDomains {
                 log.info("Creating kerberos configuration for domain(s): " + gssapiDomainsString);
                 useDnsLookup = utilityConfiguration.getUseDnsLookup();
                 String domainRealmMappingFile = utilityConfiguration.getDomainRealmMappingFile();
-                if (!args.contains(ARG_LDAP_SERVERS) && useDnsLookup) {
-                    // The arguments do not contain a list of ldap servers, the
+                if (!args.contains(ARG_LDAP_SERVERS) && useDnsLookup
+                        || args.contains(ARG_RESOLVE_KDC)) {
+                    // Arguments do not contain a list of ldap servers, so the
                     // kerberos configuration should not be created according to it if
-                    // useDnsLookup is set to true as in this case the kdc and the domain_realm information
-                    // will be resolved by DNS during kerberos negotiation.
+                    // useDnsLookup is set to true or resolve KDC argument was entered.
+                    // In those cases the kdc and the domain_realm information will be resolved
+                    // by DNS during kerberos negotiation.
                     ldapServersPerGSSAPIDomains = Collections.emptyMap();
                 }
                 krbConfCreator = new KrbConfCreator(gssapiDomainsString, useDnsLookup, ldapServersPerGSSAPIDomains, domainRealmMappingFile);
