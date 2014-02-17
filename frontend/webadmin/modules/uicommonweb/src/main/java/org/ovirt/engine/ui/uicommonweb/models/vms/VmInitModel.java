@@ -34,8 +34,13 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 
 public class VmInitModel extends Model {
 
+    private boolean isWindowsOS = false;
     public boolean getHostnameEnabled() {
-        return !StringHelper.isNullOrEmpty((String) getHostname().getEntity());
+        if (isWindowsOS) {
+            return !StringHelper.isNullOrEmpty((String) getWindowsHostname().getEntity());
+        } else {
+            return !StringHelper.isNullOrEmpty((String) getHostname().getEntity());
+        }
     }
 
     private ListModel windowsSysprepTimeZone;
@@ -56,6 +61,14 @@ public class VmInitModel extends Model {
 
     public void setWindowsSysprepTimeZoneEnabled(EntityModel windowsSysprepTimeZoneEnabled) {
         this.windowsSysprepTimeZoneEnabled = windowsSysprepTimeZoneEnabled;
+    }
+
+    private EntityModel privateWindowsHostname;
+    public EntityModel getWindowsHostname() {
+        return privateWindowsHostname;
+    }
+    private void setWindowsHostname(EntityModel value) {
+        privateWindowsHostname = value;
     }
 
     private EntityModel privateHostname;
@@ -329,6 +342,7 @@ public class VmInitModel extends Model {
 
         setWindowsSysprepTimeZone(new ListModel());
         setWindowsSysprepTimeZoneEnabled(new EntityModel());
+        setWindowsHostname(new EntityModel());
 
         setHostname(new EntityModel());
         setDomain(new EntityModel());
@@ -389,6 +403,7 @@ public class VmInitModel extends Model {
         getPasswordSet().setEntity(false);
         getPasswordSet().setIsChangable(false);
 
+        getWindowsHostname().setEntity("");
         getHostname().setEntity("");
         getDomain().setEntity("");
         getRootPassword().setEntity("");
@@ -417,14 +432,13 @@ public class VmInitModel extends Model {
                     }
                 }));
 
-        // if not proven to be hidden, show it
-        boolean isWindows = vm != null ? AsyncDataProvider.isWindowsOsType(vm.getOsId()) : true;
-        getDomain().setIsAvailable(isWindows);
+        isWindowsOS = vm != null ? AsyncDataProvider.isWindowsOsType(vm.getOsId()) : true;
 
         VmInit vmInit = (vm != null) ? vm.getVmInit() : null;
         if (vmInit != null) {
             if (!StringHelper.isNullOrEmpty(vmInit.getHostname())) {
                 getHostname().setEntity(vmInit.getHostname());
+                getWindowsHostname().setEntity(vmInit.getHostname());
             }
             getDomain().setEntity(vmInit.getDomain());
             final String tz = vmInit.getTimeZone();
@@ -521,8 +535,13 @@ public class VmInitModel extends Model {
 
     public boolean validate() {
         getHostname().setIsValid(true);
+        getWindowsHostname().setIsValid(true);
         if (getHostnameEnabled()) {
-            getHostname().validateEntity(new IValidation[] { new HostnameValidation() });
+            if (this.isWindowsOS) {
+                getWindowsHostname().validateEntity(new IValidation[] { new HostnameValidation() });
+            } else {
+                getHostname().validateEntity(new IValidation[] { new HostnameValidation() });
+            }
         }
         getDomain().setIsValid(true);
 
@@ -606,6 +625,7 @@ public class VmInitModel extends Model {
         }
 
         return getHostname().getIsValid()
+                && getWindowsHostname().getIsValid()
                 && getDomain().getIsValid()
                 && getAuthorizedKeys().getIsValid()
                 && getTimeZoneList().getIsValid()
@@ -674,7 +694,8 @@ public class VmInitModel extends Model {
         VmInit vmInit = new VmInit();
 
         if (getHostnameEnabled()) {
-            vmInit.setHostname((String) getHostname().getEntity());
+            vmInit.setHostname(isWindowsOS ? (String) getWindowsHostname().getEntity() :
+                (String) getHostname().getEntity());
         }
 
         if (getRootPasswordEnabled()) {
@@ -837,6 +858,7 @@ public class VmInitModel extends Model {
     }
 
     public void osTypeChanged(Integer selectedItem) {
-        getDomain().setIsAvailable(selectedItem != null && AsyncDataProvider.isWindowsOsType(selectedItem));
+        isWindowsOS = AsyncDataProvider.isWindowsOsType(selectedItem);
+        getDomain().setIsAvailable(selectedItem != null && isWindowsOS);
     }
 }

@@ -57,14 +57,15 @@
 
 	<g:FlowPanel addStyleNames="{style.verticalPanel}" ui:field="mainPanel">
         <g:FlowPanel ui:field="syspreptOptionsContent">
+            <e:EntityModelTextBoxEditor ui:field="windowsHostnameEditor" />
             <e:EntityModelCheckBoxEditor ui:field="windowsSyspreptimeZoneEnabledEditor" />
             <e:ListModelListBoxEditor ui:field="windowsSysprepTimeZoneEditor" />
         </g:FlowPanel>
 
         <g:FlowPanel ui:field="cloudInitOptionsContent">
             <g:FlowPanel>
-                <e:EntityModelTextBoxEditor ui:field="hostnameEditor" />
                 <e:EntityModelTextBoxEditor ui:field="domainEditor" />
+                <e:EntityModelTextBoxEditor ui:field="hostnameEditor" />
                 <e:EntityModelCheckBoxEditor ui:field="timeZoneEnabledEditor" />
                 <e:ListModelListBoxEditor ui:field="timeZoneEditor" />
             </g:FlowPanel>

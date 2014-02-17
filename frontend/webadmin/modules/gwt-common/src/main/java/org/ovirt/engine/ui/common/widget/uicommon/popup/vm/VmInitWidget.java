@@ -107,6 +107,11 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     FlowPanel cloudInitOptionsContent;
 
     @UiField
+    @Path(value = "windowsHostname.entity")
+    @WithElementId
+    EntityModelTextBoxEditor windowsHostnameEditor;
+
+    @UiField
     @Path(value = "hostname.entity")
     @WithElementId
     EntityModelTextBoxEditor hostnameEditor;
@@ -323,6 +328,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
     void localize() {
         hostnameEditor.setLabel(constants.cloudInitHostnameLabel());
+        windowsHostnameEditor.setLabel(constants.cloudInitHostnameLabel());
         authorizedKeysEditor.setLabel(constants.cloudInitAuthorizedKeysLabel());
         passwordSetEditor.setLabel(constants.vmInitPasswordSetLabel());
         regenerateKeysEnabledEditor.setLabel(constants.cloudInitRegenerateKeysLabel());
@@ -353,6 +359,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         dnsSearchDomains.setLabel(constants.cloudInitDnsSearchDomainsLabel());
 
         hostnameEditor.setTitle(constants.cloudInitHostnameToolTip());
+        windowsHostnameEditor.setTitle(constants.cloudInitHostnameToolTip());
         authorizedKeysEditor.setTitle(constants.cloudInitAuthorizedKeysToolTip());
         passwordSetEditor.setTitle(constants.vmInitPasswordSetToolTip());
         customScriptEditor.setTitle(constants.customScriptToolTip());
@@ -391,6 +398,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         networkDhcpEditor.addStyleName(customizableStyle.primaryOption());
         windowsSysprepTimeZoneEditor.addStyleName(customizableStyle.primaryOption());
         hostnameEditor.addStyleName(customizableStyle.primaryOption());
+        windowsHostnameEditor.addStyleName(customizableStyle.primaryOption());
         domainEditor.addStyleName(customizableStyle.primaryOption());
         timeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
         timeZoneEditor.addStyleName(customizableStyle.primaryOption());
