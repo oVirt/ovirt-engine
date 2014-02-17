@@ -54,6 +54,9 @@ public interface TemplateResource extends UpdatableResource<Template>, Asynchron
     @Path("nics")
     public DevicesResource<NIC, Nics> getNicsResource();
 
+    @Path("tags")
+    public AssignedTagsResource getTagsResource();
+
     @Path("permissions")
     public AssignedPermissionsResource getPermissionsResource();
 

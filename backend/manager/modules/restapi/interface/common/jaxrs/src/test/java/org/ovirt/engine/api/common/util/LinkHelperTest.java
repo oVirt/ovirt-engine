@@ -85,6 +85,7 @@ public class LinkHelperTest extends Assert {
     private static final String TAG_HREF = BASE_PATH + "/tags/" + TAG_ID;
     private static final String VM_TAG_HREF = BASE_PATH + "/vms/" + VM_ID + "/tags/" + TAG_ID;
     private static final String HOST_TAG_HREF = BASE_PATH + "/hosts/" + HOST_ID + "/tags/" + TAG_ID;
+    private static final String TEMPLATE_TAG_HREF = BASE_PATH + "/templates/" + TEMPLATE_ID + "/tags/" + TAG_ID;
     private static final String USER_TAG_HREF = BASE_PATH + "/users/" + USER_ID + "/tags/" + TAG_ID;
     private static final String CLUSTER_NETWORK_HREF = BASE_PATH + "/clusters/" + CLUSTER_ID + "/networks/" + NETWORK_ID;
     private static final String FILE_HREF = BASE_PATH + "/storagedomains/" + STORAGE_DOMAIN_ID + "/files/" + FILE_ID;
@@ -280,6 +281,18 @@ public class LinkHelperTest extends Assert {
         LinkHelper.addLinks(setUpUriExpectations(), tag);
 
         assertEquals(HOST_TAG_HREF, tag.getHref());
+    }
+
+    @Test
+    public void testTemplateTagLinks() throws Exception {
+        Tag tag = new Tag();
+        tag.setId(TAG_ID);
+        tag.setTemplate(new Template());
+        tag.getTemplate().setId(TEMPLATE_ID);
+
+        LinkHelper.addLinks(setUpUriExpectations(), tag);
+
+        assertEquals(TEMPLATE_TAG_HREF, tag.getHref());
     }
 
     @Test

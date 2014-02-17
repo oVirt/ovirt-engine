@@ -3618,6 +3618,46 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /templates/{template:id}/tags|rel=get
+  description: get the list of tags added to the template
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /templates/{template:id}/tags/{tag:id}|rel=get
+  description: get the details of the tag added to the template
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /templates/{template:id}/tags/{tag:id}|rel=delete
+  description: delete a tag added to the template
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /templates/{template:id}/tags|rel=add
+  description: add a new tag to the template
+  request:
+    body:
+      parameterType: Tag
+      signatures:
+      - mandatoryArguments: {tag.id|name: 'xs:string'}
+        description: add a new tag to the virtual machine
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /users|rel=get
   description: get the list of all users registered in the system
   request:

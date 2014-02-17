@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Tags;
+import org.ovirt.engine.core.common.businessentities.TagsTemplateMap;
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
@@ -149,6 +150,23 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     @SuppressWarnings("unchecked")
     @Override
     public List<Tags> getAllForVm(String ids) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_ids", ids);
+
+        return getCallsHandler()
+                .executeReadList("GetTagsByVmId", TagRowMapper.instance, parameterSource);
+    }
+
+    /**
+     * In the database both TemplateTags and VmTags share the same tables and
+     * functions
+     * @param ids
+     *            the Template ids
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Tags> getAllForTemplate(String ids) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_ids", ids);
 
@@ -397,6 +415,51 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
         return getCallsHandler()
                         .executeReadList(
                                 "GetnVmTagsByVmIdAndDefaultTag", mapper, parameterSource);
+    }
+
+    /**
+     * In the database both Template and Vm Tags share the same tables and functions
+     * @param tagId
+     * @param vmId
+     * @return
+     */
+    @Override
+    public TagsTemplateMap getTagTemplateByTagIdAndByTemplateId(Guid tagId, Guid vmId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id", tagId).addValue(
+                "vm_id", vmId);
+
+        RowMapper<TagsTemplateMap> mapper = new RowMapper<TagsTemplateMap>() {
+            @Override
+            public TagsTemplateMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                TagsTemplateMap entity = new TagsTemplateMap();
+                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
+                entity.settemplate_id(getGuidDefaultEmpty(rs, "vm_id"));
+                entity.setDefaultDisplayType((Integer) rs.getObject("DefaultDisplayType"));
+                return entity;
+            }
+        };
+
+        return getCallsHandler()
+                .executeRead("GetTagVmByTagIdAndByvmId", mapper, parameterSource);
+    }
+
+    @Override
+    public void attachTemplateToTag(TagsTemplateMap tagTemplateMap) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id",
+                tagTemplateMap.gettag_id()).addValue("vm_id", tagTemplateMap.gettemplate_id()).addValue("DefaultDisplayType",
+                tagTemplateMap.getDefaultDisplayType());
+
+        getCallsHandler()
+                .executeModification("Inserttags_vm_map", parameterSource);
+    }
+
+    @Override
+    public void detachTemplateFromTag(Guid tagId, Guid vmId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id", tagId).addValue(
+                "vm_id", vmId);
+
+        getCallsHandler()
+                .executeModification("Deletetags_vm_map", parameterSource);
     }
 
     @SuppressWarnings("unchecked")

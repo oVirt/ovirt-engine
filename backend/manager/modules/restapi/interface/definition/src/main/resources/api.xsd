@@ -3222,6 +3222,7 @@
         <xs:sequence>
           <xs:element ref="host" minOccurs="0"/>
           <xs:element ref="vm" minOccurs="0"/>
+          <xs:element ref="template" minOccurs="0"/>
           <xs:element ref="user" minOccurs="0"/>
           <xs:element ref="group" minOccurs="0"/>
           <xs:element name="parent" type="TagParent" minOccurs="0"/>

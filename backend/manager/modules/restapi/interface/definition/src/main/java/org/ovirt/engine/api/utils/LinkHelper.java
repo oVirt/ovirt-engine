@@ -306,6 +306,7 @@ public class LinkHelper {
         map.add(AssignedTagResource.class, AssignedTagsResource.class, Host.class);
         map.add(AssignedTagResource.class, AssignedTagsResource.class, User.class);
         map.add(AssignedTagResource.class, AssignedTagsResource.class, VM.class);
+        map.add(AssignedTagResource.class, AssignedTagsResource.class, Template.class);
         map.add(AssignedTagResource.class, AssignedTagsResource.class, Group.class);
         TYPES.put(Tag.class, map);
 

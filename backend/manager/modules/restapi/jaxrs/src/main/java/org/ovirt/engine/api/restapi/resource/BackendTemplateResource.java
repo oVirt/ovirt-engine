@@ -15,6 +15,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
+import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
@@ -40,7 +41,7 @@ public class BackendTemplateResource
     extends AbstractBackendActionableResource<Template, VmTemplate>
     implements TemplateResource {
 
-    static final String[] SUB_COLLECTIONS = { "disks", "nics", "cdroms", "permissions", "watchdogs" };
+    static final String[] SUB_COLLECTIONS = { "disks", "nics", "cdroms", "tags", "permissions", "watchdogs" };
 
     public BackendTemplateResource(String id) {
         super(id, Template.class, VmTemplate.class, SUB_COLLECTIONS);
@@ -92,6 +93,11 @@ public class BackendTemplateResource
     @Override
     public DevicesResource<NIC, Nics> getNicsResource() {
         return inject(new BackendTemplateNicsResource(guid));
+    }
+
+    @Override
+    public AssignedTagsResource getTagsResource() {
+        return inject(new BackendTemplateTagsResource(id));
     }
 
     @Override

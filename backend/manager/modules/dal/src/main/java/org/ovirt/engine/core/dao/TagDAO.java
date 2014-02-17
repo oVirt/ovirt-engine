@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Tags;
+import org.ovirt.engine.core.common.businessentities.TagsTemplateMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
@@ -97,6 +98,15 @@ public interface TagDAO extends DAO {
     List<Tags> getAllForVm(String ids);
 
     /**
+     * Retrieves the list of tags for the given Template ids.
+     *
+     * @param ids
+     *            the Template ids
+     * @return the list of tags
+     */
+    List<Tags> getAllForTemplate(String ids);
+
+    /**
      * Retrieves the list of VM tags for the given tag ids.
      *
      * @param ids
@@ -182,6 +192,12 @@ public interface TagDAO extends DAO {
     void detachVmFromTag(Guid tagId, Guid vmId);
 
     List<TagsVmMap> getTagVmMapByVmIdAndDefaultTag(Guid vmid);
+
+    TagsTemplateMap getTagTemplateByTagIdAndByTemplateId(Guid tagId, Guid templateId);
+
+    void attachTemplateToTag(TagsTemplateMap tagVmMap);
+
+    void detachTemplateFromTag(Guid tagId, Guid vmId);
 
     List<TagsVmPoolMap> getVmPoolTagsByVmPoolIdAndAdElementId(Guid vmPoolId, Guid adElementId);
 }

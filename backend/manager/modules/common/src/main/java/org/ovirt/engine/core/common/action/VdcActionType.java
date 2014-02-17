@@ -169,6 +169,8 @@ public enum VdcActionType {
     AttachVdsToTag(511, false, QuotaDependency.NONE),
     DetachVdsFromTag(512, false, QuotaDependency.NONE),
     UpdateTagsVmMapDefaultDisplayType(515, false, QuotaDependency.NONE),
+    AttachTemplatesToTag(516, false, QuotaDependency.NONE),
+    DetachTemplateFromTag(517, false, QuotaDependency.NONE),
 
     // Quota
     AddQuota(601, ActionGroup.CONFIGURE_QUOTA, false, QuotaDependency.NONE),

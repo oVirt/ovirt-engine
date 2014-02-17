@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Tags;
+import org.ovirt.engine.core.common.businessentities.TagsTemplateMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
@@ -30,19 +31,24 @@ public class TagDAOTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid FREE_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
+    private static final Guid EXISTING_TEMPLATE_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid FREE_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
+    private static final Guid FREE_TEMPLATE_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
     private TagDAO dao;
     private Tags newTag;
     private Tags existingTag;
     private Guid parent;
     private Guid user;
     private Guid vm;
+    private Guid template;
     private TagsUserGroupMap existingUserGroupTag;
     private TagsUserMap existingUserTag;
     private TagsVdsMap existingVdsTag;
     private TagsVdsMap newVdsTag;
     private TagsVmMap existingVmTag;
+    private TagsTemplateMap existingTemplateTag;
     private TagsVmMap newVmTag;
+    private TagsTemplateMap newTemplateTag;
     private Guid vmPool;
 
     @Override
@@ -57,6 +63,7 @@ public class TagDAOTest extends BaseDAOTestCase {
         parent = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
         user = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
         vm = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
+        template = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
         vmPool = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
 
         newTag = new Tags();
@@ -74,7 +81,9 @@ public class TagDAOTest extends BaseDAOTestCase {
         newVdsTag = new TagsVdsMap(EXISTING_TAG_ID, FREE_VDS_ID);
 
         existingVmTag = dao.getTagVmByTagIdAndByVmId(EXISTING_TAG_ID, EXISTING_VM_ID);
+        existingTemplateTag = dao.getTagTemplateByTagIdAndByTemplateId(EXISTING_TAG_ID, EXISTING_TEMPLATE_ID);
         newVmTag = new TagsVmMap(EXISTING_TAG_ID, FREE_VM_ID);
+        newTemplateTag = new TagsTemplateMap(EXISTING_TAG_ID, FREE_TEMPLATE_ID);
     }
 
     /**
@@ -266,12 +275,37 @@ public class TagDAOTest extends BaseDAOTestCase {
         assertTrue(result.isEmpty());
     }
 
+
     /**
      * Ensures that a collection of tags is returned.
      */
     @Test
     public void testGetAllForVm() {
-        List<Tags> result = dao.getAllForVm(vm.getUuid().toString());
+        List<Tags> result = dao.getAllForTemplate(template.getUuid().toString());
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+
+    /**
+     * Ensures that an empty collection is returned.
+     */
+    @Test
+    public void testGetAllForVmWithInvalidTemplate() {
+        List<Tags> result = dao
+                .getAllForTemplate(Guid.newGuid().getUuid().toString());
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Ensures that a collection of tags is returned.
+     */
+    @Test
+    public void testGetAllForTemplate() {
+        List<Tags> result = dao.getAllForTemplate(vm.getUuid().toString());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -421,9 +455,23 @@ public class TagDAOTest extends BaseDAOTestCase {
         assertEqualsTagsVmMap(existingVmTag, result);
     }
 
+    @Test
+    public void testGetTagTemplateMapByTag() {
+        TagsTemplateMap result = dao.getTagTemplateByTagIdAndByTemplateId(existingTemplateTag.gettag_id(), existingTemplateTag.gettemplate_id());
+
+        assertNotNull(result);
+        assertEqualsTagsTemplateMap(existingTemplateTag, result);
+    }
+
     private void assertEqualsTagsVmMap(TagsVmMap existing, TagsVmMap result) {
         assertEquals("TG is not equal", existing.gettag_id(), result.gettag_id());
         assertEquals("VM id not equal ", existing.getvm_id(), result.getvm_id());
+        assertEquals("Object equation", existing, result);
+    }
+
+    private void assertEqualsTagsTemplateMap(TagsTemplateMap existing, TagsTemplateMap result) {
+        assertEquals("TG is not equal", existing.gettag_id(), result.gettag_id());
+        assertEquals("Template id not equal ", existing.gettemplate_id(), result.gettemplate_id());
         assertEquals("Object equation", existing, result);
     }
 
@@ -435,6 +483,16 @@ public class TagDAOTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertEqualsTagsVmMap(newVmTag, result);
+    }
+
+    @Test
+    public void testAttachTemplateToTag() {
+        dao.attachTemplateToTag(newTemplateTag);
+
+        TagsTemplateMap result = dao.getTagTemplateByTagIdAndByTemplateId(newTemplateTag.gettag_id(), newTemplateTag.gettemplate_id());
+
+        assertNotNull(result);
+        assertEqualsTagsTemplateMap(newTemplateTag, result);
     }
 
     @Test
@@ -454,6 +512,15 @@ public class TagDAOTest extends BaseDAOTestCase {
         dao.detachVmFromTag(existingVmTag.gettag_id(), existingVmTag.getvm_id());
 
         TagsVmMap result = dao.getTagVmByTagIdAndByVmId(existingVmTag.gettag_id(), existingVmTag.getvm_id());
+
+        assertNull(result);
+    }
+
+    @Test
+    public void testDetachTemplateFromTag() {
+        dao.detachTemplateFromTag(existingTemplateTag.gettag_id(), existingTemplateTag.gettemplate_id());
+
+        TagsTemplateMap result = dao.getTagTemplateByTagIdAndByTemplateId(existingTemplateTag.gettag_id(), existingTemplateTag.gettemplate_id());
 
         assertNull(result);
     }
