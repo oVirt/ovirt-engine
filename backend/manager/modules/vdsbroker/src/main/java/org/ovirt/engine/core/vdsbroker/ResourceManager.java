@@ -2,10 +2,12 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
@@ -44,11 +46,11 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
 
 public class ResourceManager {
 
-    private static ResourceManager _Instance = new ResourceManager();
-    private final Map<Guid, HashSet<Guid>> _vdsAndVmsList = new ConcurrentHashMap<Guid, HashSet<Guid>>();
-    private final Map<Guid, VdsManager> _vdsManagersDict = new ConcurrentHashMap<Guid, VdsManager>();
-    private final ConcurrentHashMap<Guid, Boolean> _asyncRunningVms =
-            new ConcurrentHashMap<Guid, Boolean>();
+    private static ResourceManager instance = new ResourceManager();
+    private final Map<Guid, HashSet<Guid>> vdsAndVmsList = new ConcurrentHashMap<>();
+    private final Map<Guid, VdsManager> vdsManagersDict = new ConcurrentHashMap<>();
+    private final Set<Guid> asyncRunningVms =
+            Collections.newSetFromMap(new ConcurrentHashMap<Guid, Boolean>());
 
     private static final String VDSCommandPrefix = "VDSCommand";
 
@@ -59,7 +61,7 @@ public class ResourceManager {
     }
 
     public static ResourceManager getInstance() {
-        return _Instance;
+        return instance;
     }
 
     public void init() {
@@ -82,7 +84,7 @@ public class ResourceManager {
                 if (vm.getRunOnVds() != null) {
                     MultiValueMapUtils.addToMap(vm.getRunOnVds(),
                             vm.getId(),
-                            _vdsAndVmsList,
+                            vdsAndVmsList,
                             new MultiValueMapUtils.HashSetCreator<Guid>());
                 }
                 if (vm.getRunOnVds() != null && nonResponsiveVdss.contains(vm.getRunOnVds())) {
@@ -127,20 +129,16 @@ public class ResourceManager {
     }
 
     public boolean AddAsyncRunningVm(Guid vmId) {
-        boolean returnValue = false;
-        if (_asyncRunningVms.putIfAbsent(vmId, Boolean.TRUE) == null) {
-            returnValue = true;
-        }
-        return returnValue;
+        return asyncRunningVms.add(vmId);
     }
 
     public void RemoveAsyncRunningVm(Guid vmId) {
-        _asyncRunningVms.remove(vmId);
+        asyncRunningVms.remove(vmId);
         getEventListener().removeAsyncRunningCommand(vmId);
     }
 
     public void succededToRunVm(Guid vmId, Guid vdsId) {
-        if (_asyncRunningVms.containsKey(vmId)) {
+        if (asyncRunningVms.contains(vmId)) {
             getEventListener().runningSucceded(vmId);
         }
         RemoveAsyncRunningVm(vmId);
@@ -151,32 +149,31 @@ public class ResourceManager {
      * @param vmId
      */
     public void RerunFailedCommand(Guid vmId, Guid vdsId) {
-        Boolean value = _asyncRunningVms.remove(vmId);
-        // remove async record from broker only
-        if (value != null) {
+        if (asyncRunningVms.remove(vmId)) {
+            // remove async record from broker only
             getEventListener().rerun(vmId);
         }
     }
 
     public boolean IsVmInAsyncRunningList(Guid vmId) {
-        return (_asyncRunningVms.containsKey(vmId));
+        return asyncRunningVms.contains(vmId);
     }
 
     public void RemoveVmFromDownVms(Guid vdsId, Guid vmId) {
-        HashSet<Guid> vms = null;
-        if ((vms = _vdsAndVmsList.get(vdsId)) != null) {
+        HashSet<Guid> vms = vdsAndVmsList.get(vdsId);
+        if (vms != null) {
             vms.remove(vmId);
         }
     }
 
     public void HandleVdsFinishedInit(Guid vdsId) {
-        HashSet<Guid> vms = null;
-        if ((vms = _vdsAndVmsList.get(vdsId)) != null) {
+        HashSet<Guid> vms = vdsAndVmsList.get(vdsId);
+        if (vms != null) {
             for (Guid vmId : vms) {
                 getEventListener().processOnVmStop(vmId);
                 log.info("Procceed on vm stop entered: " + vmId.toString());
             }
-            _vdsAndVmsList.remove(vdsId);
+            vdsAndVmsList.remove(vdsId);
         }
     }
 
@@ -209,7 +206,7 @@ public class ResourceManager {
             vdsManager.updateDynamicData(vds.getDynamicData());
         }
         vdsManager.schedulJobs();
-        _vdsManagersDict.put(vds.getId(), vdsManager);
+        vdsManagersDict.put(vds.getId(), vdsManager);
         log.infoFormat("VDS {0} was added to the Resource Manager", vds.getId());
 
     }
@@ -218,12 +215,12 @@ public class ResourceManager {
         VdsManager vdsManager = GetVdsManager(vdsId);
         if (vdsManager != null) {
             vdsManager.dispose();
-            _vdsManagersDict.remove(vdsId);
+            vdsManagersDict.remove(vdsId);
         }
     }
 
     public VdsManager GetVdsManager(Guid vdsId) {
-        VdsManager vdsManger = _vdsManagersDict.get(vdsId);
+        VdsManager vdsManger = vdsManagersDict.get(vdsId);
         if (vdsManger == null) {
             log.errorFormat("Cannot get vdsManager for vdsid={0}", vdsId);
         }
@@ -259,7 +256,7 @@ public class ResourceManager {
     }
 
     public boolean IsVmDuringInitiating(Guid vm_guid) {
-        return _asyncRunningVms.containsKey(vm_guid);
+        return asyncRunningVms.contains(vm_guid);
     }
 
     /**
