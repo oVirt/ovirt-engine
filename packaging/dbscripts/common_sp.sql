@@ -198,44 +198,6 @@ LANGUAGE plpgsql;
 -- End of DB helper functions
 --------------------------------------------------
 
-CREATE OR REPLACE FUNCTION attach_user_to_su_role(v_permission_id uuid)
-  RETURNS void AS
-$procedure$
-   DECLARE
-   v_user_entry VARCHAR(255);
-   v_user_id  UUID;
-   v_name  VARCHAR(255);
-   v_domain  VARCHAR(255);
-
-   v_document  VARCHAR(64);
-   v_index  INTEGER;
-BEGIN
-
-   select   option_value INTO v_user_entry from vdc_options where option_name = 'AdUserId';
-   select   option_value INTO v_name from vdc_options where option_name = 'AdUserName';
-   select   option_value INTO v_domain from vdc_options where option_name = 'DomainName';
-
-   v_index := POSITION(':' IN v_user_entry);
-   if ( v_index <> 0 ) then
-      v_user_entry := substring( v_user_entry from v_index + 1 );
-      v_user_id := CAST( v_user_entry AS uuid );
-   end if;
-
-   v_index := POSITION(':' IN v_name);
-   if ( v_index <> 0 ) then
-      v_name := substring( v_name from v_index + 1 );
-   end if;
-
-insert into users(user_id,name,domain,username,groups,active) select v_user_id, v_name, v_domain, v_name,'',true where not exists (select user_id,name,domain,username,groups,active from users where user_id = v_user_id and name = v_name and domain = v_domain and username = v_name and groups = '' and active);
-
-insert into permissions(id,role_id,ad_element_id,object_id,object_type_id) select v_permission_id, '00000000-0000-0000-0000-000000000001', v_user_id, getGlobalIds('system'), 1 where not exists(select role_id,ad_element_id,object_id,object_type_id from permissions where role_id = '00000000-0000-0000-0000-000000000001' and ad_element_id = v_user_id and object_id= getGlobalIds('system') and object_type_id = 1);
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
 Create or replace FUNCTION CheckDBConnection() RETURNS SETOF integer IMMUTABLE
    AS $procedure$
 BEGIN
