@@ -141,7 +141,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
 
     public Version getcompatibility_version() {
         if (version == null) {
-            version = new Version(compatibilityVersion);
+            version = Version.getLatest();
         }
         return version;
     }

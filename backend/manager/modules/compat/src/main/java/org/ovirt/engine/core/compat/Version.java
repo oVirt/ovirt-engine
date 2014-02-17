@@ -65,6 +65,10 @@ public class Version implements Comparable<Version>, Serializable {
         return val.toString();
     }
 
+    public static Version getLatest() {
+        return ALL.get(ALL.size() -1);
+    }
+
     private static void appendVersionComponent(StringBuilder val, int versionNumber) {
         if (versionNumber > -1) {
             if (val.length() != 0) {
