@@ -10,12 +10,9 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVmFromCloudInitVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVmFromSysPrepVDSCommand;
@@ -41,21 +38,14 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                 command = initCreateVDSCommand(vm);
                 command.execute();
                 if (command.getVDSReturnValue().getSucceeded()) {
-                    vm.setInitialized(true);
                     saveSetInitializedToDb(vm.getId());
 
-                    TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                            new TransactionMethod<Object>() {
-                        @Override
-                        public Object runInTransaction() {
-                            vm.setRunOnVds(getVdsId());
-                            if (getParameters().isClearHibernationVolumes()) {
-                                vm.setHibernationVolHandle(StringUtils.EMPTY);
-                            }
-                            DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
-                            return null;
-                        }
-                    });
+                    vm.setInitialized(true);
+                    vm.setRunOnVds(getVdsId());
+                    if (getParameters().isClearHibernationVolumes()) {
+                        vm.setHibernationVolHandle(StringUtils.EMPTY);
+                    }
+                    DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
                 } else {
                     handleCommandResult(command);
                     ResourceManager.getInstance().RemoveAsyncRunningVm(getParameters().getVmId());
