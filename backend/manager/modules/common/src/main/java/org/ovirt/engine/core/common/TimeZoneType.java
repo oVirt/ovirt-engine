@@ -81,7 +81,7 @@ public enum TimeZoneType {
             generalTimeZones.put("Asia/Bangkok", "(GMT+07:00) SE Asia Standard Time");
             generalTimeZones.put("Asia/Singapore", "(GMT+08:00) Singapore Standard Time");
             generalTimeZones.put("Africa/Johannesburg", "(GMT+02:00) South Africa Standard Time");
-            generalTimeZones.put("Asia/Colombo", "(GMT+06:00) Sri Lanka Standard Time");
+            generalTimeZones.put("Asia/Colombo", "(GMT+05:30) Sri Lanka Standard Time");
             generalTimeZones.put("Asia/Taipei", "(GMT+08:00) Taipei Standard Time");
             generalTimeZones.put("Australia/Hobart", "(GMT+10:00) Tasmania Standard Time");
             generalTimeZones.put("Asia/Tokyo", "(GMT+09:00) Tokyo Standard Time");
@@ -118,7 +118,7 @@ public enum TimeZoneType {
             windowsTimeZones.put("Alaskan Standard Time", "(GMT-09:00) Alaskan Standard Time");
             windowsTimeZones.put("US Mountain Standard Time", "(GMT-07:00) US Mountain Standard Time");
             windowsTimeZones.put("Iran Standard Time", "(GMT+03:00) Iran Standard Time");
-            windowsTimeZones.put("Sri Lanka Standard Time", "(GMT+06:00) Sri Lanka Standard Time");
+            windowsTimeZones.put("Sri Lanka Standard Time", "(GMT+05:30) Sri Lanka Standard Time");
             windowsTimeZones.put("New Zealand Standard Time", "(GMT+12:00) New Zealand Standard Time");
             windowsTimeZones.put("Central Standard Time (Mexico)", "(GMT-06:00) Central Standard Time (Mexico)");
             windowsTimeZones.put("Arabic Standard Time", "(GMT+03:00) Arabic Standard Time");
