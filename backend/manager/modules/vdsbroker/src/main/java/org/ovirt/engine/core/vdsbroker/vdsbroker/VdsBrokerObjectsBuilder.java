@@ -594,19 +594,13 @@ public class VdsBrokerObjectsBuilder {
         vds.setUsageMemPercent(AssignIntValue(xmlRpcStruct, VdsProperties.mem_usage));
 
         // ------------- vds network statistics ---------------------
-        Map<String, Object> interfaces = (Map<String, Object>) xmlRpcStruct
-                .get(VdsProperties.NETWORK);
+        Map<String, Object> interfaces = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NETWORK);
         if (interfaces != null) {
             int networkUsage = 0;
+            Map<String, VdsNetworkInterface> nicsByName = Entities.entitiesByName(vds.getInterfaces());
             for (Entry<String, Object> entry : interfaces.entrySet()) {
-                VdsNetworkInterface iface = null;
-                for (VdsNetworkInterface tempInterface : vds.getInterfaces()) {
-                    if (tempInterface.getName().equals(entry.getKey())) {
-                        iface = tempInterface;
-                        break;
-                    }
-                }
-                if (iface != null) {
+                if (nicsByName.containsKey(entry.getKey())) {
+                    VdsNetworkInterface iface = nicsByName.get(entry.getKey());
                     iface.setVdsId(vds.getId());
                     Map<String, Object> dict = (Map<String, Object>) entry.getValue();
                     Double rx_rate = AssignDoubleValue(dict, VdsProperties.rx_rate);
