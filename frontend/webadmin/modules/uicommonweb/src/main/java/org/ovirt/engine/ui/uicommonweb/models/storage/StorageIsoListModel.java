@@ -112,19 +112,17 @@ public class StorageIsoListModel extends SearchableListModel
 
                 stopProgress();
 
-                if (returnValue == null || returnValue.getReturnValue() == null || !returnValue.getSucceeded()) {
-                    return;
+                ArrayList<RepoImage> repoImageList = new ArrayList<RepoImage>();
+                if (returnValue != null && returnValue.getReturnValue() != null && returnValue.getSucceeded()) {
+                    repoImageList = returnValue.getReturnValue();
+
+                    Collections.sort(repoImageList, new Comparator<RepoImage>() {
+                        @Override
+                        public int compare(RepoImage a, RepoImage b) {
+                            return a.getRepoImageId().compareToIgnoreCase(b.getRepoImageId());
+                        }
+                    });
                 }
-
-                @SuppressWarnings("unchecked")
-                ArrayList<RepoImage> repoImageList = (ArrayList<RepoImage>) returnValue.getReturnValue();
-
-                Collections.sort(repoImageList, new Comparator<RepoImage>() {
-                    @Override
-                    public int compare(RepoImage a, RepoImage b) {
-                        return a.getRepoImageId().compareToIgnoreCase(b.getRepoImageId());
-                    }
-                });
 
                 setItems(repoImageList);
                 setIsEmpty(repoImageList.isEmpty());
