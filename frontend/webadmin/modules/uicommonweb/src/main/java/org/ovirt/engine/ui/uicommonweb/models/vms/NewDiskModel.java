@@ -251,4 +251,10 @@ public class NewDiskModel extends AbstractDiskModel
     private boolean isSelectionsEmpty(ListModel listModel) {
         return listModel.getSelectedItems() == null || listModel.getSelectedItems().isEmpty();
     }
+
+    @Override
+    protected void updateVolumeType(StorageType storageType) {
+        getVolumeType().setSelectedItem(storageType.isBlockDomain() ? VolumeType.Preallocated : VolumeType.Sparse);
+        volumeType_SelectedItemChanged();
+    }
 }

@@ -156,4 +156,14 @@ public class EditDiskModel extends AbstractDiskModel
             getIsReadOnly().setIsChangable(false);
         }
     }
+
+    @Override
+    protected void updateStorageDomains(final StoragePool datacenter) {
+        // do nothing
+    }
+
+    @Override
+    protected void updateVolumeType(StorageType storageType) {
+        // do nothing
+    }
 }
