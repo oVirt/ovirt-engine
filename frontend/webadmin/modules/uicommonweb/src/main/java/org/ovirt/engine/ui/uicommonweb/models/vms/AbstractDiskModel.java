@@ -329,6 +329,8 @@ public abstract class AbstractDiskModel extends DiskModel
 
     protected abstract void setDefaultInterface();
 
+    protected abstract void updateVolumeType(StorageType storageType);
+
     protected boolean isEditEnabled() {
         return getIsFloating() || getIsNew() || getVm().isDown() || !getDisk().getPlugged();
     }
@@ -361,7 +363,7 @@ public abstract class AbstractDiskModel extends DiskModel
         updateDatacenters();
     }
 
-    private void updateStorageDomains(final StoragePool datacenter) {
+    protected void updateStorageDomains(final StoragePool datacenter) {
         AsyncDataProvider.getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -527,11 +529,6 @@ public abstract class AbstractDiskModel extends DiskModel
         setVolumeFormat(AsyncDataProvider.getDiskVolumeFormat(volumeType, storageType));
     }
 
-    private void setDefaultVolumeType(StorageType storageType) {
-        getVolumeType().setSelectedItem(storageType.isBlockDomain() ? VolumeType.Preallocated : VolumeType.Sparse);
-        volumeType_SelectedItemChanged();
-    }
-
     public void updateInterface(final Version clusterVersion) {
         if (getVm() != null) {
             AsyncDataProvider.isVirtioScsiEnabledForVm(new AsyncQuery(this, new INewAsyncCallback() {
@@ -641,7 +638,7 @@ public abstract class AbstractDiskModel extends DiskModel
         updateDatacenters();
     }
 
-    private void volumeType_SelectedItemChanged() {
+    protected void volumeType_SelectedItemChanged() {
         if (getVolumeType().getSelectedItem() == null || getDataCenter().getSelectedItem() == null
                 || getStorageDomain().getSelectedItem() == null) {
             return;
@@ -738,8 +735,8 @@ public abstract class AbstractDiskModel extends DiskModel
 
     private void storageDomain_SelectedItemChanged() {
         StorageDomain selectedStorage = (StorageDomain) getStorageDomain().getSelectedItem();
-        if (selectedStorage != null && getIsNew()) {
-            setDefaultVolumeType(selectedStorage.getStorageType());
+        if (selectedStorage != null) {
+            updateVolumeType(selectedStorage.getStorageType());
         }
         updateQuota((StoragePool) getDataCenter().getSelectedItem());
     }
