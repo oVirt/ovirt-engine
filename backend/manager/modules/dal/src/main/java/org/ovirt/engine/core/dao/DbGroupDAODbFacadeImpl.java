@@ -33,6 +33,38 @@ public class DbGroupDAODbFacadeImpl extends BaseDAODbFacade implements DbGroupDA
                        .addValue("external_id", externalId.getBytes()));
     }
 
+
+    @Override
+    public DbGroup getByIdOrExternalId(Guid id, String domain, ExternalId externalId) {
+        // Check if there is a user with the given internal identifier:
+        if (id != null) {
+            DbGroup existing = get(id);
+            if (existing != null) {
+                return existing;
+            }
+        }
+
+        // Check if there is an existing user for the given external identifier:
+        if (domain != null && externalId != null) {
+            DbGroup existing = getByExternalId(domain, externalId);
+            if (existing != null) {
+                return existing;
+            }
+        }
+
+        // In older versions of the engine the internal and external identifiers were the same, so we also need to check
+        // if the internal id is really an external id:
+        if (domain != null && id != null) {
+            externalId = ExternalId.fromHex(id.toString());
+            DbGroup existing = getByExternalId(domain, externalId);
+            if (existing != null) {
+                return existing;
+            }
+        }
+
+        // There is no such existing user:
+        return null;
+    }
     @Override
     public DbGroup getByName(String name) {
         return getCallsHandler().executeRead("GetGroupByName",

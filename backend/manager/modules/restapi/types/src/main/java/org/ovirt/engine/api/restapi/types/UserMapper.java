@@ -7,7 +7,10 @@ import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.authentication.DirectoryGroup;
 import org.ovirt.engine.core.authentication.DirectoryUser;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 public class UserMapper {
@@ -61,6 +64,36 @@ public class UserMapper {
             model.setDomain(dom);
         }
         return model;
+    }
+
+    @Mapping(from = User.class, to = DbUser.class)
+    public static DbUser map(User model, DbUser template) {
+        DbUser entity = template != null? template: new DbUser();
+        if (model.isSetName()) {
+            entity.setLoginName(model.getName());
+        }
+        if (model.isSetId()) {
+            String id = model.getId();
+            try {
+                entity.setId(GuidUtils.asGuid(id));
+            }
+            catch (MalformedIdException exception) {
+                // The identifier won't be a UUID if the user comes from /domains/{domain:id}/users.
+            }
+            if (!model.isSetExternalId()) {
+                entity.setExternalId(ExternalId.fromHex(id));
+            }
+        }
+        if (model.isSetExternalId()) {
+            entity.setExternalId(ExternalId.fromHex(model.getExternalId()));
+        }
+        if (model.isSetDomain()) {
+            Domain domain = model.getDomain();
+            if (domain.isSetName()) {
+                entity.setDomain(domain.getName());
+            }
+        }
+        return entity;
     }
 
 }

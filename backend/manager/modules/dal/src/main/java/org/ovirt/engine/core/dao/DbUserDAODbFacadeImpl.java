@@ -90,6 +90,38 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
     }
 
     @Override
+    public DbUser getByIdOrExternalId(Guid id, String domain, ExternalId externalId) {
+        // Check if there is a user with the given internal identifier:
+        if (id != null) {
+            DbUser existing = get(id);
+            if (existing != null) {
+                return existing;
+            }
+        }
+
+        // Check if there is an existing user for the given external identifier:
+        if (domain != null && externalId != null) {
+            DbUser existing = getByExternalId(domain, externalId);
+            if (existing != null) {
+                return existing;
+            }
+        }
+
+        // In older versions of the engine the internal and external identifiers were the same, so we also need to check
+        // if the internal id is really an external id:
+        if (domain != null && id != null) {
+            externalId = ExternalId.fromHex(id.toString());
+            DbUser existing = getByExternalId(domain, externalId);
+            if (existing != null) {
+                return existing;
+            }
+        }
+
+        // There is no such existing user:
+        return null;
+    }
+
+    @Override
     public List<DbUser> getAllForVm(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", id);

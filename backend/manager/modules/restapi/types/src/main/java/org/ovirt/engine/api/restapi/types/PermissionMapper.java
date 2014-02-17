@@ -27,11 +27,6 @@ public class PermissionMapper {
         if (model.isSetRole() && model.getRole().isSetId()) {
             entity.setrole_id(GuidUtils.asGuid(model.getRole().getId()));
         }
-        if (model.isSetUser() && model.getUser().isSetId()) {
-            entity.setad_element_id(GuidUtils.asGuid(model.getUser().getId()));
-        } else if (model.isSetGroup() && model.getGroup().isSetId()) {
-            entity.setad_element_id(GuidUtils.asGuid(model.getGroup().getId()));
-        }
         entity.setObjectId(map(model, template != null ? template.getObjectId() : null));
         entity.setObjectType(map(model, template != null ? template.getObjectType() : null));
         return entity;

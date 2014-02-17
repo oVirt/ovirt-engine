@@ -4,7 +4,10 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.core.authentication.DirectoryGroup;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GroupMapper {
@@ -34,6 +37,36 @@ public class GroupMapper {
             model.setDomain(dom);
         }
         return model;
+    }
+
+    @Mapping(from = Group.class, to = DbGroup.class)
+    public static DbGroup map(Group model, DbGroup template) {
+        DbGroup entity = template != null? template: new DbGroup();
+        if (model.isSetName()) {
+            entity.setName(model.getName());
+        }
+        if (model.isSetId()) {
+            String id = model.getId();
+            try {
+                entity.setId(GuidUtils.asGuid(id));
+            }
+            catch (MalformedIdException exception) {
+                // The identifier won't be a UUID if the group comes from /domains/{domain:id}/groups.
+            }
+            if (!model.isSetExternalId()) {
+                entity.setExternalId(ExternalId.fromHex(id));
+            }
+        }
+        if (model.isSetExternalId()) {
+            entity.setExternalId(ExternalId.fromHex(model.getExternalId()));
+        }
+        if (model.isSetDomain()) {
+            Domain domain = model.getDomain();
+            if (domain.isSetName()) {
+                entity.setDomain(domain.getName());
+            }
+        }
+        return entity;
     }
 
 }
