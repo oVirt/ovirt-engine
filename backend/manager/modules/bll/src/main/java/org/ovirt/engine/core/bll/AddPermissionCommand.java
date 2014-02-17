@@ -6,8 +6,10 @@ import java.util.List;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Permissions;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -84,54 +87,65 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         // Get the parameters:
         T parameters = getParameters();
 
-        // The user or group given in the parameters may haven't been added to
-        // the database yet, this will be the case if they don't have an
-        // internal identifier, if this is the case then they need to be
-        // added to the database now, before the permission:
+        // The user or group given in the parameters may haven't been added to the database yet, if this is the case
+        // then they need to be added to the database now, before the permission:
         DbUser user = parameters.getUser();
         if (user != null) {
-            user.setId(Guid.newGuid());
-            DbUser userFromDb = getDbUserDAO().getByExternalId(user.getDomain(), user.getExternalId());
-            if (userFromDb == null) {
-                getDbUserDAO().save(user);
-            } else {
-                user = userFromDb;
+            Guid id = user.getId();
+            String directory = user.getDomain();
+            ExternalId externalId = user.getExternalId();
+            DbUser existing = getDbUserDAO().getByIdOrExternalId(id, directory, externalId);
+            if (existing != null) {
+                user = existing;
+            }
+            else {
+                user = addUser(id, directory, externalId);
+                if (user == null) {
+                    setSucceeded(false);
+                    return;
+                }
             }
         }
         DbGroup group = parameters.getGroup();
         if (group != null) {
-            group.setId(Guid.newGuid());
-            DbGroup groupFromDb = getAdGroupDAO().getByExternalId(group.getDomain(), group.getExternalId());
-            if (groupFromDb == null) {
-                getAdGroupDAO().save(group);
-            } else {
-                group = groupFromDb;
+            Guid id = group.getId();
+            String directory = group.getDomain();
+            ExternalId externalId = group.getExternalId();
+            DbGroup existing = getAdGroupDAO().getByIdOrExternalId(id, directory, externalId);
+            if (existing != null) {
+                group = existing;
+            }
+            else {
+                group = addGroup(id, directory, externalId);
+                if (group == null) {
+                    setSucceeded(false);
+                    return;
+                }
             }
         }
 
-        // The identifier of the owner of the permission can come from the parameters directly or from the user/group
-        // objects:
-        Guid ownerId = parameters.getPermission().getad_element_id();
-        if (ownerId == null) {
-            if (user != null) {
-                ownerId = user.getId();
-            }
-            if (ownerId == null) {
-                if (group != null) {
-                    ownerId = group.getId();
-                }
-            }
+        // The identifier of the principal of the permission can come from the parameters directly or from the
+        // user/group objects:
+        Guid principalId;
+        if (user != null) {
+            principalId = user.getId();
+        }
+        else if (group != null) {
+            principalId = group.getId();
+        }
+        else {
+            principalId = parameters.getPermission().getad_element_id();
         }
 
         final Permissions paramPermission = parameters.getPermission();
 
         Permissions permission =
-                getPermissionDAO().getForRoleAndAdElementAndObject(paramPermission.getrole_id(), ownerId,
+                getPermissionDAO().getForRoleAndAdElementAndObject(paramPermission.getrole_id(), principalId,
                         paramPermission.getObjectId());
 
         if (permission == null) {
             paramPermission.setId(Guid.newGuid());
-            paramPermission.setad_element_id(ownerId);
+            paramPermission.setad_element_id(principalId);
 
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
@@ -185,4 +199,79 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         }
         return permissionsSubject;
     }
+
+    private DbUser addUser(Guid id, String directory, ExternalId externalId) {
+        // Try to add the user with the external id:
+        if (directory != null && externalId != null) {
+            DirectoryIdParameters parameters = new DirectoryIdParameters();
+            parameters.setDirectory(directory);
+            parameters.setId(externalId);
+            VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddUser, parameters);
+            if (result.getCanDoAction()) {
+                id = (Guid) result.getActionReturnValue();
+                if (id != null) {
+                    return getDbUserDAO().get(id);
+                }
+                return null;
+            }
+        }
+
+        // In older versions of the engine the internal id and external id were the same, thus we need to try again
+        // using the internal id as if it were an external id:
+        if (directory != null && id != null) {
+            externalId = ExternalId.fromHex(id.toString());
+            DirectoryIdParameters parameters = new DirectoryIdParameters();
+            parameters.setDirectory(directory);
+            parameters.setId(externalId);
+            VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddUser, parameters);
+            if (result.getCanDoAction()) {
+                id = (Guid) result.getActionReturnValue();
+                if (id != null) {
+                    return getDbUserDAO().get(id);
+                }
+                return null;
+            }
+        }
+
+        // There is no such user in the directory:
+        return null;
+    }
+
+    private DbGroup addGroup(Guid id, String directory, ExternalId externalId) {
+        // Try to add the user with the external id:
+        if (directory != null && externalId != null) {
+            DirectoryIdParameters parameters = new DirectoryIdParameters();
+            parameters.setDirectory(directory);
+            parameters.setId(externalId);
+            VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddGroup, parameters);
+            if (result.getCanDoAction()) {
+                id = (Guid) result.getActionReturnValue();
+                if (id != null) {
+                    return getAdGroupDAO().get(id);
+                }
+                return null;
+            }
+        }
+
+        // In older versions of the engine the internal id and external id were the same, thus we need to try again
+        // using the internal id as if it were an external id:
+        if (directory != null && id != null) {
+            externalId = ExternalId.fromHex(id.toString());
+            DirectoryIdParameters parameters = new DirectoryIdParameters();
+            parameters.setDirectory(directory);
+            parameters.setId(externalId);
+            VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddGroup, parameters);
+            if (result.getCanDoAction()) {
+                id = (Guid) result.getActionReturnValue();
+                if (id != null) {
+                    return getAdGroupDAO().get(id);
+                }
+                return null;
+            }
+        }
+
+        // There is no such group in the directory:
+        return null;
+    }
+
 }

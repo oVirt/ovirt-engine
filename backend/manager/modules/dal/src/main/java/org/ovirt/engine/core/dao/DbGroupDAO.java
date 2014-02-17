@@ -31,6 +31,17 @@ public interface DbGroupDAO extends DAO, SearchDAO<DbGroup> {
     DbGroup getByExternalId(String domain, ExternalId externalId);
 
     /**
+     * Retrieves a group that matches either the internal or external identifiers given.
+     *
+     * @param id the internal identifier
+     * @param domain the name of the domain
+     * @param externalId the external identifier
+     * @return a reference to the group or <code>null</code> if no such group
+     *   can be found in the database
+     */
+    DbGroup getByIdOrExternalId(Guid id, String domain, ExternalId externalId);
+
+    /**
      * Retrieves the group with the specified name.
      *
      * @param name

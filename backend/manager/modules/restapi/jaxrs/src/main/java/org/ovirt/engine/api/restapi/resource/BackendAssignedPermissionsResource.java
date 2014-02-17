@@ -17,6 +17,8 @@ import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.PermissionResource;
+import org.ovirt.engine.api.restapi.types.GroupMapper;
+import org.ovirt.engine.api.restapi.types.UserMapper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -100,11 +102,9 @@ public class BackendAssignedPermissionsResource
                            isPrincipalSubCollection()
                            ? new String[] {"role.id", "dataCenter|cluster|host|storageDomain|vm|vmpool|template.id"}
                            : new String[] {"role.id", "user|group.id"});
-        Permissions entity = map(permission, getPermissionsTemplate(permission));
-        return performCreate(VdcActionType.AddPermission,
-                               getPrincipal(entity, permission),
-                               new QueryIdResolver<Guid>(VdcQueryType.GetPermissionById,
-                                                   IdQueryParameters.class));
+        PermissionsOperationsParameters parameters = getParameters(permission);
+        QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetPermissionById, IdQueryParameters.class);
+        return performCreate(VdcActionType.AddPermission, parameters, resolver);
     }
 
     @Override
@@ -189,27 +189,67 @@ public class BackendAssignedPermissionsResource
     }
 
     /**
-     * @pre completeness of "user|group.id" already validated if not
-     * user sub-collection
+     * Find the user or group that the permissions applies to.
+     *
+     * @param permission the incoming permission model
+     * @return the user or group that the permission applies to
      */
-    protected PermissionsOperationsParameters getPrincipal(Permissions entity, Permission permission) {
-        PermissionsOperationsParameters ret = null;
-        if (isUserSubCollection() || permission.isSetUser()) {
-            DbUser user = new DbUser();
-            user.setId(isUserSubCollection()
-                           ? targetId
-                           : asGuid(permission.getUser().getId()));
-            user.setDomain(getCurrent().get(Principal.class).getDomain());
-            ret = new PermissionsOperationsParameters(entity, user);
-        } else if (isGroupSubCollection() || permission.isSetGroup()) {
-            DbGroup group = new DbGroup();
-            group.setId(isGroupSubCollection()
-                        ? targetId
-                        : asGuid(permission.getGroup().getId()));
-            group.setDomain(getCurrent().get(Principal.class).getDomain());
-            ret = new PermissionsOperationsParameters(entity, group);
+    private Object getPrincipal(Permission permission) {
+        if (isUserSubCollection()) {
+            DbUser dbUser = new DbUser();
+            dbUser.setId(targetId);
+            return dbUser;
         }
-        return ret;
+        if (isGroupSubCollection()) {
+            DbGroup dbGroup = new DbGroup();
+            dbGroup.setId(targetId);
+            return dbGroup;
+        }
+        if (permission.isSetUser()) {
+            User user = permission.getUser();
+            DbUser dbUser = UserMapper.map(user, null);
+            if (dbUser.getDomain() == null) {
+                dbUser.setDomain(getCurrent().get(Principal.class).getDomain());
+            }
+            return dbUser;
+        }
+        if (permission.isSetGroup()) {
+            Group group = permission.getGroup();
+            DbGroup dbGroup = GroupMapper.map(group, null);
+            if (dbGroup.getDomain() == null) {
+                dbGroup.setDomain(getCurrent().get(Principal.class).getDomain());
+            }
+            return dbGroup;
+        }
+        return null;
+    }
+
+    /**
+     * Create the parameters for the permissions operation.
+     *
+     * @param model the incoming permission
+     * @return the parameters for the operation
+     */
+    private PermissionsOperationsParameters getParameters(Permission model) {
+        Permissions entity = map(model, null);
+        if (!isPrincipalSubCollection()) {
+            entity.setObjectId(targetId);
+            entity.setObjectType(objectType);
+        }
+        PermissionsOperationsParameters parameters = new PermissionsOperationsParameters();
+        parameters.setPermission(entity);
+        Object principal = getPrincipal(model);
+        if (principal instanceof DbUser) {
+            DbUser user = (DbUser) principal;
+            entity.setad_element_id(user.getId());
+            parameters.setUser(user);
+        }
+        if (principal instanceof DbGroup) {
+            DbGroup group = (DbGroup) principal;
+            entity.setad_element_id(group.getId());
+            parameters.setGroup(group);
+        }
+        return parameters;
     }
 
     @Override
@@ -221,25 +261,6 @@ public class BackendAssignedPermissionsResource
             permission.setGroup(new Group());
             permission.getGroup().setId(permission.getUser().getId());
             permission.setUser(null);
-        }
-        return permission;
-    }
-
-    protected Permissions getPermissionsTemplate(Permission perm) {
-        Permissions permission = new Permissions();
-        // allow the target Id to be implicit in the client-provided
-        // representation
-        if (isPrincipalSubCollection()) {
-            permission.setad_element_id(targetId);
-            permission.setObjectId(getMapper(Permission.class, Guid.class).map(perm, null));
-        } else {
-            if (perm.getUser()!=null) {
-                permission.setad_element_id(asGuid(perm.getUser().getId()));
-            } else { //if user is null, group is not null; this was validated before
-                permission.setad_element_id(asGuid(perm.getGroup().getId()));
-            }
-            permission.setObjectId(targetId);
-            permission.setObjectType(objectType);
         }
         return permission;
     }

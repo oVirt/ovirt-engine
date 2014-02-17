@@ -16,8 +16,6 @@ public class PermissionMapperTest extends AbstractInvertibleMappingTest<Permissi
         assertEquals(model.getId(), transform.getId());
         assertTrue(transform.isSetRole());
         assertEquals(model.getRole().getId(), transform.getRole().getId());
-        assertTrue(transform.isSetUser());
-        assertEquals(model.getUser().getId(), transform.getUser().getId());
         assertTrue(transform.isSetDataCenter());
         assertEquals(model.getDataCenter().getId(), transform.getDataCenter().getId());
     }
