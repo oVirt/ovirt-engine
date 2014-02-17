@@ -74,6 +74,10 @@ USAGE:
  OVIRT_ENGINE_DATABASE_PASSWORD
      Database password as if provided by --db-password=pass option.
 
+ Wiki
+
+ See http://www.ovirt.org/Ovirt-engine-backup for more info.
+
  To create a new user/database:
 
  create role <user> with login encrypted password '<password>';
@@ -324,7 +328,7 @@ verifyConnection() {
 		-d "${ENGINE_DB_DATABASE}" \
 		-c "select 1" \
 		>> "${LOG}" 2>&1 \
-		|| logdie "Can't connect to the database"
+		|| logdie "Can't connect to the database. Please see '${0} --help'."
 
 	PGPASSFILE="${MYPGPASS}" pg_dump \
 		-U "${ENGINE_DB_USER}" \
