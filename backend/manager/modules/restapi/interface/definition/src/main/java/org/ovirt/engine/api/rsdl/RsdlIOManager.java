@@ -42,7 +42,6 @@ public class RsdlIOManager {
     }
 
     public static void copy(InputStream input, OutputStream output) throws IOException {
-        System.out.println("HERE!");
         try {
             byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
             int n = 0;
