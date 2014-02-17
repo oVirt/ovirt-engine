@@ -102,6 +102,9 @@ public class ClusterMapper {
         if (model.isSetDisplay() && model.getDisplay().isSetProxy()) {
             entity.setSpiceProxy("".equals(model.getDisplay().getProxy()) ? null : model.getDisplay().getProxy());
         }
+        if (model.isSetSerialNumber()) {
+            SerialNumberMapper.copySerialNumber(model.getSerialNumber(), entity);
+        }
 
         return entity;
     }
@@ -147,6 +150,9 @@ public class ClusterMapper {
             Display display = new Display();
             display.setProxy(entity.getSpiceProxy());
             model.setDisplay(display);
+        }
+        if (entity.getSerialNumberPolicy() != null) {
+            model.setSerialNumber(SerialNumberMapper.map(entity, null));
         }
 
         return model;

@@ -6,6 +6,7 @@ import org.ovirt.engine.api.model.ErrorHandling;
 import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
+import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -26,6 +27,7 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         SchedulingPolicy policy = new SchedulingPolicy();
         policy.setPolicy("power_saving");
         model.setSchedulingPolicy(policy);
+        model.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
         return model;
     }
 
@@ -55,6 +57,8 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         assertEquals(model.isBallooningEnabled(), transform.isBallooningEnabled());
         assertEquals(model.getKsm().isEnabled(), transform.getKsm().isEnabled());
         assertEquals(model.getDisplay().getProxy(), transform.getDisplay().getProxy());
+        assertEquals(model.getSerialNumber().getPolicy(), transform.getSerialNumber().getPolicy());
+        assertEquals(model.getSerialNumber().getValue(), transform.getSerialNumber().getValue());
     }
 
     private Mapper<Cluster, VDSGroup> getMapper() {

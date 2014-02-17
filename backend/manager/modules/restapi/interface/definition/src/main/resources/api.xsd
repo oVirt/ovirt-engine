@@ -645,6 +645,7 @@
           <xs:element ref="stages" minOccurs="0" />
           <xs:element ref="sso_methods" minOccurs="0"/>
           <xs:element ref="architecture_capabilities" minOccurs="0"/>
+          <xs:element ref="serial_number_policies" minOccurs="0" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1089,6 +1090,20 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="serial_number_policies" type="SerialNumberPolicies" />
+
+  <xs:complexType name="SerialNumberPolicies">
+    <xs:sequence>
+      <xs:element name="serial_number_policy" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="SerialNumberPolicies" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
   <!-- Common to all resources -->
 
   <xs:complexType name="ActionableResource">
@@ -1327,6 +1342,7 @@
           <xs:element name="ballooning_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="display" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="ksm" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="serial_number" minOccurs="0" maxOccurs="1" />
           <!-- Also a rel="networks" link -->
         </xs:sequence>
       </xs:extension>
@@ -2354,6 +2370,7 @@
           <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
           <!-- also rel="cdroms/disks/nics/watchdogs" links, see Devices below -->
           <xs:element name="version" type="TemplateVersion" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="serial_number" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2627,6 +2644,15 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="serial_number" type="SerialNumber" />
+
+  <xs:complexType name="SerialNumber">
+    <xs:sequence>
+      <xs:element name="policy" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:element name="vms" type="VMs"/>
   <xs:element name="vm" type="VM"/>
 
@@ -2697,6 +2723,7 @@
           <xs:element ref="reported_devices" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="watchdogs" minOccurs="0" maxOccurs="1"/>
           <xs:element name="use_latest_template_version" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="serial_number" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -3323,7 +3350,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-<!-- RSDL -->
+  <!-- RSDL -->
 
   <xs:element name="url" type="Url"/>
 
@@ -3734,7 +3761,7 @@
     </xs:sequence>
   </xs:complexType>
 
- <xs:element name="content_types" type="ContentTypes"/>
+  <xs:element name="content_types" type="ContentTypes"/>
   <xs:complexType name="ContentTypes">
     <xs:sequence>
       <xs:element name="content_type" type="xs:string" minOccurs="0" maxOccurs="unbounded">
@@ -3843,13 +3870,13 @@
    </xs:sequence>
   </xs:complexType>
 
-<xs:element name="jobs" type="Jobs"/>
-<xs:element name="job" type="Job"/>
+  <xs:element name="jobs" type="Jobs"/>
+  <xs:element name="job" type="Job"/>
 
-<xs:element name="steps" type="Steps"/>
-<xs:element name="step" type="Step"/>
+  <xs:element name="steps" type="Steps"/>
+  <xs:element name="step" type="Step"/>
 
- <xs:element name="step_types" type="StepTypes"/>
+  <xs:element name="step_types" type="StepTypes"/>
   <xs:complexType name="StepTypes">
     <xs:sequence>
       <xs:element name="step_type" type="xs:string"  minOccurs="0" maxOccurs="unbounded">
@@ -3886,7 +3913,7 @@
   </xs:complexType>
 
 
-<xs:complexType name="Steps">
+  <xs:complexType name="Steps">
     <xs:complexContent>
       <xs:extension base="BaseResources">
         <xs:sequence>
@@ -3901,7 +3928,7 @@
     </xs:complexContent>
 </xs:complexType>
 
-<xs:complexType name="Job">
+  <xs:complexType name="Job">
     <xs:annotation>
       <xs:appinfo>
          <jaxb:class name="Job"/>
@@ -3922,7 +3949,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-<xs:complexType name="Jobs">
+  <xs:complexType name="Jobs">
     <xs:complexContent>
       <xs:extension base="BaseResources">
         <xs:sequence>

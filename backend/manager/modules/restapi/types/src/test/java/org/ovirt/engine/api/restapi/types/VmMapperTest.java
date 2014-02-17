@@ -13,6 +13,7 @@ import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.GuestNicConfiguration;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Payload;
+import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.VCpuPin;
 import org.ovirt.engine.api.model.VM;
@@ -94,6 +95,7 @@ public class VmMapperTest extends
         for (GuestNicConfiguration guestNic : from.getInitialization().getNicConfigurations().getNicConfigurations()) {
             guestNic.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class).value());
         }
+        from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
         return from;
     }
 
@@ -140,6 +142,8 @@ public class VmMapperTest extends
         assertEquals(model.isDeleteProtected(), transform.isDeleteProtected());
         assertEquals(model.isTunnelMigration(), transform.isTunnelMigration());
         assertEquals(model.getMigrationDowntime(), transform.getMigrationDowntime());
+        assertEquals(model.getSerialNumber().getPolicy(), transform.getSerialNumber().getPolicy());
+        assertEquals(model.getSerialNumber().getValue(), transform.getSerialNumber().getValue());
     }
 
     @Test

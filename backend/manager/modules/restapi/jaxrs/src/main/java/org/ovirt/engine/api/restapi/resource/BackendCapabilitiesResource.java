@@ -75,6 +75,8 @@ import org.ovirt.engine.api.model.SchedulingPolicies;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.api.model.ScsiGenericIoOptions;
+import org.ovirt.engine.api.model.SerialNumberPolicies;
+import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.SnapshotStatus;
 import org.ovirt.engine.api.model.SnapshotStatuses;
 import org.ovirt.engine.api.model.Stages;
@@ -170,6 +172,12 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             minor = 4;
         }
     };
+    public static final Version VERSION_3_5 = new Version() {
+        {
+            major = 3;
+            minor = 5;
+        }
+    };
     private static Version currentVersion = null;
 
     @Override
@@ -253,6 +261,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addSnapshotStatuses(version, SnapshotStatus.values());
         addPayloadEncodings(version, PayloadEncoding.values());
         addArchitectureCapabilities(version);
+        addSerialNumberPolicies(version, SerialNumberPolicy.values());
 
         // External tasks types
         addStepEnumTypes(version, StepEnum.values());
@@ -807,6 +816,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             version.setAuthenticationMethods(new org.ovirt.engine.api.model.AuthenticationMethod());
             for (AuthenticationMethod authType : values) {
                 version.getAuthenticationMethods().getAuthenticationMethod().add(authType.value());
+            }
+        }
+    }
+
+    private void addSerialNumberPolicies(VersionCaps version, SerialNumberPolicy[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_5)) {
+            version.setSerialNumberPolicies(new SerialNumberPolicies());
+            for (SerialNumberPolicy mode : values) {
+                version.getSerialNumberPolicies().getSerialNumberPolicies().add(mode.value());
             }
         }
     }

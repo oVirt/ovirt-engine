@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.DisplayType;
+import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
@@ -37,6 +38,7 @@ public class TemplateMapperTest
             from.getCpu().getTopology().setCores(MappingTestHelper.rand(100));
         }
         from.setTimezone("Australia/Darwin");
+        from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
         return from;
     }
 
@@ -81,5 +83,7 @@ public class TemplateMapperTest
         assertEquals(model.getMigrationDowntime(), transform.getMigrationDowntime());
         assertEquals(model.getVersion().getVersionName(), transform.getVersion().getVersionName());
         assertEquals(model.getVersion().getBaseTemplate().getId(), transform.getVersion().getBaseTemplate().getId());
+        assertEquals(model.getSerialNumber().getPolicy(), transform.getSerialNumber().getPolicy());
+        assertEquals(model.getSerialNumber().getValue(), transform.getSerialNumber().getValue());
     }
 }

@@ -122,6 +122,8 @@ public class VmMapper {
         staticVm.setVncKeyboardLayout(entity.getVncKeyboardLayout());
         staticVm.setMigrationDowntime(entity.getMigrationDowntime());
         staticVm.setVmInit(entity.getVmInit());
+        staticVm.setSerialNumberPolicy(entity.getSerialNumberPolicy());
+        staticVm.setCustomSerialNumber(entity.getCustomSerialNumber());
         return staticVm;
     }
 
@@ -300,6 +302,11 @@ public class VmMapper {
                 staticVm.getVmInit().setDomain(vm.getDomain().getName());
             }
         }
+
+        if (vm.isSetSerialNumber()) {
+            SerialNumberMapper.copySerialNumber(vm.getSerialNumber(), staticVm);
+        }
+
         return staticVm;
     }
 
@@ -527,6 +534,9 @@ public class VmMapper {
                 domain.setName(entity.getVmInit().getDomain());
                 model.setDomain(domain);
             }
+        }
+        if (entity.getSerialNumberPolicy() != null) {
+            model.setSerialNumber(SerialNumberMapper.map(entity.getStaticData(), null));
         }
         return model;
     }

@@ -176,6 +176,10 @@ public class TemplateMapper {
             // numbering is generated in the backend, hence even if user specified version number, we ignore it.
         }
 
+        if (model.isSetSerialNumber()) {
+            SerialNumberMapper.copySerialNumber(model.getSerialNumber(), entity);
+        }
+
         return entity;
     }
 
@@ -296,6 +300,9 @@ public class TemplateMapper {
         if (model.isSetMigrationDowntime()) {
             staticVm.setMigrationDowntime(mapMinusOneToNull(model.getMigrationDowntime()));
         }
+        if (model.isSetSerialNumber()) {
+            SerialNumberMapper.copySerialNumber(model.getSerialNumber(), staticVm);
+        }
         return staticVm;
     }
 
@@ -395,6 +402,10 @@ public class TemplateMapper {
             baseTemplate.setId(entity.getBaseTemplateId().toString());
             version.setBaseTemplate(baseTemplate);
             model.setVersion(version);
+        }
+
+        if (entity.getSerialNumberPolicy() != null) {
+            model.setSerialNumber(SerialNumberMapper.map(entity, null));
         }
 
         return model;
