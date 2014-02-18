@@ -111,6 +111,8 @@ public class NicMapper {
             return 2;
         case VIRTIO:
             return 3;
+        case SPAPR_VLAN:
+            return 4;
         default:
             return -1;
         }
@@ -127,6 +129,8 @@ public class NicMapper {
             return NicInterface.E1000.value();
         case 3:
             return NicInterface.VIRTIO.value();
+        case 4:
+            return NicInterface.SPAPR_VLAN.value();
         default:
             return null;
         }
