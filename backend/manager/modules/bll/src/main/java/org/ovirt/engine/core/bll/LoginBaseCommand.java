@@ -22,6 +22,8 @@ import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -60,10 +62,13 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
         setSucceeded(true);
     }
-
-    @Override
+   @Override
     protected boolean canDoAction() {
-        return isUserCanBeAuthenticated() && attachUserToSession();
+        boolean result = isUserCanBeAuthenticated() && attachUserToSession();
+        if (! result) {
+            logAutheticationFailure();
+        }
+        return result;
     }
 
     protected boolean attachUserToSession() {
@@ -220,5 +225,11 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 // DbFacade.getInstance().updateLastAdminCheckStatus(dbUser.getId());
             }
         });
+    }
+
+    protected void logAutheticationFailure() {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.setUserName(getParameters().getLoginName());
+        AuditLogDirector.log(logable, AuditLogType.USER_VDC_LOGIN_FAILED);
     }
 }
