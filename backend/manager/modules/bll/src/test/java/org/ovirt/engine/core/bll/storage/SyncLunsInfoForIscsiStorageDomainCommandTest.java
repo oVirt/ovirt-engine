@@ -19,7 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 @RunWith(MockitoJUnitRunner.class)
 public class SyncLunsInfoForIscsiStorageDomainCommandTest {
 
-    private SyncLunsInfoForIscsiStorageDomainCommand<StorageDomainParametersBase> command;
+    private SyncLunsInfoForBlockStorageDomainCommand<StorageDomainParametersBase> command;
     private StorageDomainParametersBase parameters;
 
     @Before
@@ -27,7 +27,7 @@ public class SyncLunsInfoForIscsiStorageDomainCommandTest {
         parameters = new StorageDomainParametersBase(Guid.newGuid());
         parameters.setVdsId(Guid.newGuid());
 
-        command = spy(new SyncLunsInfoForIscsiStorageDomainCommand<StorageDomainParametersBase>(parameters));
+        command = spy(new SyncLunsInfoForBlockStorageDomainCommand<StorageDomainParametersBase>(parameters));
     }
 
     @Test

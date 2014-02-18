@@ -20,9 +20,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  */
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class SyncLunsInfoForIscsiStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
+public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
 
-    public SyncLunsInfoForIscsiStorageDomainCommand(T parameters) {
+    public SyncLunsInfoForBlockStorageDomainCommand(T parameters) {
         super(parameters);
         setVdsId(parameters.getVdsId());
     }
