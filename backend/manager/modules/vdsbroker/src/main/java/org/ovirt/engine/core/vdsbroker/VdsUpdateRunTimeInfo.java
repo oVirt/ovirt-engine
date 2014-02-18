@@ -1829,9 +1829,13 @@ public class VdsUpdateRunTimeInfo {
         Integer memCommited = _vds.getGuestOverhead();
         int vmsCoresCount = 0;
         for (VM vm : _vmDict.values()) {
-            memCommited += vm.getVmMemSizeMb();
-            memCommited += _vds.getGuestOverhead();
-            vmsCoresCount += vm.getNumOfCpus();
+            // VMs' pending resources are cleared in powering up, so in launch state
+            // we shouldn't include them as committed.
+            if (vm.getStatus() != VMStatus.WaitForLaunch) {
+                memCommited += vm.getVmMemSizeMb();
+                memCommited += _vds.getGuestOverhead();
+                vmsCoresCount += vm.getNumOfCpus();
+            }
         }
         if (memCommited == null || !memCommited.equals(_vds.getMemCommited())) {
             _vds.setMemCommited(memCommited);
