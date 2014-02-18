@@ -965,7 +965,11 @@ public enum AuditLogType {
 
     // Hosted Engine
     USER_SET_HOSTED_ENGINE_MAINTENANCE(10450),
-    USER_FAILED_TO_SET_HOSTED_ENGINE_MAINTENANCE(10451, AuditLogSeverity.ERROR);
+    USER_FAILED_TO_SET_HOSTED_ENGINE_MAINTENANCE(10451, AuditLogSeverity.ERROR),
+
+    // External scheduler
+    EXTERNAL_SCHEDULER_PLUGIN_ERROR(10500, AuditLogSeverity.ERROR),
+    EXTERNAL_SCHEDULER_ERROR(10501, AuditLogSeverity.ERROR);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are suppressed.

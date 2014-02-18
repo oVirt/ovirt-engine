@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.scheduling.external;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -72,7 +71,6 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
             List<Guid> hostIDs,
             Guid vmID,
             Map<String, String> propertiesMap) {
-
         try {
             // Do not call the scheduler when there is no operation requested from it
             if (filterNames.isEmpty()) {
@@ -81,8 +79,8 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
 
             XmlRpcClient client = new XmlRpcClient();
             client.setConfig(config);
-            Object result = client.execute(FILTER, createFilterArgs(filterNames, hostIDs, vmID, propertiesMap));
-            return parseFilterResults(result);
+            Object xmlRpcStruct = client.execute(FILTER, createFilterArgs(filterNames, hostIDs, vmID, propertiesMap));
+            return ExternalSchedulerBrokerObjectBuilder.getFilteringResult(xmlRpcStruct).getHosts();
 
         } catch (XmlRpcException e) {
             log.error("Could not communicate with the external scheduler while filtering", e);
@@ -116,19 +114,6 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
         return sentObject;
     }
 
-    private List<Guid> parseFilterResults(Object result) {
-        if (!(result instanceof Object[])) {
-            log.error("External scheduler error, malformed filter results");
-            return null;
-        }
-        // Its a list of host IDs
-        List<Guid> retValue = new LinkedList<Guid>();
-        for (Object hostID : (Object[]) result) {
-            retValue.add(new Guid(hostID.toString()));
-        }
-        return retValue;
-    }
-
     @Override
     public List<Pair<Guid, Integer>> runScores(List<Pair<String, Integer>> scoreNameAndWeight,
             List<Guid> hostIDs,
@@ -143,7 +128,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
             XmlRpcClient client = new XmlRpcClient();
             client.setConfig(config);
             Object result = client.execute(SCORE, createScoreArgs(scoreNameAndWeight, hostIDs, vmID, propertiesMap));
-            return parseScoreResults(result);
+            return ExternalSchedulerBrokerObjectBuilder.getScoreResult(result).getHosts();
 
         } catch (XmlRpcException e) {
             log.error("Could not communicate with the external scheduler while running weight modules", e);
@@ -179,27 +164,6 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
         return sentObject;
     }
 
-    private List<Pair<Guid, Integer>> parseScoreResults(Object result) {
-        if (!(result instanceof Object[])) {
-            log.error("External scheduler error, malformed score results");
-            return null;
-        }
-        List<Pair<Guid, Integer>> retValue = new LinkedList<Pair<Guid, Integer>>();
-        // Its a list of (hostID,score) pairs
-        for (Object hostsIDAndScore : (Object[]) result) {
-            if (!(hostsIDAndScore instanceof Object[]) || ((Object[]) hostsIDAndScore).length != 2) {
-                // some kind of error
-                log.error("External scheduler error, malformed score results");
-                return null;
-            }
-            Object[] castedHostsIDAndScore = (Object[]) hostsIDAndScore;
-            Pair<Guid, Integer> pair = new Pair<Guid, Integer>();
-            pair.setFirst(new Guid(castedHostsIDAndScore[0].toString()));
-            pair.setSecond((Integer) castedHostsIDAndScore[1]);
-            retValue.add(pair);
-        }
-        return retValue;
-    }
 
     @Override
     public Pair<List<Guid>, Guid> runBalance(String balanceName, List<Guid> hostIDs, Map<String, String> propertiesMap) {
@@ -208,7 +172,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
             client.setConfig(config);
             Object result =
                     client.execute(BALANCE, createBalanceArgs(balanceName, hostIDs, propertiesMap));
-            return parseBalanceResults(result);
+            return ExternalSchedulerBrokerObjectBuilder.getBalanceResults(result).getResult();
 
         } catch (XmlRpcException e) {
             log.error("Could not communicate with the external scheduler while balancing", e);
@@ -231,27 +195,5 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
         sentObject[2] = propertiesMap;
 
         return sentObject;
-    }
-
-    private Pair<List<Guid>, Guid> parseBalanceResults(Object result) {
-        if (!(result instanceof Object[])) {
-            log.error("External scheduler error, malformed balance results");
-            return null;
-        }
-        Object[] castedResult = (Object[]) result;
-
-        List<Guid> hostIDs = new LinkedList<Guid>();
-        for (Object hostID : (Object[]) castedResult[1]) {
-            hostIDs.add(new Guid(hostID.toString()));
-        }
-        Pair<List<Guid>, Guid> retValue = new Pair<List<Guid>, Guid>();
-        retValue.setFirst(hostIDs);
-        if (castedResult[0].toString().isEmpty()) {
-            return null;
-        } else {
-            retValue.setSecond(new Guid(castedResult[0].toString()));
-        }
-
-        return retValue;
     }
 }
