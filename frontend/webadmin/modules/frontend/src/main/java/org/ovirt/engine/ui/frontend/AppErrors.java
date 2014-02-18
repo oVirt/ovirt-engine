@@ -79,7 +79,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Template's Image is invalid (temporarily).")
     String VM_TEMPLATE_IMAGE_IS_ILLEGAL();
 
-    @DefaultStringValue("Template's Image is located only on single domain.")
+    @DefaultStringValue("Cannot ${action} ${type}. The image is the only remaining copy of a Template disk.")
     String VM_TEMPLATE_IMAGE_LAST_DOMAIN();
 
     @DefaultStringValue("VM Name cannot be empty.")
