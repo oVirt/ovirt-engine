@@ -70,7 +70,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                     // Synchronize LUN details comprising the storage domain with the DB
                     StorageDomainParametersBase parameters = new StorageDomainParametersBase(storageDomain.getId());
                     parameters.setVdsId(vdsId);
-                    Backend.getInstance().runInternalAction(VdcActionType.SyncLunsInfoForIscsiStorageDomain, parameters);
+                    Backend.getInstance().runInternalAction(VdcActionType.SyncLunsInfoForBlockStorageDomain, parameters);
                 }
             }
         }
