@@ -915,7 +915,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                                     tableNameWithOutTags, primeryKey,
                                     syntax.getSearchFrom(), innerQuery);
                 }
-            } else if (primeryKey.equals("vmt_guid") && wherePhrase.length() == 0) {
+            } else if ((primeryKey.equals("vmt_guid") || primeryKey.equals("vm_pool_id")) && wherePhrase.length() == 0) {
                 inQuery = StringFormat
                         .format("(SELECT * FROM %1$s ",
                                 tableNameWithOutTags);
