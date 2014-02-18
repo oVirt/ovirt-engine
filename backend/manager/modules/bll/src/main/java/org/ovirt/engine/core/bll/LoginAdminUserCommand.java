@@ -24,6 +24,9 @@ public class LoginAdminUserCommand<T extends LoginUserParameters> extends LoginU
                 autheticated = attachUserToSession();
             }
         }
+        if (! autheticated) {
+            logAutheticationFailure();
+        }
         return autheticated;
     }
 }
