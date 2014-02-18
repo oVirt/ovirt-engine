@@ -439,7 +439,7 @@ class OvirtUtils(base.Base):
             dbenvkeys=self._dbenvkeys,
         )
 
-        if not statement.execute(
+        if statement.execute(
             statement="""
                 select count(*)
                 from pg_language
@@ -450,7 +450,7 @@ class OvirtUtils(base.Base):
             ),
             ownConnection=True,
             transaction=False,
-        ):
+        )[0]['count'] == 0:
             statement.execute(
                 statement=(
                     """
