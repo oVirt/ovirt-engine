@@ -783,7 +783,6 @@ Create or replace FUNCTION GetAllFromVmStaticByStoragePoolId(v_sp_id uuid) RETUR
 BEGIN
 RETURN QUERY SELECT vm_static.*
    FROM vm_static INNER JOIN
-        vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid INNER JOIN
         vds_groups ON vm_static.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN
         storage_pool ON vm_static.vds_group_id = vds_groups.vds_group_id
         and vds_groups.storage_pool_id = storage_pool.id
