@@ -182,8 +182,11 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             }
             // decreasing of compatibility version is not allowed
             else if (getStoragePool().getcompatibility_version().compareTo(_oldStoragePool.getcompatibility_version()) < 0) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+                // Enable to reduce compatibility version if DC has no clusters
+                if (getVdsGroupDAO().getAllForStoragePool(getStoragePoolId()).size() > 0) {
+                    returnValue = false;
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+                }
             } else {
                 // Check all clusters has at least the same compatibility version.
                 returnValue = checkAllClustersLevel();
