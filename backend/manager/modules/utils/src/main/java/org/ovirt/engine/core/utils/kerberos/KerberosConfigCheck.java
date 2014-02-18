@@ -15,7 +15,6 @@ import javax.security.auth.login.LoginException;
 
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.ldap.LdapProviderType;
-import org.ovirt.engine.core.utils.CLIParser;
 
 /**
  * Utility to verify Kerberos installation
@@ -46,33 +45,6 @@ public class KerberosConfigCheck {
         this(null, null);
     }
 
-    // This function gets the username and adjusts it doing the following:
-    // 1. If the username contains @, for example:
-    // user@domain, it returns user@DOMAIN
-    // 2. If the username doesn't contain @ it returns the input user name
-    // 3. For inputs like "@", "user@" and @domain it just returns the input
-    private static String adjustUserName(String userName) {
-        String returnUserName = userName;
-
-        if (userName.contains("@")) {
-            String[] parts = userName.split("@");
-            int numberOfParts = parts.length;
-
-            switch (numberOfParts) {
-            case 1:
-                returnUserName = parts[0];
-                break;
-            case 2:
-                returnUserName = parts[0] + '@' + parts[1].toUpperCase();
-                break;
-            default:
-                returnUserName = userName;
-                break;
-            }
-        }
-
-        return returnUserName;
-    }
     /**
      * JAAS callback handler. JAAS uses this class during login - it provides an array of callbacks (including the
      * NameCallback and PasswordCallback) It is the responsibility of the implementor of CallbackHandler to set the user
@@ -87,6 +59,7 @@ public class KerberosConfigCheck {
             this.password = password;
         }
 
+        @Override
         public void handle(Callback[] callbacks) throws java.io.IOException, UnsupportedCallbackException {
             for (int i = 0; i < callbacks.length; i++) {
                 if (callbacks[i] instanceof NameCallback) {
@@ -101,24 +74,6 @@ public class KerberosConfigCheck {
                 }
             }
         }
-    }
-
-    private void printUsage() {
-        System.out.println("Usage:");
-        System.out
-                .println("KerberosConfigCheck: -domains=<domains> -user=<user> -password=<password> -jaas_conf=<jaas conf path> krb5_conf_path=<krb5 conf path>");
-    }
-
-    private boolean validate(CLIParser parser) {
-        Arguments[] argsToValidate =
-                { Arguments.domains, Arguments.user, Arguments.password, Arguments.jaas_file, Arguments.krb5_conf_path };
-        for (Arguments argument : argsToValidate) {
-            if (!parser.hasArg(argument.name())) {
-                System.out.println(argument.name() + " is required");
-                return false;
-            }
-        }
-        return true;
     }
 
     public void checkInstallation(String domains,
