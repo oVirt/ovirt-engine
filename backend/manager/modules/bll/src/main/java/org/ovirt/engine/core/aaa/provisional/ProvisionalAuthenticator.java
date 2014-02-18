@@ -13,11 +13,7 @@ import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
  * infrastructure. It will exist only while the engine is migrated to use the new authentication interfaces, then it
  * will be removed.
  */
-public class ProvisionalAuthenticator implements PasswordAuthenticator {
-    /**
-     * The name of the domain.
-     */
-    private String domain;
+public class ProvisionalAuthenticator extends PasswordAuthenticator {
 
     /**
      * The reference to the LDAP broker that implements the authentication.
@@ -25,7 +21,7 @@ public class ProvisionalAuthenticator implements PasswordAuthenticator {
     private LdapBroker broker;
 
     public ProvisionalAuthenticator(String domain, LdapBroker broker) {
-        this.domain = domain;
+        super(domain);
         this.broker = broker;
     }
 
@@ -36,9 +32,9 @@ public class ProvisionalAuthenticator implements PasswordAuthenticator {
     public AuthenticationResult authenticate(String name, String password) {
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.AuthenticateUser,
-            new LdapUserPasswordBaseParameters(domain, name, password)
+                new LdapUserPasswordBaseParameters(getProfileName(), name, password)
         );
         UserAuthenticationResult authResult = (UserAuthenticationResult) ldapResult.getReturnValue();
-        return new ProvisionalAuthenticationResult(domain, authResult);
+        return new ProvisionalAuthenticationResult(getProfileName(), authResult);
     }
 }

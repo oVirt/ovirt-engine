@@ -7,7 +7,7 @@ import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InternalAuthenticatorFactory implements AuthenticatorFactory {
+public class InternalAuthenticatorFactory extends AuthenticatorFactory {
     private static final Logger log = LoggerFactory.getLogger(InternalAuthenticatorFactory.class);
 
     /**
@@ -27,7 +27,7 @@ public class InternalAuthenticatorFactory implements AuthenticatorFactory {
      * {@inheritDoc}
      */
     @Override
-    public Authenticator create(Configuration config) throws ConfigurationException {
-        return new InternalAuthenticator();
+    public Authenticator createImpl(String profileName, Configuration config) throws ConfigurationException {
+        return new InternalAuthenticator(profileName);
     }
 }

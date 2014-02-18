@@ -13,7 +13,12 @@ import org.slf4j.LoggerFactory;
  * This authenticator authenticates the internal user as specified in the {@code AdminUser} and {@code AdminPassword}
  * configuration parameters stored in the database.
  */
-public class InternalAuthenticator implements PasswordAuthenticator {
+public class InternalAuthenticator extends PasswordAuthenticator {
+
+    protected InternalAuthenticator(String profileName) {
+        super(profileName);
+    }
+
     private static final Logger log = LoggerFactory.getLogger(InternalAuthenticator.class);
 
     @Override

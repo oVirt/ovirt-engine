@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * directory.type=nop
  * </pre>
  */
-public class HeaderAuthenticator implements NegotiatingAuthenticator {
+public class HeaderAuthenticator extends NegotiatingAuthenticator {
     private static final Logger log = LoggerFactory.getLogger(HeaderAuthenticator.class);
 
     /**
@@ -64,9 +64,13 @@ public class HeaderAuthenticator implements NegotiatingAuthenticator {
     /**
      * Create a new header authenticator.
      *
-     * @param header the name of the header containing the name of the user already authenticated by the web server
+     * @param profileName
+     *            name of the authentication profile
+     * @param header
+     *            the name of the header containing the name of the user already authenticated by the web server
      */
-    public HeaderAuthenticator(String header) {
+    public HeaderAuthenticator(String profileName, String header) {
+        super(profileName);
         this.header = header;
     }
 

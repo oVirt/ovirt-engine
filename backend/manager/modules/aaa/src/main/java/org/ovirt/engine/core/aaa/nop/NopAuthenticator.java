@@ -8,8 +8,12 @@ import org.slf4j.LoggerFactory;
 /**
  * This authenticator blindly accepts any user, without any check, useful only for testing environments.
  */
-public class NopAuthenticator implements PasswordAuthenticator {
+public class NopAuthenticator extends PasswordAuthenticator {
     private static final Logger log = LoggerFactory.getLogger(NopAuthenticator.class);
+
+    public NopAuthenticator(String profileName) {
+        super(profileName);
+    }
 
     @Override
     public AuthenticationResult authenticate(String name, String password) {

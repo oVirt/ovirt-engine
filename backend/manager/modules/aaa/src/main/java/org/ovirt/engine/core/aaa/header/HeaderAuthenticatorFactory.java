@@ -7,7 +7,7 @@ import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class    HeaderAuthenticatorFactory implements AuthenticatorFactory {
+public class HeaderAuthenticatorFactory extends AuthenticatorFactory {
     private static final Logger log = LoggerFactory.getLogger(HeaderAuthenticatorFactory.class);
 
     /**
@@ -32,7 +32,7 @@ public class    HeaderAuthenticatorFactory implements AuthenticatorFactory {
      * {@inheritDoc}
      */
     @Override
-    public Authenticator create(Configuration config) throws ConfigurationException {
+    public Authenticator createImpl(String profileName, Configuration config) throws ConfigurationException {
         // Get the name of the header:
         String header = config.getString(HEADER_PARAMETER);
         if (header == null) {
@@ -44,6 +44,6 @@ public class    HeaderAuthenticatorFactory implements AuthenticatorFactory {
         }
 
         // We are good, create the authenticator:
-        return new HeaderAuthenticator(header);
+        return new HeaderAuthenticator(profileName, header);
     }
 }

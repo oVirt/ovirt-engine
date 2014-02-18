@@ -9,7 +9,13 @@ import javax.servlet.http.HttpServletResponse;
  * instance of the {@link NegotiationResult} class containing the result of the authentication (succeeded or not) and
  * the name of the authenticated entity.
  */
-public interface NegotiatingAuthenticator extends Authenticator {
+public abstract class NegotiatingAuthenticator extends Authenticator {
+
+    protected NegotiatingAuthenticator(String profileName) {
+        super(profileName);
+        // TODO Auto-generated constructor stub
+    }
+
     /**
      * Process the given request and return a new result object if the negotiation has finished or {@code null} if it
      * hasn't. If the process hasn't finished then the response must be populated by the authenticator and it will be
@@ -20,5 +26,5 @@ public interface NegotiatingAuthenticator extends Authenticator {
      *     authentication didn't finish yet
      * @return a result object if the authentication process has finished or {@code null} if it hasn't
      */
-    NegotiationResult negotiate(HttpServletRequest request, HttpServletResponse response);
+    public abstract NegotiationResult negotiate(HttpServletRequest request, HttpServletResponse response);
 }

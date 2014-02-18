@@ -13,7 +13,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  * This is the factory for the bridge between the new authentication interfaces and the existing LDAP infrastructure. It
  * will exist only while the engine is migrated to use the new authentication interfaces, then it will be removed.
  */
-public class ProvisionalAuthenticatorFactory implements AuthenticatorFactory {
+public class ProvisionalAuthenticatorFactory extends AuthenticatorFactory {
     private Log log = LogFactory.getLog(ProvisionalAuthenticatorFactory.class);
 
     // The names of the parameters:
@@ -25,7 +25,7 @@ public class ProvisionalAuthenticatorFactory implements AuthenticatorFactory {
     }
 
     @Override
-    public Authenticator create(Configuration config) throws ConfigurationException {
+    public Authenticator createImpl(String profileName, Configuration config) throws ConfigurationException {
         // Get the name of the domain from the configuration:
         String domain = config.getInheritedString(DOMAIN_PARAMETER);
         if (domain == null) {

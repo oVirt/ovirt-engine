@@ -7,7 +7,7 @@ import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NopAuthenticatorFactory implements AuthenticatorFactory {
+public class NopAuthenticatorFactory extends AuthenticatorFactory {
     private static final Logger log = LoggerFactory.getLogger(NopAuthenticatorFactory.class);
 
     /**
@@ -27,7 +27,7 @@ public class NopAuthenticatorFactory implements AuthenticatorFactory {
      * {@inheritDoc}
      */
     @Override
-    public Authenticator create(Configuration config) throws ConfigurationException {
-        return new NopAuthenticator();
+    public Authenticator createImpl(String profileName, Configuration config) throws ConfigurationException {
+        return new NopAuthenticator(profileName);
     }
 }
