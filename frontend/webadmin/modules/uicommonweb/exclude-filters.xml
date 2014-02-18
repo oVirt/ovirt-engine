@@ -19,4 +19,15 @@
      <Match>
        <Bug pattern="BC_UNCONFIRMED_CAST"/>
      </Match>
+
+    <!--
+     Ignore all the questionable casts from Collection to abstract collection in this module.
+     Unfortunately, these warnings are currently inherit to the design, ListModel base items are
+     of a type Collection and many times need to be cast to a List for sorting purposes etc.
+     Handling those on an individual basis just adds noise to the process.
+    -->
+    <Match>
+        <Bug pattern="BC_BAD_CAST_TO_ABSTRACT_COLLECTION"/>
+    </Match>
+
 </FindBugsFilter>
