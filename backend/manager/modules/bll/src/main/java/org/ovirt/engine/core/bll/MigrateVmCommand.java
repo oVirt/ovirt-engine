@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -297,16 +298,20 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE_AND_IS_NOT_FORCED_BY_USER_TO_MIGRATE);
         }
 
-        if (vm.getStatus() == VMStatus.MigratingFrom) {
+        switch (vm.getStatus()) {
+        case MigratingFrom:
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
-        }
 
-        if (vm.getStatus() == VMStatus.NotResponding) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
-        }
+        case NotResponding:
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(VMStatus.NotResponding));
 
-        if (vm.getStatus() == VMStatus.Paused) {
-            return failCanDoAction(VdcBllMessages.MIGRATE_PAUSED_VM_IS_UNSUPPORTED);
+        case Paused:
+            if (vm.getVmPauseStatus() != VmPauseStatus.NOERR) {
+                return failCanDoAction(VdcBllMessages.MIGRATE_PAUSED_ERR_VM_IS_UNSUPPORTED);
+            }
+            break;
+
+        default:
         }
 
         if (!vm.isQualifyToMigrate()) {
