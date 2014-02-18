@@ -123,4 +123,19 @@ public class SyntaxCheckerTest {
                 "SELECT * FROM ((SELECT * FROM vm_templates_view )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0",
                 query);
     }
+
+    @Test
+    public void testVmPools() {
+        SyntaxChecker chkr = new SyntaxChecker(100);
+
+        ISyntaxChecker curSyntaxChecker = SyntaxCheckerFactory.createBackendSyntaxChecker("foo");
+
+        SyntaxContainer res = curSyntaxChecker.analyzeSyntaxState("Pools: ", true);
+
+        String query = chkr.generateQueryFromSyntaxContainer(res, true);
+
+        Assert.assertEquals(
+                "SELECT * FROM ((SELECT * FROM vm_pools_full_view )  ORDER BY vm_pool_name ASC ) as T1 OFFSET (1 -1) LIMIT 0",
+                query);
+    }
 }
