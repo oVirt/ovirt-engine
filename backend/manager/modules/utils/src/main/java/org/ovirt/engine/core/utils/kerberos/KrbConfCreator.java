@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.utils.kerberos;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,7 +11,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
-import org.ovirt.engine.core.utils.CLIParser;
 import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
 
 /**
@@ -30,43 +28,16 @@ public class KrbConfCreator {
     public final static String seperator = System.getProperty("line.separator");
     protected InputStream sourceFile;
     private List<String> realms;
-    private CLIParser cliParser;
-    private final String usage =
-            " Usage: \n\t-domains=<comma seperated list>\n\t-destinationFile<file>" +
-                    "\n\t-m mixed mode. Will add a flag to support AD in 2003/2008 mixed mode will be added";
     private boolean useDnsLookup;
     private Map<String, List<String>> ldapServersPerGSSAPIDomains;
 
     private final static Logger log = Logger.getLogger(KrbConfCreator.class);
-
-    public KrbConfCreator(String... args) throws Exception {
-        parseOptions(args);
-        loadSourceFile();
-        extractRealmsFromDomains();
-    }
 
     public KrbConfCreator(String domains, boolean useDnsLookup, Map<String, List<String>> ldapServersPerGSSAPIDomains) throws Exception {
         this.useDnsLookup = useDnsLookup && ( ldapServersPerGSSAPIDomains == null || ldapServersPerGSSAPIDomains.size() == 0 );
         this.ldapServersPerGSSAPIDomains = ldapServersPerGSSAPIDomains;
         loadSourceFile();
         extractRealmsFromDomains(domains);
-    }
-
-    /**
-     * @param args
-     *            arguments will be parsed as follow -domains="domainA,domainB," domains list
-     *            -destinationFile="path/to/destination/file -e encryption mode. When exist a flag to support AD in
-     *            2003/2008 mixed mode
-     * @return boolean true if to continue to next stage
-     */
-    private void parseOptions(String[] args) {
-        cliParser = new CLIParser(args);
-        if (!cliParser.hasArg(Arguments.domains.name()) ||
-                !cliParser.hasArg(Arguments.krb5_conf_path.name())) {
-            System.out.println("Missing arguments\nusage: " + usage);
-            System.exit(1);
-
-        }
     }
 
     private void loadSourceFile() throws FileNotFoundException {
@@ -76,14 +47,6 @@ public class KrbConfCreator {
             throw new FileNotFoundException(template + " was not found");
         }
         log.debug("loaded template kr5.conf file " + template);
-    }
-
-    public StringBuffer parse() throws AuthenticationException {
-        String mixedMode = "no";
-        if (cliParser.hasArg(Arguments.mixed_mode.name())) {
-            mixedMode = cliParser.getArg(Arguments.mixed_mode.name());
-        }
-        return parse(mixedMode);
     }
 
     public StringBuffer parse(String mixedMode) throws AuthenticationException {
@@ -133,17 +96,6 @@ public class KrbConfCreator {
         return sb;
     }
 
-    private void extractRealmsFromDomains() {
-        String domains = cliParser.getArg(Arguments.domains.name());
-        extractRealmsFromDomains(domains);
-        String[] realmArray = domains.split(",", -1);
-        List<String> realms = new ArrayList<String>();
-        for (String realm : realmArray) {
-            realms.add(realm.toUpperCase());
-        }
-        this.realms = realms;
-    }
-
     private void extractRealmsFromDomains(String domains) {
         String[] realmArray = domains.split(",", -1);
         List<String> realms = new ArrayList<String>();
@@ -151,17 +103,6 @@ public class KrbConfCreator {
             realms.add(realm.toUpperCase().trim());
         }
         this.realms = realms;
-    }
-
-    public void toFile(StringBuffer sb) throws FileNotFoundException, IOException {
-        File outputConfig;
-        if (cliParser.hasArg(Arguments.krb5_conf_path.name())) {
-            outputConfig = new File(cliParser.getArg(Arguments.krb5_conf_path.name()));
-        } else {
-            outputConfig =
-                    new File(System.getProperty("java.io.tmpdir") + File.separator + InstallerConstants.KRB_FILE_NAME);
-        }
-        toFile(outputConfig.getAbsolutePath(), sb);
     }
 
     public void toFile(String krb5ConfPath, StringBuffer sb) throws FileNotFoundException, IOException {
@@ -217,11 +158,5 @@ public class KrbConfCreator {
 
     private String getProblematicRealmExceptionMsg(String realm) {
         return (realm != null) ? " Problematic domain is: " + realm.toLowerCase() : "";
-    }
-
-    private enum Arguments {
-        domains,
-        krb5_conf_path,
-        mixed_mode
     }
 }
