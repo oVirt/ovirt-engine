@@ -75,6 +75,23 @@ public class StorageDomainValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult isDomainHasNoImages(VdcBllMessages message, boolean allowOvfDisk) {
+        int numOfAllowedDisks = 0;
+        if (allowOvfDisk) {
+            numOfAllowedDisks = getDbFacade().getStorageDomainOvfInfoDao().getAllForDomain(storageDomain.getId()).size();
+        }
+
+        if (getDbFacade().getDiskImageDao().getAllSnapshotsForStorageDomain(storageDomain.getId()).size() > numOfAllowedDisks) {
+            return new ValidationResult(message);
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    private DbFacade getDbFacade() {
+        return DbFacade.getInstance();
+    }
+
     private static Integer getLowDiskSpaceThreshold() {
         return Config.<Integer> getValue(ConfigValues.FreeSpaceCriticalLowInGB);
     }

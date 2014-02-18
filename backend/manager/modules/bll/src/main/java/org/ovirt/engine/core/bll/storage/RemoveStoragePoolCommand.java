@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
@@ -326,9 +327,11 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             }
             for (StorageDomain domain : poolDomains) {
                 // check that there are no images on data domains
-                if (domain.getStorageDomainType().isDataDomain()
-                        && getDbFacade().getDiskImageDao().getAllSnapshotsForStorageDomain(domain.getId()).size() != 0) {
-                    return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_IMAGES);
+                if (domain.getStorageDomainType().isDataDomain()) {
+                    StorageDomainValidator storageDomainValidator = new StorageDomainValidator(domain);
+                    if (!validate(storageDomainValidator.isDomainHasNoImages(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_IMAGES, true))) {
+                        return false;
+                    }
                 }
             }
             final List<VmStatic> vms = getVmStaticDAO().getAllByStoragePoolId(getStoragePool().getId());
