@@ -153,6 +153,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                     parentContext.getJob().getStep(StepEnum.EXECUTING),
                     StepEnum.MIGRATE_VM,
                     ExecutionMessageDirector.resolveStepMessage(StepEnum.MIGRATE_VM, values));
+            ctx.setJob(parentContext.getJob());
             ctx.setStep(step);
             ctx.setMonitored(true);
         } catch (RuntimeException e) {
