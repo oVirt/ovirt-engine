@@ -145,9 +145,14 @@ class Statement(base.Base):
                         database=database,
                     )
                 else:
+                    #
+                    # port cast is required as old psycopg2
+                    # does not support unicode strings for port.
+                    # do not cast to int to avoid breaking usock.
+                    #
                     _connection = connection = psycopg2.connect(
                         host=host,
-                        port=port,
+                        port=str(port),
                         user=user,
                         password=password,
                         database=database,
