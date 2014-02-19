@@ -1010,7 +1010,7 @@ BEGIN
       RETURN QUERY SELECT DISTINCT vms.*
       FROM vms
       INNER JOIN vm_device vd ON vd.vm_id = vms.vm_guid
-      INNER JOIN images i ON i.image_group_id = vd.device_id AND i.active = TRUE
+      INNER JOIN images i ON i.image_group_id = vd.device_id
       inner join image_storage_domain_map on i.image_guid = image_storage_domain_map.image_id
       WHERE status <> 0 and image_storage_domain_map.storage_domain_id = v_storage_domain_id;
 END; $procedure$
