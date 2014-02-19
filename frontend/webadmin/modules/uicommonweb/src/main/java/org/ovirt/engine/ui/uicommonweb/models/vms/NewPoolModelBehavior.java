@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -7,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -39,8 +41,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     public void postDataCenterWithClusterSelectedItemChanged() {
         super.postDataCenterWithClusterSelectedItemChanged();
 
-        final DataCenterWithCluster dataCenterWithCluster =
-                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+        final DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool dataCenter = getModel().getSelectedDataCenter();
         if (dataCenter == null) {
             return;
@@ -57,7 +58,14 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
                         AsyncDataProvider.filterTemplatesByArchitecture(baseTemplates,
                                 dataCenterWithCluster.getCluster().getArchitecture());
 
-                getModel().getBaseTemplate().setItems(filteredTemplates);
+                List<VmTemplate> templatesWithoutBlank = new ArrayList<VmTemplate>();
+                for (VmTemplate template : filteredTemplates) {
+                    if (!template.getId().equals(Guid.Empty)) {
+                        templatesWithoutBlank.add(template);
+                    }
+                }
+
+                getModel().getBaseTemplate().setItems(templatesWithoutBlank);
             }
         }), dataCenter.getId());
     }
