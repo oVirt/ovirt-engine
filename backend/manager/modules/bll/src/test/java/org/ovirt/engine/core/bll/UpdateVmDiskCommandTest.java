@@ -185,6 +185,25 @@ public class UpdateVmDiskCommandTest {
     }
 
     @Test
+    public void canDoActionFailedUpdateReadOnly() {
+        VmDevice device = createVmDevice(diskImageGuid, vmId);
+        doReturn(device).when(vmDeviceDAO).get(device.getId());
+
+        // make sure that device is plugged
+        assertEquals(true, device.getIsPlugged());
+
+        DiskImage disk = createDiskImage();
+        disk.setReadOnly(true);
+
+        when(diskDao.get(diskImageGuid)).thenReturn(disk);
+
+        UpdateVmDiskParameters parameters = createParameters();
+        initializeCommand(parameters, Arrays.asList(createVm(VMStatus.Up)));
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+    }
+
+    @Test
     public void canDoActionFailedShareableDiskOnGlusterDomain() throws Exception {
         UpdateVmDiskParameters parameters = createParameters();
         DiskImage disk = createShareableDisk(VolumeFormat.RAW);
@@ -303,10 +322,10 @@ public class UpdateVmDiskCommandTest {
         when(diskDao.get(diskImageGuid)).thenAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-            final DiskImage oldDisk = createDiskImage();
-            oldDisk.setDiskInterface(DiskInterface.VirtIO);
-            assert(oldDisk.getDiskInterface() != parameters.getDiskInfo().getDiskInterface());
-            return oldDisk;
+                final DiskImage oldDisk = createDiskImage();
+                oldDisk.setDiskInterface(DiskInterface.VirtIO);
+                assert (oldDisk.getDiskInterface() != parameters.getDiskInfo().getDiskInterface());
+                return oldDisk;
             }
         });
 
@@ -520,8 +539,12 @@ public class UpdateVmDiskCommandTest {
     }
 
     protected VM createVmStatusDown(VM... otherPluggedVMs) {
+        return createVm(VMStatus.Down);
+    }
+
+    protected VM createVm(VMStatus status) {
         VM vm = new VM();
-        vm.setStatus(VMStatus.Down);
+        vm.setStatus(status);
         vm.setGuestOs("rhel6");
         vm.setId(vmId);
         vm.setVdsGroupCompatibilityVersion(Version.v3_1);
