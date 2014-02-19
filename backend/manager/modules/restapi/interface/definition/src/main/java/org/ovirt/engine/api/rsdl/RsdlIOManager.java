@@ -25,10 +25,14 @@ public class RsdlIOManager {
         copy(SCHEMA_RESOURCE_NAME, outputDir);
     }
 
-    private static File createOutputDirectory(String outputDirectory) {
+    private static File createOutputDirectory(String outputDirectory) throws IOException {
         File outputDir = new File(outputDirectory);
         if (!outputDir.exists()) {
-            outputDir.mkdirs();
+            boolean success = outputDir.mkdirs();
+            if (!success) {
+                throw new IOException("Falied to create directory: " + outputDirectory
+                        + ". rsdl.xml will not be copied there.");
+            }
         }
         return outputDir;
     }
