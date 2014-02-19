@@ -881,6 +881,19 @@ public final class AuditLogDirector {
     private static void initUserAccountSeverities() {
         severities.put(AuditLogType.USER_ACCOUNT_DISABLED_OR_LOCKED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_ACCOUNT_PASSWORD_EXPIRED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.AUTH_FAILED_INVALID_CREDENTIALS, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.AUTH_FAILED_CLOCK_SKEW_TOO_GREAT, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.AUTH_FAILED_NO_KDCS_FOUND, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.AUTH_FAILED_DNS_ERROR, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.AUTH_FAILED_OTHER, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.AUTH_FAILED_DNS_COMMUNICATION_ERROR, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.AUTH_FAILED_CONNECTION_TIMED_OUT, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.AUTH_FAILED_WRONG_REALM, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.AUTH_FAILED_CONNECTION_ERROR, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.AUTH_FAILED_CANNOT_FIND_LDAP_SERVER_FOR_DOMAIN, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.AUTH_FAILED_NO_USER_INFORMATION_WAS_FOUND, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.AUTH_FAILED_CLIENT_NOT_FOUND_IN_KERBEROS_DATABASE, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.AUTH_FAILED_INTERNAL_KERBEROS_ERROR, AuditLogSeverity.ERROR);
     }
 
     private static void initCommonSeverities() {
