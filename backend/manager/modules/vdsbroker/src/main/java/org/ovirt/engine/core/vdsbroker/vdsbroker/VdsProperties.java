@@ -324,11 +324,14 @@ public final class VdsProperties {
     public static final String QOS_BURST = "burst";
 
     public static String migrationMethodtoString(MigrationMethod method) {
-        if (method == MigrationMethod.OFFLINE) {
+        switch (method) {
+        case OFFLINE:
             return offline;
-        } else if (method == MigrationMethod.ONLINE) {
+
+        case ONLINE:
             return online;
-        } else {
+
+        default:
             return "";
         }
     }

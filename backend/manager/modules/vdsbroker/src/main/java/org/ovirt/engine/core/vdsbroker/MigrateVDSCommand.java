@@ -12,6 +12,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateBrokerVDSCommand;
 
 public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
+
+    private static Log log = LogFactory.getLog(MigrateVDSCommand.class);
+
     public MigrateVDSCommand(P parameters) {
         super(parameters);
     }
@@ -22,7 +25,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
         if (_vdsManager != null) {
             VMStatus retval;
             MigrateBrokerVDSCommand<MigrateVDSCommandParameters> command =
-                    new MigrateBrokerVDSCommand<MigrateVDSCommandParameters>(parameters);
+                    new MigrateBrokerVDSCommand<>(parameters);
             command.execute();
             VDSReturnValue vdsReturnValue = command.getVDSReturnValue();
 
@@ -35,7 +38,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
                     ResourceManager.getInstance().AddAsyncRunningVm(parameters.getVmId());
             } else {
                 retval = vm.getStatus();
-                log.error("VDS::migrate:: Failed Vm migration");
+                log.error("Failed Vm migration");
                 getVDSReturnValue().setSucceeded(false);
                 getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
                 getVDSReturnValue().setExceptionString(vdsReturnValue.getExceptionString());
@@ -55,6 +58,4 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
             getVDSReturnValue().setSucceeded(false);
         }
     }
-
-    private static Log log = LogFactory.getLog(MigrateVDSCommand.class);
 }

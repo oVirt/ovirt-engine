@@ -10,18 +10,26 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 
 public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private Map<String, String> migrationInfo;
 
     public MigrateBrokerVDSCommand(P parameters) {
         super(parameters);
-        String migMethod = VdsProperties.migrationMethodtoString(parameters.getMigrationMethod());
-        log.infoFormat("VdsBroker::migrate::Entered (vm_guid='{0}', srcHost='{1}', dstHost='{2}',  method='{3}'",
-                parameters.getVmId().toString(), parameters.getSrcHost(), parameters.getDstHost(), migMethod);
-        migrationInfo = new HashMap<>();
+    }
+
+    @Override
+    protected void executeVdsBrokerCommand() {
+        status = getBroker().migrate(createMigrationInfo());
+        proceedProxyReturnValue();
+    }
+
+    private Map<String, String> createMigrationInfo() {
+        Map<String, String> migrationInfo = new HashMap<>();
+
+        P parameters = getParameters();
         migrationInfo.put(VdsProperties.vm_guid, parameters.getVmId().toString());
         migrationInfo.put(VdsProperties.src, String.format("%1$s", parameters.getSrcHost()));
         migrationInfo.put(VdsProperties.dst, String.format("%1$s", parameters.getDstHost()));
-        migrationInfo.put(VdsProperties.method, migMethod);
+        migrationInfo.put(VdsProperties.method,
+                VdsProperties.migrationMethodtoString(parameters.getMigrationMethod()));
 
         if (FeatureSupported.tunnelMigration(parameters.getClusterVersion())) {
             migrationInfo.put(VdsProperties.TUNNELED, Boolean.toString(parameters.isTunnelMigration()));
@@ -37,11 +45,7 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
         if (parameters.getMigrationDowntime() != 0) {
             migrationInfo.put(VdsProperties.MIGRATION_DOWNTIME, Integer.toString(parameters.getMigrationDowntime()));
         }
-    }
 
-    @Override
-    protected void executeVdsBrokerCommand() {
-        status = getBroker().migrate(migrationInfo);
-        proceedProxyReturnValue();
+        return migrationInfo;
     }
 }

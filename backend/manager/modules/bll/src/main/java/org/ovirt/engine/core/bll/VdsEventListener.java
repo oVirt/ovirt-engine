@@ -184,24 +184,11 @@ public class VdsEventListener implements IVdsEventListener {
                         // is on
                         List<VmStatic> vmsToMigrate =
                                 DbFacade.getInstance().getVmStaticDao().getAllWithFailbackByVds(vds.getId());
-                        if (vmsToMigrate.size() > 0) {
-                            ArrayList<VdcActionParametersBase> vmToServerParametersList =
-                                    new ArrayList<VdcActionParametersBase>(LinqUtils
-                                            .foreach(vmsToMigrate, new Function<VmStatic, VdcActionParametersBase>() {
-                                                @Override
-                                                public VdcActionParametersBase eval(VmStatic vm) {
-                                                    MigrateVmToServerParameters parameters =
-                                                            new MigrateVmToServerParameters(false,
-                                                                    vm.getId(),
-                                                                    vds.getId());
-                                                    parameters.setShouldBeLogged(false);
-                                                    return parameters;
-                                                }
-                                            }));
+                        if (!vmsToMigrate.isEmpty()) {
                             ExecutionContext executionContext = new ExecutionContext();
                             executionContext.setMonitored(true);
                             Backend.getInstance().runInternalMultipleActions(VdcActionType.MigrateVmToServer,
-                                    vmToServerParametersList,
+                                    new ArrayList<>(createMigrateVmToServerParametersList(vmsToMigrate, vds)),
                                     executionContext);
                         }
                     } catch (RuntimeException e) {
@@ -211,6 +198,21 @@ public class VdsEventListener implements IVdsEventListener {
             });
         }
         return isSucceeded;
+    }
+
+    private List<VdcActionParametersBase> createMigrateVmToServerParametersList(List<VmStatic> vmsToMigrate, final VDS vds) {
+        return LinqUtils.foreach(vmsToMigrate,
+                new Function<VmStatic, VdcActionParametersBase>() {
+            @Override
+            public VdcActionParametersBase eval(VmStatic vm) {
+                MigrateVmToServerParameters parameters =
+                        new MigrateVmToServerParameters(false,
+                                vm.getId(),
+                                vds.getId());
+                parameters.setShouldBeLogged(false);
+                return parameters;
+            }
+        });
     }
 
     @Override
