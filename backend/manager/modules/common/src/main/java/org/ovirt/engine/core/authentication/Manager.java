@@ -116,6 +116,7 @@ public abstract class Manager<O> {
             }
             if (!visitedClassLoaders.contains(classLoader)) {
                 loadFactories(classLoader);
+                visitedClassLoaders.add(classLoader);
             }
         }
 
