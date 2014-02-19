@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -214,7 +215,21 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<VmTemplate> searchVMTemplates() {
-        return genericSearch(getDbFacade().getVmTemplateDao(), true);
+
+        return genericSearch(getDbFacade().getVmTemplateDao(), true, new Filter<VmTemplate>() {
+            @Override
+            public List<VmTemplate> filter(final List<VmTemplate> data) {
+                List<VmTemplate> filtered = new ArrayList<>();
+                for (IVdcQueryable vmt_helper : data) {
+                    VmTemplate vmt = (VmTemplate) vmt_helper;
+                    if (vmt.getTemplateType() != VmEntityType.TEMPLATE) {
+                        continue;
+                    }
+                    filtered.add(vmt);
+                }
+                return filtered;
+            }
+        });
     }
 
     private List<VmTemplate> searchInstanceTypes() {
