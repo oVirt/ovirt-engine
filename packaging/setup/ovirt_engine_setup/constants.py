@@ -856,6 +856,7 @@ class ConfigEnv(object):
     JBOSS_DIRECT_HTTPS_PORT = 'OVESETUP_CONFIG/jbossDirectHttpsPort'
     WEBSOCKET_PROXY_PORT = 'OVESETUP_CONFIG/websocketProxyPort'
     JBOSS_DEBUG_ADDRESS = 'OVESETUP_CONFIG/jbossDebugAddress'
+    ADD_OVIRT_GLANCE_REPOSITORY = 'OVESETUP_CONFIG/addOvirtGlanceRepository'
 
     MAC_RANGE_POOL = 'OVESETUP_CONFIG/macRangePool'
 
