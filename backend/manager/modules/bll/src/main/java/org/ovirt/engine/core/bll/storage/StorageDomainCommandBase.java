@@ -276,6 +276,11 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             DbFacade.getInstance().getLunDao().update(lun);
         }
 
+        if (storageType == StorageType.FCP) {
+            // No need to handle connections (FCP storage doesn't utilize connections).
+            return;
+        }
+
         for (StorageServerConnections connection : lun.getLunConnections()) {
             List<StorageServerConnections> connections = DbFacade.getInstance()
                     .getStorageServerConnectionDao().getAllForConnection(connection);
