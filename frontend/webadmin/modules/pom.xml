@@ -40,6 +40,8 @@
     <maven-checkstyle-plugin.version>2.8</maven-checkstyle-plugin.version>
     <!-- Activate load time weaving of aspects via AspectJ JVM agent -->
     <aspectj.agent>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</aspectj.agent>
+    <!-- Control verbosity of GWT compiler -->
+    <gwt.logLevel>INFO</gwt.logLevel>
     <!-- Regular expression that matches types that GWT compiler shouldn't prune (avoid dead code optimization) -->
     <gwt.dontPrune>-Dgwt.dontPrune=org\.ovirt\.engine\.core\.(common|compat)\..*</gwt.dontPrune>
     <!-- This can be overridden by setting this property in your personal settings.xml -->
@@ -162,7 +164,7 @@
             </dependency>
           </dependencies>
           <configuration>
-            <logLevel>INFO</logLevel>
+            <logLevel>${gwt.logLevel}</logLevel>
             <style>OBF</style>
             <port>${engine.port.http}</port>
             <noServer>true</noServer>
