@@ -48,3 +48,34 @@ begin
     where vds_group_id = v_cluster_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+-- Adds a new glance provider, according to the specified arguments
+CREATE OR REPLACE FUNCTION inst_add_glance_provider(
+    v_provider_id UUID,
+    v_provider_name VARCHAR(128),
+    v_provider_description VARCHAR(4000),
+    v_provider_url VARCHAR(512),
+    v_storage_domain_id UUID
+)
+RETURNS VOID
+AS $procedure$
+BEGIN
+    -- Adding the Glance provider
+    insert into providers(id, name, description, url, provider_type, auth_required)
+    select v_provider_id, v_provider_name, v_provider_description, v_provider_url, 'OPENSTACK_IMAGE', false
+    where not exists (select id from providers where id = v_provider_id);
+
+    -- Adding a proper storage domain static entry
+    insert into storage_domain_static(id, storage, storage_name, storage_domain_type, storage_type, storage_domain_format_type, recoverable)
+    select v_storage_domain_id, v_provider_id, v_provider_name, 4, 8, 0, true
+    where not exists (select id from storage_domain_static where id = v_storage_domain_id);
+
+    -- Adding a proper storage domain dynamic entry
+    insert into storage_domain_dynamic(id, available_disk_size, used_disk_size)
+    select v_storage_domain_id, 0, 0
+    where not exists (select id from storage_domain_dynamic where id = v_storage_domain_id);
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
