@@ -205,6 +205,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
         if (!StringHelper.stringsEqual(searchString, value))
         {
             searchString = value;
+            pagingSearchString = null;
             searchStringChanged();
             onPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$
         }
@@ -659,14 +660,24 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
 
     protected void searchNextPage()
     {
+        searchString = stripPageKeyword(searchString);
         setSearchStringPage(getNextSearchPageNumber());
         getSearchCommand().execute();
     }
 
     protected void searchPreviousPage()
     {
+        searchString = stripPageKeyword(searchString);
         setSearchStringPage(getPreviousSearchPageNumber());
         getSearchCommand().execute();
+    }
+
+    private String stripPageKeyword(String str) {
+        int index = str.indexOf("page"); //$NON-NLS-1$
+        if (index == -1) {
+            return str;
+        }
+        return str.substring(0, index);
     }
 
     protected boolean getNextSearchPageAllowed()
