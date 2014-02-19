@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 @InternalCommandAttribute
+@NonTransactiveCommandAttribute
 public class InternalMigrateVmCommand<T extends InternalMigrateVmParameters> extends MigrateVmCommand<MigrateVmParameters> {
 
     public InternalMigrateVmCommand(T parameters) {

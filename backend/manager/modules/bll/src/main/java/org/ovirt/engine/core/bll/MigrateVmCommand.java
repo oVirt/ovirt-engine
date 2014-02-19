@@ -36,6 +36,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
+@NonTransactiveCommandAttribute
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
 
     /** The VDS that the VM is going to migrate to */
@@ -85,7 +86,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
     }
 
-    protected void initVdss() {
+    protected boolean initVdss() {
         setVdsIdRef(getVm().getRunOnVds());
         Guid vdsToRunOn =
                 SchedulingManager.getInstance().schedule(getVdsGroup(),
@@ -103,29 +104,35 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         VmHandler.updateVmGuestAgentVersion(getVm());
 
         if (vdsToRunOn != null && vdsToRunOn.equals(Guid.Empty)) {
-            throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_CANT_ALLOC_VDS_MIGRATION);
+            return false;
         }
 
         if (getDestinationVds() == null || getVds() == null) {
-            throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_VDS_NOT_FOUND);
+            return false;
         }
+
+        return true;
     }
 
     @Override
     protected void executeVmCommand() {
-        initVdss();
-        perform();
-        setSucceeded(true);
+        setSucceeded(initVdss() && perform());
     }
 
-    private void perform() {
+    private boolean perform() {
         getParameters().setStartTime(new Date());
 
-        boolean migrateSucceeded = connectLunDisks(getDestinationVdsId()) && migrateVm();
-        if (!migrateSucceeded) {
-            throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_MIGRATION_FAILED_AT_DST);
+        try {
+            if (connectLunDisks(getDestinationVdsId()) && migrateVm()) {
+                ExecutionHandler.setAsyncJob(getExecutionContext(), true);
+                return true;
+            }
         }
-        ExecutionHandler.setAsyncJob(getExecutionContext(), true);
+        catch (VdcBLLException e) {
+        }
+
+        runningFailed();
+        return false;
     }
 
     private boolean migrateVm() {
