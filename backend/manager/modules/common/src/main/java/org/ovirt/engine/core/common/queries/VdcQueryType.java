@@ -101,10 +101,12 @@ public enum VdcQueryType implements Serializable {
     GetCACertificate(VdcQueryAuthType.User),
     SignString(VdcQueryAuthType.User),
 
-    // VM Templates queries
+    // VM Template based entities queries
     IsVmTemlateWithSameNameExist(VdcQueryAuthType.User),
     GetVmTemplate(VdcQueryAuthType.User),
     GetAllVmTemplates(VdcQueryAuthType.User),
+    GetAllInstanceTypes(VdcQueryAuthType.User),
+    GetAllImageTypes(VdcQueryAuthType.User),
     GetVmTemplatesDisks(VdcQueryAuthType.User),
     GetVmTemplatesByStoragePoolId,
     GetVmTemplatesByImageGuid,

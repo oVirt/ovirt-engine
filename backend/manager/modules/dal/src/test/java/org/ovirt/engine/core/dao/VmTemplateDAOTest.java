@@ -17,12 +17,14 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmTemplateDAOTest extends BaseDAOTestCase {
     private static final int NUMBER_OF_TEMPLATES_FOR_PRIVELEGED_USER = 1;
+    private static final int NUMBER_OF_INSTANCE_TYPES_FOR_PRIVELEGED_USER = 1;
     private static final int NUMBER_OF_TEMPLATES_IN_DB = 8;
     private static final Guid EXISTING_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final Guid DELETABLE_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b80");
@@ -35,6 +37,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
 
     private VmTemplate newVmTemplate;
     private VmTemplate existingTemplate;
+    private VmTemplate existingInstanceType;
 
     @Override
     public void setUp() throws Exception {
@@ -44,6 +47,9 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
 
         existingTemplate = dao.get(
                 new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
+
+        existingInstanceType = dao.get(
+                new Guid("99408929-82cf-4dc7-a532-9d998063fa95"));
 
         newVmTemplate = new VmTemplate();
         newVmTemplate.setId(Guid.newGuid());
@@ -124,7 +130,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllWithPermissionsForPriviligedUser() {
-        List<VmTemplate> result = dao.getAll(PRIVILEGED_USER_ID, true);
+        List<VmTemplate> result = dao.getAll(PRIVILEGED_USER_ID, true, VmEntityType.TEMPLATE);
 
         assertNotNull(result);
         assertEquals(NUMBER_OF_TEMPLATES_FOR_PRIVELEGED_USER, result.size());
@@ -136,7 +142,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllWithPermissionsDisabledForUnpriviligedUser() {
-        List<VmTemplate> result = dao.getAll(UNPRIVILEGED_USER_ID, false);
+        List<VmTemplate> result = dao.getAll(UNPRIVILEGED_USER_ID, false, VmEntityType.TEMPLATE);
         assertGetAllResult(result);
     }
 
@@ -145,7 +151,38 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllWithPermissionsForUnpriviligedUser() {
-        List<VmTemplate> result = dao.getAll(UNPRIVILEGED_USER_ID, true);
+        List<VmTemplate> result = dao.getAll(UNPRIVILEGED_USER_ID, true, VmEntityType.TEMPLATE);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Asserts that the right collection containing the instnace types is returned for a privileged user with filtering enabled
+     */
+    @Test
+    public void testGetAllInstanceTypesWithPermissionsForPriviligedUser() {
+        List<VmTemplate> result = dao.getAll(PRIVILEGED_USER_ID, true, VmEntityType.INSTANCE_TYPE);
+
+        assertNotNull(result);
+        assertEquals(NUMBER_OF_INSTANCE_TYPES_FOR_PRIVELEGED_USER, result.size());
+        assertEquals(result.iterator().next(), existingInstanceType);
+    }
+
+    /**
+     * Asserts that the right collection containing the instance type is returned for a non privileged user with filtering disabled
+     */
+    @Test
+    public void testGetAllInstanceTypesWithPermissionsDisabledForUnpriviligedUser() {
+        List<VmTemplate> result = dao.getAll(UNPRIVILEGED_USER_ID, false, VmEntityType.INSTANCE_TYPE);
+        assertGetAllResult(result);
+    }
+
+    /**
+     * Asserts that an empty collection is returned for a non privileged user with filtering enabled
+     */
+    @Test
+    public void testGetAllInstanceTypesWithPermissionsForUnpriviligedUser() {
+        List<VmTemplate> result = dao.getAll(UNPRIVILEGED_USER_ID, true, VmEntityType.INSTANCE_TYPE);
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }

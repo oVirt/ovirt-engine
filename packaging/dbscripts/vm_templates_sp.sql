@@ -315,12 +315,13 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVmTemplates(v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_view STABLE
+Create or replace FUNCTION GetAllFromVmTemplates(v_user_id UUID, v_is_filtered boolean, v_entity_type VARCHAR(32)) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_templates.*
       FROM vm_templates_view vm_templates
-      WHERE (NOT v_is_filtered OR EXISTS (SELECT 1
+      WHERE entity_type = v_entity_type
+      AND (NOT v_is_filtered OR EXISTS (SELECT 1
                                           FROM   user_vm_template_permissions_view
                                           WHERE  user_id = v_user_id AND entity_id = vmt_guid))
       ORDER BY name;

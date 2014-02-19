@@ -102,19 +102,19 @@ public class RoleDAOTest extends BaseDAOTestCase {
                 GROUP_IDS, ApplicationMode.AllModes.getValue());
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals(15, result.size());
+        assertEquals(16, result.size());
 
         List<Role> result1 = dao.getAllForUserAndGroups(USER_ID,
                 GROUP_IDS, ApplicationMode.VirtOnly.getValue());
         assertNotNull(result1);
         assertFalse(result1.isEmpty());
-        assertEquals(14, result1.size());
+        assertEquals(15, result1.size());
 
         List<Role> result2 = dao.getAllForUserAndGroups(USER_ID,
                 GROUP_IDS, ApplicationMode.GlusterOnly.getValue());
         assertNotNull(result2);
         assertFalse(result2.isEmpty());
-        assertEquals(12, result2.size());
+        assertEquals(13, result2.size());
     }
 
     @Test

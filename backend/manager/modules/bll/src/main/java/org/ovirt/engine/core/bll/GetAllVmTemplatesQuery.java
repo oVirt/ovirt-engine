@@ -1,22 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
-
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
-public class GetAllVmTemplatesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public class GetAllVmTemplatesQuery<P extends VdcQueryParametersBase> extends GetAllTemplateBasedEntityQuery<P> {
+
     public GetAllVmTemplatesQuery(P parameters) {
-        super(parameters);
+        super(parameters, VmEntityType.TEMPLATE);
     }
 
-    @Override
-    protected void executeQueryCommand() {
-        List<VmTemplate> retval =
-                getDbFacade().getVmTemplateDao().getAll(getUserID(), getParameters().isFiltered());
-        for (VmTemplate template : retval) {
-            VmTemplateHandler.updateDisksFromDb(template);
-        }
-        getQueryReturnValue().setReturnValue(retval);
-    }
 }

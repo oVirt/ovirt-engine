@@ -6,6 +6,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -43,14 +44,15 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
 
     /**
      * Retrieves all templates with optional filtering.
-     *
+     * @param entityType
+     *            whether it is template, image or instance type
      * @param userID
      *            the ID of the user requesting the information
      * @param isFiltered
      *            Whether the results should be filtered according to the user's permissions
      * @return
      */
-    public List<VmTemplate> getAll(Guid userID, boolean isFiltered);
+    public List<VmTemplate> getAll(Guid userID, boolean isFiltered, VmEntityType entityType);
 
     /**
      * Retrieves all templates for the specified storage domain.
