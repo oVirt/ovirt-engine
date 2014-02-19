@@ -37,6 +37,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
+@NonTransactiveCommandAttribute
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
 
     private Guid vdsDestinationId;
@@ -87,7 +88,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
     }
 
-    protected void initVdss() {
+    protected boolean initVdss() {
         setVdsIdRef(getVm().getRunOnVds());
         VDS destVds = getDestinationVds();
         Guid vdsToRunOn =
@@ -108,45 +109,51 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         // changed.
         _destinationVds = null;
         if (vdsDestinationId != null && vdsDestinationId.equals(Guid.Empty)) {
-            throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_CANT_ALLOC_VDS_MIGRATION);
+            return false;
         }
 
         if (getDestinationVds() == null || getVds() == null) {
-            throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_VDS_NOT_FOUND);
+            return false;
         }
+
+        return true;
     }
 
     @Override
     protected void executeVmCommand() {
-        initVdss();
-        perform();
-        setSucceeded(true);
+        setSucceeded(initVdss() && perform());
     }
 
-    private void perform() {
+    private boolean perform() {
         getVm().setMigratingToVds(vdsDestinationId);
 
         getParameters().setStartTime(new Date());
 
-        // Starting migration at src VDS
-        boolean connectToLunDiskSuccess = connectLunDisks(vdsDestinationId);
-        if (connectToLunDiskSuccess) {
-            setActionReturnValue(Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunAsyncVdsCommand(
-                            VDSCommandType.Migrate,
-                            createMigrateVDSCommandParameters(),
-                            this)
-                    .getReturnValue());
+        try {
+            // Starting migration at src VDS
+            boolean connectToLunDiskSuccess = connectLunDisks(vdsDestinationId);
+            if (connectToLunDiskSuccess) {
+                setActionReturnValue(Backend
+                        .getInstance()
+                        .getResourceManager()
+                        .RunAsyncVdsCommand(
+                                VDSCommandType.Migrate,
+                                createMigrateVDSCommandParameters(),
+                                this)
+                                .getReturnValue());
+            }
+            if (!connectToLunDiskSuccess || getActionReturnValue() != VMStatus.MigratingFrom) {
+                getVm().setMigreatingToPort(0);
+                getVm().setMigreatingFromPort(0);
+                getVm().setMigratingToVds(null);
+                return false;
+            }
+            ExecutionHandler.setAsyncJob(getExecutionContext(), true);
+            return true;
         }
-        if (!connectToLunDiskSuccess || getActionReturnValue() != VMStatus.MigratingFrom) {
-            getVm().setMigreatingToPort(0);
-            getVm().setMigreatingFromPort(0);
-            getVm().setMigratingToVds(null);
-            throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_MIGRATION_FAILED_AT_DST);
+        catch (VdcBLLException e) {
+            return false;
         }
-        ExecutionHandler.setAsyncJob(getExecutionContext(), true);
     }
 
     private MigrateVDSCommandParameters createMigrateVDSCommandParameters() {

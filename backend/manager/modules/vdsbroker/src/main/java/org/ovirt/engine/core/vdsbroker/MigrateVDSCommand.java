@@ -9,8 +9,6 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateBrokerVDSCommand;
 
 public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
@@ -29,12 +27,15 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
         command.execute();
         VDSReturnValue vdsReturnValue = command.getVDSReturnValue();
 
-        final VM vm = getVmDao().get(getParameters().getVmId());
+        VM vm = getVmDao().get(getParameters().getVmId());
 
         if (vdsReturnValue.getSucceeded()) {
+            ResourceManager.getInstance().AddAsyncRunningVm(getParameters().getVmId());
+
             ResourceManager.getInstance().InternalSetVmStatus(vm, VMStatus.MigratingFrom);
             vm.setMigratingToVds(getParameters().getDstVdsId());
-            ResourceManager.getInstance().AddAsyncRunningVm(getParameters().getVmId());
+            getVmDynamicDAO().update(vm.getDynamicData());
+
             getVDSReturnValue().setReturnValue(VMStatus.MigratingFrom);
         } else {
             log.error("Failed Vm migration");
@@ -44,14 +45,6 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
             getVDSReturnValue().setExceptionString(vdsReturnValue.getExceptionString());
             getVDSReturnValue().setExceptionObject(vdsReturnValue.getExceptionObject());
         }
-
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                getVmDynamicDAO().update(vm.getDynamicData());
-                return null;
-            }
-        });
     }
 
     private VmDynamicDAO getVmDynamicDAO() {
