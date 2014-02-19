@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
@@ -29,6 +30,8 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -353,6 +356,10 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             values.put(GlusterConstants.JOB_INFO, " ");
 
             for (Step step: steps) {
+                if (TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - step.getStartTime().getTime()) < getMininumWaitInMins()) {
+                    //This task has been recently created. We will give it 10 mins before clearing it.
+                    continue;
+                }
                 step.markStepEnded(JobExecutionStatus.UNKNOWN);
                 step.setStatus(JobExecutionStatus.UNKNOWN);
                 step.setDescription(ExecutionMessageDirector.resolveStepMessage(step.getStepType(), values));
@@ -364,5 +371,9 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             getGlusterTaskUtils().releaseVolumeLock(taskId);
         }
 
+    }
+
+    private static Integer getMininumWaitInMins() {
+        return Config.<Integer> getValue(ConfigValues.GlusterTaskMinWaitForCleanupInMins);
     }
 }

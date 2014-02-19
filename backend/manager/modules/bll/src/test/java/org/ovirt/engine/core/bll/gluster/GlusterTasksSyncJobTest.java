@@ -8,6 +8,7 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,8 @@ public class GlusterTasksSyncJobTest {
 
     private static final Guid[] TASK_GUIDS = {new Guid("EE111111-1111-1111-1111-111111111111"),
         new Guid("EE222222-2222-2222-2222-222222222222"),
-        new Guid("EE333333-3333-3333-3333-333333333333")};
+        new Guid("EE333333-3333-3333-3333-333333333333"),
+        new Guid("EE444444-4444-4444-4444-444444444444")};
 
     private static final Guid[] VOL_GUIDS = {new Guid("AA111111-1111-1111-1111-111111111111"),
         new Guid("AA222222-2222-2222-2222-222222222222"),
@@ -100,7 +102,8 @@ public class GlusterTasksSyncJobTest {
             mockConfig(ConfigValues.GlusterAysncTasksSupport, Version.v3_3.toString(), true),
             mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
             mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
-            mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10));
+            mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10),
+            mockConfig(ConfigValues.GlusterTaskMinWaitForCleanupInMins, 10));
 
     @Before
     public void init() {
@@ -144,11 +147,12 @@ public class GlusterTasksSyncJobTest {
     @Test
     public void cleanOrphanTasks() {
         doReturn(getTasks()).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
-        doReturn(Arrays.asList(TASK_GUIDS[2])).when(provider).getMonitoredTaskIDsInDB();
+        doReturn(Arrays.asList(TASK_GUIDS[2], TASK_GUIDS[3])).when(provider).getMonitoredTaskIDsInDB();
         prepareMocks();
 
         tasksSyncJob.updateGlusterAsyncTasks();
         Mockito.verify(jobRepository, times(1)).updateStep(any(Step.class));
+        //endStepJob will not be called for TASK_GUIDS[3], so times is = 2
         Mockito.verify(taskUtils, times(2)).endStepJob(any(Step.class));
     }
 
@@ -157,7 +161,7 @@ public class GlusterTasksSyncJobTest {
         doReturn(new HashMap<>()).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
         doReturn(Arrays.asList(TASK_GUIDS[2])).when(provider).getMonitoredTaskIDsInDB();
         doReturn(null).when(volumeDao).getVolumeByGlusterTask(TASK_GUIDS[2]);
-        doReturn(getSteps()).when(stepDao).getStepsByExternalId(TASK_GUIDS[2]);
+        doReturn(getSteps(TASK_GUIDS[2])).when(stepDao).getStepsByExternalId(TASK_GUIDS[2]);
 
         tasksSyncJob.updateGlusterAsyncTasks();
         Mockito.verify(taskUtils, times(1)).endStepJob(any(Step.class));
@@ -212,7 +216,7 @@ public class GlusterTasksSyncJobTest {
         doReturn(getTasks(JobExecutionStatus.ABORTED)).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
         prepareMocks();
         tasksSyncJob.updateGlusterAsyncTasks();
-          Mockito.verify(jobRepository, times(0)).updateStep(any(Step.class));
+        Mockito.verify(jobRepository, times(0)).updateStep(any(Step.class));
         Mockito.verify(taskUtils, times(2)).endStepJob(any(Step.class));
     }
 
@@ -220,9 +224,9 @@ public class GlusterTasksSyncJobTest {
         doReturn(getVolume(0)).when(volumeDao).getVolumeByGlusterTask(TASK_GUIDS[0]);
         doReturn(getVolume(1)).when(volumeDao).getVolumeByGlusterTask(TASK_GUIDS[1]);
         doReturn(getVolume(1)).when(volumeDao).getVolumeByGlusterTask(TASK_GUIDS[2]);
-        doReturn(getSteps()).when(stepDao).getStepsByExternalId(TASK_GUIDS[0]);
-        doReturn(getSteps()).when(stepDao).getStepsByExternalId(TASK_GUIDS[1]);
-        doReturn(getSteps()).when(stepDao).getStepsByExternalId(TASK_GUIDS[2]);
+        doReturn(getSteps(TASK_GUIDS[0])).when(stepDao).getStepsByExternalId(TASK_GUIDS[0]);
+        doReturn(getSteps(TASK_GUIDS[1])).when(stepDao).getStepsByExternalId(TASK_GUIDS[1]);
+        doReturn(getSteps(TASK_GUIDS[2])).when(stepDao).getStepsByExternalId(TASK_GUIDS[2]);
    }
 
     private void prepareMocksForTasksFromCLI() {
@@ -232,15 +236,21 @@ public class GlusterTasksSyncJobTest {
         doReturn(new ArrayList<Step>()).when(stepDao).getStepsByExternalId(TASK_GUIDS[1]);
     }
 
-    private List<Step> getSteps() {
+    private List<Step> getSteps(Guid taskGuid) {
         List<Step> steps = new ArrayList<>();
-        steps.add(createStep());
+        steps.add(createStep(taskGuid));
         return steps;
     }
 
-    private Step createStep() {
+    private Step createStep(Guid taskGuid) {
         Step step = new Step();
         step.setStepType(StepEnum.REBALANCING_VOLUME);
+        Calendar stepTime = Calendar.getInstance();
+        if (taskGuid.equals(TASK_GUIDS[2])) {
+            //only create TASK_GUIDS[2] as older job
+            stepTime.set(Calendar.HOUR, stepTime.get(Calendar.HOUR) -1);
+        }
+        step.setStartTime(stepTime.getTime());
         return step;
     }
 

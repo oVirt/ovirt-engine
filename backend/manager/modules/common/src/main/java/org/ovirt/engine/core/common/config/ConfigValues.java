@@ -1344,6 +1344,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     GlusterAysncTasksSupport,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    GlusterTaskMinWaitForCleanupInMins,
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("AttestationService/resources/PollHosts")
     PollUri,
