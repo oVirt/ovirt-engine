@@ -416,7 +416,10 @@ public class SnapshotsManager {
         }
 
         if (!vmUpdatedFromConfiguration) {
-            vm.setImages(new ArrayList<DiskImage>(getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshot.getId())));
+            if (images == null) {
+                images = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshot.getId());
+            }
+            vm.setImages(new ArrayList<>(images));
         }
 
         vm.setAppList(snapshot.getAppList());

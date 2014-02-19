@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -38,7 +39,13 @@ public class SnapshotVmConfigurationHelper {
         VM vm;
         if (configuration != null) {
             vm = getVmWithConfiguration(configuration, vmId);
-            markImagesIllegalIfNotInDb(vm, snapshotId);
+            Snapshot snapshot = getSnapshotDao().get(snapshotId);
+            if (snapshot != null && snapshot.getType() != Snapshot.SnapshotType.PREVIEW) {
+                // No need to mark disks of 'PREVIEW' snapshot as illegal
+                // as it represents previous 'Active VM' state and no operations
+                // on disks can be done while previewing a snapshot.
+                markImagesIllegalIfNotInDb(vm, snapshotId);
+            }
         } else {
             vm = getVmWithoutConfiguration(vmId, snapshotId);
         }
