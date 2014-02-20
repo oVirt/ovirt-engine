@@ -128,19 +128,6 @@ public class CloudInitHandler {
     private void storeNetwork() throws UnsupportedEncodingException {
         StringBuilder output = new StringBuilder();
 
-        // As of cloud-init 0.7.1, you can't set DNS servers without also setting NICs
-        if (vmInit.getDnsServers() != null) {
-            output.append("dns-nameservers")
-            .append(" ").append(vmInit.getDnsServers());
-            output.append("\n");
-        }
-
-        if (vmInit.getDnsSearch() != null) {
-            output.append("dns-search")
-            .append(" ").append(vmInit.getDnsSearch());
-            output.append("\n");
-        }
-
         if (vmInit.getNetworks() != null) {
             List<VmInitNetwork> networks = vmInit.getNetworks();
 
@@ -151,6 +138,19 @@ public class CloudInitHandler {
                 output.append("  netmask " + iface.getNetmask() + "\n");
                 if (!StringUtils.isEmpty(iface.getGateway())) {
                     output.append("  gateway " + iface.getGateway() + "\n");
+                }
+
+                // As of cloud-init 0.7.1, you can't set DNS servers without also setting NICs
+                if (vmInit.getDnsServers() != null) {
+                    output.append("  dns-nameservers")
+                        .append(" ").append(vmInit.getDnsServers());
+                    output.append("\n");
+                }
+
+                if (vmInit.getDnsSearch() != null) {
+                    output.append("  dns-search")
+                        .append(" ").append(vmInit.getDnsSearch());
+                    output.append("\n");
                 }
             }
 
