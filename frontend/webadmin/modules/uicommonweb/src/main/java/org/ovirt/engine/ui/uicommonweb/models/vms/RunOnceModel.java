@@ -673,7 +673,15 @@ public abstract class RunOnceModel extends Model
         EntityModel qxlProtocol = new EntityModel(DisplayType.qxl)
            .setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
 
-        getDisplayProtocol().setItems(Arrays.asList(vncProtocol, qxlProtocol));
+        boolean hasSpiceSupport = AsyncDataProvider.hasSpiceSupport(vm.getOs(), vm.getVdsGroupCompatibilityVersion());
+
+        if (hasSpiceSupport) {
+            getDisplayProtocol().setItems(Arrays.asList(vncProtocol, qxlProtocol));
+        } else {
+            getDisplayProtocol().setItems(Arrays.asList(vncProtocol));
+            getDisplayConsole_Spice_IsSelected().setIsAvailable(false);
+        }
+
         getDisplayProtocol().setSelectedItem(vm.getDefaultDisplayType() == DisplayType.vnc ?
                 vncProtocol : qxlProtocol);
     }
