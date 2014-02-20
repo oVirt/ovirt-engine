@@ -195,6 +195,41 @@ class Statement(base.Base):
         self.logger.debug('Result: %s', ret)
         return ret
 
+    def getVdcOptionVersions(
+        self,
+        name,
+        type=str,
+        ownConnection=False,
+    ):
+        result = self.execute(
+            statement="""
+                select version, option_value
+                from vdc_options
+                where option_name = %(name)s
+            """,
+            args=dict(
+                name=name,
+            ),
+            ownConnection=ownConnection,
+        )
+        if len(result) == 0:
+            raise RuntimeError(
+                _('Cannot locate application option {name}').format(
+                    name=name,
+                )
+            )
+
+        return dict([
+            (
+                r['version'],
+                (
+                    r['option_value']
+                    if type != bool
+                    else r['option_value'].lower() not in ('false', '0')
+                )
+            ) for r in result
+        ])
+
     def getVdcOption(
         self,
         name,
@@ -202,31 +237,11 @@ class Statement(base.Base):
         type=str,
         ownConnection=False,
     ):
-        result = self.execute(
-            statement="""
-                select option_name, option_value
-                from vdc_options
-                where
-                    option_name = %(name)s and
-                    version = %(version)s
-            """,
-            args=dict(
-                name=name,
-                version=version,
-            ),
+        return self.getVdcOptionVersions(
+            name=name,
+            type=type,
             ownConnection=ownConnection,
-        )
-        if len(result) != 1:
-            raise RuntimeError(
-                _('Cannot locate application option {name}').format(
-                    name=name,
-                )
-            )
-        value = result[0]['option_value']
-        if type == bool:
-            value = value.lower() not in ('false', '0')
-
-        return value
+        )[version]
 
     def updateVdcOptions(
         self,
