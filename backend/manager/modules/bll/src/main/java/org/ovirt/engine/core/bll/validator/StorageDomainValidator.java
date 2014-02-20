@@ -36,7 +36,7 @@ public class StorageDomainValidator {
         }
         if (storageDomain.getStatus() != StorageDomainStatus.Active) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
-                    storageDomain.getStatus().name());
+                    String.format("$%1$s %2$s", "status", storageDomain.getStatus().name()));
         }
         return ValidationResult.VALID;
     }
