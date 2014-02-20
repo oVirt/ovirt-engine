@@ -1315,7 +1315,7 @@
             <null />
             <null />
             <null />
-            <value>0</value>                        
+            <value>0</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>4</value>
@@ -1347,7 +1347,7 @@
             <null />
             <null />
             <null />
-            <value>0</value>                        
+            <value>0</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>4</value>
@@ -4774,7 +4774,7 @@
             <value>-1</value>
             <value>30</value>
             <value></value>
-            <value>false</value>            
+            <value>false</value>
         </row>
         <row>
             <value>44294</value>
@@ -4808,7 +4808,7 @@
             <value>-1</value>
             <value>30</value>
             <value></value>
-            <value>false</value>            
+            <value>false</value>
         </row>
         <row>
             <value>44295</value>
@@ -4842,7 +4842,7 @@
             <value>-1</value>
             <value>30</value>
             <value></value>
-            <value>false</value>            
+            <value>false</value>
         </row>
         <row>
             <value>44296</value>
@@ -4876,7 +4876,7 @@
             <value>1</value>
             <value>30</value>
             <value></value>
-            <value>false</value>            
+            <value>false</value>
         </row>
     </table>
 
