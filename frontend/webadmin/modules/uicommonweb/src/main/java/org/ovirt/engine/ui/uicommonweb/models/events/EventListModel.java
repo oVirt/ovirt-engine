@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -28,6 +29,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class EventListModel extends ListWithDetailsModel
 {
+    private final GridTimer timer;
+
     private UICommand privateRefreshCommand;
 
     public UICommand getRefreshCommand()
@@ -105,11 +108,16 @@ public class EventListModel extends ListWithDetailsModel
         getSearchPreviousPageCommand().setIsAvailable(true);
 
         setIsTimerDisabled(true);
-    }
 
-    @Override
-    protected void doGridTimerExecute() {
-        getRefreshCommand().execute();
+        timer = new GridTimer(getListName()) {
+
+            @Override
+            public void execute() {
+                getRefreshCommand().execute();
+            }
+        };
+
+        timer.setRefreshRate(getConfigurator().getPollingTimerInterval());
     }
 
     @Override
@@ -126,6 +134,8 @@ public class EventListModel extends ListWithDetailsModel
         requestingData = true;
         setItems(new ObservableCollection<AuditLog>());
         setLastEvent(null);
+
+        timer.start();
     }
 
     @Override
@@ -212,6 +222,14 @@ public class EventListModel extends ListWithDetailsModel
     @Override
     public UICommand getDefaultCommand() {
         return getDetailsCommand();
+    }
+
+    @Override
+    public void stopRefresh()
+    {
+        super.stopRefresh();
+
+        timer.stop();
     }
 
     private void updateItems(ArrayList<AuditLog> source)

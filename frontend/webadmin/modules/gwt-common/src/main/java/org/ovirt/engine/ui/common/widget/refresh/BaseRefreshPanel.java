@@ -177,7 +177,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
 
     private ToggleButton refreshMenuButton;
 
-    private final Image separator;
+    private Image separator;
 
     private final RefreshRateOptionsMenu refreshOptionsMenu;
 
@@ -290,7 +290,11 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
     }
 
     public void showStatus(String status) {
-        setTitle(status);
+        // for debugging
+        // statusLabel.setText(status);
+        if (refreshManager.getModelTimer().isActive()) {
+            setTitle(status);
+        }
     }
 
     private void createRefreshButton() {

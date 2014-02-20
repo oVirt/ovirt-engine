@@ -70,9 +70,9 @@ public class SubTabHostInterfacePresenter extends AbstractSubTabPresenter<VDS, H
                 }
             }
         }));
-        getModelProvider().getModel().getTimer().addValueChangeHandler(new ValueChangeHandler<Integer>() {
+        getModelProvider().getModel().getTimer().addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
-            public void onValueChange(ValueChangeEvent<Integer> event) {
+            public void onValueChange(ValueChangeEvent<String> event) {
                 getView().setRefreshButtonVisibility(!getModelProvider().getModel().getTimer().isActive());
             }
         });

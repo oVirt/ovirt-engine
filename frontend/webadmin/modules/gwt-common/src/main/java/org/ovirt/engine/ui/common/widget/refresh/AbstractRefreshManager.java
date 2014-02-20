@@ -19,7 +19,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 
 /**
@@ -36,8 +35,8 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
 
     }
 
-    // Key used to store refresh rate of all data grids
-    private static final String GRID_REFRESH_RATE_KEY = "GridRefreshRate"; //$NON-NLS-1$
+    // Prefix for keys used to store refresh rates of individual data grids
+    private static final String GRID_REFRESH_RATE_PREFIX = "GridRefreshRate"; //$NON-NLS-1$
 
     private static final Integer DEFAULT_REFRESH_RATE = GridTimer.DEFAULT_NORMAL_RATE;
     private static final Integer OUT_OF_FOCUS_REFRESH_RATE = Integer.valueOf(60000);
@@ -63,7 +62,6 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
     private final T refreshPanel;
     private final EventBus eventBus;
     private ManualRefreshCallback manualRefreshCallback;
-    private HandlerRegistration statusUpdateHandlerRegistration;
 
     private GridController controller;
 
@@ -97,22 +95,15 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
     private void updateController() {
         this.controller = modelProvider.getModel();
 
-        updateTimer();
-    }
+        GridTimer modelTimer = getModelTimer();
+        modelTimer.setRefreshRate(readRefreshRate());
 
-    private void updateTimer() {
-        final GridTimer modelTimer = getModelTimer();
-
-        if (statusUpdateHandlerRegistration != null) {
-            statusUpdateHandlerRegistration.removeHandler();
-        }
-        statusUpdateHandlerRegistration = modelTimer.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+        modelTimer.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
-            public void onValueChange(ValueChangeEvent<Integer> event) {
-                onRefresh(modelTimer.getTimerRefreshStatus());
+            public void onValueChange(ValueChangeEvent<String> event) {
+                onRefresh(event.getValue());
             }
         });
-        modelTimer.resume();
     }
 
     /**
@@ -165,9 +156,8 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
     }
 
     public void setCurrentRefreshRate(int newRefreshRate) {
+        getModelTimer().setRefreshRate(newRefreshRate);
         saveRefreshRate(newRefreshRate);
-        getModelTimer().setRefreshRate(readRefreshRate());
-        updateTimer();
     }
 
     public int getCurrentRefreshRate() {
@@ -175,7 +165,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
     }
 
     String getRefreshRateItemKey() {
-        return GRID_REFRESH_RATE_KEY;
+        return GRID_REFRESH_RATE_PREFIX + "_" + controller.getId(); //$NON-NLS-1$
     }
 
     void saveRefreshRate(int newRefreshRate) {

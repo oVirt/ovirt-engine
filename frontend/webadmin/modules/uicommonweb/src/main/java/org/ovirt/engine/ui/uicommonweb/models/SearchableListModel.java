@@ -42,12 +42,6 @@ import org.ovirt.engine.ui.uicompat.IteratorUtils;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
-
 /**
  * Represents a list model with ability to fetch items both sync and async.
  */
@@ -60,7 +54,6 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
     private static final String PAGE_NUMBER_REGEX = "[1-9]+[0-9]*$"; //$NON-NLS-1$
 
     private UICommand privateSearchCommand;
-    private HandlerRegistration timerChangeHandler;
 
     public UICommand getSearchCommand()
     {
@@ -304,84 +297,35 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
         return true;
     }
 
-    /**
-     * Grid refresh timer associated with this list model.
-     */
-    private GridTimer timer;
+    private GridTimer privatetimer;
 
-    /**
-     * Setter for the grid timer.
-     * @param value The new {@code GridTimer}.
-     */
-    private void setTimer(final GridTimer value) {
-        timer = value;
+    public GridTimer gettimer()
+    {
+        return privatetimer;
+    }
+
+    public void settimer(GridTimer value)
+    {
+        privatetimer = value;
     }
 
     @Override
-    public GridTimer getTimer() {
-        if (timer == null && getEventBus() != null) {
-            // The timer doesn't exist yet, and we have an event bus, create the timer and pass in the bus.
-            setTimer(new GridTimer(getListName(), getEventBus()) {
+    public GridTimer getTimer()
+    {
+        if (gettimer() == null)
+        {
+            settimer(new GridTimer(getListName()) {
 
                 @Override
                 public void execute() {
-                    // Execute the code, sub classes can override this method to get their own code run.
-                    doGridTimerExecute();
+                    logger.fine(SearchableListModel.this.getClass().getName() + ": Executing search"); //$NON-NLS-1$
+                    syncSearch();
                 }
 
             });
-            //Always add a change handler, so we can properly synchronize the interval on all GridTimers.
-            replaceTimerChangeHandler();
+            gettimer().setRefreshRate(getConfigurator().getPollingTimerInterval());
         }
-        return timer;
-    }
-
-    /**
-     * Sub classes can override this method if they need to do something different when the timer
-     * expires.
-     */
-    protected void doGridTimerExecute() {
-        logger.fine(SearchableListModel.this.getClass().getName() + ": Executing search"); //$NON-NLS-1$
-        syncSearch();
-    }
-
-    /**
-     * Add a {@code ValueChangeHandler} to the timer associated with this {@code SearchableListModel}.
-     * The handler is used to update the refresh rate based on changes of other timers. So if another timer changes
-     * from lets say 5 seconds to 30 seconds interval. It will fire a {@code ValueChangeEvent} which this timer
-     * receives.
-     *
-     * If this timer is currently active (active tab/always active). It will stop this timer, change the interval,
-     * and start the timer again. If it is inactive, it will just update the interval so that the interval is correct
-     * for when the timer does become active (changing main tabs).
-     */
-    private void addTimerChangeHandler() {
-        timerChangeHandler = timer.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Integer> event) {
-                int newInterval = event.getValue();
-                if (timer.isActive()) {
-                    //Immediately adjust timer and restart if it was active.
-                    if (newInterval != timer.getRefreshRate()) {
-                        timer.stop();
-                        timer.setRefreshRate(newInterval);
-                        timer.start();
-                    }
-                } else {
-                    //Update the timer interval for inactive timers, so they are correct when they become active
-                    timer.setRefreshRate(newInterval);
-                }
-            }
-        });
-    }
-
-    protected void replaceTimerChangeHandler() {
-        if (timerChangeHandler == null) {
-            addTimerChangeHandler();
-        } else {
-            removeTimerChangeHandler();
-            addTimerChangeHandler();
-        }
+        return gettimer();
     }
 
     @Override
@@ -447,20 +391,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
                 onPropertyChanged(new PropertyChangedEventArgs(PropertyChangedEventArgs.Args.PROGRESS.toString()));
                 syncSearch();
                 setIsQueryFirstTime(false);
-                if (getTimer() != null) {
-                    //Timer can be null if the event bus hasn't been set yet (model hasn't been fully initialized)
-                    startRefresh();
-                } else {
-                    //Defer the start of the timer until after the event bus has been added to this model. Then we
-                    //can pass the event bus to the timer and the timer can become active.
-                    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                        @Override
-                        public void execute() {
-                            startRefresh();
-                        }
-                    });
-                }
+                getTimer().start();
             }
             else
             {
@@ -469,21 +400,15 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
         }
     }
 
-    private void startRefresh() {
-        if (getTimer() != null) {
-            getTimer().start();
-        }
-    }
-
     public void forceRefresh()
     {
-        stopRefresh();
+        getTimer().stop();
         setIsQueryFirstTime(true);
         syncSearch();
 
         if (!getIsTimerDisabled())
         {
-            startRefresh();
+            getTimer().start();
         }
     }
 
@@ -857,17 +782,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
 
     public void stopRefresh()
     {
-        if (getTimer() != null) {
-            //Timer can be null if the event bus hasn't been set yet. If the timer is null we can't stop it.
-            getTimer().stop();
-        }
-    }
-
-    protected void removeTimerChangeHandler() {
-        if (timerChangeHandler != null) {
-            timerChangeHandler.removeHandler();
-            timerChangeHandler = null;
-        }
+        getTimer().stop();
     }
 
     @Override
