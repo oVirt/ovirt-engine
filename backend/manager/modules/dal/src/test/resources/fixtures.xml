@@ -6155,6 +6155,10 @@
         <column>password</column>
         <column>winkey</column>
         <column>custom_script</column>
+        <column>input_locale</column>
+        <column>ui_language</column>
+        <column>system_locale</column>
+        <column>user_locale</column>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
             <value>users.mydomain.com</value>
@@ -6168,6 +6172,10 @@
             <value></value>
             <value></value>
             <value></value>
+            <value>en_US</value>
+            <value>en_US</value>
+            <value>en_US</value>
+            <value>en_US</value>
         </row>
     </table>
 </dataset>

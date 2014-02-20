@@ -1687,5 +1687,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     IscsiMultipathingSupported,
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("en_US")
+    DefaultSysprepLocale,
+
     Invalid;
 }

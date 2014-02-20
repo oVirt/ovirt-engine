@@ -728,7 +728,8 @@ public abstract class RunOnceModel extends Model
             params.setSysPrepPassword(getSysPrepPassword().getEntity());
         }
 
-        if (getIsCloudInitEnabled() != null && getIsCloudInitEnabled().getEntity()) {
+        if (getIsCloudInitEnabled() != null && getIsCloudInitEnabled().getEntity() ||
+                getIsSysprepEnabled() != null && getIsSysprepEnabled().getEntity()) {
             params.setVmInit(getVmInit().buildCloudInitParameters(this));
         }
 

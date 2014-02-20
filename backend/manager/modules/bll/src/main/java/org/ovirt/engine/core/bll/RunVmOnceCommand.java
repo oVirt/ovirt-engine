@@ -98,7 +98,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         sysPrepParams.setSysPrepPassword(runOnceParams.getSysPrepPassword());
         createVmParams.setSysPrepParams(sysPrepParams);
 
-        createVmParams.setVmInit(runOnceParams.getVmInit());
+        createVmParams.getVm().setVmInit(getParameters().getVmInit());
 
         return createVmParams;
     }
@@ -146,6 +146,10 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             // if is not null it means runVM was launch from the run once command, thus
             // the VM can run with keyboard layout type which is different from its default display type
             getVm().getDynamicData().setVncKeyboardLayout(getParameters().getVncKeyboardLayout());
+        }
+
+        if (getParameters().getVmInit() != null) {
+            getVm().setVmInit(getParameters().getVmInit());
         }
     }
 

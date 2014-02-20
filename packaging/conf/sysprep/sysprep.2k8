@@ -54,13 +54,13 @@
     <settings pass="windowsPE">
         <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="x86" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <SetupUILanguage>
-                <UILanguage>en-us</UILanguage>
+                <UILanguage>$SetupUiLanguageUiLanguage$</UILanguage>
             </SetupUILanguage>
             <InputLocale>0409:00000409</InputLocale>
-            <UILanguage>en-us</UILanguage>
-            <SystemLocale>en-us</SystemLocale>
-            <UILanguageFallback>en-us</UILanguageFallback>
-            <UserLocale>en-us</UserLocale>
+            <SystemLocale>$SystemLocale$</SystemLocale>
+            <UILanguage>$UILanguage$</UILanguage>
+            <UILanguageFallback>en-US</UILanguageFallback>
+            <UserLocale>$UserLocale$</UserLocale>
         </component>
         <component name="Microsoft-Windows-Setup" processorArchitecture="x86" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <UserData>

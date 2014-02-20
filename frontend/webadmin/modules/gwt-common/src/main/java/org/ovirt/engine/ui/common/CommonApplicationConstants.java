@@ -157,6 +157,18 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Use Cloud-Init")
     String runOncePopupCloudInitLabel();
 
+    @DefaultStringValue("Input Locale")
+    String inputLocaleLabel();
+
+    @DefaultStringValue("UI Language")
+    String uiLanguageLabel();
+
+    @DefaultStringValue("System Locale")
+    String systemLocaleLabel();
+
+    @DefaultStringValue("User Locale")
+    String userLocaleLabel();
+
     @DefaultStringValue("VM Hostname")
     String cloudInitHostnameLabel();
 

@@ -1042,6 +1042,22 @@ public class VmMapper {
             }
             entity.setNetworks(networks);
         }
+
+        if (model.isSetInputLocale()) {
+            entity.setInputLocale(model.getInputLocale());
+        }
+
+        if (model.isSetUiLanguage()) {
+            entity.setUiLanguage(model.getUiLanguage());
+        }
+
+        if (model.isSetSystemLocale()) {
+            entity.setSystemLocale(model.getSystemLocale());
+        }
+
+        if (model.isSetUserLocale()) {
+            entity.setUserLocale(model.getUserLocale());
+        }
         return entity;
     }
 
@@ -1085,6 +1101,18 @@ public class VmMapper {
             for (VmInitNetwork network : entity.getNetworks()) {
                 model.getNicConfigurations().getNicConfigurations().add(map(network, null));
             }
+        }
+        if (entity.getInputLocale() != null) {
+            model.setInputLocale(entity.getInputLocale());
+        }
+        if (entity.getUiLanguage() != null) {
+            model.setUiLanguage(entity.getUiLanguage());
+        }
+        if (entity.getSystemLocale() != null) {
+            model.setSystemLocale(entity.getSystemLocale());
+        }
+        if (entity.getUserLocale() != null) {
+            model.setUserLocale(entity.getUserLocale());
         }
         return model;
     }

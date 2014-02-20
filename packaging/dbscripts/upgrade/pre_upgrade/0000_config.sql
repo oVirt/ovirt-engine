@@ -213,6 +213,7 @@ select fn_db_add_config_value('HostNetworkQosSupported', 'false', '3.3');
 select fn_db_add_config_value('CloudInitSupported','false','3.0');
 select fn_db_add_config_value('CloudInitSupported','false','3.1');
 select fn_db_add_config_value('CloudInitSupported','false','3.2');
+select fn_db_add_config_value('DefaultSysprepLocale','en_US','general');
 select fn_db_add_config_value('ImportGlanceImageAsTemplate','false','3.0');
 select fn_db_add_config_value('ImportGlanceImageAsTemplate','false','3.1');
 select fn_db_add_config_value('ImportGlanceImageAsTemplate','false','3.2');

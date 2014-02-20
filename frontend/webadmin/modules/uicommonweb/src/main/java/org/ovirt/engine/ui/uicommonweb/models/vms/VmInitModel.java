@@ -75,8 +75,41 @@ public class VmInitModel extends Model {
     public EntityModel<String> getHostname() {
         return privateHostname;
     }
+
     private void setHostname(EntityModel<String> value) {
         privateHostname = value;
+    }
+
+    private EntityModel<String> privateInputLocale;
+    public EntityModel<String> getInputLocale() {
+        return privateInputLocale;
+    }
+    private void setInputLocale(EntityModel<String> value) {
+        privateInputLocale = value;
+    }
+
+    private EntityModel<String> privateUiLanguage;
+    public EntityModel<String> getUiLanguage() {
+        return privateUiLanguage;
+    }
+    private void setUiLanguage(EntityModel<String> value) {
+        privateUiLanguage = value;
+    }
+
+    private EntityModel<String> privateSystemLocale;
+    public EntityModel<String> getSystemLocale() {
+        return privateSystemLocale;
+    }
+    private void setSystemLocale(EntityModel<String> value) {
+        privateSystemLocale = value;
+    }
+
+    private EntityModel<String> privateUserLocale;
+    public EntityModel<String> getUserLocale() {
+        return privateUserLocale;
+    }
+    private void setUserLocale(EntityModel<String> value) {
+        privateUserLocale = value;
     }
 
     private EntityModel<String> privateDomain;
@@ -343,6 +376,10 @@ public class VmInitModel extends Model {
         setWindowsSysprepTimeZone(new ListModel<Map.Entry<String, String>>());
         setWindowsSysprepTimeZoneEnabled(new EntityModel<Boolean>());
         setWindowsHostname(new EntityModel<String>());
+        setInputLocale(new EntityModel<String>());
+        setUiLanguage(new EntityModel<String>());
+        setSystemLocale(new EntityModel<String>());
+        setUserLocale(new EntityModel<String>());
 
         setHostname(new EntityModel<String>());
         setDomain(new EntityModel<String>());
@@ -404,6 +441,10 @@ public class VmInitModel extends Model {
         getPasswordSet().setIsChangable(false);
 
         getWindowsHostname().setEntity("");
+        getInputLocale().setEntity("");
+        getUiLanguage().setEntity("");
+        getSystemLocale().setEntity("");
+        getUserLocale().setEntity("");
         getHostname().setEntity("");
         getDomain().setEntity("");
         getRootPassword().setEntity("");
@@ -439,6 +480,18 @@ public class VmInitModel extends Model {
             if (!StringHelper.isNullOrEmpty(vmInit.getHostname())) {
                 getHostname().setEntity(vmInit.getHostname());
                 getWindowsHostname().setEntity(vmInit.getHostname());
+            }
+            if (!StringHelper.isNullOrEmpty(vmInit.getInputLocale())) {
+                getInputLocale().setEntity(vmInit.getInputLocale());
+            }
+            if (!StringHelper.isNullOrEmpty(vmInit.getUiLanguage())) {
+                getUiLanguage().setEntity(vmInit.getUiLanguage());
+            }
+            if (!StringHelper.isNullOrEmpty(vmInit.getSystemLocale())) {
+                getSystemLocale().setEntity(vmInit.getSystemLocale());
+            }
+            if (!StringHelper.isNullOrEmpty(vmInit.getUserLocale())) {
+                getUserLocale().setEntity(vmInit.getUserLocale());
             }
             getDomain().setEntity(vmInit.getDomain());
             final String tz = vmInit.getTimeZone();
@@ -655,7 +708,8 @@ public class VmInitModel extends Model {
     }
 
     public VmInit buildCloudInitParameters(UnitVmModel model) {
-        if (model.getVmInitEnabled().getEntity()) {
+        if (model.getVmInitEnabled().getEntity() ||
+                model.getSysprepEnabled().getEntity()) {
             return buildModelSpecificParameters(model.getIsWindowsOS(), model.getDomain().getEntity());
         } else {
             return null;
@@ -696,6 +750,12 @@ public class VmInitModel extends Model {
         if (getHostnameEnabled()) {
             vmInit.setHostname(isWindowsOS ? getWindowsHostname().getEntity() :
                                        getHostname().getEntity());
+        }
+        if (isWindowsOS) {
+            vmInit.setInputLocale((String)getInputLocale().getEntity());
+            vmInit.setUiLanguage((String)getUiLanguage().getEntity());
+            vmInit.setSystemLocale((String)getSystemLocale().getEntity());
+            vmInit.setUserLocale((String)getUserLocale().getEntity());
         }
 
         if (getRootPasswordEnabled()) {

@@ -2560,6 +2560,10 @@
         <xs:element name="windows_license_key" type="xs:string" minOccurs="0" maxOccurs="1"/>
         <xs:element name="root_password" type="xs:string" minOccurs="0" maxOccurs="1"/>
         <xs:element name="custom_script" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="input_locale" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="ui_language" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="system_locale" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="user_locale" type="xs:string" minOccurs="0" maxOccurs="1"/>
       </xs:sequence>
   </xs:complexType>
 

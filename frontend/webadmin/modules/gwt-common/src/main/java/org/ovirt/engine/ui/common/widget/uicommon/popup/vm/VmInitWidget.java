@@ -1,8 +1,31 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import java.util.Map;
+
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.ComboBox;
+import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmInitModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ClientBundle;
@@ -15,30 +38,6 @@ import com.google.gwt.user.client.ui.IndexedPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
-
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
-import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.ComboBox;
-import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
-import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmInitModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.Map;
 
 public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitModel> implements IndexedPanel {
 
@@ -110,6 +109,26 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @Path(value = "windowsHostname.entity")
     @WithElementId
     StringEntityModelTextBoxEditor windowsHostnameEditor;
+
+    @UiField
+    @Path(value = "inputLocale.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor inputLocaleEditor;
+
+    @UiField
+    @Path(value = "uiLanguage.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor uiLanguageEditor;
+
+    @UiField
+    @Path(value = "systemLocale.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor systemLocaleEditor;
+
+    @UiField
+    @Path(value = "userLocale.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor userLocaleEditor;
 
     @UiField
     @Path(value = "hostname.entity")
@@ -329,6 +348,10 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     void localize() {
         hostnameEditor.setLabel(constants.cloudInitHostnameLabel());
         windowsHostnameEditor.setLabel(constants.cloudInitHostnameLabel());
+        inputLocaleEditor.setLabel(constants.inputLocaleLabel());
+        uiLanguageEditor.setLabel(constants.uiLanguageLabel());
+        systemLocaleEditor.setLabel(constants.systemLocaleLabel());
+        userLocaleEditor.setLabel(constants.userLocaleLabel());
         authorizedKeysEditor.setLabel(constants.cloudInitAuthorizedKeysLabel());
         passwordSetEditor.setLabel(constants.vmInitPasswordSetLabel());
         regenerateKeysEnabledEditor.setLabel(constants.cloudInitRegenerateKeysLabel());
@@ -397,6 +420,10 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         networkStartOnBootEditor.addStyleName(customizableStyle.primaryOption());
         networkDhcpEditor.addStyleName(customizableStyle.primaryOption());
         windowsSysprepTimeZoneEditor.addStyleName(customizableStyle.primaryOption());
+        inputLocaleEditor.addStyleName(customizableStyle.primaryOption());
+        uiLanguageEditor.addStyleName(customizableStyle.primaryOption());
+        systemLocaleEditor.addStyleName(customizableStyle.primaryOption());
+        userLocaleEditor.addStyleName(customizableStyle.primaryOption());
         hostnameEditor.addStyleName(customizableStyle.primaryOption());
         windowsHostnameEditor.addStyleName(customizableStyle.primaryOption());
         domainEditor.addStyleName(customizableStyle.primaryOption());

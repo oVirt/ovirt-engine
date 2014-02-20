@@ -9,7 +9,7 @@ public class CreateVmFromCloudInitVDSCommand<P extends CreateVmVDSCommandParamet
     public CreateVmFromCloudInitVDSCommand(P parameters) throws Exception {
         super(parameters);
 
-        CloudInitHandler cloudInitHandler = new CloudInitHandler(parameters.getVmInit());
+        CloudInitHandler cloudInitHandler = new CloudInitHandler(parameters.getVm().getVmInit());
         Map<String, byte[]> cloudInitContent;
         try {
             cloudInitContent = cloudInitHandler.getFileData();

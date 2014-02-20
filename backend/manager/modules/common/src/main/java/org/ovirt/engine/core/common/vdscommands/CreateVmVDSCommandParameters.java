@@ -28,14 +28,6 @@ public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         return String.format("%s, vm=%s", super.toString(), getVm());
     }
 
-    public VmInit getVmInit() {
-        return vmInit;
-    }
-
-    public void setVmInit(VmInit vmInit) {
-        this.vmInit = vmInit;
-    }
-
     public SysPrepParams getSysPrepParams() {
         return sysPrepParams;
     }

@@ -60,10 +60,15 @@ public final class SysprepHandler {
         passwordPerDomain = Config.<DomainsPasswordMap> getValue(ConfigValues.AdUserPassword);
     }
 
-    public static String getSysPrep(VM vm, String hostName, String domain, SysPrepParams sysPrepParams) {
+    public static String getSysPrep(VM vm, SysPrepParams sysPrepParams) {
         String sysPrepContent = "";
         sysPrepContent = LoadFile(osRepository.getSysprepPath(vm.getVmOsId(), null));
         sysPrepContent = replace(sysPrepContent, "$ProductKey$", osRepository.getProductKey(vm.getVmOsId(), null));
+
+        String domain = (vm.getVmInit() != null && vm.getVmInit().getDomain() != null) ?
+                vm.getVmInit().getDomain() : "";
+        String hostName = (vm.getVmInit() != null && vm.getVmInit().getHostname() != null) ?
+                vm.getVmInit().getHostname() : vm.getName();
 
         if (sysPrepContent.length() > 0) {
 
@@ -75,6 +80,33 @@ public final class SysprepHandler {
 
             sysPrepContent = replace(sysPrepContent, "$TimeZone$", timeZone);
             sysPrepContent = replace(sysPrepContent, "$OrgName$", Config.<String> getValue(ConfigValues.OrganizationName));
+
+
+            String inputLocale = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
+            String uiLanguage = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
+            String systemLocale = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
+            String userLocale = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
+
+            if (vm.getVmInit() != null) {
+                if (vm.getVmInit().getInputLocale() != null) {
+                    inputLocale = vm.getVmInit().getInputLocale();
+                }
+                if (vm.getVmInit().getUiLanguage() != null) {
+                    uiLanguage = vm.getVmInit().getUiLanguage();
+                }
+                if (vm.getVmInit().getSystemLocale() != null) {
+                    systemLocale = vm.getVmInit().getSystemLocale();
+                }
+                if (vm.getVmInit().getUserLocale() != null) {
+                    userLocale = vm.getVmInit().getUserLocale();
+                }
+            }
+
+            sysPrepContent = replace(sysPrepContent, "$SetupUiLanguageUiLanguage$", inputLocale);
+            sysPrepContent = replace(sysPrepContent, "$InputLocale$", inputLocale);
+            sysPrepContent = replace(sysPrepContent, "$UiLanguage$", uiLanguage);
+            sysPrepContent = replace(sysPrepContent, "$SystemLocale$", systemLocale);
+            sysPrepContent = replace(sysPrepContent, "$UserLocale$", userLocale);
         }
 
         return sysPrepContent;

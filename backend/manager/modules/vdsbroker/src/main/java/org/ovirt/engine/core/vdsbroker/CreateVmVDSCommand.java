@@ -17,7 +17,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVmFromCloudInitVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVmFromSysPrepVDSCommand;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVmFromSysPrepVDSCommandParameters;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSGenericException;
 
 public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
@@ -69,19 +68,14 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
 
     private CreateVDSCommand<?> initCreateVDSCommand(VM vm) throws Exception {
         if (vm.isSysprepUsed()) {
-            String domain = (vm.getVmInit() != null && vm.getVmInit().getDomain() != null) ?
-                    vm.getVmInit().getDomain() : "";
-            String hostName = (vm.getVmInit() != null && vm.getVmInit().getHostname() != null) ?
-                    vm.getVmInit().getHostname() : vm.getName();
+
             // use answer file to run after sysprep.
-            CreateVmFromSysPrepVDSCommandParameters createVmFromSysPrepParam =
-                    new CreateVmFromSysPrepVDSCommandParameters(
+            CreateVmVDSCommandParameters createVmFromSysPrepParam =
+                    new CreateVmVDSCommandParameters(
                             getVdsId(),
-                            vm,
-                            hostName,
-                            domain);
+                            vm);
             createVmFromSysPrepParam.setSysPrepParams(getParameters().getSysPrepParams());
-            return new CreateVmFromSysPrepVDSCommand<CreateVmFromSysPrepVDSCommandParameters>(createVmFromSysPrepParam);
+            return new CreateVmFromSysPrepVDSCommand<CreateVmVDSCommandParameters>(createVmFromSysPrepParam);
         }
         else if (vm.isCloudInitUsed()) {
             return new CreateVmFromCloudInitVDSCommand<CreateVmVDSCommandParameters>(getParameters());

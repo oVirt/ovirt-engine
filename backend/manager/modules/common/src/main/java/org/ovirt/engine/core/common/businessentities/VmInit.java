@@ -23,6 +23,11 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
     private boolean passwordAlreadyStored;
     private String customScript;
 
+    private String inputLocale;
+    private String uiLanguage;
+    private String systemLocale;
+    private String userLocale;
+
     public VmInit() {
     }
 
@@ -124,5 +129,37 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
 
     public void setPasswordAlreadyStored(boolean passwordAlreadyStored) {
         this.passwordAlreadyStored = passwordAlreadyStored;
+    }
+
+    public String getInputLocale() {
+        return inputLocale;
+    }
+
+    public void setInputLocale(String inputLocale) {
+        this.inputLocale = inputLocale;
+    }
+
+    public String getUiLanguage() {
+        return uiLanguage;
+    }
+
+    public void setUiLanguage(String uiLanguage) {
+        this.uiLanguage = uiLanguage;
+    }
+
+    public String getSystemLocale() {
+        return systemLocale;
+    }
+
+    public void setSystemLocale(String systemLocale) {
+        this.systemLocale = systemLocale;
+    }
+
+    public String getUserLocale() {
+        return userLocale;
+    }
+
+    public void setUserLocale(String userLocale) {
+        this.userLocale = userLocale;
     }
 }

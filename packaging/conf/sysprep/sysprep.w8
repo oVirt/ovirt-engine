@@ -18,12 +18,12 @@
         </component>
         <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="x86" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <SetupUILanguage>
-                <UILanguage>en-US</UILanguage>
+                <UILanguage>$SetupUiLanguageUiLanguage$</UILanguage>
             </SetupUILanguage>
-            <InputLocale>en-US</InputLocale>
-            <UILanguage>en-US</UILanguage>
-            <SystemLocale>en-US</SystemLocale>
-            <UserLocale>en-US</UserLocale>
+            <InputLocale>$InputLocale$</InputLocale>
+            <UILanguage>$UILanguage$</UILanguage>
+            <SystemLocale>$SystemLocale$</SystemLocale>
+            <UserLocale>$UserLocale$</UserLocale>
         </component>
     </settings>
     <settings pass="specialize">
@@ -49,10 +49,10 @@
             <TimeZone>$TimeZone$</TimeZone>
         </component>
         <component name="Microsoft-Windows-International-Core" processorArchitecture="x86" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <InputLocale>en-US</InputLocale>
-            <UserLocale>en-US</UserLocale>
-            <SystemLocale>en-US</SystemLocale>
-            <UILanguage>en-US</UILanguage>
+            <InputLocale>$InputLocale$</InputLocale>
+            <UserLocale>$UserLocale$</UserLocale>
+            <SystemLocale>$UILanguage$</SystemLocale>
+            <UILanguage>$SystemLocale$</UILanguage>
         </component>
     </settings>
     <settings pass="oobeSystem">
@@ -81,10 +81,10 @@
             </OOBE>
         </component>
         <component name="Microsoft-Windows-International-Core" processorArchitecture="x86" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <InputLocale>en-US</InputLocale>
-            <UserLocale>en-US</UserLocale>
-            <SystemLocale>en-US</SystemLocale>
-            <UILanguage>en-US</UILanguage>
+            <InputLocale>$InputLocale$</InputLocale>
+            <UserLocale>$UserLocale$</UserLocale>
+            <SystemLocale>$SystemLocale$</SystemLocale>
+            <UILanguage>$UILanguage$</UILanguage>
         </component>
     </settings>
     <cpi:offlineImage cpi:source="wim:d:/sources/install.wim#Windows 8 ENTERPRISE" xmlns:cpi="urn:schemas-microsoft-com:cpi"/>

@@ -68,7 +68,11 @@ public class VmInitDAODbFacadeImpl extends BaseDAODbFacade implements VmInitDAO 
                 .addValue("networks", VmInitUtils.networkListToJson(vmInit.getNetworks()))
                 .addValue("password", DbFacadeUtils.encryptPassword(vmInit.getRootPassword()))
                 .addValue("winkey", vmInit.getWinKey())
-                .addValue("custom_script", vmInit.getCustomScript());
+                .addValue("custom_script", vmInit.getCustomScript())
+                .addValue("input_locale", vmInit.getInputLocale())
+                .addValue("ui_language", vmInit.getUiLanguage())
+                .addValue("system_locale", vmInit.getSystemLocale())
+                .addValue("user_locale", vmInit.getUserLocale());
     }
 
     private static class VMInitRowMapper implements RowMapper<VmInit> {
@@ -90,6 +94,10 @@ public class VmInitDAODbFacadeImpl extends BaseDAODbFacade implements VmInitDAO 
             entity.setDnsServers(rs.getString("dns_servers"));
             entity.setDnsSearch(rs.getString("dns_search_domains"));
             entity.setCustomScript(rs.getString("custom_script"));
+            entity.setInputLocale(rs.getString("input_locale"));
+            entity.setUiLanguage(rs.getString("ui_language"));
+            entity.setSystemLocale(rs.getString("system_locale"));
+            entity.setUserLocale(rs.getString("user_locale"));
 
             return entity;
         }

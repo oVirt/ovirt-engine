@@ -503,11 +503,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     /**
      * Initialize the parameters for the VDSM command of VM creation
+     *
      * @return the VDS create VM parameters
      */
     protected CreateVmVDSCommandParameters buildCreateVmParameters() {
         CreateVmVDSCommandParameters parameters = new CreateVmVDSCommandParameters(getVdsId(), getVm());
-        parameters.setVmInit(getVm().getVmInit());
         return parameters;
     }
 
