@@ -223,13 +223,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("memSize")
     public EntityModelTextBoxEditor<Integer> memSizeEditor;
 
-    @UiField(provided = true)
     @Path(value = "totalCPUCores.entity")
     @WithElementId("totalCPUCores")
     public StringEntityModelTextBoxOnlyEditor totalvCPUsEditor;
 
     @UiField(provided = true)
-    InfoIcon totalVCpuInfoIcon;
+    @Ignore
+    public EntityModelWidgetWithInfo totalvCPUsEditorWithInfoIcon;
 
     @UiField
     @Ignore
@@ -731,6 +731,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initPoolSpecificWidgets(resources, messages);
         initTextBoxEditors();
         initSpiceProxy();
+        initTotalVcpus();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
@@ -763,6 +764,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo(label, spiceProxyOverrideEnabledEditor);
     }
 
+    private void initTotalVcpus() {
+        EntityModelLabel label = new EntityModelLabel();
+        label.setText(constants.numOfVCPUs());
+        totalvCPUsEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        totalvCPUsEditorWithInfoIcon = new EntityModelWidgetWithInfo(label, totalvCPUsEditor);
+        totalvCPUsEditorWithInfoIcon.setExplanation(applicationTemplates.italicText(messages.hotPlugUnplugCpuWarning()));
+    }
+
     public void setSpiceProxyOverrideExplanation(String explanation) {
         spiceProxyEnabledCheckboxWithInfoIcon.setExplanation(applicationTemplates.italicText(explanation));
     }
@@ -771,7 +780,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         templateVersionNameEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         descriptionEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         commentEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
-        totalvCPUsEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         numOfVmsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         cpuPinning = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         cpuSharesAmountEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
@@ -816,7 +824,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         });
 
-        totalVCpuInfoIcon = new InfoIcon(applicationTemplates.italicText(messages.hotPlugUnplugCpuWarning()), resources);
     }
 
     /**
