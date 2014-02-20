@@ -24,6 +24,7 @@ import datetime
 import gettext
 import hashlib
 import os
+import re
 import uuid
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -62,6 +63,7 @@ class Plugin(plugin.PluginBase):
         'VERSION': 0,
         'MASTER_VERSION': 0,
     }
+    RE_NOT_ALPHANUMERIC = re.compile(r"[^-\w]")
 
     def _generate_md_content(self, sdUUID, description):
         self.logger.debug('Generating ISO Domain metadata')
@@ -375,15 +377,31 @@ class Plugin(plugin.PluginBase):
         if self.environment[
             osetupcons.ConfigEnv.ISO_DOMAIN_NAME
         ] is None:
-            self.environment[
-                osetupcons.ConfigEnv.ISO_DOMAIN_NAME
-            ] = self.dialog.queryString(
-                name='ISO_DOMAIN_NAME',
-                note=_('Local ISO domain name [@DEFAULT@]: '),
-                prompt=True,
-                caseSensitive=True,
-                default=osetupcons.Defaults.DEFAULT_ISO_DOMAIN_NAME,
-            )
+            validName = False
+            while not validName:
+                self.environment[
+                    osetupcons.ConfigEnv.ISO_DOMAIN_NAME
+                ] = self.dialog.queryString(
+                    name='ISO_DOMAIN_NAME',
+                    note=_('Local ISO domain name [@DEFAULT@]: '),
+                    prompt=True,
+                    caseSensitive=True,
+                    default=osetupcons.Defaults.DEFAULT_ISO_DOMAIN_NAME,
+                )
+
+                if self.RE_NOT_ALPHANUMERIC.search(
+                        self.environment[
+                            osetupcons.ConfigEnv.ISO_DOMAIN_NAME
+                        ]
+                ):
+                    self.logger.error(
+                        _(
+                            'Domain name can only consist of alphanumeric '
+                            'characters.'
+                        )
+                    )
+                else:
+                    validName = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
