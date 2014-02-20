@@ -4882,7 +4882,6 @@
 
     <table name="event_notification_hist">
         <column>status</column>
-        <column>subscriber_id</column>
         <column>event_name</column>
         <column>audit_log_id</column>
         <column>method_type</column>
@@ -4890,7 +4889,6 @@
         <column>reason</column>
         <row>
             <value>true</value>
-            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
             <value>event_name</value>
             <value>44293</value>
             <value>email</value>
@@ -4899,7 +4897,6 @@
         </row>
         <row>
             <value>true</value>
-            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
             <value>event_name</value>
             <value>44294</value>
             <value>email</value>
@@ -4908,7 +4905,6 @@
         </row>
         <row>
             <value>true</value>
-            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
             <value>event_name</value>
             <value>44295</value>
             <value>email</value>
