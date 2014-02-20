@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connecti
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map_id;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
@@ -30,12 +31,14 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -44,6 +47,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class StorageDomainCommandBase<T extends StorageDomainParametersBase> extends
         StorageHandlingCommandBase<T> {
+
+    private List<StorageDomainOvfInfo> ovfInfo;
 
     public StorageDomainCommandBase(T parameters) {
         super(parameters);
@@ -118,10 +123,18 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     private boolean hasImages() {
+        int allowedDisksNum = getOvfInfo().size();
         return getDiskImageDao()
                 .getAllSnapshotsForStorageDomain(getStorageDomain().getId())
-                .size() != 0
-                || getImageStorageDomainMapDao().getAllByStorageDomainId(getStorageDomain().getId()).size() != 0;
+                .size() > allowedDisksNum
+                || getImageStorageDomainMapDao().getAllByStorageDomainId(getStorageDomain().getId()).size() > allowedDisksNum;
+    }
+
+    public List<StorageDomainOvfInfo> getOvfInfo() {
+        if (ovfInfo == null) {
+            ovfInfo = getStorageDomainOvfInfoDao().getAllForDomain(getStorageDomain().getId());
+        }
+        return ovfInfo;
     }
 
     private StoragePoolIsoMap getStoragePoolIsoMap() {
@@ -393,12 +406,20 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return getDbFacade().getBaseDiskDao();
     }
 
+    protected DiskDao getDiskDao() {
+        return getDbFacade().getDiskDao();
+    }
+
     protected ImageDao getImageDao() {
         return getDbFacade().getImageDao();
     }
 
     protected DiskImageDAO getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
+    }
+
+    protected StorageDomainOvfInfoDao getStorageDomainOvfInfoDao() {
+        return getDbFacade().getStorageDomainOvfInfoDao();
     }
 
     protected DiskImageDynamicDAO getDiskImageDynamicDAO() {

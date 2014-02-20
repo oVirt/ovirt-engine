@@ -29,8 +29,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -154,10 +152,5 @@ public class RemoveStorageDomainCommandTest {
         ret.setSucceeded(!shouldFail);
         doReturn(ret).when(command).runVdsCommand
                 (eq(VDSCommandType.FormatStorageDomain), any(FormatStorageDomainVDSCommandParameters.class));
-
-        if (!shouldFail) {
-            doReturn(mock(StorageDomainStaticDAO.class)).when(command).getStorageDomainStaticDAO();
-            doReturn(mock(StorageDomainDynamicDAO.class)).when(command).getStorageDomainDynamicDao();
-        }
     }
 }
