@@ -79,6 +79,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
+import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
@@ -640,6 +641,15 @@ public class DbFacade {
      */
     public StorageDomainDAO getStorageDomainDao() {
         return getDao(StorageDomainDAO.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link StorageDomainOvfInfoDao}.
+     *
+     * @return the dao
+     */
+    public StorageDomainOvfInfoDao getStorageDomainOvfInfoDao() {
+        return getDao(StorageDomainOvfInfoDao.class);
     }
 
     /**

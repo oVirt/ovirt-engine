@@ -258,9 +258,98 @@ LANGUAGE plpgsql;
 
 
 ----------------------------------------------------------------
+-- [storage_domains_ovf_info] Table
+--
+Create or replace FUNCTION LoadStorageDomainInfoByDomainId(v_storage_domain_id UUID) RETURNS SETOF storage_domains_ovf_info STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT *
+   FROM storage_domains_ovf_info ovf
+   WHERE ovf.storage_domain_id = v_storage_domain_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+Create or replace FUNCTION LoadStorageDomainInfoByDiskId(v_disk_id UUID) RETURNS SETOF storage_domains_ovf_info STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT *
+   FROM storage_domains_ovf_info ovf
+   WHERE ovf.ovf_disk_id = v_disk_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+Create or replace FUNCTION InsertStorageDomainOvfInfo(v_storage_domain_id UUID, v_status INTEGER, v_ovf_disk_id UUID,
+v_stored_ovfs_ids TEXT) RETURNS VOID
+   AS $procedure$
+BEGIN
+INSERT INTO storage_domains_ovf_info (storage_domain_id, status, ovf_disk_id, stored_ovfs_ids)
+VALUES(v_storage_domain_id, v_status, v_ovf_disk_id, v_stored_ovfs_ids);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+Create or replace FUNCTION LoadStorageDomainsForOvfIds(v_ovfs_ids TEXT) RETURNS SETOF UUID
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT ovf.storage_domain_id
+   FROM storage_domains_ovf_info ovf
+   WHERE string_to_array(ovf.stored_ovfs_ids,',') && string_to_array(v_ovfs_ids,',');
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+Create or replace FUNCTION UpdateStorageDomainOvfInfo(v_storage_domain_id UUID, v_status INTEGER, v_ovf_disk_id UUID,
+v_stored_ovfs_ids TEXT, v_last_updated TIMESTAMP WITH TIME ZONE) RETURNS VOID
+   AS $procedure$
+BEGIN
+UPDATE storage_domains_ovf_info SET status = v_status, storage_domain_id = v_storage_domain_id,
+ovf_disk_id = v_ovf_disk_id, stored_ovfs_ids = v_stored_ovfs_ids, last_updated = v_last_updated
+WHERE ovf_disk_id = v_ovf_disk_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+Create or replace FUNCTION DeleteStorageDomainOvfInfo(v_ovf_disk_id UUID) RETURNS VOID
+   AS $procedure$
+BEGIN
+DELETE FROM storage_domains_ovf_info WHERE ovf_disk_id = v_ovf_disk_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+Create or replace FUNCTION UpdateOvfUpdatedInfo(v_storage_domains_ids VARCHAR(5000), v_status INTEGER, v_except_status INTEGER)
+    RETURNS VOID
+    AS $procedure$
+DECLARE
+curs_storages_ids CURSOR FOR SELECT * FROM fnSplitterUuid(v_storage_domains_ids);
+id UUID;
+BEGIN
+ OPEN curs_storages_ids;
+LOOP
+    FETCH curs_storages_ids INTO id;
+    IF NOT FOUND THEN
+     EXIT;
+    END IF;
+    UPDATE storage_domains_ovf_info
+    SET status = v_status WHERE storage_domain_id = id AND status != v_except_status;
+END LOOP;
+CLOSE curs_storages_ids;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+-- ----------------------------------------------------------------
 -- [storage_domain_static] Table
 --
-
 --This function is also called during installation. If you change it, please verify
 --that functions in inst_sp.sql can be executed successfully.
 

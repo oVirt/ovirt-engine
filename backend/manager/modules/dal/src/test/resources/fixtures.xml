@@ -3819,6 +3819,28 @@
         </row>
     </table>
 
+    <table name="storage_domains_ovf_info">
+        <column>storage_domain_id</column>
+        <column>status</column>
+        <column>ovf_disk_id</column>
+        <column>stored_ovfs_ids</column>
+        <column>last_updated</column>
+        <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
+            <value>1</value>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa32</value>
+            <value>1</value>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
+            <null/>
+            <null/>
+        </row>
+    </table>
+
     <table name="disk_lun_map">
       <column>disk_id</column>
       <column>lun_id</column>

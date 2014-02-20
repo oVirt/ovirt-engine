@@ -40,6 +40,16 @@ public class FixturesTool {
     /**
      * Predefined NFS master storage domain.
      */
+    protected static final Guid STORAGE_DOAMIN_NFS2_1 = new Guid("d9ede37f-e6c3-4bf9-a984-19174070aa31");
+
+    /**
+     * Predefined NFS master storage domain.
+     */
+    protected static final Guid STORAGE_DOAMIN_NFS2_2 = new Guid("d9ede37f-e6c3-4bf9-a984-19174070aa32");
+
+    /**
+     * Predefined NFS master storage domain.
+     */
     protected static final Guid STORAGE_DOAMIN_NFS_MASTER = new Guid("c2211b56-8869-41cd-84e1-78d7cb96f31d");
 
     /**
@@ -268,6 +278,11 @@ public class FixturesTool {
      * Predefined disk for testing.
      */
     protected static final Guid DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
+
+    /**
+     * Predefined disk for testing.
+     */
+    protected static final Guid DISK_ID_2 = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a36");
 
     /**
      * Predefined image on a VM template for testing. <BR/>

@@ -75,7 +75,8 @@ SELECT images.image_guid as image_guid,
     disk_image_dynamic.write_latency_seconds as write_latency_seconds,
     disk_image_dynamic.flush_latency_seconds as flush_latency_seconds,
     base_disks.alignment as alignment,
-    base_disks.last_alignment_scan as last_alignment_scan
+    base_disks.last_alignment_scan as last_alignment_scan,
+    EXISTS (SELECT 1 FROM storage_domains_ovf_info WHERE images.image_group_id = storage_domains_ovf_info.ovf_disk_id) as ovf_store
 FROM
 images
 left outer join disk_image_dynamic on images.image_guid = disk_image_dynamic.image_id
@@ -141,7 +142,7 @@ SELECT                storage_for_image_view.storage_id as storage_id, storage_f
                       images_storage_domain_view.entity_type as entity_type,images_storage_domain_view.number_of_vms as number_of_vms,images_storage_domain_view.vm_names as vm_names,
                       storage_for_image_view.quota_id as quota_id, storage_for_image_view.quota_name as quota_name, images_storage_domain_view.quota_enforcement_type,
                       images_storage_domain_view.disk_id, images_storage_domain_view.disk_alias as disk_alias, images_storage_domain_view.disk_description as disk_description,images_storage_domain_view.shareable as shareable,
-                      images_storage_domain_view.alignment as alignment, images_storage_domain_view.last_alignment_scan as last_alignment_scan
+                      images_storage_domain_view.alignment as alignment, images_storage_domain_view.last_alignment_scan as last_alignment_scan, images_storage_domain_view.ovf_store as ovf_store
 FROM         images_storage_domain_view
 INNER JOIN disk_image_dynamic ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id
 INNER JOIN storage_for_image_view ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
@@ -196,6 +197,7 @@ FROM
            storage_for_image_view.quota_id as quota_id, -- Quota fields
            storage_for_image_view.quota_name as quota_name,
            quota_enforcement_type,
+           ovf_store,
            null AS lun_id, -- LUN fields
            null AS physical_volume_id,
            null AS volume_group_id,
@@ -239,6 +241,7 @@ FROM
            null AS quota_id, -- Quota fields
            null AS quota_name,
            null AS quota_enforcement_type,
+           false as ovf_store,
            l.lun_id, -- LUN fields
            l.physical_volume_id,
            l.volume_group_id,

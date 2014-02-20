@@ -24,6 +24,7 @@ public abstract class Disk extends BaseDisk {
     private VmEntityType vmEntityType;
     private int numberOfVms;
     private ArrayList<String> vmNames;
+    private boolean ovfStore;
 
     /**
      * Plugged and readOnly are of type Boolean (as opposed to boolean) since they are optional.
@@ -118,6 +119,14 @@ public abstract class Disk extends BaseDisk {
     @JsonIgnore
     public boolean isDiskSnapshot() {
         return false;
+    }
+
+    public boolean isOvfStore() {
+        return ovfStore;
+    }
+
+    public void setOvfStore(boolean ovfStore) {
+        this.ovfStore = ovfStore;
     }
 
     /**
