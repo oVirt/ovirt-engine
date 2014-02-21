@@ -1714,4 +1714,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("IQN")
     String iqn();
+
+    @DefaultStringValue("Provide custom serial number policy")
+    String overrideSerialNumberPolicy();
 }

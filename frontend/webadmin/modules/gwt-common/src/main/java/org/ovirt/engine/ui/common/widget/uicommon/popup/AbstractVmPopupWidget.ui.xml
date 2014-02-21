@@ -452,6 +452,7 @@
 						</g:FlowPanel>
                         <g:Label addStyleNames="{style.sectionLabel}" text="{constants.initialRunGeneral}" />
 					    <e:ListModelListBoxEditor ui:field="timeZoneEditor" />
+              <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" />
 						</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>

@@ -33,5 +33,7 @@ public class CoreUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<U
         vm.setOsId(model.getOSType().getSelectedItem());
         vm.setVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
         vm.setDefaultDisplayType(model.getDisplayProtocol().getSelectedItem().getEntity());
+        vm.setSerialNumberPolicy(model.getSerialNumberPolicy().getSelectedSerialNumberPolicy());
+        vm.setCustomSerialNumber(model.getSerialNumberPolicy().getCustomSerialNumber().getEntity());
     }
 }

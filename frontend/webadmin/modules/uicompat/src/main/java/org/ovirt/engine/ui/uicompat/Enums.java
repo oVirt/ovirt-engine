@@ -358,4 +358,10 @@ public interface Enums extends LocalizedEnums {
     String ExternalSubnet$IpVersion___IPV4();
 
     String ExternalSubnet$IpVersion___IPV6();
+
+    String SerialNumberPolicy___HOST_ID();
+
+    String SerialNumberPolicy___VM_ID();
+
+    String SerialNumberPolicy___CUSTOM();
 }

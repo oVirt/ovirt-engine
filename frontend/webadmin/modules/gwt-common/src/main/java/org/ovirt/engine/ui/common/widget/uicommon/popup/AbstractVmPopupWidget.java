@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.gwt.event.shared.EventBus;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -56,6 +57,7 @@ import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmPopupVmInitWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -271,6 +273,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path("copyPermissions.entity")
     @WithElementId("copyTemplatePermissions")
     public EntityModelCheckBoxEditor copyTemplatePermissionsEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    @WithElementId("serialNumberPolicy")
+    public SerialNumberPolicyWidget serialNumberPolicyEditor;
 
     // == Pools ==
     @UiField
@@ -684,7 +691,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public AbstractVmPopupWidget(CommonApplicationConstants constants,
             CommonApplicationResources resources,
             final CommonApplicationMessages messages,
-            CommonApplicationTemplates applicationTemplates) {
+            CommonApplicationTemplates applicationTemplates,
+            EventBus eventBus) {
 
         this.messages = messages;
         this.applicationTemplates = applicationTemplates;
@@ -731,6 +739,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
         disksAllocationView = new DisksAllocationView(constants);
+        serialNumberPolicyEditor = new SerialNumberPolicyWidget(eventBus, applicationTemplates, messages, resources, new ModeSwitchingVisibilityRenderer());
 
         initPoolSpecificWidgets(resources, messages);
         initTextBoxEditors();
@@ -1171,6 +1180,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         profilesInstanceTypeEditor.edit(model.getNicsWithLogicalNetworks());
         customPropertiesSheetEditor.edit(model.getCustomPropertySheet());
         vmInitEditor.edit(model.getVmInitModel());
+        serialNumberPolicyEditor.edit(model.getSerialNumberPolicy());
         initTabAvailabilityListeners(model);
         initListeners(model);
         hideAlwaysHiddenFields();
@@ -1296,6 +1306,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                     boolean sysprepEnabled = object.getSysprepEnabled().getEntity();
                     vmInitEditor.setSyspepContentVisible(object.getSysprepEnabled().getEntity());
                     domainEditor.setVisible(sysprepEnabled);
+                }
+            }
+        });
+
+        object.getDataCenterWithClustersList().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                VDSGroup vdsGroup = object.getSelectedCluster();
+                if (vdsGroup != null && vdsGroup.getcompatibility_version() != null) {
+                    boolean enabled = AsyncDataProvider.isSerialNumberPolicySupported(vdsGroup.getcompatibility_version().getValue());
+                    changeApplicationLevelVisibility(serialNumberPolicyEditor, enabled);
                 }
             }
         });
@@ -1476,6 +1497,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         priorityEditor.flush();
         profilesInstanceTypeEditor.flush();
         vmInitEditor.flush();
+        serialNumberPolicyEditor.flush();
         return driver.flush();
     }
 
@@ -1526,6 +1548,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         nextTabIndex = vcpusAdvancedParameterExpander.setTabIndexes(nextTabIndex);
         corePerSocketEditor.setTabIndex(nextTabIndex++);
         numOfSocketsEditor.setTabIndex(nextTabIndex++);
+        nextTabIndex = serialNumberPolicyEditor.setTabIndexes(nextTabIndex);
 
         // == Pools ==
         nextTabIndex = poolTab.setTabIndexes(nextTabIndex);

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -72,7 +73,6 @@ public class UnitVmModel extends Model {
     private boolean privateIsNew;
 
     private EntityModel<String> spiceProxy;
-
     public EntityModel<String> getSpiceProxy() {
         return spiceProxy;
     }
@@ -170,6 +170,7 @@ public class UnitVmModel extends Model {
 
             getCoresPerSocket().setIsChangable(false);
             getNumOfSockets().setIsChangable(false);
+            getSerialNumberPolicy().setIsChangable(false);
 
             getOSType().setIsChangable(false);
             getIsStateless().setIsChangable(false);
@@ -1253,6 +1254,16 @@ public class UnitVmModel extends Model {
         this.vncKeyboardLayout = vncKeyboardLayout;
     }
 
+    private SerialNumberPolicyModel serialNumberPolicy;
+
+    public SerialNumberPolicyModel getSerialNumberPolicy() {
+        return serialNumberPolicy;
+    }
+
+    public void setSerialNumberPolicy(SerialNumberPolicyModel value) {
+        this.serialNumberPolicy = value;
+    }
+
     public UnitVmModel(VmModelBehaviorBase behavior) {
         Frontend.getInstance().getQueryStartedEvent().addListener(this);
         Frontend.getInstance().getQueryCompleteEvent().addListener(this);
@@ -1395,6 +1406,8 @@ public class UnitVmModel extends Model {
 
         setCoresPerSocket(new NotChangableForVmInPoolListModel<Integer>());
         getCoresPerSocket().getSelectedItemChangedEvent().addListener(this);
+
+        setSerialNumberPolicy(new SerialNumberPolicyModel());
 
         setMigrationMode(new NotChangableForVmInPoolListModel<MigrationSupport>());
         getMigrationMode().getSelectedItemChangedEvent().addListener(this);
@@ -2464,6 +2477,12 @@ public class UnitVmModel extends Model {
 
         boolean customPropertySheetValid = getCustomPropertySheet().validate();
 
+        if (getSerialNumberPolicy().getSelectedSerialNumberPolicy() == SerialNumberPolicy.CUSTOM) {
+            getSerialNumberPolicy().getCustomSerialNumber().validateEntity(new IValidation[] { new NotEmptyValidation() });
+        } else {
+            getSerialNumberPolicy().getCustomSerialNumber().setIsValid(true);
+        }
+
         setIsBootSequenceTabValid(true);
         setIsAllocationTabValid(getIsBootSequenceTabValid());
         setIsDisplayTabValid(getIsAllocationTabValid());
@@ -2495,7 +2514,8 @@ public class UnitVmModel extends Model {
                 && getCpuSharesAmount().getIsValid()
                 && behaviorValid
                 && customPropertySheetValid && getQuota().getIsValid()
-                && getMigrationDowntime().getIsValid();
+                && getMigrationDowntime().getIsValid()
+                && getSerialNumberPolicy().getCustomSerialNumber().getIsValid();
 
     }
 

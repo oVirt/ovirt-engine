@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
+import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
@@ -25,6 +26,8 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAre
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
@@ -302,6 +305,11 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @WithElementId
     EntityModelRadioButtonEditor allowOverbookingEditor;
 
+    @UiField(provided = true)
+    @Ignore
+    @WithElementId("serialNumberPolicy")
+    SerialNumberPolicyWidget serialNumberPolicyEditor;
+
     @UiField
     @Ignore
     DialogTab consoleTab;
@@ -325,11 +333,17 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     private final ApplicationTemplates templates;
 
+    private final ApplicationResources resources;
+
+    private final EventBus eventBus;
+
     @Inject
     public ClusterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationMessages messages, ApplicationTemplates templates) {
         super(eventBus, resources);
         this.messages = messages;
         this.templates = templates;
+        this.resources = resources;
+        this.eventBus = eventBus;
         initListBoxEditors();
         initRadioButtonEditors();
         initCheckBoxEditors();
@@ -430,6 +444,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         guarantyResourcesEditor = new EntityModelRadioButtonEditor("4"); //$NON-NLS-1$
         allowOverbookingEditor = new EntityModelRadioButtonEditor("4"); //$NON-NLS-1$
+
+        serialNumberPolicyEditor = new SerialNumberPolicyWidget(eventBus, templates, messages, resources, new VisibilityRenderer.SimpleVisibilityRenderer());
     }
 
     private void initListBoxEditors() {
@@ -528,6 +544,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         servicesCheckboxPanel.setVisible(object.getAllowClusterWithVirtGlusterEnabled());
         servicesRadioPanel.setVisible(!object.getAllowClusterWithVirtGlusterEnabled());
 
+        serialNumberPolicyEditor.edit(object.getSerialNumberPolicy());
+
         optimizationForServerFormatter(object);
         optimizationForDesktopFormatter(object);
         optimizationCustomFormatter(object);
@@ -598,6 +616,16 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
                         object.getAllowOverbookingInfoMessage()).asString()
                         .replaceAll("(\r\n|\n)", "<br />"))); //$NON-NLS-1$ //$NON-NLS-2$
         allowOverbookingPanel.setVisible(allowOverbookingEditor.isVisible());
+
+        object.getVersion().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (object.getVersion().getSelectedItem() != null) {
+                    String clusterVersion = object.getVersion().getSelectedItem().getValue();
+                    serialNumberPolicyEditor.setVisible(AsyncDataProvider.isSerialNumberPolicySupported(clusterVersion));
+                }
+            }
+        });
     }
 
     private void optimizationForServerFormatter(ClusterModel object) {
@@ -636,6 +664,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     @Override
     public ClusterModel flush() {
+        serialNumberPolicyEditor.flush();
         return driver.flush();
     }
 

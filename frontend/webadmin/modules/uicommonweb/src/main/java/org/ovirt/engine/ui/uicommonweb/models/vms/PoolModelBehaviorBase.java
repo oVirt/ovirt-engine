@@ -13,6 +13,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -196,12 +198,14 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             getModel().getVmInitModel().init(vmBase);
             getModel().getVmInitEnabled().setEntity(vmBase.getVmInit() != null);
+
+            BuilderExecutor.build(vmBase, getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
         }
     }
 
     @Override
     public void template_SelectedItemChanged() {
-        // override if there is a need to do some actions
+        // overrideSerialNumberPolicy if there is a need to do some actions
     }
 
     protected abstract DisplayType extractDisplayType(VmBase vmBase);

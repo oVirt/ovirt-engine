@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
 
+import com.google.gwt.event.shared.EventBus;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -21,8 +22,9 @@ public class VmPopupWidget extends AbstractVmPopupWidget {
     public VmPopupWidget(CommonApplicationConstants constants,
             CommonApplicationResources resources,
             CommonApplicationMessages messages,
-            CommonApplicationTemplates applicationTemplates) {
-        super(constants, resources, messages, applicationTemplates);
+            CommonApplicationTemplates applicationTemplates,
+            EventBus eventBus) {
+        super(constants, resources, messages, applicationTemplates, eventBus);
     }
 
     @Override

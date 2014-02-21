@@ -32,7 +32,7 @@
 						<e:ListModelListBoxEditor ui:field="bondingModeEditor" />
 						<e:EntityModelTextBoxEditor ui:field="customEditor" visible="false" />
 						<e:EntityModelLabelEditor ui:field="bootProtocolLabel" />
-						<we:EnumRadioEditor ui:field="bootProtocol" />
+						<e:EnumRadioEditor ui:field="bootProtocol" />
 						<e:EntityModelTextBoxEditor ui:field="address" />
 						<e:EntityModelTextBoxEditor ui:field="subnet" />
 						<e:EntityModelTextBoxEditor ui:field="gateway" />

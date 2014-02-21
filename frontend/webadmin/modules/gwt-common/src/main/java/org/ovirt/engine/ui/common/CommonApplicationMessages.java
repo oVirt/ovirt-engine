@@ -150,4 +150,7 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("Hot set CPUs by changing the number of sockets." +
             " The support for hot plug/unplug CPUs to the guest varies.")
     String hotPlugUnplugCpuWarning();
+
+    @DefaultMessage("Policy of assigning serial numbers to running VMs. Can be Host''s UUID, Vm''s UUID or any custom value.")
+    String serialNumberInfo();
 }

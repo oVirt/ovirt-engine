@@ -24,7 +24,7 @@ public class TemplateNewPopupView extends AbstractVmPopupView implements Templat
 
     @Inject
     public TemplateNewPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, CommonApplicationMessages messages, CommonApplicationTemplates applicationTemplates) {
-        super(eventBus, resources, new TemplateNewPopupWidget(constants, resources, messages, applicationTemplates){
+        super(eventBus, resources, new TemplateNewPopupWidget(constants, resources, messages, applicationTemplates, eventBus){
             @Override
             protected PopupWidgetConfigMap createWidgetConfiguration() {
                 return super.createWidgetConfiguration().update(hostTab, hiddenField());

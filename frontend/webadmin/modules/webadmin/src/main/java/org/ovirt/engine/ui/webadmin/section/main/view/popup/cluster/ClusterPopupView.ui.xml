@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
-    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget" xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value">
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+             xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
+             xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm">
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
 	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
@@ -246,6 +250,7 @@
 									<ge:EntityModelCheckBoxEditor ui:field="enableTrustedServiceEditor" />
 									<ge:EntityModelCheckBoxEditor ui:field="enableHaReservationEditor" />
 								</g:FlowPanel>
+                <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" />
 							</g:FlowPanel>
 						</t:content>
 					</t:DialogTab>

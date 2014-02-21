@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
+import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -31,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.SerialNumberPolicyModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostWithProtocolAndPortAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
@@ -553,6 +555,16 @@ public class ClusterModel extends EntityModel
         this.allowOverbooking = allowOverbooking;
     }
 
+    private SerialNumberPolicyModel serialNumberPolicy;
+
+    public SerialNumberPolicyModel getSerialNumberPolicy() {
+        return serialNumberPolicy;
+    }
+
+    public void setSerialNumberPolicy(SerialNumberPolicyModel serialNumberPolicy) {
+        this.serialNumberPolicy = serialNumberPolicy;
+    }
+
     private boolean isGeneralTabValid;
 
     public boolean getIsGeneralTabValid()
@@ -773,6 +785,8 @@ public class ClusterModel extends EntityModel
 
         setEnableOvirtService(new EntityModel());
         setEnableGlusterService(new EntityModel());
+
+        setSerialNumberPolicy(new SerialNumberPolicyModel());
 
         getEnableOvirtService().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
@@ -1600,6 +1614,12 @@ public class ClusterModel extends EntityModel
             getSpiceProxy().setIsValid(true);
         }
 
+        if (getSerialNumberPolicy().getSelectedSerialNumberPolicy() == SerialNumberPolicy.CUSTOM) {
+            getSerialNumberPolicy().getCustomSerialNumber().validateEntity(new IValidation[] { new NotEmptyValidation() });
+        } else {
+            getSerialNumberPolicy().getCustomSerialNumber().setIsValid(true);
+        }
+
         setIsGeneralTabValid(getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
@@ -1610,6 +1630,7 @@ public class ClusterModel extends EntityModel
         return getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid() && getSpiceProxy().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
+                && getSerialNumberPolicy().getCustomSerialNumber().getIsValid()
                 && (getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()
                         && getGlusterHostPassword().getIsValid()
                         && isFingerprintVerified()) : true) && getCustomPropertySheet().getIsValid();

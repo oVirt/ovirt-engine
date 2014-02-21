@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.pool;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.text.shared.Parser;
 import java.text.ParseException;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -28,8 +29,9 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
     public PoolEditPopupWidget(CommonApplicationConstants constants,
             CommonApplicationResources resources,
             CommonApplicationMessages messages,
-            CommonApplicationTemplates applicationTemplates) {
-        super(constants, resources, messages, applicationTemplates);
+            CommonApplicationTemplates applicationTemplates,
+            EventBus eventBus) {
+        super(constants, resources, messages, applicationTemplates, eventBus);
     }
 
     @Override

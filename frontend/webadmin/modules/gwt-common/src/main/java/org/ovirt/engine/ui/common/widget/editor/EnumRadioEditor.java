@@ -1,12 +1,11 @@
-package org.ovirt.engine.ui.webadmin.widget.editor;
+package org.ovirt.engine.ui.common.widget.editor;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import org.ovirt.engine.ui.common.widget.HasEnabledForContainter;
-import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
-import org.ovirt.engine.ui.common.widget.editor.TakesValueWithChangeHandlersEditor;
+import org.ovirt.engine.ui.common.editor.UiCommonEditor;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.RadioboxCell;
 
@@ -30,7 +29,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.RowStyles;
-import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -44,7 +42,8 @@ import com.google.gwt.view.client.SingleSelectionModel;
  * @param <E>
  *            The enum type
  */
-public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafValueEditor<E>>, TakesValue<E>, HasValueChangeHandlers<E>, HasEnabledForContainter<E> {
+public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafValueEditor<E>>, UiCommonEditor<E>, HasValueChangeHandlers<E>, LeafValueEditor<E> {
+
 
     public interface EnumRadioCellTableResources extends CellTable.Resources {
         interface TableStyle extends CellTable.Style {
@@ -55,7 +54,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
         }
 
         @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/EnumRadioCellTable.css" })
+        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/EnumRadioCellTable.css" })
         TableStyle cellTableStyle();
     }
 
@@ -325,4 +324,32 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
         selectionModel.setSelected(value, true);
     }
 
+    @Override
+    public void setAccessible(boolean accessible) {
+        peer.setVisible(accessible);
+    }
+
+    @Override
+    public boolean isAccessible() {
+        return peer.isVisible();
+    }
+    @Override
+    public LeafValueEditor<E> getActualEditor() {
+        return this;
+    }
+
+    @Override
+    public void disable(String disabilityHint) {
+        // not implemented
+    }
+
+    @Override
+    public void markAsValid() {
+        // not implemented
+    }
+
+    @Override
+    public void markAsInvalid(List<String> validationHints) {
+        // not implemented
+    }
 }

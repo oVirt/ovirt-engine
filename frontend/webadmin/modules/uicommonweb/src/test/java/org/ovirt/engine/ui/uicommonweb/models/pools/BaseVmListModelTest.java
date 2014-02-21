@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.SerialNumberPolicyModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
@@ -60,6 +62,8 @@ public class BaseVmListModelTest {
     protected static final MigrationSupport MIGRATION_SUPPORT_2 = MigrationSupport.IMPLICITLY_NON_MIGRATABLE;
     protected static final Integer MIGRATION_DOWNTIME = 500;
     protected static final Integer MIGRATION_DOWNTIME_2 = 750;
+    protected static final SerialNumberPolicy SERIAL_NUMBER_POLICY = SerialNumberPolicy.CUSTOM;
+    protected static final String CUSTOM_SERIAL_NUMBER = "my custom number"; //$NON-NLS-1$
 
     protected void setUpUnitVmModelExpectations(UnitVmModel model) {
         when(model.getVmType().getSelectedItem()).thenReturn(VM_TYPE);
@@ -77,6 +81,8 @@ public class BaseVmListModelTest {
         ListModel<TimeZoneModel> timeZoneModelListModel = mockTimeZoneListModel();
         when(model.getTimeZone()).thenReturn(timeZoneModelListModel);
         when(model.getNumOfSockets().getSelectedItem()).thenReturn(NUM_OF_SOCKETS);
+        SerialNumberPolicyModel serialNumberPolicyModel = mockSerialNumberPolicyModel();
+        when(model.getSerialNumberPolicy()).thenReturn(serialNumberPolicyModel);
         when(model.getAllowConsoleReconnect().getEntity()).thenReturn(true);
         when(model.getIsSingleQxlEnabled().getEntity()).thenReturn(true);
         when(model.getTotalCPUCores().getEntity()).thenReturn(Integer.toString(TOTAL_CPU));
@@ -130,6 +136,8 @@ public class BaseVmListModelTest {
         assertEquals(MEM_SIZE, vm.getMemSizeMb());
         assertEquals(MIN_MEM, vm.getMinAllocatedMem());
         assertEquals(NUM_OF_MONITORS, vm.getNumOfMonitors());
+        assertEquals(SERIAL_NUMBER_POLICY, vm.getSerialNumberPolicy());
+        assertEquals(CUSTOM_SERIAL_NUMBER, vm.getCustomSerialNumber());
         assertTrue(vm.getSingleQxlPci());
         assertTrue(vm.isSmartcardEnabled());
         assertEquals(SSO_METHOD, vm.getSsoMethod());
@@ -253,6 +261,15 @@ public class BaseVmListModelTest {
         quota.setId(QUOTA_ID);
         final ListModel<Quota> model = mockListModel(quota);
         when(model.getIsAvailable()).thenReturn(true);
+
+        return model;
+    }
+
+    protected SerialNumberPolicyModel mockSerialNumberPolicyModel() {
+        final SerialNumberPolicyModel model = mock(SerialNumberPolicyModel.class);
+        final EntityModel<String> customSerialNumber = mockEntityModel(CUSTOM_SERIAL_NUMBER);
+        when(model.getSelectedSerialNumberPolicy()).thenReturn(SERIAL_NUMBER_POLICY);
+        when(model.getCustomSerialNumber()).thenReturn(customSerialNumber);
 
         return model;
     }

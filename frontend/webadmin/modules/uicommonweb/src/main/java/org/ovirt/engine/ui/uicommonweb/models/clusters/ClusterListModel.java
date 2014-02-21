@@ -374,6 +374,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.getEnableKsm().setEntity(cluster.isEnableKsm());
         clusterModel.getEnableBallooning().setEntity(cluster.isEnableBallooning());
         clusterModel.getArchitecture().setSelectedItem(cluster.getArchitecture());
+        clusterModel.getSerialNumberPolicy().setSelectedSerialNumberPolicy(cluster.getSerialNumberPolicy());
+        clusterModel.getSerialNumberPolicy().getCustomSerialNumber().setEntity(cluster.getCustomSerialNumber());
 
         if (cluster.supportsTrustedService())
         {
@@ -742,6 +744,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         if (model.getSpiceProxyEnabled().getEntity()) {
             cluster.setSpiceProxy(model.getSpiceProxy().getEntity());
         }
+        cluster.setSerialNumberPolicy(model.getSerialNumberPolicy().getSelectedSerialNumberPolicy());
+        cluster.setCustomSerialNumber(model.getSerialNumberPolicy().getCustomSerialNumber().getEntity());
 
         model.startProgress(null);
 

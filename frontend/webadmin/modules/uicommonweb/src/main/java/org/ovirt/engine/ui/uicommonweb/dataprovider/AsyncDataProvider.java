@@ -3757,6 +3757,10 @@ public final class AsyncDataProvider {
         return true;
     }
 
+    public static boolean isSerialNumberPolicySupported(String version) {
+        return (Boolean) getConfigValuePreConverted(ConfigurationValues.SerialNumberPolicySupported, version);
+    }
+
     public static List<IStorageModel> getDataStorageModels() {
         ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
 

@@ -14,6 +14,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -219,6 +221,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getTemplateVersionName().setEntity(template.getTemplateVersionName());
 
         initPriority(template.getPriority());
+
+        BuilderExecutor.build(template, getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
     }
 
     private void initCdImage()
