@@ -4,9 +4,16 @@ import org.ovirt.engine.core.ldap.LdapProviderType;
 
 public class LdapQueryExecutionBuilderImpl implements LdapQueryExecutionBuilder {
 
-    private static LdapQueryExecutionBuilder instance;
+    private static volatile LdapQueryExecutionBuilder instance;
 
     public static LdapQueryExecutionBuilder getInstance() {
+        if (instance == null) {
+            synchronized (LdapQueryExecutionBuilderImpl.class) {
+                if (instance == null) {
+                    instance = new LdapQueryExecutionBuilderImpl();
+                }
+            }
+        }
         return instance;
     }
 
@@ -16,9 +23,5 @@ public class LdapQueryExecutionBuilderImpl implements LdapQueryExecutionBuilder 
                 LdapQueryMetadataFactoryImpl.getInstance().getLdapQueryMetadata(providerType,
                         queryData);
         return queryMetadata.getFormatter().format(queryMetadata);
-    }
-
-    static {
-        instance = new LdapQueryExecutionBuilderImpl();
     }
 }
