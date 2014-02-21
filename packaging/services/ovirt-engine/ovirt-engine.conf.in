@@ -211,3 +211,6 @@ ENGINE_PKI_ENGINE_STORE_ALIAS=1
 # by default serv 404.
 #
 ENGINE_REPORTS_UI=${ENGINE_VAR}/reports.xml
+
+
+ENGINE_EXTENSION_PATH="${ENGINE_USR}/extensions.d:${ENGINE_ETC}/extensions.d"

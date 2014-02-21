@@ -65,6 +65,13 @@ public abstract class Configuration {
     public abstract File getFile();
 
     /**
+     * Gets the properties object that is associated with the configuration hierarchy
+     *
+     * @return the reference to the properties object
+     */
+    public abstract Properties getProperties();
+
+    /**
      * Gets the value associated to a configuration parameter, searching it only the this configuration.
      *
      * @param key the name of the configuration parameter
@@ -331,6 +338,11 @@ public abstract class Configuration {
             }
             return Collections.unmodifiableList(keys);
         }
+
+        @Override
+        public Properties getProperties() {
+            return properties;
+        }
     }
 
     /**
@@ -401,6 +413,11 @@ public abstract class Configuration {
                 }
             }
             return Collections.unmodifiableList(keys);
+        }
+
+        @Override
+        public Properties getProperties() {
+            return parent.getProperties();
         }
     }
 

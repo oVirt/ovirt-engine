@@ -72,9 +72,10 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         }
 
         // Load authentication profiles:
-        File authDir = EngineLocalConfig.getInstance().getAuthDir();
-        if (authDir.exists() && authDir.isDirectory()) {
-            AuthenticationProfileManager.getInstance().loadFiles(authDir);
+        for (File directory:  EngineLocalConfig.getInstance().getExtensionsDirectories()) {
+            if (directory.exists() && directory.isDirectory()) {
+                AuthenticationProfileManager.getInstance().loadFiles(directory);
+            }
         }
 
         UsersDomainsCacheManagerService.getInstance().init();

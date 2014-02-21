@@ -3,8 +3,12 @@ package org.ovirt.engine.core.utils;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -50,7 +54,7 @@ public class EngineLocalConfig extends LocalConfig {
         }
     }
 
-    private EngineLocalConfig(Map<String, String> values) {
+    protected EngineLocalConfig(Map<String, String> values) {
         setConfig(values);
     }
 
@@ -219,11 +223,20 @@ public class EngineLocalConfig extends LocalConfig {
     }
 
     /**
-     * Gets the directory where the configuration files of the authentication profiles are stored.
-     *
-     * @return a reference to the directory containing the configuration files of the authentication profiles
+     * Returns the directory for custom/3rd party extension configuration files
      */
-    public File getAuthDir() {
-        return new File(getEtcDir(), "auth.conf.d");
+    public List<File> getExtensionsDirectories() {
+        String path = getProperty("ENGINE_EXTENSION_PATH");
+        if (path == null) {
+            return Collections.emptyList();
+        }
+        List<File> results = new ArrayList<File>();
+        for (String currentPath : path.split(":")) {
+            if (StringUtils.isNotBlank(currentPath)) {
+                results.add(new File(currentPath));
+            }
+
+        }
+        return results;
     }
 }
