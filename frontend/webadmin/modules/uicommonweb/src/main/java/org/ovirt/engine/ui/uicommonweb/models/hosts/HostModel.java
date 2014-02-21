@@ -1222,7 +1222,8 @@ public abstract class HostModel extends Model
                                     ArrayList<VDSGroup> filteredClusters = new ArrayList<VDSGroup>();
 
                                     for (VDSGroup cluster : clusters) {
-                                        if (cluster.getArchitecture() == ArchitectureType.undefined
+                                        if (architecture == ArchitectureType.undefined
+                                                || cluster.getArchitecture() == ArchitectureType.undefined
                                                 || cluster.getArchitecture() == architecture) {
                                             filteredClusters.add(cluster);
                                         }
