@@ -55,6 +55,9 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteStartElement(OvfProperties.TEMPLATE_VERSION_NAME);
         _writer.WriteRaw(_vmTemplate.getTemplateVersionName());
         _writer.WriteEndElement();
+        _writer.WriteStartElement("AutoStartup"); // aka highly available
+        _writer.WriteRaw(String.valueOf(_vmTemplate.isAutoStartup()));
+        _writer.WriteEndElement();
     }
 
     @Override
