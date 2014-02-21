@@ -32,7 +32,7 @@ public class VmStatisticalQuery extends AbstractStatisticalQuery<VM, org.ovirt.e
         Double cpuUser = s.getcpu_user()==null ? zero : s.getcpu_user();
         Double cpuSys = s.getcpu_sys()==null ? zero : s.getcpu_sys();
         return asList(setDatum(clone(MEM_CONFIG),   mem),
-                      setDatum(clone(MEM_USED),     (int)(memUsedByCent/100)),
+                      setDatum(clone(MEM_USED),     memUsedByCent/100),
                       setDatum(clone(CPU_GUEST),    cpuUser),
                       setDatum(clone(CPU_OVERHEAD), cpuSys),
                       setDatum(clone(CPU_TOTAL),    cpuUser + cpuSys));
