@@ -130,23 +130,6 @@ public class CloudInitHandler {
     private void storeNetwork() throws UnsupportedEncodingException {
         StringBuilder output = new StringBuilder();
 
-        // As of cloud-init 0.7.1, you can't set DNS servers without also setting NICs
-        if (!CollectionUtils.isEmpty(params.getDnsServers())) {
-            output.append("dns-nameservers");
-            for (String server : params.getDnsServers()) {
-                output.append(" " + server);
-            }
-            output.append("\n");
-        }
-
-        if (!CollectionUtils.isEmpty(params.getDnsSearch())) {
-            output.append("dns-search");
-            for (String domain : params.getDnsSearch()) {
-                output.append(" " + domain);
-            }
-            output.append("\n");
-        }
-
         if (!CollectionUtils.isEmpty(params.getInterfaces())) {
             Map<String, VdsNetworkInterface> interfaces = params.getInterfaces();
             List<String> names = new ArrayList<String>(interfaces.keySet());
@@ -160,6 +143,23 @@ public class CloudInitHandler {
                 output.append("  netmask " + iface.getSubnet() + "\n");
                 if (!StringUtils.isEmpty(iface.getGateway())) {
                     output.append("  gateway " + iface.getGateway() + "\n");
+                }
+
+                // As of cloud-init 0.7.1, you can't set DNS servers without also setting NICs
+                if (!CollectionUtils.isEmpty(params.getDnsServers())) {
+                    output.append("  dns-nameservers");
+                    for (String server : params.getDnsServers()) {
+                        output.append(" " + server);
+                    }
+                    output.append("\n");
+                }
+
+                if (!CollectionUtils.isEmpty(params.getDnsSearch())) {
+                    output.append("  dns-search");
+                    for (String domain : params.getDnsSearch()) {
+                        output.append(" " + domain);
+                    }
+                    output.append("\n");
                 }
             }
         }
