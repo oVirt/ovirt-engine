@@ -17,7 +17,7 @@ public class DirectoryUtils {
         if (groups != null) {
             boolean first = true;
             for (DirectoryGroup group : groups) {
-                DbGroup dbGroup = dao.getByExternalId(group.getDirectory().getName(), group.getId());
+                DbGroup dbGroup = dao.getByExternalId(group.getDirectoryName(), group.getId());
                 if (!first) {
                     sb.append(",");
                 } else {

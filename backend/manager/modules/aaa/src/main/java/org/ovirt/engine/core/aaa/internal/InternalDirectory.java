@@ -53,7 +53,7 @@ public class InternalDirectory implements Directory {
         this.name = name;
 
         // Create the builtin user:
-        admin = new DirectoryUser(this, ADMIN_ID, ADMIN_NAME);
+        admin = new DirectoryUser(this.getName(), ADMIN_ID, ADMIN_NAME);
     }
 
     /**

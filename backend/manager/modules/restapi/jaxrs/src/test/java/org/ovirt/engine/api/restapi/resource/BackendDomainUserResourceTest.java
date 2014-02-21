@@ -8,7 +8,6 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.core.aaa.DirectoryStub;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -75,7 +74,7 @@ public class BackendDomainUserResourceTest
 
     @Override
     protected DirectoryUser getEntity(int index) {
-        return new DirectoryUser(new DirectoryStub(DOMAIN), EXTERNAL_IDS[index], NAMES[index]);
+        return new DirectoryUser(DOMAIN, EXTERNAL_IDS[index], NAMES[index]);
     }
 }
 

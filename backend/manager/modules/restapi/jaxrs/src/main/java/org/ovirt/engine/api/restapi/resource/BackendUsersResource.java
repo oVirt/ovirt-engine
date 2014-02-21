@@ -189,7 +189,7 @@ public class BackendUsersResource
                     .build();
         }
         DirectoryIdParameters parameters = new DirectoryIdParameters();
-        parameters.setDirectory(directoryUser.getDirectory().getName());
+        parameters.setDirectory(directoryUser.getDirectoryName());
         parameters.setId(directoryUser.getId());
         QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDbUserByUserId, IdQueryParameters.class);
         return performCreate(VdcActionType.AddUser, parameters, resolver, BaseResource.class);

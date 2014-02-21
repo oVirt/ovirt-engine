@@ -14,7 +14,7 @@ public class DirectoryEntry extends IVdcQueryable {
     /**
      * Reference to the directory where this entry was originated.
      */
-    private Directory directory;
+    private String directoryName;
 
     // The values o the attributes:
     private ExternalId id;
@@ -26,8 +26,8 @@ public class DirectoryEntry extends IVdcQueryable {
      */
     private List<DirectoryGroup> groups;
 
-    public DirectoryEntry(Directory directory, ExternalId id, String name) {
-        this.directory = directory;
+    public DirectoryEntry(String directoryName, ExternalId id, String name) {
+        this.directoryName = directoryName;
         this.id = id;
         this.name = name;
         this.status = DirectoryEntryStatus.UNAVAILABLE;
@@ -42,12 +42,12 @@ public class DirectoryEntry extends IVdcQueryable {
         this.id = id;
     }
 
-    public Directory getDirectory() {
-        return directory;
+    public String getDirectoryName() {
+        return directoryName;
     }
 
-    public void setDirectory(Directory directory) {
-        this.directory = directory;
+    public void setDirectoryName(String directoryName) {
+        this.directoryName = directoryName;
     }
 
     public String getName() {
@@ -93,7 +93,7 @@ public class DirectoryEntry extends IVdcQueryable {
         result = prime * result + (id == null? 0: id.hashCode());
         result = prime * result + (name == null? 0: name.hashCode());
         result = prime * result + (status == null? 0: status.hashCode());
-        result = prime * result + (directory == null? 0: directory.hashCode());
+        result = prime * result + (directoryName == null ? 0 : directoryName.hashCode());
         return result;
     }
 
@@ -109,14 +109,15 @@ public class DirectoryEntry extends IVdcQueryable {
             return false;
         }
         DirectoryEntry other = (DirectoryEntry) obj;
-        return
-            ObjectUtils.objectsEqual(id, other.id) &&
-            ObjectUtils.objectsEqual(name, other.name) &&
-            ObjectUtils.objectsEqual(status, other.status) &&
-            ObjectUtils.objectsEqual(directory, other.directory);
+        return (
+                ObjectUtils.objectsEqual(id, other.id) &&
+                ObjectUtils.objectsEqual(name, other.name) &&
+                ObjectUtils.objectsEqual(status, other.status) &&
+                ObjectUtils.objectsEqual(directoryName, other.directoryName)
+               );
     }
 
     public String toString() {
-        return name + "@" + directory.getName();
+        return name + "@" + directoryName;
     }
 }

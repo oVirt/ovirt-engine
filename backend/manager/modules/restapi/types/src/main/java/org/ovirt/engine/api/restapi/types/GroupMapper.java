@@ -28,9 +28,9 @@ public class GroupMapper {
         Group model = template != null ? template : new Group();
         model.setName(entity.getName());
         model.setId(entity.getId().toHex());
-        if (!StringUtils.isEmpty(entity.getDirectory().getName())) {
+        if (!StringUtils.isEmpty(entity.getDirectoryName())) {
             Domain dom = new Domain();
-            dom.setId(new Guid(entity.getDirectory().getName().getBytes(), true).toString());
+            dom.setId(new Guid(entity.getDirectoryName().getBytes(), true).toString());
             model.setDomain(dom);
         }
         return model;

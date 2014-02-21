@@ -99,7 +99,7 @@ public class DbUser extends IVdcQueryable {
 
     public DbUser(DirectoryUser directoryUser) {
         externalId = directoryUser.getId();
-        domain = directoryUser.getDirectory().getName();
+        domain = directoryUser.getDirectoryName();
         loginName = directoryUser.getName();
         firstName = directoryUser.getFirstName();
         lastName = directoryUser.getLastName();

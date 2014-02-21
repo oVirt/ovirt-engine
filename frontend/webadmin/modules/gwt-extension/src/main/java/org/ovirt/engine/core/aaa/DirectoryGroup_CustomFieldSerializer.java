@@ -13,14 +13,14 @@ import com.google.gwt.user.client.rpc.SerializationStreamWriter;
 public class DirectoryGroup_CustomFieldSerializer {
 
     public static DirectoryGroup instantiate(SerializationStreamReader reader) throws SerializationException {
-        Directory directory = DirectoryManager.getInstance().getDirectory(reader.readString());
+        String directoryName = reader.readString();
         ExternalId id = (ExternalId) reader.readObject();
         String name = reader.readString();
-        return new DirectoryGroup(directory, id, name);
+        return new DirectoryGroup(directoryName, id, name);
     }
 
     public static void serialize(SerializationStreamWriter writer, DirectoryGroup group) throws SerializationException {
-        writer.writeObject(group.getDirectory().getName());
+        writer.writeObject(group.getDirectoryName());
         writer.writeObject(group.getId());
         writer.writeString(group.getName());
     }

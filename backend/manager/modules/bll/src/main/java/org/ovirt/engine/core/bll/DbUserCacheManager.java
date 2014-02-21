@@ -188,8 +188,8 @@ public class DbUserCacheManager {
             dbUser.setLastName(directoryUser.getLastName());
             update = true;
         }
-        if (!StringUtils.equals(dbUser.getDomain(), directoryUser.getDirectory().getName())) {
-            dbUser.setDomain(directoryUser.getDirectory().getName());
+        if (!StringUtils.equals(dbUser.getDomain(), directoryUser.getDirectoryName())) {
+            dbUser.setDomain(directoryUser.getDirectoryName());
             update = true;
         }
         if (!StringUtils.equals(dbUser.getLoginName(), directoryUser.getName())) {

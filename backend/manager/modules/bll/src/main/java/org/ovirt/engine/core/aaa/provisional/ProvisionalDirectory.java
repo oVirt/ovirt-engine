@@ -126,7 +126,7 @@ public class ProvisionalDirectory implements Directory {
         }
 
         // Create the directory user and populate the basic attributes:
-        DirectoryUser directoryUser = new DirectoryUser(this, ldapUser.getUserId(), name);
+        DirectoryUser directoryUser = new DirectoryUser(this.getName(), ldapUser.getUserId(), name);
         directoryUser.setFirstName(ldapUser.getName());
         directoryUser.setLastName(ldapUser.getSurName());
         directoryUser.setDepartment(ldapUser.getDepartment());
@@ -213,7 +213,7 @@ public class ProvisionalDirectory implements Directory {
      * Transforms a LDAP group into a directory group.
      */
     private DirectoryGroup mapGroup(LdapGroup ldapGroup) {
-        return new DirectoryGroup(this, ldapGroup.getid(), ldapGroup.getname());
+        return new DirectoryGroup(this.getName(), ldapGroup.getid(), ldapGroup.getname());
     }
 
     /**

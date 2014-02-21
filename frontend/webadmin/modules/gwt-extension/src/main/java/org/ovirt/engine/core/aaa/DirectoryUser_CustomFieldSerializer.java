@@ -14,14 +14,14 @@ import com.google.gwt.user.client.rpc.SerializationStreamWriter;
 public class DirectoryUser_CustomFieldSerializer {
 
     public static DirectoryUser instantiate(SerializationStreamReader reader) throws SerializationException {
-        Directory directory = DirectoryManager.getInstance().getDirectory(reader.readString());
+        String directoryName = reader.readString();
         ExternalId id = (ExternalId) reader.readObject();
         String name = reader.readString();
-        return new DirectoryUser(directory, id, name);
+        return new DirectoryUser(directoryName, id, name);
     }
 
     public static void serialize(SerializationStreamWriter writer, DirectoryUser user) throws SerializationException {
-        writer.writeString(user.getDirectory().getName());
+        writer.writeString(user.getDirectoryName());
         writer.writeObject(user.getId());
         writer.writeString(user.getName());
         writer.writeBoolean(user.isAdmin());

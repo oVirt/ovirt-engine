@@ -42,7 +42,7 @@ public class UserMapper {
     public static User map(DirectoryUser entity, User template) {
         User model = template != null ? template : new User();
         model.setName(entity.getFirstName());
-        model.setUserName(entity.getName() + "@" + entity.getDirectory().getName());
+        model.setUserName(entity.getName() + "@" + entity.getDirectoryName());
         model.setId(entity.getId().toHex());
         model.setLastName(entity.getLastName());
         model.setEmail(entity.getEmail());
@@ -55,9 +55,9 @@ public class UserMapper {
                 model.getGroups().getGroups().add(group);
             }
         }
-        if (!StringUtils.isEmpty(entity.getDirectory().getName())) {
+        if (!StringUtils.isEmpty(entity.getDirectoryName())) {
             Domain dom = new Domain();
-            dom.setId(new Guid(entity.getDirectory().getName().getBytes(), true).toString());
+            dom.setId(new Guid(entity.getDirectoryName().getBytes(), true).toString());
             model.setDomain(dom);
         }
         return model;

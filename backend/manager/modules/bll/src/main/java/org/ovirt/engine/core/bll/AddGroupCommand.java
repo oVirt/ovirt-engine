@@ -58,7 +58,7 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
         // First check if the group is already in the database, if it is we
         // need to update, if not we need to insert:
         DbGroupDAO dao = getAdGroupDAO();
-        DbGroup dbGroup = dao.getByExternalId(directoryGroup.getDirectory().getName(), directoryGroup.getId());
+        DbGroup dbGroup = dao.getByExternalId(directoryGroup.getDirectoryName(), directoryGroup.getId());
         if (dbGroup == null) {
             dbGroup = new DbGroup(directoryGroup);
             dbGroup.setId(Guid.newGuid());

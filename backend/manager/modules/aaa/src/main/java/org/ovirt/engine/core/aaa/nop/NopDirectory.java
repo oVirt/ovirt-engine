@@ -48,7 +48,7 @@ public class NopDirectory implements Directory {
         } catch (UnsupportedEncodingException e) {
             return null;
         }
-        return new DirectoryUser(this, id, name);
+        return new DirectoryUser(this.getName(), id, name);
     }
 
     /**
@@ -62,7 +62,7 @@ public class NopDirectory implements Directory {
         } catch (UnsupportedEncodingException e) {
             return null;
         }
-        return new DirectoryUser(this, id, name);
+        return new DirectoryUser(this.getName(), id, name);
     }
 
     /**

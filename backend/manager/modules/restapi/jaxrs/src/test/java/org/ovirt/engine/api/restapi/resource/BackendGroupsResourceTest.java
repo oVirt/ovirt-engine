@@ -11,7 +11,6 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
-import org.ovirt.engine.core.aaa.DirectoryStub;
 import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -372,7 +371,7 @@ public class BackendGroupsResourceTest
     }
 
     private DirectoryGroup getDirectoryGroup(int index) {
-        return new DirectoryGroup(new DirectoryStub(DOMAIN), EXTERNAL_IDS[index], GROUP_NAMES[index]);
+        return new DirectoryGroup(DOMAIN, EXTERNAL_IDS[index], GROUP_NAMES[index]);
     }
 
     @Override

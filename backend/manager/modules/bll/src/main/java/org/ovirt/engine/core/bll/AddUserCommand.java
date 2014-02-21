@@ -89,7 +89,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
         DbUserDAO dao = getDbUserDAO();
 
         // First check if the user is already in the database, if it is we need to update, if not we need to insert:
-        DbUser dbUser = dao.getByExternalId(directoryUser.getDirectory().getName(), directoryUser.getId());
+        DbUser dbUser = dao.getByExternalId(directoryUser.getDirectoryName(), directoryUser.getId());
         if (dbUser == null) {
             dbUser = new DbUser(directoryUser);
             dbUser.setId(Guid.newGuid());

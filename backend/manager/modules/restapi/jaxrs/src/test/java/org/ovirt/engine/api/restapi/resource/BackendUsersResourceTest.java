@@ -12,7 +12,6 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.core.aaa.DirectoryStub;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
@@ -214,7 +213,7 @@ public class BackendUsersResourceTest
     }
 
     private DirectoryUser getDirectoryUser(int index) {
-        return new DirectoryUser(new DirectoryStub(DOMAIN), EXTERNAL_IDS[index], NAMES[index]);
+        return new DirectoryUser(DOMAIN, EXTERNAL_IDS[index], NAMES[index]);
     }
 
     @Override

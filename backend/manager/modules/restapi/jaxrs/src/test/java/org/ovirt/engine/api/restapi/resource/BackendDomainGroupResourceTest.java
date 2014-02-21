@@ -6,11 +6,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
-import org.ovirt.engine.core.aaa.DirectoryStub;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -76,7 +74,7 @@ public class BackendDomainGroupResourceTest
 
     @Override
     protected DirectoryGroup getEntity(int index) {
-        return new DirectoryGroup(new DirectoryStub(DOMAIN), EXTERNAL_IDS[index], NAMES[index]);
+        return new DirectoryGroup(DOMAIN, EXTERNAL_IDS[index], NAMES[index]);
     }
 }
 

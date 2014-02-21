@@ -78,7 +78,7 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
      */
     public static DbUser persistAuthenticatedUser(DirectoryUser directoryUser) {
         DbUserDAO dao = DbFacade.getInstance().getDbUserDao();
-        DbUser dbUser = dao.getByExternalId(directoryUser.getDirectory().getName(), directoryUser.getId());
+        DbUser dbUser = dao.getByExternalId(directoryUser.getDirectoryName(), directoryUser.getId());
         if (dbUser != null) {
             dao.update(dbUser);
         }
