@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #include db general functions
-dbutils=$(dirname ${0})
+dbutils="$(dirname "${0}")"
 
 usage() {
     cat << __EOF__
@@ -20,10 +20,7 @@ Usage: $0
         database to connect to
 
 __EOF__
-    exit 1
 }
-
-error=0
 
 while [ -n "$1" ]; do
     x="$1"
@@ -44,13 +41,13 @@ while [ -n "$1" ]; do
         ;;
         --database=*)
             DATABASE="-d ${v}"
-            dbname="${v}"
         ;;
         --fix*)
             extra_params="-f"
         ;;
         --help)
             usage
+            exit 0
         ;;
         *)
             die "Invalid option '${x}'"
@@ -60,7 +57,8 @@ done
 
 validationlist="fkvalidator.sh"
 
+error=0
 for script in ${validationlist}; do
-        $dbutils/${script} ${USERNAME} ${SERVERNAME} ${PORT} ${DATABASE} ${LOGFILE:+-l "$LOGFILE"} -q ${extra_params} || error=1
+    "${dbutils}/${script}" ${USERNAME} ${SERVERNAME} ${PORT} ${DATABASE} ${LOGFILE:+-l "$LOGFILE"} -q ${extra_params} || error=1
 done
 exit ${error}

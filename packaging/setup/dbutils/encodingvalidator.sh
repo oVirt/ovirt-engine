@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 ###############################################################################################################
 # The purpose of this utility is to find not UTF8 template1 encoding , display it and enable to fix it
 # Only support may access this utility with care
@@ -8,66 +8,60 @@
 ###############################################################################################################
 
 #include db general functions
-pushd $(dirname ${0})>/dev/null
-source ./common.sh
+cd "$(dirname "${0}")"
+. ./common.sh
 
 #setting defaults
 set_defaults
 
-
 usage() {
-    printf "Usage: ${ME} [-h] [-s SERVERNAME [-p PORT]] [-u USERNAME] [-l LOGFILE] [-q] [-f] [-v]\n"
-    printf "\n"
-    printf "\t-s SERVERNAME - The database servername for the database  (def. ${SERVERNAME})\n"
-    printf "\t-p PORT       - The database port for the database        (def. ${PORT})\n"
-    printf "\t-u USERNAME   - The username for the database             (def. engine)\n"
-    printf "\t-l LOGFILE    - The logfile for capturing output          (def. ${LOGFILE})\n"
-    printf "\t-f            - Fix the template1 database encoding to be UTF8.\n"
-    printf "\t-q            - Quiet operation: do not ask questions, assume 'yes' when fixing.\n"
-    printf "\t-v            - Turn on verbosity                         (WARNING: lots of output)\n"
-    printf "\t-h            - This help text.\n"
-    printf "\n"
-    popd>/dev/null
-    exit $ret
+    cat << __EOF__
+Usage: $0 [options]
+
+    -h            - This help text.
+    -v            - Turn on verbosity                         (WARNING: lots of output)
+    -l LOGFILE    - The logfile for capturing output          (def. ${LOGFILE})
+    -s SERVERNAME - The database servername for the database  (def. ${SERVERNAME})
+    -p PORT       - The database port for the database        (def. ${PORT})
+    -u USERNAME   - The username for the database             (def. engine)
+    -f            - Fix the template1 database encoding to be UTF8.
+    -q            - Quiet operation: do not ask questions, assume 'yes' when fixing.
+
+__EOF__
 }
 
-DEBUG () {
-    if $VERBOSE; then
-        printf "DEBUG: $*"
-    fi
-}
+FIXIT=
+QUIET=
 
-FIXIT=false
-QUIET=false
-
-while getopts hs:u:p:l:d:qfv option; do
+while getopts hvl:s:p:u:fq option; do
     case $option in
-        s) SERVERNAME=$OPTARG;;
-        p) PORT=$OPTARG;;
-        u) USERNAME=$OPTARG;;
-        l) LOGFILE=$OPTARG;;
-        f) FIXIT=true;;
-        q) QUIET=true;;
+       \?) usage; exit 1;;
+        h) usage; exit 0;;
         v) VERBOSE=true;;
-        h) ret=0 && usage;;
-       \?) ret=1 && usage;;
+        l) LOGFILE="${OPTARG}";;
+        s) SERVERNAME="${OPTARG}";;
+        p) PORT="${OPTARG}";;
+        u) USERNAME="${OPTARG}";;
+        f) FIXIT=1;;
+        q) QUIET=1;;
     esac
 done
 
 run() {
-  command="${1}"
-  db="${2}"
-  psql --pset=tuples_only=on -w -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -c "${command}"  ${db}  > /dev/null
+  local command="${1}"
+  local db="${2}"
+  psql --pset=tuples_only=on -w -U "${USERNAME}" -h "${SERVERNAME}" -p "${PORT}" -c "${command}" "${db}"  > /dev/null
 }
 
 get() {
-    CMD="SELECT pg_encoding_to_char(encoding) FROM pg_database WHERE datname = 'template1';"
-    encoding=$(psql --pset=tuples_only=on -w -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -c "${CMD}"  template1)
+    local CMD="SELECT pg_encoding_to_char(encoding) FROM pg_database WHERE datname = 'template1';"
+    local encoding="$(psql --pset=tuples_only=on -w -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -c "${CMD}"  template1)"
     echo "${encoding}" | sed -e 's/^ *//g'
 }
 
 fix_template1_encoding() {
     #Allow connecting to template 0
+    local CMD
     CMD="UPDATE pg_database SET datallowconn = TRUE WHERE datname = 'template0';"
     run "${CMD}" template1
     #Define template1 as a regular DB so we can drop it
@@ -87,35 +81,25 @@ fix_template1_encoding() {
     run "${CMD}" template1
 }
 
-if [[ "${FIXIT}" = "true" && "${QUIET}" == "false" ]]; then
+if [ -n "${FIXIT}" -a -z "${QUIET}" ]; then
     echo "Caution, this operation should be used with care. Please contact support prior to running this command"
     echo "Are you sure you want to proceed? [y/n]"
     read answer
 
     if [ "${answer}" != "y" ]; then
-       echo "Please contact support for further assistance."
-       popd>/dev/null
-       exit 1
+        echo "Please contact support for further assistance."
+        exit 1
     fi
 fi
 
-encoding=$(get)
+encoding="$(get)"
 
-if [[ "${encoding}" = "UTF8" || "${encoding}" = "utf8" ]]; then
-   echo "Database template1 has already UTF8 default encoding configured. nothing to do, exiting..."
-   exit 0
-elif [ "${FIXIT}" = "false" ]; then
-   echo "Database template1 is configured with an incompatible encoding: ${encoding}"
-   exit 1
+if [ "${encoding}" = "UTF8" -o "${encoding}" = "utf8" ]; then
+    echo "Database template1 has already UTF8 default encoding configured. nothing to do, exiting..."
+    exit 0
+elif [ -z "${FIXIT}" ]; then
+    echo "Database template1 is configured with an incompatible encoding: ${encoding}"
+    exit 1
 fi
 
 fix_template1_encoding
-
-if [ $? -eq 0 ]; then
-  echo "Operation completed successfully"
-else
-  echo "Operation failed"
-fi
-
-popd>/dev/null
-exit $?

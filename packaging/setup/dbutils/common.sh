@@ -1,13 +1,11 @@
-#!/bin/bash
 
 set_defaults() {
-    ME=$(basename $0)
     SERVERNAME="localhost"
     PORT="5432"
     DATABASE="engine"
     USERNAME="engine"
     VERBOSE=false
-    LOGFILE="$ME.log"
+    LOGFILE="$(basename "$0").log"
 
     if [ -n "${ENGINE_PGPASS}" ]; then
         export PGPASSFILE="${ENGINE_PGPASS}"
