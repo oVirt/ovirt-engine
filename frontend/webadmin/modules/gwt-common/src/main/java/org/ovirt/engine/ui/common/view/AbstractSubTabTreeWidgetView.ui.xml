@@ -34,10 +34,10 @@
 		}
 	</ui:style>
 
-	<g:VerticalPanel ui:field="mainContainer" addStyleNames="{style.mainContainer}">
+	<g:FlowPanel ui:field="mainContainer" addStyleNames="{style.mainContainer}">
 		<g:SimplePanel ui:field="actionPanelContainer" addStyleNames="{style.actionPanelContainer}"></g:SimplePanel>
 		<g:SimplePanel ui:field="headerTableContainer" addStyleNames="{style.headerTableContainer}"></g:SimplePanel>
 		<g:SimplePanel ui:field="treeContainer" addStyleNames="{style.treeContainer}"></g:SimplePanel>
-	</g:VerticalPanel>
+	</g:FlowPanel>
 
 </ui:UiBinder>
