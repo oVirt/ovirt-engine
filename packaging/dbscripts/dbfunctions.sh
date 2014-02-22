@@ -392,10 +392,6 @@ run_upgrade_files() {
     fi
 }
 
-pg_version() {
-    echo $(psql --version | head -1 | awk '{print $3}')
-}
-
 # gets the configuration value of the given option name and version.
 # usage: <some variable>=get_config_value <name> <version>
 get_config_value() {
