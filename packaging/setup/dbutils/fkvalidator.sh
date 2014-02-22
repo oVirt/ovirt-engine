@@ -21,10 +21,13 @@
 
 #include db general functions
 cd "$(dirname "$0")"
-. ./common.sh
+. ./dbfunc-base.sh
 
-#setting defaults
-set_defaults
+cleanup() {
+    dbfunc_cleanup
+}
+trap cleanup 0
+dbfunc_init
 
 usage() {
     cat << __EOF__
@@ -32,11 +35,11 @@ Usage: $0 [options]
 
     -h            - This help text.
     -v            - Turn on verbosity                         (WARNING: lots of output)
-    -l LOGFILE    - The logfile for capturing output          (def. ${LOGFILE})
-    -s SERVERNAME - The database servername for the database  (def. ${SERVERNAME})
-    -p PORT       - The database port for the database        (def. ${PORT})
-    -u USERNAME   - The username for the database             (def. engine)
-    -d DATABASE   - The database name                         (def. ${DATABASE})
+    -l LOGFILE    - The logfile for capturing output          (def. ${DBFUNC_LOGFILE})
+    -s HOST       - The database servername for the database  (def. ${DBFUNC_DB_HOST})
+    -p PORT       - The database port for the database        (def. ${DBFUNC_DB_PORT})
+    -u USER       - The username for the database             (def. ${DBFUNC_DB_USER})
+    -d DATABASE   - The database name                         (def. ${DBFUNC_DB_DATABASE})
     -f            - Fix the non consistent data by removing it from DB.
     -q            - Run in a quiet mode (don't ask questions).
 
@@ -49,27 +52,33 @@ __EOF__
 validate_db_fks() {
     local fix_it=${1}
     local verbose=${2}
-    local CMD
+    local res
     if [ -n "${fix_it}" ]; then
-        if [ -n "${verbose}" ]; then
-            CMD="copy (select fk_violation from fn_db_validate_fks(true,true)) to stdout;"
-        else
-            CMD="copy (select fk_violation from fn_db_validate_fks(true,false)) to stdout;"
-        fi
+        res="$(
+            dbfunc_psql_statement_parsable "
+                select fk_violation
+                from fn_db_validate_fks(true, ${verbose:-0} != 0)
+            "
+        )"
     else
-        if [ -n "${verbose}" ]; then
-            CMD="copy (select fk_violation,fk_status from fn_db_validate_fks(false,true) where fk_status=1) to stdout with csv;"
-        else
-            CMD="copy (select fk_violation,fk_status from fn_db_validate_fks(false,false) where fk_status=1) to stdout with csv;"
-        fi
+        res="$(
+            dbfunc_psql_statement_parsable "
+                select fk_violation, fk_status
+                from fn_db_validate_fks(false, ${verbose:-0} != 0)
+                where fk_status=1
+            "
+        )"
     fi
-    local res="$(psql -w --pset=tuples_only=on --set ON_ERROR_STOP=1 -U ${USERNAME} -c "${CMD}" -h "${SERVERNAME}" -p "${PORT}" -L "${LOGFILE}" "${DATABASE}")"
     local exit_code=$?
 
-    local out="$(echo "${res}" | cut -f1 -d,)"
+    if [ ${exit_code} -eq 0 -a -z "${res}" ]; then
+        exit 0
+    fi
+
+    local out="$(echo "${res}" | sed -n '1p')"
     echo "${out}"
     if [ "${exit_code}" = "0" -a -z "${fix_it}" ]; then
-        exit_code="$(echo "${res}" | cut -f2 -d, | tail -1)"
+        exit_code="$(echo "${res}" | sed -n '2p')"
     fi
     exit ${exit_code}
 }
@@ -81,19 +90,19 @@ while getopts hvl:s:p:u:d:fq option; do
     case $option in
        \?) usage; exit 1;;
         h) usage; exit 0;;
-        v) VERBOSE=true;;
-        l) LOGFILE="${OPTARG}";;
-        s) SERVERNAME="${OPTARG}";;
-        p) PORT="${OPTARG}";;
-        u) USERNAME="${OPTARG}";;
-        d) DATABASE="${OPTARG}";;
+        v) DBFUNC_VERBOSE=1;;
+        l) DBFUNC_LOGFILE="${OPTARG}";;
+        s) DBFUNC_DB_HOST="${OPTARG}";;
+        p) DBFUNC_DB_PORT="${OPTARG}";;
+        d) DBFUNC_DB_DATABASE="${OPTARG}";;
+        u) DBFUNC_DB_USER="${OPTARG}";;
         f) FIXIT=1;;
         q) QUIET=1;;
     esac
 done
 
-[ -n "${USERNAME}" ] || die "Please specify user name"
-[ -n "${DATABASE}" ] || die "Please specify database"
+[ -n "${DBFUNC_DB_USER}" ] || die "Please specify user name"
+[ -n "${DBFUNC_DB_DATABASE}" ] || die "Please specify database"
 
 if [ -n "${FIXIT}" -a -z "${QUIET}" ]; then
     echo "Caution, this operation should be used with care. Please contact support prior to running this command"
@@ -104,6 +113,6 @@ if [ -n "${FIXIT}" -a -z "${QUIET}" ]; then
 fi
 
 # Install fkvalidator procedures
-psql -w -U "${USERNAME}" -h "${SERVERNAME}" -p "${PORT}" -f ./fkvalidator_sp.sql "${DATABASE}" > /dev/null
+dbfunc_psql_die --file=./fkvalidator_sp.sql > /dev/null
 # Execute
-validate_db_fks "${FIXIT}" "${VERBOSE}"
+validate_db_fks "${FIXIT}" "${DBFUNC_VERBOSE}"

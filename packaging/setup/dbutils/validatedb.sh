@@ -1,7 +1,7 @@
 #!/bin/sh
 
-#include db general functions
 dbutils="$(dirname "${0}")"
+. "${dbutils}/dbfunc-base.sh"
 
 usage() {
     cat << __EOF__

@@ -1,133 +1,41 @@
 
-# $1 - the command to execute
-# $2 - the database to use
-# $3 - db hostname  (default 'localhost' or '')
-# $4 - db port (default '5432')
-execute_command () {
-    local command="$1"
-    local dbname="$2"
-    local dbhost="$3"
-    local dbport="$4"
+. ./dbfunc-base.sh
 
-    (
-        filename="$(mktemp)"
-        cleanup() {
-            rm -f "${filename}"
-        }
-        trap cleanup 0
-
-        echo "${command}" > "${filename}"
-
-        execute_file "${filename}" "${dbname}" "${dbhost}" "${dbport}"
-    ) || exit $?
-}
-
-# $1 - the file to execute
-# $2 - the database to use
-# $3 - db hostname  (default 'localhost' or '')
-# $4 - db port (default '5432')
-execute_file () {
-    local filename="$1"
-    local dbname="$2"
-    local dbhost="$3"
-    local dbport="$4"
-    local ret_instead_exit="$5"
-    # tuples_only - supress header (column names) and footer  (rows affected) from output.
-    # ON_ERROR_STOP - stop on error.
-    local cmdline="psql -w --pset=tuples_only=on --set ON_ERROR_STOP=1"
-    cmdline="${cmdline} --file=\"${filename}\" "
-
-    if [ -n "${dbname}" ]; then
-        cmdline="${cmdline} --dbname=${dbname} "
-    fi
-
-    if [ -n "${USERNAME}" ]; then
-        cmdline="${cmdline} --username=${USERNAME} "
-    fi
-
-    if [ -n "${dbhost}" ]; then
-        cmdline="${cmdline} --host=${dbhost} "
-        if [ -n "${dbport}" ]; then
-           cmdline="${cmdline} --port=${dbport} "
-        fi
-    fi
-
-
-    if ${VERBOSE}; then
-        cmdline="${cmdline} --echo-all "
-    fi
-
-    if [ -n "${LOGFILE}" ]; then
-        cmdline="${cmdline} --log-file=\"${LOGFILE}\" "
-    fi
-
-    eval "${cmdline}"
-    # save last command return value
-    retval=$?
-    # exit script if command fails.
-    if [ "${retval}" -ne 0 -a -z "${ret_instead_exit}" ]; then
-        exit "${retval}"
-    fi
-
-    return "${retval}"
-}
+#DBFUNC_COMMON_MD5DIR=
 
 #cleans db by dropping all objects
 cleandb() {
-# common stored procedures are executed first (for new added functions to be valid)
-    (
-        file="$(mktemp)"
-        cleanup() {
-            rm -f "${file}"
-        }
-        trap cleanup 0
-
-        execute_file "common_sp.sql" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
-        {
-            CMD="select * from generate_drop_all_seq_syntax();"
-            execute_command "${CMD}" "${DATABASE}" "${SERVERNAME}" "${PORT}"
-            CMD="select * from generate_drop_all_tables_syntax();"
-            execute_command "${CMD}" "${DATABASE}" "${SERVERNAME}" "${PORT}"
-            CMD="select * from generate_drop_all_views_syntax();"
-            execute_command "${CMD}" "${DATABASE}" "${SERVERNAME}" "${PORT}"
-            CMD="select * from generate_drop_all_functions_syntax();"
-            execute_command "${CMD}" "${DATABASE}" "${SERVERNAME}" "${PORT}"
-            CMD="select * from generate_drop_all_user_types_syntax();"
-            execute_command "${CMD}" "${DATABASE}" "${SERVERNAME}" "${PORT}"
-        } > "${file}"
-        execute_file "${file}" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
-    ) || exit $?
+    dbfunc_psql_die --file="common_sp.sql" > /dev/null
+    local statement
+    statement="$(
+        dbfunc_psql_die --command="select * from generate_drop_all_seq_syntax();"
+        dbfunc_psql_die --command="select * from generate_drop_all_tables_syntax();"
+        dbfunc_psql_die --command="select * from generate_drop_all_views_syntax();"
+        dbfunc_psql_die --command="select * from generate_drop_all_functions_syntax();"
+        dbfunc_psql_die --command="select * from generate_drop_all_user_types_syntax();"
+    )" || exit 1
+    dbfunc_psql_die --command="${statement}" > /dev/null
 }
 
 #drops views before upgrade or refresh operations
 drop_views() {
     # common stored procedures are executed first (for new added functions to be valid)
-    execute_file "common_sp.sql" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
-    local CMD="select * from generate_drop_all_views_syntax();"
-    execute_command "$CMD" "${DATABASE}" "${SERVERNAME}" "${PORT}" > drop_all_views.sql
-    execute_file "drop_all_views.sql" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
-    rm -f drop_all_views.sql
+    dbfunc_psql_die --file="common_sp.sql" > /dev/null
+    dbfunc_psql_die --command="select * from generate_drop_all_views_syntax();" | \
+        dbfunc_psql_die > /dev/null
 }
 
 #drops sps before upgrade or refresh operations
 drop_sps() {
-# common stored procedures are executed first (for new added functions to be valid)
-    execute_file "common_sp.sql" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
-
-    (
-        drop_all_functions="$(mktemp)"
-        cleanup() {
-            rm -f "${drop_all_functions}"
-        }
-        trap cleanup 0
-
-        CMD="select * from generate_drop_all_functions_syntax();"
-        execute_command "$CMD"  "${DATABASE}" "${SERVERNAME}" "${PORT}" > "${drop_all_functions}"
-        execute_file "${drop_all_functions}" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
-    ) || exit $?
+    dbfunc_psql_die --file="common_sp.sql" > /dev/null
+    local statement
+    statement="$(
+        dbfunc_psql_die --command="select * from generate_drop_all_functions_syntax();"
+    )" || exit 1
+    dbfunc_psql_die --command="${statement}" > /dev/null
 
     # recreate generic functions
-    execute_file "create_functions.sql" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
+    dbfunc_psql_die --file="create_functions.sql" > /dev/null
 }
 
 #refreshes sps
@@ -136,18 +44,18 @@ refresh_sps() {
     local sql
     for sql in $(ls *sp.sql | sort); do
         echo "Creating stored procedures from ${sql}..."
-        execute_file "${sql}" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
+        dbfunc_psql_die --file="${sql}" > /dev/null
     done
-    execute_file "common_sp.sql" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
+    dbfunc_psql_die --file="common_sp.sql" > /dev/null
 }
 
 install_common_func() {
     # common stored procedures are executed first (for new added functions to be valid)
-    execute_file "common_sp.sql" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
+    dbfunc_psql_die --file="common_sp.sql" > /dev/null
 }
 
 delete_async_tasks_and_compensation_data() {
-    execute_file "delete_async_tasks_and_compensation_data.sql" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
+    dbfunc_psql_die --file="delete_async_tasks_and_compensation_data.sql" > /dev/null
 }
 
 run_pre_upgrade() {
@@ -180,10 +88,9 @@ run_post_upgrade() {
     custom_materialized_views_file="upgrade/post_upgrade/custom/create_materialized_views.sql"
     if [ -f "${custom_materialized_views_file}" ]; then
         echo "running custom materialized views from '${custom_materialized_views_file}'..."
-        psql -w -U "${USERNAME}" --pset=tuples_only=on  --set ON_ERROR_STOP=1 -h "${SERVERNAME}" -p "${PORT}" -f "${custom_materialized_views_file}" "${DATABASE}" > /dev/null
-        if [ $? -ne 0 ] ; then
+        if ! dbfunc_psql --file="${custom_materialized_views_file}"; then
             #drop all custom views
-            psql -w -U "${USERNAME}" -h "${SERVERNAME}" -p "${PORT}" -c "select DropAllCustomMaterializedViews();" "${DATABASE}" > /dev/null
+            dbfunc_psql --command="select DropAllCustomMaterializedViews();" > /dev/null
             echo "Illegal syntax in custom Materialized Views, Custom Materialized Views were dropped."
         fi
     fi
@@ -215,55 +122,77 @@ run_required_scripts() {
         local sql="$(echo "${line}" | cut -d " " -f2)"
         echo "${sql}" | grep -q "_sp.sql" || \
             die "invalid source file ${sql} in ${file}, source files must end with '_sp.sql'"
-        if [ -z "${valid}" ]; then
-            echo "invalid source file ${sql} in ${file}, source files must end with '_sp.sql'"
-            exit 1
-        fi
         echo "Running helper functions from '${sql}' for '${file}'"
-        execute_file "${sql}" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
+        dbfunc_psql_die --file="${sql}" > /dev/null
     done < "${script}"
 }
 
 run_file() {
     local file="$1"
     if [ -x "${file}" ]; then
+        # delegate all DBFUNC_ vars in subshell
         echo "Running upgrade shell script '${file}'..."
-        DATABASE="${DATABASE}" SERVERNAME="${SERVERNAME}" PORT="${PORT}" USERNAME="${USERNAME}" \
+        (
+            eval "$(set | grep '^DBFUNC_' | sed 's/^\([^=]*\)=.*/export \1/')"
             "./${file}"
+        )
     else
         echo "Running upgrade sql script '${file}'..."
-        execute_file "${file}" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
+        dbfunc_psql_die --file="${file}" > /dev/null
     fi
 }
 
-set_version() {
-    execute_file upgrade/03_02_0000_set_version.sql "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
-}
-
 get_current_version() {
-    echo "select version from schema_version where current = true order by id LIMIT 1;" |
-                    psql -w -U "${USERNAME}" --pset=tuples_only=on "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+    dbfunc_psql_statement_parsable "
+        select version
+        from schema_version
+        where current = true
+        order by id
+        LIMIT 1
+    "
 }
 
 get_installed_version() {
     local cheksum="$1"
-    echo "select version from schema_version where checksum = '${cheksum}' and state = 'INSTALLED';" |
-                    psql -w -U "${USERNAME}" --pset=tuples_only=on "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
-}
-
-get_last_installed_id() {
-    echo "select max(id) from schema_version where state in ('INSTALLED','SKIPPED')" |
-                    psql -w -U "${USERNAME}" --pset=tuples_only=on "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+    dbfunc_psql_statement_parsable "
+        select version
+        from schema_version
+        where
+            checksum = '${cheksum}' and
+            state = 'INSTALLED'
+    "
 }
 
 set_last_version() {
-    local id="$(get_last_installed_id)"
-    local CMD="update schema_version set current=(id=${id});"
-    execute_command "${CMD}" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null
+    local id="$(
+        dbfunc_psql_statement_parsable "
+            select max(id)
+            from schema_version
+            where state in ('INSTALLED','SKIPPED')
+        "
+    )"
+    dbfunc_psql_die --command="
+        update schema_version
+        set current=(id=${id});
+    " > /dev/null
 }
 
 get_db_time(){
-    echo "select now();" | psql -w -U "${USERNAME}" --pset=tuples_only=on "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+    dbfunc_psql_statement_parsable "select now()"
+}
+
+dbfunc_common_language_create() {
+    local lang="$1"
+
+    if [ "$(
+        dbfunc_psql_statement_parsable "
+            select count(*)
+            from pg_language
+            where lanname='${lang}'
+        "
+    )" -eq 0 ]; then
+        dbfunc_psql_die --command="create language '${lang}';" > /dev/null
+    fi
 }
 
 # gets a directory and required depth and return all sql & sh files
@@ -278,7 +207,7 @@ get_files() {
 
 is_view_or_sp_changed() {
     local files="$(get_files "upgrade" 3)"
-    local md5sum_file="${MD5DIR}/.${DATABASE}.scripts.md5"
+    local md5sum_file="${DBFUNC_COMMON_MD5DIR}/.${DBFUNC_DB_DATABASE}.scripts.md5"
     local md5sum_tmp_file="${md5sum_file}.tmp"
     md5sum ${files} create_*views.sql *_sp.sql > "${md5sum_tmp_file}"
     diff -s -q "${md5sum_file}" "${md5sum_tmp_file}" > /dev/null 2>&1
@@ -311,20 +240,16 @@ validate_version_uniqueness() {
 }
 
 run_upgrade_files() {
-    set_version
+
+    dbfunc_psql_die --file=upgrade/03_02_0000_set_version.sql > /dev/null
+
     local res="$(find upgrade/ -name '*.sql' -or -name '*.sh' | wc -l)"
-    local CMD
     if [ "${res}" -gt 0 ]; then
         local state="FAILED"
         local comment=""
         local updated=0
         validate_version_uniqueness
-        if [ "${NOMD5}" = "false" ]; then
-            is_view_or_sp_changed
-        fi
-
-        # Checks if a view or sp file has been changed
-        if [ $? -ne 0 -o "${NOMD5}" = "true" ]; then
+        if [ -z "${DBFUNC_COMMON_MD5DIR}" ] || ! is_view_or_sp_changed; then
             echo "upgrade script detected a change in Config, View or Stored Procedure..."
             run_pre_upgrade
             updated=1
@@ -385,10 +310,30 @@ Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and r
                         exit "${code}"
                     fi
                 fi
-                CMD="insert into schema_version(version,script,checksum,installed_by,started_at,ended_at,state,current,comment)
-                     values (trim('${ver}'),'${file}','${checksum}','${USERNAME}',
-                     cast(trim('${before}') as timestamp),cast(trim('${after}') as timestamp),'${state}',false,'${comment}');"
-                psql -w -U "${USERNAME}" --pset=tuples_only=on -h "${SERVERNAME}" -p "${PORT}" -c "${CMD}" "${DATABASE}" > /dev/null
+                dbfunc_psql_die --command="
+                    insert into schema_version(
+                        version,
+                        script,
+                        checksum,
+                        installed_by,
+                        started_at,
+                        ended_at,
+                        state,
+                        current,
+                        comment
+                    )
+                    values (
+                        trim('${ver}'),
+                        '${file}',
+                        '${checksum}',
+                        '${DBFUNC_DB_USER}',
+                        cast(trim('${before}') as timestamp),
+                        cast(trim('${after}') as timestamp),
+                        '${state}',
+                        false,
+                        '${comment}'
+                    );
+                " > /dev/null
             fi
         done
         set_last_version
@@ -407,10 +352,16 @@ Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and r
 get_config_value() {
     local option_name="$1"
     local version="$2"
-    local cmd="select option_value from vdc_options where option_name ='${option_name}' and version = '${version}';"
-    # remove leading/trailing spaces from the result
-    # current implementation of execute_command use --echo-all flag of psql that outputs the query in 1st line
-    echo $(execute_command "${cmd}" "${DATABASE}" "${SERVERNAME}" "${PORT}" | sed 's/^ *//g' | head -2 | tail -1 | tr -d ' ')
+
+    dbfunc_psql_statement_parse_line "$(
+        dbfunc_psql_statement_parsable "
+            select option_value
+            from vdc_options
+            where
+                option_name='${option_name}' and
+                version='${version}'
+        "
+    )"
 }
 
 #adds a record to audit_log in case of calling unlock_entity
@@ -418,10 +369,23 @@ log_unlock_entity() {
     local object_type="$1"
     local id="$2"
     local user="$3"
-    local msg="System user ${user} run unlock_entity script on ${object_type} ${id} with db user ${USERNAME}"
-    local CMD="insert into audit_log(log_time,log_type_name,log_type,severity,message)
-        values(now(), 'USER_RUN_UNLOCK_ENTITY_SCRIPT', 2024, 10, '${msg}')"
-    execute_command "${CMD}" "${DATABASE}" "${SERVERNAME}" "${PORT}"
+
+    dbfunc_psql_die --command="
+        insert into audit_log(
+            log_time,
+            log_type_name,
+            log_type,
+            severity,
+            message
+        )
+        values(
+            now(),
+            'USER_RUN_UNLOCK_ENTITY_SCRIPT',
+            2024,
+            10,
+            'System user ${user} run unlock_entity script on ${object_type} ${id} with db user ${DBUTILS_DB_USER}}'
+        )
+    "
 }
 
 
@@ -432,9 +396,7 @@ unlock_entity() {
     local id="$2"
     local user="$3"
     local recursive="$4"
-    if [ -z "${recursive}" ]; then
-        recursive=false
-    fi
+    [ -z "${recursive}" ] && recursive=false || recursive=true
     local CMD=""
     if [ "${object_type}" = "vm" -o "${object_type}" = "template" ]; then
         CMD="select fn_db_unlock_entity('${object_type}', '${id}', ${recursive});"
@@ -448,7 +410,7 @@ unlock_entity() {
 
     if [ -n "${CMD}" ]; then
         echo "${CMD}"
-        if execute_command "${CMD}" "${DATABASE}" "${SERVERNAME}" "${PORT}"; then
+        if dbfunc_psql --command="${CMD}"; then
             log_unlock_entity ${object_type} ${id} ${user}
             echo "unlock ${object_type} ${id} completed successfully."
         else
@@ -466,43 +428,92 @@ query_locked_entities() {
     local SNAPSHOT_LOCKED=LOCKED
     local CMD
     if [ "${object_type}" = "vm" ]; then
-        CMD="select vm_name as vm_name from vm_static a ,vm_dynamic b
-            where a.vm_guid = b.vm_guid and status = ${IMAGE_LOCKED};"
-        psql -w -c "${CMD}" -U "${USERNAME}" -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
-        CMD="select vm_name as vm_name , image_group_id as disk_id
-            from images a,vm_static b,vm_device c
-            where a.image_group_id = c.device_id and b.vm_guid = c.vm_id and
-            imagestatus = ${LOCKED} and
-            entity_type ilike 'VM' and
-            image_group_id in
-            (select device_id from vm_device where is_plugged);"
-        psql -w -c "${CMD}" -U "${USERNAME}" -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
-        CMD="select vm_name as vm_name, snapshot_id as snapshot_id  from vm_static a ,snapshots b
-            where a.vm_guid = b.vm_id and status ilike '${SNAPSHOT_LOCKED}';"
-        psql -w -c "${CMD}" -U "${USERNAME}" -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+        dbfunc_psql_die --command="
+            select
+                vm_name as vm_name
+            from
+                vm_static a,
+                vm_dynamic b
+            where
+                a.vm_guid = b.vm_guid and
+                status = ${IMAGE_LOCKED};
+
+            select
+                vm_name as vm_name,
+                image_group_id as disk_id
+            from
+                images a,
+                vm_static b,
+                vm_device c
+            where
+                a.image_group_id = c.device_id and
+                b.vm_guid = c.vm_id and
+                imagestatus = ${LOCKED} and
+                entity_type ilike 'VM' and
+                image_group_id in (
+                    select device_id
+                    from vm_device
+                    where is_plugged
+                );
+
+            select
+                vm_name as vm_name,
+                snapshot_id as snapshot_id
+            from
+                vm_static a,
+                snapshots b
+            where
+                a.vm_guid = b.vm_id and
+                status ilike '${SNAPSHOT_LOCKED}';
+        "
     elif [ "${object_type}" = "template" ]; then
-        CMD="select vm_name as template_name from vm_static
-                  where template_status = ${TEMPLATE_LOCKED};"
-        psql -w -c "${CMD}" -U "${USERNAME}" -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
-        CMD="select vm_name as template_name, image_group_id as disk_id
-            from images a,vm_static b,vm_device c
-            where a.image_group_id = c.device_id and b.vm_guid = c.vm_id and
-            imagestatus = ${LOCKED} and
-            entity_type ilike 'TEMPLATE' and
-            image_group_id in
-            (select device_id from vm_device where is_plugged);"
-        psql -w -c "${CMD}" -U "${USERNAME}" -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+        dbfunc_psql_die --command="
+            select vm_name as template_name
+            from vm_static
+            where template_status = ${TEMPLATE_LOCKED};
+
+            select
+                vm_name as template_name,
+                image_group_id as disk_id
+            from
+                images a,
+                vm_static b,
+                vm_device c
+            where
+                a.image_group_id = c.device_id and
+                b.vm_guid = c.vm_id and
+                imagestatus = ${LOCKED} and
+                entity_type ilike 'TEMPLATE' and
+                image_group_id in (
+                    select device_id
+                    from vm_device
+                    where is_plugged
+                );
+        "
     elif [ "${object_type}" = "disk" ]; then
-        CMD="select vm_id as entity_id,disk_id
-            from base_disks a ,images b, vm_device c
-            where a.disk_id = b.image_group_id and
-                  b.image_group_id = c.device_id and
-                  imagestatus = ${LOCKED} and is_plugged;"
-        psql -w -c "${CMD}" -U "${USERNAME}" -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+        dbfunc_psql_die --command="
+            select
+                vm_id as entity_id,
+                disk_id
+            from
+                base_disks a,
+                images b,
+                vm_device c
+            where
+                a.disk_id = b.image_group_id and
+                b.image_group_id = c.device_id and
+                imagestatus = ${LOCKED} and
+                is_plugged;
+        "
     elif [ "${object_type}" = "snapshot" ]; then
-        CMD="select vm_id as entity_id, snapshot_id
-            from snapshots a
-            where status ilike '${SNAPSHOT_LOCKED}';"
-        psql -w -c "${CMD}" -U "${USERNAME}" -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+        dbfunc_psql_die --command="
+            select
+                vm_id as entity_id,
+                snapshot_id
+            from
+                snapshots a
+            where
+                status ilike '${SNAPSHOT_LOCKED}';
+        "
     fi
 }

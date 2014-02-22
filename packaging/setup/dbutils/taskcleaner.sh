@@ -18,11 +18,13 @@
 ###############################################################################################################
 
 cd "$(dirname "$0")"
-. ./common.sh
+. ./dbfunc-base.sh
 
-
-#setting defaults
-set_defaults
+cleanup() {
+    dbfunc_cleanup
+}
+trap cleanup 0
+dbfunc_init
 
 usage() {
     cat << __EOF__
@@ -30,11 +32,11 @@ Usage: $0 [options]
 
     -h            - This help text.
     -v            - Turn on verbosity                         (WARNING: lots of output)
-    -l LOGFILE    - The logfile for capturing output          (def. ${LOGFILE})
-    -s SERVERNAME - The database servername for the database  (def. ${SERVERNAME})
-    -p PORT       - The database port for the database        (def. ${PORT})
-    -u USERNAME   - The username for the database             (def. engine)
-    -d DATABASE   - The database name                         (def. ${DATABASE})
+    -l LOGFILE    - The logfile for capturing output          (def. ${DBFUNC_LOGFILE})
+    -s HOST       - The database servername for the database  (def. ${DBFUNC_DB_HOST})
+    -p PORT       - The database port for the database        (def. ${DBFUNC_DB_PORT})
+    -u USER       - The username for the database             (def. ${DBFUNC_DB_USER})
+    -d DATABASE   - The database name                         (def. ${DBFUNC_DB_DATABASE})
     -t TASK_ID    - Removes a task by its Task ID.
     -c COMMAND_ID - Removes all tasks related to the given Command Id.
     -z            - Removes/Displays a Zombie task.
@@ -65,12 +67,12 @@ while getopts hvl:s:p:u:d:t:c:zRCJAq option; do
     case "${option}" in
        \?) usage; exit 1;;
         h) usage; exit 0;;
-        v) VERBOSE=1;;
-        l) LOGFILE="${OPTARG}";;
-        s) SERVERNAME="${OPTARG}";;
-        p) PORT="${OPTARG}";;
-        u) USERNAME="${OPTARG}";;
-        d) DATABASE="${OPTARG}";;
+        v) DBFUNC_VERBOSE=1;;
+        l) DBFUNC_LOGFILE="${OPTARG}";;
+        s) DBFUNC_DB_HOST="${OPTARG}";;
+        p) DBFUNC_DB_PORT="${OPTARG}";;
+        d) DBFUNC_DB_DATABASE="${OPTARG}";;
+        u) DBFUNC_DB_USER="${OPTARG}";;
         t) TASK_ID="${OPTARG}";;
         c) COMMAND_ID="${OPTARG}";;
         z) ZOMBIES_ONLY=1;;
@@ -95,15 +97,8 @@ __EOF__
     fi
 }
 
-[ -n "${USERNAME}" ] || die "Please specify user name"
-[ -n "${DATABASE}" ] || die "Please specify database"
-
-# Install taskcleaner procedures
-psql -w -U "${USERNAME}" -h "${SERVERNAME}" -p "${PORT}" -f ./taskcleaner_sp.sql "${DATABASE}" > /dev/null
-status=$?
-if [ ${status} -ne 0 ]; then
-    exit ${status}
-fi
+[ -n "${DBFUNC_DB_USER}" ] || die "Please specify user name"
+[ -n "${DBFUNC_DB_DATABASE}" ] || die "Please specify database"
 
 if [ "${TASK_ID}" != "" -o "${COMMAND_ID}" != "" -o -n "${CLEAR_ALL}" -o -n "${CLEAR_COMPENSATION}" -o -n "${CLEAR_JOB_STEPS}" ]; then #delete operations block
     if [ -n "${TASK_ID}" ]; then
@@ -239,4 +234,7 @@ else
     CMD1="SELECT ${FIELDS} FROM GetAllFromasync_tasks();"
 fi
 
-psql -w -U "${USERNAME}" -h "${SERVERNAME}" -p "${PORT}" -c "${CMD1}${CMD2}" -x "${DATABASE}" -L "${LOGFILE}"
+# Install taskcleaner procedures
+dbfunc_psql_die --file=./taskcleaner_sp.sql > /dev/null
+# Execute
+dbfunc_psql_die --command="${CMD1}${CMD2}"

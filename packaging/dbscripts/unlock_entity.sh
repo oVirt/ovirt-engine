@@ -1,11 +1,13 @@
 #!/bin/sh
 
 cd "$(dirname "$0")"
-. ./dbfunctions.sh
 . ./dbcustomfunctions.sh
 
-#setting defaults
-set_defaults
+cleanup() {
+    dbfunc_cleanup
+}
+trap cleanup 0
+dbfunc_init
 
 usage() {
     cat << __EOF__
@@ -13,11 +15,11 @@ Usage: $0 [options] [ENTITIES]
 
     -h            - This help text.
     -v            - Turn on verbosity                         (WARNING: lots of output)
-    -l LOGFILE    - The logfile for capturing output          (def. ${LOGFILE})
-    -s SERVERNAME - The database servername for the database  (def. ${SERVERNAME})
-    -p PORT       - The database port for the database        (def. ${PORT})
-    -u USERNAME   - The username for the database             (def. engine)
-    -d DATABASE   - The database name                         (def. ${DATABASE})
+    -l LOGFILE    - The logfile for capturing output          (def. ${DBFUNC_LOGFILE})
+    -s HOST       - The database servername for the database  (def. ${DBFUNC_DB_HOST})
+    -p PORT       - The database port for the database        (def. ${DBFUNC_DB_PORT})
+    -u USER       - The username for the database             (def. ${DBFUNC_DB_USER})
+    -d DATABASE   - The database name                         (def. ${DBFUNC_DB_DATABASE})
     -t TYPE       - The object type {vm | template | disk | snapshot}
     -r            - Recursive, unlocks all disks under the selected vm/template.
     -q            - Query db and display a list of the locked entites.
@@ -26,19 +28,23 @@ Usage: $0 [options] [ENTITIES]
 __EOF__
 }
 
+TYPE=
+RECURSIVE=
+QUERY=
+
 while getopts hvl:s:p:u:d:t:rq option; do
     case $option in
        \?) usage; exit 1;;
         h) usage; exit 0;;
-        v) VERBOSE=true;;
-        l) LOGFILE=$OPTARG;;
-        s) SERVERNAME=$OPTARG;;
-        p) PORT=$OPTARG;;
-        d) DATABASE=$OPTARG;;
-        u) USERNAME=$OPTARG;;
-        t) TYPE=$OPTARG;;
-        r) RECURSIVE=true;;
-        q) QUERY=true;;
+        v) DBFUNC_VERBOSE=1;;
+        l) DBFUNC_LOGFILE="${OPTARG}";;
+        s) DBFUNC_DB_HOST="${OPTARG}";;
+        p) DBFUNC_DB_PORT="${OPTARG}";;
+        u) DBFUNC_DB_USER="${OPTARG}";;
+        d) DBFUNC_DB_DATABASE="${OPTARG}";;
+        t) TYPE="${OPTARG}";;
+        r) RECURSIVE=1;;
+        q) QUERY=1;;
     esac
 done
 

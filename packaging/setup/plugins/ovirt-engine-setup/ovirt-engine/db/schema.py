@@ -251,16 +251,10 @@ class Plugin(plugin.PluginBase):
                     osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR,
                 ]
             )
-        else:
-            args.extend(
-                [
-                    '-g',   # do not generate md5
-                ]
-            )
         self.execute(
             args=args,
             envAppend={
-                'ENGINE_PGPASS': self.environment[
+                'DBFUNC_DB_PGPASSFILE': self.environment[
                     osetupcons.DBEnv.PGPASS_FILE
                 ]
             },
@@ -324,16 +318,10 @@ class Plugin(plugin.PluginBase):
                     osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR,
                 ]
             )
-        else:
-            args.extend(
-                [
-                    '-g',   # do not generate md5
-                ]
-            )
         self.execute(
             args=args,
             envAppend={
-                'ENGINE_PGPASS': self.environment[
+                'DBFUNC_DB_PGPASSFILE': self.environment[
                     osetupcons.DBEnv.PGPASS_FILE
                 ]
             },

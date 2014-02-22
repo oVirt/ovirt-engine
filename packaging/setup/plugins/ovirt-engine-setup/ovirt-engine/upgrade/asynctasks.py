@@ -136,7 +136,7 @@ class Plugin(plugin.PluginBase):
             ),
             raiseOnError=False,
             envAppend={
-                'ENGINE_PGPASS': self.environment[
+                'DBFUNC_DB_PGPASSFILE': self.environment[
                     osetupcons.DBEnv.PGPASS_FILE
                 ]
             },
