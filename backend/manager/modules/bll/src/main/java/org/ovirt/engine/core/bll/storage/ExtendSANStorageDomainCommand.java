@@ -75,32 +75,34 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
             return false;
         }
 
-        boolean returnValue = checkStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active);
-        if (returnValue
-                && (getStorageDomain().getStorageType() == StorageType.NFS || getStorageDomain().getStorageType() == StorageType.UNKNOWN)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-            returnValue = false;
-        } else {
-            final ConnectAllHostsToLunCommandReturnValue connectResult =
-                    (ConnectAllHostsToLunCommandReturnValue) Backend.getInstance().runInternalAction(
-                            VdcActionType.ConnectAllHostsToLun,
-                            new ExtendSANStorageDomainParameters(getParameters().getStorageDomainId(), getParameters()
-                                    .getLunIds()));
-            if (!connectResult.getSucceeded()) {
-                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_EXTEND_CONNECTION_FAILED);
-                if (connectResult.getFailedVds() != null) {
-                    getReturnValue().getCanDoActionMessages().add(String.format("$hostName %1s",
-                            connectResult.getFailedVds().getName()));
-                }
-                String lunId = connectResult.getFailedLun() != null ? connectResult.getFailedLun().getLUN_id() : "";
-                getReturnValue().getCanDoActionMessages().add(String.format("$lun %1s", lunId));
-                returnValue = false;
-            } else {
-                // use luns list from connect command
-                getParameters().setLunsList((ArrayList<LUNs>) connectResult.getActionReturnValue());
-            }
+        if (!(checkStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active))) {
+            return false;
         }
-        return returnValue;
+
+        if ((getStorageDomain().getStorageType() == StorageType.NFS || getStorageDomain().getStorageType() == StorageType.UNKNOWN)) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            return false;
+        }
+
+        final ConnectAllHostsToLunCommandReturnValue connectResult =
+                (ConnectAllHostsToLunCommandReturnValue) Backend.getInstance().runInternalAction(
+                        VdcActionType.ConnectAllHostsToLun,
+                        new ExtendSANStorageDomainParameters(getParameters().getStorageDomainId(), getParameters()
+                                .getLunIds()));
+        if (!connectResult.getSucceeded()) {
+            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_EXTEND_CONNECTION_FAILED);
+            if (connectResult.getFailedVds() != null) {
+                getReturnValue().getCanDoActionMessages().add(String.format("$hostName %1s",
+                        connectResult.getFailedVds().getName()));
+            }
+            String lunId = connectResult.getFailedLun() != null ? connectResult.getFailedLun().getLUN_id() : "";
+            getReturnValue().getCanDoActionMessages().add(String.format("$lun %1s", lunId));
+            return false;
+        } else {
+            // use luns list from connect command
+            getParameters().setLunsList((ArrayList<LUNs>) connectResult.getActionReturnValue());
+        }
+        return true;
     }
 
     @Override
