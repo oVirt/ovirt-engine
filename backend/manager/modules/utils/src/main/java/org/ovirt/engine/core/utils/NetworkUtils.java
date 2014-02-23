@@ -70,19 +70,15 @@ public final class NetworkUtils {
     }
 
     public static boolean isBondVlan(List<VdsNetworkInterface> interfaces, VdsNetworkInterface iface) {
-        boolean retVal = false;
-
         if (isVlan(iface)) {
             for (VdsNetworkInterface i : interfaces) {
-                if (i.getBonded() != null && i.getBonded() == true
-                        && interfaceBasedOn(iface.getName(), i.getName())) {
-                    retVal = true;
-                    break;
+                if (Boolean.TRUE.equals(i.getBonded()) && interfaceBasedOn(iface.getName(), i.getName())) {
+                    return true;
                 }
             }
         }
 
-        return retVal;
+        return false;
     }
 
     /**
