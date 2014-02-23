@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -47,8 +48,9 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                 .getSubnet() : getParameters().getSubnet();
         String gateway = StringUtils.isEmpty(getParameters().getGateway()) ? "" : getParameters().getGateway();
         java.util.ArrayList<String> interfaceNames = new java.util.ArrayList<String>();
+
         for (VdsNetworkInterface i : getParameters().getInterfaces()) {
-            if (i.getBonded() != null && i.getBonded() || NetworkUtils.isBondVlan(interfaces, i)) {
+            if (Boolean.TRUE.equals(i.getBonded()) || NetworkUtils.isBondVlan(interfaces, i)) {
                 getParameters().setBondName(NetworkUtils.stripVlan(i.getName()));
                 for (VdsNetworkInterface ix : interfaces) {
                     if (NetworkUtils.interfaceBasedOn(i.getName(), ix.getBondName())) {
@@ -60,11 +62,28 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             }
         }
 
-        NetworkVdsmVDSCommandParameters parameters = new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
-                getParameters().getNetwork().getName(), getParameters().getNetwork().getVlanId(), getParameters()
-                        .getBondName(), interfaceNames.toArray(new String[] {}), address, subnet, gateway,
-                getParameters().getNetwork().getStp(), getParameters().getBondingOptions(), getParameters()
-                        .getBootProtocol());
+        // updating a vlan over bond if the bond was not provided the bond device should preserve the bonding options
+        String bondingOptions = null;
+        if (getParameters().getBondingOptions() == null && getParameters().getBondName() != null
+                && !Entities.entitiesByName(getParameters().getInterfaces()).containsKey(getParameters().getBondName())) {
+            VdsNetworkInterface bond = Entities.entitiesByName(interfaces).get(getParameters().getBondName());
+            bondingOptions = bond == null ? null : bond.getBondOptions();
+        } else {
+            bondingOptions = getParameters().getBondingOptions();
+        }
+
+        NetworkVdsmVDSCommandParameters parameters =
+                new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
+                        getParameters().getNetwork().getName(),
+                        getParameters().getNetwork().getVlanId(),
+                        getParameters().getBondName(),
+                        interfaceNames.toArray(new String[] {}),
+                        address,
+                        subnet,
+                        gateway,
+                        getParameters().getNetwork().getStp(),
+                        bondingOptions,
+                        getParameters().getBootProtocol());
         parameters.setVmNetwork(getParameters().getNetwork().isVmNetwork());
         parameters.setOldNetworkName(getParameters().getOldNetworkName());
         parameters.setConnectionTimeout(Config.<Integer> getValue(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds));
