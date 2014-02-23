@@ -4,11 +4,20 @@
 DBFUNC_DB_USER="${DBFUNC_DB_USER:-engine}"
 DBFUNC_DB_DATABASE="${DBFUNC_DB_DATABASE:-engine}"
 
+DBFUNC_CUSTOM_CLEAN_TASKS=
+
 dbfunc_common_hook_init_insert_data() {
 	echo "Inserting data..."
 	dbfunc_psql_die --file="insert_data.sql" > /dev/null
 	echo "Inserting pre-defined roles..."
 	dbfunc_psql_die --file="insert_predefined_roles.sql" > /dev/null
+}
+
+dbfunc_common_hook_pre_upgrade() {
+	if [ -n "${DBFUNC_CUSTOM_CLEAN_TASKS}" ]; then
+		echo "Cleaning tasks metadata..."
+		dbfunc_psql_die --file="delete_async_tasks_and_compensation_data.sql" > /dev/null
+	fi
 }
 
 #refreshes views

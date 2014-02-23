@@ -65,7 +65,7 @@ while getopts hvl:s:p:u:d:m:c option; do
 		u) DBFUNC_DB_USER="${OPTARG}";;
 		d) DBFUNC_DB_DATABASE="${OPTARG}";;
 		m) DBFUNC_COMMON_MD5DIR="${OPTARG}";;
-		c) CLEAN_TASKS=1;;
+		c) DBFUNC_CUSTOM_CLEAN_TASKS=1;;
 	esac
 done
 

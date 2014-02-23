@@ -7,6 +7,10 @@ dbfunc_common_hook_init_insert_data() {
 	return 0
 }
 
+dbfunc_common_hook_pre_upgrade() {
+	return 0
+}
+
 dbfunc_common_hook_views_refresh() {
 	return 0
 }
@@ -359,12 +363,7 @@ _dbfunc_common_run_pre_upgrade() {
 	#drop materialized views to support views changesin upgrade
 	#Materialized views are restored in the post_upgrade step
 	dbfunc_common_hook_materialized_views_drop
-
-	# TODO: move this to custom?
-	if [ -n "${CLEAN_TASKS}" ]; then
-		echo "Cleaning tasks metadata..."
-		dbfunc_psql_die --file="delete_async_tasks_and_compensation_data.sql" > /dev/null
-	fi
+	dbfunc_common_hook_pre_upgrade
 }
 
 _dbfunc_common_run_post_upgrade() {
