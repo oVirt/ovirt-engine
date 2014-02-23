@@ -1,5 +1,7 @@
 
-. ./dbfunc-base.sh
+DBFUNC_COMMON_DBSCRIPTS_DIR="${DBFUNC_COMMON_DBSCRIPTS_DIR:-$(dirname "$0")}"
+
+. "${DBFUNC_COMMON_DBSCRIPTS_DIR}/dbfunc-base.sh"
 
 #DBFUNC_COMMON_MD5DIR=
 
@@ -33,7 +35,7 @@ dbfunc_common_hook_sequence_numbers_update() {
 
 #cleans db by dropping all objects
 dbfunc_common_schema_drop() {
-	dbfunc_psql_die --file="common_sp.sql" > /dev/null
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 	local statement
 	statement="$(
 		dbfunc_psql_die --command="select * from generate_drop_all_seq_syntax();"
@@ -51,10 +53,10 @@ dbfunc_common_init_insert_data() {
 
 dbfunc_common_upgrade() {
 
-	dbfunc_psql_die --file=upgrade/03_02_0000_set_version.sql > /dev/null
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/upgrade/03_02_0000_set_version.sql" > /dev/null
 
-	local res="$(find upgrade/ -name '*.sql' -or -name '*.sh' | wc -l)"
-	if [ "${res}" -gt 0 ]; then
+	local files="$(_dbfunc_common_get_files "upgrade" 1)"
+	if [ -n "${files}" ]; then
 		local state="FAILED"
 		local comment=""
 		local updated=0
@@ -69,13 +71,11 @@ dbfunc_common_upgrade() {
 		local current="$(_dbfunc_common_get_current_version)"
 		# we should remove leading blank (from select result) and zero in order not to treat number as octal
 		local last="$(expr substr "${current}" 3 7)"
-		local files="$(_dbfunc_common_get_files "upgrade" 1)"
 		local file
-		for file in $(ls ${files} | sort); do
-			local before="$(_dbfunc_common_get_db_time)"
-			local checksum="$(md5sum "${file}" | cut -d " " -f1)"
-			# upgrade/dd_dd_dddd* => dddddddd
-			local ver="$(_dbfunc_common_get_file_version "${file}")"
+		echo "${files}" | while read file; do
+			before="$(_dbfunc_common_get_db_time)"
+			checksum="$(md5sum "${file}" | cut -d " " -f1)"
+			ver="$(_dbfunc_common_get_file_version "${file}")"
 			if [ "${ver}" -gt "${current}" ] ; then
 				# we should remove leading zero in order not to treat number as octal
 				local xver="$(expr substr "${ver}" 2 7)"
@@ -134,7 +134,7 @@ Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and r
 					)
 					values (
 						trim('${ver}'),
-						'${file}',
+						'$(echo "${file}" | sed "s#^${DBFUNC_COMMON_DBSCRIPTS_DIR}/##")',
 						'${checksum}',
 						'${DBFUNC_DB_USER}',
 						cast(trim('${before}') as timestamp),
@@ -145,7 +145,7 @@ Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and r
 					);
 				" > /dev/null
 			fi
-		done
+		done || exit $?
 		_dbfunc_common_set_last_version
 
 		# restore views & SPs if dropped
@@ -177,14 +177,14 @@ dbfunc_common_config_get_value() {
 #drops views before upgrade or refresh operations
 dbfunc_common_views_drop() {
 	# common stored procedures are executed first (for new added functions to be valid)
-	dbfunc_psql_die --file="common_sp.sql" > /dev/null
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 	dbfunc_psql_die --command="select * from generate_drop_all_views_syntax();" | \
 		dbfunc_psql_die > /dev/null
 }
 
 #drops sps before upgrade or refresh operations
 dbfunc_common_sps_drop() {
-	dbfunc_psql_die --file="common_sp.sql" > /dev/null
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 	local statement
 	statement="$(
 		dbfunc_psql_die --command="select * from generate_drop_all_functions_syntax();"
@@ -192,18 +192,18 @@ dbfunc_common_sps_drop() {
 	dbfunc_psql_die --command="${statement}" > /dev/null
 
 	# recreate generic functions
-	dbfunc_psql_die --file="create_functions.sql" > /dev/null
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_functions.sql" > /dev/null
 }
 
 #refreshes sps
 dbfunc_common_sps_refresh() {
 	echo "Creating stored procedures..."
-	local sql
-	for sql in $(ls *sp.sql | sort); do
-		echo "Creating stored procedures from ${sql}..."
-		dbfunc_psql_die --file="${sql}" > /dev/null
-	done
-	dbfunc_psql_die --file="common_sp.sql" > /dev/null
+	local file
+	find "${DBFUNC_COMMON_DBSCRIPTS_DIR}" -name '*sp.sql' | sort | while read file; do
+		echo "Creating stored procedures from ${file}..."
+		dbfunc_psql_die --file="${file}" > /dev/null
+	done || exit $?
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 }
 
 #unlocks the given VM/Template and its disks or a given disk
@@ -354,7 +354,7 @@ _dbfunc_common_run_pre_upgrade() {
 	dbfunc_common_views_drop
 	dbfunc_common_sps_drop
 	# common stored procedures are executed first (for new added functions to be valid)
-	dbfunc_psql_die --file="common_sp.sql" > /dev/null
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 	#update sequence numers
 	dbfunc_common_hook_sequence_numbers_update
 	#run pre upgrade scripts
@@ -373,7 +373,7 @@ _dbfunc_common_run_post_upgrade() {
 	#Running post-upgrade scripts
 	_dbfunc_common_psql_statements_in_dir 'post_upgrade'
 	#run custom materialized views if exists
-	custom_materialized_views_file="upgrade/post_upgrade/custom/create_materialized_views.sql"
+	custom_materialized_views_file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/upgrade/post_upgrade/custom/create_materialized_views.sql"
 	if [ -f "${custom_materialized_views_file}" ]; then
 		echo "running custom materialized views from '${custom_materialized_views_file}'..."
 		if ! dbfunc_psql --file="${custom_materialized_views_file}"; then
@@ -388,12 +388,9 @@ _dbfunc_common_run_post_upgrade() {
 # Runs all the SQL scripts in directory upgrade/$1/
 _dbfunc_common_psql_statements_in_dir() {
 	local dir="$1"
-	if [ -d "upgrade/${dir}" ]; then
-		files="$(_dbfunc_common_get_files "upgrade/${dir}" 1)"
-		for file in $(ls ${files} | sort); do
-			_dbfunc_common_run_file "${file}"
-		done
-	fi
+	_dbfunc_common_get_files "upgrade/${dir}" 1 | while read file; do
+		_dbfunc_common_run_file "${file}"
+	done || exit $?
 }
 
 _dbfunc_common_run_required_scripts() {
@@ -408,7 +405,7 @@ _dbfunc_common_run_required_scripts() {
 		echo "${sql}" | grep -q "_sp.sql" || \
 			die "invalid source file ${sql} in ${file}, source files must end with '_sp.sql'"
 		echo "Running helper functions from '${sql}' for '${file}'"
-		dbfunc_psql_die --file="${sql}" > /dev/null
+		dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/${sql}" > /dev/null
 	done < "${script}"
 }
 
@@ -419,7 +416,7 @@ _dbfunc_common_run_file() {
 		echo "Running upgrade shell script '${file}'..."
 		(
 			eval "$(set | grep '^DBFUNC_' | sed 's/^\([^=]*\)=.*/export \1/')"
-			"./${file}"
+			"${file}"
 		)
 	else
 		echo "Running upgrade sql script '${file}'..."
@@ -470,7 +467,7 @@ _dbfunc_common_get_db_time(){
 _dbfunc_common_get_files() {
 	local dir="$1"
 	local maxdepth="$2"
-	find "${dir}" \
+	find "${DBFUNC_COMMON_DBSCRIPTS_DIR}/${dir}" \
 		-maxdepth "${maxdepth}" \
 		-name '*.sql' -or -name '*.sh' | \
 		sort
@@ -480,7 +477,12 @@ _dbfunc_common_is_view_or_sp_changed() {
 	local files="$(_dbfunc_common_get_files "upgrade" 3)"
 	local md5sum_file="${DBFUNC_COMMON_MD5DIR}/.${DBFUNC_DB_DATABASE}.scripts.md5"
 	local md5sum_tmp_file="${md5sum_file}.tmp"
-	md5sum ${files} create_*views.sql *_sp.sql > "${md5sum_tmp_file}"
+
+	{
+		_dbfunc_common_get_files "upgrade" 3
+		find "${DBFUNC_COMMON_DBSCRIPTS_DIR}" -name 'create_*views.sql' -or -name '*_sp.sql'
+	} | sort | uniq | xargs -d '\n' md5sum > "${md5sum_tmp_file}"
+
 	diff -s -q "${md5sum_file}" "${md5sum_tmp_file}" > /dev/null 2>&1
 	result=$?
 
@@ -500,14 +502,12 @@ _dbfunc_common_get_file_version() {
 }
 
 _dbfunc_common_validate_version_uniqueness() {
-	local prev=""
-	local files="$(_dbfunc_common_get_files "upgrade" 1)"
 	local file
-	for file in $(ls ${files} | sort) ; do
-		local ver="$(_dbfunc_common_get_file_version "${file}")"
+	_dbfunc_common_get_files "upgrade" 1 | while read file; do
+		ver="$(_dbfunc_common_get_file_version "${file}")"
 		[ "${ver}" != "${prev}" ] || die "Operation aborted, found duplicate version: ${ver}"
 		prev="${ver}"
-	done
+	done || exit $?
 }
 
 #adds a record to audit_log in case of calling unlock_entity

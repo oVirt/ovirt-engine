@@ -27,9 +27,8 @@
 # problems)
 ################################################################################
 
-#include db general functions
-cd "$(dirname "$0")"
-. ./dbfunc-custom.sh
+DBFUNC_COMMON_DBSCRIPTS_DIR="$(dirname "$0")"
+. "${DBFUNC_COMMON_DBSCRIPTS_DIR}/dbfunc-custom.sh"
 
 cleanup() {
 	dbfunc_cleanup

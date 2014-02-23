@@ -7,9 +7,7 @@
 # It is highly recomended to backup the database before using this utility.
 ###############################################################################################################
 
-#include db general functions
-cd "$(dirname "${0}")"
-. ./dbfunc-base.sh
+. "$(dirname "${0}")/dbfunc-base.sh"
 
 cleanup() {
 	dbfunc_cleanup

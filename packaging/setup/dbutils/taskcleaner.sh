@@ -17,8 +17,7 @@
 #  should be cleaned as well.
 ###############################################################################################################
 
-cd "$(dirname "$0")"
-. ./dbfunc-base.sh
+. "$(dirname "$0")/dbfunc-base.sh"
 
 cleanup() {
 	dbfunc_cleanup
@@ -235,6 +234,6 @@ else
 fi
 
 # Install taskcleaner procedures
-dbfunc_psql_die --file=./taskcleaner_sp.sql > /dev/null
+dbfunc_psql_die --file="$(dirname "$0")/taskcleaner_sp.sql" > /dev/null
 # Execute
 dbfunc_psql_die --command="${CMD1}${CMD2}"

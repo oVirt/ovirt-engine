@@ -20,8 +20,7 @@
 ###############################################################################################################
 
 #include db general functions
-cd "$(dirname "$0")"
-. ./dbfunc-base.sh
+. "$(dirname "$0")/dbfunc-base.sh"
 
 cleanup() {
 	dbfunc_cleanup
@@ -113,6 +112,6 @@ if [ -n "${FIXIT}" -a -z "${QUIET}" ]; then
 fi
 
 # Install fkvalidator procedures
-dbfunc_psql_die --file=./fkvalidator_sp.sql > /dev/null
+dbfunc_psql_die --file="$(dirname "$0")/fkvalidator_sp.sql" > /dev/null
 # Execute
 validate_db_fks "${FIXIT}" "${DBFUNC_VERBOSE}"

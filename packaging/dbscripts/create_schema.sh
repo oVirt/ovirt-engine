@@ -1,7 +1,7 @@
 #!/bin/sh
 
-cd "$(dirname "$0")"
-. ./dbfunc-custom.sh
+DBFUNC_COMMON_DBSCRIPTS_DIR="$(dirname "$0")"
+. "${DBFUNC_COMMON_DBSCRIPTS_DIR}/dbfunc-custom.sh"
 
 cleanup() {
 	dbfunc_cleanup
@@ -47,13 +47,13 @@ dbfunc_common_language_create "plpgsql"
 dbfunc_psql_die --command="ALTER DATABASE \"${DBFUNC_DB_DATABASE}\" SET client_min_messages=ERROR;" > /dev/null
 
 echo "Creating tables..."
-dbfunc_psql_die --file="create_tables.sql" > /dev/null
+dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_tables.sql" > /dev/null
 
 echo "Creating functions..."
-dbfunc_psql_die --file="create_functions.sql" > /dev/null
+dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_functions.sql" > /dev/null
 
 echo "Creating common functions..."
-dbfunc_psql_die --file="common_sp.sql" > /dev/null
+dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 
 #inserting initial data
 dbfunc_common_init_insert_data

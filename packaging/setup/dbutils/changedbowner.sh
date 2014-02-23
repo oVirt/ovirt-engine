@@ -4,9 +4,7 @@
 # database
 ################################################################
 
-#include db general functions
-cd "$(dirname "$0")"
-. ./dbfunc-base.sh
+. "$(dirname "$0")/dbfunc-base.sh"
 
 cleanup() {
 	dbfunc_cleanup
