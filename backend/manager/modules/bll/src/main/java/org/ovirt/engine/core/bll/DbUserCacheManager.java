@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
-import org.ovirt.engine.core.aaa.DirectoryManager;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -76,8 +76,9 @@ public class DbUserCacheManager {
         // Classify the users by directory. Note that the resulting map may have an entry with a null key, that
         // corresponds to the users whose directory has been removed from the configuration.
         Map<Directory, List<DbUser>> index = new HashMap<>();
+
         for (DbUser dbUser : dbUsers) {
-            Directory key = DirectoryManager.getInstance().getDirectory(dbUser.getDomain());
+            Directory key = AuthenticationProfileRepository.getInstance().getProfile(dbUser.getDomain()).getDirectory();
             List<DbUser> value = index.get(key);
             if (value == null) {
                 value = new ArrayList<DbUser>();

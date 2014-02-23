@@ -23,13 +23,12 @@ public class AuthenticationProfile {
     /**
      * Create a new authentication profile with the given name, authenticator and directory.
      *
-     * @param name the name of the profile
      * @param authenticator the authenticator that will be used to check the credentials of the user
      * @param directory the directory that will be used to lookup the details of the user once it is successfully
      *     authenticated
      */
-    public AuthenticationProfile(String name, Authenticator authenticator, Directory directory) {
-        this.name = name;
+    public AuthenticationProfile(Authenticator authenticator, Directory directory) {
+        this.name = authenticator.getProfileName();
         this.authenticator = authenticator;
         this.directory = directory;
     }

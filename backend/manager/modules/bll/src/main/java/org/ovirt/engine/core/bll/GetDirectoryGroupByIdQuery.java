@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
-import org.ovirt.engine.core.aaa.DirectoryManager;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.utils.ExternalId;
 
@@ -16,7 +16,7 @@ public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> ex
     protected void executeQueryCommand() {
         final String directoryName = getParameters().getDomain();
         final ExternalId id = getParameters().getId();
-        final Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
+        final Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
         if (directory == null) {
             getQueryReturnValue().setSucceeded(false);
         } else {

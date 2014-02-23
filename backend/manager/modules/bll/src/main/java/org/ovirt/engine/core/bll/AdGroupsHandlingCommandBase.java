@@ -3,9 +3,9 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
-import org.ovirt.engine.core.aaa.DirectoryManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.IdParameters;
@@ -45,7 +45,7 @@ public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extend
         if (mGroup == null && !getGroupId().equals(Guid.Empty)) {
             DbGroup dbGroup = DbFacade.getInstance().getDbGroupDao().get(getGroupId());
             if (dbGroup != null) {
-                Directory directory = DirectoryManager.getInstance().getDirectory(dbGroup.getDomain());
+                Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(dbGroup.getDomain());
                 mGroup = directory.findGroup(dbGroup.getExternalId());
             }
         }

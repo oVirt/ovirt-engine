@@ -10,32 +10,11 @@ import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.utils.ExternalId;
 
-public class NopDirectory implements Directory {
+public class NopDirectory extends Directory {
     /**
      *
      */
     private static final long serialVersionUID = 3719648746441818198L;
-    /**
-     * The name of the directory.
-     */
-    private String name;
-
-    /**
-     * Create a new NOP directory.
-     *
-     * @param name the name of the directory
-     */
-    public NopDirectory(String name) {
-        this.name = name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
 
     /**
      * {@inheritDoc}
@@ -48,7 +27,7 @@ public class NopDirectory implements Directory {
         } catch (UnsupportedEncodingException e) {
             return null;
         }
-        return new DirectoryUser(this.getName(), id, name);
+        return new DirectoryUser(getProfileName(), id, name);
     }
 
     /**
@@ -62,7 +41,7 @@ public class NopDirectory implements Directory {
         } catch (UnsupportedEncodingException e) {
             return null;
         }
-        return new DirectoryUser(this.getName(), id, name);
+        return new DirectoryUser(getProfileName(), id, name);
     }
 
     /**
@@ -110,5 +89,9 @@ public class NopDirectory implements Directory {
     @Override
     public List<DirectoryGroup> queryGroups(String query) {
         return Collections.emptyList();
+    }
+
+    @Override
+    public void init() {
     }
 }

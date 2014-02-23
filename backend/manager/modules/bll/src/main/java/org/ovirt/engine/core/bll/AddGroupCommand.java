@@ -3,9 +3,9 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
-import org.ovirt.engine.core.aaa.DirectoryManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -36,7 +36,7 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
     protected boolean canDoAction() {
         String directoryName = getParameters().getDirectory();
         ExternalId id = getParameters().getId();
-        Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
+        Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
         if (directory == null) {
             addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
             return false;

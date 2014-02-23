@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
-import org.ovirt.engine.core.aaa.DirectoryManager;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.IdParameters;
@@ -59,7 +59,7 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
     public static DbUser initUser(String sessionId, String directoryName, ExternalId id) {
         DbUser dbUser = DbFacade.getInstance().getDbUserDao().getByExternalId(directoryName, id);
         if (dbUser == null) {
-            Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
+            Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
             if (directory == null) {
                 throw new VdcBLLException(VdcBllErrors.USER_FAILED_POPULATE_DATA);
             }

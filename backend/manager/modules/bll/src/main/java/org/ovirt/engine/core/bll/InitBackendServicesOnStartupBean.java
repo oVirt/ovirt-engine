@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.DependsOn;
@@ -10,16 +12,12 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
-import org.ovirt.engine.core.aaa.AuthenticationProfileManager;
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Authenticator;
-import org.ovirt.engine.core.aaa.AuthenticatorManager;
 import org.ovirt.engine.core.aaa.Directory;
-import org.ovirt.engine.core.aaa.DirectoryManager;
 import org.ovirt.engine.core.aaa.provisional.ProvisionalAuthenticator;
 import org.ovirt.engine.core.aaa.provisional.ProvisionalDirectory;
-import org.ovirt.engine.core.bll.adbroker.LdapBroker;
 import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
-import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.UsersDomainsCacheManagerService;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
@@ -32,6 +30,8 @@ import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.extensions.mgr.Extension.ExtensionProperties;
+import org.ovirt.engine.core.extensions.mgr.ExtensionManager;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
@@ -61,22 +61,33 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
     public void create() {
 
         // Create authentication profiles for all the domains that exist in the database:
+        // TODO: remove this later, and rely only on the custom and built in extensions directories configuration
         for (String domain : LdapBrokerUtils.getDomainsList()) {
-            LdapBroker broker = LdapFactory.getInstance(domain);
-            Authenticator authenticator = new ProvisionalAuthenticator(domain, broker);
-            Directory directory = new ProvisionalDirectory(domain, broker);
-            AuthenticationProfile profile = new AuthenticationProfile(domain, authenticator, directory);
-            AuthenticatorManager.getInstance().registerAuthenticator(domain, authenticator);
-            DirectoryManager.getInstance().registerDirectory(domain, directory);
-            AuthenticationProfileManager.getInstance().registerProfile(domain, profile);
+            Map<ExtensionProperties, Object> dirContext = new EnumMap<>(ExtensionProperties.class);
+            Properties dirProps = new Properties();
+            dirProps.put("ovirt.engine.aaa.authz.profile.name", domain);
+            dirContext.put(ExtensionProperties.CONFIGURATION, dirProps);
+            dirContext.put(ExtensionProperties.NAME, domain);
+            Directory directory = new ProvisionalDirectory();
+            directory.setContext(dirContext);
+            directory.init();
+
+            Map<ExtensionProperties, Object> authContext = new EnumMap<>(ExtensionProperties.class);
+            Properties authProps = new Properties();
+            authProps.put("ovirt.engine.aaa.authn.profile.name", domain);
+            authContext.put(ExtensionProperties.CONFIGURATION, authProps);
+            authContext.put(ExtensionProperties.NAME, domain);
+            Authenticator authenticator = new ProvisionalAuthenticator();
+            authenticator.setContext(authContext);
+            authenticator.init();
+
+            AuthenticationProfile profile = new AuthenticationProfile(authenticator, directory);
+
+            AuthenticationProfileRepository.getInstance().registerProfile(profile);
         }
 
-        // Load authentication profiles:
-        for (File directory:  EngineLocalConfig.getInstance().getExtensionsDirectories()) {
-            if (directory.exists() && directory.isDirectory()) {
-                AuthenticationProfileManager.getInstance().loadFiles(directory);
-            }
-        }
+        ExtensionManager.getInstance().load(EngineLocalConfig.getInstance());
+        AuthenticationProfileRepository.getInstance();
 
         UsersDomainsCacheManagerService.getInstance().init();
         AsyncTaskManager.getInstance().initAsyncTaskManager();

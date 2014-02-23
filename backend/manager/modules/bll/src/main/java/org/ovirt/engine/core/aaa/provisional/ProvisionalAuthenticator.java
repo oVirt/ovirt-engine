@@ -4,6 +4,7 @@ import org.ovirt.engine.core.aaa.AuthenticationResult;
 import org.ovirt.engine.core.aaa.PasswordAuthenticator;
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapBroker;
+import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
 import org.ovirt.engine.core.bll.adbroker.LdapUserPasswordBaseParameters;
 import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
@@ -20,10 +21,16 @@ public class ProvisionalAuthenticator extends PasswordAuthenticator {
      */
     private LdapBroker broker;
 
-    public ProvisionalAuthenticator(String domain, LdapBroker broker) {
-        super(domain);
-        this.broker = broker;
+
+    public ProvisionalAuthenticator() {
     }
+
+    @Override
+    public void init() {
+        broker = LdapFactory.getInstance(getProfileName());
+    }
+
+
 
     /**
      * {@inheritDoc}
@@ -37,4 +44,5 @@ public class ProvisionalAuthenticator extends PasswordAuthenticator {
         UserAuthenticationResult authResult = (UserAuthenticationResult) ldapResult.getReturnValue();
         return new ProvisionalAuthenticationResult(getProfileName(), authResult);
     }
+
 }

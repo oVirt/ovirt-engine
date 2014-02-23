@@ -60,7 +60,7 @@ public class AuthenticationFilter implements Filter {
             synchronized(this) {
                 if (profiles == null) {
                     profiles = new ArrayList<AuthenticationProfile>(1);
-                    for (AuthenticationProfile profile : AuthenticationProfileManager.getInstance().getProfiles()) {
+                    for (AuthenticationProfile profile : AuthenticationProfileRepository.getInstance().getProfiles()) {
                         if (profile != null) {
                             Authenticator authenticator = profile.getAuthenticator();
                             if (authenticator instanceof NegotiatingAuthenticator) {
@@ -116,7 +116,7 @@ public class AuthenticationFilter implements Filter {
 
         while (!stack.isEmpty()) {
             // Resume the negotiation with the profile at the top of the stack:
-            AuthenticationProfile profile = AuthenticationProfileManager.getInstance().getProfile(stack.peek());
+            AuthenticationProfile profile = AuthenticationProfileRepository.getInstance().getProfile(stack.peek());
             if (profile == null) {
                 session.invalidate();
                 rsp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

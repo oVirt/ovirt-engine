@@ -11,12 +11,16 @@ import org.slf4j.LoggerFactory;
 public class NopAuthenticator extends PasswordAuthenticator {
     private static final Logger log = LoggerFactory.getLogger(NopAuthenticator.class);
 
-    public NopAuthenticator(String profileName) {
-        super(profileName);
+    public NopAuthenticator() {
     }
 
     @Override
     public AuthenticationResult authenticate(String name, String password) {
         return new NopAuthenticationResult();
     }
+
+    @Override
+    public void init() {
+    }
+
 }

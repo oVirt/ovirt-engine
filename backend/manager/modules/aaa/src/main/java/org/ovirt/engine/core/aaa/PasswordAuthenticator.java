@@ -6,9 +6,7 @@ package org.ovirt.engine.core.aaa;
  */
 public abstract class PasswordAuthenticator extends Authenticator {
 
-    protected PasswordAuthenticator(String profileName) {
-        super(profileName);
-        // TODO Auto-generated constructor stub
+    protected PasswordAuthenticator() {
     }
 
     /**

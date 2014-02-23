@@ -14,16 +14,12 @@ import org.ovirt.engine.core.common.utils.ExternalId;
 /**
  * This directory contains only the internal user as specified in the {@code AdminUser} configuration parameter.
  */
-public class InternalDirectory implements Directory {
+public class InternalDirectory extends Directory {
     /**
      *
      */
     private static final long serialVersionUID = 6614140186031169227L;
 
-    /**
-     * The name of the directory:
-     */
-    private String name;
 
     /**
      * The name of the admin user and of the internal domain come from the configuration of the engine.
@@ -42,27 +38,6 @@ public class InternalDirectory implements Directory {
      * The only user supported by this directory.
      */
     private DirectoryUser admin;
-
-    /**
-     * Create a new internal directory.
-     *
-     * @param name the name of the directory
-     */
-    public InternalDirectory(String name) {
-        // Save the name of the domain:
-        this.name = name;
-
-        // Create the builtin user:
-        admin = new DirectoryUser(this.getName(), ADMIN_ID, ADMIN_NAME);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
 
     /**
      * {@inheritDoc}
@@ -125,5 +100,11 @@ public class InternalDirectory implements Directory {
     @Override
     public List<DirectoryGroup> queryGroups(String query) {
         return Collections.emptyList();
+    }
+
+    @Override
+    public void init() {
+        admin = new DirectoryUser(getProfileName(), ADMIN_ID, ADMIN_NAME);
+
     }
 }

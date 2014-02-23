@@ -3,12 +3,12 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
-import org.ovirt.engine.core.aaa.DirectoryManager;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.DirectoryUtils;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -55,7 +55,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
         }
 
         // Check that the directory exists:
-        Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
+        Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
         if (directory == null) {
             log.errorFormat(
                 "Can't add user with id \"{0}\" because directory \"{1}\" doesn't exist.",

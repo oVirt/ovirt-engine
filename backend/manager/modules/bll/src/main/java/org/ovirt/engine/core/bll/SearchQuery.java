@@ -6,9 +6,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
-import org.ovirt.engine.core.aaa.DirectoryManager;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.provisional.ProvisionalDirectory;
 import org.ovirt.engine.core.bll.adbroker.LdapBroker;
@@ -182,7 +182,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
         // Find the directory:
         String directoryName = data.getDomain();
-        Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
+        Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
         if (directory == null) {
             return Collections.emptyList();
         }
@@ -211,7 +211,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
         // Find the directory:
         String directoryName = data.getDomain();
-        Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
+        Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
         if (directory == null) {
             return Collections.emptyList();
         }
@@ -416,7 +416,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     protected String getDefaultDomain() {
-        return DirectoryManager.getInstance().getDirectories().get(0).getName();
+        return AuthenticationProfileRepository.getInstance().getProfiles().get(0).getDirectory().getName();
     }
 
     protected LdapBroker getLdapFactory(String domain) {

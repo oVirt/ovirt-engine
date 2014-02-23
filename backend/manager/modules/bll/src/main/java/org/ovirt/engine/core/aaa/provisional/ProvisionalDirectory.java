@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
-import org.ovirt.engine.core.aaa.DirectoryManager;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapBroker;
+import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryData;
 import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
@@ -26,7 +27,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  * This directory implementation is a bridge between the new directory interfaces and the existing LDAP infrastructure.
  * It will exist only while the engine is migrated to use the new directory interfaces, then it will be removed.
  */
-public class ProvisionalDirectory implements Directory {
+public class ProvisionalDirectory extends Directory {
     /**
      *
      */
@@ -35,23 +36,16 @@ public class ProvisionalDirectory implements Directory {
     private static final Log log = LogFactory.getLog(ProvisionalDirectory.class);
 
     /**
-     * The name of the domain.
-     */
-    private String domain;
-
-    /**
      * The reference to the LDAP broker that implements the authentication.
      */
     private LdapBroker broker;
 
-    public ProvisionalDirectory(String domain, LdapBroker broker) {
-        this.domain = domain;
-        this.broker = broker;
+    public ProvisionalDirectory() {
     }
 
     @Override
-    public String getName() {
-        return domain;
+    public void init() {
+        broker = LdapFactory.getInstance(getProfileName());
     }
 
     @Override
@@ -59,7 +53,7 @@ public class ProvisionalDirectory implements Directory {
         // Find the user with the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.GetAdUserByUserId,
-            new LdapSearchByIdParameters(domain, id)
+                new LdapSearchByIdParameters(getName(), id)
         );
         LdapUser ldapUser = (LdapUser) ldapResult.getReturnValue();
 
@@ -72,7 +66,7 @@ public class ProvisionalDirectory implements Directory {
         // Find the user with the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.GetAdUserByUserName,
-            new LdapSearchByUserNameParameters(null, domain, name)
+                new LdapSearchByUserNameParameters(null, getName(), name)
         );
         LdapUser ldapUser = (LdapUser) ldapResult.getReturnValue();
         if (ldapUser == null) {
@@ -88,7 +82,7 @@ public class ProvisionalDirectory implements Directory {
         // Find the users using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.GetAdUserByUserIdList,
-            new LdapSearchByUserIdListParameters(domain, ids, false)
+                new LdapSearchByUserIdListParameters(getName(), ids, false)
         );
         @SuppressWarnings("unchecked")
         List<LdapUser> ldapUsers = (List<LdapUser>) ldapResult.getReturnValue();
@@ -106,7 +100,7 @@ public class ProvisionalDirectory implements Directory {
         // Find the users using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.SearchUserByQuery,
-            new LdapSearchByQueryParameters(null, domain, data)
+                new LdapSearchByQueryParameters(null, getName(), data)
         );
         List<LdapUser> ldapUsers = (List<LdapUser>) ldapResult.getReturnValue();
 
@@ -136,12 +130,13 @@ public class ProvisionalDirectory implements Directory {
         // Populate the groups of the user (note that as we a calling a method of this directory to do so we should
         // first locate it using the manager, calling the method directory would bypass any decorator that may put on
         // top of the directory):
-        Directory directory = DirectoryManager.getInstance().getDirectory(domain);
+        Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(getName());
         if (directory == null) {
             log.warnFormat(
                 "Can't find domain \"{0}\" to retrieve groups for user \"{1}\", the groups and related permissions " +
                 "won't be available.",
-                domain, ldapUser.getUserId()
+                    getName(),
+                    ldapUser.getUserId()
             );
         }
         else {
@@ -184,7 +179,7 @@ public class ProvisionalDirectory implements Directory {
         // Find the group using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.GetAdGroupByGroupId,
-            new LdapSearchByIdParameters(domain, id)
+                new LdapSearchByIdParameters(getName(), id)
         );
         LdapGroup ldapGroup = (LdapGroup) ldapResult.getReturnValue();
 
@@ -201,7 +196,7 @@ public class ProvisionalDirectory implements Directory {
         // Find the groups using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.SearchGroupsByQuery,
-            new LdapSearchByQueryParameters(null, domain, data)
+                new LdapSearchByQueryParameters(null, getName(), data)
         );
         List<LdapGroup> ldapGroups = (List<LdapGroup>) ldapResult.getReturnValue();
 
@@ -227,4 +222,5 @@ public class ProvisionalDirectory implements Directory {
         }
         return directoryGroups;
     }
+
 }

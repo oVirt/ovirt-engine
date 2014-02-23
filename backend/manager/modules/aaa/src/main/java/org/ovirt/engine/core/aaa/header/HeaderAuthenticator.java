@@ -62,19 +62,6 @@ public class HeaderAuthenticator extends NegotiatingAuthenticator {
     private String header;
 
     /**
-     * Create a new header authenticator.
-     *
-     * @param profileName
-     *            name of the authentication profile
-     * @param header
-     *            the name of the header containing the name of the user already authenticated by the web server
-     */
-    public HeaderAuthenticator(String profileName, String header) {
-        super(profileName);
-        this.header = header;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -93,5 +80,9 @@ public class HeaderAuthenticator extends NegotiatingAuthenticator {
 
         // We are good, the user has already been authenticated by the web server:
         return new NegotiationResult(true, value);
+    }
+
+    @Override
+    public void init() {
     }
 }

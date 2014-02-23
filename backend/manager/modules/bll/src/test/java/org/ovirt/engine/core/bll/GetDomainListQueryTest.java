@@ -14,11 +14,9 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
-import org.ovirt.engine.core.aaa.AuthenticationProfileManager;
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Authenticator;
-import org.ovirt.engine.core.aaa.AuthenticatorManager;
 import org.ovirt.engine.core.aaa.Directory;
-import org.ovirt.engine.core.aaa.DirectoryManager;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -62,23 +60,17 @@ public class GetDomainListQueryTest
     private void setUpProfileMock(String name) {
         Directory directoryMock = mock(Directory.class);
         doReturn(name).when(directoryMock).getName();
-        DirectoryManager.getInstance().registerDirectory(name, directoryMock);
-
         Authenticator authenticatorMock = mock(Authenticator.class);
-        AuthenticatorManager.getInstance().registerAuthenticator(name, authenticatorMock);
-
         AuthenticationProfile profileMock = mock(AuthenticationProfile.class);
         doReturn(name).when(profileMock).getName();
         doReturn(directoryMock).when(profileMock).getDirectory();
         doReturn(authenticatorMock).when(profileMock).getAuthenticator();
-        AuthenticationProfileManager.getInstance().registerProfile(name, profileMock);
+        AuthenticationProfileRepository.getInstance().registerProfile(profileMock);
     }
 
     @After
     public void tearDown() {
-        DirectoryManager.getInstance().clear();
-        AuthenticatorManager.getInstance().clear();
-        AuthenticationProfileManager.getInstance().clear();
+        AuthenticationProfileRepository.getInstance().clear();
     }
 
     @Test

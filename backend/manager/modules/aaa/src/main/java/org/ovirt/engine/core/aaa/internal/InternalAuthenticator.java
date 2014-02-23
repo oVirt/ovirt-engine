@@ -15,9 +15,6 @@ import org.slf4j.LoggerFactory;
  */
 public class InternalAuthenticator extends PasswordAuthenticator {
 
-    protected InternalAuthenticator(String profileName) {
-        super(profileName);
-    }
 
     private static final Logger log = LoggerFactory.getLogger(InternalAuthenticator.class);
 
@@ -27,5 +24,9 @@ public class InternalAuthenticator extends PasswordAuthenticator {
         String adminPassword = Config.<String> getValue(ConfigValues.AdminPassword);
         return new BooleanAuthenticationResult(ObjectUtils.equals(user, adminName) &&
                 ObjectUtils.equals(password, adminPassword));
+    }
+
+    @Override
+    public void init() {
     }
 }

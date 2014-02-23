@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
-import org.ovirt.engine.core.aaa.AuthenticationProfileManager;
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.AuthenticationResult;
 import org.ovirt.engine.core.aaa.Authenticator;
 import org.ovirt.engine.core.aaa.Directory;
@@ -113,7 +113,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         }
 
         // Check that the authentication profile exists:
-        AuthenticationProfile profile = AuthenticationProfileManager.getInstance().getProfile(profileName);
+        AuthenticationProfile profile = AuthenticationProfileRepository.getInstance().getProfile(profileName);
         if (profile == null) {
             log.errorFormat(
                 "Can't login user \"{0}\" because authentication profile \"{1}\" doesn't exist.",

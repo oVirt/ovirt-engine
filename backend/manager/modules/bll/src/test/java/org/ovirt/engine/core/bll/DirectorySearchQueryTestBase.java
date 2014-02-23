@@ -9,11 +9,9 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.mockito.Mock;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
-import org.ovirt.engine.core.aaa.AuthenticationProfileManager;
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Authenticator;
-import org.ovirt.engine.core.aaa.AuthenticatorManager;
 import org.ovirt.engine.core.aaa.Directory;
-import org.ovirt.engine.core.aaa.DirectoryManager;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -38,21 +36,16 @@ public abstract class DirectorySearchQueryTestBase {
     public void setUp() {
         initMocks(this);
 
-        AuthenticatorManager.getInstance().registerAuthenticator(NAME, authenticatorMock);
-
         doReturn(NAME).when(directoryMock).getName();
-        DirectoryManager.getInstance().registerDirectory(NAME, directoryMock);
 
         doReturn(NAME).when(profileMock).getName();
         doReturn(authenticatorMock).when(profileMock).getAuthenticator();
         doReturn(directoryMock).when(profileMock).getDirectory();
-        AuthenticationProfileManager.getInstance().registerProfile(NAME, profileMock);
+        AuthenticationProfileRepository.getInstance().registerProfile(profileMock);
     }
 
     @After
     public void tearDown() {
-        AuthenticatorManager.getInstance().clear();
-        DirectoryManager.getInstance().clear();
-        AuthenticationProfileManager.getInstance().clear();
+        AuthenticationProfileRepository.getInstance().clear();
     }
 }

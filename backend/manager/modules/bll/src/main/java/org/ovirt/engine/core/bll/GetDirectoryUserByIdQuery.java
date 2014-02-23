@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
-import org.ovirt.engine.core.aaa.DirectoryManager;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.utils.ExternalId;
@@ -16,7 +16,7 @@ public class GetDirectoryUserByIdQuery<P extends DirectoryIdQueryParameters> ext
     protected void executeQueryCommand() {
         String directoryName = getParameters().getDomain();
         ExternalId id = getParameters().getId();
-        Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
+        Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
         if (directory == null) {
             getQueryReturnValue().setSucceeded(false);
         } else {

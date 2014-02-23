@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
-import org.ovirt.engine.core.aaa.AuthenticationProfileManager;
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
@@ -82,7 +82,7 @@ public class AutomaticLoginFilter implements Filter {
         String profileName = principalName.substring(index + 1);
 
         // Check that the authentication profile exists:
-        AuthenticationProfile profile = AuthenticationProfileManager.getInstance().getProfile(profileName);
+        AuthenticationProfile profile = AuthenticationProfileRepository.getInstance().getProfile(profileName);
         if (profile == null) {
             log.error(
                 "Can't login user \"{}\" because authentication profile \"{}\" doesn't exist.",

@@ -11,11 +11,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class NegotiatingAuthenticator extends Authenticator {
 
-    protected NegotiatingAuthenticator(String profileName) {
-        super(profileName);
-        // TODO Auto-generated constructor stub
-    }
-
     /**
      * Process the given request and return a new result object if the negotiation has finished or {@code null} if it
      * hasn't. If the process hasn't finished then the response must be populated by the authenticator and it will be
