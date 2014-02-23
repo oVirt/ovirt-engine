@@ -514,6 +514,15 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Low disk space on relevant Storage Domain.")
     String ACTION_TYPE_FAILED_DISK_SPACE_LOW();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The operation is unsupported for ${volumeType} Disk(s), please try again with Disk(s) with one of the following type(s): ${supportedVolumeTypes}.")
+    String ACTION_TYPE_FAILED_DISK_VOLUME_TYPE_UNSUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The Data Center has no Storage Pool Manager.")
+    String ACTION_TYPE_FAILED_NO_SPM();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The Data Center's Storage Pool Manager has changed.")
+    String ACTION_TYPE_FAILED_SPM_CHANGED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Low disk space on target Storage Domain ${storageName}.")
     String ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN();
 

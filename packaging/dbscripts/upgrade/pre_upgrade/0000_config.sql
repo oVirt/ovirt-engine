@@ -396,6 +396,7 @@ select fn_db_add_config_value('PortMirroringSupported','false','3.1');
 select fn_db_add_config_value('SpeedOptimizationSchedulingThreshold','10','general');
 select fn_db_add_config_value('SchedulerAllowOverBooking','false','general');
 select fn_db_add_config_value('SchedulerOverBookingThreshold','10','general');
+select fn_db_add_config_value('UploadFileMaxTimeInMinutes','5','general');
 --Handling Organization Name
 select fn_db_add_config_value('OrganizationName','oVirt','general');
 select fn_db_add_config_value('OriginType','OVIRT','general');

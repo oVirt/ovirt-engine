@@ -325,6 +325,7 @@ public enum VdcActionType {
     AddInternalStep(1851, false, QuotaDependency.NONE),
 
     UpdateMomPolicy(1900, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
+    UploadStream(1901, QuotaDependency.NONE),
 
     // Affinity Groups
     AddAffinityGroup(1950, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),
@@ -337,6 +338,7 @@ public enum VdcActionType {
     RemoveIscsiBond(2002, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
 
     SetHaMaintenance(2050, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE);
+
 
     private int intValue;
     private ActionGroup actionGroup;

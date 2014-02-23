@@ -1666,5 +1666,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("Dummy serial number.")
     DefaultCustomSerialNumber,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("5")
+    UploadFileMaxTimeInMinutes,
+
     Invalid;
 }

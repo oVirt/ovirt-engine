@@ -98,9 +98,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
             printReturnValue();
             throw ex;
         } catch (XmlRpcRunTimeException ex) {
-            Throwable rootCause = ExceptionUtils.getRootCause(ex);
-            VDSNetworkException networkException = new VDSNetworkException(rootCause);
-            networkException.setVdsError(new VDSError(VdcBllErrors.VDS_NETWORK_ERROR, rootCause.toString()));
+            VDSNetworkException networkException = createNetworkException(ex);
             printReturnValue();
             throw networkException;
         }
@@ -118,6 +116,21 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
             throw e;
         }
 
+    }
+
+    protected VDSNetworkException createNetworkException(Exception ex) {
+        Throwable rootCause = ExceptionUtils.getRootCause(ex);
+        VDSNetworkException networkException;
+        String message;
+        if (rootCause != null) {
+            networkException = new VDSNetworkException(rootCause);
+            message = rootCause.toString();
+        } else {
+            networkException = new VDSNetworkException(ex);
+            message = ex.getMessage();
+        }
+        networkException.setVdsError(new VDSError(VdcBllErrors.VDS_NETWORK_ERROR, message));
+        return networkException;
     }
 
     protected abstract void executeVdsBrokerCommand();

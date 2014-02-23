@@ -401,6 +401,7 @@ public enum VdcBllErrors {
     // oVirt errors
     ENGINE(5001),
     DB(5002),
+    UPLOAD_FAILURE(5003),
     // The VDS does not exist in memory
     RESOURCE_MANAGER_VDS_NOT_FOUND(5004),
     IRS_IMAGE_STATUS_ILLEGAL(5006),

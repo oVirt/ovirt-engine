@@ -103,6 +103,7 @@ public enum VDSCommandType {
     SPMClearTask("org.ovirt.engine.core.vdsbroker.irsbroker"),
     SPMRevertTask("org.ovirt.engine.core.vdsbroker.irsbroker"),
     UpdateVM("org.ovirt.engine.core.vdsbroker.irsbroker"),
+    UploadStream("org.ovirt.engine.core.vdsbroker.irsbroker"),
     RemoveVM("org.ovirt.engine.core.vdsbroker.irsbroker"),
     SpmStopOnIrs("org.ovirt.engine.core.vdsbroker.irsbroker"),
     ResetISOPath("org.ovirt.engine.core.vdsbroker.vdsbroker"),

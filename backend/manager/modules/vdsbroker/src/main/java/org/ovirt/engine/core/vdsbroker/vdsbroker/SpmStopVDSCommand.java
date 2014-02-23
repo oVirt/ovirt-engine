@@ -1,28 +1,54 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SpmStopVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends VdsBrokerCommand<P> {
+    private EngineLock lock;
+
     public SpmStopVDSCommand(P parameters) {
         super(parameters, DbFacade.getInstance().getVdsDao().get(parameters.getVdsId()));
     }
 
+    private EngineLock retrieveVdsExecutionLock() {
+        if (lock == null) {
+            Map<String, Pair<String, String>> exsluciveLock = Collections.singletonMap(getParameters().getVdsId().toString(), new Pair<>(LockingGroup.VDS_EXECUTION.toString(), VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString()));
+            lock = new EngineLock(exsluciveLock, null);
+        }
+        return  lock;
+    }
+
     @Override
     protected void executeVdsBrokerCommand() {
+        boolean lockAcquired = false;
         try {
             if (canVdsBeReached()) {
+                lockAcquired = LockManagerFactory.getLockManager().acquireLock(retrieveVdsExecutionLock()).getFirst();
+                if (!lockAcquired) {
+                    getVDSReturnValue().setVdsError(new VDSError(VdcBllErrors.ENGINE,
+                            "Failed to acquire vds execution lock - related operation is under execution"));
+                    getVDSReturnValue().setSucceeded(false);
+                    return;
+                }
+
                 boolean performSpmStop = true;
                 try {
                     VDSReturnValue vdsReturnValue = ResourceManager
@@ -76,6 +102,10 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                     .getStoragePoolId(), getParameters().getVdsId(), exp.toString());
             getVDSReturnValue().setExceptionObject(exp);
             getVDSReturnValue().setSucceeded(false);
+        } finally {
+            if (lockAcquired) {
+                LockManagerFactory.getLockManager().releaseLock(retrieveVdsExecutionLock());
+            }
         }
     }
 

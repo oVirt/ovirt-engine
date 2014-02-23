@@ -10,7 +10,8 @@ public enum AsyncTaskType {
     mergeSnapshots,
     cloneImageStructure,
     syncImageData,
-    extendImageSize;
+    extendImageSize,
+    downloadImageFromStream;
 
     public int getValue() {
         return this.ordinal();
