@@ -509,11 +509,14 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     {
         Disk disk = (Disk) getSelectedItem();
         ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList<Disk>) getSelectedItems() : null;
-        boolean isDiskLocked = disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
+        boolean shouldAllowEdit = true;
+        if (disk != null) {
+            shouldAllowEdit = !disk.isOvfStore() && !(disk.getDiskStorageType() == DiskStorageType.IMAGE &&
+                    ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED);
+        }
 
         getNewCommand().setIsExecutionAllowed(true);
-        getEditCommand().setIsExecutionAllowed(disk != null && disks != null && disks.size() == 1 && !isDiskLocked);
+        getEditCommand().setIsExecutionAllowed(disk != null && disks != null && disks.size() == 1 && shouldAllowEdit);
         getRemoveCommand().setIsExecutionAllowed(disks != null && disks.size() > 0 && isRemoveCommandAvailable());
         getScanAlignmentCommand().setIsExecutionAllowed(
                 disks != null && disks.size() > 0 && isScanAlignmentCommandAvailable());
@@ -544,7 +547,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
             }
 
             DiskImage diskImage = (DiskImage) disk;
-            if (diskImage.getImageStatus() != ImageStatus.OK || !datacenterId.equals(diskImage.getStoragePoolId())) {
+            if (diskImage.getImageStatus() != ImageStatus.OK || !datacenterId.equals(diskImage.getStoragePoolId()) || diskImage.isOvfStore()) {
                 disableMoveAndCopyCommands();
                 return;
             }
