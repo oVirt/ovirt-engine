@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.SpmStatusResult;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -95,13 +94,6 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         setVdsName(_problematicVds.getName());
         if (_problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
             result = activateDataCenter();
-            if (getVdsDAO().getAllForStoragePool(getStoragePool().getId()).size() == 1) {
-                //reset SPM flag fot this Host
-                StoragePool sp = getStoragePool();
-                sp.setspm_vds_id(null);
-                getStoragePoolDAO().update(sp);
-                result = true;
-            }
         }
         if ((getParameters()).getClearVMs() && result) {
             VdsActionParameters tempVar = new VdsActionParameters(_problematicVds.getId());
@@ -173,34 +165,40 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                 && (masterDomain.getStatus() == StorageDomainStatus.Active
                         || masterDomain.getStatus() == StorageDomainStatus.Unknown || masterDomain.getStatus() == StorageDomainStatus.InActive)) {
             if (!getStoragePool().isLocal()) {
-                for (VDS vds : getAllRunningVdssInPool()) {
-                    try {
-                        SpmStatusResult statusResult = (SpmStatusResult) Backend
-                                .getInstance()
-                                .getResourceManager()
-                                .RunVdsCommand(VDSCommandType.SpmStatus,
-                                        new SpmStatusVDSCommandParameters(vds.getId(), getStoragePool().getId()))
-                                .getReturnValue();
-                        log.infoFormat("Trying to fence spm {0} via vds {1}",
-                                _problematicVds.getName(),
-                                vds.getName());
-                        if (Backend
-                                .getInstance()
-                                .getResourceManager()
-                                .RunVdsCommand(
-                                        VDSCommandType.FenceSpmStorage,
-                                        new FenceSpmStorageVDSCommandParameters(vds.getId(),
-                                                getStoragePool().getId(),
-                                                statusResult.getSpmId(),
-                                                statusResult.getSpmLVER()))
-                                .getSucceeded()) {
-                            resetIrs();
-                            result = true;
-                            _fenceSpmCalled = true;
-                            break;
+                // if only one\"the fenced" host connected to sp in dc
+                if (getAmountOfVdssInPool() == 1) {
+                    resetIrs();
+                    result = true;
+                } else {
+                    for (VDS vds : getAllRunningVdssInPool()) {
+                        try {
+                            SpmStatusResult statusResult = (SpmStatusResult) Backend
+                                    .getInstance()
+                                    .getResourceManager()
+                                    .RunVdsCommand(VDSCommandType.SpmStatus,
+                                            new SpmStatusVDSCommandParameters(vds.getId(), getStoragePool().getId()))
+                                    .getReturnValue();
+                            log.infoFormat("Trying to fence spm {0} via vds {1}",
+                                    _problematicVds.getName(),
+                                    vds.getName());
+                            if (Backend
+                                    .getInstance()
+                                    .getResourceManager()
+                                    .RunVdsCommand(
+                                            VDSCommandType.FenceSpmStorage,
+                                            new FenceSpmStorageVDSCommandParameters(vds.getId(),
+                                                    getStoragePool().getId(),
+                                                    statusResult.getSpmId(),
+                                                    statusResult.getSpmLVER()))
+                                    .getSucceeded()) {
+                                resetIrs();
+                                result = true;
+                                _fenceSpmCalled = true;
+                                break;
+                            }
+                        } catch (java.lang.Exception e) {
+                            log.warnFormat("Could not fence spm on vds {0}", vds.getName());
                         }
-                    } catch (java.lang.Exception e) {
-                        log.warnFormat("Could not fence spm on vds {0}", vds.getName());
                     }
                 }
             } else {
