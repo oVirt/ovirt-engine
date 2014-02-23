@@ -43,4 +43,4 @@ while getopts hvl:s:p:u:d: option; do
 done
 
 echo "Cleaning database..."
-cleandb
+dbfunc_common_schema_drop

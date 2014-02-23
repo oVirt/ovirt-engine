@@ -56,11 +56,11 @@ echo "Creating common functions..."
 dbfunc_psql_die --file="common_sp.sql" > /dev/null
 
 #inserting initial data
-insert_initial_data
+dbfunc_common_init_insert_data
 
 #remove checksum file in clean install in order to run views/sp creation
 [ -n "${DBFUNC_COMMON_MD5DIR}" ] && rm -f "${DBFUNC_COMMON_MD5DIR}/.${DBFUNC_DB_DATABASE}.scripts.md5" > /dev/null 2>&1
 
 # Running upgrade scripts
 echo "Running upgrade scripts..."
-run_upgrade_files
+dbfunc_common_upgrade

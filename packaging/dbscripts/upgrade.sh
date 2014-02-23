@@ -69,4 +69,4 @@ while getopts hvl:s:p:u:d:m:c option; do
     esac
 done
 
-run_upgrade_files
+dbfunc_common_upgrade

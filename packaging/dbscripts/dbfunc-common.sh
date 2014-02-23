@@ -3,8 +3,32 @@
 
 #DBFUNC_COMMON_MD5DIR=
 
+dbfunc_common_hook_init_insert_data() {
+    return 0
+}
+
+dbfunc_common_hook_views_refresh() {
+    return 0
+}
+
+dbfunc_common_hook_materialized_views_install() {
+    return 0
+}
+
+dbfunc_common_hook_materialized_views_drop() {
+    return 0
+}
+
+dbfunc_common_hook_materialized_viewsrefresh_() {
+    return 0
+}
+
+dbfunc_common_hook_sequence_numbers_update() {
+    return 0
+}
+
 #cleans db by dropping all objects
-cleandb() {
+dbfunc_common_schema_drop() {
     dbfunc_psql_die --file="common_sp.sql" > /dev/null
     local statement
     statement="$(
@@ -17,8 +41,12 @@ cleandb() {
     dbfunc_psql_die --command="${statement}" > /dev/null
 }
 
+dbfunc_common_init_insert_data() {
+    dbfunc_common_hook_init_insert_data
+}
+
 #drops views before upgrade or refresh operations
-drop_views() {
+dbfunc_common_views_drop() {
     # common stored procedures are executed first (for new added functions to be valid)
     dbfunc_psql_die --file="common_sp.sql" > /dev/null
     dbfunc_psql_die --command="select * from generate_drop_all_views_syntax();" | \
@@ -26,7 +54,7 @@ drop_views() {
 }
 
 #drops sps before upgrade or refresh operations
-drop_sps() {
+dbfunc_common_sps_drop() {
     dbfunc_psql_die --file="common_sp.sql" > /dev/null
     local statement
     statement="$(
@@ -39,7 +67,7 @@ drop_sps() {
 }
 
 #refreshes sps
-refresh_sps() {
+dbfunc_common_sps_refresh() {
     echo "Creating stored procedures..."
     local sql
     for sql in $(ls *sp.sql | sort); do
@@ -49,41 +77,42 @@ refresh_sps() {
     dbfunc_psql_die --file="common_sp.sql" > /dev/null
 }
 
-install_common_func() {
+_dbfunc_common_install_common_func() {
     # common stored procedures are executed first (for new added functions to be valid)
     dbfunc_psql_die --file="common_sp.sql" > /dev/null
 }
 
-delete_async_tasks_and_compensation_data() {
+_dbfunc_common_delete_async_tasks_and_compensation_data() {
     dbfunc_psql_die --file="delete_async_tasks_and_compensation_data.sql" > /dev/null
 }
 
-run_pre_upgrade() {
+_dbfunc_common_run_pre_upgrade() {
     #Dropping all views & sps
-    drop_views
-    drop_sps
-    install_common_func
+    dbfunc_common_views_drop
+    dbfunc_common_sps_drop
+    _dbfunc_common_install_common_func
     #update sequence numers
-    update_sequence_numbers
+    dbfunc_common_hook_sequence_numbers_update
     #run pre upgrade scripts
-    execute_commands_in_dir 'pre_upgrade'
-    install_materialized_views_func
+    _dbfunc_common_psql_statements_in_dir 'pre_upgrade'
+    dbfunc_common_hook_materialized_views_install
     #drop materialized views to support views changesin upgrade
     #Materialized views are restored in the post_upgrade step
-    drop_materialized_views
+    dbfunc_common_hook_materialized_views_drop
 
+    # TODO: move this to custom?
     if [ -n "${CLEAN_TASKS}" ]; then
        echo "Cleaning tasks metadata..."
-       delete_async_tasks_and_compensation_data
+       _dbfunc_common_delete_async_tasks_and_compensation_data
     fi
 }
 
-run_post_upgrade() {
+_dbfunc_common_run_post_upgrade() {
     #Refreshing  all views & sps & run post-upgrade scripts
-    refresh_views
-    refresh_sps
+    dbfunc_common_hook_views_refresh
+    dbfunc_common_sps_refresh
     #Running post-upgrade scripts
-    execute_commands_in_dir 'post_upgrade'
+    _dbfunc_common_psql_statements_in_dir 'post_upgrade'
     #run custom materialized views if exists
     custom_materialized_views_file="upgrade/post_upgrade/custom/create_materialized_views.sql"
     if [ -f "${custom_materialized_views_file}" ]; then
@@ -94,24 +123,23 @@ run_post_upgrade() {
             echo "Illegal syntax in custom Materialized Views, Custom Materialized Views were dropped."
         fi
     fi
-    refresh_materialized_views
-
+    dbfunc_common_hook_materialized_viewsrefresh_
 }
 
 # Runs all the SQL scripts in directory upgrade/$1/
 # The second argument is the label to use while notifying
 # the user about the running of the script
-execute_commands_in_dir() {
+_dbfunc_common_psql_statements_in_dir() {
     local dir="$1"
     if [ -d "upgrade/${dir}" ]; then
-        files="$(get_files "upgrade/${dir}" 1)"
+        files="$(_dbfunc_common_get_files "upgrade/${dir}" 1)"
         for file in $(ls ${files} | sort); do
-           run_file "${file}"
+           _dbfunc_common_run_file "${file}"
         done
     fi
 }
 
-run_required_scripts() {
+_dbfunc_common_run_required_scripts() {
     local script="$1"
     # check for helper functions that the script needs
     # source scripts must be defined in the first lines of the script
@@ -127,7 +155,7 @@ run_required_scripts() {
     done < "${script}"
 }
 
-run_file() {
+_dbfunc_common_run_file() {
     local file="$1"
     if [ -x "${file}" ]; then
         # delegate all DBFUNC_ vars in subshell
@@ -142,7 +170,7 @@ run_file() {
     fi
 }
 
-get_current_version() {
+_dbfunc_common_get_current_version() {
     dbfunc_psql_statement_parsable "
         select version
         from schema_version
@@ -152,7 +180,7 @@ get_current_version() {
     "
 }
 
-get_installed_version() {
+_dbfunc_common_get_installed_version() {
     local cheksum="$1"
     dbfunc_psql_statement_parsable "
         select version
@@ -163,7 +191,7 @@ get_installed_version() {
     "
 }
 
-set_last_version() {
+_dbfunc_common_set_last_version() {
     local id="$(
         dbfunc_psql_statement_parsable "
             select max(id)
@@ -177,7 +205,7 @@ set_last_version() {
     " > /dev/null
 }
 
-get_db_time(){
+_dbfunc_common_get_db_time(){
     dbfunc_psql_statement_parsable "select now()"
 }
 
@@ -196,7 +224,7 @@ dbfunc_common_language_create() {
 }
 
 # gets a directory and required depth and return all sql & sh files
-get_files() {
+_dbfunc_common_get_files() {
     local dir="$1"
     local maxdepth="$2"
     find "${dir}" \
@@ -205,8 +233,8 @@ get_files() {
         sort
 }
 
-is_view_or_sp_changed() {
-    local files="$(get_files "upgrade" 3)"
+_dbfunc_common_is_view_or_sp_changed() {
+    local files="$(_dbfunc_common_get_files "upgrade" 3)"
     local md5sum_file="${DBFUNC_COMMON_MD5DIR}/.${DBFUNC_DB_DATABASE}.scripts.md5"
     local md5sum_tmp_file="${md5sum_file}.tmp"
     md5sum ${files} create_*views.sql *_sp.sql > "${md5sum_tmp_file}"
@@ -228,9 +256,9 @@ _dbfunc_common_get_file_version() {
     basename "${file}" | sed -e 's#\(..........\).*#\1#' -e 's/_//g'
 }
 
-validate_version_uniqueness() {
+_dbfunc_common_validate_version_uniqueness() {
     local prev=""
-    local files="$(get_files "upgrade" 1)"
+    local files="$(_dbfunc_common_get_files "upgrade" 1)"
     local file
     for file in $(ls ${files} | sort) ; do
         local ver="$(_dbfunc_common_get_file_version "${file}")"
@@ -239,7 +267,7 @@ validate_version_uniqueness() {
     done
 }
 
-run_upgrade_files() {
+dbfunc_common_upgrade() {
 
     dbfunc_psql_die --file=upgrade/03_02_0000_set_version.sql > /dev/null
 
@@ -248,21 +276,21 @@ run_upgrade_files() {
         local state="FAILED"
         local comment=""
         local updated=0
-        validate_version_uniqueness
-        if [ -z "${DBFUNC_COMMON_MD5DIR}" ] || ! is_view_or_sp_changed; then
+        _dbfunc_common_validate_version_uniqueness
+        if [ -z "${DBFUNC_COMMON_MD5DIR}" ] || ! _dbfunc_common_is_view_or_sp_changed; then
             echo "upgrade script detected a change in Config, View or Stored Procedure..."
-            run_pre_upgrade
+            _dbfunc_common_run_pre_upgrade
             updated=1
         fi
 
         # get current version
-        local current="$(get_current_version)"
+        local current="$(_dbfunc_common_get_current_version)"
         # we should remove leading blank (from select result) and zero in order not to treat number as octal
         local last="$(expr substr "${current}" 3 7)"
-        local files="$(get_files "upgrade" 1)"
+        local files="$(_dbfunc_common_get_files "upgrade" 1)"
         local file
         for file in $(ls ${files} | sort); do
-            local before="$(get_db_time)"
+            local before="$(_dbfunc_common_get_db_time)"
             local checksum="$(md5sum "${file}" | cut -d " " -f1)"
             # upgrade/dd_dd_dddd* => dddddddd
             local ver="$(_dbfunc_common_get_file_version "${file}")"
@@ -277,36 +305,36 @@ run_upgrade_files() {
                 # check gaps only for identical major revisions
                 if [ "${xverMajor}" -eq "${lastMajor}" ]; then
                     if [ $((${xver} - ${last})) -gt 10 ]; then
-                       set_last_version
+                       _dbfunc_common_set_last_version
                        die "Illegal script version number ${ver},version should be in max 10 gap from last installed version: 0${last}
 Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and run the upgrade script."
                     fi
                 fi
                 # check if script was already installed with other version name.
-                local installed_version="$(get_installed_version $checksum)"
+                local installed_version="$(_dbfunc_common_get_installed_version "${checksum}")"
                 if [ -n "${installed_version}" ]; then
                     echo "Skipping upgrade script ${file}, already installed by ${installed_version}"
                     state="SKIPPED"
-                    after="$(get_db_time)"
+                    after="$(_dbfunc_common_get_db_time)"
                     last="${xver}"
                     comment="Installed already by ${installed_version}"
                 else
                     # force pre upgrade to run in case no md5 change was
                     # found but we still upgrade, like in db restore.
                     if [ "${updated}" = 0 ]; then
-                       run_pre_upgrade
+                       _dbfunc_common_run_pre_upgrade
                        updated=1
                     fi
-                    run_required_scripts "${file}"
-                    run_file "${file}"
+                    _dbfunc_common_run_required_scripts "${file}"
+                    _dbfunc_common_run_file "${file}"
                     code=$?
                     if [ "${code}" -eq 0 ]; then
                         state="INSTALLED"
-                        after=$(get_db_time)
+                        after=$(_dbfunc_common_get_db_time)
                         last=$xver
                         comment=""
                     else
-                        set_last_version
+                        _dbfunc_common_set_last_version
                         exit "${code}"
                     fi
                 fi
@@ -336,11 +364,11 @@ Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and r
                 " > /dev/null
             fi
         done
-        set_last_version
+        _dbfunc_common_set_last_version
 
         # restore views & SPs if dropped
         if [ "${updated}" -eq 1 ]; then
-            run_post_upgrade
+            _dbfunc_common_run_post_upgrade
         else
             echo "database is up to date."
         fi
@@ -349,7 +377,7 @@ Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and r
 
 # gets the configuration value of the given option name and version.
 # usage: <some variable>=get_config_value <name> <version>
-get_config_value() {
+dbfunc_common_config_get_value() {
     local option_name="$1"
     local version="$2"
 
@@ -365,7 +393,7 @@ get_config_value() {
 }
 
 #adds a record to audit_log in case of calling unlock_entity
-log_unlock_entity() {
+_dbfunc_common_log_unlock_entity() {
     local object_type="$1"
     local id="$2"
     local user="$3"
@@ -391,7 +419,7 @@ log_unlock_entity() {
 
 #unlocks the given VM/Template and its disks or a given disk
 #in case of VM/Template the id is the name, in case of a disk, the id is the disk UUID
-unlock_entity() {
+dbfunc_common_entity_unlock() {
     local object_type="$1"
     local id="$2"
     local user="$3"
@@ -411,7 +439,7 @@ unlock_entity() {
     if [ -n "${CMD}" ]; then
         echo "${CMD}"
         if dbfunc_psql --command="${CMD}"; then
-            log_unlock_entity ${object_type} ${id} ${user}
+            _dbfunc_common_log_unlock_entity ${object_type} ${id} ${user}
             echo "unlock ${object_type} ${id} completed successfully."
         else
             echo "unlock ${object_type} ${id} completed with errors."
@@ -420,7 +448,7 @@ unlock_entity() {
 }
 
 #Displays locked entities
-query_locked_entities() {
+dbfunc_common_entity_query() {
     local object_type="$1"
     local LOCKED=2
     local TEMPLATE_LOCKED=1

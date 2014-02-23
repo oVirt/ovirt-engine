@@ -38,9 +38,9 @@ while getopts hvl:s:p:u:d: option; do
 done
 
 #Dropping all views & sps
-drop_views
-drop_sps
+dbfunc_common_views_drop
+dbfunc_common_sps_drop
 
 #Refreshing  all views & sps
-refresh_views
-refresh_sps
+dbfunc_common_hook_views_refresh
+dbfunc_common_sps_refresh

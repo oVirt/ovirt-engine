@@ -62,8 +62,8 @@ if [ -n "${IDS}" ]; then
     [ "${answer}" = "y" ] || die "Please contact support for further assistance."
 
     for ID in ${IDS} ; do
-        unlock_entity "${TYPE}" "${ID}" "$(whoami)" ${RECURSIVE}
+        dbfunc_common_entity_unlock "${TYPE}" "${ID}" "$(whoami)" ${RECURSIVE}
     done
 elif [ -n "${QUERY}" ]; then
-    query_locked_entities "${TYPE}"
+    dbfunc_common_entity_query "${TYPE}"
 fi
