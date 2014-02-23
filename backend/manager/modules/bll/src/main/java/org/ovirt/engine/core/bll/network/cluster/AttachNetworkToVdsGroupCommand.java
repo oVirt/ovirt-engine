@@ -65,7 +65,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
             @Override
             public Void runInTransaction() {
-                updateNetworkAttachment(getVdsGroupId(), getNetworkCluster(), getNetwork());
+                attachNetwork(getVdsGroupId(), getNetworkCluster(), getNetwork());
                 return null;
             }
         });
@@ -94,7 +94,8 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected boolean canDoAction() {
-        return vdsGroupExists()
+        return networkNotAttachedToCluster()
+                && vdsGroupExists()
                 && changesAreClusterCompatible()
                 && logicalNetworkExists()
                 && validateAttachment();
@@ -141,6 +142,19 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         }
         return true;
     }
+
+    private boolean networkNotAttachedToCluster() {
+        if (networkExists()) {
+            return failCanDoAction(VdcBllMessages.NETWORK_ALREADY_ATTACHED_TO_CLUSTER);
+        }
+
+        return true;
+    }
+
+    private boolean networkExists() {
+        return getNetworkClusterDAO().get(getNetworkCluster().getId()) != null;
+    }
+
 
     private boolean vdsGroupExists() {
         if (!vdsGroupInDb()) {
@@ -201,16 +215,12 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         return false;
     }
 
-    public static void updateNetworkAttachment(Guid clusterId, NetworkCluster networkCluster, Network network) {
-        if (networkExists(clusterId, networkCluster)) {
-            getNetworkClusterDao().update(networkCluster);
-        } else {
-            getNetworkClusterDao().save(new NetworkCluster(clusterId, network.getId(),
-                    NetworkStatus.OPERATIONAL,
-                    false,
-                    networkCluster.isRequired(),
-                    networkCluster.isMigration()));
-        }
+    public static void attachNetwork(Guid clusterId, NetworkCluster networkCluster, Network network) {
+        getNetworkClusterDao().save(new NetworkCluster(clusterId, network.getId(),
+                NetworkStatus.OPERATIONAL,
+                false,
+                networkCluster.isRequired(),
+                networkCluster.isMigration()));
 
         if (network.getCluster().isDisplay()) {
             getNetworkClusterDao().setNetworkExclusivelyAsDisplay(clusterId, network.getId());

@@ -40,7 +40,7 @@ public class AttachNetworksToClusterCommand<T extends ClusterNetworksParameters>
             @Override
             public Void runInTransaction() {
                 for (AttachNetworkToVdsGroupParameter param : getParameters().getClusterNetworksParameters()) {
-                    AttachNetworkToVdsGroupCommand.updateNetworkAttachment(param.getVdsGroupId(),
+                    AttachNetworkToVdsGroupCommand.attachNetwork(param.getVdsGroupId(),
                             param.getNetworkCluster(),
                             param.getNetwork());
                 }

@@ -34,6 +34,7 @@ public class AttachNetworkToVdsGroupCommandTest {
 
     private VDSGroup existingGroup = new VDSGroup();
     private Network network = createNetwork();
+    private AttachNetworkToVdsGroupParameter param;
     private AttachNetworkToVdsGroupCommand<AttachNetworkToVdsGroupParameter> command;
 
     @Rule
@@ -59,7 +60,8 @@ public class AttachNetworkToVdsGroupCommandTest {
     public void networkExists() {
         simulateVdsGroupExists();
         when(networkDao.get(any(Guid.class))).thenReturn(getNetwork());
-        assertCanDoActionSucceeds();
+        when(networkClusterDAO.get(param.getNetworkCluster().getId())).thenReturn(param.getNetworkCluster());
+        assertCanDoActionFailure(VdcBllMessages.NETWORK_ALREADY_ATTACHED_TO_CLUSTER.toString());
     }
 
     @Test
@@ -89,8 +91,7 @@ public class AttachNetworkToVdsGroupCommandTest {
 
     @SuppressWarnings("serial")
     public void createCommand() {
-        AttachNetworkToVdsGroupParameter param =
-                new AttachNetworkToVdsGroupParameter(getExistingVdsGroupId(), getNetwork());
+        param = new AttachNetworkToVdsGroupParameter(getExistingVdsGroupId(), getNetwork());
 
         command = new AttachNetworkToVdsGroupCommand<AttachNetworkToVdsGroupParameter>(param) {
             // Since the command isn't in the same package as AuditLogableBase which defines the DAO accessors they
@@ -150,10 +151,6 @@ public class AttachNetworkToVdsGroupCommandTest {
     private void assertCanDoActionFailure(final String messageToVerify) {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains(messageToVerify));
-    }
-
-    private void assertCanDoActionSucceeds() {
-        assertTrue(command.canDoAction());
     }
 
     private void assertExecuteActionFailure() {
