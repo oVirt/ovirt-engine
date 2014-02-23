@@ -259,10 +259,6 @@ class Plugin(plugin.PluginBase):
         self.execute(
             args=args,
             envAppend={
-                'ENGINE_CERTIFICATE': (
-                    osetupcons.FileLocations.
-                    OVIRT_ENGINE_PKI_ENGINE_CA_CERT
-                ),
                 'ENGINE_PGPASS': self.environment[
                     osetupcons.DBEnv.PGPASS_FILE
                 ]
@@ -337,10 +333,6 @@ class Plugin(plugin.PluginBase):
         self.execute(
             args=args,
             envAppend={
-                'ENGINE_CERTIFICATE': (
-                    osetupcons.FileLocations.
-                    OVIRT_ENGINE_PKI_ENGINE_CA_CERT
-                ),
                 'ENGINE_PGPASS': self.environment[
                     osetupcons.DBEnv.PGPASS_FILE
                 ]
