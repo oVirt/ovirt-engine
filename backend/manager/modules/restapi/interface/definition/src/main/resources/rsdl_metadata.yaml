@@ -2616,7 +2616,6 @@ actions:
           hostnic.mac: xs:string
           hostnic.ip.address: xs:string
           hostnic.ip.netmask: xs:string
-          hostnic.ip.mtu: xs:int
         description: update the specified network interface for the host
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
