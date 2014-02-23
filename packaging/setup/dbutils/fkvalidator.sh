@@ -24,7 +24,7 @@ cd "$(dirname "$0")"
 . ./dbfunc-base.sh
 
 cleanup() {
-    dbfunc_cleanup
+	dbfunc_cleanup
 }
 trap cleanup 0
 dbfunc_init
@@ -50,66 +50,66 @@ __EOF__
 # if fix_it is false , constriant violations are reported only
 # if fix_it is true , constriant violations cause is removed from DB
 validate_db_fks() {
-    local fix_it=${1}
-    local verbose=${2}
-    local res
-    if [ -n "${fix_it}" ]; then
-        res="$(
-            dbfunc_psql_statement_parsable "
-                select fk_violation
-                from fn_db_validate_fks(true, ${verbose:-0} != 0)
-            "
-        )"
-    else
-        res="$(
-            dbfunc_psql_statement_parsable "
-                select fk_violation, fk_status
-                from fn_db_validate_fks(false, ${verbose:-0} != 0)
-                where fk_status=1
-            "
-        )"
-    fi
-    local exit_code=$?
+	local fix_it=${1}
+	local verbose=${2}
+	local res
+	if [ -n "${fix_it}" ]; then
+		res="$(
+			dbfunc_psql_statement_parsable "
+				select fk_violation
+				from fn_db_validate_fks(true, ${verbose:-0} != 0)
+			"
+		)"
+	else
+		res="$(
+			dbfunc_psql_statement_parsable "
+				select fk_violation, fk_status
+				from fn_db_validate_fks(false, ${verbose:-0} != 0)
+				where fk_status=1
+			"
+		)"
+	fi
+	local exit_code=$?
 
-    if [ ${exit_code} -eq 0 -a -z "${res}" ]; then
-        exit 0
-    fi
+	if [ ${exit_code} -eq 0 -a -z "${res}" ]; then
+		exit 0
+	fi
 
-    local out="$(echo "${res}" | sed -n '1p')"
-    echo "${out}"
-    if [ "${exit_code}" = "0" -a -z "${fix_it}" ]; then
-        exit_code="$(echo "${res}" | sed -n '2p')"
-    fi
-    exit ${exit_code}
+	local out="$(echo "${res}" | sed -n '1p')"
+	echo "${out}"
+	if [ "${exit_code}" = "0" -a -z "${fix_it}" ]; then
+		exit_code="$(echo "${res}" | sed -n '2p')"
+	fi
+	exit ${exit_code}
 }
 
 FIXIT=
 QUIET=
 
 while getopts hvl:s:p:u:d:fq option; do
-    case $option in
-       \?) usage; exit 1;;
-        h) usage; exit 0;;
-        v) DBFUNC_VERBOSE=1;;
-        l) DBFUNC_LOGFILE="${OPTARG}";;
-        s) DBFUNC_DB_HOST="${OPTARG}";;
-        p) DBFUNC_DB_PORT="${OPTARG}";;
-        d) DBFUNC_DB_DATABASE="${OPTARG}";;
-        u) DBFUNC_DB_USER="${OPTARG}";;
-        f) FIXIT=1;;
-        q) QUIET=1;;
-    esac
+	case $option in
+		\?) usage; exit 1;;
+		h) usage; exit 0;;
+		v) DBFUNC_VERBOSE=1;;
+		l) DBFUNC_LOGFILE="${OPTARG}";;
+		s) DBFUNC_DB_HOST="${OPTARG}";;
+		p) DBFUNC_DB_PORT="${OPTARG}";;
+		d) DBFUNC_DB_DATABASE="${OPTARG}";;
+		u) DBFUNC_DB_USER="${OPTARG}";;
+		f) FIXIT=1;;
+		q) QUIET=1;;
+	esac
 done
 
 [ -n "${DBFUNC_DB_USER}" ] || die "Please specify user name"
 [ -n "${DBFUNC_DB_DATABASE}" ] || die "Please specify database"
 
 if [ -n "${FIXIT}" -a -z "${QUIET}" ]; then
-    echo "Caution, this operation should be used with care. Please contact support prior to running this command"
-    echo "Are you sure you want to proceed? [y/n]"
-    read answer
+	echo "Caution, this operation should be used with care. Please contact support prior to running this command"
+	echo "Are you sure you want to proceed? [y/n]"
+	read answer
 
-    [ "${answer}" = "y" ] || die "Please contact support for further assistance."
+	[ "${answer}" = "y" ] || die "Please contact support for further assistance."
 fi
 
 # Install fkvalidator procedures

@@ -32,7 +32,7 @@ cd "$(dirname "$0")"
 . ./dbfunc-custom.sh
 
 cleanup() {
-    dbfunc_cleanup
+	dbfunc_cleanup
 }
 trap cleanup 0
 dbfunc_init
@@ -55,18 +55,18 @@ __EOF__
 }
 
 while getopts hvl:s:p:u:d:m:c option; do
-    case "${option}" in
-       \?) usage; exit 1;;
-        h) usage; exit 0;;
-        v) DBFUNC_VERBOSE=1;;
-        l) DBFUNC_LOGFILE="${OPTARG}";;
-        s) DBFUNC_DB_HOST="${OPTARG}";;
-        p) DBFUNC_DB_PORT="${OPTARG}";;
-        u) DBFUNC_DB_USER="${OPTARG}";;
-        d) DBFUNC_DB_DATABASE="${OPTARG}";;
-        m) DBFUNC_COMMON_MD5DIR="${OPTARG}";;
-        c) CLEAN_TASKS=1;;
-    esac
+	case "${option}" in
+		\?) usage; exit 1;;
+		h) usage; exit 0;;
+		v) DBFUNC_VERBOSE=1;;
+		l) DBFUNC_LOGFILE="${OPTARG}";;
+		s) DBFUNC_DB_HOST="${OPTARG}";;
+		p) DBFUNC_DB_PORT="${OPTARG}";;
+		u) DBFUNC_DB_USER="${OPTARG}";;
+		d) DBFUNC_DB_DATABASE="${OPTARG}";;
+		m) DBFUNC_COMMON_MD5DIR="${OPTARG}";;
+		c) CLEAN_TASKS=1;;
+	esac
 done
 
 dbfunc_common_upgrade

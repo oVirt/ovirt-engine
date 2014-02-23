@@ -23,42 +23,42 @@ __EOF__
 }
 
 while [ -n "$1" ]; do
-    x="$1"
-    v="${x#*=}"
-    shift
-    case "${x}" in
-        --log=*)
-            LOGFILE="${v}"
-        ;;
-        --user=*)
-            USERNAME="-u ${v}"
-        ;;
-        --host=*)
-            SERVERNAME="-s ${v}"
-        ;;
-        --port=*)
-            PORT="-p ${v}"
-        ;;
-        --database=*)
-            DATABASE="-d ${v}"
-        ;;
-        --fix*)
-            extra_params="-f"
-        ;;
-        --help)
-            usage
-            exit 0
-        ;;
-        *)
-            die "Invalid option '${x}'"
-        ;;
-    esac
+	x="$1"
+	v="${x#*=}"
+	shift
+	case "${x}" in
+		--log=*)
+			LOGFILE="${v}"
+		;;
+		--user=*)
+			USERNAME="-u ${v}"
+		;;
+		--host=*)
+			SERVERNAME="-s ${v}"
+		;;
+		--port=*)
+			PORT="-p ${v}"
+		;;
+		--database=*)
+			DATABASE="-d ${v}"
+		;;
+		--fix*)
+			extra_params="-f"
+		;;
+		--help)
+			usage
+			exit 0
+		;;
+		*)
+			die "Invalid option '${x}'"
+		;;
+	esac
 done
 
 validationlist="fkvalidator.sh"
 
 error=0
 for script in ${validationlist}; do
-    "${dbutils}/${script}" ${USERNAME} ${SERVERNAME} ${PORT} ${DATABASE} ${LOGFILE:+-l "$LOGFILE"} -q ${extra_params} || error=1
+	"${dbutils}/${script}" ${USERNAME} ${SERVERNAME} ${PORT} ${DATABASE} ${LOGFILE:+-l "$LOGFILE"} -q ${extra_params} || error=1
 done
 exit ${error}

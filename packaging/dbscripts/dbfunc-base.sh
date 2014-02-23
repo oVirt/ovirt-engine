@@ -10,49 +10,49 @@ PSQL="${PSQL:-psql}"
 NULL=
 
 die() {
-    local m="$1"
-    echo "FATAL: ${m}" >&2
-    exit 1
+	local m="$1"
+	echo "FATAL: ${m}" >&2
+	exit 1
 }
 
 dbfunc_init() {
-    if [ -n "${DBFUNC_DB_PGPASSFILE}" ]; then
-        export PGPASSFILE="${DBFUNC_DB_PGPASSFILE}"
-        unset PGPASSWORD
-    fi
+	if [ -n "${DBFUNC_DB_PGPASSFILE}" ]; then
+		export PGPASSFILE="${DBFUNC_DB_PGPASSFILE}"
+		unset PGPASSWORD
+	fi
 }
 
 dbfunc_cleanup() {
-    :
+	:
 }
 
 dbfunc_psql_raw() {
-    LC_ALL="C" "${PSQL}" \
-        -w \
-        --pset=tuples_only=on \
-        --set ON_ERROR_STOP=1 \
-        ${DBFUNC_LOGFILE:+--log-file="${DBFUNC_LOGFILE}"} \
-        --host="${DBFUNC_DB_HOST}" \
-        --port="${DBFUNC_DB_PORT}" \
-        --username="${DBFUNC_DB_USER}" \
-        --dbname="${DBFUNC_DB_DATABASE}" \
-        "$@"
+	LC_ALL="C" "${PSQL}" \
+		-w \
+		--pset=tuples_only=on \
+		--set ON_ERROR_STOP=1 \
+		${DBFUNC_LOGFILE:+--log-file="${DBFUNC_LOGFILE}"} \
+		--host="${DBFUNC_DB_HOST}" \
+		--port="${DBFUNC_DB_PORT}" \
+		--username="${DBFUNC_DB_USER}" \
+		--dbname="${DBFUNC_DB_DATABASE}" \
+		"$@"
 }
 
 dbfunc_psql() {
-    dbfunc_psql_raw \
-        ${DBFUNC_VERBOSE:+--echo-all} \
-        "$@"
+	dbfunc_psql_raw \
+		${DBFUNC_VERBOSE:+--echo-all} \
+		"$@"
 }
 
 dbfunc_psql_die() {
-    dbfunc_psql "$@" || die "Cannot execute sql command: $*"
+	dbfunc_psql "$@" || die "Cannot execute sql command: $*"
 }
 
 dbfunc_psql_statement_parsable() {
-    local statement="$1"
-    dbfunc_psql_raw \
-        -c "copy (${statement}) to stdout with delimiter as '|';"
+	local statement="$1"
+	dbfunc_psql_raw \
+		-c "copy (${statement}) to stdout with delimiter as '|';"
 }
 
 #
@@ -60,27 +60,27 @@ dbfunc_psql_statement_parsable() {
 # in own line
 #
 dbfunc_psql_statement_parse_line() {
-    local NL="
+	local NL="
 "
-    local line="$1"
-    local ret=""
+	local line="$1"
+	local ret=""
 
-    [ -z "${line}" ] && return 0
+	[ -z "${line}" ] && return 0
 
-    local escape=
-    while [ -n "${line}" ]; do
-        c="$(expr substr "${line}" 1 1)"
-        line="$(expr substr "${line}" 2 $((${#line}+1)))"
-        if [ -n "${escape}" ]; then
-            escape=
-            echo -n "$c"
-        else
-            case "${c}" in
-                \\) escape=1 ;;
-                \|) ret="${ret}${NL}" ;;
-                *) ret="${ret}${c}" ;;
-            esac
-        fi
-    done
-    echo "${ret}"
+	local escape=
+	while [ -n "${line}" ]; do
+		c="$(expr substr "${line}" 1 1)"
+		line="$(expr substr "${line}" 2 $((${#line}+1)))"
+		if [ -n "${escape}" ]; then
+			escape=
+			echo -n "$c"
+		else
+			case "${c}" in
+				\\) escape=1 ;;
+				\|) ret="${ret}${NL}" ;;
+				*) ret="${ret}${c}" ;;
+			esac
+		fi
+	done
+	echo "${ret}"
 }

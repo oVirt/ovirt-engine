@@ -9,7 +9,7 @@ cd "$(dirname "$0")"
 . ./dbfunc-base.sh
 
 cleanup() {
-    dbfunc_cleanup
+	dbfunc_cleanup
 }
 trap cleanup 0
 dbfunc_init
@@ -29,15 +29,15 @@ __EOF__
 }
 
 while getopts hs:p:d:f:t: option; do
-    case $option in
-       \?) usage; exit 1;;
-        h) usage; exit 0;;
-        s) DBFUNC_DB_HOST="${OPTARG}";;
-        p) DBFUNC_DB_PORT="${OPTARG}";;
-        d) DBFUNC_DB_DATABASE="${OPTARG}";;
-        f) DBFUNC_DB_USER="${OPTARG}";;
-        t) TO_USER="${OPTARG}";;
-    esac
+	case $option in
+		\?) usage; exit 1;;
+		h) usage; exit 0;;
+		s) DBFUNC_DB_HOST="${OPTARG}";;
+		p) DBFUNC_DB_PORT="${OPTARG}";;
+		d) DBFUNC_DB_DATABASE="${OPTARG}";;
+		f) DBFUNC_DB_USER="${OPTARG}";;
+		t) TO_USER="${OPTARG}";;
+	esac
 done
 
 [ -n "${DBFUNC_DB_USER}" ] || die "Please specify from user"
@@ -53,8 +53,8 @@ trap cleanup 0
 # Change all schema objects ownership
 echo "Changing database ${DBFUNC_DB_DATABASE} objects ownership"
 ( "${PGDUMP:-pg_dump}" -s -h "${DBFUNC_DB_HOST}" -p "${DBFUNC_DB_PORT}" -U "${DBFUNC_DB_USER}" "${DBFUNC_DB_DATABASE}" && echo ok >> "${tempfile}" ) | \
-    grep -i 'owner to' | sed "s/OWNER TO ${DBFUNC_DB_USER};/OWNER TO ${TO_USER};/i" | \
-    ( dbfunc_psql_die && echo ok >> "${tempfile}" )
+	grep -i 'owner to' | sed "s/OWNER TO ${DBFUNC_DB_USER};/OWNER TO ${TO_USER};/i" | \
+	( dbfunc_psql_die && echo ok >> "${tempfile}" )
 
 [ "$(wc -l < "${tempfile}")" -eq 2 ] || die "Failed to change DB ${DBFUNC_DB_DATABASE} objects ownership."
 
