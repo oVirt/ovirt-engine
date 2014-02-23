@@ -1,7 +1,7 @@
 #!/bin/sh
 
 cd "$(dirname "$0")"
-. ./dbcustomfunctions.sh
+. ./dbfunc-custom.sh
 
 cleanup() {
     dbfunc_cleanup

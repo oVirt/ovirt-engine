@@ -1,5 +1,5 @@
 
-. ./dbfunctions.sh
+. ./dbfunc-common.sh
 
 DBFUNC_DB_USER="${DBFUNC_DB_USER:-engine}"
 DBFUNC_DB_DATABASE="${DBFUNC_DB_DATABASE:-engine}"
