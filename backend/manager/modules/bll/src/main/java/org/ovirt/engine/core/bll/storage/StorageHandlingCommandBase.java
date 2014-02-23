@@ -72,6 +72,10 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return DbFacade.getInstance().getVdsDao().getAllForStoragePoolAndStatus(pool.getId(), VDSStatus.Up);
     }
 
+    protected int getAmountOfVdssInPool() {
+        return getVdsDAO().getAllForStoragePool(getStoragePool().getId()).size();
+    }
+
     protected List<VDS> getAllRunningVdssInPool() {
         return getVdsDAO().getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
     }
