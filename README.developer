@@ -50,7 +50,8 @@ restart postgresql service.
 DATABASE CREATION
 
 Create database for ovirt-engine, usually the following
-sequence should work:
+sequence should work to create a user named 'engine' that owns
+database named 'engine':
 
 # su - postgres -c "psql -d template1"
 template1=# create user engine password 'engine';
@@ -66,6 +67,12 @@ ENVIRONMENT
 
 Development environment is supported only under non-root account. Do
 not run this sequence as root.
+
+Each instance of application must be installed at different PREFIX
+and use its own database. Throughout this document application is
+installed using PREFIX=$HOME/ovirt-engine and engine database and
+user, these should be changed if a new instance is required. Do not
+mix different versions of product with same PREFIX/database.
 
 BUILD
 
@@ -145,7 +152,8 @@ REFRESH
 
 If there are no significant changes, such as file structure or database
 schema, there is no need to run the setup again, 'make install-dev <args>'
-will overwrite files as required.
+will overwrite files as required, run engine-setup to refresh database
+schema.
 
 Do remember to restart the engine service.
 
