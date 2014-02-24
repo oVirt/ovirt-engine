@@ -123,7 +123,7 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private Map<String, LogicalNetworkModel> networkMap;
 
-    private Map<String, NetworkLabelModel> labelMap;
+    private Map<String, NetworkLabelModel> networkLabelMap;
 
     private Map<String, String> labelToIface;
 
@@ -264,13 +264,14 @@ public class HostSetupNetworksModel extends EntityModel {
         Set<LogicalNetworkModel> removedNetworks = new HashSet<LogicalNetworkModel>();
         Set<LogicalNetworkModel> addedNetworks = new HashSet<LogicalNetworkModel>();
         for (String label : removedLabels) {
-            Collection<LogicalNetworkModel> labelNetworks = labelMap.get(label).getNetworks();
+             NetworkLabelModel networkLabelModel = networkLabelMap.get(label);
+             Collection<LogicalNetworkModel> labelNetworks = networkLabelModel != null ? networkLabelModel.getNetworks() : null;
             if (labelNetworks != null) {
                 removedNetworks.addAll(labelNetworks);
             }
         }
         for (String label : addedLabels) {
-            NetworkLabelModel labelModel = labelMap.get(label);
+            NetworkLabelModel labelModel = networkLabelMap.get(label);
             if (labelModel != null) {
                 addedNetworks.addAll(labelModel.getNetworks());
             }
@@ -604,16 +605,16 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private void initNetworkModels() {
         Map<String, LogicalNetworkModel> networkModels = new HashMap<String, LogicalNetworkModel>();
-        labelMap = new HashMap<String, NetworkLabelModel>();
+        networkLabelMap = new HashMap<String, NetworkLabelModel>();
         for (Network network : allNetworks) {
             LogicalNetworkModel networkModel = new LogicalNetworkModel(network, this);
             networkModels.put(network.getName(), networkModel);
 
             if (!network.isExternal()) {
-                NetworkLabelModel labelModel = labelMap.get(network.getLabel());
+                NetworkLabelModel labelModel = networkLabelMap.get(network.getLabel());
                 if (labelModel == null) {
                     labelModel = new NetworkLabelModel(network.getLabel(), this);
-                    labelMap.put(network.getLabel(), labelModel);
+                    networkLabelMap.put(network.getLabel(), labelModel);
                 }
                 labelModel.getNetworks().add(networkModel);
             }
@@ -712,7 +713,7 @@ public class HostSetupNetworksModel extends EntityModel {
             if (labels != null) {
                 for (String label : labels) {
                     labelToIface.put(label, ifName);
-                    NetworkLabelModel labelModel = labelMap.get(label);
+                    NetworkLabelModel labelModel = networkLabelMap.get(label);
                     if (labelModel != null) {
                         // attach label networks to nic
                         for (LogicalNetworkModel networkModel : labelModel.getNetworks()) {
