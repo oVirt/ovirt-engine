@@ -421,12 +421,15 @@ public class VdsUpdateRunTimeInfo {
                     ResourceManager
                             .getInstance()
                             .getEventListener()
-                            .vdsNonOperational(_vds.getId(), _vds.getNonOperationalReason(), false, false,
+                            .vdsNonOperational(_vds.getId(), _vds.getNonOperationalReason(), false, true,
                                     Guid.Empty);
                 } else {
-                    log.infoFormat("Host {0} : {1} is already in NonOperational status. SetNonOperationalVds command is skipped.",
+
+                    log.infoFormat("Host {0} : {1} is already in NonOperational status for reason {2}. SetNonOperationalVds command is skipped.",
                             _vds.getId(),
-                            _vds.getName());
+                            _vds.getName(),
+                            (_vds.getNonOperationalReason() != null) ? _vds.getNonOperationalReason().name()
+                                    : "unknown");
                 }
             }
             // rerun all vms from rerun list
