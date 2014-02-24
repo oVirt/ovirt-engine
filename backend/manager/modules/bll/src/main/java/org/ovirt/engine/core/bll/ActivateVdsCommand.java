@@ -81,10 +81,6 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                         haMaintenanceFailed = true;
                     }
                 }
-            } else {
-                // We didn't manage to activate host. Set its status to Error
-                runVdsCommand(VDSCommandType.SetVdsStatus,
-                        new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Error));
             }
         }
 
