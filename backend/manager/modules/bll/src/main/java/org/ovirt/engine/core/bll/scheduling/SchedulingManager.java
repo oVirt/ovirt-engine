@@ -849,21 +849,33 @@ public class SchedulingManager {
     /**
      * returns all cluster policies names containing the specific policy unit.
      * @param policyUnitId
-     * @return
+     * @return List of cluster policy names that use the referenced policyUnitId
+     *         or null if the policy unit is not available.
      */
     public List<String> getClusterPoliciesNamesByPolicyUnitId(Guid policyUnitId) {
         List<String> list = new ArrayList<String>();
-        PolicyUnit policyUnit = policyUnits.get(policyUnitId).getPolicyUnit();
+        final PolicyUnitImpl policyUnitImpl = policyUnits.get(policyUnitId);
+        if (policyUnitImpl == null) {
+            log.warnFormat("Trying to find usages of non-existing policy unit %s", policyUnitId.toString());
+            return null;
+        }
+
+        PolicyUnit policyUnit = policyUnitImpl.getPolicyUnit();
         if (policyUnit != null) {
             for (ClusterPolicy clusterPolicy : policyMap.values()) {
                 switch (policyUnit.getPolicyUnitType()) {
                 case Filter:
-                    if (clusterPolicy.getFilters().contains(policyUnitId)) {
+                    Collection<Guid> filters = clusterPolicy.getFilters();
+                    if (filters != null && filters.contains(policyUnitId)) {
                         list.add(clusterPolicy.getName());
                     }
                     break;
                 case Weight:
-                    for (Pair<Guid, Integer> pair : clusterPolicy.getFunctions()) {
+                    Collection<Pair<Guid, Integer>> functions = clusterPolicy.getFunctions();
+                    if (functions == null) {
+                        break;
+                    }
+                    for (Pair<Guid, Integer> pair : functions) {
                         if (pair.getFirst().equals(policyUnitId)) {
                             list.add(clusterPolicy.getName());
                             break;
