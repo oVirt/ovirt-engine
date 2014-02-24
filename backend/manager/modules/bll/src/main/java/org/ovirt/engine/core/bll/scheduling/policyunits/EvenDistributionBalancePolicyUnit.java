@@ -146,7 +146,8 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
                 return p.getUsageCpuPercent() >= highUtilization
                         && p.getCpuOverCommitTimestamp() != null
                         && (new Date().getTime() - p.getCpuOverCommitTimestamp().getTime())
-                        >= cpuOverCommitDurationMinutes * 1000L * 60L;
+                        >= cpuOverCommitDurationMinutes * 1000L * 60L
+                        && p.getVmCount() > 0;
             }
         });
         Collections.sort(overUtilizedHosts, new ReverseComparator(new VdsCpuUsageComparator()));

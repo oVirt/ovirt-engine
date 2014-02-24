@@ -271,7 +271,8 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
                 return p.getUsageCpuPercent() <= lowUtilization
                         && p.getCpuOverCommitTimestamp() != null
                         && (new Date().getTime() - p.getCpuOverCommitTimestamp().getTime()) >=
-                        cpuOverCommitDurationMinutes * 60L * 1000L;
+                        cpuOverCommitDurationMinutes * 60L * 1000L
+                        && p.getVmCount() > 0;
             }
         });
         // The order of sorting will be from smallest to biggest. The vm will be
