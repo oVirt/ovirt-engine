@@ -45,7 +45,9 @@ public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extend
         if (mGroup == null && !getGroupId().equals(Guid.Empty)) {
             DbGroup dbGroup = DbFacade.getInstance().getDbGroupDao().get(getGroupId());
             Directory directory = DirectoryManager.getInstance().getDirectory(dbGroup.getDomain());
-            mGroup = directory.findGroup(dbGroup.getExternalId());
+            if (directory != null) {
+                mGroup = directory.findGroup(dbGroup.getExternalId());
+            }
         }
         return mGroup;
     }
