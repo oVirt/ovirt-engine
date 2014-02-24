@@ -35,7 +35,6 @@ import com.woorea.openstack.quantum.model.NetworkForCreate;
 import com.woorea.openstack.quantum.model.Networks;
 import com.woorea.openstack.quantum.model.Port;
 import com.woorea.openstack.quantum.model.Subnet;
-import com.woorea.openstack.quantum.model.SubnetForCreate;
 import com.woorea.openstack.quantum.model.Subnets;
 
 public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
@@ -154,12 +153,14 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     @Override
     public void addSubnet(ExternalSubnet subnet) {
         com.woorea.openstack.quantum.model.Network externalNetwork = getExternalNetwork(subnet.getExternalNetwork());
-        SubnetForCreate subnetForCreate = new SubnetForCreate();
+        Subnet subnetForCreate = new Subnet();
         subnetForCreate.setCidr(subnet.getCidr());
-        subnetForCreate.setIpVersion(subnet.getIpVersion() == IpVersion.IPV6 ? 6 : 4);
+        subnetForCreate.setIpversion(subnet.getIpVersion() == IpVersion.IPV6
+                ? Subnet.IpVersion.IPV6 : Subnet.IpVersion.IPV4);
         subnetForCreate.setName(subnet.getName());
         subnetForCreate.setNetworkId(externalNetwork.getId());
         subnetForCreate.setTenantId(externalNetwork.getTenantId());
+        subnetForCreate.setEnableDHCP(true);
 
         try {
             getClient().subnets().create(subnetForCreate).execute();
