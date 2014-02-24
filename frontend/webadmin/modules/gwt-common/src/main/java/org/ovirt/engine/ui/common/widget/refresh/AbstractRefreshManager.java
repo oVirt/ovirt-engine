@@ -208,7 +208,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
 
     @Override
     public void fireEvent(GwtEvent<?> event) {
-        eventBus.fireEvent(event);
+        eventBus.fireEventFromSource(event, modelProvider.getModel());
     }
 
 }

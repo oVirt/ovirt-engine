@@ -65,7 +65,8 @@ public class SubTabHostInterfacePresenter extends AbstractSubTabPresenter<VDS, H
         registerHandler(getEventBus().addHandler(ManualRefreshEvent.getType(), new ManualRefreshHandler() {
             @Override
             public void onManualRefresh(ManualRefreshEvent event) {
-                if (SubTabHostInterfacePresenter.this.isVisible()) {
+                if (SubTabHostInterfacePresenter.this.isVisible()
+                        && SubTabHostInterfacePresenter.this.getModelProvider().getModel().equals(event.getSource())) {
                     getView().removeContent();
                 }
             }
