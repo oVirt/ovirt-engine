@@ -35,7 +35,6 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mVerbs.add("DATACENTER");
         mVerbs.add("TYPE");
         mVerbs.add("QUOTA");
-        mVerbs.add("HOST");
         mVerbs.add("ID");
         // Building the autoCompletion Dict
         buildCompletions();
