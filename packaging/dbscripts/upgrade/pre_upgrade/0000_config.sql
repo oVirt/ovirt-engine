@@ -159,11 +159,11 @@ select fn_db_add_config_value('HighUtilizationForPowerSave','75','general');
 select fn_db_add_config_value('HostPreparingForMaintenanceIdleTime', '300', 'general');
 select fn_db_add_config_value('HostTimeDriftInSec','300','general');
 select fn_db_add_config_value('HotPlugEnabled','false','3.0');
-select fn_db_add_config_value('HotPlugCpuEnabled','{\"x86_64\":\"false\",\"ppc64\":\"false\"}','3.0');
-select fn_db_add_config_value('HotPlugCpuEnabled','{\"x86_64\":\"false\",\"ppc64\":\"false\"}','3.1');
-select fn_db_add_config_value('HotPlugCpuEnabled','{\"x86_64\":\"false\",\"ppc64\":\"false\"}','3.2');
-select fn_db_add_config_value('HotPlugCpuEnabled','{\"x86_64\":\"false\",\"ppc64\":\"false\"}','3.3');
-select fn_db_add_config_value('HotPlugCpuEnabled','{\"x86_64\":\"true\",\"ppc64\":\"false\"}','3.4');
+select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.0');
+select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.1');
+select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.2');
+select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.3');
+select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"true","ppc64":"false"}','3.4');
 select fn_db_add_config_value('MigrationSupportForNativeUsb','false','3.0');
 select fn_db_add_config_value('MigrationSupportForNativeUsb','false','3.1');
 select fn_db_add_config_value('NetworkLinkingSupported','false','3.0');
@@ -909,6 +909,7 @@ select fn_db_delete_config_value('DocsURL','general');
 select fn_db_delete_config_value('VirtIoScsiUnsupportedOsList','general');
 select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.0');
 select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.1');
+select fn_db_delete_config_value('HotPlugCpuEnabled','3.0,3.1,3.2,3.3,3.4');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
