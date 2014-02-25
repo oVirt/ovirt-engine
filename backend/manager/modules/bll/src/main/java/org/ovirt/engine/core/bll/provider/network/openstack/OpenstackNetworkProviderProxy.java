@@ -148,6 +148,8 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
                 : IpVersion.IPV4);
         s.setName(subnet.getName());
         s.setExternalNetwork(network);
+        s.setGateway(subnet.getGw());
+        s.setDnsServers(subnet.getDnsNames());
         return s;
     }
 
@@ -160,6 +162,9 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
         subnetForCreate.setName(subnet.getName());
         subnetForCreate.setNetworkId(externalNetwork.getId());
         subnetForCreate.setTenantId(externalNetwork.getTenantId());
+        subnetForCreate.setEnableDHCP(true);
+        subnetForCreate.setGw(subnet.getGateway());
+        subnetForCreate.setDnsNames(subnet.getDnsServers());
 
         try {
             getClient().subnets().create(subnetForCreate).execute();

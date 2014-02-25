@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
@@ -23,6 +24,10 @@ public class ExternalSubnet extends IVdcQueryable implements Serializable, Namea
 
     @NotNull(groups = { RemoveEntity.class })
     private ProviderNetwork externalNetwork;
+
+    private String gateway;
+
+    private List<String> dnsServers;
 
     public String getId() {
         return id;
@@ -70,6 +75,22 @@ public class ExternalSubnet extends IVdcQueryable implements Serializable, Namea
         this.externalNetwork = externalNetwork;
     }
 
+    public String getGateway() {
+        return gateway;
+    }
+
+    public void setGateway(String gateway) {
+        this.gateway = gateway;
+    }
+
+    public List<String> getDnsServers() {
+        return dnsServers;
+    }
+
+    public void setDnsServers(List<String> dnsServers) {
+        this.dnsServers = dnsServers;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -83,6 +104,10 @@ public class ExternalSubnet extends IVdcQueryable implements Serializable, Namea
                 .append(getIpVersion())
                 .append(", externalNetwork=")
                 .append(getExternalNetwork())
+                .append(", gateway=")
+                .append(getGateway())
+                .append(", dnsServers=")
+                .append(getDnsServers())
                 .append("]");
         return builder.toString();
     }
@@ -96,6 +121,8 @@ public class ExternalSubnet extends IVdcQueryable implements Serializable, Namea
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getIpVersion() == null) ? 0 : getIpVersion().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+        result = prime * result + ((getGateway() == null) ? 0 : getGateway().hashCode());
+        result = prime * result + ((getDnsServers() == null) ? 0 : getDnsServers().hashCode());
         return result;
     }
 
@@ -140,6 +167,20 @@ public class ExternalSubnet extends IVdcQueryable implements Serializable, Namea
                 return false;
             }
         } else if (!getName().equals(other.getName())) {
+            return false;
+        }
+        if (getGateway() == null) {
+            if (other.getGateway() != null) {
+                return false;
+            }
+        } else if (!getGateway().equals(other.getGateway())) {
+            return false;
+        }
+        if (getDnsServers() == null) {
+            if (other.getDnsServers() != null) {
+                return false;
+            }
+        } else if (!getDnsServers().equals(other.getDnsServers())) {
             return false;
         }
         return true;
