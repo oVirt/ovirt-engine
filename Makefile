@@ -317,7 +317,7 @@ validations:	generated-files
 	if [ "$(BUILD_VALIDATION)" != 0 ]; then \
 		build/shell-check.sh && \
 		build/python-check.sh && \
-		build/dbscripts/check_for_duplicate_upgrade_scripts.sh; \
+		build/dbscripts-duplicate_upgrade_scripts.sh; \
 	fi
 
 install_artifacts:
