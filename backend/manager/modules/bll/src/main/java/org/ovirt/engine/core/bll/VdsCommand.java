@@ -49,10 +49,14 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     }
 
     protected void initializeVds() {
+        initializeVds(false);
+    }
+
+    protected void initializeVds(boolean newHost) {
         Backend.getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.RemoveVds,
-                        new RemoveVdsVDSCommandParameters(getVdsId()));
+                        new RemoveVdsVDSCommandParameters(getVdsId(), newHost));
         Backend.getInstance().getResourceManager()
                 .RunVdsCommand(VDSCommandType.AddVds, new AddVdsVDSCommandParameters(getVdsId()));
     }

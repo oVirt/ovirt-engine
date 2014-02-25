@@ -8,7 +8,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class AddVdsVDSCommand<P extends AddVdsVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
     public AddVdsVDSCommand(P parameters) {
-        super(parameters);
+        super(parameters, true);
     }
 
     @Override

@@ -8,9 +8,15 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 public abstract class VdsIdVDSCommandBase<P extends VdsIdVDSCommandParametersBase> extends VDSCommandBase<P> {
     protected VdsManager _vdsManager;
 
-    public VdsIdVDSCommandBase(P parameters) {
+    public VdsIdVDSCommandBase(P parameters, boolean newHost) {
         super(parameters);
-        _vdsManager = ResourceManager.getInstance().GetVdsManager(parameters.getVdsId());
+        if (!newHost) {
+            _vdsManager = ResourceManager.getInstance().GetVdsManager(parameters.getVdsId());
+        }
+    }
+
+    public VdsIdVDSCommandBase(P parameters) {
+        this(parameters, false);
     }
 
     protected Guid getVdsId() {

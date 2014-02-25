@@ -212,7 +212,11 @@ public class ResourceManager {
     }
 
     public void RemoveVds(Guid vdsId) {
-        VdsManager vdsManager = GetVdsManager(vdsId);
+        RemoveVds(vdsId, false);
+    }
+
+    public void RemoveVds(Guid vdsId, boolean newHost) {
+        VdsManager vdsManager = GetVdsManager(vdsId, newHost);
         if (vdsManager != null) {
             vdsManager.dispose();
             vdsManagersDict.remove(vdsId);
@@ -220,9 +224,15 @@ public class ResourceManager {
     }
 
     public VdsManager GetVdsManager(Guid vdsId) {
+        return GetVdsManager(vdsId, false);
+    }
+
+    public VdsManager GetVdsManager(Guid vdsId, boolean newHost) {
         VdsManager vdsManger = vdsManagersDict.get(vdsId);
         if (vdsManger == null) {
-            log.errorFormat("Cannot get vdsManager for vdsid={0}", vdsId);
+            if (!newHost) {
+                log.errorFormat("Cannot get vdsManager for vdsid={0}", vdsId);
+            }
         }
         return vdsManger;
     }
