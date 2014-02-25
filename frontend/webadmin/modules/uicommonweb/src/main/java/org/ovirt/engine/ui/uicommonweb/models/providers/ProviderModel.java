@@ -54,7 +54,6 @@ public class ProviderModel extends Model {
     private EntityModel name = new EntityModel();
     private EntityModel description = new EntityModel();
     private EntityModel url = new EntityModel();
-    private ListModel apiVersion = new ListModel();
     private EntityModel requiresAuthentication = new EntityModel();
     private EntityModel username = new EntityModel();
     private EntityModel password = new EntityModel();
@@ -87,10 +86,6 @@ public class ProviderModel extends Model {
 
     public EntityModel getUrl() {
         return url;
-    }
-
-    public ListModel getApiVersion() {
-        return apiVersion;
     }
 
     public EntityModel getRequiresAuthentication() {
@@ -197,7 +192,6 @@ public class ProviderModel extends Model {
                 }
 
                 boolean isNeutron = isTypeOpenStackNetwork();
-                getApiVersion().setIsAvailable(isNeutron);
                 getNeutronAgentModel().setIsAvailable(isNeutron);
 
                 boolean requiresAuth = isTypeRequiresAuthentication();
@@ -207,13 +201,11 @@ public class ProviderModel extends Model {
         });
 
         getNeutronAgentModel().setIsAvailable(false);
-        getApiVersion().setIsAvailable(false);
         getTenantName().setIsAvailable(false);
 
         List<ProviderType> providerTypes = new ArrayList<ProviderType>(Arrays.asList(ProviderType.values()));
         Collections.sort(providerTypes, new Linq.ProviderTypeComparator());
         getType().setItems(providerTypes);
-        getApiVersion().setItems(Arrays.asList("v2.0")); //$NON-NLS-1$
 
         UICommand tempVar = new UICommand(CMD_SAVE, this);
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
