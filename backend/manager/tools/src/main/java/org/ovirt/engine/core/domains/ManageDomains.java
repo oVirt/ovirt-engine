@@ -485,9 +485,8 @@ public class ManageDomains {
                     }
                 } catch (Exception ex) {
                     String msg = String.format(
-                            "Cannot resolve LDAP server hostname '%s'. Details: %s,",
-                            server,
-                            ex.getMessage());
+                            "Cannot resolve LDAP server hostname '%s'.",
+                            server);
                     log.warn(msg, ex);
                     System.err.println(msg);
                 }
