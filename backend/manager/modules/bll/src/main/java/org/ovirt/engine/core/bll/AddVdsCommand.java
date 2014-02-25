@@ -125,7 +125,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                initializeVds();
+                initializeVds(true);
                 AlertIfPowerManagementNotConfigured(getParameters().getVdsStaticData());
                 TestVdsPowerManagementStatus(getParameters().getVdsStaticData());
                 setSucceeded(true);
@@ -376,8 +376,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
         catch (Exception e) {
             log.warnFormat(
-                    "Failed to initiate vdsm-id request on host",
-                    e
+                    "Failed to initiate vdsm-id request on host with message {0}",
+                    e.getMessage()
                     );
             return null;
         }
