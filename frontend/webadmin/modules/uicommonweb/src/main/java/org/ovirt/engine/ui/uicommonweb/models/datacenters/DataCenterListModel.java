@@ -894,8 +894,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             }
         }
 
-        getRecoveryStorageCommand().setIsExecutionAllowed(items != null && items.size() == 1
-                && !items.iterator().next().isLocal());
+        getRecoveryStorageCommand().setIsExecutionAllowed(storagePoolItem != null && items.size() == 1
+                && !storagePoolItem.isLocal() && storagePoolItem.getStatus() != StoragePoolStatus.Uninitialized);
 
         // System tree dependent actions.
         boolean isAvailable =
