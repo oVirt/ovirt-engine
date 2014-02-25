@@ -63,6 +63,7 @@ public abstract class DynamicTabContainerPresenter<V extends TabView & DynamicTa
     }
 
     @Override
+    // TODO-GWT: override setInSlot to get hold of TabContentProxy in case of Presenter
     public void setInSlot(Object slot, PresenterWidget<?> content) {
         super.setInSlot(slot, content);
 

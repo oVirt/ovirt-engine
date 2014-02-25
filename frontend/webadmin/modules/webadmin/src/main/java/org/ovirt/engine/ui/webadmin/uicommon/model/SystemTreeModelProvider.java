@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.gwtplatform.dispatch.annotation.GenEvent;
+
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
@@ -101,11 +102,11 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
         return selectionModel;
     }
 
+    // TODO-GWT: https://code.google.com/p/google-web-toolkit/issues/detail?id=6310
     public void setSelectedItem(Guid id) {
         display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED); // open small GWT workaround
         selectionModel.setSelected(getModel().getItemById(id), true);
         Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
             @Override
             public void execute() {
                 display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION); // close small GWT workaround
