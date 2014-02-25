@@ -575,10 +575,11 @@ done << __EOF__
 %{engine_ear}/userportal.war/WEB-INF/lib/branding.jar
 %{engine_ear}/webadmin.war/WEB-INF/lib/branding.jar
 %{engine_ear}/welcome.war/WEB-INF/lib/branding.jar
-%{engine_jboss_modules}/org/ovirt/engine/core/authentication/main/authentication.jar
+%{engine_jboss_modules}/org/ovirt/engine/core/aaa/main/aaa.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/common/main/common.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/compat/main/compat.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/dal/main/dal.jar
+%{engine_jboss_modules}/org/ovirt/engine/core/extension-manager/main/extension-manager.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/searchbackend/main/searchbackend.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/tools/main/tools.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/utils/main/utils.jar
@@ -778,10 +779,11 @@ fi
 %{engine_data}/branding/ovirt.brand/
 %{engine_etc}/branding/00-ovirt.brand
 %{engine_etc}/engine.conf.d/
-%{engine_java}/authentication.jar
+%{engine_java}/aaa.jar
 %{engine_java}/branding.jar
 %{engine_java}/common.jar
 %{engine_java}/compat.jar
+%{engine_java}/extension-manager.jar
 %{engine_java}/utils.jar
 
 #
