@@ -3,7 +3,7 @@ DBFUNC_COMMON_DBSCRIPTS_DIR="${DBFUNC_COMMON_DBSCRIPTS_DIR:-$(dirname "$0")}"
 
 . "${DBFUNC_COMMON_DBSCRIPTS_DIR}/dbfunc-base.sh"
 
-#DBFUNC_COMMON_MD5DIR=
+#DBFUNC_COMMON_MD5FILE=
 
 dbfunc_common_hook_init_insert_data() {
 	return 0
@@ -47,114 +47,25 @@ dbfunc_common_schema_drop() {
 	dbfunc_psql_die --command="${statement}" > /dev/null
 }
 
-dbfunc_common_init_insert_data() {
-	dbfunc_common_hook_init_insert_data
+dbfunc_common_schema_apply() {
+	# check database connection
+	dbfunc_psql_die --command="select 1;" > /dev/null
+
+	echo "Creating schema ${DBFUNC_DB_USER}@${DBFUNC_DB_HOST}:${DBFUNC_DB_PORT}/${DBFUNC_DB_DATABASE}"
+	if [ "$(dbfunc_psql_statement_parsable "
+                select count(*) as count
+                from information_schema.tables
+                where table_name = 'schema_version'
+	")" -eq 0 ]; then
+		echo "Creating fresh schema"
+		_dbfunc_common_schema_create
+	fi
+	_dbfunc_common_schema_upgrade
 }
 
-dbfunc_common_upgrade() {
-
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/upgrade/03_02_0000_set_version.sql" > /dev/null
-
-	local files="$(_dbfunc_common_get_files "upgrade" 1)"
-	if [ -n "${files}" ]; then
-		local state="FAILED"
-		local comment=""
-		local updated=0
-		_dbfunc_common_validate_version_uniqueness
-		if [ -z "${DBFUNC_COMMON_MD5DIR}" ] || ! _dbfunc_common_is_view_or_sp_changed; then
-			echo "upgrade script detected a change in Config, View or Stored Procedure..."
-			_dbfunc_common_run_pre_upgrade
-			updated=1
-		fi
-
-		# get current version
-		local current="$(_dbfunc_common_get_current_version)"
-		# we should remove leading blank (from select result) and zero in order not to treat number as octal
-		local last="$(expr substr "${current}" 3 7)"
-		local file
-		echo "${files}" | while read file; do
-			before="$(_dbfunc_common_get_db_time)"
-			checksum="$(md5sum "${file}" | cut -d " " -f1)"
-			ver="$(_dbfunc_common_get_file_version "${file}")"
-			if [ "${ver}" -gt "${current}" ] ; then
-				# we should remove leading zero in order not to treat number as octal
-				local xver="$(expr substr "${ver}" 2 7)"
-				# taking major revision , i.e 03010000=>301
-				local xverMajor="$(expr substr "${xver}" 1 3)"
-				local lastMajor="$(expr substr "${last}" 1 3)"
-
-				# check for gaps in upgrade
-				# check gaps only for identical major revisions
-				if [ "${xverMajor}" -eq "${lastMajor}" ]; then
-					if [ $((${xver} - ${last})) -gt 10 ]; then
-						_dbfunc_common_set_last_version
-						die "Illegal script version number ${ver},version should be in max 10 gap from last installed version: 0${last}
-Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and run the upgrade script."
-					fi
-				fi
-				# check if script was already installed with other version name.
-				local installed_version="$(_dbfunc_common_get_installed_version "${checksum}")"
-				if [ -n "${installed_version}" ]; then
-					echo "Skipping upgrade script ${file}, already installed by ${installed_version}"
-					state="SKIPPED"
-					after="$(_dbfunc_common_get_db_time)"
-					last="${xver}"
-					comment="Installed already by ${installed_version}"
-				else
-					# force pre upgrade to run in case no md5 change was
-					# found but we still upgrade, like in db restore.
-					if [ "${updated}" = 0 ]; then
-						_dbfunc_common_run_pre_upgrade
-						updated=1
-					fi
-					_dbfunc_common_run_required_scripts "${file}"
-					_dbfunc_common_run_file "${file}"
-					code=$?
-					if [ "${code}" -eq 0 ]; then
-						state="INSTALLED"
-						after=$(_dbfunc_common_get_db_time)
-						last=$xver
-						comment=""
-					else
-						_dbfunc_common_set_last_version
-						exit "${code}"
-					fi
-				fi
-				dbfunc_psql_die --command="
-					insert into schema_version(
-						version,
-						script,
-						checksum,
-						installed_by,
-						started_at,
-						ended_at,
-						state,
-						current,
-						comment
-					)
-					values (
-						trim('${ver}'),
-						'$(echo "${file}" | sed "s#^${DBFUNC_COMMON_DBSCRIPTS_DIR}/##")',
-						'${checksum}',
-						'${DBFUNC_DB_USER}',
-						cast(trim('${before}') as timestamp),
-						cast(trim('${after}') as timestamp),
-						'${state}',
-						false,
-						'${comment}'
-					);
-				" > /dev/null
-			fi
-		done || exit $?
-		_dbfunc_common_set_last_version
-
-		# restore views & SPs if dropped
-		if [ "${updated}" -eq 1 ]; then
-			_dbfunc_common_run_post_upgrade
-		else
-			echo "database is up to date."
-		fi
-	fi
+dbfunc_common_schema_refresh() {
+	_dbfunc_common_schema_refresh_drop
+	_dbfunc_common_schema_refresh_create
 }
 
 # gets the configuration value of the given option name and version.
@@ -172,38 +83,6 @@ dbfunc_common_config_get_value() {
 				version='${version}'
 		"
 	)"
-}
-
-#drops views before upgrade or refresh operations
-dbfunc_common_views_drop() {
-	# common stored procedures are executed first (for new added functions to be valid)
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
-	dbfunc_psql_die --command="select * from generate_drop_all_views_syntax();" | \
-		dbfunc_psql_die > /dev/null
-}
-
-#drops sps before upgrade or refresh operations
-dbfunc_common_sps_drop() {
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
-	local statement
-	statement="$(
-		dbfunc_psql_die --command="select * from generate_drop_all_functions_syntax();"
-	)" || exit 1
-	dbfunc_psql_die --command="${statement}" > /dev/null
-
-	# recreate generic functions
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_functions.sql" > /dev/null
-}
-
-#refreshes sps
-dbfunc_common_sps_refresh() {
-	echo "Creating stored procedures..."
-	local file
-	find "${DBFUNC_COMMON_DBSCRIPTS_DIR}" -name '*sp.sql' | sort | while read file; do
-		echo "Creating stored procedures from ${file}..."
-		dbfunc_psql_die --file="${file}" > /dev/null
-	done || exit $?
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 }
 
 #unlocks the given VM/Template and its disks or a given disk
@@ -335,7 +214,7 @@ dbfunc_common_entity_query() {
 	fi
 }
 
-dbfunc_common_language_create() {
+_dbfunc_common_language_create() {
 	local lang="$1"
 
 	if [ "$(
@@ -349,10 +228,180 @@ dbfunc_common_language_create() {
 	fi
 }
 
+_dbfunc_common_schema_refresh_drop() {
+	_dbfunc_common_views_drop
+	_dbfunc_common_sps_drop
+}
+
+_dbfunc_common_schema_refresh_create() {
+	dbfunc_common_hook_views_refresh
+	_dbfunc_common_sps_refresh
+}
+
+_dbfunc_common_schema_create() {
+
+	_dbfunc_common_language_create "plpgsql"
+
+	#set database min error level
+	dbfunc_psql_die --command="ALTER DATABASE \"${DBFUNC_DB_DATABASE}\" SET client_min_messages=ERROR;" > /dev/null
+
+	echo "Creating tables..."
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_tables.sql" > /dev/null
+
+	echo "Creating functions..."
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_functions.sql" > /dev/null
+
+	echo "Creating common functions..."
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
+
+	#inserting initial data
+	dbfunc_common_hook_init_insert_data
+
+	#remove checksum file in clean install in order to run views/sp creation
+	[ -n "${DBFUNC_COMMON_MD5FILE}" ] && rm -f "${DBFUNC_COMMON_MD5FILE}" > /dev/null 2>&1
+}
+
+_dbfunc_common_schema_upgrade() {
+
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/upgrade/03_02_0000_set_version.sql" > /dev/null
+
+	local files="$(_dbfunc_common_get_files "upgrade" 1)"
+	if [ -n "${files}" ]; then
+		local state="FAILED"
+		local comment=""
+		local updated=0
+		_dbfunc_common_validate_version_uniqueness
+		if [ -z "${DBFUNC_COMMON_MD5FILE}" ] || ! _dbfunc_common_is_view_or_sp_changed; then
+			echo "upgrade script detected a change in Config, View or Stored Procedure..."
+			_dbfunc_common_run_pre_upgrade
+			updated=1
+		fi
+
+		# get current version
+		local current="$(_dbfunc_common_get_current_version)"
+		# we should remove leading blank (from select result) and zero in order not to treat number as octal
+		local last="$(expr substr "${current}" 3 7)"
+		local file
+		echo "${files}" | while read file; do
+			before="$(_dbfunc_common_get_db_time)"
+			checksum="$(md5sum "${file}" | cut -d " " -f1)"
+			ver="$(_dbfunc_common_get_file_version "${file}")"
+			if [ "${ver}" -gt "${current}" ] ; then
+				# we should remove leading zero in order not to treat number as octal
+				local xver="$(expr substr "${ver}" 2 7)"
+				# taking major revision , i.e 03010000=>301
+				local xverMajor="$(expr substr "${xver}" 1 3)"
+				local lastMajor="$(expr substr "${last}" 1 3)"
+
+				# check for gaps in upgrade
+				# check gaps only for identical major revisions
+				if [ "${xverMajor}" -eq "${lastMajor}" ]; then
+					if [ $((${xver} - ${last})) -gt 10 ]; then
+						_dbfunc_common_set_last_version
+						die "Illegal script version number ${ver},version should be in max 10 gap from last installed version: 0${last}
+Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and run the upgrade script."
+					fi
+				fi
+				# check if script was already installed with other version name.
+				local installed_version="$(_dbfunc_common_get_installed_version "${checksum}")"
+				if [ -n "${installed_version}" ]; then
+					echo "Skipping upgrade script ${file}, already installed by ${installed_version}"
+					state="SKIPPED"
+					after="$(_dbfunc_common_get_db_time)"
+					last="${xver}"
+					comment="Installed already by ${installed_version}"
+				else
+					# force pre upgrade to run in case no md5 change was
+					# found but we still upgrade, like in db restore.
+					if [ "${updated}" = 0 ]; then
+						_dbfunc_common_run_pre_upgrade
+						updated=1
+					fi
+					_dbfunc_common_run_required_scripts "${file}"
+					_dbfunc_common_run_file "${file}"
+					code=$?
+					if [ "${code}" -eq 0 ]; then
+						state="INSTALLED"
+						after=$(_dbfunc_common_get_db_time)
+						last=$xver
+						comment=""
+					else
+						_dbfunc_common_set_last_version
+						exit "${code}"
+					fi
+				fi
+				dbfunc_psql_die --command="
+					insert into schema_version(
+						version,
+						script,
+						checksum,
+						installed_by,
+						started_at,
+						ended_at,
+						state,
+						current,
+						comment
+					)
+					values (
+						trim('${ver}'),
+						'$(echo "${file}" | sed "s#^${DBFUNC_COMMON_DBSCRIPTS_DIR}/##")',
+						'${checksum}',
+						'${DBFUNC_DB_USER}',
+						cast(trim('${before}') as timestamp),
+						cast(trim('${after}') as timestamp),
+						'${state}',
+						false,
+						'${comment}'
+					);
+				" > /dev/null
+			fi
+		done || exit $?
+		_dbfunc_common_set_last_version
+
+		# restore views & SPs if dropped
+		if [ "${updated}" -eq 1 ]; then
+			_dbfunc_common_run_post_upgrade
+		else
+			echo "database is up to date."
+		fi
+	fi
+}
+
+#drops views before upgrade or refresh operations
+_dbfunc_common_views_drop() {
+	# common stored procedures are executed first (for new added functions to be valid)
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
+	dbfunc_psql_die --command="select * from generate_drop_all_views_syntax();" | \
+		dbfunc_psql_die > /dev/null
+}
+
+#drops sps before upgrade or refresh operations
+_dbfunc_common_sps_drop() {
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
+	local statement
+	statement="$(
+		dbfunc_psql_die --command="select * from generate_drop_all_functions_syntax();"
+	)" || exit 1
+	dbfunc_psql_die --command="${statement}" > /dev/null
+
+	# recreate generic functions
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_functions.sql" > /dev/null
+}
+
+#refreshes sps
+_dbfunc_common_sps_refresh() {
+	echo "Creating stored procedures..."
+	local file
+	find "${DBFUNC_COMMON_DBSCRIPTS_DIR}" -name '*sp.sql' | sort | while read file; do
+		echo "Creating stored procedures from ${file}..."
+		dbfunc_psql_die --file="${file}" > /dev/null
+	done || exit $?
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
+}
+
 _dbfunc_common_run_pre_upgrade() {
 	#Dropping all views & sps
-	dbfunc_common_views_drop
-	dbfunc_common_sps_drop
+	_dbfunc_common_schema_refresh_drop
 	# common stored procedures are executed first (for new added functions to be valid)
 	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 	#update sequence numers
@@ -368,8 +417,7 @@ _dbfunc_common_run_pre_upgrade() {
 
 _dbfunc_common_run_post_upgrade() {
 	#Refreshing  all views & sps & run post-upgrade scripts
-	dbfunc_common_hook_views_refresh
-	dbfunc_common_sps_refresh
+	_dbfunc_common_schema_refresh_create
 	#Running post-upgrade scripts
 	_dbfunc_common_psql_statements_in_dir 'post_upgrade'
 	#run custom materialized views if exists
@@ -475,23 +523,22 @@ _dbfunc_common_get_files() {
 
 _dbfunc_common_is_view_or_sp_changed() {
 	local files="$(_dbfunc_common_get_files "upgrade" 3)"
-	local md5sum_file="${DBFUNC_COMMON_MD5DIR}/.${DBFUNC_DB_DATABASE}.scripts.md5"
-	local md5sum_tmp_file="${md5sum_file}.tmp"
+	local md5sum_tmp_file="${DBFUNC_COMMON_MD5FILE}.tmp"
 
 	{
 		_dbfunc_common_get_files "upgrade" 3
 		find "${DBFUNC_COMMON_DBSCRIPTS_DIR}" -name 'create_*views.sql' -or -name '*_sp.sql'
-	} | sort | uniq | xargs -d '\n' md5sum > "${md5sum_tmp_file}"
+	} | sort | uniq | xargs -d '\n' md5sum > "${DBFUNC_COMMON_MD5FILE}.tmp"
 
-	diff -s -q "${md5sum_file}" "${md5sum_tmp_file}" > /dev/null 2>&1
+	diff -s -q "${DBFUNC_COMMON_MD5FILE}" "${DBFUNC_COMMON_MD5FILE}.tmp" > /dev/null 2>&1
 	result=$?
 
 	#  0 - identical , 1 - differ , 2 - error
 	if [ $result -eq 0 ] ; then
-		rm -f "${md5sum_tmp_file}"
+		rm -f "${DBFUNC_COMMON_MD5FILE}.tmp"
 	else
 		# there is a diff or md5 file does not exist
-		mv -f "${md5sum_tmp_file}" "${md5sum_file}"
+		mv -f "${DBFUNC_COMMON_MD5FILE}.tmp" "${DBFUNC_COMMON_MD5FILE}"
 	fi
 	return $result
 }

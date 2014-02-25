@@ -161,13 +161,9 @@ class FileLocations(object):
         OVIRT_ENGINE_DATADIR,
         'dbscripts',
     )
-    OVIRT_ENGINE_DB_CREATE = os.path.join(
+    OVIRT_ENGINE_DB_SCHMA_TOOL = os.path.join(
         OVIRT_ENGINE_DB_DIR,
-        'create_schema.sh',
-    )
-    OVIRT_ENGINE_DB_UPGRADE = os.path.join(
-        OVIRT_ENGINE_DB_DIR,
-        'upgrade.sh',
+        'schema.sh',
     )
     OVIRT_ENGINE_DB_BACKUP_DIR = os.path.join(
         OVIRT_ENGINE_LOCALSTATEDIR,

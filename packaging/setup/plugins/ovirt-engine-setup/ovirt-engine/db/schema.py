@@ -216,69 +216,24 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         name=osetupcons.Stages.DB_SCHEMA,
-        condition=lambda self: self.environment[
-            osetupcons.DBEnv.NEW_DATABASE
-        ],
-    )
-    def _miscInstall(self):
-        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-            self.SchemaTransaction(
-                parent=self,
-            )
-        )
-
-        self.logger.info(_('Creating Engine database schema'))
-        args = [
-            osetupcons.FileLocations.OVIRT_ENGINE_DB_CREATE,
-            '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
-            '-s', self.environment[osetupcons.DBEnv.HOST],
-            '-p', str(self.environment[osetupcons.DBEnv.PORT]),
-            '-d', self.environment[osetupcons.DBEnv.DATABASE],
-            '-u', self.environment[osetupcons.DBEnv.USER],
-        ]
-        if self.environment[
-            osetupcons.CoreEnv.DEVELOPER_MODE
-        ]:
-            if not os.path.exists(
-                osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR
-            ):
-                os.makedirs(
-                    osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR
-                )
-            args.extend(
-                [
-                    '-m',
-                    osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR,
-                ]
-            )
-        self.execute(
-            args=args,
-            envAppend={
-                'DBFUNC_DB_PGPASSFILE': self.environment[
-                    osetupcons.DBEnv.PGPASS_FILE
-                ]
-            },
-        )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
-        name=osetupcons.Stages.DB_SCHEMA,
-        condition=lambda self: not self.environment[
-            osetupcons.DBEnv.NEW_DATABASE
-        ],
         after=(
             osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
         ),
     )
-    def _miscUpgrade(self):
-        dbovirtutils = database.OvirtUtils(
-            plugin=self,
-            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
-        )
-        backupFile = dbovirtutils.backup(
-            dir=osetupcons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
-            prefix=osetupcons.Const.ENGINE_DB_BACKUP_PREFIX,
-        )
+    def _misc(self):
+        backupFile = None
+
+        if not self.environment[
+            osetupcons.DBEnv.NEW_DATABASE
+        ]:
+            dbovirtutils = database.OvirtUtils(
+                plugin=self,
+                dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            )
+            backupFile = dbovirtutils.backup(
+                dir=osetupcons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
+                prefix=osetupcons.Const.ENGINE_DB_BACKUP_PREFIX,
+            )
 
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             self.SchemaTransaction(
@@ -287,21 +242,15 @@ class Plugin(plugin.PluginBase):
             )
         )
 
-        #
-        # TODO
-        # rename database
-        # why do we need rename?
-        # consider doing that via python
-        #
-
-        self.logger.info(_('Updating Engine database schema'))
+        self.logger.info(_('Creating/refreshing Engine database schema'))
         args = [
-            osetupcons.FileLocations.OVIRT_ENGINE_DB_UPGRADE,
+            osetupcons.FileLocations.OVIRT_ENGINE_DB_SCHMA_TOOL,
             '-s', self.environment[osetupcons.DBEnv.HOST],
             '-p', str(self.environment[osetupcons.DBEnv.PORT]),
             '-u', self.environment[osetupcons.DBEnv.USER],
             '-d', self.environment[osetupcons.DBEnv.DATABASE],
             '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
+            '-c', 'apply',
         ]
         if self.environment[
             osetupcons.CoreEnv.DEVELOPER_MODE
@@ -315,7 +264,13 @@ class Plugin(plugin.PluginBase):
             args.extend(
                 [
                     '-m',
-                    osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR,
+                    os.path.join(
+                        osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR,
+                        '%s-%s.scripts.md5' % (
+                            self.environment[osetupcons.DBEnv.HOST],
+                            self.environment[osetupcons.DBEnv.DATABASE],
+                        ),
+                    ),
                 ]
             )
         self.execute(
