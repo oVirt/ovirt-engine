@@ -34,6 +34,7 @@ public class ExtensionManager {
     private static final String ENABLED = "ovirt.engine.extension.enabled";
     private static final String MODULE = "ovirt.engine.extension.module";
     private static final String CLASS = "ovirt.engine.extension.class";
+    private static final String ENGINE_EXTENSION_ENABLED = "ENGINE_EXTENSION_ENABLED_";
 
     public class ExtensionEntry {
         private File file;
@@ -115,8 +116,12 @@ public class ExtensionManager {
         return result;
     }
 
-    public void load(EngineLocalConfig config) throws ConfigurationException {
-        for (File directory : config.getExtensionsDirectories()) {
+    private ExtensionManager() {
+        load();
+    }
+
+    private void load() throws ConfigurationException {
+        for (File directory : EngineLocalConfig.getInstance().getExtensionsDirectories()) {
             load(directory);
         }
         activate();
@@ -203,7 +208,11 @@ public class ExtensionManager {
      * Activates the enabled configurations
      */
     private void activate() {
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
         for (ExtensionEntry entry : loadedEntries.values()) {
+            //Engine local config might override the enabled property of the configuration
+            // if a proper entry exists at the engine config.
+            entry.enabled = config.getBoolean(ENGINE_EXTENSION_ENABLED + entry.getName(), entry.enabled);
             if (entry.enabled) {
                 try {
                     entry.extension = (Extension) lookupService(

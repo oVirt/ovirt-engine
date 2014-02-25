@@ -31,8 +31,6 @@ import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.extensions.mgr.Extension.ExtensionProperties;
-import org.ovirt.engine.core.extensions.mgr.ExtensionManager;
-import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.exceptions.InitializationException;
@@ -86,7 +84,6 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             AuthenticationProfileRepository.getInstance().registerProfile(profile);
         }
 
-        ExtensionManager.getInstance().load(EngineLocalConfig.getInstance());
         AuthenticationProfileRepository.getInstance();
 
         UsersDomainsCacheManagerService.getInstance().init();
