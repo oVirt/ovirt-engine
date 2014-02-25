@@ -203,7 +203,8 @@ WHERE     ((a._create_date >
                           (SELECT     var_datetime
                             FROM          dwh_history_timekeeping AS history_timekeeping_1
                             WHERE      (var_name = 'lastSync')))) AND
-		   (a.is_bond is null OR
+		   (a.is_bond IS NULL OR
+		   a.is_bond = false OR
 		   (a.is_bond = true and a.name in (SELECT b.bond_name
 											FROM vds_interface AS b
 											where b.is_bond is null and b.vds_id = a.vds_id)));
