@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
 import org.ovirt.engine.core.bll.adbroker.LdapUserPasswordBaseParameters;
 import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
+import org.ovirt.engine.core.extensions.mgr.Extension.ExtensionProperties;
 
 /**
  * This authenticator implementation is a bridge between the new directory interface and the existing LDAP
@@ -28,6 +29,12 @@ public class ProvisionalAuthenticator extends PasswordAuthenticator {
     @Override
     public void init() {
         broker = LdapFactory.getInstance(getProfileName());
+        context.put(ExtensionProperties.AUTHOR, "The oVirt Project");
+        context.put(ExtensionProperties.EXTENSION_NAME, "Internal Kerberos/LDAP authentication (Built-in)");
+        context.put(ExtensionProperties.LICENSE, "ASL 2.0");
+        context.put(ExtensionProperties.HOME, "http://www.ovirt.org");
+        context.put(ExtensionProperties.VERSION, "N/A");
+
     }
 
 

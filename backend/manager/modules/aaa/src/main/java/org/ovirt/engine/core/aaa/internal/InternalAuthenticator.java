@@ -28,5 +28,10 @@ public class InternalAuthenticator extends PasswordAuthenticator {
 
     @Override
     public void init() {
+        context.put(ExtensionProperties.AUTHOR, "The oVirt Project");
+        context.put(ExtensionProperties.EXTENSION_NAME, "Internal Authentication (Built-in)");
+        context.put(ExtensionProperties.LICENSE, "ASL 2.0");
+        context.put(ExtensionProperties.HOME, "http://www.ovirt.org");
+        context.put(ExtensionProperties.VERSION, "N/A");
     }
 }

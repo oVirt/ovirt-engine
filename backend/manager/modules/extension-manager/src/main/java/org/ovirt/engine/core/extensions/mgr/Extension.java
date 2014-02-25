@@ -12,7 +12,10 @@ public interface Extension {
         CONFIGURATION,
         LICENSE,
         PROVIDES,
-        VERSION;
+        VERSION,
+        AUTHOR,
+        HOME,
+        EXTENSION_NAME;
     };
 
     /**

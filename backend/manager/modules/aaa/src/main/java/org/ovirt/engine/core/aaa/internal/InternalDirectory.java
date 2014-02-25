@@ -10,6 +10,7 @@ import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ExternalId;
+import org.ovirt.engine.core.extensions.mgr.Extension.ExtensionProperties;
 
 /**
  * This directory contains only the internal user as specified in the {@code AdminUser} configuration parameter.
@@ -105,6 +106,11 @@ public class InternalDirectory extends Directory {
     @Override
     public void init() {
         admin = new DirectoryUser(getProfileName(), ADMIN_ID, ADMIN_NAME);
+        context.put(ExtensionProperties.AUTHOR, "The oVirt Project");
+        context.put(ExtensionProperties.EXTENSION_NAME, "Internal Authorization (Built-in)");
+        context.put(ExtensionProperties.LICENSE, "ASL 2.0");
+        context.put(ExtensionProperties.HOME, "http://www.ovirt.org");
+        context.put(ExtensionProperties.VERSION, "N/A");
 
     }
 }
