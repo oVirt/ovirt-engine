@@ -7,10 +7,8 @@ import java.util.Set;
 
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
-public class SubnetMaskValidation implements IValidation
+public class SubnetMaskValidation extends RegexValidation
 {
-    private final static IpAddressValidation IP_VALIDATOR = new IpAddressValidation();
     private final static Set<Integer> CORRECT_RANGE = new HashSet<Integer>();
     private final static List<String> reasons = new ArrayList<String>();
 
@@ -28,9 +26,14 @@ public class SubnetMaskValidation implements IValidation
         reasons.add(ConstantsManager.getInstance().getConstants().subnetMaskIsNotValid());
     }
 
+    public SubnetMaskValidation() {
+        setExpression("^" + IpAddressValidation.IP_ADDRESS_REGEX + "$"); //$NON-NLS-1$ $NON-NLS-2$
+        setMessage(ConstantsManager.getInstance().getConstants().thisFieldMustContainSubnetInFormatMsg());
+    }
+
     @Override
     public ValidationResult validate(Object value) {
-        ValidationResult ipValidation = IP_VALIDATOR.validate(value);
+        ValidationResult ipValidation = super.validate(value);
         if (!ipValidation.getSuccess()) {
             return ipValidation;
         }
