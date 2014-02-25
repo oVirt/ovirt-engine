@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
@@ -107,6 +108,7 @@ public class RunVmValidator {
         return
                 validateVmProperties(vm, runVmParam.getCustomProperties(), messages) &&
                 validate(validateBootSequence(vm, runVmParam.getBootSequence(), getVmDisks(), activeIsoDomainId), messages) &&
+                validate(validateDisplayType(), messages) &&
                 validate(new VmValidator(vm).vmNotLocked(), messages) &&
                 validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()), messages) &&
                 validate(validateVmStatusUsingMatrix(vm), messages) &&
@@ -142,6 +144,20 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
+    protected ValidationResult validateDisplayType() {
+
+        DisplayType selectedDisplayType = runVmParam.getUseVnc() == null ?
+                vm.getDefaultDisplayType() : (runVmParam.getUseVnc() ? DisplayType.vnc : DisplayType.qxl);
+
+        if (!VmValidationUtils.isDisplayTypeSupported(vm.getOs(),
+                vm.getVdsGroupCompatibilityVersion(),
+                selectedDisplayType)) {
+            return new ValidationResult(
+                    VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS);
+        }
+
+        return ValidationResult.VALID;
+    }
 
     protected boolean validateVmProperties(VM vm, String runOnceCustomProperties, List<String> messages) {
         String customProperties = runOnceCustomProperties != null ?
