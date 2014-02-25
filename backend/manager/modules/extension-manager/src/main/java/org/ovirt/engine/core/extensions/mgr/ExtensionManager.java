@@ -239,5 +239,31 @@ public class ExtensionManager {
                 }
             }
         }
+        logEnabledExtensions();
+    }
+
+    private void logEnabledExtensions() {
+        log.info("Start of enabled extensions list");
+        for (ExtensionEntry entry: loadedEntries.values()) {
+            if (entry.extension != null) {
+                Map<ExtensionProperties, Object> context = entry.extension.getContext();
+                log.info(String.format(
+                        "Instance name: '%1$s', Extension name: '%2$s', Version: '%3$s', License: '%4$s', Home: '%5$s', Author '%6$s',  File: '%7$s'",
+                        emptyIfNull(context.get(ExtensionProperties.NAME)),
+                        emptyIfNull(context.get(ExtensionProperties.EXTENSION_NAME)),
+                        emptyIfNull(context.get(ExtensionProperties.VERSION)),
+                        emptyIfNull(context.get(ExtensionProperties.LICENSE)),
+                        emptyIfNull(context.get(ExtensionProperties.HOME)),
+                        emptyIfNull(context.get(ExtensionProperties.AUTHOR)),
+                        emptyIfNull(entry.file)
+                        )
+                        );
+            }
+        }
+        log.info("End of enabled extensions list");
+    }
+
+    private Object emptyIfNull(Object value) {
+        return value == null ? "" : value;
     }
 }
