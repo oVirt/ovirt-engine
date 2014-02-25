@@ -232,19 +232,24 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<DbUser> searchDbUsers() {
-        return genericSearch(getDbFacade().getDbUserDao(), true, null);
+        return genericSearch(getDbFacade().getDbUserDao(), true);
     }
 
     private List<DbGroup> searchDbGroups() {
-        return genericSearch(getDbFacade().getDbGroupDao(), true, null);
+        return genericSearch(getDbFacade().getDbGroupDao(), true);
     }
 
     private List<VmTemplate> searchVMTemplates() {
-        return genericSearch(getDbFacade().getVmTemplateDao(), true, null);
+        return genericSearch(getDbFacade().getVmTemplateDao(), true);
     }
 
     private List<VmTemplate> searchInstanceTypes() {
-        return genericSearch(getDbFacade().getVmTemplateDao(), true, null);
+        return genericSearch(getDbFacade().getVmTemplateDao(), true);
+    }
+
+    private final <T extends IVdcQueryable> List<T> genericSearch(final SearchDAO<T> dao,
+            final boolean useCache) {
+        return genericSearch(dao, useCache, null);
     }
 
     private final <T extends IVdcQueryable> List<T> genericSearch(final SearchDAO<T> dao,
@@ -260,45 +265,45 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<AuditLog> searchAuditLogEvents() {
-        return genericSearch(getDbFacade().getAuditLogDao(), false, null);
+        return genericSearch(getDbFacade().getAuditLogDao(), false);
     }
 
     private List<VmPool> searchVmPools() {
-        return genericSearch(getDbFacade().getVmPoolDao(), true, null);
+        return genericSearch(getDbFacade().getVmPoolDao(), true);
     }
 
     private List<VDSGroup> searchClusters() {
-        return genericSearch(getDbFacade().getVdsGroupDao(), true, null);
+        return genericSearch(getDbFacade().getVdsGroupDao(), true);
     }
 
     private List<StoragePool> searchStoragePool() {
-        return genericSearch(getDbFacade().getStoragePoolDao(), true, null);
+        return genericSearch(getDbFacade().getStoragePoolDao(), true);
     }
 
     private List<StorageDomain> searchStorageDomain() {
-        return genericSearch(getDbFacade().getStorageDomainDao(), true, null);
+        return genericSearch(getDbFacade().getStorageDomainDao(), true);
     }
 
     private List<Quota> searchQuota() {
-        List<Quota> quotaList = genericSearch(getDbFacade().getQuotaDao(), true, null);
+        List<Quota> quotaList = genericSearch(getDbFacade().getQuotaDao(), true);
         QuotaManager.getInstance().updateUsage(quotaList);
         return quotaList;
     }
 
     private List<Disk> searchDisk() {
-        return genericSearch(getDbFacade().getDiskDao(), true, null);
+        return genericSearch(getDbFacade().getDiskDao(), true);
     }
 
     private List<GlusterVolumeEntity> searchGlusterVolumes() {
-        return genericSearch(getDbFacade().getGlusterVolumeDao(), true, null);
+        return genericSearch(getDbFacade().getGlusterVolumeDao(), true);
     }
 
     private List<NetworkView> searchNetworks() {
-        return genericSearch(getDbFacade().getNetworkViewDao(), true, null);
+        return genericSearch(getDbFacade().getNetworkViewDao(), true);
     }
 
     private List<Provider<?>> searchProviders() {
-        return genericSearch(getDbFacade().getProviderDao(), true, null);
+        return genericSearch(getDbFacade().getProviderDao(), true);
     }
 
     private QueryData initQueryData(boolean useCache) {
