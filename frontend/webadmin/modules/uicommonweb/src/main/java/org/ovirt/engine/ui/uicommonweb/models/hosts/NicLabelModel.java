@@ -9,6 +9,8 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NicLabelModel extends ListModel<ListModel<String>> {
@@ -57,6 +59,8 @@ public class NicLabelModel extends ListModel<ListModel<String>> {
     public boolean validate() {
         boolean res = true;
         for (ListModel<String> labelModel : getItems()) {
+            labelModel.validateSelectedItem(new IValidation[] { new AsciiNameValidation() });
+
             String label = labelModel.getSelectedItem();
             String usingIface = labelToIface.get(label);
             if (usingIface != null && !containedIfaces.contains(usingIface)) {
@@ -64,8 +68,8 @@ public class NicLabelModel extends ListModel<ListModel<String>> {
                         .getMessages()
                         .labelInUse(label, usingIface));
                 labelModel.setIsValid(false);
-                res = false;
             }
+            res &= labelModel.getIsValid();
         }
         return res;
     }
