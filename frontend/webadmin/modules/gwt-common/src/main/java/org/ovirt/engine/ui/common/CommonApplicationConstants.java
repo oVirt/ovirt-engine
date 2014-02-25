@@ -574,6 +574,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Delete Protection")
     String deleteProtectionPopup();
 
+    @DefaultStringValue("Instantiate VM network interfaces by picking a vNIC profile.")
+    String assignNics();
+
     @DefaultStringValue("Copy Template Permissions")
     String copyTemplatePermissions();
 

@@ -3222,7 +3222,7 @@ public final class AsyncDataProvider {
         return diskInterfaces;
     }
 
-    public static String getNewNicName(List<VmNetworkInterface> existingInterfaces)
+    public static String getNewNicName(Collection<VmNetworkInterface> existingInterfaces)
     {
         int maxIfaceNumber = 0;
         if (existingInterfaces != null)

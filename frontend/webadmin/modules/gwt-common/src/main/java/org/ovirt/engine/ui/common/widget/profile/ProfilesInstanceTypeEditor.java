@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.common.widget.profile;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -15,9 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstancesModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstancesModel, VnicInstanceType, ProfileInstanceTypeEditor> implements HasElementId {
@@ -28,18 +26,11 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstances
 
     private String elementId = DOM.createUniqueId();
 
-    @Ignore
-    @UiField
-    Label headerLabel;
-
-    private static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
-
     private Collection<VnicProfileView> vnicProfiles;
-    private final List<VmNetworkInterface> vnics;
-    private int realEntryCount;
+    private final Set<VmNetworkInterface> vnics;
 
     public ProfilesInstanceTypeEditor() {
-        vnics = new ArrayList<VmNetworkInterface>();
+        vnics = new HashSet<VmNetworkInterface>();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 
@@ -63,34 +54,12 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstances
             }
         }
         super.init(model);
-
-        realEntryCount = vnics.size() - 1; // don't count the ghost entry
-        updateHeaderLabel();
-    }
-
-    private void updateHeaderLabel() {
-        if (realEntryCount == 0) {
-            headerLabel.setText(messages.assignNicsNothingToAssign());
-        } else if (realEntryCount == 1) {
-            headerLabel.setText(messages.assignNicsToProfilesSingular());
-        } else {
-            headerLabel.setText(messages.assignNicsToProfilesPlural(realEntryCount));
-        }
-    }
-
-    @Override
-    protected void onAdd(VnicInstanceType value, ProfileInstanceTypeEditor widget) {
-        super.onAdd(value, widget);
-        ++realEntryCount; // necessarily a ghost entry, but this will be offset when the entry is toggled to ghost
-        updateHeaderLabel();
     }
 
     @Override
     protected void onRemove(VnicInstanceType value, ProfileInstanceTypeEditor widget) {
         super.onRemove(value, widget);
         vnics.remove(value.getNetworkInterface());
-        --realEntryCount; // necessarily a real entry
-        updateHeaderLabel();
     }
 
     @Ignore
@@ -127,9 +96,6 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstances
     protected void toggleGhost(VnicInstanceType value, ProfileInstanceTypeEditor item, boolean becomingGhost) {
         item.profileEditor.setEnabled(!becomingGhost);
         item.profileEditor.asWidget().setEnabled(true);
-
-        realEntryCount += (becomingGhost ? -1 : 1);
-        updateHeaderLabel();
     }
 
 }
