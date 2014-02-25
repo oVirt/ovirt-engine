@@ -232,7 +232,7 @@
 						</g:HTMLPanel>
 					</g:Cell>
 					<g:Cell width="30%" height="100%">
-						<g:ScrollPanel height="370px">
+						<g:ScrollPanel height="390px">
 							<g:VerticalPanel width="100%" horizontalAlignment="ALIGN_LEFT">
 								<g:Label text="{constants.unassignedLogicalNetworks}" styleName="{style.unassignedtitle}" />
 								<p:InternalNetworksPanel ui:field="internalNetworkList" />
