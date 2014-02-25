@@ -175,8 +175,7 @@ public class NetworkValidator {
      * @return An error iff the network is in use by any templates.
      */
     public ValidationResult networkNotUsedByTemplates() {
-        return networkNotUsed(getTemplates(),
-                VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES);
+        return networkNotUsed(getTemplates(), VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES);
     }
 
     /**

@@ -218,7 +218,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
         public ValidationResult nonVmNetworkNotUsedByVms(Network updatedNetwork) {
             if (networkChangedToNonVmNetwork(updatedNetwork)) {
-                return networkNotUsed(getVms(), VdcBllMessages.VAR__ENTITIES__VMS);
+                return networkNotUsedByVms();
             }
 
             return ValidationResult.VALID;
@@ -249,7 +249,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
         public ValidationResult nonVmNetworkNotUsedByTemplates(Network updatedNetwork) {
             if (networkChangedToNonVmNetwork(updatedNetwork)) {
-                return networkNotUsed(getTemplates(), VdcBllMessages.VAR__ENTITIES__VMS);
+                return networkNotUsedByTemplates();
             }
 
             return ValidationResult.VALID;
