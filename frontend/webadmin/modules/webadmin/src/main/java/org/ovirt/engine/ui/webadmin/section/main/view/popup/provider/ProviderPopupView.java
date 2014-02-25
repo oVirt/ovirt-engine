@@ -68,11 +68,6 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     EntityModelTextBoxEditor urlEditor;
 
     @UiField
-    @Path(value = "apiVersion.selectedItem")
-    @WithElementId
-    ListModelListBoxEditor<Object> apiVersionEditor;
-
-    @UiField
     UiCommandButton testButton;
 
     @UiField
@@ -142,7 +137,6 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         localize(constants);
         addContentStyleName(style.contentStyle());
         driver.initialize(this);
-        apiVersionEditor.asListBox().addStyleName(style.apiVersionStyle());
     }
 
     void localize(ApplicationConstants constants) {
@@ -187,7 +181,6 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
     interface Style extends CssResource {
         String contentStyle();
-        String apiVersionStyle();
         String testResultImage();
     }
 

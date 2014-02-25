@@ -24,11 +24,6 @@
 			margin-top: 20px;
 		}
 
-		.apiVersionStyle {
-			width: 50px !important;
-			float: right;
-		}
-
 		.authField {
 			padding-left: 10px;
 		}
@@ -69,7 +64,6 @@
 										<g:FlowPanel>
 											<e:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" />
 											<e:EntityModelTextBoxEditor ui:field="urlEditor" />
-											<e:ListModelListBoxEditor ui:field="apiVersionEditor" />
 										</g:FlowPanel>
 										<g:FlowPanel addStyleNames="{style.sectionStyle}">
 											<e:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" />
