@@ -29,7 +29,6 @@ public class SetupNetworksBondPopupView extends HostBondPopupView implements Set
         message.setVisible(false);
         // resize
         layoutPanel.remove(infoPanel);
-        layoutPanel.setWidgetSize(mainPanel, 300);
         asPopupPanel().setPixelSize(400, 400);
     }
 

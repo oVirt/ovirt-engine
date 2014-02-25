@@ -28,7 +28,8 @@ public class NicLabelEditor extends AbstractModelBoundPopupWidget<ListModel<Stri
     public NicLabelEditor() {
         suggestBoxEditor = new ListModelSuggestBoxEditor();
         initWidget(suggestBoxEditor);
-        getElement().getStyle().setMarginTop(10, Unit.PX);
+        getElement().getStyle().setMarginTop(5, Unit.PX);
+        getElement().getStyle().setMarginBottom(5, Unit.PX);
         driver.initialize(this);
     }
 

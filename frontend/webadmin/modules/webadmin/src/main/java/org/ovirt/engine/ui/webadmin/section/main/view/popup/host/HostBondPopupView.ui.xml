@@ -17,7 +17,7 @@
 	<d:SimpleDialogPanel width="400px" height="600px">
 		<d:content>
 			<g:DockLayoutPanel ui:field="layoutPanel">
-				<g:north size="330">
+				<g:north size="329">
 					<g:VerticalPanel ui:field="mainPanel">
 						<e:ListModelSuggestBoxEditor ui:field="bondSuggestEditor" />
 						<e:ListModelListBoxEditor ui:field="bondEditor" />
