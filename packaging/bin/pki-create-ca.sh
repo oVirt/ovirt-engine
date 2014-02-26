@@ -52,7 +52,7 @@ enroll() {
 	touch "${PKIDIR}/database.txt" "${PKIDIR}/.rnd" || die "Cannot write to database.txt"
 
 	touch "${PKIDIR}/private/ca.pem"
-	chmod g-rwx "${PKIDIR}/private/ca.pem" || die "Cannot set CA permissions"
+	chmod o-rwx "${PKIDIR}/private/ca.pem" || die "Cannot set CA permissions"
 	openssl genrsa \
 		-out "${PKIDIR}/private/ca.pem" \
 		2048 \
