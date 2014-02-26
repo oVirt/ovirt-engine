@@ -1266,6 +1266,7 @@ public class BackendVmsResourceTest
         expect(entity.getNumOfMonitors()).andReturn(2).anyTimes();
         expect(entity.getVmType()).andReturn(VmType.Server).anyTimes();
         expect(entity.getRunOnVdsName()).andReturn(NAMES[NAMES.length -1]).anyTimes();
+        expect(entity.isHostedEngine()).andReturn(index == 0).anyTimes();
         setUpStatisticalEntityExpectations(entity, statistics);
         return entity;
     }

@@ -362,7 +362,8 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     protected Host doPopulate(Host model, VDS entity) {
-        return model;
+        Host host = parent.addHostedEngineIfConfigured(model, entity);
+        return host;
     }
 
     @Override

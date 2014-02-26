@@ -21,6 +21,7 @@ import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostStatus;
 import org.ovirt.engine.api.model.HostType;
+import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.IscsiDetails;
 import org.ovirt.engine.api.model.KSM;
 import org.ovirt.engine.api.model.OperatingSystem;
@@ -391,6 +392,17 @@ public class HostMapper {
         }
 
         return model;
+    }
+
+    @Mapping(from = VDS.class, to = HostedEngine.class)
+    public static HostedEngine map(VDS entity, HostedEngine template) {
+        HostedEngine hostedEngine = template != null ? template : new HostedEngine();
+        hostedEngine.setConfigured(entity.getHighlyAvailableIsConfigured());
+        hostedEngine.setActive(entity.getHighlyAvailableIsActive());
+        hostedEngine.setScore(entity.getHighlyAvailableScore());
+        hostedEngine.setGlobalMaintenance(entity.getHighlyAvailableGlobalMaintenance());
+        hostedEngine.setLocalMaintenance(entity.getHighlyAvailableLocalMaintenance());
+        return hostedEngine;
     }
 
     private static OperatingSystem getHostOs(String hostOs) {

@@ -996,6 +996,19 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /vms/{vm:id}/maintenance|rel=maintenance
+  description: enable or disable maintenance mode for this virtual machine
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {action.maintenance_enabled: 'xs:boolean'}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: enable or disable maintenance mode for this virtual machine
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /disks|rel=get
   description: get a list of disks in the system
   request:
