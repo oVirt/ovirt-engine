@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -87,28 +86,6 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
         assertNull(resultStatic);
         VdsDynamic resultDynamic = dao.get(existingVds.getId());
         assertNull(resultDynamic);
-    }
-
-    @Test
-    public void testUpdateIfNeededPerformance() {
-        VdsDynamic before = dao.get(existingVds.getId());
-        long start;
-        long diffNoChanges;
-        long diffChanges;
-
-        start = System.currentTimeMillis();
-        for (int i = 0; i < 1000; ++i) {
-            dao.update(before);
-        }
-        diffChanges = System.currentTimeMillis() - start;
-
-        start = System.currentTimeMillis();
-        for (int i = 0; i < 1000; ++i) {
-            dao.updateIfNeeded(before);
-        }
-        diffNoChanges = System.currentTimeMillis() - start;
-
-        Assert.assertTrue(diffChanges > diffNoChanges);
     }
 
     @Test
