@@ -346,7 +346,7 @@ public class LocalConfig {
 
         // Get the text of the property and convert it to lowercase:
         String value = getProperty(key, defaultValue != null);
-        if (value == null) {
+        if (StringUtils.isEmpty(value)) {
             ret = defaultValue.booleanValue();
         }
         else {
@@ -403,7 +403,7 @@ public class LocalConfig {
         int ret;
 
         String value = getProperty(key, defaultValue != null);
-        if (value == null) {
+        if (StringUtils.isEmpty(value)) {
             ret = defaultValue.intValue();
         }
         else {
@@ -449,7 +449,7 @@ public class LocalConfig {
         long ret;
 
         String value = getProperty(key, defaultValue != null);
-        if (value == null) {
+        if (StringUtils.isEmpty(value)) {
             ret = defaultValue.intValue();
         }
         else {
