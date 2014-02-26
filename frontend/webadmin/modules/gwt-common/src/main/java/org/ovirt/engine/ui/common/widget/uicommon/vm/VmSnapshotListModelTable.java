@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -133,9 +132,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                 constants.statusSnapshot(), true, "75px"); //$NON-NLS-1$
 
         boolean memorySnapshotSupported =
-                (Boolean) AsyncDataProvider.getConfigValuePreConverted(
-                        ConfigurationValues.MemorySnapshotSupported,
-                        vm.getVdsGroupCompatibilityVersion().toString());
+                getModel().isMemorySnapshotSupported();
 
         getTable().ensureColumnPresent(SnapshotsViewColumns.memoryColumn,
                 constants.memorySnapshot(), memorySnapshotSupported, "55px"); //$NON-NLS-1$

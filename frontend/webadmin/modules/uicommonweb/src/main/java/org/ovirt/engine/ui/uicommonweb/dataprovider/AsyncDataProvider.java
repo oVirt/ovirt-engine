@@ -325,6 +325,26 @@ public final class AsyncDataProvider {
                 callback);
     }
 
+    /**
+     * Check if memory snapshot is supported
+     * @param vm
+     * @return
+     */
+    public static boolean isMemorySnapshotSupported(VM vm) {
+        if (vm == null) {
+            return false;
+        }
+
+        boolean archMemorySnapshotSupported = isMemorySnapshotSupportedByArchitecture(
+                vm.getClusterArch(),
+                vm.getVdsGroupCompatibilityVersion());
+
+        return  ((Boolean) getConfigValuePreConverted(
+                ConfigurationValues.MemorySnapshotSupported,
+                vm.getVdsGroupCompatibilityVersion().toString()))
+                && archMemorySnapshotSupported;
+    }
+
     public static void initNicHotplugSupportMap() {
         AsyncQuery callback = new AsyncQuery();
         callback.asyncCallback = new INewAsyncCallback() {

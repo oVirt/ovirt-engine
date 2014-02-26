@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -199,6 +198,22 @@ public class VmSnapshotListModel extends SearchableListModel
         }
     }
 
+    private boolean memorySnapshotSupported;
+
+    public boolean isMemorySnapshotSupported()
+    {
+        return memorySnapshotSupported;
+    }
+
+    private void setMemorySnapshotSupported(boolean value)
+    {
+        if (memorySnapshotSupported != value)
+        {
+            memorySnapshotSupported = value;
+            onPropertyChanged(new PropertyChangedEventArgs("IsMemorySnapshotSupported")); //$NON-NLS-1$
+        }
+    }
+
     public VmSnapshotListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().snapshotsTitle());
@@ -271,6 +286,8 @@ public class VmSnapshotListModel extends SearchableListModel
     @Override
     public void setEntity(Object value)
     {
+        updateIsMemorySnapshotSupported(value);
+
         super.setEntity(value);
 
         updateIsCloneVmSupported();
@@ -741,16 +758,14 @@ public class VmSnapshotListModel extends SearchableListModel
         }), vm.getStoragePoolId());
     }
 
-    protected boolean isMemorySnapshotSupported() {
-        if (getEntity() == null) {
-            return false;
+    private void updateIsMemorySnapshotSupported(Object entity) {
+        if (entity == null) {
+            return;
         }
 
-        VM vm = (VM) getEntity();
+        VM vm = (VM) entity;
 
-        return  (Boolean) AsyncDataProvider.getConfigValuePreConverted(
-                ConfigurationValues.MemorySnapshotSupported,
-                vm.getVdsGroupCompatibilityVersion().toString());
+        setMemorySnapshotSupported(AsyncDataProvider.isMemorySnapshotSupported(vm));
     }
 
     @Override

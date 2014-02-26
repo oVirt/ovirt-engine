@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -150,9 +149,7 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
                 }
 
                 boolean memorySnapshotSupported =
-                        (Boolean) AsyncDataProvider.getConfigValuePreConverted(
-                                ConfigurationValues.MemorySnapshotSupported,
-                                vm.getVdsGroupCompatibilityVersion().toString());
+                        AsyncDataProvider.isMemorySnapshotSupported(vm);
                 memoryEditor.setVisible(memorySnapshotSupported && vm.isRunning());
                 // The memory option is enabled by default, so in case its checkbox
                 // is not visible, we should disable it explicitly
