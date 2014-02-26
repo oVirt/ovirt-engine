@@ -167,17 +167,19 @@
 						<g:Label ui:field="externalLabel" addStyleNames="{style.externalLabel}"/>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
-				<g:HorizontalPanel>
-					<g:Label addStyleNames="{style.sectionLabel}"
-						text="{constants.clusterPolicyPropertiesLabel}" />
-					<d:InfoIcon ui:field="propertiesInfoIcon" addStyleNames="{style.iconInfoStyle}"/>
-				</g:HorizontalPanel>
-				<g:HTML>
-					<hr style="width:100%;" />
-				</g:HTML>
-				<g:ScrollPanel height="100px">
-					<k:KeyValueWidget ui:field="customPropertiesSheetEditor" />
-				</g:ScrollPanel>
+                <g:FlowPanel ui:field="clusterPolicyPropertiesZone">
+                    <g:HorizontalPanel>
+                        <g:Label addStyleNames="{style.sectionLabel}"
+                            text="{constants.clusterPolicyPropertiesLabel}" />
+                        <d:InfoIcon ui:field="propertiesInfoIcon" addStyleNames="{style.iconInfoStyle}"/>
+                    </g:HorizontalPanel>
+                    <g:HTML>
+                        <hr style="width:100%;" />
+                    </g:HTML>
+                    <g:ScrollPanel height="100px">
+                        <k:KeyValueWidget ui:field="customPropertiesSheetEditor" />
+                    </g:ScrollPanel>
+                </g:FlowPanel>
 			</g:VerticalPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

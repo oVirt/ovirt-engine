@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -101,6 +102,9 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
     @Ignore
     Label externalLabel;
 
+    @UiField
+    FlowPanel clusterPolicyPropertiesZone;
+
     @Inject
     public ClusterPolicyPopupView(EventBus eventBus,
             ApplicationResources resources,
@@ -145,16 +149,47 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
         descriptionEditor.setLabel(constants.clusterPolicyDescriptionLabel());
     }
 
+    public boolean showClusterPolicyPropertiesZone(final NewClusterPolicyModel model) {
+        if (!model.getCustomProperties().isEmpty()) {
+            return true;
+        }
+
+        if (model.getUsedFilters() != null) {
+            for (PolicyUnit policyUnit: model.getUsedFilters()) {
+                if (policyUnit.getParameterRegExMap() != null
+                        && !policyUnit.getParameterRegExMap().isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        if (model.getUsedFunctions() != null) {
+            for (Pair<PolicyUnit, Integer> policyUnit: model.getUsedFunctions()) {
+                if (policyUnit.getFirst().getParameterRegExMap() != null
+                        && !policyUnit.getFirst().getParameterRegExMap().isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        if (model.getLoadBalanceList().getSelectedItem() != null) {
+            PolicyUnit policyUnit = (PolicyUnit)model.getLoadBalanceList().getSelectedItem();
+            if (policyUnit.getParameterRegExMap() != null
+                    && !policyUnit.getParameterRegExMap().isEmpty()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void edit(final NewClusterPolicyModel model) {
         driver.edit(model);
         setPanelModel(model);
         updateFilters(model);
         model.getFiltersChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 updateFilters(model);
-
+                clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
             }
         });
         updateFunctions(model);
@@ -163,18 +198,21 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 updateFunctions(model);
-
+                clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
             }
         });
         if (model.getClusterPolicy().isLocked()) {
             customPropertiesSheetEditor.setEnabled(false);
         }
         customPropertiesSheetEditor.edit(model.getCustomPropertySheet());
+
+        clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
         updateTooltips(model);
         model.getLoadBalanceList().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 updateTooltips(model);
+                clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
             }
         });
     }
