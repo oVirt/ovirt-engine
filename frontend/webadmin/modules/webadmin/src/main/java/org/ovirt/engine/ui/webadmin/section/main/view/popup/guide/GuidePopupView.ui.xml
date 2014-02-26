@@ -35,11 +35,15 @@
 		.actionsLabel {
 			padding-bottom: 15px;
 		}
+
+		@external obrand_dialogLogoGuideImage;
+		.obrand_dialogLogoGuideImage {
+		}
 	</ui:style>
 
 	<d:SimpleDialogPanel width="450px" height="400px">
 		<d:logo>
-			<g:Image resource='{resources.dialogLogoGuideImage}' />
+			<g:Image styleName='obrand_dialogLogoGuideImage' url="clear.cache.gif" />
 		</d:logo>
 
 		<d:content>

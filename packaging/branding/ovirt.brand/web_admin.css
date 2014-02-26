@@ -57,3 +57,10 @@ These classes allow you to customize the header at the top of the screen */
     line-height: 2em;
     padding-right: 10px;
 }
+
+/* guide me dialogs */
+.obrand_dialogLogoGuideImage {
+    background-image: url(images/dialog/guide.png);
+    width: 27px;
+    height: 27px;
+}
