@@ -141,6 +141,12 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         return labelElement;
     }
 
+    public void setLabelStyleNames(String styleNames) {
+        for (String name : styleNames.split("[,\\s]+")) { //$NON-NLS-1$
+            labelElement.addClassName(name);
+        }
+    }
+
     @Override
     public void setElementId(String elementId) {
         getContentWidgetElement().setId(elementId);
