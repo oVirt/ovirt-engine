@@ -741,6 +741,7 @@ public class ManageDomains {
             try {
                 log.info("Creating kerberos configuration for domain(s): " + gssapiDomainsString);
                 useDnsLookup = utilityConfiguration.getUseDnsLookup();
+                String domainRealmMappingFile = utilityConfiguration.getDomainRealmMappingFile();
                 if (!args.contains(ARG_LDAP_SERVERS) && useDnsLookup) {
                     // The arguments do not contain a list of ldap servers, the
                     // kerberos configuration should not be created according to it if
@@ -748,7 +749,7 @@ public class ManageDomains {
                     // will be resolved by DNS during kerberos negotiation.
                     ldapServersPerGSSAPIDomains = Collections.emptyMap();
                 }
-                krbConfCreator = new KrbConfCreator(gssapiDomainsString, useDnsLookup, ldapServersPerGSSAPIDomains);
+                krbConfCreator = new KrbConfCreator(gssapiDomainsString, useDnsLookup, ldapServersPerGSSAPIDomains, domainRealmMappingFile);
                 StringBuffer buffer = null;
                 buffer = krbConfCreator.parse("y");
                 krbConfCreator.toFile(utilityConfiguration.getkrb5confFilePath() + TESTING_KRB5_CONF_SUFFIX, buffer);
