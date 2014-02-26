@@ -40,6 +40,7 @@ import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmSessionsResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendResource.QueryIdResolver;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -52,6 +53,7 @@ import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.RunVmParams;
+import org.ovirt.engine.core.common.action.SetHaMaintenanceParameters;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
@@ -61,6 +63,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -537,5 +540,26 @@ public class BackendVmResource extends
     @Override
     public VmSessionsResource getVmSessionsResource() {
         return inject(new BackendVmSessionsResource(guid));
+    }
+
+    @Override
+    public Response maintenance(Action action) {
+        validateParameters(action, "maintenanceEnabled");
+
+        org.ovirt.engine.core.common.businessentities.VM entity =
+                getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
+                          VdcQueryType.GetVmByVmId,
+                          new IdQueryParameters(guid),
+                          id);
+        if (!entity.isHostedEngine()) {
+            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Moving to maintenance mode is currently only available for the VM containing the hosted engine.")
+                    .build());
+        }
+
+        return doAction(VdcActionType.SetHaMaintenance,
+                        new SetHaMaintenanceParameters(entity.getRunOnVds(),
+                                HaMaintenanceMode.GLOBAL, action.isMaintenanceEnabled()),
+                        action);
     }
 }

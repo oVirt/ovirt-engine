@@ -203,6 +203,8 @@
       <xs:element name="job" type="Job" minOccurs="0"/>
       <!-- indicates whether to import the image as template or not -->
       <xs:element name="import_as_template" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <!-- for VM hosted engine maintenance actions -->
+      <xs:element name="maintenance_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:group>
 
@@ -1516,6 +1518,7 @@
           <xs:element name="libvirt_version" type="Version" minOccurs="0" maxOccurs="1"/>
 <!--           Optionally  specify the display address of this host explicitly -->
           <xs:element ref="display" minOccurs="0"/>
+          <xs:element name="hosted_engine" type="HostedEngine" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1535,6 +1538,18 @@
         </xs:attribute>
       </xs:extension>
     </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:element name="hosted_engine" type="HostedEngine"/>
+
+  <xs:complexType name="HostedEngine">
+    <xs:sequence>
+      <xs:element name="configured" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="active" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="score" type="xs:int" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="global_maintenance" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="local_maintenance" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="host_states" type="HostStates"/>

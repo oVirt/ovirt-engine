@@ -77,6 +77,7 @@ public class FeaturesHelper {
             addFeatureCopyMoveDiskInAdditionalContext(features);
             addNetworkLabelsFeature(features);
             addRebootFeature(features);
+            addMaintenanceFeature(features);
         }
         return features;
     }
@@ -414,6 +415,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Network Labels");
         feature.setDescription("Abilitiy to provision networks on hosts via labels.");
+        features.getFeature().add(feature);
+    }
+
+    private void addMaintenanceFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Maintenance");
+        feature.setDescription("Enable or disable VM maintenance mode.");
         features.getFeature().add(feature);
     }
 }

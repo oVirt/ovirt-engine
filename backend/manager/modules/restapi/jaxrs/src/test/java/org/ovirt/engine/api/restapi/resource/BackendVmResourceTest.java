@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.RunVmParams;
+import org.ovirt.engine.core.common.action.SetHaMaintenanceParameters;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
@@ -881,6 +882,19 @@ public class BackendVmResourceTest
         assertNotNull(statisticsResource);
 
         verifyQuery(statisticsResource.getQuery(), entity);
+    }
+
+    @Test
+    public void testMaintenance() throws Exception {
+        setUpGetEntityExpectations(1);
+        setUriInfo(setUpActionExpectations(VdcActionType.SetHaMaintenance,
+                                           SetHaMaintenanceParameters.class,
+                                           new String[] { "IsEnabled" },
+                                           new Object[] { true }));
+
+        Action action = new Action();
+        action.setMaintenanceEnabled(true);
+        verifyActionResponse(resource.maintenance(action));
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM setUpStatisticalExpectations() throws Exception {

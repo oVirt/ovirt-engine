@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
@@ -115,7 +116,8 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     @Override
     protected Host doPopulate(Host model, VDS entity) {
-        return model;
+        Host host = addHostedEngineIfConfigured(model, entity);
+        return host;
     }
 
     @Override
@@ -194,5 +196,14 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
                 VdcQueryType.GetVdsGroupByName,
                 new NameQueryParameters(name),
                 "Cluster: name=" + name).getId();
+    }
+
+    Host addHostedEngineIfConfigured(Host host, VDS entity) {
+        /* Add entity data only if the hosted engine agent is configured on this host */
+        if (entity.getHighlyAvailableIsConfigured()) {
+            HostedEngine hostedEngine = getMapper(VDS.class, HostedEngine.class).map(entity, null);
+            host.setHostedEngine(hostedEngine);
+        }
+        return host;
     }
 }

@@ -37,6 +37,7 @@ public class ReflectionHelper {
 
     private static final String GET_ROOT = "get";
     private static final String SET_ROOT = "set";
+    private static final String IS_ROOT = "is";
     private static final String IS_SET_ROOT = "isSet";
 
     private ReflectionHelper() {}
@@ -99,8 +100,9 @@ public class ReflectionHelper {
     }
 
     public static Method getGetter(Object o, String name) {
-        String getterName = GET_ROOT + capitalize(name);
-        return getMethod(o, getterName);
+        String capitalizedName = capitalize(name);
+        Method method = getMethod(o, GET_ROOT + capitalizedName);
+        return (method != null ? method : getMethod(o, IS_ROOT + capitalizedName));
     }
 
     public static Class<?> getReturnType(Object o, String name) {

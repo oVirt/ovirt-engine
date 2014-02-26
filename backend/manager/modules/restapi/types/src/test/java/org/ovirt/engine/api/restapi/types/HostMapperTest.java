@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.SSH;
 import org.ovirt.engine.api.model.User;
@@ -282,5 +283,23 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         assertEquals(Long.valueOf(host.getLibvirtVersion().getRevision()), Long.valueOf(0));
         assertEquals(Long.valueOf(host.getLibvirtVersion().getBuild()), Long.valueOf(10));
         assertEquals(host.getLibvirtVersion().getFullVersion(), "libvirt-0.9.10-21.el6_3.4");
+    }
+
+    @Test
+    public void testHostedEngineMapping() {
+        VDS vds = new VDS();
+        vds.setId(Guid.Empty);
+        vds.setHighlyAvailableIsConfigured(true);
+        vds.setHighlyAvailableIsActive(false);
+        vds.setHighlyAvailableScore(123);
+        vds.setHighlyAvailableGlobalMaintenance(true);
+        vds.setHighlyAvailableLocalMaintenance(false);
+        HostedEngine hostedEngine = HostMapper.map(vds, (HostedEngine) null);
+        assertNotNull(hostedEngine);
+        assertEquals(hostedEngine.isConfigured(), Boolean.TRUE);
+        assertEquals(hostedEngine.isActive(), Boolean.FALSE);
+        assertEquals(hostedEngine.getScore(), Integer.valueOf(123));
+        assertEquals(hostedEngine.isGlobalMaintenance(), Boolean.TRUE);
+        assertEquals(hostedEngine.isLocalMaintenance(), Boolean.FALSE);
     }
 }
