@@ -144,11 +144,11 @@ class Plugin(plugin.PluginBase):
                     osetupcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
                 ] = False
 
-        if self.environment[
+        self._enabled = [
             osetupcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
-        ]:
+        ]
+        if self._enabled:
             self._provisioning.applyEnvironment()
-            self._enabled = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
