@@ -6,8 +6,10 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
@@ -43,7 +45,16 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
 
         IEventListener getDiskTypeChangedEventListener();
 
+        void handleQuotaColumnVisibility();
+
     }
+
+    final IEventListener systemTreeListener = new IEventListener() {
+        @Override
+        public void eventRaised(Event ev, Object sender, EventArgs args) {
+            getView().handleQuotaColumnVisibility();
+        }
+    };
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
@@ -74,6 +85,19 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
             entityChangedEvent.addListener(getView().getDiskTypeChangedEventListener());
         }
 
+        Event systemTreeSelectedItemChangedEvent =
+                CommonModel.getInstance().getSystemTree().getSelectedItemChangedEvent();
+        systemTreeSelectedItemChangedEvent.addListener(systemTreeListener);
+
         super.onReveal();
+        getView().handleQuotaColumnVisibility();
+    }
+
+    @Override
+    protected void onHide() {
+        super.onHide();
+        Event systemTreeSelectedItemChangedEvent =
+                CommonModel.getInstance().getSystemTree().getSelectedItemChangedEvent();
+        systemTreeSelectedItemChangedEvent.removeListener(systemTreeListener);
     }
 }

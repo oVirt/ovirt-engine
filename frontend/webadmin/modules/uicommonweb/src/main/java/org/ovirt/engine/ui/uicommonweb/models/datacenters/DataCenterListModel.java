@@ -39,6 +39,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -769,6 +770,11 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 },
                 this);
         } else {
+            // Update the Quota at the corresponding DC object at the system tree.
+            // The DC Quota value from the tree is used at MainTabDiskView.
+            SystemTreeItemModel itemModel = CommonModel.getInstance().getSystemTree().getItemById(dataCenter.getId());
+            itemModel.setEntity(dataCenter);
+
             // Otherwise use async action in order to close dialog immediately.
             Frontend.getInstance().runMultipleAction(VdcActionType.UpdateStoragePool,
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(

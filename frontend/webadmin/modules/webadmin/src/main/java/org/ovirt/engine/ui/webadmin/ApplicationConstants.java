@@ -2690,6 +2690,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("ID")
     String idDisk();
 
+    @DefaultStringValue("Quota")
+    String quotaDisk();
+
     @DefaultStringValue("Volume Format")
     String volumeFormatDisk();
 

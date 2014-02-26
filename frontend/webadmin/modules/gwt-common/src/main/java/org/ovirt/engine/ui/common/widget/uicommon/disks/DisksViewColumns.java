@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.disks;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -47,6 +49,22 @@ public class DisksViewColumns {
         @Override
         public String getValue(Disk object) {
             return object.getId().toString();
+        }
+    };
+
+    public static final TextColumnWithTooltip<Disk> qoutaColumn = new TextColumnWithTooltip<Disk>() {
+        @Override
+        public String getValue(Disk object) {
+
+            String value = "";
+            if (object.getDiskStorageType() == DiskStorageType.IMAGE) {
+                DiskImage diskImage = (DiskImage) object;
+                ArrayList<String> quotaNamesArr = diskImage.getQuotaNames();
+                if (quotaNamesArr != null) {
+                    value = StringHelper.join(", ", quotaNamesArr.toArray());//$NON-NLS-1$
+                }
+            }
+            return value;
         }
     };
 

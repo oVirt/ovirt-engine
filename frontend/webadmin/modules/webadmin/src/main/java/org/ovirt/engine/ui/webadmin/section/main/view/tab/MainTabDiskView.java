@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -10,6 +12,8 @@ import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -39,6 +43,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
 
     private final ApplicationConstants constants;
     private DisksViewRadioGroup disksViewRadioGroup;
+    private boolean isQuotaVisible;
 
     @Inject
     public MainTabDiskView(MainModelProvider<Disk, DiskListModel> modelProvider, ApplicationConstants constants) {
@@ -75,6 +80,20 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     @Override
     public IEventListener getDiskTypeChangedEventListener() {
         return diskTypeChangedEventListener;
+    }
+
+    public void handleQuotaColumnVisibility() {
+        isQuotaVisible = false;
+        SystemTreeItemModel treeItem =
+                (SystemTreeItemModel) CommonModelManager.instance().getSystemTree().getSelectedItem();
+        if (treeItem != null
+                && SystemTreeItemType.DataCenter == treeItem.getType()) {
+            StoragePool storagePool = (StoragePool) treeItem.getEntity();
+            if (QuotaEnforcementTypeEnum.DISABLED != storagePool.getQuotaEnforcementType()) {
+                isQuotaVisible = true;
+            }
+        }
+        onDiskViewTypeChanged();
     }
 
     void onDiskViewTypeChanged() {
@@ -147,6 +166,9 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         getTable().ensureColumnPresent(
                 DisksViewColumns.lunProductIdColumn, constants.productIdSanStorage(), luns,
                 "100px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.qoutaColumn, constants.quotaDisk(), images && isQuotaVisible, "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.descriptionColumn, constants.descriptionDisk(), all || images || luns,

@@ -437,15 +437,17 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             SystemTreeItemModel dataCenterItem = new SystemTreeItemModel();
             dataCenterItem.setType(SystemTreeItemType.DataCenter);
             dataCenterItem.setApplicationMode(ApplicationMode.VirtOnly);
-            dataCenterItem.setTitle(getDataCenters().get(count).getName());
-            dataCenterItem.setEntity(getDataCenters().get(count));
+            StoragePool dataCenter = getDataCenters().get(count);
+            dataCenterItem.setTitle(dataCenter.getName());
+            dataCenterItem.setEntity(dataCenter);
             dataCentersItem.addChild(dataCenterItem);
+            treeItemById.put(dataCenter.getId(), dataCenterItem);
 
             SystemTreeItemModel storagesItem = new SystemTreeItemModel();
             storagesItem.setType(SystemTreeItemType.Storages);
             storagesItem.setApplicationMode(ApplicationMode.VirtOnly);
             storagesItem.setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
-            storagesItem.setEntity(getDataCenters().get(count));
+            storagesItem.setEntity(dataCenter);
             dataCenterItem.addChild(storagesItem);
 
             if (storages != null && storages.size() > 0)
@@ -467,10 +469,10 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             networksItem.setType(SystemTreeItemType.Networks);
             networksItem.setApplicationMode(ApplicationMode.VirtOnly);
             networksItem.setTitle(ConstantsManager.getInstance().getConstants().networksTitle());
-            networksItem.setEntity(getDataCenters().get(count));
+            networksItem.setEntity(dataCenter);
             dataCenterItem.addChild(networksItem);
 
-            List<Network> dcNetworks = getNetworkMap().get(getDataCenters().get(count).getId());
+            List<Network> dcNetworks = getNetworkMap().get(dataCenter.getId());
             if (dcNetworks != null)
             {
                 // sort by name first
@@ -491,18 +493,18 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             templatesItem.setType(SystemTreeItemType.Templates);
             templatesItem.setApplicationMode(ApplicationMode.VirtOnly);
             templatesItem.setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
-            templatesItem.setEntity(getDataCenters().get(count));
+            templatesItem.setEntity(dataCenter);
             dataCenterItem.addChild(templatesItem);
 
             SystemTreeItemModel clustersItem = new SystemTreeItemModel();
             clustersItem.setType(SystemTreeItemType.Clusters);
             clustersItem.setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
-            clustersItem.setEntity(getDataCenters().get(count));
+            clustersItem.setEntity(dataCenter);
             dataCenterItem.addChild(clustersItem);
 
-            if (getClusterMap().containsKey(getDataCenters().get(count).getId()))
+            if (getClusterMap().containsKey(dataCenter.getId()))
             {
-                List<VDSGroup> clusters = getClusterMap().get(getDataCenters().get(count).getId());
+                List<VDSGroup> clusters = getClusterMap().get(dataCenter.getId());
                 Collections.sort(clusters, new Linq.VDSGroupComparator());
                 for (VDSGroup cluster : clusters)
                 {
