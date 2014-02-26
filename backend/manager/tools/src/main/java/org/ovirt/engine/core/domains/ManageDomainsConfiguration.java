@@ -11,6 +11,7 @@ public class ManageDomainsConfiguration {
     private static String ENGINE_CONFIG_EXECUTABLE_PROPERTY = "engineConfigExecutable";
     private static String LOCAL_HOST_ENTRY = "localHostEntry";
     private static String USE_DNS_LOOKUP = "useDnsLookup";
+    private static String DOMAIN_REALM_MAPPING_FILE = "domainRealmMappingFile";
 
     ManageDomainsConfiguration(String confFilePath) throws ConfigurationException {
         manageDomainsConf = new PropertiesConfiguration(confFilePath);
@@ -34,6 +35,10 @@ public class ManageDomainsConfiguration {
 
     public boolean getUseDnsLookup() {
         return manageDomainsConf.getBoolean(USE_DNS_LOOKUP);
+    }
+
+    public String getDomainRealmMappingFile() {
+        return manageDomainsConf.getString(DOMAIN_REALM_MAPPING_FILE);
     }
 
 }

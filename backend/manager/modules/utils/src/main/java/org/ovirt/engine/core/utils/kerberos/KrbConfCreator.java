@@ -1,15 +1,20 @@
 package org.ovirt.engine.core.utils.kerberos;
 
+import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
 
@@ -30,12 +35,17 @@ public class KrbConfCreator {
     private List<String> realms;
     private boolean useDnsLookup;
     private Map<String, List<String>> ldapServersPerGSSAPIDomains;
+    private String domainRealmMappingFile;
 
     private final static Logger log = Logger.getLogger(KrbConfCreator.class);
 
-    public KrbConfCreator(String domains, boolean useDnsLookup, Map<String, List<String>> ldapServersPerGSSAPIDomains) throws Exception {
+    public KrbConfCreator(String domains,
+            boolean useDnsLookup,
+            Map<String, List<String>> ldapServersPerGSSAPIDomains,
+            String domainRealmMappingFile) throws Exception {
         this.useDnsLookup = useDnsLookup && ( ldapServersPerGSSAPIDomains == null || ldapServersPerGSSAPIDomains.size() == 0 );
         this.ldapServersPerGSSAPIDomains = ldapServersPerGSSAPIDomains;
+        this.domainRealmMappingFile = domainRealmMappingFile;
         loadSourceFile();
         extractRealmsFromDomains(domains);
     }
@@ -150,10 +160,39 @@ public class KrbConfCreator {
     // .second.example.com = SECOND.EXAMPLE.COM
     private String appendDomainRealms(List<String> realms) throws AuthenticationException {
         StringBuffer text = new StringBuffer(" [domain_realm]\n");
-        for (String realm : realms) {
-            text.append("\t" + realm.toLowerCase() + " = " + realm.toUpperCase() + "\n");
+        if (!domainRealmMappingFileExits()) {
+            for (String realm : realms) {
+                text.append("\t" + realm.toLowerCase() + " = " + realm.toUpperCase() + "\n");
+            }
+        } else {
+            // Fill in [domain_realm] section from the provided file at engine-manage-domains.conf
+            // This can be useful in case the realm is not an upper case of the domain
+            try (BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(new FileInputStream(domainRealmMappingFile)))) {
+                while (true) {
+                    String readLine = reader.readLine();
+                    if (readLine == null) {
+                        break;
+                    }
+                    text.append("\t").append(readLine).append("\n");
+                }
+
+            } catch (FileNotFoundException e) {
+                // This exception should not really happen as we check that the file exists at
+                // domainRealmMappingFileExits()
+
+            } catch (IOException e) {
+            }
         }
         return text.toString();
+    }
+
+    private boolean domainRealmMappingFileExits() {
+        if (StringUtils.isEmpty(domainRealmMappingFile)) {
+            return false;
+        }
+        File f = new File(domainRealmMappingFile);
+        return f.exists();
     }
 
     private String getProblematicRealmExceptionMsg(String realm) {
