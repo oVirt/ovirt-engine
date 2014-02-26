@@ -53,7 +53,7 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
             return failCanDoAction(VdcBllMessages.WATCHDOG_ALREADY_EXISTS);
         }
 
-        if (!validate(validateModelCompatibleWithOs())) {
+        if (!getParameters().isInstanceType() && !validate(validateModelCompatibleWithOs())) {
             return false;
         }
 

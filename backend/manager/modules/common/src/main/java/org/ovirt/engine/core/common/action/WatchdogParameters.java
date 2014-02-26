@@ -12,6 +12,12 @@ public class WatchdogParameters extends VdcActionParametersBase {
      * true if the watchog must be set in the VM, false if it must be set in a template
      */
     boolean vm;
+
+    /**
+     * true if the watchog must be set in the instanceType, false otherwise
+     */
+    boolean instanceType;
+
     @NotNull
     Guid id;
     VmWatchdogAction action;
@@ -40,6 +46,14 @@ public class WatchdogParameters extends VdcActionParametersBase {
 
     public boolean isVm() {
         return vm;
+    }
+
+    public boolean isInstanceType() {
+        return instanceType;
+    }
+
+    public void setInstanceType(boolean instanceType) {
+        this.instanceType = instanceType;
     }
 
     public void setVm(boolean vm) {

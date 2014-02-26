@@ -9,16 +9,23 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
+import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -191,5 +198,41 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             jobProperties.put(VdcObjectType.VmTemplate.name().toLowerCase(), getVmTemplateName());
         }
         return jobProperties;
+    }
+
+    protected void updateWatchdog(Guid templateId) {
+        // do not update if this flag is not set
+        if (getParameters().isUpdateWatchdog()) {
+            VdcQueryReturnValue query =
+                    getBackend().runInternalQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(templateId));
+            List<VmWatchdog> watchdogs = query.getReturnValue();
+            if (watchdogs.isEmpty()) {
+                if (getParameters().getWatchdog() != null) {
+                    WatchdogParameters parameters = new WatchdogParameters();
+                    parameters.setVm(false);
+                    parameters.setInstanceType(getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE);
+
+                    parameters.setId(templateId);
+                    parameters.setAction(getParameters().getWatchdog().getAction());
+                    parameters.setModel(getParameters().getWatchdog().getModel());
+                    getBackend().runInternalAction(VdcActionType.AddWatchdog, parameters);
+                }
+            } else {
+                WatchdogParameters watchdogParameters = new WatchdogParameters();
+                watchdogParameters.setVm(false);
+                watchdogParameters.setInstanceType(getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE);
+
+                watchdogParameters.setId(templateId);
+                if (getParameters().getWatchdog() == null) {
+                    // there is a watchdog in the vm, there should not be any, so let's delete
+                    getBackend().runInternalAction(VdcActionType.RemoveWatchdog, watchdogParameters);
+                } else {
+                    // there is a watchdog in the vm, we have to update.
+                    watchdogParameters.setAction(getParameters().getWatchdog().getAction());
+                    watchdogParameters.setModel(getParameters().getWatchdog().getModel());
+                    getBackend().runInternalAction(VdcActionType.UpdateWatchdog, watchdogParameters);
+                }
+            }
+        }
     }
 }
