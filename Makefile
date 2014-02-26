@@ -314,6 +314,15 @@ copy-recursive:
 
 
 validations:	generated-files
+	if [ "$(BUILD_LOCALES)" != 0 ]; then \
+		require="10240"; \
+		current="$$(ulimit -n)"; \
+		if [ "$${current}" -lt "$${require}" ]; then \
+			echo "Building locales requires more than $${require} available file descriptors, currently $${require}" >&2; \
+			echo "Refer to README.developer for further instructions" >&2; \
+			false; \
+		fi; \
+	fi
 	if [ "$(BUILD_VALIDATION)" != 0 ]; then \
 		build/shell-check.sh && \
 		build/python-check.sh && \

@@ -31,6 +31,22 @@ distribution package management, and add to PATH.
 >=Jboss 7.1.1 is required, download and extract it if not installed
 using distribution package management.
 
+SYSTEM SETTINGS
+
+Build locales requires at least 10240 file descriptors, create the
+following file, replace <user> with user that is used for building,
+and logout/login:
+
+/etc/security/limits.d/10-nofile.conf
+---
+<user> hard nofile 10240
+#<user> soft nofile 10240  # optional, to apply automatically
+---
+
+If soft limit was not set, before building, apply new limit using:
+
+ $ ulimit -n 10240
+
 POSTGRESQL ACCESSIBILITY
 
 Configure postgresql to accept user and password:
