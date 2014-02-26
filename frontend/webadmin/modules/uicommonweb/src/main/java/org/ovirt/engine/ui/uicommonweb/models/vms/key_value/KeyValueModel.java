@@ -57,13 +57,11 @@ public class KeyValueModel extends BaseKeyModel {
             saveEntity = value;
             return;
         }
-        if (value != null) {
-            if (value.isEmpty()) {
-                return;
-            }
-            String[] lines = value.split(PROPERTIES_DELIMETER);
 
-            keyValueMap_used = new HashMap<String, String>();
+        //always reset the list of items when the item changes
+        keyValueMap_used = new HashMap<String, String>();
+        if (value != null && !value.isEmpty()) {
+            String[] lines = value.split(PROPERTIES_DELIMETER);
             String[] splitLine;
             for (String line : lines) {
                 if (line.isEmpty()) {
@@ -75,6 +73,7 @@ public class KeyValueModel extends BaseKeyModel {
                 if (allKeyValueMap.containsKey(key)) {
                     keyValueMap_used.put(key, splitLine[1]);
                 }
+
             }
         }
         init(allKeyValueMap.keySet(), keyValueMap_used.keySet());
