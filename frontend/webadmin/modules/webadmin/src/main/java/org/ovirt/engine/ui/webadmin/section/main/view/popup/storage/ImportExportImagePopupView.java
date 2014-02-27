@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -57,6 +58,11 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
     public ListModelListBoxEditor<Object> dataCenterEditor;
 
     @UiField(provided = true)
+    @Path(value = "cluster.selectedItem")
+    @WithElementId
+    public ListModelListBoxEditor<Object> clusterEditor;
+
+    @UiField(provided = true)
     @Path(value = "storageDomain.selectedItem")
     @WithElementId
     public ListModelListBoxEditor<Object> storageDomainEditor;
@@ -91,6 +97,14 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
             }
         });
         dataCenterEditor.setLabel(constants.dataCenter());
+
+        clusterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((VDSGroup) object).getName();
+            }
+        });
+        clusterEditor.setLabel(constants.makeTemplateClusterLabel());
 
         storageDomainEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
@@ -159,7 +173,8 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
     public void edit(final ImportExportRepoImageBaseModel model) {
         driver.edit(model);
 
-        importAsTemplateEditor.setVisible(model.showImportAsTemplateOption());
+        importAsTemplateEditor.setVisible(model.showImportAsTemplateOptions());
+        clusterEditor.setVisible(model.showImportAsTemplateOptions());
 
         model.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override

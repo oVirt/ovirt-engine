@@ -7,12 +7,16 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 import java.util.ArrayList;
@@ -27,6 +31,13 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
         this.sourceStorageDomain = sourceStorageDomain;
         setRepoImages(repoImages);
         updateDataCenters();
+        IEventListener importAsTemplateListener = new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                updateClusterEnabled();
+            }
+        };
+        getImportAsTemplate().getEntityChangedEvent().addListener(importAsTemplateListener);
     }
 
     public void setRepoImages(List<RepoImage> repoImages) {
@@ -55,7 +66,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
     }
 
     @Override
-    public boolean showImportAsTemplateOption() {
+    public boolean showImportAsTemplateOptions() {
         return true;
     }
 
@@ -79,6 +90,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
             // destination
             importParameters.setStoragePoolId(((StoragePool) getDataCenter().getSelectedItem()).getId());
             importParameters.setStorageDomainId(((StorageDomain) getStorageDomain().getSelectedItem()).getId());
+            importParameters.setClusterId(((StorageDomain) getStorageDomain().getSelectedItem()).getId());
 
             Quota selectedQuota = (Quota) getQuota().getSelectedItem();
 
@@ -86,7 +98,12 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
                 importParameters.setQuotaId(selectedQuota.getId());
             }
 
-            importParameters.setImportAsTemplate((Boolean) getImportAsTemplate().getEntity());
+            Boolean importAsTemplate = (Boolean) getImportAsTemplate().getEntity();
+            importParameters.setImportAsTemplate(importAsTemplate);
+
+            if (importAsTemplate) {
+                importParameters.setClusterId(((VDSGroup) getCluster().getSelectedItem()).getId());
+            }
 
             actionParameters.add(importParameters);
         }
@@ -101,4 +118,11 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
                     }
                 }, this);
     }
+
+    public void updateClusterEnabled() {
+        boolean importAsTemplate = (Boolean) getImportAsTemplate().getEntity();
+        getCluster().setIsAvailable(importAsTemplate);
+        getCluster().setIsChangable(!getCluster().getIsEmpty());
+    }
+
 }

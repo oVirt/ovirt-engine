@@ -12,6 +12,7 @@ public class ImportRepoImageParameters extends ImagesActionsParametersBase {
     private DiskImage diskImage;
 
     private Guid sourceStorageDomainId;
+    private Guid clusterId;
     private boolean importAsTemplate;
 
     public String getSourceRepoImageId() {
@@ -36,6 +37,14 @@ public class ImportRepoImageParameters extends ImagesActionsParametersBase {
 
     public void setSourceStorageDomainId(Guid sourceStorageDomainId) {
         this.sourceStorageDomainId = sourceStorageDomainId;
+    }
+
+    public Guid getClusterId() {
+        return clusterId;
+    }
+
+    public void setClusterId(Guid clusterId) {
+        this.clusterId = clusterId;
     }
 
     public DiskImage getDiskImage() {

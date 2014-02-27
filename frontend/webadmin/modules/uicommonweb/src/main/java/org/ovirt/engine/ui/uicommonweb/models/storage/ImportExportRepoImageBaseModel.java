@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -50,6 +51,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     }
 
     private ListModel dataCenter;
+    private ListModel cluster;
     private ListModel storageDomain;
     private ListModel quota;
 
@@ -76,6 +78,16 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     public void setDataCenter(ListModel value)
     {
        dataCenter = value;
+    }
+
+    public ListModel getCluster()
+    {
+        return cluster;
+    }
+
+    public void setCluster(ListModel value)
+    {
+        cluster = value;
     }
 
     public ListModel getStorageDomain() {
@@ -115,6 +127,9 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         setDataCenter(new ListModel());
         getDataCenter().setIsEmpty(true);
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
+        setCluster(new ListModel());
+        getCluster().setIsEmpty(true);
+        getCluster().getSelectedItemChangedEvent().addListener(this);
 
         setStorageDomain(new ListModel());
         getStorageDomain().setIsEmpty(true);
@@ -158,6 +173,8 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     protected void updateControlsAvailability() {
         getDataCenter().setIsChangable(!getDataCenter().getIsEmpty());
         getStorageDomain().setIsChangable(!getStorageDomain().getIsEmpty());
+        getCluster().setIsAvailable((Boolean) getImportAsTemplate().getEntity());
+        getCluster().setIsChangable(!getCluster().getIsEmpty());
         getQuota().setIsChangable(!getQuota().getIsEmpty());
         getOkCommand().setIsExecutionAllowed(!getStorageDomain().getIsEmpty());
         setMessage(getStorageDomain().getIsEmpty() ? constants.noStorageDomainAvailableMsg() : null);
@@ -184,6 +201,28 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
             AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, callback), storagePoolId);
         } else {
             AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, callback));
+        }
+    }
+
+    protected void updateClusters(Guid storagePoolId) {
+        INewAsyncCallback callback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) target;
+                List<VDSGroup> clusters = AsyncDataProvider.filterClustersWithoutArchitecture((List<VDSGroup>) returnValue);
+                model.getCluster().setItems(clusters);
+                model.getCluster().setIsEmpty(clusters.isEmpty());
+                model.updateControlsAvailability();
+                stopProgress();
+            }
+        };
+
+        startProgress(null);
+
+        if (storagePoolId != null) {
+            AsyncDataProvider.getClusterList(new AsyncQuery(this, callback), storagePoolId);
+        } else {
+            AsyncDataProvider.getClusterList(new AsyncQuery(this, callback));
         }
     }
 
@@ -227,6 +266,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
 
     protected void dataCenter_SelectedItemChanged() {
         updateStorageDomains(((StoragePool) getDataCenter().getSelectedItem()).getId());
+        updateClusters(((StoragePool) getDataCenter().getSelectedItem()).getId());
     }
 
     protected void storageDomain_SelectedItemChanged() {
@@ -248,6 +288,6 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         }
     }
 
-    public abstract boolean showImportAsTemplateOption();
+    public abstract boolean showImportAsTemplateOptions();
 
 }

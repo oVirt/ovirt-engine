@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -181,6 +182,24 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     protected boolean canDoAction() {
         if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             return false;
+        }
+
+        if (getParameters().getImportAsTemplate()) {
+            if (getParameters().getClusterId() == null) {
+                addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+                return false;
+            }
+
+            setVdsGroupId(getParameters().getClusterId());
+            if (getVdsGroup() == null) {
+                addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+                return false;
+            }
+
+            // A Template cannot be added in a cluster without a defined architecture
+            if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+            }
         }
 
         DiskImage diskImage = null;
