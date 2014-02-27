@@ -152,6 +152,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         boolean hasVms = false;
         boolean hasVmOrHost = false;
         boolean sameCpuNames = false;
+        boolean allVdssInMaintenance = false;
 
         List<VM> vmList = null;
 
@@ -188,6 +189,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         // If both original Cpu and new Cpu are null, don't check Cpu validity
         if (result) {
             allForVdsGroup = getVdsDAO().getAllForVdsGroup(oldGroup.getId());
+            allVdssInMaintenance = areAllVdssInMaintenance(allForVdsGroup);
         }
         // Validate the cpu only if the cluster supports Virt
         if (result && getVdsGroup().supportsVirtService()
@@ -201,7 +203,8 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 // if cpu changed from intel to amd (or backwards) and there are
                 // vds in this cluster, cannot update
                 if (!StringUtils.isEmpty(oldGroup.getcpu_name())
-                        && !checkIfCpusSameManufacture(oldGroup) && !allForVdsGroup.isEmpty()) {
+                        && !checkIfCpusSameManufacture(oldGroup)
+                        && !allVdssInMaintenance) {
                     addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_ILLEGAL);
                     result = false;
                 }
@@ -389,6 +392,17 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
     protected boolean isCpuUpdatable(VDSGroup cluster) {
         return CpuFlagsManagerHandler.isCpuUpdatable(cluster.getcpu_name(), cluster.getcompatibility_version());
+    }
+
+    private boolean areAllVdssInMaintenance(List<VDS> vdss) {
+        boolean allInMaintenance = true;
+        for (VDS vds : vdss) {
+            if (vds.getStatus() != VDSStatus.Maintenance) {
+                allInMaintenance = false;
+                break;
+            }
+        }
+        return allInMaintenance;
     }
 
     protected int compareCpuLevels(VDSGroup otherGroup) {
