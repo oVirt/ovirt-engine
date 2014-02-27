@@ -403,16 +403,6 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             getOptionalActions().add(attachDataStorageAction);
         }
 
-        UICommand addIsoStorageAction = new UICommand("AddIsoStorage", this); //$NON-NLS-1$
-        addIsoStorageAction.getExecuteProhibitionReasons().add(NoDataDomainAttachedReason);
-        addIsoStorageAction.setIsExecutionAllowed(getEntity().getStatus() == StoragePoolStatus.Up);
-
-        if (isoStorageDomains.isEmpty())
-        {
-            addIsoStorageAction.setTitle(DataCenterConfigureISOLibraryAction);
-            getOptionalActions().add(addIsoStorageAction);
-        }
-
         // Attach ISO storage action.
         // Allow to attach ISO domain only when there are Data storages attached
         // and there ISO storages to attach and ther are no ISO storages actually
@@ -426,26 +416,34 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             }
         }
 
-        boolean attachIsoAllowed =
-                (attachedDataStorages.size() > 0 && Linq.isAnyStorageDomainIsMasterAndActive(attachedDataStorages)
-                        && isoStorageDomains.size() > 0 && attachedIsoStorages.isEmpty() && upHosts.size() > 0);
+        boolean attachOrAddIsoAvailable = attachedIsoStorages.isEmpty();
+        boolean masterStorageExistsAndRunning = Linq.isAnyStorageDomainIsMasterAndActive(attachedDataStorages);
+        boolean addIsoAllowed =
+                (attachedDataStorages.size() > 0 && masterStorageExistsAndRunning
+                        && attachedIsoStorages.isEmpty() && upHosts.size() > 0);
 
-        // The action is available if there are no storages attached to the
-        // Data Center. It will not always be allowed.
-        boolean attachIsoAvailable = attachedIsoStorages.isEmpty();
 
-        UICommand attachIsoStorageAction = new UICommand("AttachIsoStorage", this); //$NON-NLS-1$
-        attachIsoStorageAction.setIsAvailable(attachIsoAvailable);
-        if (upHosts.isEmpty())
-        {
-            attachIsoStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
-        }
-        attachIsoStorageAction.setIsExecutionAllowed(attachIsoAllowed);
+        if (attachOrAddIsoAvailable) {
+            UICommand addIsoStorageAction = new UICommand("AddIsoStorage", this); //$NON-NLS-1$
+            addIsoStorageAction.setTitle(DataCenterConfigureISOLibraryAction);
+            getOptionalActions().add(addIsoStorageAction);
 
-        if (attachIsoAvailable)
-        {
+            UICommand attachIsoStorageAction = new UICommand("AttachIsoStorage", this); //$NON-NLS-1$
             attachIsoStorageAction.setTitle(DataCenterAttachISOLibraryAction);
             getOptionalActions().add(attachIsoStorageAction);
+
+            if (!masterStorageExistsAndRunning) {
+                addIsoStorageAction.getExecuteProhibitionReasons().add(NoDataDomainAttachedReason);
+                attachIsoStorageAction.getExecuteProhibitionReasons().add(NoDataDomainAttachedReason);
+            }
+
+            if (upHosts.isEmpty()) {
+                addIsoStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
+                attachIsoStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
+            }
+
+            addIsoStorageAction.setIsExecutionAllowed(addIsoAllowed);
+            attachIsoStorageAction.setIsExecutionAllowed(addIsoAllowed && isoStorageDomains.size() > 0);
         }
 
         stopProgress();
