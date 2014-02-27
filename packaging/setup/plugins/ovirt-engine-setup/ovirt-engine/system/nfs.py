@@ -97,6 +97,8 @@ class Plugin(plugin.PluginBase):
                     break
             else:
                 self._enabled = False
+        if not self.environment[osetupcons.DBEnv.NEW_DATABASE]:
+            self._enabled = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
