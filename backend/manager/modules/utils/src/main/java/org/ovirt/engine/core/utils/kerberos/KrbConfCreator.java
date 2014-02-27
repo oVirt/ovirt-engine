@@ -168,7 +168,8 @@ public class KrbConfCreator {
             // Fill in [domain_realm] section from the provided file at engine-manage-domains.conf
             // This can be useful in case the realm is not an upper case of the domain
             try (BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(new FileInputStream(domainRealmMappingFile)))) {
+                    new BufferedReader(new InputStreamReader(new FileInputStream(domainRealmMappingFile),
+                            java.nio.charset.Charset.defaultCharset().displayName()))) {
                 while (true) {
                     String readLine = reader.readLine();
                     if (readLine == null) {
