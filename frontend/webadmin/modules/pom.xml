@@ -47,6 +47,8 @@
     <!-- This can be overridden by setting this property in your personal settings.xml -->
     <gwt-plugin.extraJvmArgs>
       -Xms1024M -Xmx4096M -XX:PermSize=512M -XX:MaxPermSize=1024M \
+      -Dgwt.jjs.permutationWorkerFactory=com.google.gwt.dev.ThreadedPermutationWorkerFactory \
+      -Dgwt.jjs.maxThreads=4 \
       -Djava.io.tmpdir="${project.build.directory}/tmp" \
       -Djava.util.prefs.systemRoot="${project.build.directory}/tmp/.java" \
       -Djava.util.prefs.userRoot="${project.build.directory}/tmp/.java"
