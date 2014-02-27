@@ -226,7 +226,7 @@ public class EngineLocalConfig extends LocalConfig {
      * Returns the directory for custom/3rd party extension configuration files
      */
     public List<File> getExtensionsDirectories() {
-        String path = getProperty("ENGINE_EXTENSION_PATH");
+        String path = getProperty("ENGINE_EXTENSION_PATH", true);
         if (path == null) {
             return Collections.emptyList();
         }

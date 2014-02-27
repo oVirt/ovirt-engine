@@ -216,6 +216,7 @@ public class ExtensionManager {
                     activatedEntries.put(entry.getName(), entry);
                     MultiValueMapUtils.addToMap(entry.getProvides(), entry, providesEntries);
                 } catch (Exception ex) {
+                    entry.enabled = false;
                     log.error(
                             String.format(
                                     "Error in activating extension %1$s. Exception message is %2$s",
