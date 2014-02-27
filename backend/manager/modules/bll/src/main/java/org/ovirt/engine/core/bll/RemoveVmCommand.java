@@ -201,7 +201,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             return false;
         }
 
-        if (getParameters().getForce() && !validate(snapshotsValidator.vmNotInPreview(getVmId()))) {
+        if (!validate(snapshotsValidator.vmNotInPreview(getVmId()))) {
             return false;
         }
 
