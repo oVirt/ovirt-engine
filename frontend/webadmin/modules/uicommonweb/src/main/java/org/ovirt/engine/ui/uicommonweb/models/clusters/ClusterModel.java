@@ -1024,6 +1024,7 @@ public class ClusterModel extends EntityModel
 
         setCPU(new ListModel<ServerCpu>());
         getCPU().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
+        getCPU().getSelectedItemChangedEvent().addListener(this);
         setVersion(new ListModel<Version>());
         getVersion().getSelectedItemChangedEvent().addListener(this);
         setMigrateOnErrorOption(MigrateOnErrorOptions.YES);
@@ -1227,6 +1228,9 @@ public class ClusterModel extends EntityModel
             else if (sender == getClusterPolicy()) {
                 clusterPolicyChanged();
             }
+            else if (sender == getCPU()) {
+                CPU_SelectedItemChanged(args);
+            }
         }
         else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition))
         {
@@ -1284,6 +1288,10 @@ public class ClusterModel extends EntityModel
                 }
             }
         }
+    }
+
+    private void CPU_SelectedItemChanged(EventArgs args) {
+        updateMigrateOnError();
     }
 
     private void version_SelectedItemChanged(EventArgs e)
@@ -1355,6 +1363,34 @@ public class ClusterModel extends EntityModel
         getEnableKsm().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ksmNotAvailable());
         if (isSmallerThanVersion3_4) {
             getEnableKsm().setEntity(true);
+        }
+
+        updateMigrateOnError();
+    }
+
+    private void updateMigrateOnError() {
+        ServerCpu cpu = (ServerCpu) getCPU().getSelectedItem();
+
+        Version version = (Version) getVersion().getSelectedItem();
+
+        if (version == null) {
+            return;
+        }
+
+        if (cpu == null) {
+            return;
+        }
+
+        getMigrateOnErrorOption_NO().setIsAvailable(true);
+
+        if (AsyncDataProvider.isMigrationSupported(cpu.getArchitecture(), version)) {
+            getMigrateOnErrorOption_YES().setIsAvailable(true);
+            getMigrateOnErrorOption_HA_ONLY().setIsAvailable(true);
+        } else {
+            getMigrateOnErrorOption_YES().setIsAvailable(false);
+            getMigrateOnErrorOption_HA_ONLY().setIsAvailable(false);
+
+            setMigrateOnErrorOption(MigrateOnErrorOptions.NO);
         }
     }
 

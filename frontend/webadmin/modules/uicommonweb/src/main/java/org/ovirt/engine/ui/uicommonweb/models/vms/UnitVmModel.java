@@ -1795,6 +1795,27 @@ public class UnitVmModel extends Model {
                                                                  }, getHash()));
     }
 
+    private void updateMigrationOptions()
+    {
+        DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getDataCenterWithClustersList().getSelectedItem();
+        if (dataCenterWithCluster == null) {
+            return;
+        }
+
+        VDSGroup cluster = dataCenterWithCluster.getCluster();
+
+        Boolean isMigrationSupported =
+                AsyncDataProvider.isMigrationSupported(cluster.getArchitecture(),
+                        cluster.getcompatibility_version());
+
+        if (isMigrationSupported) {
+            getMigrationMode().setItems(Arrays.asList(MigrationSupport.values()));
+        } else {
+            getMigrationMode().setItems(Arrays.asList(MigrationSupport.PINNED_TO_HOST));
+        }
+    }
+
     private void updateMaximalVmMemSize()
     {
         DataCenterWithCluster dataCenterWithCluster = getDataCenterWithClustersList().getSelectedItem();
@@ -1908,6 +1929,7 @@ public class UnitVmModel extends Model {
                     .getQuotaEnforcementType());
         }
 
+        updateMigrationOptions();
         updateMaximalVmMemSize();
         handleQxlClusterLevel();
 
