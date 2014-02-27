@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -1239,4 +1240,32 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         getModel().getIsSingleQxlEnabled().setIsChangable(enabled);
         getModel().getIsSingleQxlEnabled().setEntity(enabled);
     }
+
+    /**
+     * In case of a blank template, use the proper value for the default OS.
+     *
+     * @param VmBase
+     * @param ArchitectureType
+     */
+    protected void setSelectedOSType(VmBase vmBase,
+            ArchitectureType architectureType) {
+        if (vmBase.getId().equals(Guid.Empty)) {
+            Integer osId = AsyncDataProvider.getDefaultOs(architectureType);
+            if (osId != null) {
+                setSelectedOSTypeById(osId.intValue());
+            }
+        } else {
+            setSelectedOSTypeById(vmBase.getOsId());
+        }
+    }
+
+    private void setSelectedOSTypeById(int osId) {
+        for (Integer osIdList : getModel().getOSType().getItems()) {
+            if (osIdList.intValue() == osId) {
+                getModel().getOSType().setSelectedItem(osIdList);
+                break;
+            }
+        }
+    }
+
 }

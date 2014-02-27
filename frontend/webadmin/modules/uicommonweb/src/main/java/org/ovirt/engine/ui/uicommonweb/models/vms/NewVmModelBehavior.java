@@ -86,17 +86,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         if (template != null)
         {
             // Copy VM parameters from template.
-
-            // If this a blank template, use the proper value for the default OS
-            if (template.getId().equals(Guid.Empty))
-            {
-                Integer osId = AsyncDataProvider.getDefaultOs(getModel().getSelectedCluster().getArchitecture());
-                if (osId != null) {
-                    setSelectedOSById(osId.intValue());
-                }
-            } else {
-                setSelectedOSById(template.getOsId());
-            }
+            setSelectedOSType(template, getModel().getSelectedCluster().getArchitecture());
             getModel().getTotalCPUCores().setEntity(Integer.toString(template.getNumOfCpus()));
             getModel().getNumOfSockets().setSelectedItem(template.getNumOfSockets());
             getModel().getNumOfMonitors().setSelectedItem(template.getNumOfMonitors());
@@ -193,15 +183,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             updateNetworkInterfacesByTemplate(template);
             getModel().getVmInitModel().init(template);
             getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
-        }
-    }
-
-    private void setSelectedOSById (int osId) {
-        for (Integer osIdList : getModel().getOSType().getItems()) {
-            if (osIdList.intValue() == osId) {
-                getModel().getOSType().setSelectedItem(osIdList);
-                break;
-            }
         }
     }
 
