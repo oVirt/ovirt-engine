@@ -29,7 +29,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
      * @return
      */
     @Template("<span style='position: relative; bottom: 1px;'>{0}</span>" +
-            "<span style='position: relative; bottom: 7px;' id='{2}'>{1}</span>")
+            "<span id='{2}'>{1}</span>")
     SafeHtml treeItem(SafeHtml imageHtml, String text, String id);
 
     /**
@@ -38,7 +38,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
      * @param text
      *            the bookmark title
      */
-    @Template("<span id='{0}' style='display: inline-block; padding: 5px;'>{1}</span>")
+    @Template("<span id='{0}' style='display: inline-block; padding: 2px;'>{1}</span>")
     SafeHtml bookmarkItem(String id, String text);
 
     /**
@@ -62,7 +62,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
      *            the image HTML
      * @return
      */
-    @Template("<span style='position: relative; border: 1px solid {2}; visibility: {3};" +
+    @Template("<span style='position: relative; left: -2px; border: 1px solid {2}; visibility: {3};" +
             " bottom: 4px; padding: 0 3px; background-color: {1};' id='{4}'>{0}</span>")
     SafeHtml tagButton(SafeHtml imageHtml, String backgroundColor, String borderColor, String visibility, String id);
 
@@ -81,10 +81,10 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     SafeHtml alertEventButton(SafeHtml image, String text, String start, String stretch,
             String end, String contentStyleName);
 
-    @Template("<div style=\"text-align: center; padding-top: 6px;\">{0}{1}</div>")
+    @Template("<div style=\"text-align: center;\">{0}{1}</div>")
     SafeHtml statusWithAlertTemplate(SafeHtml statusImage, SafeHtml alertImage);
 
-    @Template("<div title=\"{1}\" style=\"text-align: center; padding-top: 6px;\">{0}</div>")
+    @Template("<div title=\"{1}\" style=\"text-align: center;\">{0}</div>")
     SafeHtml statusTemplate(SafeHtml statusImage, String title);
 
     @Template("<button type='button' tabindex='-1' style='float: right; height: 20px;'>"
@@ -132,9 +132,9 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     SafeHtml image(SafeHtml statusImage);
 
     @Template("<table> <tr> " +
-            "<td> <div style='padding-top: 6px;'>{0}</div> </td>" +
+            "<td> <div>{0}</div> </td>" +
             "<td> {1} </td>" +
-            "<td> <div style='padding-top: 6px;'> {2} </div> </td>" +
+            "<td> <div> {2} </div> </td>" +
             "<td> {3} </td>" +
             "</tr> </table>")
     SafeHtml volumeBrickStatusTemplate(SafeHtml upImage, int upCount, SafeHtml downImage, int downCount);

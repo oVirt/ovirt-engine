@@ -7,56 +7,56 @@
              xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
              xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
-	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+    <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmInitWidget.Style">
-		.verticalPanel>* {
-			display: block;
-			clear: both;
-		}
-		.horizontalPanel>* {
-			float: left;
-		}
-		.optionCheckbox {
-			width: 150px;
-		}
-		.primaryOptionComboBox {
-			margin-left: 40px;
-		}
-		.nestedOption {
-			margin-left: 27px;
-			margin-right: 5px;
-			font-family: Arial Unicode MS,Arial,sans-serif !important;
+    <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmInitWidget.Style">
+        .verticalPanel>* {
+            display: block;
+            clear: both;
+        }
+        .horizontalPanel>* {
             float: left;
-		}
-		.comboBoxControlMargin {
-			margin-top: 3px;
-			margin-bottom: 5px;
-			margin-left: 32px;
-		}
-		.labelSep {
-			margin-left: 12px;
-			margin-right: 12px;
-		}
-		.buttonStyle {
-			margin-right: 7px;
-			width: 9px;
-			height: 10px;
-			padding-left: 2px;
-			padding-top: 2px;
-		}
-		.displayNone {
-			display: none !important;
-		}
+        }
+        .optionCheckbox {
+            width: 150px;
+        }
+        .primaryOptionComboBox {
+            margin-left: 40px;
+        }
+        .nestedOption {
+            margin-left: 27px;
+            margin-right: 5px;
+            font-family: Arial Unicode MS,Arial,sans-serif !important;
+            float: left;
+        }
+        .comboBoxControlMargin {
+            margin-top: 3px;
+            margin-bottom: 5px;
+            margin-left: 32px;
+        }
+        .labelSep {
+            margin-left: 12px;
+            margin-right: 12px;
+        }
+        .buttonStyle {
+            margin-right: 7px;
+            width: 9px;
+            height: 10px;
+            padding-left: 2px;
+            padding-top: 2px;
+        }
+        .displayNone {
+            display: none !important;
+        }
 
         .customScriptInfoIconStyle {
             display: inline;
             float: left;
       }
 
-	</ui:style>
+    </ui:style>
 
-	<g:FlowPanel addStyleNames="{style.verticalPanel}" ui:field="mainPanel">
+    <g:FlowPanel addStyleNames="{style.verticalPanel}" ui:field="mainPanel">
         <g:FlowPanel ui:field="syspreptOptionsContent">
             <ge:StringEntityModelTextBoxEditor ui:field="windowsHostnameEditor" />
             <ge:ListModelSuggestBoxEditor ui:field="sysprepDomainEditor" />
@@ -98,17 +98,17 @@
 
                 <g:FlowPanel>
                     <ge:EntityModelCheckBoxEditor ui:field="networkEnabledEditor" addStyleNames="{style.optionCheckbox}" />
-                    <w:ComboBox ui:field="networkComboBox" addStyleNames="{style.primaryOptionComboBox}" />
+                    <w:ComboBox ui:field="networkComboBox" addStyleNames="{style.primaryOptionComboBox} vmiw_networkComboBox_pfly_fix" />
                 </g:FlowPanel>
                 <g:FlowPanel addStyleNames="{style.horizontalPanel} {style.comboBoxControlMargin}">
                     <g:Label ui:field="networkSelectLabel" />
                     <g:Label ui:field="networkLabelSepSelectAdd" addStyleNames="{style.labelSep}" />
-                    <g:PushButton ui:field="networkAddButton" addStyleNames="{style.buttonStyle}">
+                    <g:PushButton ui:field="networkAddButton" addStyleNames="{style.buttonStyle} vmiw_networkAddButton_pfly_fix">
                         <g:upFace image='{resources.increaseIcon}' />
                     </g:PushButton>
                     <g:Label ui:field="networkAddLabel" />
                     <g:Label ui:field="networkLabelSepAddRemove" addStyleNames="{style.labelSep}" />
-                    <g:PushButton ui:field="networkRemoveButton" addStyleNames="{style.buttonStyle}">
+                    <g:PushButton ui:field="networkRemoveButton" addStyleNames="{style.buttonStyle} vmiw_networkAddButton_pfly_fix">
                         <g:upFace image='{resources.decreaseIcon}' />
                     </g:PushButton>
                     <g:Label ui:field="networkRemoveLabel" />
@@ -130,5 +130,5 @@
             </g:FlowPanel>
 
         </g:FlowPanel>
-	</g:FlowPanel>
+    </g:FlowPanel>
 </ui:UiBinder>

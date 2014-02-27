@@ -7,22 +7,29 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.HasEnabled;
+import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Abstract button widget bound to UiCommon {@linkplain UICommand command}.
  */
 public abstract class AbstractUiCommandButton extends Composite
-        implements HasUiCommandClickHandlers, HasLabel, Focusable, FocusableComponentsContainer {
+        implements HasUiCommandClickHandlers, HasLabel, FocusableComponentsContainer {
 
     private UICommand command;
 
     @Override
     public HandlerRegistration addClickHandler(ClickHandler handler) {
-        return getButtonWidget().addClickHandler(handler);
+        Widget widget = getButtonWidget();
+        if (widget instanceof HasClickHandlers) {
+            return ((HasClickHandlers)widget).addClickHandler(handler);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -46,18 +53,29 @@ public abstract class AbstractUiCommandButton extends Composite
 
     @Override
     public String getLabel() {
-        return getButtonWidget().getText();
+        Widget widget = getButtonWidget();
+        String result = null;
+        if (widget instanceof HasText) {
+            result = ((HasText)widget).getText();
+        }
+        return result;
     }
 
     @Override
     public void setLabel(String label) {
-        getButtonWidget().setText(label);
+        Widget widget = getButtonWidget();
+        if (widget instanceof HasText) {
+            ((HasText)widget).setText(label);
+        }
     }
 
     void updateButton() {
-        getButtonWidget().setVisible(command.getIsAvailable() && command.getIsVisible());
-        getButtonWidget().setEnabled(command.getIsExecutionAllowed());
-
+        Widget widget = getButtonWidget();
+        widget.setVisible(command.getIsAvailable() && command.getIsVisible());
+        if (widget instanceof HasEnabled) {
+            ((HasEnabled)widget).setEnabled(command.getIsExecutionAllowed());
+        }
+        String label = getLabel();
         // Use prohibition reasons for tooltip if exist.
         String title = "";  //$NON-NLS-1$
         StringBuilder sb = new StringBuilder();
@@ -70,45 +88,23 @@ public abstract class AbstractUiCommandButton extends Composite
                 title = title.substring(0, title.length() -1);
             }
         } else {
-            title = !getButtonWidget().getText().equals("") ? //$NON-NLS-1$
-                    getButtonWidget().getText() : command.getTitle();
+            if (label != null && !label.isEmpty()) {
+                title = label;
+            }
+            else {
+                title = command.getTitle();
+            }
         }
         getButtonWidget().setTitle(title);
 
         if (command.getTitle() == null) {
-            getButtonWidget().setText(""); //$NON-NLS-1$
+            setLabel(""); //$NON-NLS-1$
         }
-        else if (getButtonWidget().getText().equals("")) { //$NON-NLS-1$
-            getButtonWidget().setText(command.getTitle());
+        else if (label != null && label.equals("")) { //$NON-NLS-1$
+            setLabel(command.getTitle());
         }
     }
 
-    protected abstract ButtonBase getButtonWidget();
-
-    @Override
-    public int getTabIndex() {
-        return getButtonWidget().getTabIndex();
-    }
-
-    @Override
-    public void setAccessKey(char key) {
-        getButtonWidget().setAccessKey(key);
-    }
-
-    @Override
-    public void setFocus(boolean focused) {
-        getButtonWidget().setFocus(focused);
-    }
-
-    @Override
-    public void setTabIndex(int index) {
-        getButtonWidget().setTabIndex(index);
-    }
-
-    @Override
-    public int setTabIndexes(int nextTabIndex) {
-        setTabIndex(nextTabIndex++);
-        return nextTabIndex;
-    }
+    protected abstract Widget getButtonWidget();
 
 }

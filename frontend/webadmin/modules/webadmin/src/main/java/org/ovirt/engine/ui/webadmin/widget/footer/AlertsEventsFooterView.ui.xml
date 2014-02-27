@@ -2,121 +2,122 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+    <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.widget.footer.AlertsEventsFooterView.Style">
-		.barStyle {
-			height: 0px;
-		}
-		
-		.tablePanel {
-			bottom: 0px;
-			top: 26px;
-			width: 100%;
-			overflow: auto;
-			position: absolute;
-			background-color: #666666;
-		}
-		
-		.firstRowTablePanel {
-			width: 100%;
-			height: 22px;
-		}
-		
-		.lastMessage {
-			width: 100%;
-			white-space: nowrap;
-			color: white;
-			padding: 5px;
-			float: left;
-		}
-		
-		.widgetOuterPanel {
-			width: 100%;
-		}
-		
-		.widgetInnerPanel {
-			background-color: #666666;
-			vertical-align: center;
-		}
-		
-		.taskButton,
-		.eventButton,
-		.alertButton {
-			height: 20px;
-			margin-left: 2px;
-			margin-right: 2px;
-		}
-		
-		.expandButton {
-			width: 12px;
-			padding-right: 2px;
-			padding-left: 4px;
-			padding-top: 3px;
-			cursor: pointer;
-		}
-		
-		.collapseButton {
-			cursor: pointer;
-			float: left;
-			line-height: 25px;
-			vertical-align: middle;
-		}
+    <ui:style type="org.ovirt.engine.ui.webadmin.widget.footer.AlertsEventsFooterView.Style">
+        .barStyle {
+            height: 0px;
+        }
 
-		.alertButtonUpStyle {
-			color: red;
-		}
+        .tablePanel {
+            bottom: 0px;
+            top: 26px;
+            width: 100%;
+            overflow: auto;
+            position: absolute;
+            background-color: #666666;
+            border-top: 1px solid gray;
+        }
 
-		.alertButtonDownStyle {
-			color: white;
-		}
+        .firstRowTablePanel {
+            width: 100%;
+            height: 22px;
+        }
 
-		.eventButtonUpStyle {
-			color: #333333;
-		}
+        .lastMessage {
+            width: 100%;
+            white-space: nowrap;
+            color: white;
+            padding-left: 5px;
+            float: left;
+        }
 
-		.eventButtonDownStyle {
-			color: white;
-		}
+        .widgetOuterPanel {
+            width: 100%;
+        }
 
-		.taskButtonUpStyle {
-			color: #333333;
-		}
+        .widgetInnerPanel {
+            background-color: #666666;
+            vertical-align: center;
+        }
 
-		.taskButtonDownStyle {
-			color: white;
-		}
+        .taskButton,
+        .eventButton,
+        .alertButton {
+            height: 20px;
+            margin-left: 2px;
+            margin-right: 2px;
+        }
 
-		.alertButtonUpStyle,
-		.alertButtonDownStyle,
-		.eventButtonUpStyle,
-		.eventButtonDownStyle,
-		.taskButtonUpStyle,
-		.taskButtonDownStyle {
-			cursor: pointer;
-		}
-	</ui:style>
+        .expandButton {
+            width: 12px;
+            padding-right: 2px;
+            padding-left: 4px;
+            padding-top: 3px;
+            cursor: pointer;
+        }
 
-	<g:SimplePanel ui:field="widgetPanel">
-		<g:VerticalPanel addStyleNames="{style.widgetOuterPanel}">
-			<g:HorizontalPanel ui:field="widgetInnerPanel" addStyleNames="{style.widgetInnerPanel}">
-				<g:PushButton ui:field="collapseButton" styleName="{style.collapseButton}">
-					<g:upFace image='{resources.collapseAllIcon}' />
-				</g:PushButton>
-				<g:Label ui:field="message" text="{constants.lastMsgEventFooter}" addStyleNames="{style.lastMessage}" />
-				<g:SimplePanel ui:field="firstRowTablePanel" addStyleNames="{style.firstRowTablePanel}" />
-				<g:ToggleButton ui:field="alertButton" styleName="{style.alertButton}" />
-				<g:ToggleButton ui:field="eventButton" styleName="{style.eventButton}" />
-				<g:ToggleButton ui:field="taskButton" styleName="{style.taskButton}" />
-				<g:PushButton ui:field="expandButton" styleName="{style.expandButton}">
-					<g:upFace image='{resources.enlargeFooterPanelImage}' />
-				</g:PushButton>
-			</g:HorizontalPanel>
-			<g:SimplePanel ui:field="tablePanel" addStyleNames="{style.tablePanel}" />
-		</g:VerticalPanel>
-	</g:SimplePanel>
+        .collapseButton {
+            cursor: pointer;
+            float: left;
+            line-height: 25px;
+            vertical-align: middle;
+        }
+
+        .alertButtonUpStyle {
+            color: red;
+        }
+
+        .alertButtonDownStyle {
+            color: white;
+        }
+
+        .eventButtonUpStyle {
+            color: #333333;
+        }
+
+        .eventButtonDownStyle {
+            color: white;
+        }
+
+        .taskButtonUpStyle {
+            color: #333333;
+        }
+
+        .taskButtonDownStyle {
+            color: white;
+        }
+
+        .alertButtonUpStyle,
+        .alertButtonDownStyle,
+        .eventButtonUpStyle,
+        .eventButtonDownStyle,
+        .taskButtonUpStyle,
+        .taskButtonDownStyle {
+            cursor: pointer;
+        }
+    </ui:style>
+
+    <g:SimplePanel ui:field="widgetPanel">
+        <g:VerticalPanel addStyleNames="{style.widgetOuterPanel}">
+            <g:HorizontalPanel ui:field="widgetInnerPanel" addStyleNames="{style.widgetInnerPanel}">
+                <g:PushButton ui:field="collapseButton" styleName="{style.collapseButton}">
+                    <g:upFace image='{resources.collapseAllIcon}' />
+                </g:PushButton>
+                <g:Label ui:field="message" text="{constants.lastMsgEventFooter}" addStyleNames="{style.lastMessage}" />
+                <g:SimplePanel ui:field="firstRowTablePanel" addStyleNames="{style.firstRowTablePanel}" />
+                <g:ToggleButton ui:field="alertButton" styleName="{style.alertButton}" />
+                <g:ToggleButton ui:field="eventButton" styleName="{style.eventButton}" />
+                <g:ToggleButton ui:field="taskButton" styleName="{style.taskButton}" />
+                <g:PushButton ui:field="expandButton" styleName="{style.expandButton}">
+                    <g:upFace image='{resources.enlargeFooterPanelImage}' />
+                </g:PushButton>
+            </g:HorizontalPanel>
+            <g:SimplePanel ui:field="tablePanel" addStyleNames="{style.tablePanel}" />
+        </g:VerticalPanel>
+    </g:SimplePanel>
 
 </ui:UiBinder>

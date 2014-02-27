@@ -19,6 +19,13 @@
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-dev</artifactId>
     </dependency>
+    <!-- GWT wrapper for Bootstrap framework -->
+    <dependency>
+      <groupId>org.gwtbootstrap3</groupId>
+      <artifactId>gwtbootstrap3</artifactId>
+      <version>${gwtbootstrap3.version}</version>
+      <scope>provided</scope>
+    </dependency>
     <!-- GWTP MVP component -->
     <dependency>
       <groupId>com.gwtplatform</groupId>

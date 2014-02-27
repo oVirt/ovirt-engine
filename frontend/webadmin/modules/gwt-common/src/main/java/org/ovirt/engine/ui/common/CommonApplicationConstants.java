@@ -7,6 +7,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("")
     String empty();
 
+    @DefaultStringValue("http://www.ovirt.org")
+    String vendorUrl();
+
     @DefaultStringValue("Operation Canceled")
     String errorPopupCaption();
 

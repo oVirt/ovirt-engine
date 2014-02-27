@@ -4,7 +4,7 @@
 <c:if test="${requestScope['brandingStyle'] != null}">
     <c:forEach items="${requestScope['brandingStyle']}" var="theme">
         <c:if test="${initParam['obrandApplicationName'] != null && theme.getThemeStyleSheet(initParam['obrandApplicationName']) != null}">
-        <!-- for actual servlets that have to set the request attribe -->
+        <!-- for actual servlets that have to set the request attribute -->
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}${initParam['obrandThemePath']}${theme.path}/${theme.getThemeStyleSheet(initParam['obrandApplicationName'])}">
         </c:if>
     </c:forEach>

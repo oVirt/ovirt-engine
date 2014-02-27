@@ -94,6 +94,8 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         setAutoHideEnabled(false);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
+        mainPanel.getElement().addClassName("lmtalb_listbox_pfly_fix"); //$NON-NLS-1$
+
         registerListeners();
     }
 
@@ -163,6 +165,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             selectInMenu(getValue());
 
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
                 public void execute () {
                     setFocus(true);
                 }
@@ -258,11 +261,13 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         throw new IllegalArgumentException("The provided value is not acceptable: '" + provided + "'"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
+    @Override
     public void setValue(T value) {
         addToValidValuesIfNeeded(value);
         super.setValue(value);
     }
 
+    @Override
     public void setValue(T value, boolean fireEvents) {
         addToValidValuesIfNeeded(value);
         super.setValue(value, fireEvents);

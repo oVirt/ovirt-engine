@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:with field='resources' type='org.ovirt.engine.ui.userportal.ApplicationResources' />
+
+    <ui:style>
+        .loginForm:focus {
+            outline: 0;
+        }
+
+        .container {
+            padding-top: 10px !important;
+        }
+
+        .label-default {
+            background-color: inherit;
+        }
+
+        .login-link:hover, login-link:focus {
+            color: #00618a;
+            text-decoration: underline;
+        }
+
+        .login-link {
+            color: #0099d3;
+        }
+
+        .login-error {
+            color: #b94a48;
+            background-color: inherit;
+            border-color: #b94a48;
+        }
+
+        .login-message-error {
+            color: #b94a48;
+            background-color: inherit;
+            word-break: break-word;
+            white-space: normal;
+        }
+
+        .information-triangle {
+            font-size: 20px;
+        }
+
+        .information-message {
+            font-size: 13px;
+            font-weight: 600;
+            white-space: normal;
+        }
+
+        .motd-header {
+            font-size: 14px;
+            font-weight: 600;
+            padding-top: 20px;
+            padding-bottom: 5px;
+        }
+
+        .loginButtonContainer {
+            padding-right: 0 !important;
+        }
+
+        @external obrand_loginFormLogoImage;
+            .obrand_loginFormLogoImage {
+        }
+    </ui:style>
+
+    <g:FocusPanel ui:field="loginForm" styleName="login-pf {style.loginForm}">
+        <g:HTMLPanel styleName="container {style.container}">
+            <div class="row">
+
+                <div class="col-sm-12">
+                    <div id="brand">
+                        <g:Image styleName="obrand_loginFormLogoImage" url="clear.cache.gif" />
+                    </div>
+                </div>
+
+                <b:Well size="SMALL" addStyleNames="col-sm-11 {style.login-error}" ui:field="errorMessagePanel">
+                    <b:Label ui:field="errorMessage" addStyleNames="{style.login-message-error} temp-link-color"/>
+                </b:Well>
+
+                <div class="col-sm-7 col-md-6 col-lg-5 login">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <div class="col-sm-8 col-md-8"></div>
+                            <div class="col-sm-4 col-md-4">
+                                <b:ListBox ui:field="localeBox"/>
+                            </div>
+                        </div>
+
+                        <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor" usePatternFly="true" />
+
+                        <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" usePatternFly="true" />
+
+                        <e:ListModelListBoxEditor ui:field="domainEditor" usePatternFly="true" />
+
+                        <div>
+                            <div class="col-xs-8 col-sm-offset-2 col-sm-6 col-md-offset-2 col-md-6">
+                                <ge:EntityModelCheckBoxEditor ui:field="connectAutomaticallyEditor" usePatternFly="true" />
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-4 submit {style.loginButtonContainer}">
+                                <w:PatternflyUiCommandButton ui:field="loginButton" addStyleNames="btn-primary btn-lg" />
+                           </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-sm-5 col-md-6 col-lg-7 details">
+                    <g:HTMLPanel ui:field="informationMessagePanel">
+                        <span class="pficon-layered {style.information-triangle}">
+                            <span class="pficon pficon-warning-triangle"></span>
+                            <span class="pficon pficon-warning-exclamation"></span>
+                        </span>
+                        <b:Label ui:field="informationMessage" addStyleNames="{style.label-default} {style.information-message} temp-link-color"/>
+                    </g:HTMLPanel>
+                    <g:HTMLPanel ui:field="motdPanel" addStyleNames="{style.label-default}">
+                        <b:Label ui:field="motdHeaderLabel" styleName="{style.motd-header}" />
+                        <g:HTMLPanel ui:field="motdMessagePanel" addStyleNames="temp-link-color" />
+                    </g:HTMLPanel>
+                </div>
+            </div>
+        </g:HTMLPanel>
+    </g:FocusPanel>
+
+</ui:UiBinder>

@@ -6,9 +6,9 @@
              xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.NfsStorageView.WidgetStyle">
-		.content {
-			margin-top: 40px;
-		}
+        .content {
+            margin-top: 40px;
+        }
 
         .label {
             color: #333333;
@@ -54,7 +54,7 @@
                         <g:Label ui:field="pathLabel" addStyleNames="{style.label}"/>
                     </td>
                     <td>
-                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="pathEditor"/>
+                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="pathEditor" addStyleNames="table_contentWidget_pfly_fix"/>
                     </td>
                 </tr>
                 <tr>
@@ -76,7 +76,7 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <ge:EntityModelCheckBoxEditor ui:field="overrideEditor" addStyleNames="{style.label}"/>
+                            <ge:EntityModelCheckBoxEditor ui:field="overrideEditor" addStyleNames="{style.label} table_contentWidget_pfly_fix"/>
                         </td>
                     </tr>
                     <tr>
@@ -85,7 +85,7 @@
                         </td>
                         <td>
                             <e:ListModelListBoxOnlyEditor ui:field="versionEditor"/>
-                            <ge:StringEntityModelTextBoxOnlyEditor ui:field="versionReadOnlyEditor"/>
+                            <ge:StringEntityModelTextBoxOnlyEditor ui:field="versionReadOnlyEditor" addStyleNames="table_contentWidget_pfly_fix"/>
                         </td>
                     </tr>
                     <tr>
@@ -101,7 +101,7 @@
                             <g:Label ui:field="timeoutLabel" addStyleNames="{style.label}"/>
                         </td>
                         <td>
-                            <ge:ShortEntityModelTextBoxOnlyEditor ui:field="timeoutEditor"/>
+                            <ge:ShortEntityModelTextBoxOnlyEditor ui:field="timeoutEditor" addStyleNames="table_contentWidget_pfly_fix"/>
                         </td>
                     </tr>
                 </table>

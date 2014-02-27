@@ -252,11 +252,11 @@
                                     <g:VerticalPanel addStyleNames="{style.content}">
                                         <g:Label ui:field="authLabel" addStyleNames="{style.headerAuthLabel}"/>
                                         <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor"/>
-                                        <g:HorizontalPanel ui:field="passwordSection" width="100%" verticalAlignment="middle">
+                                        <g:HorizontalPanel ui:field="passwordSection" width="100%" verticalAlignment="middle" addStyleNames="hpv_radio_pfly_fix">
                                             <g:RadioButton ui:field="rbPassword" />
                                             <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor"/>
                                         </g:HorizontalPanel>
-                                        <g:HorizontalPanel ui:field="pkSection" width="100%" verticalAlignment="middle">
+                                        <g:HorizontalPanel ui:field="pkSection" width="100%" verticalAlignment="middle" addStyleNames="hpv_radio_pfly_fix">
                                             <g:RadioButton ui:field="rbPublicKey" addStyleNames="{style.radioButton}" />
                                             <ge:StringEntityModelTextAreaLabelEditor ui:field="publicKeyEditor" />
                                         </g:HorizontalPanel>
@@ -330,7 +330,7 @@
                         <t:content>
                             <g:VerticalPanel>
                                 <g:Label text="{constants.spmPriority}" addStyleNames="{style.headerLabel}"/>
-                                <g:VerticalPanel ui:field="spmPanel"/>
+                                <g:VerticalPanel ui:field="spmPanel" addStyleNames="hpv_spmPanel_pfly_fix"/>
                             </g:VerticalPanel>
                         </t:content>
                     </t:DialogTab>
@@ -342,7 +342,7 @@
                                 <g:FlowPanel addStyleNames="{style.consoleAddressStyle}">
                                     <g:FlowPanel addStyleNames="{style.consoleAddressWithHelp}">
                                         <g:Label ui:field="consoleAddressLabel" addStyleNames="{style.consoleAddressEnabledLabel}" />
-                                        <d:InfoIcon ui:field="consoleAddressInfoIcon" addStyleNames="{style.consoleAddressHelpIcon}" />
+                                        <d:InfoIcon ui:field="consoleAddressInfoIcon" addStyleNames="{style.consoleAddressHelpIcon} hpv_consoleAddressHelpIcon_pfly_fix" />
                                     </g:FlowPanel>
                                     <ge:EntityModelCheckBoxOnlyEditor ui:field="consoleAddressEnabled" addStyleNames="{style.consoleAddressEnabledChecbox}" />
 	                            </g:FlowPanel>

@@ -7,26 +7,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-<obrand:favicon />
-<title><fmt:message key="pagenotfound.page_not_found" bundle="${pagenotfound}" /></title>
-<obrand:stylesheets />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <obrand:favicon />
+    <title><fmt:message key="pagenotfound.page_not_found" bundle="${pagenotfound}" /></title>
+    <obrand:stylesheets />
 </head>
 <body>
-    <div>
-        <div class="obrand_left">
-            <div class="obrand_header_nav">
-                <fmt:message key="obrand.welcome.header.main" />
+<div class="obrand_loginPageBackground">
+        <a href="<obrand:messages key="obrand.common.vendor_url"/>" class="obrand_loginPageLogoImageLink">
+             <span class="obrand_loginPageLogoImage"></span>
+        </a>
+        <div class="login-pf">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-sm-12">
+                        <div id="brand">
+                            <div class="obrand_loginFormLogoImage"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <span class="welcome-title"><fmt:message key="pagenotfound.page_not_found" bundle="${pagenotfound}" /></span>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <a id="link-404" href="${pageContext.request.contextPath}/"><fmt:message key="pagenotfound.link" bundle="${pagenotfound}" /></a>
+                    </div>
+
+                </div>
             </div>
         </div>
-        <div class="obrand_right">
-        </div>
-        <div class="obrand_center">
-        </div>
-    </div>
-    <div class="obrand_main">
-        <h2><span class="obrand_section_header"><fmt:message key="pagenotfound.page_not_found" bundle="${pagenotfound}" /></span></h2>
-        <a href="/ovirt-engine"><fmt:message key="pagenotfound.link" bundle="${pagenotfound}" /></a>
     </div>
 </body>
 </html>

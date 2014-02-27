@@ -1,0 +1,404 @@
+/* These are styles we need to override temporarily until the entire application is
+   converted to use PatternFly. For example, since the body is still set to default
+   to Arial, the navigation tabs use Arial instead of Open Sans. To correct, we will
+   temporarily override such things in this file.
+
+   TODO: remove this file when fully converted over to PatternFly.
+*/
+
+
+label {
+    font-weight: 500 !important;
+}
+
+/* UserPortal navigation bar has wrong font, set to Open Sans */
+.navbar-pf .navbar-nav > li > a {
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
+}
+
+
+.navbar-pf .navbar-utility > li > a {
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
+}
+
+.dropdown-menu > li > a {
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
+}
+.login-pf {
+    color: #fff !important;
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
+}
+.login-pf select {
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
+}
+.login-pf label {
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
+}
+#LoginFormView_loginButton {
+    position: relative;
+    top: 6px;
+}
+
+/* this is for links that arent picking up the correct light blue color.
+   remove temp-link-color from everywhere when we are switched over. */
+.temp-link-color a, .temp-link-color a:visited, .temp-link-color a:hover {
+    color: #0099d3;
+}
+.closeIconButton_fix {
+    margin-top: -4px !important;
+}
+.dialogTab_fix {
+    padding-top: 1px !important;
+    padding-bottom: 1px !important;
+}
+.buttonStyle_pfly_fix {
+    width: 18px !important;
+    height: 18px !important;
+}
+.buttonStyle_pfly_fix img {
+    position: relative !important;
+    top: -7px !important;
+}
+.avw_contentWidget_pfly_fix {
+    /* width: 240px !important; */
+    line-height: 16px !important;
+}
+.avw_wrapper_pfly_fix {
+}
+.avw_label_pfly_fix {
+    line-height: 16px !important;
+}
+.lmtalb_listbox_pfly_fix {
+    height: 18px !important;
+}
+.lmtalb_listbox_pfly_fix input {
+    height: 16px !important;
+}
+.lmtalb_suggestboxWrapper_pfly_fix {
+    height: 18px !important;
+}
+#VmPopupWidget_name, #PoolNewPopupWidget_name, #PoolNewPopupWidget_prestartedVms, #PoolNewPopupWidget_maxAssignedVmsPerUser,
+    #PoolEditPopupWidget_name, #PoolEditPopupWidget_editPrestartedVms, #PoolEditPopupWidget_incraseNumOfVms,
+    #PoolEditPopupWidget_editMaxAssignedVmsPerUser, #TemplateNewPopupWidget_name {
+    line-height: 16px !important;
+}
+.cbe_checkbox_pfly_fix {
+    position: relative;
+    top: 2px;
+}
+.cbe_label_pfly_fix {
+    padding-left: 5px;
+}
+
+.pite_content_pfly_fix span.avw_label_pfly_fix {
+    position: relative !important;
+    top: 6px !important;
+}
+.ape_expander_pfly_fix div span span:first-child {
+    top: 4px;
+    padding-right: 2px;
+}
+.avmpw_nameEditor_pfly_fix {
+    padding-left: 5px;
+}
+.avmpw_nameEditor_pfly_fix div:nth-child(2) {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.connect-automatically-checkbox_pfly_fix {
+    margin-left: 3px;
+}
+span.label {
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+}
+
+.avw_contentWidget_pfly_fix span.gwt-RadioButton label {
+    padding-left: 5px !important;
+}
+.avmpw_monitorsLabel_pfly_fix {
+    width: 276px !important;
+}
+.cpv_panelInfo_pfly_fix {
+    margin-left: 5px !important;
+
+}
+div.avw_contentWidget_pfly_fix {
+    position: relative;
+    top: 6px;
+}
+.avmpw_name_pfly_fix {
+    padding-bottom: 30px !important;
+}
+.vmiw_networkAddButton_pfly_fix {
+    width: 18px !important;
+    height: 18px !important;
+    position: relative;
+    top: 3px;
+}
+.vmiw_networkAddButton_pfly_fix img {
+    position: relative;
+    top: -7px;
+}
+.vmiw_networkComboBox_pfly_fix {
+    padding-bottom: 10px;
+}
+.avmpw_specificHostLabel_pfly_fix {
+    padding-left: 5px !important;
+}
+.avmpw_migrationDowntimeLabel_pfly_fix {
+    padding-left: 7px;
+}
+.avmpw_overrideMigrationDowntime_pfly_fix {
+    position: relative;
+    top: -3px;
+}
+.avmpw_cpuSahresValueTextBox_pfly_fix, .avmpw_cpuPinningTextBox_pfly_fix {
+    line-height: 16px !important;
+    padding-top: 5px !important;
+}
+.avmpw_cdImageEditor_pfly_fix .avw_contentWidget_pfly_fix {
+    left: -6px;
+}
+.avmpw_refreshButton_pfly_fix {
+    position: relative;
+    top: -3px;
+    left: -8px;
+}
+.cpv_enableOvirtService_pfly_fix span.gwt-CheckBox {
+    position: relative;
+    top: -2px;
+}
+.cpv_enableGlusterService_pfly_fix span.gwt-CheckBox {
+    position: relative;
+    top: -32px;
+}
+.cvp_consoleContent_pfly_fix, .cvp_clusterPolicyContent_pfly_fix {
+    padding-top: 5px;
+}
+.cpv_spiceProxyEnabledCheckbox_pfly_fix span.gwt-CheckBox {
+    position: relative;
+    top: -5px;
+}
+.hpv_pmVariantsEditor_pfly_fix {
+    padding-bottom: 10px;
+    padding-top: 5px;
+}
+.hpv_spmPanel_pfly_fix label {
+    padding-left: 5px;
+}
+.hpv_consoleAddressHelpIcon_pfly_fix {
+    padding-top: 0 !important;
+    padding-left: 5px;
+}
+.atpv_tree_pfly_fix span:nth-child(1) { /* checkbox */
+    position: relative;
+    top: 2px;
+}
+.atpv_tree_pfly_fix span:nth-child(2) { /* label */
+    padding-left: 5px;
+}
+
+.avmpw_infoIcon_pfly_fix {
+    padding-top: 0 !important;
+    padding-left: 5px !important;
+}
+.avmpw_maxAssignedVmsPerUserEditorContent_pfly_fix, .avmpw_prestartedVmsEditorContent_pfly_fix {
+    padding-left: 10px;
+}
+.avmpw_poolEditVms_pfly_fix {
+    padding-bottom: 30px !important;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .contentPanel_pfly_fix {
+        padding: 3px !important;
+    }
+}
+.table_contentWidget_pfly_fix .avw_contentWidget_pfly_fix {
+    top: 0 !important;
+}
+.rv_showLabel_pfly_fix {
+    padding-right: 7px;
+    position: relative;
+    top: -1px;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .rv_showLabel_pfly_fix {
+        top: -2px;
+    }
+}
+
+.rv_radio_pfly_fix label {
+    padding-left: 3px;
+    position: relative;
+    top: -2px;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.rv_image_pfly_fix {
+    position: relative;
+    top: -5px;
+    margin-right: 5px;
+    margin-left: 15px !important;
+}
+.footerButton_pfly_fix {
+    height: 22px;
+}
+.footerButton_pfly_fix div {
+    position: relative;
+    top: -2px;
+}
+.rpv_buttonPanel_pfly_fix button {
+    line-height: 12px;
+    margin-right: 5px;
+}
+.rpv_treePanel_pfly_fix img {
+    position: relative;
+    top: -4px;
+}
+.rpv_radioPanel_pfly_fix label {
+    padding-left: 3px !important;
+    padding-right: 10px !important;
+    position: relative !important;
+    top: 5px !important;
+}
+.rpv_titleLabel_pfly_fix {
+    padding-right: 5px;
+}
+.rpv_treePanel_pfly_fix input {
+    margin-right: 3px;
+}
+.mtev_buttonPanel_pfly_fix label {
+    padding-left: 3px !important;
+}
+.db_text {
+    position: relative !important;
+    top: -1px;
+}
+.sdp_helpIconButton_pfly_fix {
+    top: -7px !important;
+}
+.tslp_sliderButton_pfly_fix {
+    top: -3px !important;
+}
+.sap_refreshButton_pfly_fix {
+    position: relative !important;
+    right: 5px !important;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .brp_refreshButton_pfly_fix img {
+        position: relative !important;
+        top: 3px;
+    }
+}
+input[readonly="readonly"], input[readonly=""] {
+    background-color: #fff;
+}
+.formPanel_detailView {
+    line-height: 22px !important;
+}
+.dvrg_radioGroup_pfly_fix, .stnhv_radioGroup_pfly_fix, .stnvmv_radioGroup_pfly_fix, .mtdv_radioGroup_pfly_fix {
+    clear: left;
+    padding-left: 10px;
+}
+.dvrg_radioGroup_pfly_fix label, .stnhv_radioGroup_pfly_fix label, .stnvmv_radioGroup_pfly_fix label,
+        .mtdv_radioGroup_pfly_fix label {
+    padding-left: 3px !important;
+}
+a.dropdown-toggle {
+    line-height: 11px !important;
+}
+
+#SearchPanelView_searchStringInput {
+    height: 26px;
+    line-height: 26px;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    #SearchPanelView_searchStringInput {
+        height: 25px;
+        line-height: 25px;
+    }
+}
+.dab_dropdownImage_pfly_fix {
+    position: relative !important;
+    top: 6px !important;
+}
+.hpv_radio_pfly_fix label {
+    padding-left: 3px !important;
+}
+#PermissionsPopupView_specificUserOrGroupRadio input, #PermissionsPopupView_everyoneRadio input {
+    margin-left: 3px !important;
+    margin-right: 3px !important;
+}
+#PermissionsPopupView_specificUserOrGroupRadio {
+    margin-right: 4px !important;
+}
+#PermissionsPopupView_searchString {
+    top: 1px !important;
+    line-height: 16px !important;
+    position: relative;
+    border-color: #808080;
+    border-style: solid;
+    border-width: 1px;
+    width: 100%;
+}
+.generalTabTopDecorator_pfly_fix {
+    margin-top: 0 !important;
+    margin-right: 0 !important;
+}
+.vpv_transportType_pfly_fix td:nth-child(2) div {
+    position: relative;
+    left: 12px;
+}
+.vpv_bricks_pfly_fix > tbody > tr > td:nth-child(2) > table {
+    margin-left: 20px;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .vpv_bricks_pfly_fix > tbody > tr > td:nth-child(2) > table {
+        margin-left: 15px;
+    }
+}
+.prevPageButton_pfly_fix {
+    margin-right: 8px !important;
+}
+.nextPageButton_pfly_fix {
+    margin-right: 10px !important;
+}
+.epv_closeButton_pfly_fix {
+    line-height: 12px !important;
+}
+.epv_titleLabel_pfly_fix {
+    position: relative !important;
+    left: 12px !important;
+}
+.gpv_flowPanel_pfly_fix {
+    padding: 4px;
+}
+.gpv_flowPanel_pfly_fix .db_text {
+    position: relative !important;
+    top: -25px !important;
+    left: 20px !important;
+}
+.gpv_flowPanel_pfly_fix .db_image_container img {
+    position: relative !important;
+    top: -3px !important;
+}
+.hsnpv_checkBoxesPanel_pfly_fix img {
+    position: relative !important;
+    top: 6px !important;
+}
+.cpv_spicePanel_pfly_fix, .cpv_spiceTitle_pfly_fix {
+    padding-top: 10px !important;
+}
+.cpv_spicePanel_pfly_fix input[type=radio], .cpv_spiceTitle_pfly_fix input[type=radio] {
+    position: relative !important;
+    top: 2px !important;
+}
+.cpv_infoIcon_pfly_fix {
+    position: relative;
+    top: -3px;
+    left: 5px;
+}
+.appv_searchButton_pfly_fix {
+    position: relative !important;
+    top: 2px !important;
+}

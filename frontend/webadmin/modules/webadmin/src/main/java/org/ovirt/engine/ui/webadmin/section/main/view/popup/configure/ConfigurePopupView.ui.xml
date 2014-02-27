@@ -37,7 +37,7 @@
 						</t:content>
 					</t:DialogTab>
 				</t:tab>
-				<t:tab>
+                <t:tab>
 					<t:DialogTab ui:field="instanceTypesTab">
 						<t:content>
                             <g:SimplePanel addStyleNames="{style.panel}" ui:field="instanceTypesTabPanel" />
@@ -47,9 +47,9 @@
 			</t:DialogTabPanel>
 		</d:content>
 
-		<d:footerButton>
-			<g:PushButton ui:field="closeButton" />
-		</d:footerButton>
-	</d:SimpleDialogPanel>
+        <d:footerButton>
+            <g:PushButton ui:field="closeButton" addStyleNames="footerButton_pfly_fix"/>
+        </d:footerButton>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

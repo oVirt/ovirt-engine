@@ -8,9 +8,9 @@ xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
 xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
-	<ui:style type="org.ovirt.engine.ui.common.view.popup.ConsolePopupView.Style">
+    <ui:style type="org.ovirt.engine.ui.common.view.popup.ConsolePopupView.Style">
         .explanationLabel {
             font-style: italic;
             margin-left: 40px;
@@ -47,59 +47,59 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
         }
     </ui:style>
 
-	<d:SimpleDialogPanel width="500px" height="420px">
-		<d:content>
-			<g:FlowPanel addStyleNames="{style.fullWidth}">
-				<g:FlowPanel addStyleNames="{style.protocolPanel}">
-					<g:Label ui:field="consoleTitle" addStyleNames="{style.labelStyle}" />
-					<g:FlowPanel>
-						<ge:EntityModelRadioButtonEditor ui:field="spiceRadioButton" addStyleNames="{style.protocolRadioButton}"/>
-						<ge:EntityModelRadioButtonEditor ui:field="vncRadioButton" addStyleNames="{style.protocolRadioButton}"/>
-						<ge:EntityModelRadioButtonEditor ui:field="remoteDesktopRadioButton" addStyleNames="{style.protocolRadioButton}" />
-					</g:FlowPanel>
-				</g:FlowPanel>
+    <d:SimpleDialogPanel width="500px" height="420px">
+        <d:content>
+            <g:FlowPanel addStyleNames="{style.fullWidth}">
+                <g:FlowPanel addStyleNames="{style.protocolPanel}">
+                    <g:Label ui:field="consoleTitle" addStyleNames="{style.labelStyle}" />
+                    <g:FlowPanel>
+                        <ge:EntityModelRadioButtonEditor ui:field="spiceRadioButton" addStyleNames="{style.protocolRadioButton}"/>
+                        <ge:EntityModelRadioButtonEditor ui:field="vncRadioButton" addStyleNames="{style.protocolRadioButton}"/>
+                        <ge:EntityModelRadioButtonEditor ui:field="remoteDesktopRadioButton" addStyleNames="{style.protocolRadioButton}" />
+                    </g:FlowPanel>
+                </g:FlowPanel>
 
-				<g:FlowPanel ui:field="spicePanel" addStyleNames="{style.protocolPanel}">
+                <g:FlowPanel ui:field="spicePanel" addStyleNames="{style.protocolPanel} cpv_spicePanel_pfly_fix">
                     <v:WidgetWithInfo ui:field="spiceHeadline" />
-					<ge:EntityModelRadioButtonEditor ui:field="spiceAutoImplRadioButton"/>
-					<ge:EntityModelRadioButtonEditor ui:field="spiceNativeImplRadioButton"/>
-					<ge:EntityModelRadioButtonEditor ui:field="spicePluginImplRadioButton"/>
-					<ge:EntityModelRadioButtonEditor ui:field="spiceHtml5ImplRadioButton"/>
+                    <ge:EntityModelRadioButtonEditor ui:field="spiceAutoImplRadioButton"/>
+                    <ge:EntityModelRadioButtonEditor ui:field="spiceNativeImplRadioButton"/>
+                    <ge:EntityModelRadioButtonEditor ui:field="spicePluginImplRadioButton"/>
+                    <ge:EntityModelRadioButtonEditor ui:field="spiceHtml5ImplRadioButton"/>
 
-					<g:Label ui:field="spiceTitle" text="{constants.spiceOptions}" addStyleNames="{style.labelStyle}" />
-					<w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteSpice" />
-					<w:EntityModelValueCheckBoxEditor ui:field="enableUsbAutoshare" />
-					<w:EntityModelValueCheckBoxEditor ui:field="openInFullScreen" />
-					<w:EntityModelValueCheckBoxEditor ui:field="enableSpiceProxy" />
+                    <g:Label ui:field="spiceTitle" text="{constants.spiceOptions}" addStyleNames="{style.labelStyle} cpv_spiceTitle_pfly_fix" />
+                    <w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteSpice" />
+                    <w:EntityModelValueCheckBoxEditor ui:field="enableUsbAutoshare" />
+                    <w:EntityModelValueCheckBoxEditor ui:field="openInFullScreen" />
+                    <w:EntityModelValueCheckBoxEditor ui:field="enableSpiceProxy" />
 
-					<g:FlowPanel ui:field="wanOptionsPanel" >
-						<w:EntityModelValueCheckBoxEditor ui:field="wanEnabled" />
-					</g:FlowPanel>
+                    <g:FlowPanel ui:field="wanOptionsPanel" >
+                        <w:EntityModelValueCheckBoxEditor ui:field="wanEnabled" />
+                    </g:FlowPanel>
 
-					<g:FlowPanel ui:field="disableSmartcardPanel" >
-						<w:EntityModelValueCheckBoxEditor ui:field="disableSmartcard" />
-					</g:FlowPanel>
-				</g:FlowPanel>
+                    <g:FlowPanel ui:field="disableSmartcardPanel" >
+                        <w:EntityModelValueCheckBoxEditor ui:field="disableSmartcard" />
+                    </g:FlowPanel>
+                </g:FlowPanel>
 
-				<g:FlowPanel ui:field="vncPanel" addStyleNames="{style.protocolPanel}">
+                <g:FlowPanel ui:field="vncPanel" addStyleNames="{style.protocolPanel}">
                     <v:WidgetWithInfo ui:field="vncHeadline" />
-					<ge:EntityModelRadioButtonEditor ui:field="vncNativeImplRadioButton" />
-					<ge:EntityModelRadioButtonEditor ui:field="noVncImplRadioButton"/>
+                    <ge:EntityModelRadioButtonEditor ui:field="vncNativeImplRadioButton" />
+                    <ge:EntityModelRadioButtonEditor ui:field="noVncImplRadioButton"/>
                     <g:Label ui:field="vncTitle" text="{constants.vncOptions}" addStyleNames="{style.labelStyle}" />
                     <w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteVnc" />
-				</g:FlowPanel>
+                </g:FlowPanel>
 
-				<g:FlowPanel ui:field="rdpPanel" addStyleNames="{style.protocolPanel}">
+                <g:FlowPanel ui:field="rdpPanel" addStyleNames="{style.protocolPanel}">
                     <v:WidgetWithInfo ui:field="rdpHeadline" />
-					<ge:EntityModelRadioButtonEditor ui:field="rdpAutoImplRadioButton" />
-					<ge:EntityModelRadioButtonEditor ui:field="rdpNativeImplRadioButton" />
-					<ge:EntityModelRadioButtonEditor ui:field="rdpPluginImplRadioButton" />
+                    <ge:EntityModelRadioButtonEditor ui:field="rdpAutoImplRadioButton" />
+                    <ge:EntityModelRadioButtonEditor ui:field="rdpNativeImplRadioButton" />
+                    <ge:EntityModelRadioButtonEditor ui:field="rdpPluginImplRadioButton" />
                     <g:Label text="{constants.rdpOptions}" addStyleNames="{style.labelStyle}" />
-					<w:EntityModelValueCheckBoxEditor ui:field="useLocalDrives" />
-				</g:FlowPanel>
+                    <w:EntityModelValueCheckBoxEditor ui:field="useLocalDrives" />
+                </g:FlowPanel>
 
-			</g:FlowPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+            </g:FlowPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

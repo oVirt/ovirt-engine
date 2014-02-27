@@ -2,24 +2,24 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-	<ui:style>
-		.viewButtonPanel {
-			float: left;
-			margin-top: 5px;
-			margin-left: 5px;
-		}
+    <ui:style>
+        .viewButtonPanel {
+            float: left;
+            margin-top: 5px;
+            margin-left: 5px;
+        }
 
-		.viewButton {
-			margin-right: 10px;
-		}
-	</ui:style>
+        .viewButton {
+            margin-right: 10px;
+        }
+    </ui:style>
 
-	<g:FlowPanel>
-		<g:FlowPanel addStyleNames="{style.viewButtonPanel}">
-			<g:RadioButton ui:field="basicViewButton" name="view" addStyleNames="{style.viewButton}" />
-			<g:RadioButton ui:field="advancedViewButton" name="view" addStyleNames="{style.viewButton}" />
-		</g:FlowPanel>
-		<g:SimplePanel ui:field="tablePanel" />
-	</g:FlowPanel>
+    <g:FlowPanel>
+        <g:FlowPanel addStyleNames="{style.viewButtonPanel} mtev_buttonPanel_pfly_fix">
+            <g:RadioButton ui:field="basicViewButton" name="view" addStyleNames="{style.viewButton}" />
+            <g:RadioButton ui:field="advancedViewButton" name="view" addStyleNames="{style.viewButton}" />
+        </g:FlowPanel>
+        <g:SimplePanel ui:field="tablePanel" />
+    </g:FlowPanel>
 
 </ui:UiBinder>

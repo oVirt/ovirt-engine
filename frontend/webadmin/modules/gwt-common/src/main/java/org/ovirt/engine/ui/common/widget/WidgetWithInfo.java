@@ -36,4 +36,8 @@ public class WidgetWithInfo extends Composite {
         infoIcon.setText(text);
     }
 
+    public void addInfoIconStyle(String style) {
+        infoIcon.addStyleName(style);
+    }
+
 }

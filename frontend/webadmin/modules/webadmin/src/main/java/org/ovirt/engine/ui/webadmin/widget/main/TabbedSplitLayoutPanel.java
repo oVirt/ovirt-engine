@@ -174,6 +174,7 @@ public class TabbedSplitLayoutPanel extends SplitLayoutPanel {
         });
         result.setVisible(false);
         result.addStyleName(style.sliderButton());
+        result.addStyleName("tslp_sliderButton_pfly_fix"); //$NON-NLS-1$
         return result;
     }
 

@@ -878,6 +878,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private void initTotalVcpus() {
         StringEntityModelLabel label = new StringEntityModelLabel();
         label.setText(constants.numOfVCPUs());
+        label.addStyleName("numCPUs_pfly_fix"); //$NON-NLS-1$
         totalvCPUsEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         totalvCPUsEditorWithInfoIcon = new EntityModelDetachableWidgetWithInfo<String>(label, totalvCPUsEditor);
         totalvCPUsEditorWithInfoIcon.setExplanation(applicationTemplates.italicText(messages.hotPlugUnplugCpuWarning()));

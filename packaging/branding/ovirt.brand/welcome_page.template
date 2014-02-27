@@ -1,21 +1,11 @@
-<div>
-  <h2>
-    <span class="obrand_section_header">{portal_title}</span>
-  </h2>
-  <div>
-    <a href="userportal/?locale={userLocale}">{portal_user_portal}</a>
-  </div>
-  <div>
-    <a href="webadmin/?locale={userLocale}">{portal_admin}</a>
-  </div>
-  <div>
-    <a href="services/reports-redirect">{portal_reports}</a>
-  </div>
 
-  <h2>
-    <span class="obrand_section_header">{downloads_title}</span>
-  </h2>
-  <div>
-    <a href="{console_client_resources_url}" target="_blank">{console_client_resources}</a>
-  </div>
+<div class="col-sm-7 col-md-6 col-lg-5 login">
+    <div class="welcome-section-title">{portal_title}</div>
+    <div class="welcome-link"><a href="userportal/?locale={userLocale}">{portal_user_portal}</a></div>
+    <div class="welcome-link"><a href="webadmin/?locale={userLocale}">{portal_admin}</a></div>
+    <div class="welcome-link"><a href="services/reports-redirect">{portal_reports}</a></div>
+</div>
+<div class="col-sm-5 col-md-6 col-lg-7 details">
+    <div class="welcome-section-title"><span class="">{downloads_title}</div>
+    <div class="welcome-link"><a href="{console_client_resources_url}" target="_blank">{console_client_resources}</a></div>
 </div>

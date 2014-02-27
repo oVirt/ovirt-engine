@@ -1,31 +1,36 @@
 package org.ovirt.engine.ui.common.view;
 
+import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.ListBox;
+import org.gwtbootstrap3.client.ui.Well;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
-import org.ovirt.engine.ui.common.widget.dialog.DialogBoxWithKeyHandlers;
-import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
+import org.ovirt.engine.ui.common.widget.PatternflyUiCommandButton;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor.Ignore;
+import com.google.gwt.editor.client.Editor.Path;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.HasKeyPressHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.Panel;
 
 /**
- * Base implementation of the login dialog.
- * <p>
- * TODO: check if bigger portion of the LoginPopupView can not be moved to this class
+ * Base implementation of the login form.
  */
-public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBoxWithKeyHandlers> {
+public abstract class AbstractLoginFormView extends AbstractView {
 
     interface MotdAnchorTemplate extends SafeHtmlTemplates {
         @Template("<a href=\"{0}\" target=\"blank\">{1}</a>")
@@ -40,29 +45,69 @@ public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBox
     @Ignore
     public ListBox localeBox;
 
+    @UiField
+    public FocusPanel loginForm;
+
     @UiField(provided = true)
+    @Path("userName.entity")
+    @WithElementId("userName")
+    public StringEntityModelTextBoxEditor userNameEditor;
+
+    @UiField
+    @Path("password.entity")
+    @WithElementId("password")
+    public StringEntityModelPasswordBoxEditor passwordEditor;
+
+    @UiField
+    @Path("domain.selectedItem")
+    @WithElementId("domain")
+    public ListModelListBoxEditor<Object> domainEditor;
+
+    @UiField
+    @WithElementId
+    public PatternflyUiCommandButton loginButton;
+
+    @UiField
     @Ignore
-    public Label selectedLocale;
+    public Label errorMessage;
 
-    private final ClientAgentType clientAgentType;
+    @UiField
+    @Ignore
+    public Label informationMessage;
 
-    public AbstractLoginPopupView(EventBus eventBus,
-            CommonApplicationResources resources,
-            ClientAgentType clientAgentType) {
-        super(eventBus, resources);
-        this.clientAgentType = clientAgentType;
+    @UiField
+    @Ignore
+    public Well errorMessagePanel;
+
+    @UiField
+    @Ignore
+    public Panel informationMessagePanel;
+
+    public AbstractLoginFormView(EventBus eventBus,
+            CommonApplicationResources resources) {
         initLocalizationEditor();
+
+        // We need this code because resetAndFocus is called when userNameEditor is Disabled
+        userNameEditor = new StringEntityModelTextBoxEditor() {
+            @Override
+            public void setEnabled(boolean enabled) {
+                super.setEnabled(enabled);
+                if (enabled) {
+                    userNameEditor.asValueBox().selectAll();
+                    userNameEditor.setFocus(true);
+                }
+            }
+        };
     }
 
-    @Override
-    protected void initWidget(DialogBoxWithKeyHandlers widget) {
-        super.initWidget(widget);
-        setAutoHideOnNavigationEventEnabled(true);
+    protected void setStyles() {
+        errorMessagePanel.setVisible(false);
+        informationMessagePanel.setVisible(false);
+        passwordEditor.setAutoComplete("off"); //$NON-NLS-1$
     }
 
     private void initLocalizationEditor() {
         localeBox = new ListBox();
-        selectedLocale = new Label();
 
         // Add the option to change the locale
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
@@ -87,10 +132,6 @@ public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBox
             setSelectedLocale(0);
         }
 
-        if (clientAgentType.isIE8OrBelow()) {
-            selectedLocale.getElement().getStyle().setOpacity(0);
-        }
-
         localeBox.addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent event) {
@@ -103,7 +144,6 @@ public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBox
 
     void setSelectedLocale(int index) {
         localeBox.setSelectedIndex(index);
-        selectedLocale.setText(localeBox.getItemText(index));
     }
 
     MotdAnchorTemplate getTemplate() {
@@ -111,21 +151,6 @@ public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBox
             template = GWT.create(MotdAnchorTemplate.class);
         }
         return template;
-    }
-
-    @Override
-    public HasClickHandlers getCloseButton() {
-        return null;
-    }
-
-    @Override
-    public HasClickHandlers getCloseIconButton() {
-        return null;
-    }
-
-    @Override
-    public void setPopupKeyPressHandler(PopupNativeKeyPressHandler keyPressHandler) {
-        asWidget().setKeyPressHandler(keyPressHandler);
     }
 
     protected void setErrorMessageLabel(Label errorMessage, SafeHtml text) {
@@ -139,4 +164,32 @@ public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBox
     public String getMotdAnchorHtml(String url) {
         return getTemplate().anchor(url, url).asString();
     }
+
+    public void clearErrorMessage() {
+        setErrorMessageHtml(null);
+        errorMessagePanel.setVisible(false);
+    }
+
+    public void setErrorMessageHtml(SafeHtml text) {
+        setErrorMessageLabel(errorMessage, text);
+        errorMessage.setVisible(text != null);
+        if (errorMessage.isVisible()) {
+            errorMessagePanel.setVisible(true);
+        }
+    }
+
+    public void resetAndFocus() {
+        userNameEditor.asValueBox().selectAll();
+        userNameEditor.asValueBox().setFocus(true);
+        clearErrorMessage();
+    }
+
+    public HasUiCommandClickHandlers getLoginButton() {
+        return loginButton;
+    }
+
+    public HasKeyPressHandlers getLoginForm() {
+        return loginForm;
+    }
+
 }

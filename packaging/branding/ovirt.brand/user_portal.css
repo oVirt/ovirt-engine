@@ -1,4 +1,4 @@
-@import url("common.css");
+@import url('common.css');
 
 /* MainTabBasicView.ui.xml:
 Change the border of the main screen */
@@ -37,7 +37,7 @@ regards to the extended view. */
 }
 
 /* User portal HeaderView.ui.xml:
-These classes allow you to change the color and logo at the 
+These classes allow you to change the color and logo at the
 top of the user portal. */
 .obrand_wrapper {
     height: 74px;
@@ -70,8 +70,8 @@ colors of the side tab in the extended view */
 /* SideTabWithDetailsView:
 This class allows you to change the colors of menu bar in the extended view */
 .obrand_mainBarPanel {
-    padding-top: 7px;
-    height: 24px;
+    padding-top: 5px;
+    height: 36px;
     border-bottom: 2px solid #719823;
     margin-left: 2px;
     margin-right: 2px;

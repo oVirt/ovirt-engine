@@ -7,9 +7,10 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.ButtonBase;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
 
-public class UiCommandButton extends AbstractUiCommandButton {
+public class UiCommandButton extends AbstractUiCommandButton implements Focusable {
 
     interface WidgetUiBinder extends UiBinder<Widget, UiCommandButton> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -47,6 +48,32 @@ public class UiCommandButton extends AbstractUiCommandButton {
 
     public void setCustomContentStyle(String customStyle) {
         button.setCustomContentStyle(customStyle);
+    }
+
+    @Override
+    public int getTabIndex() {
+        return getButtonWidget().getTabIndex();
+    }
+
+    @Override
+    public void setAccessKey(char key) {
+        getButtonWidget().setAccessKey(key);
+    }
+
+    @Override
+    public void setFocus(boolean focused) {
+        getButtonWidget().setFocus(focused);
+    }
+
+    @Override
+    public void setTabIndex(int index) {
+        getButtonWidget().setTabIndex(index);
+    }
+
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        setTabIndex(nextTabIndex++);
+        return nextTabIndex;
     }
 
 }

@@ -2,13 +2,23 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-	<ui:style>
-		.loginPanelContainer {
-			background-color: #7F7F7F;
-		}
-	</ui:style>
+    <ui:style>
+        @external obrand_loginPageLogoImage;
+            .obrand_loginPageLogoImage {
+        }
 
-	<g:FlowPanel addStyleNames="{style.loginPanelContainer}">
-	</g:FlowPanel>
+        @external obrand_loginPageLogoImageLink;
+            .obrand_loginPageLogoImageLink {
+        }
+
+        @external obrand_loginPageBackground;
+            .obrand_loginPageBackground {
+        }
+    </ui:style>
+
+    <g:HTMLPanel addStyleNames="obrand_loginPageBackground">
+        <g:Anchor ui:field="vendorUrl" styleName="obrand_loginPageLogoImageLink obrand_loginPageLogoImage" />
+        <g:SimplePanel ui:field="loginFormPanel" />
+    </g:HTMLPanel>
 
 </ui:UiBinder>

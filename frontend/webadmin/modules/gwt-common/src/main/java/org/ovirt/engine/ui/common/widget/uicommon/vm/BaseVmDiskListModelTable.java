@@ -43,6 +43,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
 
     void initTableOverhead() {
         disksViewRadioGroup.setClickHandler(clickHandler);
+        disksViewRadioGroup.addStyleName("dvrg_radioGroup_pfly_fix"); //$NON-NLS-1$
         getTable().setTableOverhead(disksViewRadioGroup);
         getTable().setTableTopMargin(20);
     }

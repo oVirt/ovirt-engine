@@ -5,6 +5,8 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
+    public final static int TAB_BAR_HEIGHT = 24;
+
     @Template("<span><span style='position: relative; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{0}</span>"
             + "<span style='position: relative; margin-left: 3px; margin-right: 3px; white-space: nowrap; height: 14px; line-height: 14px;'>{1}</span></span>")
     SafeHtml imageTextButton(SafeHtml image, String text);
@@ -34,8 +36,8 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<table cellspacing='0' cellpadding='0'><tr>" +
             "<td style='background: url({2});width:2px;'></td>" +
             "<td style='text-align:center;'>" +
-            "<div class='{5} {6}' style='background: url({3}) repeat-x; height: 20px;'>" +
-            "<span style='vertical-align: middle; line-height: 20px;'>{0}</span>{1}</div>" +
+            "<div class='db_bg_image {5} {6}' style='background: url({3}) repeat-x; height: 20px;'>" +
+            "<span style='vertical-align: middle; line-height: 20px;' class=\"db_image_container\">{0}</span><div class=\"db_text\">{1}</div></div>" +
             "</td>" +
             "<td style='background: url({4});width:2px;'></td>" +
             "</tr></table>")

@@ -182,6 +182,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     void initTableOverhead() {
         disksViewRadioGroup = new DisksViewRadioGroup();
         disksViewRadioGroup.setClickHandler(clickHandler);
+        disksViewRadioGroup.addStyleName("mtdv_radioGroup_pfly_fix"); //$NON-NLS-1$
         getTable().setTableOverhead(disksViewRadioGroup);
         getTable().setTableTopMargin(20);
     }

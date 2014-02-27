@@ -10,35 +10,41 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <obrand:favicon />
     <title><fmt:message key="docs.missing.title" bundle="${docs}">
-               <fmt:param value="${requestScope['locale'].getDisplayLanguage()}" />
-           </fmt:message>
+        <fmt:param value="${requestScope['locale'].getDisplayLanguage()}" />
+        </fmt:message>
     </title>
     <obrand:stylesheets />
 </head>
 <body>
-    <div>
-        <div class="obrand_left">
-            <div class="obrand_header_nav">
-                <fmt:message key="obrand.welcome.header.main" />
+    <div class="obrand_loginPageBackground">
+        <a href="<obrand:messages key="obrand.common.vendor_url"/>" class="obrand_loginPageLogoImageLink">
+             <span class="obrand_loginPageLogoImage"></span>
+        </a>
+        <div class="login-pf">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-sm-12">
+                        <div id="brand">
+                            <div class="obrand_loginFormLogoImage"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <fmt:message key="docs.missing.appears" bundle="${docs}">
+                            <fmt:param value="${requestScope['locale'].getDisplayLanguage()}" />
+                        </fmt:message>
+                        <fmt:message key="docs.missing.admin" bundle="${docs}" />
+                    </div>
+                    <div class="col-sm-12">
+                        <a href="${requestScope['englishHref']}"><fmt:message key="docs.missing.click_here" bundle="${docs}" /></a>
+                    </div>
+                    <div class="col-sm-12">
+                        <fmt:message key="docs.missing.appear_once" bundle="${docs}" />
+                    </div>
+                    <div style="clear: both;"></div>
+                </div>
             </div>
-        </div>
-        <div class="obrand_right">
-        </div>
-        <div class="obrand_center">
-        </div>
-    </div>
-    <div class="obrand_main">
-        <div>
-            <p>
-                <fmt:message key="docs.missing.appears" bundle="${docs}">
-                    <fmt:param value="${requestScope['locale'].getDisplayLanguage()}" />
-                </fmt:message>
-                <fmt:message key="docs.missing.admin" bundle="${docs}" />
-            </p>
-            <p>
-                <a href="${requestScope['englishHref']}"><fmt:message key="docs.missing.click_here" bundle="${docs}" /></a>
-                <fmt:message key="docs.missing.appear_once" bundle="${docs}" />
-            </p>
         </div>
     </div>
 </body>

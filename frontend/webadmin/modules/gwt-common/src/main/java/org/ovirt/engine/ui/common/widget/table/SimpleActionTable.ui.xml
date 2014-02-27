@@ -13,7 +13,7 @@
 		}
 
 		.bar {
-			padding-top: 7px;
+			padding-top: 4px;
 			height: 24px;
 		}
 

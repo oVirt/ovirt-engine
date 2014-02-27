@@ -16,23 +16,29 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasKeyPressHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.safehtml.shared.UriUtils;
+import com.gwtplatform.mvp.client.PresenterWidget;
+import com.gwtplatform.mvp.client.View;
 
 /**
- * Base class for login popup presenter widgets.
+ * Base class for login presenter widgets.
  *
  * @param <T>
  *            Login model type.
  * @param <V>
  *            View type.
  */
-public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V extends AbstractLoginPopupPresenterWidget.ViewDef<T>> extends AbstractPopupPresenterWidget<V> {
+public abstract class AbstractLoginPresenterWidget<T extends LoginModel, V extends AbstractLoginPresenterWidget.ViewDef<T>> extends PresenterWidget<V> {
 
-    public interface ViewDef<T extends LoginModel> extends AbstractPopupPresenterWidget.ViewDef, HasEditorDriver<T> {
+    public interface ViewDef<T extends LoginModel> extends View, HasEditorDriver<T> {
 
         void resetAndFocus();
 
@@ -42,17 +48,19 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
 
         HasUiCommandClickHandlers getLoginButton();
 
+        HasKeyPressHandlers getLoginForm();
+
         String getMotdAnchorHtml(String url);
     }
 
-    private static final Logger logger = Logger.getLogger(AbstractLoginPopupPresenterWidget.class.getName());
+    private static final Logger logger = Logger.getLogger(AbstractLoginPresenterWidget.class.getName());
 
     private final ClientStorage clientStorage;
     private final LockInteractionManager lockInteractionManager;
 
     private DeferredModelCommandInvoker modelCommandInvoker;
 
-    public AbstractLoginPopupPresenterWidget(EventBus eventBus, V view, T loginModel,
+    public AbstractLoginPresenterWidget(EventBus eventBus, V view, T loginModel,
             ClientStorage clientStorage, LockInteractionManager lockInteractionManager) {
         super(eventBus, view);
         this.clientStorage = clientStorage;
@@ -102,6 +110,15 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
             }
         }));
 
+        registerHandler(getView().getLoginForm().addKeyPressHandler(new KeyPressHandler() {
+            @Override
+            public void onKeyPress(KeyPressEvent event) {
+                if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
+                    modelCommandInvoker.invokeDefaultCommand();
+                }
+            }
+        }));
+
         // Update selected domain after domain items have been set
         loginModel.getDomain().getPropertyChangedEvent().addListener(new IEventListener() {
             @SuppressWarnings("unchecked")
@@ -124,16 +141,6 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
                 }
             }
         });
-    }
-
-    @Override
-    protected void handleEnterKey() {
-        modelCommandInvoker.invokeDefaultCommand();
-    }
-
-    @Override
-    protected void handleEscapeKey() {
-        // No-op, login popup cannot be closed
     }
 
     /**

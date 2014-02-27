@@ -103,6 +103,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         searchItems = new EntityModelCellTable<ListModel>(true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         generateIds();
+        searchStringEditor.setStyleName("");
         initTable(constants);
         specificUserOrGroupRadio.setValue(true);
         everyoneRadio.setValue(false);

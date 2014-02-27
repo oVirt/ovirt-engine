@@ -1,34 +1,17 @@
 @import url("gwt_common.css");
+@import url("patternfly-custom.css");
+@import url("patternfly-custom-hacks.css");
 
 /* LoginPopupView.ui.xml:
-These classes allow you to modify the border and header of the
-login window. This is common between the user portal and webadmin
-interface */
-.obrand_loginPopupHeaderLogoImage {
-
-    background-image: url(images/login/login_page_header_logo.png);
-    width: 83px;
-    height: 44px;
+These classes allow you to modify the logo used in the login form. */
+.obrand_loginFormLogoImage {
+    background-image: url(images/ovirt_login_middle_logo.png);
+    width: 440px;
+    height: 35px !important;
     border: 0px;
     display: block;
 }
 
-.obrand_loginPopupHeaderCenter {
-    background: url(images/login_header_background_repetitive.png) repeat-x;
-    width: 248px;
-    height: 44px;
-    text-align: left;
-    padding-left: 6px;
-    padding-top: 14px;
-}
-
-.obrand_loginPopupHeaderImage {
-    background: url(images/login/login_page_header_image.png);
-    width: 133px;
-    height: 44px;
-    border: 0px;
-    display: block;
-}
 
 /* SimpleDialogPanel:
 These classes allow you to modify the header of all the popup windows
@@ -67,7 +50,7 @@ in the user portal and web admin. The border is defined in gwt-common.css */
     margin-left: 14px;
     float: left;
     position: relative;
-    margin-top: 5px;
+    margin-top: 1px;
 }
 
 
@@ -92,10 +75,58 @@ popup windows, for instance for creating a new VM */
 
 /* VmDiskPopupWidget.ui.xml */
 .obrand_topPanel {
-	background-color: #688B21;
+    background-color: #688B21;
 }
 
 .obrand_diskTypePanel {
-	background-color: #82AA32;
+    background-color: #82AA32;
 }
 
+/* LoginSectionView.ui.xml:
+   app logo, positioned in the top right of login screen */
+.obrand_loginPageLogoImage {
+    background-image: url(images/ovirt_top_right_logo.png);
+    width: 98px;
+    height: 39px;
+    border: 0px;
+}
+
+.obrand_loginPageLogoImageLink {
+    display: block;
+    float: right;
+    margin-right: 64px;
+    margin-top: 50px;
+    margin-bottom: 70px;
+    position: relative;
+    text-align: center;
+}
+
+/* LoginSectionView.ui.xml:
+   background image */
+.obrand_loginPageBackground {
+    background-image: url(images/ovirt_bg.png);
+    background-color: #282d33;
+    background-size: auto;
+    background-repeat: repeat-x;
+    background-position: 50% 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+}
+@media (min-width: 768px) {
+    .obrand_loginPageBackground {
+        background-size: 100% auto;
+     }
+}
+
+/* HeaderView.ui.xml:
+logo used in the application header */
+.obrand_headerLogoImage {
+    background-image: url(images/ovirt_top_logo.png);
+    width: 264px;
+    height: 15px !important;
+    border: 0px;
+    display: block;
+}

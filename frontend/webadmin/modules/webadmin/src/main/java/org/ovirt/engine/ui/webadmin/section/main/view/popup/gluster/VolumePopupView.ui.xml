@@ -2,10 +2,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-  xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
-	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
 	<ui:style>
 	.generalTabTopDecorator {
@@ -17,12 +17,12 @@
 			padding-bottom: 6px;
 		}
 
-		.label {
-			font-size: 13px;
-			padding: 0 5px;
-			font-family: Verdana,sans-serif;
-			line-height: 30px;
-		}
+        .label {
+            font-size: 13px;
+            padding: 0 5px;
+            font-family: Arial,sans-serif;
+            line-height: 30px;
+        }
 
 		.sectionLabel {
 			font-weight: bold;
@@ -30,13 +30,13 @@
 			margin-bottom: 5px;
 		}
 
-		.bricksLabel {
-			font-size: 13px;
-			padding: 0 5px;
-			font-family: Verdana,sans-serif;
-			line-height: 30px;
-			width: 190px;
-		}
+        .bricksLabel {
+            font-size: 13px;
+            padding: 0 5px;
+            font-family: Arial,sans-serif;
+            line-height: 30px;
+            width: 190px;
+        }
 
 		.bricksCountLabel {
 			font-size: 13px;
@@ -44,13 +44,13 @@
 			color: #0000FF;
 		}
 
-		.transTypeLabel {
-			font-size: 13px;
-			padding: 0 5px;
-			font-family: Verdana,sans-serif;
-			width: 175px;
-			padding-top: 5px;
-		}
+        .transTypeLabel {
+            font-size: 13px;
+            padding: 0 5px;
+            font-family: Arial,sans-serif;
+            width: 175px;
+            padding-top: 5px;
+        }
 
 		.explanationLabel {
 			font-style: italic;

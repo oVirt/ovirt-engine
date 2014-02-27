@@ -4,25 +4,25 @@
 
     <ui:with field='common_resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.action.DropdownActionButton.Style">
-		.actionButton {
-			float: left;
-			font-size: 11px;
-			font-family: Arial, sans-serif;
-			color: #333333;
-			background: transparent;
-			padding: 0px;
+    <ui:style type="org.ovirt.engine.ui.common.widget.action.DropdownActionButton.Style">
+        .actionButton {
+            float: left;
+            font-size: 11px;
+            font-family: Arial, sans-serif;
+            color: #333333;
+            background: transparent;
+            padding: 0px;
             border: 1px solid transparent;
-		}
+        }
 
-		.buttonMouseOver {
-			border: 1px solid #AAAAAA !important;
-			cursor: pointer;
-		}
+        .buttonMouseOver {
+            border: 1px solid #AAAAAA !important;
+            cursor: pointer;
+        }
 
-		.buttonMouseOut {
-			border: 1px solid transparent;
-		}
+        .buttonMouseOut {
+            border: 1px solid transparent;
+        }
 
         .container {
             float: left;
@@ -48,13 +48,13 @@
         .menuItem {
             font-size: 11px !important;
         }
-	</ui:style>
+    </ui:style>
 
     <g:FocusPanel ui:field="container" addStyleNames="{style.container}">
         <g:FlowPanel>
             <g:ToggleButton ui:field="button" addStyleNames="{style.actionButton}"/>
             <g:Image resource='{common_resources.separator}' addStyleNames="{style.separator}" />
-            <g:ToggleButton ui:field="dropdownButton" addStyleNames="{style.dropdownImage}" />
+            <g:ToggleButton ui:field="dropdownButton" addStyleNames="{style.dropdownImage} dab_dropdownImage_pfly_fix" />
         </g:FlowPanel>
     </g:FocusPanel>
 

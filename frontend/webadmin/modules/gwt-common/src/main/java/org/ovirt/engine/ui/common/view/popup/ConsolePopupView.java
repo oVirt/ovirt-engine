@@ -345,6 +345,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         rdpInvocationLabel.setText(constants.consoleInvocation());
         spiceHeadline = new WidgetWithInfo(spiceInvocationLabel);
         spiceHeadline.setExplanation(SafeHtmlUtils.fromTrustedString(createSpiceInvocationInfo()));
+        spiceHeadline.addInfoIconStyle("cpv_infoIcon_pfly_fix"); //$NON-NLS-1$
         vncHeadline= new WidgetWithInfo(vncInvocationLabel);
         vncHeadline.setExplanation(SafeHtmlUtils.fromTrustedString(createVncInvocationInfo()));
         rdpHeadline= new WidgetWithInfo(rdpInvocationLabel);
@@ -399,6 +400,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
             return this;
         }
 
+        @Override
         public String toString() {
             return html;
         }
@@ -821,10 +823,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         return clientConsoleResourcesUrl;
     }
 
+    @Override
     public HasValueChangeHandlers<Boolean> getNoVncImplRadioButton() {
         return noVncImplRadioButton.asRadioButton();
     }
 
+    @Override
     public HasValueChangeHandlers<Boolean> getVncNativeImplRadioButton() {
         return vncNativeImplRadioButton.asRadioButton();
     }

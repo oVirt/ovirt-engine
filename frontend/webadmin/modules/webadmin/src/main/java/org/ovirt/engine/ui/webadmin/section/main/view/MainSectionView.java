@@ -52,6 +52,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     private static final int BOOKMARK_INDEX = 1;
     private static final int TAG_INDEX = 2;
     private static final int SPLITTER_THICKNESS = 4;
+    private static final int SECTION_HEADER_HEIGHT = 30;
 
     interface ViewUiBinder extends UiBinder<Widget, MainSectionView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -193,9 +194,9 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             BookmarkModelProvider bookmarkModelProvider,
             TagModelProvider tagModelProvider,
             final StackLayoutPanel panel, ApplicationConstants constants) {
-        panel.insert(new SystemTree(treeModelProvider, constants), treeHeader, 26, panel.getWidgetCount());
-        panel.insert(new BookmarkList(bookmarkModelProvider, constants), bookmarksHeader, 26, panel.getWidgetCount());
-        panel.insert(new TagList(tagModelProvider, constants), tagsHeader, 26, panel.getWidgetCount());
+        panel.insert(new SystemTree(treeModelProvider, constants), treeHeader, SECTION_HEADER_HEIGHT, panel.getWidgetCount());
+        panel.insert(new BookmarkList(bookmarkModelProvider, constants), bookmarksHeader, SECTION_HEADER_HEIGHT, panel.getWidgetCount());
+        panel.insert(new TagList(tagModelProvider, constants), tagsHeader, SECTION_HEADER_HEIGHT, panel.getWidgetCount());
     }
 
     void initAlertEventFooterPanel(AlertModelProvider alertModelProvider,

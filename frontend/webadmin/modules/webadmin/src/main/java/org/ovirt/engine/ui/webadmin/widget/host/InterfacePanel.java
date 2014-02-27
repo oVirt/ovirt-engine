@@ -52,14 +52,14 @@ class InterfaceElementPanel extends TogglePanel {
         gridStyle.setBorderWidth(1, Unit.PX);
         gridStyle.setBorderStyle(BorderStyle.SOLID);
 
-        row.getColumnFormatter().setWidth(0, "10%"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(1, "18%"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(2, "18%"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(3, "18%"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(4, "10%"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(5, "9%"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(6, "9%"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(7, "10%"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(0, "30px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(1, "210px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(2, "210px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(3, "210px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(4, "105px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(5, "105px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(6, "105px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(7, "105px"); //$NON-NLS-1$
 
         // Check box and interface status icon
         row.setWidget(0, 0, new FlowPanel() {

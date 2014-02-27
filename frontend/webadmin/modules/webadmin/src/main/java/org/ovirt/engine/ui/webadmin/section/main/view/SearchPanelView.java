@@ -16,22 +16,11 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyDownHandlers;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -49,14 +38,6 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
 
     protected interface Style extends CssResource {
 
-        String searchBoxLeft();
-
-        String searchBoxLeft_HasSelectedTags();
-
-        String searchBoxRight();
-
-        String searchBoxRight_HasSelectedTags();
-
         String searchBoxPanel();
 
         String searchBoxPanel_HasSelectedTags();
@@ -68,41 +49,23 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
     }
 
     @UiField
-    InlineLabel searchLabel;
-
-    @UiField
     Label searchStringPrefixLabel;
 
     @UiField
     VerticalPanel searchBoxPanel;
 
     @UiField
-    FlowPanel searchBoxBookmark;
+    FocusPanel searchBoxClear;
 
     @UiField
-    FlowPanel searchBoxClear;
+    FocusPanel searchBoxBookmark;
 
     @UiField
-    HTML searchBoxLeft;
-
-    @UiField
-    HTML searchBoxRight;
+    FocusPanel searchBoxSearch;
 
     @UiField(provided = true)
     @WithElementId
     final SearchSuggestBox searchStringInput;
-
-    @WithElementId
-    @UiField
-    Image bookmarkButton;
-
-    @WithElementId
-    @UiField
-    Image clearButton;
-
-    @WithElementId
-    @UiField
-    Image searchButton;
 
     @UiField
     HorizontalPanel searchPanelContainer;
@@ -127,61 +90,13 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
         searchStringInput.setAutoSelectEnabled(false);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
         addStyles();
 
         searchStringInput.setSearchBoxPanel(searchBoxPanel);
 
-        bookmarkButton.setResource(applicationResources.bookmarkImage());
-        searchButton.setResource(applicationResources.searchButtonImage());
-        clearButton.setResource(applicationResources.clearSearchImage());
-
-        clearButton.addMouseOverHandler(new MouseOverHandler() {
-
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                clearButton.setResource(applicationResources.clearSearchImage_mouseOver());
-
-            }
-
-        });
-
-        clearButton.addMouseOutHandler(new MouseOutHandler() {
-
-            @Override
-            public void onMouseOut(MouseOutEvent event) {
-                clearButton.setResource(applicationResources.clearSearchImage());
-
-            }
-
-        });
-
-        clearButton.addMouseDownHandler(new MouseDownHandler() {
-
-            @Override
-            public void onMouseDown(MouseDownEvent event) {
-                clearButton.setResource(applicationResources.clearSearchImage_mouseDown());
-
-            }
-        });
-
-        clearButton.addMouseUpHandler(new MouseUpHandler() {
-
-            @Override
-            public void onMouseUp(MouseUpEvent event) {
-                clearButton.setResource(applicationResources.clearSearchImage_mouseOver());
-
-            }
-
-        });
-
         searchPanelContainer.setCellWidth(searchBoxPanel, "1000px"); //$NON-NLS-1$
 
         ViewIdHandler.idHandler.generateAndSetIds(this);
-    }
-
-    void localize(ApplicationConstants constants) {
-        searchLabel.setText(constants.searchLabel());
     }
 
     void addStyles() {
@@ -222,14 +137,10 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
     @Override
     public void setHasSelectedTags(boolean hasSelectedTags) {
         if (hasSelectedTags) {
-            searchBoxLeft.addStyleName(style.searchBoxLeft_HasSelectedTags());
-            searchBoxRight.addStyleName(style.searchBoxRight_HasSelectedTags());
             searchBoxPanel.addStyleName(style.searchBoxPanel_HasSelectedTags());
             searchBoxClear.addStyleName(style.searchBoxClear_HasSelectedTags());
         }
         else {
-            searchBoxLeft.setStyleName(style.searchBoxLeft());
-            searchBoxRight.setStyleName(style.searchBoxRight());
             searchBoxPanel.setStyleName(style.searchBoxPanel());
             searchBoxClear.setStyleName(style.searchBoxClear());
         }
@@ -237,17 +148,17 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
 
     @Override
     public HasClickHandlers getBookmarkButton() {
-        return bookmarkButton;
+        return searchBoxBookmark;
     }
 
     @Override
     public HasClickHandlers getClearButton() {
-        return clearButton;
+        return searchBoxClear;
     }
 
     @Override
     public HasClickHandlers getSearchButton() {
-        return searchButton;
+        return searchBoxSearch;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.presenter;
 
 import org.ovirt.engine.ui.common.presenter.SetDynamicTabAccessibleEvent.SetDynamicTabAccessibleHandler;
-import org.ovirt.engine.ui.common.widget.tab.AbstractTab;
+import org.ovirt.engine.ui.common.widget.tab.AbstractCompositeTab;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -26,7 +26,7 @@ public abstract class DynamicTabPresenter<V extends View, P extends DynamicTabPr
 
     private final PlaceManager placeManager;
 
-    private boolean tabAccessible = AbstractTab.DEFAULT_ACCESSIBLE;
+    private boolean tabAccessible = AbstractCompositeTab.DEFAULT_ACCESSIBLE;
 
     public DynamicTabPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, Type<RevealContentHandler<?>> slot) {

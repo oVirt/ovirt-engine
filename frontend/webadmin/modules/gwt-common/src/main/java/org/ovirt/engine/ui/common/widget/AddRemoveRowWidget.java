@@ -180,6 +180,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         final PushButton button =
                 new PushButton(new Image(plusButton ? resources.increaseIcon() : resources.decreaseIcon()));
         button.addStyleName(style.buttonStyle());
+        button.addStyleName("buttonStyle_pfly_fix"); //$NON-NLS-1$
         button.setEnabled(!isGhost(value));
 
         button.addClickHandler(plusButton ?

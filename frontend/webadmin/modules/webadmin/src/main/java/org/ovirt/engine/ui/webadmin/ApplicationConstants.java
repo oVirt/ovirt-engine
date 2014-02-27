@@ -3018,12 +3018,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("* Note that cloned vm will be 'Collapsed Snapshot'")
     String noteClone_CollapsedSnapshotMsg();
 
-    @DefaultStringValue("Open Virtualization Manager")
-    String loginHeaderLabel();
-
-    @DefaultStringValue("")
-    String mainHeaderLabel();
-
     @DefaultStringValue("This operation might be unrecoverable and destructive!")
     String storageForceCreatePopupWarningLabel();
 

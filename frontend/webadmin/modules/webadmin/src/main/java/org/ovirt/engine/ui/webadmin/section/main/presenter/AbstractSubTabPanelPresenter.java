@@ -44,6 +44,7 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
                 MainContentPresenter.TYPE_SetSubTabPanelContent);
         getView().setUiHandlers(tabBar);
         this.tabBar = tabBar;
+        this.tabBar.setWantsOffset(false);
     }
 
     @Override

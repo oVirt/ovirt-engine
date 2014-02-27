@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.view;
 
 import org.ovirt.engine.ui.common.presenter.ScrollableTabBarPresenterWidget;
-import org.ovirt.engine.ui.common.widget.tab.AbstractTab;
+import org.ovirt.engine.ui.common.widget.tab.AbstractCompositeTab;
 import org.ovirt.engine.ui.common.widget.tab.RepeatingPushButton;
 
 import com.google.gwt.core.client.Scheduler;
@@ -306,8 +306,8 @@ public class ScrollableTabBarView extends AbstractView implements ScrollableTabB
     void handleDropdownClick(ClickEvent event) {
         if (!dropdownPopupPanel.isShowing()) {
             for (int i = 0; i < widgetBar.getWidgetCount(); i++) {
-                if (widgetBar.getWidget(i) instanceof AbstractTab) {
-                    dropdownPanel.getWidget(i).setVisible(((AbstractTab) widgetBar.getWidget(i)).isAccessible());
+                if (widgetBar.getWidget(i) instanceof AbstractCompositeTab) {
+                    dropdownPanel.getWidget(i).setVisible(((AbstractCompositeTab) widgetBar.getWidget(i)).isAccessible());
                 }
             }
             dropdownPanel.setVisible(true);
@@ -390,8 +390,10 @@ public class ScrollableTabBarView extends AbstractView implements ScrollableTabB
     }
 
     @Override
-    public void setOffset(int left) {
-        asWidget().getElement().getStyle().setLeft(left, Unit.PX);
+    public void setOffset(int left, boolean wantsLeft) {
+        if (wantsLeft) {
+            asWidget().getElement().getStyle().setLeft(left, Unit.PX);
+        }
         asWidget().getElement().getStyle().setWidth(Window.getClientWidth() - left, Unit.PX);
         recalculateSize();
         showScrollButtons();

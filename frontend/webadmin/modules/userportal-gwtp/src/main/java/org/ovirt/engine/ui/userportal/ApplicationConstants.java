@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.userportal;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 
+import com.google.gwt.i18n.client.Constants.DefaultStringValue;
+
 public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("oVirt Engine User Portal")
@@ -18,9 +20,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     // Login section
 
-    @DefaultStringValue("Open Virtualization User Portal")
-    String loginHeaderLabel();
-
     @DefaultStringValue("User Name")
     String loginFormUserNameLabel();
 
@@ -35,6 +34,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Connect Automatically")
     String loginFormConnectAutomaticallyLabel();
+
+    @DefaultStringValue("Message of the Day")
+    String motdHeaderLabel();
 
     // Main section
 
@@ -242,9 +244,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String editBasicDetails();
 
     // Header
-
-    @DefaultStringValue("oVirt Engine")
-    String mainHeaderLabel();
 
     @DefaultStringValue("Logged in user")
     String loggedInUser();

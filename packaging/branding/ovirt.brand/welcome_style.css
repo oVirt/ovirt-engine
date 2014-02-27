@@ -1,110 +1,73 @@
-﻿html, body
-{
-	margin: 0;
-	padding: 0;
-	background-image: url(images/welcome/bg_main.gif);
-	color: #111111;
+﻿@import url('common.css');
+
+.login-pf {
+    color: #fff;
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif;
 }
 
-
-
-.obrand_section_header {
-	height: 42px;
-	color: #FFFFFF;
-	background-color: #669900;
-	text-align: left;
-	padding: 4px 6px 4px 4px;
-	
-	font-family: Verdana;
-	font-size: 16px;
-	font-weight: bold;
+.container {
+    padding-top: 10px !important;
 }
 
-.obrand_left
-{
-	background-image: url(images/welcome/logo.png);
-	background-repeat: no-repeat;
-	float: left;
-	height: 73px;
-	width: 820px;
-	margin-top: 0px;
+.label-default {
+    background-color: inherit;
 }
 
-.obrand_center
-{
-	background-image: url(images/welcome/bg_head.gif);
-	background-repeat: repeat-x;
-	height: 73px;
+.login-link:hover, login-link:focus {
+    color: #00618a;
+    text-decoration: underline;
 }
 
-.obrand_header_nav
-{
-	padding-top: 22px;
-	padding-left: 90px;
-	width: 250px;
+.login-link {
+    color: #0099d3;
 }
 
-.obrand_main
-{
-    
-	width: 500px;
-	text-align: left;
-	font-family: Verdana;
-	font-size: 12px;
-	margin:auto;
-	padding-top: 50px;
-	line-height: 18pt ;
+.login-error {
+    color: #b94a48;
+    background-color: inherit;
+    border-color: #b94a48;
 }
 
-a, a:visited
-{
-	text-decoration: none;
-	color: #111111;
+.login-message-error {
+    color: #b94a48;
+    background-color: inherit;
 }
 
-a:hover
-{
-	text-decoration: underline;
-	font-weight: bold;
+.welcome-title {
+    font-size: 18px;
 }
 
-.obrand_welcome
-{
-	font-family: Verdana;
-	font-size: 16px;
+.version-text {
+    margin-left: 30px;
 }
 
-.obrand_warningMessage
-{
-	color: #cc0000;
-	font-family: Verdana;
-	font-size: 12px;
+.welcome-section-title {
+    font-weight: 700;
+    font-size: 14px;
 }
 
-/*The locale selection box.*/
-.obrand_locale_select_panel {
-    background: url("images/triangle_down_gray.gif") no-repeat scroll right center;
-    float: right;
-    margin-left: 270px;
-    margin-right: 25px;
-    margin-top: 10px;
-    overflow: hidden;
+.welcome-link {
+    font-size: 14px;
 }
 
-.obrand_locale_list_box {
-   background: none repeat scroll 0 0 transparent;
-   border-width: 0;
-   color: gray;
-   font-size: 11px;
-   opacity: 0;
-   position: absolute;
-   width: 150px;
+.locale-div {
+    padding-top: 20px;
 }
 
-.obrand_locale_selected {
-    color: gray;
-    font-size: 11px;
-    padding-right: 15px;
-    text-align: right;
-    width: 130px;
+#well-error {
+    color: #b94a48;
+    background-color: inherit;
+    border-color: #b94a48;
+}
+
+#well-error-label {
+    font-size: 14px;
+    color: #b94a48;
+    background-color: inherit;
+}
+
+#link-404 {
+    font-size: 13px;
+    display: block;
+    margin-bottom: 75px;
 }

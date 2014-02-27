@@ -5,8 +5,9 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.CustomButton;
+import com.google.gwt.user.client.ui.HasText;
 
-public abstract class AbstractDialogButton extends CustomButton {
+public abstract class AbstractDialogButton extends CustomButton implements HasText {
 
     protected String text;
     protected SafeHtml image = SafeHtmlUtils.EMPTY_SAFE_HTML;

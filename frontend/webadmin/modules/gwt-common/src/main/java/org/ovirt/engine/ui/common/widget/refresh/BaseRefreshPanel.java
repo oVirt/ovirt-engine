@@ -300,6 +300,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
 
         refreshButton = new PushButton(refreshIcon);
         refreshButton.setStylePrimaryName(style.refreshButton());
+        refreshButton.addStyleName("brp_refreshButton_pfly_fix"); //$NON-NLS-1$
         refreshButton.setPixelSize(17, 17);
         refreshButton.addClickHandler(new ClickHandler() {
             @Override

@@ -11,4 +11,8 @@
     <name>stylesheets</name>
     <path>/META-INF/tags/obrand/stylesheets.tag</path>
   </tag-file>
+  <tag-file>
+    <name>messages</name>
+    <path>/META-INF/tags/obrand/messages.tag</path>
+  </tag-file>
 </taglib>

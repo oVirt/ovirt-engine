@@ -49,6 +49,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         this.templates = templates;
         viewRadioGroup = new ViewRadioGroup<NetworkVmFilter>(Arrays.asList(NetworkVmFilter.values()));
         viewRadioGroup.setSelectedValue(NetworkVmFilter.running);
+        viewRadioGroup.addStyleName("stnvmv_radioGroup_pfly_fix"); //$NON-NLS-1$
         initTable();
         initWidget(getTable());
     }

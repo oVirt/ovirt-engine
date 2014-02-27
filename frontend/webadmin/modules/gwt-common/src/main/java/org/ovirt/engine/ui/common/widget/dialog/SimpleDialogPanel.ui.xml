@@ -2,94 +2,94 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+    <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel.Style">
-		.header {
-			position: absolute;
-			top: 5px;
-			left: 0px;
-			right: 0px;
-		}
+    <ui:style type="org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel.Style">
+        .header {
+            position: absolute;
+            top: 5px;
+            left: 0px;
+            right: 0px;
+        }
 
-		.headerRightPanel {
-			position: absolute;
-			right: 5px;
-		}
+        .headerRightPanel {
+            position: absolute;
+            right: 5px;
+        }
 
-		.headerLeftPanel {
-			position: absolute;
-			left: 5px;
-		}
+        .headerLeftPanel {
+            position: absolute;
+            left: 5px;
+        }
 
         @external obrand_headerCenterPanel;
-		.obrand_headerCenterPanel {
-		}
+        .obrand_headerCenterPanel {
+        }
 
         @external obrand_headerTitle;
-		.obrand_headerTitle {
-		}
+        .obrand_headerTitle {
+        }
 
-		.content {
-			border: 1px solid #CED8DF;
-			position: absolute;
-			padding: 0px;
-			top: 34px;
-			bottom: 35px;
-			left: 6px;
-			right: 6px;
-		}
+        .content {
+            border: 1px solid #CED8DF;
+            position: absolute;
+            padding: 0px;
+            top: 34px;
+            bottom: 35px;
+            left: 6px;
+            right: 6px;
+        }
 
-		.footer {
-			position: absolute;
-			right: 16px;
-			bottom: 9px;
-			width: 97%;
-		}
+        .footer {
+            position: absolute;
+            right: 16px;
+            bottom: 9px;
+            width: 97%;
+        }
 
-		.footerButton {
-			float: right;
-			font-size: 12px;
-			margin-left: 4px;
-			cursor: pointer;
-		}
+        .footerButton {
+            float: right;
+            font-size: 12px;
+            margin-left: 4px;
+            cursor: pointer;
+        }
 
-		.contentWidget {
-			width: 100%;
-			height: 100%;
-			overflow: auto;
-			position: absolute;
-		}
+        .contentWidget {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            position: absolute;
+        }
 
         .headerTitleFloat {
             float: left;
         }
 
-		.helpIconButton {
-			background: transparent;
-			border: 1px solid transparent;
-			line-height: 32px;
-			vertical-align: middle;
-			padding: 1px;
-			cursor: pointer;
-			z-index: 1;
-			float: left;
-			position: relative;
-			top: -5px;
-		}
+        .helpIconButton {
+            background: transparent;
+            border: 1px solid transparent;
+            line-height: 32px;
+            vertical-align: middle;
+            padding: 1px;
+            cursor: pointer;
+            z-index: 1;
+            float: left;
+            position: relative;
+            top: -5px;
+        }
 
-		.closeIconButton {
-			position: absolute;
-			background: transparent;
-			border: 1px solid transparent;
-			line-height: 30px;
-			vertical-align: middle;
-			top: 0px;
-			right: 6px;
-			padding: 1px;
-		    cursor: pointer;
-		    z-index: 1;
-		}
+        .closeIconButton {
+            position: absolute;
+            background: transparent;
+            border: 1px solid transparent;
+            line-height: 30px;
+            vertical-align: middle;
+            top: 0px;
+            right: 6px;
+            padding: 1px;
+            cursor: pointer;
+            z-index: 1;
+        }
 
         @external obrand_dialogHeaderImage;
         .obrand_dialogHeaderImage {
@@ -98,42 +98,42 @@
         @external obrand_dialogLogoImage;
         .obrand_dialogLogoImage {
         }
-	</ui:style>
+    </ui:style>
 
-	<g:FlowPanel>
-		<g:FlowPanel addStyleNames="{style.header}">
-			<g:SimplePanel ui:field="logoPanel" addStyleNames="{style.headerLeftPanel}">
-				<g:Image styleName='obrand_dialogLogoImage' url="clear.cache.gif" />
-			</g:SimplePanel>
-			<g:SimplePanel addStyleNames="{style.obrand_headerCenterPanel}" />
-			<g:SimplePanel addStyleNames="{style.headerRightPanel}">
-				<g:FlowPanel>
-					<g:Image styleName='obrand_dialogHeaderImage' url="clear.cache.gif" />
-					<g:PushButton ui:field='closeIconButton' addStyleNames="{style.closeIconButton}">
-						<g:upFace image='{resources.dialogIconClose}' />
-						<g:downFace image='{resources.dialogIconCloseDown}' />
-						<g:upHoveringFace image='{resources.dialogIconCloseRollover}' />
-					</g:PushButton>
-				</g:FlowPanel>
-			</g:SimplePanel>
-			<g:FlowPanel addStyleNames="{style.obrand_headerTitle}">
+    <g:FlowPanel>
+        <g:FlowPanel addStyleNames="{style.header}">
+            <g:SimplePanel ui:field="logoPanel" addStyleNames="{style.headerLeftPanel}">
+                <g:Image styleName='obrand_dialogLogoImage' url="clear.cache.gif" />
+            </g:SimplePanel>
+            <g:SimplePanel addStyleNames="{style.obrand_headerCenterPanel}" />
+            <g:SimplePanel addStyleNames="{style.headerRightPanel}">
+                <g:FlowPanel>
+                    <g:Image styleName='obrand_dialogHeaderImage' url="clear.cache.gif" />
+                    <g:PushButton ui:field='closeIconButton' addStyleNames="{style.closeIconButton} closeIconButton_fix">
+                        <g:upFace image='{resources.dialogIconClose}' />
+                        <g:downFace image='{resources.dialogIconCloseDown}' />
+                        <g:upHoveringFace image='{resources.dialogIconCloseRollover}' />
+                    </g:PushButton>
+                </g:FlowPanel>
+            </g:SimplePanel>
+            <g:FlowPanel addStyleNames="{style.obrand_headerTitle}">
                 <g:FlowPanel ui:field="headerTitlePanel">
-                    <g:PushButton ui:field="helpIconButton" addStyleNames="{style.helpIconButton}" visible="false">
+                    <g:PushButton ui:field="helpIconButton" addStyleNames="{style.helpIconButton} sdp_helpIconButton_pfly_fix" visible="false">
                         <g:upFace image='{resources.dialogIconHelp}' />
                         <g:downFace image='{resources.dialogIconHelpDown}' />
                         <g:upHoveringFace image='{resources.dialogIconHelpRollover}' />
                     </g:PushButton>
                 </g:FlowPanel>
-			</g:FlowPanel>
-		</g:FlowPanel>
+            </g:FlowPanel>
+        </g:FlowPanel>
 
-		<g:SimplePanel ui:field="contentPanel" addStyleNames="{style.content}" />
+        <g:SimplePanel ui:field="contentPanel" addStyleNames="{style.content} contentPanel_pfly_fix" />
 
-		<g:HTMLPanel addStyleNames="{style.footer}">
-			<g:FlowPanel ui:field="footerButtonPanel" />
-			<g:FlowPanel ui:field="footerStatusPanel" />
-			<div style="clear: both;" />
-		</g:HTMLPanel>
-	</g:FlowPanel>
+        <g:HTMLPanel addStyleNames="{style.footer}">
+            <g:FlowPanel ui:field="footerButtonPanel" />
+            <g:FlowPanel ui:field="footerStatusPanel" />
+            <div style="clear: both;" />
+        </g:HTMLPanel>
+    </g:FlowPanel>
 
 </ui:UiBinder>

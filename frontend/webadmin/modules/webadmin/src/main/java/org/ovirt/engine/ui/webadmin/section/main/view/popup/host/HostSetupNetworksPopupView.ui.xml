@@ -1,262 +1,262 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
-	xmlns:f="urn:import:org.ovirt.engine.ui.webadmin.widget.footer" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels">
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
+    xmlns:f="urn:import:org.ovirt.engine.ui.webadmin.widget.footer" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels">
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkPanelsStyle">
-		.unassignedtitle {
-			font-size: small;
-			text-align: center;
-			margin-bottom: 5px;
-		}
+    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkPanelsStyle">
+        .unassignedtitle {
+            font-size: small;
+            text-align: center;
+            margin-bottom: 5px;
+        }
 
-		.externaltitle {
-			font-size: small;
-			display: inline;
-		}
+        .externaltitle {
+            font-size: small;
+            display: inline;
+        }
 
-		.externalNetworksPanel {
-			text-align: center;
-			margin-bottom: 5px;
-			margin-top: 30px;
-		}
+        .externalNetworksPanel {
+            text-align: center;
+            margin-bottom: 5px;
+            margin-top: 30px;
+        }
 
-		.externalNetworksInfo {
-			display: inline;
-			margin-left: 2px;
-		}
+        .externalNetworksInfo {
+            display: inline;
+            margin-left: 2px;
+        }
 
-		.assignedtitle {
-			font-size: small;
-			text-align: center;
-			margin-left: 210px;
-			margin-bottom: 5px;
-		}
+        .assignedtitle {
+            font-size: small;
+            text-align: center;
+            margin-left: 210px;
+            margin-bottom: 5px;
+        }
 
-		.nicstitle {
-			font-size: small;
-			text-align: center;
-			margin-left: 80px;
-			margin-bottom: 5px;
-		}
+        .nicstitle {
+            font-size: small;
+            text-align: center;
+            margin-left: 80px;
+            margin-bottom: 5px;
+        }
 
-		.statusLabel {
-			font-size: 15px;
-			font-weight: bold;
-			color: gray;
-			padding-left: 20px;
-			padding-top: 5px;
-		}
+        .statusLabel {
+            font-size: 15px;
+            font-weight: bold;
+            color: gray;
+            padding-left: 20px;
+            padding-top: 5px;
+        }
 
-		.errorLabel {
-			font-size: 15px;
-			font-weight: bold;
-			color: red;
-			padding-left: 20px;
-			padding-top: 5px;
-		}
+        .errorLabel {
+            font-size: 15px;
+            font-weight: bold;
+            color: red;
+            padding-left: 20px;
+            padding-top: 5px;
+        }
 
-		.itemPanel {
-			border-width: 1px;
-			border-style: solid;
-			width: 100%;
-			font-family: Arial,sans-serif !important;
-			font-size: 13px !important;
-			color: black;
-		}
+        .itemPanel {
+            border-width: 1px;
+            border-style: solid;
+            width: 100%;
+            font-family: Arial,sans-serif !important;
+            font-size: 13px !important;
+            color: black;
+        }
 
-		.networkGroupDragOver {
-			border-color: black !important;
-			box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);
-		}
+        .networkGroupDragOver {
+            border-color: black !important;
+            box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);
+        }
 
-		.networkPanel {
-			background-color: #FFFFFF;
-			border-color: #C5C5C5;
-			cursor: move;
-			height: 36px;
-		}
+        .networkPanel {
+            background-color: #FFFFFF;
+            border-color: #C5C5C5;
+            cursor: move;
+            height: 36px;
+        }
 
-		.networkPanel:HOVER {
-			background-color: #F6F6F6;
-			box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);
-		}
+        .networkPanel:HOVER {
+            background-color: #F6F6F6;
+            box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);
+        }
 
-		.disabledNetworkPanel {
-			background-color: #E3E3E3;
-			border-color: #C5C5C5;
-			color: gray;
-			height: 36px;
-		}
+        .disabledNetworkPanel {
+            background-color: #E3E3E3;
+            border-color: #C5C5C5;
+            color: gray;
+            height: 36px;
+        }
 
-		.mgmtNetwork {
-			font-weight: bold;
-		}
+        .mgmtNetwork {
+            font-weight: bold;
+        }
 
-		.nicPanel {
-			background-color: #CED8DF;
-			border-color: #7A8D9A;
-			cursor: move;
-			height: 27px;
-		}
+        .nicPanel {
+            background-color: #CED8DF;
+            border-color: #7A8D9A;
+            cursor: move;
+            height: 27px;
+        }
 
-		.nicPanel:HOVER {
-			background-color: #BBBBBB;
-			box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);
-		}
+        .nicPanel:HOVER {
+            background-color: #BBBBBB;
+            box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);
+        }
 
-		.bondPanel {
-			height: auto;
-			background-color: #EFEFEF;
-		}
+        .bondPanel {
+            height: auto;
+            background-color: #EFEFEF;
+        }
 
-		.bondPanel:HOVER {
-			background-color: #EFEFEF;
-		}
+        .bondPanel:HOVER {
+            background-color: #EFEFEF;
+        }
 
-		.groupPanel {
-			border-color: #999999;
-			background-color: #F6F6F6;
-			border-width: 1px;
-			border-style: solid;
-			width: 100%;
-		}
+        .groupPanel {
+            border-color: #999999;
+            background-color: #F6F6F6;
+            border-width: 1px;
+            border-style: solid;
+            width: 100%;
+        }
 
-		.unassignedNetworksPanel {
-			border-width: 1px;
-			border-style: solid;
-			border-color: #F6F6F6;
-			width: 100%;
-			height: 100%;
-			background-color: #F6F6F6;
-		}
+        .unassignedNetworksPanel {
+            border-width: 1px;
+            border-style: solid;
+            border-color: #F6F6F6;
+            width: 100%;
+            height: 100%;
+            background-color: #F6F6F6;
+        }
 
-		.actionButtonNetwork {
-			padding: 8px;
-		}
+        .actionButtonNetwork {
+            padding: 8px;
+        }
 
-		.actionButtonBond {
-			padding: 5px 8px;
-		}
+        .actionButtonBond {
+            padding: 5px 8px;
+        }
 
-		.networkImageBorder {
-			border: 1px solid #C5C5C5;
-		}
-				
-		.emptyPanel {
-			border: 1px dashed gray;
-			color: gray;
-			height: 36px;
-			width: 100%;
-		}
+        .networkImageBorder {
+            border: 1px solid #C5C5C5;
+        }
 
-		.checkCon {
-			width: 100%;
-			padding: 5px;
-		}
+        .emptyPanel {
+            border: 1px dashed gray;
+            color: gray;
+            height: 36px;
+            width: 100%;
+        }
 
-		.commitChanges{
-			width: 100%;
-			padding: 5px;
-		}
+        .checkCon {
+            width: 100%;
+            padding: 5px;
+        }
 
-		.allNicsPanel{
-			background-color: #F6F6F6;
-		}
+        .commitChanges{
+            width: 100%;
+            padding: 5px;
+        }
 
-		.statusPanel{
-			background-color: #F6F6F6;
-			height: 30px;
-			border-bottom: 1px solid #C5C5C5;
-		}
+        .allNicsPanel{
+            background-color: #F6F6F6;
+        }
 
-		.errorPanel{
-			background-color: pink;
-			height: 30px;
-			border-bottom: 1px solid #C5C5C5;
-		}
+        .statusPanel{
+            background-color: #F6F6F6;
+            height: 30px;
+            border-bottom: 1px solid #C5C5C5;
+        }
 
-		.checkBoxesPanel{
-			border-top: 1px solid #C5C5C5;
-			width: 100%;
-		}
+        .errorPanel{
+            background-color: pink;
+            height: 30px;
+            border-bottom: 1px solid #C5C5C5;
+        }
 
-		.separator {
-			background-color: #CED8DF;
-			width: 100%;
-			height: 100%;
-		}
+        .checkBoxesPanel{
+            border-top: 1px solid #C5C5C5;
+            width: 100%;
+        }
 
-		.requiredTitlePanel {
-			background-color: #778899;
-			width: 100%;
-			height: 36px;
-			border-color: #778899;
-			border-style: solid;
-			border-width:1px;
-		}
+        .separator {
+            background-color: #CED8DF;
+            width: 100%;
+            height: 100%;
+        }
 
-		.requiredLabel{
-			text-align: center;
-			font-weight: bold;
-			padding-top: 10px;
-		}
+        .requiredTitlePanel {
+            background-color: #778899;
+            width: 100%;
+            height: 36px;
+            border-color: #778899;
+            border-style: solid;
+            border-width:1px;
+        }
+
+        .requiredLabel{
+            text-align: center;
+            font-weight: bold;
+            padding-top: 10px;
+        }
 
 
-	</ui:style>
+    </ui:style>
 
-	<d:SimpleDialogPanel width="900px" height="600px">
-		<d:content>
-			<g:HTMLPanel>
-				<g:SimplePanel ui:field="statusPanel">
-					<f:StatusLabel ui:field="status"/>
-				</g:SimplePanel>
-				<g:HorizontalPanel spacing="10" width="100%" height="79%" verticalAlignment="ALIGN_TOP">
-					<g:Cell width="69%" height="100%">
-						<g:VerticalPanel width="100%" horizontalAlignment="ALIGN_LEFT">
-						<g:HorizontalPanel>
-							<g:Label text="{constants.interfaces}" styleName="{style.nicstitle}" />
-							<g:Label text="{constants.assignedLogicalNetworks}" styleName="{style.assignedtitle}" />
-						</g:HorizontalPanel>
-						<g:ScrollPanel height="370px">
-							<e:AnimatedVerticalPanel ui:field="nicList" width="100%" spacing="10" styleName="{style.allNicsPanel}"/>
-						</g:ScrollPanel>
-						</g:VerticalPanel>
-					</g:Cell>
-					<g:Cell width="1%" height="100%">
-						<g:HTMLPanel styleName="{style.separator}" >
-						</g:HTMLPanel>
-					</g:Cell>
-					<g:Cell width="30%" height="100%">
-						<g:ScrollPanel height="390px">
-							<g:VerticalPanel width="100%" horizontalAlignment="ALIGN_LEFT">
-								<g:Label text="{constants.unassignedLogicalNetworks}" styleName="{style.unassignedtitle}" />
-								<p:InternalNetworksPanel ui:field="internalNetworkList" />
-								<g:FlowPanel styleName="{style.externalNetworksPanel}" >
-									<g:Label text="{constants.externalLogicalNetworks}" styleName="{style.externaltitle}" />
-									<d:InfoIcon ui:field="externalNetworksInfo" styleName="{style.externalNetworksInfo}" />
-								</g:FlowPanel>
-								<p:ExternalNetworksPanel ui:field="externalNetworkList"/>
-							</g:VerticalPanel>
-						</g:ScrollPanel>
-					</g:Cell>
-				</g:HorizontalPanel>
-				<g:VerticalPanel styleName="{style.checkBoxesPanel}" >
-					<g:HorizontalPanel>
-						<ge:EntityModelCheckBoxEditor ui:field="checkConnectivity" />
-						<d:InfoIcon ui:field="checkConnInfo"/>
-					</g:HorizontalPanel>
-					<g:HorizontalPanel>
-						<ge:EntityModelCheckBoxEditor ui:field="commitChanges" />
-						<d:InfoIcon ui:field="commitChangesInfo"/>
-					</g:HorizontalPanel>
-				</g:VerticalPanel>
-			</g:HTMLPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+    <d:SimpleDialogPanel width="900px" height="600px">
+        <d:content>
+            <g:HTMLPanel>
+                <g:SimplePanel ui:field="statusPanel">
+                    <f:StatusLabel ui:field="status"/>
+                </g:SimplePanel>
+                <g:HorizontalPanel spacing="10" width="100%" height="77%" verticalAlignment="ALIGN_TOP">
+                    <g:Cell width="69%" height="100%">
+                        <g:VerticalPanel width="100%" horizontalAlignment="ALIGN_LEFT">
+                        <g:HorizontalPanel>
+                            <g:Label text="{constants.interfaces}" styleName="{style.nicstitle}" />
+                            <g:Label text="{constants.assignedLogicalNetworks}" styleName="{style.assignedtitle}" />
+                        </g:HorizontalPanel>
+                        <g:ScrollPanel height="370px">
+                            <e:AnimatedVerticalPanel ui:field="nicList" width="100%" spacing="10" styleName="{style.allNicsPanel}"/>
+                        </g:ScrollPanel>
+                        </g:VerticalPanel>
+                    </g:Cell>
+                    <g:Cell width="1%" height="100%">
+                        <g:HTMLPanel styleName="{style.separator}" >
+                        </g:HTMLPanel>
+                    </g:Cell>
+                    <g:Cell width="30%" height="100%">
+                        <g:ScrollPanel height="390px">
+                            <g:VerticalPanel width="100%" horizontalAlignment="ALIGN_LEFT">
+                                <g:Label text="{constants.unassignedLogicalNetworks}" styleName="{style.unassignedtitle}" />
+                                <p:InternalNetworksPanel ui:field="internalNetworkList" />
+                                <g:FlowPanel styleName="{style.externalNetworksPanel}" >
+                                    <g:Label text="{constants.externalLogicalNetworks}" styleName="{style.externaltitle}" />
+                                    <d:InfoIcon ui:field="externalNetworksInfo" styleName="{style.externalNetworksInfo}" />
+                                </g:FlowPanel>
+                                <p:ExternalNetworksPanel ui:field="externalNetworkList"/>
+                            </g:VerticalPanel>
+                        </g:ScrollPanel>
+                    </g:Cell>
+                </g:HorizontalPanel>
+                <g:VerticalPanel addStyleNames="{style.checkBoxesPanel} hsnpv_checkBoxesPanel_pfly_fix" >
+                    <g:HorizontalPanel>
+                        <ge:EntityModelCheckBoxEditor ui:field="checkConnectivity" />
+                        <d:InfoIcon ui:field="checkConnInfo"/>
+                    </g:HorizontalPanel>
+                    <g:HorizontalPanel>
+                        <ge:EntityModelCheckBoxEditor ui:field="commitChanges" />
+                        <d:InfoIcon ui:field="commitChangesInfo"/>
+                    </g:HorizontalPanel>
+                </g:VerticalPanel>
+            </g:HTMLPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

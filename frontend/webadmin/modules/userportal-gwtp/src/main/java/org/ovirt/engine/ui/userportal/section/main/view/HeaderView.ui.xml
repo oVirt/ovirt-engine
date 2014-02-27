@@ -6,89 +6,57 @@
     <ui:with field='dynamicMessages' type='org.ovirt.engine.ui.userportal.ApplicationDynamicMessages' />
 
     <ui:style>
-        @external obrand_wrapper;
-        .obrand_wrapper {
+        @external obrand_headerLogoImage;
+            .obrand_headerLogoImage {
         }
-
-        @external obrand_logo;
-        .obrand_logo {
-        }
-
-        @external obrand_barOuter;
-        .obrand_barOuter {
-        }
-
-        .barInner {
-            height: 60px;
-            padding-top: 14px;
-            color: white;
-            font-size: 13px;
-        }
-
-        .menuTitle {
-            font-family: Verdana,sans-serif;
-            font-size: 14px;
-            font-weight: bold;
-            text-decoration: underline;
-            position: relative;
-            left: 10px;
-            top: 10px;
-        }
-
-        .menu {
-            position: relative;
-            left: 10px;
-            top: 5px;
-        }
-
-        .userName {
-            font-weight: bold;
-        }
-
-        a.menuLink {
-            color: white;
-        }
-
-        .mainTabs {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            margin-right: 16px;
-            margin-bottom: 16px;
-        }
-
-        @external obrand_mainTabsBackground;
-        .obrand_mainTabsBackground {
+        .topLinks {
+            font-size: 11px;
         }
     </ui:style>
 
-    <g:HTMLPanel addStyleNames="{style.obrand_wrapper}">
-        <g:HTML addStyleNames="{style.obrand_logo}" />
-        <g:HTML addStyleNames="{style.obrand_mainTabsBackground}" />
-        <g:SimplePanel addStyleNames="{style.obrand_barOuter}">
-            <g:VerticalPanel addStyleNames="{style.barInner}">
-                <g:InlineLabel addStyleNames="{style.menuTitle}" text="{dynamicMessages.mainHeaderLabel}" />
-                <g:FlowPanel>
-                    <g:HTMLPanel addStyleNames="{style.menu}">
-                        <g:InlineLabel text="{constants.loggedInUser}:" />
-                        <g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.userName}" />
-                        |
-                        <g:Anchor ui:field="logoutLink" addStyleNames="{style.menuLink}" />
-                        |
-                        <g:Anchor ui:field="guideLink" addStyleNames="{style.menuLink}" />
-                        |
-                        <g:Anchor ui:field="aboutLink" addStyleNames="{style.menuLink}" />
-                    </g:HTMLPanel>
+    <g:HTMLPanel>
 
-                    <g:HTMLPanel ui:field="mainTabBarPanel" addStyleNames="{style.mainTabs}">
-                        <g:FlowPanel ui:field="mainTabContainer" />
-                        <div style="clear: both;" />
-                    </g:HTMLPanel>
-                </g:FlowPanel>
-            </g:VerticalPanel>
-        </g:SimplePanel>
+        <nav class="navbar navbar-default navbar-pf" role="navigation">
+            <div class="navbar-header">
+                <!-- toggles navbar at mobile resolutions -->
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">
+                    <g:Image styleName="{style.obrand_headerLogoImage}" url="clear.cache.gif" />
+                </a>
+            </div>
 
-        <div style="clear: both;" />
+            <div class="collapse navbar-collapse navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-utility">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span class="pficon pficon-user {style.topLinks}"></span>
+                            <g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.topLinks}" /> <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <g:Anchor ui:field="logoutLink" addStyleNames="{style.topLinks}"/>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <g:Anchor ui:field="guideLink" addStyleNames="{style.topLinks}" />
+                    </li>
+                    <li>
+                        <g:Anchor ui:field="aboutLink" addStyleNames="{style.topLinks}" />
+                    </li>
+                </ul>
+
+                <g:HTMLPanel ui:field="mainTabBarPanel">
+                    <ul class="nav navbar-nav navbar-primary" ui:field="mainTabContainer">
+                    </ul>
+                </g:HTMLPanel>
+            </div>
+        </nav>
     </g:HTMLPanel>
 
 </ui:UiBinder>

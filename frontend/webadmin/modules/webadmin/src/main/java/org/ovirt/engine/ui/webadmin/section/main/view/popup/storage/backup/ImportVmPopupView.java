@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -156,7 +157,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
     private void initSubTabLayoutPanel() {
         if (subTabLayoutPanel == null) {
-            subTabLayoutPanel = new TabLayoutPanel(20, Unit.PX);
+            subTabLayoutPanel = new TabLayoutPanel(CommonApplicationTemplates.TAB_BAR_HEIGHT, Unit.PX);
             subTabLayoutPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 
                 @Override

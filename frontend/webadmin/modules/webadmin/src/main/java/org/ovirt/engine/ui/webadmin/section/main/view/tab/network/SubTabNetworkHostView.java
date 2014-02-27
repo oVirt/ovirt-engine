@@ -44,6 +44,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         this.templates = templates;
         viewRadioGroup = new ViewRadioGroup<NetworkHostFilter>(Arrays.asList(NetworkHostFilter.values()));
         viewRadioGroup.setSelectedValue(NetworkHostFilter.attached);
+        viewRadioGroup.addStyleName("stnhv_radioGroup_pfly_fix"); //$NON-NLS-1$
         initTable();
         initWidget(getTable());
     }

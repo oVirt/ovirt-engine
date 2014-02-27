@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.webadmin.gin;
 
 import org.ovirt.engine.ui.common.gin.BasePresenterModule;
-import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginFormPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginSectionPresenter;
-import org.ovirt.engine.ui.webadmin.section.login.view.LoginPopupView;
+import org.ovirt.engine.ui.webadmin.section.login.view.LoginFormView;
 import org.ovirt.engine.ui.webadmin.section.login.view.LoginSectionView;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AboutPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget;
@@ -465,9 +465,9 @@ public class PresenterModule extends BasePresenterModule {
                 LoginSectionPresenter.ViewDef.class,
                 LoginSectionView.class,
                 LoginSectionPresenter.ProxyDef.class);
-        bindSingletonPresenterWidget(LoginPopupPresenterWidget.class,
-                LoginPopupPresenterWidget.ViewDef.class,
-                LoginPopupView.class);
+        bindPresenterWidget(LoginFormPresenterWidget.class,
+                LoginFormPresenterWidget.ViewDef.class,
+                LoginFormView.class);
 
         // Main section: common stuff
         bindPresenter(MainSectionPresenter.class,

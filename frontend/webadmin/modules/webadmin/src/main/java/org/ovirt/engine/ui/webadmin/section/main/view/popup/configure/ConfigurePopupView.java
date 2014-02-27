@@ -71,6 +71,7 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
         localize(constants);
 
         roleView.setWidth("100%"); //$NON-NLS-1$
+        roleView.addStyleName("cpv_roleView_pfly_fix"); //$NON-NLS-1$
         rolesTabPanel.add(roleView);
 
         clusterPolicyView.setWidth("100%"); //$NON-NLS-1$

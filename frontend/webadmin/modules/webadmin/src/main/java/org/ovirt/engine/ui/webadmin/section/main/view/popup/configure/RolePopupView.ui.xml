@@ -74,12 +74,12 @@
                         <g:Button ui:field="expandAllButton"/>
 					    <g:Button ui:field="collapseAllButton"/>
                     </g:HorizontalPanel>
-					<g:ScrollPanel height="300px" addStyleNames="{style.treePanel}">
-						<we:EntityModelCellTree ui:field="tree"/>
-					</g:ScrollPanel>
-				</g:FlowPanel>
-			</g:VerticalPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+                    <g:ScrollPanel height="300px" addStyleNames="{style.treePanel} rpv_treePanel_pfly_fix">
+                        <we:EntityModelCellTree ui:field="tree"/>
+                    </g:ScrollPanel>
+                </g:FlowPanel>
+            </g:VerticalPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

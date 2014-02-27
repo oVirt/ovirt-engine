@@ -1,108 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-    xmlns:ol="urn:import:org.ovirt.engine.ui.webadmin.widget.label">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-    <ui:style type='org.ovirt.engine.ui.webadmin.section.main.view.HeaderView.Style'>
-        @external obrand_wrapperOuter;
-        .obrand_wrapperOuter {
+    <ui:style>
+        @external obrand_headerLogoImage;
+            .obrand_headerLogoImage {
         }
-
-        @external obrand_wrapperInner;
-        .obrand_wrapperInner {
+        .topLinks {
+            font-size: 11px;
+            cursor: pointer;
         }
-
-        .upperPanel {
-            height: 35px;
-            color: white;
-            overflow: hidden;
+        .gradientFix {
+            background-image: -webkit-gradient(linear, left 0%, left 100%, from(#474c50), to(#383f43));
+            background-image: -webkit-linear-gradient(top, #474c50 0%, #383f43 100%);
+            background-image: -moz-linear-gradient(top, #474c50 0%, #383f43 100%);
+            background-image: linear-gradient(to bottom, #474c50 0%, #383f43 100%);
+            background-repeat: repeat-x;
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff474c50', endColorstr='#ff383f43', GradientType=0);
         }
-
-        .lowerPanel {
-            height: 70px;
-            overflow: visible;
-        }
-
-        @external obrand_logo;
-        .obrand_logo {
-        }
-
-        @external obrand_menuBar;
-        .obrand_menuBar {
-        }
-
-        .userName {
-            font-weight: bold;
-        }
-
-        a.menuLink {
-            color: white;
-        }
-
-        .searchPanel {
-            width: 100%;
-            float: left;
-        }
-
-        .mainTabBar {
-            position: absolute;
-            bottom: 0;
-            left: 250px;
-            height: 28px;
-        }
-
-        .headerLabelStyle {
-            font-weight: bold;
-            color: white;
-            line-height: 35px;
-            width: 300px;
-            float: left;
-        }
-
-        .feedbackImagePanel {
-            float: right;
-        }
-
-        @external obrand_feedbackImageLeft;
-        .obrand_feedbackImageLeft {
-        }
-
-        @external obrand_feedbackImageLabel;
-        .obrand_feedbackImageLabel {
+        .tabContainer {
+            background-color: #5C5C5C !important;
+            position: relative;
+            bottom: -1px;
         }
     </ui:style>
 
-    <g:HTMLPanel addStyleNames="{style.obrand_wrapperOuter}">
-        <g:HTMLPanel addStyleNames="{style.obrand_wrapperInner}">
+    <g:HTMLPanel>
 
-            <g:HTMLPanel addStyleNames="{style.upperPanel}">
-                <g:HTML addStyleNames="{style.obrand_logo}" />
-                <g:Label ui:field="headerLabel" addStyleNames="{style.headerLabelStyle}"/>
+        <nav class="navbar navbar-default navbar-pf" role="navigation">
+            <div class="navbar-header">
+                <!-- toggles navbar at mobile resolutions -->
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">
+                    <g:Image styleName="{style.obrand_headerLogoImage}" url="clear.cache.gif" />
+                </a>
+            </div>
 
-                <g:HTMLPanel  ui:field="feedbackImagePanel" visible="false" addStyleNames="{style.feedbackImagePanel}">
-                    <g:HTMLPanel addStyleNames="{style.obrand_feedbackImageLeft}" />
-                    <ol:LabelWithToolTip ui:field="feedbackImageLabel" addStyleNames="{style.obrand_feedbackImageLabel}" />
+            <div class="collapse navbar-collapse navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-utility">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span class="pficon pficon-user {style.topLinks}"></span>
+                            <g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.topLinks}" /> <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <g:Anchor ui:field="logoutLink" addStyleNames="{style.topLinks}"/>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <g:Anchor ui:field="configureLink" addStyleNames="{style.topLinks}" />
+                    </li>
+                    <li>
+                        <g:Anchor ui:field="guideLink" addStyleNames="{style.topLinks}" />
+                    </li>
+                    <li>
+                        <g:Anchor ui:field="aboutLink" addStyleNames="{style.topLinks}" />
+                    </li>
+                    <li>
+                        <g:Anchor ui:field="feedbackLink" addStyleNames="{style.topLinks}" />
+                    </li>
+                </ul>
+
+                <g:HTMLPanel>
+                    <g:SimplePanel ui:field="searchPanelContainer" addStyleNames="{style.gradientFix}" />
+                    <g:SimplePanel ui:field="mainTabContainer" addStyleNames="{style.tabContainer}" />
                 </g:HTMLPanel>
-                <g:HTMLPanel addStyleNames="{style.obrand_menuBar}">
-                    <g:InlineLabel text="{constants.loggedInUser}:" />
-                    <g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.userName}" />
-                    | <g:Anchor ui:field="configureLink" addStyleNames="{style.menuLink}" /> |
-                    <g:Anchor ui:field="guideLink" addStyleNames="{style.menuLink}" /> |
-                    <g:Anchor ui:field="aboutLink" addStyleNames="{style.menuLink}" />
-                    |
-                    <g:Anchor ui:field="logoutLink" addStyleNames="{style.menuLink}" />
-                </g:HTMLPanel>
-                <div style="clear: both;" />
-            </g:HTMLPanel>
-
-            <g:HTMLPanel addStyleNames="{style.lowerPanel}">
-                <g:SimplePanel ui:field="searchPanelContainer" addStyleNames="{style.searchPanel}" />
-                <g:SimplePanel ui:field="mainTabContainer" />
-            </g:HTMLPanel>
-
-        </g:HTMLPanel>
+            </div>
+        </nav>
     </g:HTMLPanel>
 
 </ui:UiBinder>

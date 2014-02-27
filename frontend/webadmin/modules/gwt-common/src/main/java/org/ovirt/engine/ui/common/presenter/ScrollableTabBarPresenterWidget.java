@@ -37,8 +37,9 @@ public class ScrollableTabBarPresenterWidget extends PresenterWidget<ScrollableT
         /**
          * Allow the caller to set the offset of the {@code ScrollableTabBar} relative to its container.
          * @param left How far to the left in pixels.
+         * @param wantsLeft If the left offset needs to be added to the container.
          */
-        void setOffset(int left);
+        void setOffset(int left, boolean wantsLeft);
         /**
          * Set how many pixels the scroll panel should scroll when a button is clicked.
          * @param scrollDistance The distance in pixels.
@@ -51,6 +52,7 @@ public class ScrollableTabBarPresenterWidget extends PresenterWidget<ScrollableT
      */
     public static final int DEFAULT_SCROLL_DISTANCE = 20; //pixels.
     private HandlerRegistration resizeHandlerRegistration;
+    private boolean wantsOffset = true;
 
     /**
      * Constructor.
@@ -81,7 +83,7 @@ public class ScrollableTabBarPresenterWidget extends PresenterWidget<ScrollableT
 
             @Override
             public void onHeaderOffsetChange(HeaderOffsetChangeEvent event) {
-                getView().setOffset(event.getWidth());
+                getView().setOffset(event.getWidth(), wantsOffset);
                 //This may seem a little strange, removing the handler for the resize event after the first
                 //offset change event. But the splitter also generates a resize event. So we would be handling the
                 //same thing twice. Until the offset events are properly registered and working, we need the resize
@@ -124,7 +126,7 @@ public class ScrollableTabBarPresenterWidget extends PresenterWidget<ScrollableT
      * @param left How far to the left in pixels.
      */
     public void setOffset(int left) {
-        getView().setOffset(left);
+        getView().setOffset(left, wantsOffset);
     }
 
     /**
@@ -134,4 +136,13 @@ public class ScrollableTabBarPresenterWidget extends PresenterWidget<ScrollableT
     public void setScrollDistance(int scrollDistance) {
         getView().setScrollDistance(scrollDistance);
     }
+
+    /**
+     * Lets the presenter know if we should pass offsets to the scrollablle tab bar.
+     * @param wantsOffset true if you want offsets passed, false otherwise.
+     */
+    public void setWantsOffset(boolean wantsOffset) {
+        this.wantsOffset = wantsOffset;
+    }
+
 }

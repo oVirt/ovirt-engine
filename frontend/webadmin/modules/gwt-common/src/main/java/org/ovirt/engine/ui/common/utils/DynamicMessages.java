@@ -31,8 +31,6 @@ public class DynamicMessages {
 
         APPLICATION_TITLE("application_title"), //$NON-NLS-1$
         VERSION_ABOUT("version_about"), //$NON-NLS-1$
-        LOGIN_HEADER_LABEL("login_header_label"), //$NON-NLS-1$
-        MAIN_HEADER_LABEL("main_header_label"), //$NON-NLS-1$
         COPY_RIGHT_NOTICE("copy_right_notice"), //$NON-NLS-1$
         FEEDBACK_URL("feedback_url"), //$NON-NLS-1$
         FEEDBACK_LINK_LABEL("feedback_link_label"), //$NON-NLS-1$
@@ -43,6 +41,7 @@ public class DynamicMessages {
         CLIENT_RESOURCES("client_resources"), //$NON-NLS-1$
         CONSOLE_CLIENT_RESOURCES("console_client_resources"), //$NON-NLS-1$
         CONSOLE_CLIENT_RESOURCES_URL("console_client_resources_url"), //$NON-NLS-1$
+        VENDOR_URL("vendor_url"), //$NON-NLS-1$
         DOC("doc"); //$NON-NLS-1$
 
         private final String value;
@@ -219,26 +218,6 @@ public class DynamicMessages {
     }
 
     /**
-     * Get the login header label using the {@code Dictionary} in the host page. With a fall back to the standard GWT
-     * Constant.
-     *
-     * @return The login header label.
-     */
-    public final String loginHeaderLabel() {
-        return getString(DynamicMessageKey.LOGIN_HEADER_LABEL);
-    }
-
-    /**
-     * Get the main header label using the {@code Dictionary} in the host page. With a fall back to the standard GWT
-     * Constant.
-     *
-     * @return The main header label.
-     */
-    public final String mainHeaderLabel() {
-        return getString(DynamicMessageKey.MAIN_HEADER_LABEL);
-    }
-
-    /**
      * Get the copy right notice using the {@code Dictionary} in the host page. With a fall back to the standard GWT
      * Constant.
      *
@@ -334,6 +313,17 @@ public class DynamicMessages {
         return isAbsolute
                  ? url
                  : "/" + BaseContextPathData.getInstance().getRelativePath() + url; //$NON-NLS-1$
+    }
+
+    /**
+     *
+     * Get the vendor URL using the {@code Dictionary} in the host page. With a fall back to
+     * the standard GWT Constant.
+     *
+     * @return The vendor url.
+     */
+    public final String vendorUrl() {
+        return getString(DynamicMessageKey.VENDOR_URL);
     }
 
     /**

@@ -42,7 +42,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
             CommonApplicationConstants constants,
             CommonApplicationMessages messages,
             CommonApplicationTemplates templates) {
-        super(20, Unit.PX);
+        super(CommonApplicationTemplates.TAB_BAR_HEIGHT, Unit.PX);
 
         this.vmInterfaceListModel = vmInterfaceListModel;
         this.constants = constants;

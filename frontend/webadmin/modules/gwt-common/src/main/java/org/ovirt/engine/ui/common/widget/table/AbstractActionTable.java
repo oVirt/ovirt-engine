@@ -237,6 +237,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     protected void updateTableControls() {
         prevPageButton.setEnabled(getDataProvider().canGoBack());
         nextPageButton.setEnabled(getDataProvider().canGoForward());
+
+        prevPageButton.addStyleName("prevPageButton_pfly_fix"); //$NON-NLS-1$
+        nextPageButton.addStyleName("nextPageButton_pfly_fix"); //$NON-NLS-1$
     }
 
     public void showPagingButtons() {

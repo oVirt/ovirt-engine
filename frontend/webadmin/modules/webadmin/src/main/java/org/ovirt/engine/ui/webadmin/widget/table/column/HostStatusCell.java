@@ -77,7 +77,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
         // Generate the HTML for the cell including the exclamation mark only if
         // power management is not enabled or there are network configuration
         // changes that haven't been saved yet:
-        sb.appendHtmlConstant("<div style=\"text-align: center; padding-top: 6px;\">"); //$NON-NLS-1$
+        sb.appendHtmlConstant("<div style=\"text-align: center;\">"); //$NON-NLS-1$
         sb.append(statusImageHtml);
         boolean getnet_config_dirty =
                 vds.getNetConfigDirty() == null ? false : vds.getNetConfigDirty().booleanValue();
