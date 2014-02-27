@@ -28,9 +28,9 @@ public class JsArrayHelper {
      * Supported value types:
      * <ul>
      * <li>{@link JavaScriptObject}, maps to native JS object
-     * <li>String, maps to {@code string}
-     * <li>Double, maps to {@code number}
-     * <li>Boolean, maps to {@code boolean}
+     * <li>String, maps to JS {@code string}
+     * <li>Double, maps to JS {@code number}
+     * <li>Boolean, maps to JS {@code boolean}
      * </ul>
      */
     public static JsArray<JavaScriptObject> createMixedArray(Object... values) {
@@ -57,11 +57,11 @@ public class JsArrayHelper {
     }-*/;
 
     private static native void pushNumber(JavaScriptObject arrayObj, Double value) /*-{
-        arrayObj[arrayObj.length] = value;
+        arrayObj[arrayObj.length] = value.@java.lang.Double::doubleValue()();
     }-*/;
 
     private static native void pushBoolean(JavaScriptObject arrayObj, Boolean value) /*-{
-        arrayObj[arrayObj.length] = value;
+        arrayObj[arrayObj.length] = value.@java.lang.Boolean::booleanValue()();
     }-*/;
 
     /**

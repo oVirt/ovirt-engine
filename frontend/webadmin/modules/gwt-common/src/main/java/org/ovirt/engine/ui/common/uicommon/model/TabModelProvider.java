@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.uicommon.model;
 
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HasHandlers;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -24,7 +26,7 @@ import com.google.inject.Provider;
  * @param <M>
  *            Model type.
  */
-public abstract class TabModelProvider<M extends EntityModel> implements ModelProvider<M>, ModelBoundPopupResolver<M> {
+public abstract class TabModelProvider<M extends EntityModel> implements ModelProvider<M>, ModelBoundPopupResolver<M>, HasHandlers {
 
     private final EventBus eventBus;
     private final ModelBoundPopupHandler<M> popupHandler;
@@ -159,6 +161,11 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
     protected ModelBoundPresenterWidget<? extends Model> getModelBoundWidget(UICommand lastExecutedCommand) {
         // No-op, override as necessary
         return null;
+    }
+
+    @Override
+    public void fireEvent(GwtEvent<?> event) {
+        getEventBus().fireEvent(event);
     }
 
 }

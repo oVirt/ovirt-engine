@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.gwtplatform.dispatch.annotation.GenEvent;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
@@ -32,6 +33,13 @@ import com.google.inject.Provider;
 
 public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTreeItemModel, SystemTreeModel>
         implements SearchableTreeModelProvider<SystemTreeItemModel, SystemTreeModel>, TreeModelWithElementId {
+
+    @GenEvent
+    public class SystemTreeSelectionChange {
+
+        SystemTreeItemModel selectedItem;
+
+    }
 
     private final DefaultSelectionEventManager<SystemTreeItemModel> selectionManager =
             DefaultSelectionEventManager.createDefaultManager();
@@ -108,6 +116,10 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
     @Override
     public void setSelectedItems(List<SystemTreeItemModel> items) {
         getModel().setSelectedItem(items.size() > 0 ? items.get(0) : null);
+
+        if (items.size() > 0) {
+            SystemTreeSelectionChangeEvent.fire(this, items.get(0));
+        }
     }
 
     @Override

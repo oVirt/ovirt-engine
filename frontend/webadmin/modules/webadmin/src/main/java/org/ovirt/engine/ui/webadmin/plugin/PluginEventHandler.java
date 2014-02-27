@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
 import org.ovirt.engine.ui.webadmin.plugin.PluginManager.PluginInvocationCondition;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
+import org.ovirt.engine.ui.webadmin.plugin.entity.SystemTreeItemObject;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsArrayHelper;
 import org.ovirt.engine.ui.webadmin.plugin.restapi.RestApiSessionAcquiredEvent;
 import org.ovirt.engine.ui.webadmin.plugin.restapi.RestApiSessionAcquiredEvent.RestApiSessionAcquiredHandler;
@@ -41,6 +42,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VolumeSelectionCh
 import org.ovirt.engine.ui.webadmin.system.MessageEventData;
 import org.ovirt.engine.ui.webadmin.system.MessageReceivedEvent;
 import org.ovirt.engine.ui.webadmin.system.MessageReceivedEvent.MessageReceivedHandler;
+import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeSelectionChangeEvent;
+import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeSelectionChangeEvent.SystemTreeSelectionChangeHandler;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -175,6 +178,16 @@ public class PluginEventHandler {
             public void onEventSelectionChange(EventSelectionChangeEvent event) {
                 manager.invokePluginsNow("EventSelectionChange", //$NON-NLS-1$
                         EntityObject.arrayFrom(event.getSelectedItems()));
+            }
+        });
+
+        // System tree item selection change
+        eventBus.addHandler(SystemTreeSelectionChangeEvent.getType(), new SystemTreeSelectionChangeHandler() {
+            @Override
+            public void onSystemTreeSelectionChange(SystemTreeSelectionChangeEvent event) {
+                manager.invokePluginsNow("SystemTreeSelectionChange", //$NON-NLS-1$
+                        JsArrayHelper.createMixedArray(
+                                SystemTreeItemObject.from(event.getSelectedItem())));
             }
         });
 

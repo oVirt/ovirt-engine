@@ -21,18 +21,15 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import org.ovirt.engine.ui.webadmin.plugin.jsni.JsMutableObjectWithProperties;
 
 /**
  * Overlay type representing a business entity passed through plugin API as native JS object.
  */
-public final class EntityObject extends JavaScriptObject {
+public final class EntityObject extends JsMutableObjectWithProperties {
 
     protected EntityObject() {
     }
-
-    protected native void setProperty(String name, String value) /*-{
-        this[name] = value;
-    }-*/;
 
     protected static <T> EntityObject create(T businessEntity) {
         EntityObject obj = JavaScriptObject.createObject().cast();
@@ -43,7 +40,7 @@ public final class EntityObject extends JavaScriptObject {
         } else if (businessEntity instanceof IVdcQueryable) {
             entityId = ((IVdcQueryable) businessEntity).getQueryableId().toString();
         }
-        obj.setProperty("id", entityId); //$NON-NLS-1$
+        obj.setValueAsString("id", entityId); //$NON-NLS-1$
 
         return obj;
     }
@@ -55,28 +52,28 @@ public final class EntityObject extends JavaScriptObject {
 
         // DataCenter
         if (businessEntity instanceof StoragePool) {
-            obj.setProperty("name", ((StoragePool) businessEntity).getName()); //$NON-NLS-1$
+            obj.setValueAsString("name", ((StoragePool) businessEntity).getName()); //$NON-NLS-1$
         }
 
         // Cluster
         else if (businessEntity instanceof VDSGroup) {
-            obj.setProperty("name", ((VDSGroup) businessEntity).getName()); //$NON-NLS-1$
+            obj.setValueAsString("name", ((VDSGroup) businessEntity).getName()); //$NON-NLS-1$
         }
 
         // Host
         else if (businessEntity instanceof VDS) {
-            obj.setProperty("name", ((VDS) businessEntity).getName()); //$NON-NLS-1$
-            obj.setProperty("hostname", ((VDS) businessEntity).getHostName()); //$NON-NLS-1$
+            obj.setValueAsString("name", ((VDS) businessEntity).getName()); //$NON-NLS-1$
+            obj.setValueAsString("hostname", ((VDS) businessEntity).getHostName()); //$NON-NLS-1$
         }
 
         // Network
         else if (businessEntity instanceof Network) {
-            obj.setProperty("name", ((Network) businessEntity).getName()); //$NON-NLS-1$
+            obj.setValueAsString("name", ((Network) businessEntity).getName()); //$NON-NLS-1$
         }
 
         // Storage
         else if (businessEntity instanceof StorageDomain) {
-            obj.setProperty("name", ((StorageDomain) businessEntity).getStorageName()); //$NON-NLS-1$
+            obj.setValueAsString("name", ((StorageDomain) businessEntity).getStorageName()); //$NON-NLS-1$
         }
 
         // Disk
@@ -86,48 +83,48 @@ public final class EntityObject extends JavaScriptObject {
 
         // VirtualMachine
         else if (businessEntity instanceof VM) {
-            obj.setProperty("name", ((VM) businessEntity).getName()); //$NON-NLS-1$
-            obj.setProperty("ipaddress", ((VM) businessEntity).getVmIp()); //$NON-NLS-1$
+            obj.setValueAsString("name", ((VM) businessEntity).getName()); //$NON-NLS-1$
+            obj.setValueAsString("ipaddress", ((VM) businessEntity).getVmIp()); //$NON-NLS-1$
         }
 
         // Pool
         else if (businessEntity instanceof VmPool) {
-            obj.setProperty("name", ((VmPool) businessEntity).getName()); //$NON-NLS-1$
+            obj.setValueAsString("name", ((VmPool) businessEntity).getName()); //$NON-NLS-1$
         }
 
         // Template
         else if (businessEntity instanceof VmTemplate) {
-            obj.setProperty("name", ((VmTemplate) businessEntity).getName()); //$NON-NLS-1$
+            obj.setValueAsString("name", ((VmTemplate) businessEntity).getName()); //$NON-NLS-1$
         }
 
         // GlusterVolume
         else if (businessEntity instanceof GlusterVolumeEntity) {
-            obj.setProperty("name", ((GlusterVolumeEntity) businessEntity).getName()); //$NON-NLS-1$
+            obj.setValueAsString("name", ((GlusterVolumeEntity) businessEntity).getName()); //$NON-NLS-1$
         }
 
         // Provider
         else if (businessEntity instanceof Provider) {
-            obj.setProperty("name", ((Provider) businessEntity).getName()); //$NON-NLS-1$
+            obj.setValueAsString("name", ((Provider) businessEntity).getName()); //$NON-NLS-1$
         }
 
         // User
         else if (businessEntity instanceof DbUser) {
-            obj.setProperty("username", ((DbUser) businessEntity).getLoginName()); //$NON-NLS-1$
-            obj.setProperty("domain", ((DbUser) businessEntity).getDomain()); //$NON-NLS-1$
+            obj.setValueAsString("username", ((DbUser) businessEntity).getLoginName()); //$NON-NLS-1$
+            obj.setValueAsString("domain", ((DbUser) businessEntity).getDomain()); //$NON-NLS-1$
         }
 
         // Quota
         else if (businessEntity instanceof Quota) {
-            obj.setProperty("name", ((Quota) businessEntity).getQuotaName()); //$NON-NLS-1$
+            obj.setValueAsString("name", ((Quota) businessEntity).getQuotaName()); //$NON-NLS-1$
         }
 
         // Event
         else if (businessEntity instanceof AuditLog) {
-            obj.setProperty("correlationId", ((AuditLog) businessEntity).getCorrelationId()); //$NON-NLS-1$
-            obj.setProperty("message", ((AuditLog) businessEntity).getmessage()); //$NON-NLS-1$
-            obj.setProperty("callStack", ((AuditLog) businessEntity).getCallStack()); //$NON-NLS-1$
-            obj.setProperty("customEventId", String.valueOf(((AuditLog) businessEntity).getCustomEventId())); //$NON-NLS-1$
-            obj.setProperty("toString", ((AuditLog) businessEntity).toStringForLogging()); //$NON-NLS-1$
+            obj.setValueAsString("correlationId", ((AuditLog) businessEntity).getCorrelationId()); //$NON-NLS-1$
+            obj.setValueAsString("message", ((AuditLog) businessEntity).getmessage()); //$NON-NLS-1$
+            obj.setValueAsString("callStack", ((AuditLog) businessEntity).getCallStack()); //$NON-NLS-1$
+            obj.setValueAsString("customEventId", String.valueOf(((AuditLog) businessEntity).getCustomEventId())); //$NON-NLS-1$
+            obj.setValueAsString("toString", ((AuditLog) businessEntity).toStringForLogging()); //$NON-NLS-1$
         }
 
         return obj;
