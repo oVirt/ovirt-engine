@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -23,10 +24,12 @@ import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -709,4 +712,32 @@ public class BackendTemplatesResourceTest
                     new ArrayList<>());
         }
     }
+
+    @Override
+    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+        // If the query to retrieve the virtual templates succeeds, then we will run another query to add the
+        // initialization information:
+        if (failure == null) {
+            setUpEntityQueryExpectations(
+                VdcQueryType.GetVmsInit,
+                IdsQueryParameters.class,
+                new String[]{},
+                new Object[]{},
+                setUpVmInit()
+            );
+        }
+
+        // Add the default expectations:
+        super.setUpQueryExpectations(query, failure);
+    }
+
+    private List<VmInit> setUpVmInit() {
+        List<VmInit> vmInits = new ArrayList<>(NAMES.length);
+        for (int i = 0; i < NAMES.length; i++) {
+            VmInit vmInit = control.createMock(VmInit.class);
+            vmInits.add(vmInit);
+        }
+        return vmInits;
+    }
+
 }

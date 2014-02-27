@@ -1172,6 +1172,15 @@ RETURN QUERY SELECT vm_init.*
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetVmInitByids(v_vm_init_ids TEXT) RETURNS SETOF vm_init STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT *
+     FROM vm_init
+     WHERE vm_init.vm_id IN (SELECT * from fnSplitterUuid(v_vm_init_ids));
+END; $procedure$
+LANGUAGE plpgsql;
+
 
 Create or replace FUNCTION UpdateVmInit(
     v_vm_id UUID,

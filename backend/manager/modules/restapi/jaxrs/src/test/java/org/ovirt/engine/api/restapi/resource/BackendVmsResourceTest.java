@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -55,6 +56,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -1485,5 +1487,32 @@ public class BackendVmsResourceTest
                     new Object[] { GUIDS[idxs[i]], 0L },
                     "configuration");
         }
+    }
+
+    @Override
+    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+        // If the query to retrieve the virtual machines succeeds, then we will run another query to add the
+        // initialization information:
+        if (failure == null) {
+            setUpEntityQueryExpectations(
+                VdcQueryType.GetVmsInit,
+                IdsQueryParameters.class,
+                new String[]{},
+                new Object[]{},
+                setUpVmInit()
+            );
+        }
+
+        // Add the default expectations:
+        super.setUpQueryExpectations(query, failure);
+    }
+
+    private List<VmInit> setUpVmInit() {
+        List<VmInit> vminits = new ArrayList<>(NAMES.length);
+        for (int i = 0; i < NAMES.length; i++) {
+            VmInit vmInit = control.createMock(VmInit.class);
+            vminits.add(vmInit);
+        }
+        return vminits;
     }
 }

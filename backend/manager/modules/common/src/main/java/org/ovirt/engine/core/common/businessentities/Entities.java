@@ -163,4 +163,13 @@ public class Entities {
 
         return baseEntities;
     }
+
+    @SuppressWarnings("unchecked")
+    public static <E extends BusinessEntity<I>, I extends Serializable> List<I> getIds(List<E> entities) {
+        List<I> ids = new ArrayList<I>(entities.size());
+        for (E entity : entities) {
+            ids.add(entity.getId());
+        }
+        return ids;
+    }
 }

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -40,6 +41,13 @@ public class VmInitDAODbFacadeImpl extends BaseDAODbFacade implements VmInitDAO 
     @Override
     public void remove(Guid id) {
         getCallsHandler().executeModification("DeleteVmInit", getIdParamterSource(id));
+    }
+
+    @Override
+    public List<VmInit> getVmInitByIds(List<Guid> ids) {
+        return getCallsHandler().executeReadList("GetVmInitByids",
+                VMInitRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("vm_init_ids", StringUtils.join(ids, ',')));
     }
 
     private MapSqlParameterSource getIdParamterSource(Guid id) {

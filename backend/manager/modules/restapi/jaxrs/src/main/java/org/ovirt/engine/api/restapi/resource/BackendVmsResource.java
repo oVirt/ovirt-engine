@@ -43,8 +43,10 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -53,6 +55,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -451,6 +454,19 @@ public class BackendVmsResource extends
     }
 
     protected VMs mapCollection(List<org.ovirt.engine.core.common.businessentities.VM> entities, boolean isFiltered) {
+        // Fill VmInit for entities - the search query no join the VmInit to Vm
+        IdsQueryParameters params = new IdsQueryParameters();
+        List<Guid> ids = Entities.getIds(entities);
+        params.setId(ids);
+        VdcQueryReturnValue queryReturnValue = runQuery(VdcQueryType.GetVmsInit, params);
+        if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {
+            List<VmInit> vmInits = queryReturnValue.getReturnValue();
+            Map<Guid, VmInit> initMap = Entities.businessEntitiesById(vmInits);
+            for (org.ovirt.engine.core.common.businessentities.VM vm : entities) {
+                vm.setVmInit(initMap.get(vm.getId()));
+            }
+        }
+
         VMs collection = new VMs();
         for (org.ovirt.engine.core.common.businessentities.VM entity : entities) {
             VM vm = map(entity);
