@@ -331,6 +331,11 @@ public class VmHandler {
         db.remove(vm.getId());
     }
 
+    public static List<VmInit> getVmInitByIds(List<Guid> ids) {
+        VmInitDAO db = DbFacade.getInstance().getVmInitDao();
+        return db.getVmInitByIds(ids);
+    }
+
     /**
      * Filters the vm image disks/disk devices according to the given parameters
      * note: all the given parameters are relevant for image disks, luns will be filtered.

@@ -26,6 +26,7 @@ import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.CustomProperty;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
+import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Files;
 import org.ovirt.engine.api.model.GuestInfo;
@@ -520,6 +521,11 @@ public class VmMapper {
 
         if (entity.getVmInit() != null) {
             model.setInitialization(map(entity.getVmInit(), null));
+            if (entity.getVmInit().getDomain() != null) {
+                Domain domain = new Domain();
+                domain.setName(entity.getVmInit().getDomain());
+                model.setDomain(domain);
+            }
         }
         return model;
     }

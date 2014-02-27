@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
@@ -20,14 +21,18 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -143,6 +148,19 @@ public class BackendTemplatesResource
     }
 
     protected Templates mapCollection(List<VmTemplate> entities) {
+        // Fill VmInit for entities - the search query no join the VmInit to Templates
+        IdsQueryParameters params = new IdsQueryParameters();
+        List<Guid> ids = Entities.getIds(entities);
+        params.setId(ids);
+        VdcQueryReturnValue queryReturnValue = runQuery(VdcQueryType.GetVmsInit, params);
+        if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {
+            List<VmInit> vmInits = queryReturnValue.getReturnValue();
+            Map<Guid, VmInit> initMap = Entities.businessEntitiesById(vmInits);
+            for (VmTemplate template : entities) {
+                template.setVmInit(initMap.get(template.getId()));
+            }
+        }
+
         Templates collection = new Templates();
         for (VmTemplate entity : entities) {
             collection.getTemplates().add(addLinks(populate(map(entity), entity)));
