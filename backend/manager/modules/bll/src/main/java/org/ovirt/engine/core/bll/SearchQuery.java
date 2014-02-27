@@ -202,16 +202,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<VmTemplate> searchVMTemplates() {
-        return genericSearch(getDbFacade().getVmTemplateDao(), true, new Filter<VmTemplate>() {
-            @Override
-            public List<VmTemplate> filter(final List<VmTemplate> data) {
-                for (IVdcQueryable vmt_helper : data) {
-                    VmTemplate vmt = (VmTemplate) vmt_helper;
-                    VmTemplateHandler.UpdateDisksFromDb(vmt);
-                }
-                return data;
-            }
-        });
+        return genericSearch(getDbFacade().getVmTemplateDao(), true, null);
     }
 
     private final <T extends IVdcQueryable> List<T> genericSearch(final SearchDAO<T> dao,

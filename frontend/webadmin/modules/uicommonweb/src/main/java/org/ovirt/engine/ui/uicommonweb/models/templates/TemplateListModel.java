@@ -286,6 +286,18 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     {
         VmTemplate template = (VmTemplate) getSelectedItem();
 
+        // get full template object from backend
+        AsyncQuery getVmInitQuery = new AsyncQuery();
+        getVmInitQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result) {
+                templateLoaded((VmTemplate) result);
+            }
+        };
+        AsyncDataProvider.getTemplateById(getVmInitQuery, template.getId());
+    }
+
+    private void templateLoaded(VmTemplate template) {
         if (getWindow() != null) {
             return;
         }
@@ -417,7 +429,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             return;
         }
 
-        VmTemplate selectedItem = (VmTemplate) getSelectedItem();
+        VmTemplate selectedItem = ((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate();
         final VmTemplate template = (VmTemplate) Cloner.clone(selectedItem);
 
         String name = (String) model.getName().getEntity();

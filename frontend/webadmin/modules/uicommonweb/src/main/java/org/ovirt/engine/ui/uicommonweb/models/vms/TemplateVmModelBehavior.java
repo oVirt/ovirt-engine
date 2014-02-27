@@ -204,4 +204,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         updateCdImage();
     }
 
+    public VmTemplate getVmTemplate() {
+        return template;
+    }
+
 }
