@@ -50,9 +50,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.NewHostModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.FcpStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NewEditStorageModelBehavior;
@@ -639,29 +637,15 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.getDataCenter().setSelectedItem(getEntity());
         model.getDataCenter().setIsChangable(false);
 
-        ArrayList<IStorageModel> items = new ArrayList<IStorageModel>();
+        List<IStorageModel> items = null;
 
         if (type == StorageDomainType.Data)
         {
-            NfsStorageModel tempVar = new NfsStorageModel();
-            tempVar.setRole(StorageDomainType.Data);
-            items.add(tempVar);
-            IscsiStorageModel tempVar2 = new IscsiStorageModel();
-            tempVar2.setRole(StorageDomainType.Data);
-            tempVar2.setIsGrouppedByTarget(true);
-            items.add(tempVar2);
-            FcpStorageModel tempVar3 = new FcpStorageModel();
-            tempVar3.setRole(StorageDomainType.Data);
-            items.add(tempVar3);
-            LocalStorageModel tempVar4 = new LocalStorageModel();
-            tempVar4.setRole(StorageDomainType.Data);
-            items.add(tempVar4);
+            items = AsyncDataProvider.getDataStorageModels();
         }
         else if (type == StorageDomainType.ISO)
         {
-            NfsStorageModel tempVar5 = new NfsStorageModel();
-            tempVar5.setRole(StorageDomainType.ISO);
-            items.add(tempVar5);
+            items = AsyncDataProvider.getIsoStorageModels();
         }
 
         model.setItems(items);
