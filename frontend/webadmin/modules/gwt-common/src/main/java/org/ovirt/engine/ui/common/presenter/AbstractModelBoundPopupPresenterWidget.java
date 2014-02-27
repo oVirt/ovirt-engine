@@ -203,12 +203,14 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
     @Override
     protected void handleEnterKey() {
+        getView().flush();
         beforeCommandExecuted(model.getDefaultCommand());
         modelCommandInvoker.invokeDefaultCommand();
     }
 
     @Override
     protected void handleEscapeKey() {
+        getView().flush();
         beforeCommandExecuted(model.getCancelCommand());
         modelCommandInvoker.invokeCancelCommand();
     }
