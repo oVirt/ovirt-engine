@@ -73,7 +73,7 @@ public class GridTimerStateChangeEvent extends GwtEvent<GridTimerStateChangeEven
     @Override
     public int hashCode() {
         int hashCode = 23;
-        hashCode = (hashCode * 37) + new Integer(refreshRate).hashCode();
+        hashCode = (hashCode * 37) + Integer.valueOf(refreshRate).hashCode();
         return hashCode;
     }
 
