@@ -147,6 +147,13 @@ import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.FcpStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.GlusterStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -3663,5 +3670,53 @@ public final class AsyncDataProvider {
             }
         }
         return true;
+    }
+
+    public static List<IStorageModel> getDataStorageModels() {
+        ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
+
+        NfsStorageModel nfsDataModel = new NfsStorageModel();
+        models.add(nfsDataModel);
+
+        PosixStorageModel posixDataModel = new PosixStorageModel();
+        models.add(posixDataModel);
+
+        GlusterStorageModel GlusterDataModel = new GlusterStorageModel();
+        models.add(GlusterDataModel);
+
+        IscsiStorageModel iscsiDataModel = new IscsiStorageModel();
+        iscsiDataModel.setIsGrouppedByTarget(true);
+        models.add(iscsiDataModel);
+
+        FcpStorageModel fcpDataModel = new FcpStorageModel();
+        models.add(fcpDataModel);
+
+        LocalStorageModel localDataModel = new LocalStorageModel();
+        models.add(localDataModel);
+
+        for (IStorageModel model : models) {
+            model.setRole(StorageDomainType.Data);
+        }
+
+        return models;
+    }
+
+    public static List<IStorageModel> getIsoStorageModels() {
+        ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
+
+        LocalStorageModel localIsoModel = new LocalStorageModel();
+        models.add(localIsoModel);
+
+        PosixStorageModel posixIsoModel = new PosixStorageModel();
+        models.add(posixIsoModel);
+
+        NfsStorageModel nfsIsoModel = new NfsStorageModel();
+        models.add(nfsIsoModel);
+
+        for (IStorageModel model : models) {
+            model.setRole(StorageDomainType.ISO);
+        }
+
+        return models;
     }
 }

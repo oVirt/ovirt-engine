@@ -278,46 +278,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.setHashName("new_domain"); //$NON-NLS-1$
         model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
 
-        ArrayList<IStorageModel> items = new ArrayList<IStorageModel>();
         // putting all Data domains at the beginning on purpose (so when choosing the
         // first selectable storage type/function, it will be a Data one, if relevant).
 
-        NfsStorageModel nfsDataModel = new NfsStorageModel();
-        nfsDataModel.setRole(StorageDomainType.Data);
-        items.add(nfsDataModel);
-
-        IscsiStorageModel iscsiDataModel = new IscsiStorageModel();
-        iscsiDataModel.setRole(StorageDomainType.Data);
-        iscsiDataModel.setIsGrouppedByTarget(true);
-        items.add(iscsiDataModel);
-
-        FcpStorageModel fcpDataModel = new FcpStorageModel();
-        fcpDataModel.setRole(StorageDomainType.Data);
-        items.add(fcpDataModel);
-
-        LocalStorageModel localDataModel = new LocalStorageModel();
-        localDataModel.setRole(StorageDomainType.Data);
-        items.add(localDataModel);
-
-        LocalStorageModel localIsoModel = new LocalStorageModel();
-        localIsoModel.setRole(StorageDomainType.ISO);
-        items.add(localIsoModel);
-
-        PosixStorageModel posixDataModel = new PosixStorageModel();
-        posixDataModel.setRole(StorageDomainType.Data);
-        items.add(posixDataModel);
-
-        GlusterStorageModel GlusterDataModel = new GlusterStorageModel();
-        GlusterDataModel.setRole(StorageDomainType.Data);
-        items.add(GlusterDataModel);
-
-        PosixStorageModel posixIsoModel = new PosixStorageModel();
-        posixIsoModel.setRole(StorageDomainType.ISO);
-        items.add(posixIsoModel);
-
-        NfsStorageModel nfsIsoModel = new NfsStorageModel();
-        nfsIsoModel.setRole(StorageDomainType.ISO);
-        items.add(nfsIsoModel);
+        List<IStorageModel> items =  AsyncDataProvider.getDataStorageModels();
+        items.addAll(AsyncDataProvider.getIsoStorageModels());
 
         NfsStorageModel nfsExportModel = new NfsStorageModel();
         nfsExportModel.setRole(StorageDomainType.ImportExport);
