@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.HttpLocationInfo;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -18,14 +19,14 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DownloadImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-
-import java.util.List;
 
 
 public class ImportRepoImageCopyTaskHandler
@@ -103,18 +104,30 @@ public class ImportRepoImageCopyTaskHandler
         getEnclosingCommand().getReturnValue().setSucceeded(true);
     }
 
+    // No need for null checks, as we already tested that the cluster exists in the canDoAction of the parent command
+    public VDSGroup getVdsGroup(Guid vdsGroupId) {
+        return DbFacade.getInstance().getVdsGroupDao().get(vdsGroupId);
+    }
+
     private Guid createTemplate() {
 
         VmTemplate blankTemplate = DbFacade.getInstance().getVmTemplateDao().get(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         VmStatic masterVm = new VmStatic(blankTemplate);
+        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+
         DiskImage templateDiskImage = getEnclosingCommand().getParameters().getDiskImage();
         // Following the same convention as the glance disk name, using a GlanceTemplate prefix, followed by a short identifier
         String vmTemplateName = "GlanceTemplate-" + Guid.newGuid().toString().substring(0, 7);
         AddVmTemplateParameters parameters = new AddVmTemplateParameters(masterVm, vmTemplateName, templateDiskImage.getDiskDescription());
-        VDSGroup vdsGroup = getVdsGroup();
 
-        if (vdsGroup != null) {
-            masterVm.setVdsGroupId(vdsGroup.getId());
+        // Setting the cluster ID, and other related properties derived from it
+        if (getEnclosingCommand().getParameters().getClusterId() != null) {
+            masterVm.setVdsGroupId(getEnclosingCommand().getParameters().getClusterId());
+            VDSGroup vdsGroup = getVdsGroup(masterVm.getVdsGroupId());
+            masterVm.setOsId(osRepository.getDefaultOSes().get(vdsGroup.getArchitecture()));
+            DisplayType defaultDisplayType =
+                    osRepository.getDisplayTypes(masterVm.getOsId(), vdsGroup.getcompatibility_version()).get(0);
+            masterVm.setDefaultDisplayType(defaultDisplayType);
         }
 
         VdcReturnValueBase addVmTemplateReturnValue =
@@ -134,16 +147,6 @@ public class ImportRepoImageCopyTaskHandler
                 true,
                 Boolean.FALSE,
                 null);
-    }
-
-    protected VDSGroup getVdsGroup() {
-        VDSGroup vdsGroup = null;
-        List<VDSGroup> vdsGroups = DbFacade.getInstance().getVdsGroupDao().getAllForStoragePool(getEnclosingCommand().getParameters().getStoragePoolId());
-        if (!vdsGroups.isEmpty()) {
-            vdsGroup = vdsGroups.get(0);
-        }
-
-        return vdsGroup;
     }
 
     @Override
