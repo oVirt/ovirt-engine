@@ -462,6 +462,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                     storageItem.setTitle(storage.getStorageName());
                     storageItem.setEntity(storage);
                     storagesItem.addChild(storageItem);
+                    treeItemById.put(storage.getId(), storageItem);
                 }
             }
 
@@ -514,6 +515,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                     clusterItem.setTitle(cluster.getName());
                     clusterItem.setEntity(cluster);
                     clustersItem.addChild(clusterItem);
+                    treeItemById.put(cluster.getId(), clusterItem);
 
                     SystemTreeItemModel hostsItem = new SystemTreeItemModel();
                     hostsItem.setType(SystemTreeItemType.Hosts);
@@ -530,6 +532,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                             hostItem.setTitle(host.getName());
                             hostItem.setEntity(host);
                             hostsItem.addChild(hostItem);
+                            treeItemById.put(host.getId(), hostItem);
                         }
                     }
                     if (cluster.supportsGlusterService())
@@ -549,6 +552,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                 volumeItem.setTitle(volume.getName());
                                 volumeItem.setEntity(volume);
                                 volumesItem.addChild(volumeItem);
+                                treeItemById.put(volume.getId(), volumeItem);
                             }
                         }
                     }
