@@ -463,7 +463,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             return;
         }
 
-        VmTemplate selectedItem = (VmTemplate) getSelectedItem();
+        VmTemplate selectedItem = ((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate();
         final VmTemplate template = (VmTemplate) Cloner.clone(selectedItem);
 
         String name = model.getName().getEntity();
