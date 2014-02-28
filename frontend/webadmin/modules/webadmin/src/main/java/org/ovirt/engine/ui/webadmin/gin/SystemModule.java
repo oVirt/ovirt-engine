@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.place.WebAdminPlaceManager;
-import org.ovirt.engine.ui.webadmin.system.ApplicationInit;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
 import org.ovirt.engine.ui.webadmin.system.PostMessageDispatcher;
 
@@ -29,7 +28,6 @@ public class SystemModule extends BaseSystemModule {
 
     void bindInfrastructure() {
         bindCommonInfrastructure(WebAdminPlaceManager.class);
-        bind(ApplicationInit.class).asEagerSingleton();
         bind(InternalConfiguration.class).asEagerSingleton();
         bind(PostMessageDispatcher.class).asEagerSingleton();
     }

@@ -23,30 +23,46 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 
 public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
 
+    private final PlaceManager placeManager;
     private final CurrentUserRole userRole;
     private final ConnectAutomaticallyManager connectAutomaticallyManager;
     private final ClientAgentType clientAgentType;
+    private final ApplicationDynamicMessages dynamicMessages;
 
     @Inject
     public ApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
             FrontendFailureEventListener frontendFailureEventListener,
-            CurrentUser user, EventBus eventBus,
+            CurrentUser user,
+            EventBus eventBus,
             Provider<UserPortalLoginModel> loginModelProvider,
             LockInteractionManager lockInteractionManager,
-            ConnectAutomaticallyManager connectAutomaticallyManager,
+            Frontend frontend,
+            PlaceManager placeManager,
             CurrentUserRole userRole,
-            ApplicationDynamicMessages dynamicMessages,
-            ClientAgentType clientAgentType, Frontend frontend) {
+            ConnectAutomaticallyManager connectAutomaticallyManager,
+            ClientAgentType clientAgentType,
+            ApplicationDynamicMessages dynamicMessages) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
                 user, eventBus, loginModelProvider, lockInteractionManager, frontend);
+        this.placeManager = placeManager;
         this.userRole = userRole;
         this.connectAutomaticallyManager = connectAutomaticallyManager;
         this.clientAgentType = clientAgentType;
+        this.dynamicMessages = dynamicMessages;
+    }
+
+    @Override
+    public void onBootstrap() {
+        super.onBootstrap();
         Window.setTitle(dynamicMessages.applicationTitle());
+
+        // Initiate transition to requested application place
+        placeManager.revealCurrentPlace();
     }
 
     @Override

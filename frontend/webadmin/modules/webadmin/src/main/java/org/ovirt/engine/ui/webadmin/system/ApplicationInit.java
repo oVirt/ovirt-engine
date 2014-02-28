@@ -28,24 +28,37 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 
 public class ApplicationInit extends BaseApplicationInit<LoginModel> {
 
+    private final PlaceManager placeManager;
     private final RestApiSessionManager restApiSessionManager;
+    private final ApplicationDynamicMessages dynamicMessages;
 
     @Inject
     public ApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
             FrontendFailureEventListener frontendFailureEventListener,
-            CurrentUser user, EventBus eventBus,
+            CurrentUser user,
+            EventBus eventBus,
             Provider<LoginModel> loginModelProvider,
             LockInteractionManager lockInteractionManager,
-            ApplicationDynamicMessages dynamicMessages,
+            Frontend frontend,
+            PlaceManager placeManager,
             RestApiSessionManager restApiSessionManager,
-            Frontend frontend) {
+            ApplicationDynamicMessages dynamicMessages) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
                 user, eventBus, loginModelProvider, lockInteractionManager, frontend);
+        this.placeManager = placeManager;
         this.restApiSessionManager = restApiSessionManager;
+        this.dynamicMessages = dynamicMessages;
+
+    }
+
+    @Override
+    public void onBootstrap() {
+        super.onBootstrap();
         Window.setTitle(dynamicMessages.applicationTitle());
 
         // Check for ApplicationMode configuration
@@ -59,6 +72,9 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         if (engineSessionTimeoutData != null) {
             restApiSessionManager.setSessionTimeout(engineSessionTimeoutData.getValue());
         }
+
+        // Initiate transition to requested application place
+        placeManager.revealCurrentPlace();
     }
 
     @Override

@@ -21,6 +21,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Provider;
+import com.gwtplatform.mvp.client.Bootstrapper;
 
 /**
  * Contains initialization logic that gets executed at application startup.
@@ -28,7 +29,7 @@ import com.google.inject.Provider;
  * @param <T>
  *            Login model type.
  */
-public abstract class BaseApplicationInit<T extends LoginModel> implements LogoutHandler {
+public abstract class BaseApplicationInit<T extends LoginModel> implements Bootstrapper, LogoutHandler {
 
     private final ITypeResolver typeResolver;
     private final FrontendEventsHandlerImpl frontendEventsHandler;
@@ -58,7 +59,10 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
         this.loginModelProvider = loginModelProvider;
         this.lockInteractionManager = lockInteractionManager;
         this.frontend = frontend;
+    }
 
+    @Override
+    public void onBootstrap() {
         // Handle UI logout requests
         user.setLogoutHandler(this);
 

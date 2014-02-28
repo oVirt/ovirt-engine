@@ -22,6 +22,9 @@
     <set-configuration-property name="gin.ginjector.modules" value="org.ovirt.engine.ui.userportal.gin.ClientModule" />
     <set-configuration-property name="gin.ginjector.extensions" value="org.ovirt.engine.ui.userportal.gin.ClientGinjectorExtension" />
 
+    <!-- GWTP Bootstrapper configuration -->
+    <set-configuration-property name="gwtp.bootstrapper" value="org.ovirt.engine.ui.userportal.system.ApplicationInit" />
+
     <!-- All source code within this module is translatable -->
     <source path="">
         <!-- Except deferred binding classes -->

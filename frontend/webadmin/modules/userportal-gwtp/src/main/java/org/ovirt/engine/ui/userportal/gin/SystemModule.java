@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.userportal.auth.LoggedInExtendedPlaceGatekeeper;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.place.UserPortalPlaceManager;
 import org.ovirt.engine.ui.userportal.section.DefaultMainSectionExtendedPlace;
-import org.ovirt.engine.ui.userportal.system.ApplicationInit;
 
 import com.google.inject.Singleton;
 
@@ -34,7 +33,6 @@ public class SystemModule extends BaseSystemModule {
     void bindInfrastructure() {
         bindCommonInfrastructure(UserPortalPlaceManager.class);
         bind(LoggedInExtendedPlaceGatekeeper.class).in(Singleton.class);
-        bind(ApplicationInit.class).asEagerSingleton();
         bind(CurrentUserRole.class).in(Singleton.class);
     }
 
