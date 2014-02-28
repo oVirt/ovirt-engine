@@ -211,6 +211,7 @@ class Plugin(plugin.PluginBase):
     )
     def _validation(self):
         self._checkDatabaseOwnership()
+        self._checkSupportedVersionsPresent()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
@@ -276,7 +277,6 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _miscUpgrade(self):
-        self._checkSupportedVersionsPresent()
         dbovirtutils = database.OvirtUtils(
             plugin=self,
             dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
