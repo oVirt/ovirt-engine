@@ -1,0 +1,2 @@
+org.ovirt.engine.core.aaa.internal.InternalAuthenticator
+org.ovirt.engine.core.aaa.internal.InternalDirectory

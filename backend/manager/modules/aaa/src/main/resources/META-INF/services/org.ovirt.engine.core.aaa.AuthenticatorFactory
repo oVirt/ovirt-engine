@@ -1,7 +1,0 @@
-#
-# This file contains one line per each authenticator factory to be
-# automatically registered with the authenticator manager:
-#
-org.ovirt.engine.core.authentication.header.HeaderAuthenticatorFactory
-org.ovirt.engine.core.authentication.internal.InternalAuthenticatorFactory
-org.ovirt.engine.core.authentication.nop.NopAuthenticatorFactory

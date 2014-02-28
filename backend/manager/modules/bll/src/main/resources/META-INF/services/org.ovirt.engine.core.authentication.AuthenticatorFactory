@@ -1,6 +1,0 @@
-#
-# This file is used to register the provisioal bridge between the new
-# authentication interfaces and the old LDAP infrastructure. It should be
-# removed once the old LDAP infrastructure is retired.
-#
-org.ovirt.engine.core.authentication.provisional.ProvisionalAuthenticatorFactory
