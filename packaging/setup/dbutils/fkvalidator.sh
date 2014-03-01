@@ -92,18 +92,18 @@ while getopts hvl:s:p:u:d:fq option; do
     esac
 done
 
-# Install fkvalidator procedures
-psql -w -U "${USERNAME}" -h "${SERVERNAME}" -p "${PORT}" -f ./fkvalidator_sp.sql "${DATABASE}" > /dev/null
+[ -n "${USERNAME}" ] || die "Please specify user name"
+[ -n "${DATABASE}" ] || die "Please specify database"
 
 if [ -n "${FIXIT}" -a -z "${QUIET}" ]; then
     echo "Caution, this operation should be used with care. Please contact support prior to running this command"
     echo "Are you sure you want to proceed? [y/n]"
     read answer
 
-    if [ "${answer}" = "n" ]; then
-        echo "Please contact support for further assistance."
-        exit 1
-    fi
+    [ "${answer}" = "y" ] || die "Please contact support for further assistance."
 fi
 
+# Install fkvalidator procedures
+psql -w -U "${USERNAME}" -h "${SERVERNAME}" -p "${PORT}" -f ./fkvalidator_sp.sql "${DATABASE}" > /dev/null
+# Execute
 validate_db_fks "${FIXIT}" "${VERBOSE}"

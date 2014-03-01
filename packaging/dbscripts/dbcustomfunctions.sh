@@ -1,4 +1,10 @@
 
+die() {
+    local m="$1"
+    echo "FATAL: ${m}" >&2
+    exit 1
+}
+
 insert_initial_data() {
     echo "Inserting data..."
     execute_file "insert_data.sql" "${DATABASE}" "${SERVERNAME}" "${PORT}" > /dev/null

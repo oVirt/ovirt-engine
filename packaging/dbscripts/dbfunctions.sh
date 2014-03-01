@@ -213,7 +213,8 @@ run_required_scripts() {
         expr="$(echo "${line}" | cut -d " " -f1 | grep "\-\-#source")"
         [ -z "${expr}" ] && break
         local sql="$(echo "${line}" | cut -d " " -f2)"
-        valid="$(echo "${sql}" | grep "_sp.sql")"
+        echo "${sql}" | grep -q "_sp.sql" || \
+            die "invalid source file ${sql} in ${file}, source files must end with '_sp.sql'"
         if [ -z "${valid}" ]; then
             echo "invalid source file ${sql} in ${file}, source files must end with '_sp.sql'"
             exit 1
@@ -304,10 +305,7 @@ validate_version_uniqueness() {
     local file
     for file in $(ls ${files} | sort) ; do
         local ver="$(_dbfunc_common_get_file_version "${file}")"
-        if [ "${ver}" = "${prev}" ]; then
-            echo "Operation aborted, found duplicate version: ${ver}"
-            exit 1
-        fi
+        [ "${ver}" != "${prev}" ] || die "Operation aborted, found duplicate version: ${ver}"
         prev="${ver}"
     done
 }
@@ -355,9 +353,8 @@ run_upgrade_files() {
                 if [ "${xverMajor}" -eq "${lastMajor}" ]; then
                     if [ $((${xver} - ${last})) -gt 10 ]; then
                        set_last_version
-                       echo "Illegal script version number ${ver},version should be in max 10 gap from last installed version: 0${last}"
-                       echo "Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and run the upgrade script."
-                       exit 1
+                       die "Illegal script version number ${ver},version should be in max 10 gap from last installed version: 0${last}
+Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and run the upgrade script."
                     fi
                 fi
                 # check if script was already installed with other version name.

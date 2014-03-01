@@ -1,4 +1,10 @@
 
+die() {
+    local m="$1"
+    echo "FATAL: ${m}" >&2
+    exit 1
+}
+
 set_defaults() {
     SERVERNAME="localhost"
     PORT="5432"

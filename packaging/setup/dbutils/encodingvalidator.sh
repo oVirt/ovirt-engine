@@ -47,6 +47,8 @@ while getopts hvl:s:p:u:fq option; do
     esac
 done
 
+[ -n "${USERNAME}" ] || die "Please specify user"
+
 run() {
   local command="${1}"
   local db="${2}"
@@ -81,25 +83,23 @@ fix_template1_encoding() {
     run "${CMD}" template1
 }
 
-if [ -n "${FIXIT}" -a -z "${QUIET}" ]; then
-    echo "Caution, this operation should be used with care. Please contact support prior to running this command"
-    echo "Are you sure you want to proceed? [y/n]"
-    read answer
-
-    if [ "${answer}" != "y" ]; then
-        echo "Please contact support for further assistance."
-        exit 1
-    fi
-fi
-
 encoding="$(get)"
 
 if [ "${encoding}" = "UTF8" -o "${encoding}" = "utf8" ]; then
     echo "Database template1 has already UTF8 default encoding configured. nothing to do, exiting..."
     exit 0
-elif [ -z "${FIXIT}" ]; then
-    echo "Database template1 is configured with an incompatible encoding: ${encoding}"
-    exit 1
+fi
+
+echo "Database template1 is configured with an incompatible encoding: ${encoding}"
+
+[ -n "${FIXIT}" ] || die "Database is incompatible"
+
+if [ -z "${QUIET}" ]; then
+    echo "Caution, this operation should be used with care. Please contact support prior to running this command"
+    echo "Are you sure you want to proceed? [y/n]"
+    read answer
+
+    [ "${answer}" = "y" ] || die "Please contact support for further assistance."
 fi
 
 fix_template1_encoding

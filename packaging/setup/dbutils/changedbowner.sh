@@ -37,10 +37,9 @@ while getopts hs:p:d:f:t: option; do
     esac
 done
 
-if [ ! -n "${FROM_USER}" -o ! -n "${TO_USER}" ]; then
-    echo "Please specify users"
-    exit 1
-fi
+[ -n "${FROM_USER}" ] || die "Please specify from user"
+[ -n "${TO_USER}" ] || die "Please specify to user"
+[ -n "${DATABASE}" ] || die "Please specify database"
 
 tempfile="$(mktemp)"
 cleanup() {
@@ -54,17 +53,13 @@ echo "Changing database ${DATABASE} objects ownership"
     grep -i 'owner to' | sed "s/OWNER TO ${FROM_USER};/OWNER TO ${TO_USER};/i" | \
     ( psql -h "${SERVERNAME}" -p "${PORT}" -U "${FROM_USER}" "${DATABASE}" && echo ok >> "${tempfile}" )
 
-if [ "$(wc -l < "${tempfile}")" -ne 2 ]; then
-    echo "Failed to change DB ${DATABASE} objects ownership."
-    exit 1
-fi
+[ "$(wc -l < "${tempfile}")" -eq 2 ] || die "Failed to change DB ${DATABASE} objects ownership."
 
 #change the DB ownership
 echo "Changing database ${DATABASE} ownership"
 cmd="ALTER DATABASE ${DATABASE} OWNER TO ${TO_USER};"
 if ! psql -w -h "${SERVERNAME}" -p "${PORT}" --pset=tuples_only=on --set ON_ERROR_STOP=1 -c "${cmd}" -U "${FROM_USER}" -d "${DATABASE}"; then
-    echo "Failed to change DB ${DATABASE} ownership."
-    exit 2
+    die "Failed to change DB ${DATABASE} ownership."
 fi
 
 echo "Changing database ${DATABASE} ownership from ${FROM_USER} to ${TO_USER} completed successfully."

@@ -45,23 +45,19 @@ done
 shift $(( $OPTIND - 1 ))
 IDS="$@"
 
+[ -n "${TYPE}" ] || die "Please specify type"
+[ -z "${IDS}" -a -z "${QUERY}" ] && die "Please specify ids or query"
+[ -n "${IDS}" -a -n "${QUERY}" ] && die "Please specify one ids or query"
 
-if [ -n "${TYPE}" -a -n "${IDS}" ]; then
+if [ -n "${IDS}" ]; then
     echo "Caution, this operation may lead to data corruption and should be used with care. Please contact support prior to running this command"
     echo "Are you sure you want to proceed? [y/n]"
     read answer
-
-    if [ "${answer}" = "n" ]; then
-       echo "Please contact support for further assistance."
-       exit 1
-    fi
+    [ "${answer}" = "y" ] || die "Please contact support for further assistance."
 
     for ID in ${IDS} ; do
         unlock_entity "${TYPE}" "${ID}" "$(whoami)" ${RECURSIVE}
     done
-elif [ -n "${TYPE}" -a -n "${QUERY}" ]; then
+elif [ -n "${QUERY}" ]; then
     query_locked_entities "${TYPE}"
-else
-    echo "Please specify type and ids or query"
-    exit 1
 fi

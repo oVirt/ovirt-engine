@@ -91,18 +91,12 @@ Caution, this operation should be used with care. Please contact support prior t
 Are you sure you want to proceed? [y/n]
 __EOF__
         read answer
-        if [ "${answer}" = "n" ]; then
-           echo "Please contact support for further assistance."
-           exit 1
-        fi
+        [ "${answer}" = "y" ] || die "Please contact support for further assistance."
     fi
 }
 
-if [ -z "${USERNAME}" ]; then
-    echo "Please specify user name"
-    exit 1
-fi
-
+[ -n "${USERNAME}" ] || die "Please specify user name"
+[ -n "${DATABASE}" ] || die "Please specify database"
 
 # Install taskcleaner procedures
 psql -w -U "${USERNAME}" -h "${SERVERNAME}" -p "${PORT}" -f ./taskcleaner_sp.sql "${DATABASE}" > /dev/null
@@ -237,8 +231,7 @@ if [ "${TASK_ID}" != "" -o "${COMMAND_ID}" != "" -o -n "${CLEAR_ALL}" -o -n "${C
             fi
         fi
     else
-        echo "Please specify task"
-        exit 1
+        die "Please specify task"
     fi
 elif [ -n "${ZOMBIES_ONLY}" ]; then #only display operations block
     CMD1="SELECT ${FIELDS} FROM GetAsyncTasksZombies();"
