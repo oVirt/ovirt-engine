@@ -118,7 +118,7 @@ public class NotificationService implements Runnable {
                         new FirstMatchSimpleFilter.FilterEntry(
                                 EventsManager.DATABASE_UNREACHABLE,
                                 false,
-                                EventNotificationMethod.EMAIL.name(),
+                                EventNotificationMethod.SMTP.getAsString(),
                                 subscriber);
                     }
                 }

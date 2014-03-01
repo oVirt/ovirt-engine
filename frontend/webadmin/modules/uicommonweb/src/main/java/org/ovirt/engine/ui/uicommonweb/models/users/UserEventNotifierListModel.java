@@ -257,14 +257,14 @@ public class UserEventNotifierListModel extends SearchableListModel
             for (event_subscriber a : existing)
             {
                 toRemoveList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getevent_up_name(),
-                        EventNotificationMethod.EMAIL,
+                        EventNotificationMethod.SMTP,
                         a.getmethod_address(),
                         a.getsubscriber_id(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
             for (SelectionTreeNodeModel a : selected)
             {
                 toAddList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getTitle(),
-                        EventNotificationMethod.EMAIL,
+                        EventNotificationMethod.SMTP,
                         (String) model.getEmail().getEntity(),
                         getEntity().getId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
@@ -274,7 +274,7 @@ public class UserEventNotifierListModel extends SearchableListModel
             for (SelectionTreeNodeModel a : added)
             {
                 toAddList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getTitle(),
-                        EventNotificationMethod.EMAIL,
+                        EventNotificationMethod.SMTP,
                         (String) model.getEmail().getEntity(),
                         getEntity().getId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
@@ -282,7 +282,7 @@ public class UserEventNotifierListModel extends SearchableListModel
             for (event_subscriber a : removed)
             {
                 toRemoveList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getevent_up_name(),
-                        EventNotificationMethod.EMAIL,
+                        EventNotificationMethod.SMTP,
                         a.getmethod_address(),
                         a.getsubscriber_id(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
