@@ -218,10 +218,6 @@ run_file() {
 
 set_version() {
     execute_file upgrade/03_02_0000_set_version.sql ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
-    if [  -n "${VERSION}" ]; then
-        CMD="update schema_version set current=true where version=trim('${VERSION}');"
-        execute_command "${CMD}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
-    fi
 }
 
 get_current_version() {
