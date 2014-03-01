@@ -52,7 +52,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         EventNotificationMethod notificationMethod = eventNotificationMethod;
 
         switch (notificationMethod) {
-        case EMAIL:
+        case SMTP:
             String mailAdress = (StringUtils.isEmpty(event_subscriber.getmethod_address())) ? user.getEmail()
                     : event_subscriber.getmethod_address();
 

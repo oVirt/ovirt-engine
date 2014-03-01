@@ -32,7 +32,7 @@ public class EventDAOTest extends BaseDAOTestCase {
         newSubscriber = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
         newSubscription = new event_subscriber();
         newSubscription.setsubscriber_id(newSubscriber);
-        newSubscription.setevent_notification_method(EventNotificationMethod.EMAIL);
+        newSubscription.setevent_notification_method(EventNotificationMethod.SMTP);
         newSubscription.setevent_up_name("TestRun");
         newSubscription.settag_name("farkle");
 
