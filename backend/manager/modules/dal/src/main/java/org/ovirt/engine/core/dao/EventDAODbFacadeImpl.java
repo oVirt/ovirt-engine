@@ -25,7 +25,7 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
                 throws SQLException {
             event_subscriber entity = new event_subscriber();
             entity.setevent_up_name(rs.getString("event_up_name"));
-            entity.setevent_notification_method(EventNotificationMethod.valueOf(rs.getString("notification_method")));
+            entity.setevent_notification_method(EventNotificationMethod.valueOfString(rs.getString("notification_method")));
             entity.setmethod_address(rs.getString("method_address"));
             entity.setsubscriber_id(getGuidDefaultEmpty(rs, "subscriber_id"));
             entity.settag_name(rs.getString("tag_name"));
@@ -59,7 +59,7 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
     public void subscribe(event_subscriber subscriber) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("event_up_name", subscriber.getevent_up_name())
-                .addValue("notification_method", subscriber.getevent_notification_method().name())
+                .addValue("notification_method", subscriber.getevent_notification_method().getAsString())
                 .addValue("method_address", subscriber.getmethod_address())
                 .addValue("subscriber_id", subscriber.getsubscriber_id())
                 .addValue("tag_name", subscriber.gettag_name());
@@ -71,7 +71,7 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
     public void unsubscribe(event_subscriber subscriber) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("event_up_name", subscriber.getevent_up_name())
-                .addValue("notification_method", subscriber.getevent_notification_method().name())
+                .addValue("notification_method", subscriber.getevent_notification_method().getAsString())
                 .addValue("subscriber_id", subscriber.getsubscriber_id())
                 .addValue("tag_name", subscriber.gettag_name());
 

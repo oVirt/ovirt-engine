@@ -4069,7 +4069,7 @@
         <row>
             <value>9bf7c640-b620-456f-a550-0348f366544a</value>
             <value>TestRun</value>
-            <value>EMAIL</value>
+            <value>smtp</value>
             <null />
             <value>testrun</value>
         </row>

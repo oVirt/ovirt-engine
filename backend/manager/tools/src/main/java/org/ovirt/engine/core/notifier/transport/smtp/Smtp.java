@@ -172,14 +172,14 @@ public class Smtp extends Transport {
                                 message.getMessageBody()));
                     }
                     sendMail(attempt.address, message.getMessageSubject(), message.getMessageBody());
-                    notifyObservers(DispatchResult.success(attempt.event, attempt.address, EventNotificationMethod.EMAIL));
+                    notifyObservers(DispatchResult.success(attempt.event, attempt.address, EventNotificationMethod.SMTP));
                     iterator.remove();
                 } catch (Exception ex) {
                     attempt.retries++;
                     if (attempt.retries >= retries) {
                         notifyObservers(DispatchResult.failure(attempt.event,
                                 attempt.address,
-                                EventNotificationMethod.EMAIL,
+                                EventNotificationMethod.SMTP,
                                 ex.getMessage()));
                         iterator.remove();
                     }

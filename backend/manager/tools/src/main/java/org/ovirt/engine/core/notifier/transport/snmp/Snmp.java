@@ -131,10 +131,10 @@ public class Snmp extends Transport {
                     )
                 );
                 snmp.send(v2pdu, target);
-                notifyObservers(DispatchResult.success(event, address, EventNotificationMethod.SNMP_TRAP));
+                notifyObservers(DispatchResult.success(event, address, EventNotificationMethod.SNMP));
             } catch (Exception e) {
                 log.error(e.getMessage());
-                notifyObservers(DispatchResult.failure(event, address, EventNotificationMethod.SNMP_TRAP, e.getMessage()));
+                notifyObservers(DispatchResult.failure(event, address, EventNotificationMethod.SNMP, e.getMessage()));
             }
         }
     }
