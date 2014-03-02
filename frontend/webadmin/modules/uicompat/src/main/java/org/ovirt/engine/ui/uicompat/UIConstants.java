@@ -1086,6 +1086,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allow to add/remove permissions for Users on objects in the system")
     String allowToAddRemovePermissionsForUsersOnObjectsInTheSystemRoleTreeTooltip();
 
+    @DefaultStringValue("Add users and groups from directory while adding permissions")
+    String allowToAddUsersAndGroupsFromDirectoryOnObjectsInTheSystemRoleTreeTooltip();
+
     @DefaultStringValue("Allow to login to the system")
     String allowToLoginToTheSystemRoleTreeTooltip();
 

@@ -71,6 +71,7 @@ public enum ActionGroup {
     MANIPULATE_USERS(500, RoleType.ADMIN, VdcObjectType.User, true),
     MANIPULATE_ROLES(501, RoleType.ADMIN, VdcObjectType.User, true),
     MANIPULATE_PERMISSIONS(502, RoleType.USER, VdcObjectType.User, true),
+    ADD_USERS_AND_GROUPS_FROM_DIRECTORY(503, RoleType.USER, VdcObjectType.User, true),
     // storage domains actions groups
     CREATE_STORAGE_DOMAIN(600, RoleType.ADMIN, VdcObjectType.Storage, true, ApplicationMode.VirtOnly),
     EDIT_STORAGE_DOMAIN_CONFIGURATION(601, RoleType.ADMIN, VdcObjectType.Storage, true, ApplicationMode.VirtOnly),

@@ -286,6 +286,8 @@ public class RoleTreeView
                                         getConstants().allowToAddRemoveUsersFromTheSystemRoleTreeTooltip()),
                                 new RoleNode(ActionGroup.MANIPULATE_PERMISSIONS,
                                         getConstants().allowToAddRemovePermissionsForUsersOnObjectsInTheSystemRoleTreeTooltip()),
+                                new RoleNode(ActionGroup.ADD_USERS_AND_GROUPS_FROM_DIRECTORY,
+                                        getConstants().allowToAddUsersAndGroupsFromDirectoryOnObjectsInTheSystemRoleTreeTooltip()),
                                 new RoleNode(ActionGroup.MANIPULATE_ROLES,
                                         getConstants().allowToDefineConfigureRolesInTheSystemRoleTreeTooltip()),
                                 new RoleNode(ActionGroup.LOGIN, getConstants().allowToLoginToTheSystemRoleTreeTooltip()),
