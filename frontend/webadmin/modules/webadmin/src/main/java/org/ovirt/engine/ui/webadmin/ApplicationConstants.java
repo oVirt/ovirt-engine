@@ -224,6 +224,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Override MTU")
     String overrideMtuLabel();
 
+    @DefaultStringValue("Create subnet")
+    String createSubnetLabel();
+
     @DefaultStringValue("Host Network QoS")
     String hostNetworkQos();
 

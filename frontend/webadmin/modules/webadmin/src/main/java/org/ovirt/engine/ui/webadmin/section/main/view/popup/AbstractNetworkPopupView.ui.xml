@@ -8,7 +8,8 @@
 	xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
 	xmlns:v="urn:import:org.ovirt.engine.ui.webadmin.widget.vnicProfile"
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
-	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+	xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider">
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
 
@@ -137,9 +138,8 @@
                     <t:DialogTab ui:field="subnetTab">
                         <t:content>
 							<g:FlowPanel>
-								<ge:StringEntityModelTextBoxEditor ui:field="subnetNameEditor" />
-								<ge:StringEntityModelTextBoxEditor ui:field="subnetCidrEditor" />
-								<e:ListModelListBoxEditor ui:field="subnetIpVersionEditor"/>
+								<e:EntityModelCheckBoxEditor ui:field="createSubnetEditor" />
+								<p:ExternalSubnetWidget ui:field="subnetWidget" />
 							</g:FlowPanel>
                         </t:content>
                     </t:DialogTab>

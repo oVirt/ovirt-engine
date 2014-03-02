@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -14,13 +13,11 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -33,6 +30,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractNetworkPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.widget.provider.ExternalSubnetWidget;
 import org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfilesEditor;
 
 import com.google.gwt.cell.client.Cell.Context;
@@ -143,17 +141,14 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @UiField
     public WidgetStyle style;
 
-    @UiField
-    @Path("subnetName.entity")
-    public StringEntityModelTextBoxEditor subnetNameEditor;
-
-    @UiField
-    @Path("subnetCidr.entity")
-    public StringEntityModelTextBoxEditor subnetCidrEditor;
-
     @UiField(provided = true)
-    @Path("subnetIpVersion.selectedItem")
-    public ListModelListBoxEditor<IpVersion> subnetIpVersionEditor;
+    @Path(value = "createSubnet.entity")
+    @WithElementId("createSubnet")
+    public EntityModelCheckBoxEditor createSubnetEditor;
+
+    @UiField
+    @Ignore
+    ExternalSubnetWidget subnetWidget;
 
     @UiField
     @Ignore
@@ -213,10 +208,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
                 }
             }
         });
-        subnetIpVersionEditor = new ListModelListBoxEditor<IpVersion>(new EnumRenderer<IpVersion>());
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         hasMtuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        createSubnetEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         this.clustersTable = new EntityModelCellTable<ListModel>(SelectionMode.NONE, true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTable(constants, templates);
@@ -243,10 +238,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         vlanTagging.setLabel(constants.enableVlanTagLabel());
         hasMtuEditor.setLabel(constants.overrideMtuLabel());
         qosEditor.setLabel(constants.hostNetworkQos());
-
-        subnetNameEditor.setLabel(constants.nameExternalSubnet());
-        subnetCidrEditor.setLabel(constants.cidrExternalSubnet());
-        subnetIpVersionEditor.setLabel(constants.ipVersionExternalSubnet());
+        createSubnetEditor.setLabel(constants.createSubnetLabel());
 
         profilesLabel.setText(constants.profilesLabel());
     }
@@ -412,11 +404,13 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Override
     public void edit(T model) {
         profilesEditor.edit(model.getProfiles());
+        subnetWidget.edit(model.getSubnetModel());
     }
 
     @Override
     public T flush() {
         profilesEditor.flush();
+        subnetWidget.flush();
         return null;
     }
 

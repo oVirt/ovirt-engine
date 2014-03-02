@@ -3,15 +3,14 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic" >
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+	xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider" >
 
 	<d:SimpleDialogPanel width="350px" height="220px">
 		<d:content>
 			<g:FlowPanel>
 				<ge:StringEntityModelLabelEditor ui:field="networkEditor" />
-				<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
-				<ge:StringEntityModelTextBoxEditor ui:field="cidrEditor" />
-				<e:ListModelListBoxEditor ui:field="ipVersionEditor"/>
+				<p:ExternalSubnetWidget ui:field="subnetWidget" />
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

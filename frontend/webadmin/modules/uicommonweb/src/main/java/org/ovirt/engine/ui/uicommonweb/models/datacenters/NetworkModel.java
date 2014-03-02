@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -31,8 +30,8 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NetworkProfilesModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
+import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalSubnetModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.CidrValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -70,9 +69,8 @@ public abstract class NetworkModel extends Model
     private boolean mtuOverrideSupported = false;
     private ListModel privateDataCenters;
     private NetworkProfilesModel profiles;
-    private EntityModel<String> subnetName;
-    private EntityModel<String> subnetCidr;
-    private ListModel<IpVersion> subnetIpVersion;
+    private EntityModel createSubnet;
+    private ExternalSubnetModel subnetModel;
     private UICommand addQosCommand;
     private final Network network;
     private final ListModel sourceListModel;
@@ -159,14 +157,21 @@ public abstract class NetworkModel extends Model
 
         setQos(new ListModel<NetworkQoS>());
 
-        setSubnetName(new EntityModel<String>());
-        setSubnetCidr(new EntityModel<String>());
-        setSubnetIpVersion(new ListModel<IpVersion>());
-        getSubnetIpVersion().setItems(AsyncDataProvider.getExternalSubnetIpVerionList());
+        EntityModel createSubnet = new EntityModel(false);
+        setCreateSubnet(createSubnet);
+        createSubnet.getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                updateSubnetChangeability();
+            }
+        });
+
+        setSubnetModel(new ExternalSubnetModel());
 
         // Update changeability according to initial values
         updateVlanTagChangeability();
         updateMtuChangeability();
+        updateSubnetChangeability();
     }
 
     private VnicProfileModel createDefaultProfile() {
@@ -402,28 +407,20 @@ public abstract class NetworkModel extends Model
         return sourceListModel;
     }
 
-    public EntityModel<String> getSubnetName() {
-        return subnetName;
+    public EntityModel getCreateSubnet() {
+        return createSubnet;
     }
 
-    private void setSubnetName(EntityModel<String> subnetName) {
-        this.subnetName = subnetName;
+    private void setCreateSubnet(EntityModel createSubnet) {
+        this.createSubnet = createSubnet;
     }
 
-    public EntityModel<String> getSubnetCidr() {
-        return subnetCidr;
+    public ExternalSubnetModel getSubnetModel() {
+        return subnetModel;
     }
 
-    private void setSubnetCidr(EntityModel<String> subnetCidr) {
-        this.subnetCidr = subnetCidr;
-    }
-
-    public ListModel<IpVersion> getSubnetIpVersion() {
-        return subnetIpVersion;
-    }
-
-    private void setSubnetIpVersion(ListModel<IpVersion> subnetIpVersion) {
-        this.subnetIpVersion = subnetIpVersion;
+    private void setSubnetModel(ExternalSubnetModel subnetModel) {
+        this.subnetModel = subnetModel;
     }
 
     public UICommand getAddQosCommand() {
@@ -466,11 +463,9 @@ public abstract class NetworkModel extends Model
 
         getExternalProviders().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
-        getSubnetName().validateEntity(new IValidation[] { new AsciiNameValidation() });
-        if (getSubnetName().getEntity() != null && !getSubnetName().getEntity().isEmpty()) {
-            getSubnetCidr().validateEntity(new IValidation[] { getSubnetIpVersion().getSelectedItem() == IpVersion.IPV4 ? new CidrValidation()
-                    : new NotEmptyValidation() });
-            getSubnetIpVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        boolean subnetValid = true;
+        if ((Boolean) getExport().getEntity() && (Boolean) getCreateSubnet().getEntity()) {
+            subnetValid = getSubnetModel().validate();
         }
 
         boolean profilesValid = true;
@@ -485,8 +480,7 @@ public abstract class NetworkModel extends Model
 
         return getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()
                 && getMtu().getIsValid() && getExternalProviders().getIsValid() && getComment().getIsValid()
-                && getSubnetName().getIsValid() && getSubnetCidr().getIsValid() && getSubnetIpVersion().getIsValid()
-                && profilesValid && getNetworkLabel().getIsValid();
+                && subnetValid && profilesValid && getNetworkLabel().getIsValid();
     }
 
     public void syncWithBackend() {
@@ -737,5 +731,9 @@ public abstract class NetworkModel extends Model
 
     private void updateMtuChangeability() {
         getMtu().setIsChangable((Boolean) getHasMtu().getEntity() && !((Boolean) getExport().getEntity()));
+    }
+
+    private void updateSubnetChangeability() {
+        getSubnetModel().toggleChangeability((Boolean) getCreateSubnet().getEntity());
     }
 }
