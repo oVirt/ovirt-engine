@@ -22,10 +22,11 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -635,36 +636,29 @@ public class VdsUpdateRunTimeInfo {
                     return;
                 }
 
-                // if we could retreive it within the timeout, remove from map (for future checks) and set the host to
+                // if we could retrieve it within the timeout, remove from map (for future checks) and set the host to
                 // non-operational
                 hostDownTimes.remove(_vds.getId());
 
                 try {
-                    StringBuilder sNics = new StringBuilder();
-                    StringBuilder sNetworks = new StringBuilder();
-
-                    for (String nic : brokenNics) {
-                        sNics.append(nic)
-                                .append(", ");
-                    }
-                    for (String net : networks) {
-                        sNetworks.append(net)
-                                .append(", ");
-                    }
+                    String networkNames = StringUtils.join(networks, ", ");
+                    String nicNames = StringUtils.join(brokenNics, ", ");
 
                     String message =
                             String.format(
                                     "Host '%s' moved to Non-Operational state because interface/s '%s' are down which needed by network/s '%s' in the current cluster",
                                     _vds.getName(),
-                                    sNics.toString(),
-                                    sNetworks.toString());
+                                    nicNames,
+                                    networkNames);
 
+                    _vds.setNonOperationalReason(NonOperationalReason.NETWORK_INTERFACE_IS_DOWN);
                     _vdsManager.setStatus(VDSStatus.NonOperational, _vds);
                     log.info(message);
 
                     AuditLogableBase logable = new AuditLogableBase(_vds.getId());
-                    logable.addCustomValue("Networks", StringUtils.stripEnd(sNetworks.toString(), ", "));
-                    logable.addCustomValue("Interfaces", StringUtils.stripEnd(sNics.toString(), ", "));
+                    logable.addCustomValue("Networks", networkNames);
+                    logable.addCustomValue("Interfaces", nicNames);
+                    logable.setCustomId(nicNames + networkNames);
                     auditLog(logable, AuditLogType.VDS_SET_NONOPERATIONAL_IFACE_DOWN);
                 } catch (Exception e) {
                     log.error(String.format("checkInterface: Failure on moving host: %s to non-operational.",

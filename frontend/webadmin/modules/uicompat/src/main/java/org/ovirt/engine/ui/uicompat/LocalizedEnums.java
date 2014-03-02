@@ -38,6 +38,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String NonOperationalReason___ARCHITECTURE_INCOMPATIBLE_WITH_CLUSTER();
 
+    String NonOperationalReason___NETWORK_INTERFACE_IS_DOWN();
+
     String UsbPolicy___ENABLED_LEGACY();
 
     String UsbPolicy___ENABLED_NATIVE();

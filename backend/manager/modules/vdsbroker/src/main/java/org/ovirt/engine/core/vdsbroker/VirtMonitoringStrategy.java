@@ -36,8 +36,9 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
 
     @Override
     public boolean isMonitoringNeeded(VDS vds) {
-        // No need to update the run-time info for hosts that don't run VMs
-        return (vds.getStatus() != VDSStatus.NonOperational || vds.getVmCount() > 0);
+        // No need to update the run-time info for hosts that don't run VMs, depends on the non-operational reason
+        return vds.getStatus() != VDSStatus.NonOperational || vds.getVmCount() > 0
+                || (vds.getNonOperationalReason() != null && vds.getNonOperationalReason().shouldCollectStats());
     }
 
     @Override

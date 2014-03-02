@@ -21,9 +21,11 @@ public enum NonOperationalReason {
     UNINITIALIZED(13),
     CLUSTER_VERSION_INCOMPATIBLE_WITH_CLUSTER(14),
     GLUSTER_HOST_UUID_ALREADY_EXISTS(15),
-    ARCHITECTURE_INCOMPATIBLE_WITH_CLUSTER(16);
+    ARCHITECTURE_INCOMPATIBLE_WITH_CLUSTER(16),
+    NETWORK_INTERFACE_IS_DOWN(17, true);
 
     private final int value;
+    private boolean collectStats;
 
     private static final Map<Integer, NonOperationalReason> valueMap = new HashMap<Integer, NonOperationalReason>(
             values().length);
@@ -38,8 +40,17 @@ public enum NonOperationalReason {
         this.value = value;
     }
 
+    private NonOperationalReason(int value, boolean collectStats) {
+        this(value);
+        this.collectStats = collectStats;
+    }
+
     public int getValue() {
         return value;
+    }
+
+    public boolean shouldCollectStats() {
+        return collectStats;
     }
 
     public static NonOperationalReason forValue(int value) {
