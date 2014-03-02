@@ -69,7 +69,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
-import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -3602,10 +3601,6 @@ public final class AsyncDataProvider {
             };
         }
         Frontend.getInstance().runQuery(VdcQueryType.GetVnicProfilesByDataCenterId, new IdQueryParameters(dcId), aQuery);
-    }
-
-    public static List<IpVersion> getExternalSubnetIpVerionList() {
-        return Arrays.asList(IpVersion.values());
     }
 
     public static void getNumberOfActiveVmsInCluster(AsyncQuery aQuery, Guid clusterId) {

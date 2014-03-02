@@ -3,44 +3,33 @@ package org.ovirt.engine.ui.uicommonweb.models.providers;
 import org.ovirt.engine.core.common.action.AddExternalSubnetParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
-import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.CidrValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class NewExternalSubnetModel extends Model {
 
-    private EntityModel<String> name;
-    private EntityModel<String> cidr;
     private EntityModel<NetworkView> network;
-    private ListModel<IpVersion> ipVersion;
+
+    private ExternalSubnetModel subnetModel;
+
     private final SearchableListModel sourceModel;
-    private ExternalSubnet subnet;
 
     public NewExternalSubnetModel(NetworkView network, SearchableListModel sourceModel) {
         this.sourceModel = sourceModel;
 
-        setName(new EntityModel<String>());
-        setCidr(new EntityModel<String>());
         setNetwork(new ListModel<NetworkView>());
-        setIpVersion(new ListModel<IpVersion>());
-        getIpVersion().setItems(AsyncDataProvider.getExternalSubnetIpVerionList());
         getNetwork().setEntity(network);
+        setSubnetModel(new ExternalSubnetModel());
+        getSubnetModel().setExternalNetwork(network.getProvidedBy());
 
         setTitle(ConstantsManager.getInstance().getConstants().newExternalSubnetTitle());
         setHelpTag(HelpTag.new_external_subnet);
@@ -60,22 +49,6 @@ public class NewExternalSubnetModel extends Model {
         getCommands().add(cancelCommand);
     }
 
-    public EntityModel<String> getName() {
-        return name;
-    }
-
-    private void setName(EntityModel<String> name) {
-        this.name = name;
-    }
-
-    public EntityModel<String> getCidr() {
-        return cidr;
-    }
-
-    private void setCidr(EntityModel<String> cidr) {
-        this.cidr = cidr;
-    }
-
     public EntityModel<NetworkView> getNetwork() {
         return network;
     }
@@ -84,12 +57,12 @@ public class NewExternalSubnetModel extends Model {
         this.network = network;
     }
 
-    public ListModel<IpVersion> getIpVersion() {
-        return ipVersion;
+    public ExternalSubnetModel getSubnetModel() {
+        return subnetModel;
     }
 
-    private void setIpVersion(ListModel<IpVersion> ipVersion) {
-        this.ipVersion = ipVersion;
+    private void setSubnetModel(ExternalSubnetModel subnetModel) {
+        this.subnetModel = subnetModel;
     }
 
     private void onSave() {
@@ -104,7 +77,8 @@ public class NewExternalSubnetModel extends Model {
         startProgress(null);
 
         Frontend.getInstance().runAction(VdcActionType.AddSubnetToProvider,
-                new AddExternalSubnetParameters(subnet, getNetwork().getEntity().getId()),
+                new AddExternalSubnetParameters(getSubnetModel().getSubnet(),
+                        getNetwork().getEntity().getId()),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -121,12 +95,7 @@ public class NewExternalSubnetModel extends Model {
     }
 
     public void flush() {
-        subnet = new ExternalSubnet();
-        subnet.setName(getName().getEntity());
-        Network network = getNetwork().getEntity();
-        subnet.setExternalNetwork(network.getProvidedBy());
-        subnet.setCidr(getCidr().getEntity());
-        subnet.setIpVersion(getIpVersion().getSelectedItem());
+        getSubnetModel().flush();
     }
 
     private void cancel() {
@@ -145,12 +114,6 @@ public class NewExternalSubnetModel extends Model {
     }
 
     public boolean validate() {
-        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() });
-        getCidr().validateEntity(new IValidation[] { getIpVersion().getSelectedItem() == IpVersion.IPV4
-                ? new CidrValidation()
-                : new NotEmptyValidation() });
-        getIpVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-
-        return getName().getIsValid() && getCidr().getIsValid() && getIpVersion().getIsValid();
+        return getSubnetModel().validate();
     }
 }
