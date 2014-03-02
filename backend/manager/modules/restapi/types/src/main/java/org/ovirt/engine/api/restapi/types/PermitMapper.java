@@ -188,6 +188,8 @@ public class PermitMapper {
             return PermitType.EVENT_NOTIFICATION_MANAGEMENT;
         case MANIPULATE_AFFINITY_GROUPS:
             return PermitType.MANIPULATE_AFFINITY_GROUPS;
+        case ADD_USERS_AND_GROUPS_FROM_DIRECTORY:
+            return PermitType.ADD_USERS_AND_GROUPS_FROM_DIRECTORY;
         default:
             return null;
         }
@@ -340,6 +342,8 @@ public class PermitMapper {
             return ActionGroup.EVENT_NOTIFICATION_MANAGEMENT;
         case MANIPULATE_AFFINITY_GROUPS:
             return ActionGroup.MANIPULATE_AFFINITY_GROUPS;
+        case ADD_USERS_AND_GROUPS_FROM_DIRECTORY:
+            return ActionGroup.ADD_USERS_AND_GROUPS_FROM_DIRECTORY;
         default:
             return null;
         }

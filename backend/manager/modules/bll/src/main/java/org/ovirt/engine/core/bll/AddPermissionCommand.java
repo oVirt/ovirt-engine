@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Permissions;
@@ -192,10 +193,10 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         // if the user does not exist in the database we need to
         // check if the logged in user has permissions to add another
         // user from the directory service
-        if (getParameters().getUser() != null && dbUser == null) {
-            permissionsSubject.add(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
-                VdcObjectType.System,
-                VdcActionType.AddUser.getActionGroup()));
+        if ((getParameters().getUser() != null && dbUser == null)
+                || (getParameters().getGroup() != null && dbGroup == null)) {
+           permissionsSubject.add(new PermissionSubject(permission.getObjectId(),
+                    permission.getObjectType(), ActionGroup.ADD_USERS_AND_GROUPS_FROM_DIRECTORY));
         }
         return permissionsSubject;
     }
