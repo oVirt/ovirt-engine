@@ -437,7 +437,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                             commandId,
                             snapshot.getSnapshotType(),
                             snapshot.getEntityType(),
-                            (snapshot.getSnapshotType() == SnapshotType.CHANGED_ENTITY ? "id=" + snapshot.getEntityId()
+                            (snapshot.getSnapshotType() == SnapshotType.DELETED_OR_UPDATED_ENTITY ? "id=" + snapshot.getEntityId()
                                     : snapshotData.toString()));
                     Class<BusinessEntity<Serializable>> entityClass =
                             (Class<BusinessEntity<Serializable>>) ReflectionUtils.getClassFor(snapshot.getEntityType());
@@ -450,13 +450,16 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         ((StatusAwareDao<Serializable, Enum<?>>) daoForEntity).updateStatus(
                                 entityStatusSnapshot.getId(), entityStatusSnapshot.getStatus());
                         break;
-                    case CHANGED_ENTITY:
+                    case DELETED_OR_UPDATED_ENTITY:
                         BusinessEntity<Serializable> entitySnapshot = (BusinessEntity<Serializable>) snapshotData;
                         if (daoForEntity.get(entitySnapshot.getId()) == null) {
                             daoForEntity.save(entitySnapshot);
                         } else {
                             daoForEntity.update(entitySnapshot);
                         }
+                        break;
+                    case UPDATED_ONLY_ENTITY:
+                        daoForEntity.update((BusinessEntity<Serializable>)snapshotData);
                         break;
                     case NEW_ENTITY_ID:
                         daoForEntity.remove(snapshotData);

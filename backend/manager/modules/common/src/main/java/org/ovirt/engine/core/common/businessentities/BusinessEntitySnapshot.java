@@ -14,9 +14,10 @@ public class BusinessEntitySnapshot {
      * The type of snapshot taken, so that during compensation we can handle the snapshot correctly.
      */
     public enum SnapshotType {
-        CHANGED_ENTITY,
+        DELETED_OR_UPDATED_ENTITY,
         NEW_ENTITY_ID,
-        CHANGED_STATUS_ONLY
+        CHANGED_STATUS_ONLY,
+        UPDATED_ONLY_ENTITY
     }
 
     /**

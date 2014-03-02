@@ -20,6 +20,15 @@ public interface CompensationContext {
     public void snapshotEntity(BusinessEntity<?> entity);
 
     /**
+     * Save a snapshot of the entire entity before it was changed in the DB, so that it can be restored later on
+     * in case of compensation.
+     *
+     * @param entity
+     *            The entity state before the change.
+     */
+    public void snapshotEntityUpdated(BusinessEntity<?> entity);
+
+    /**
      * For each entity in the collection saves a snapshot of the entire data before it is changed/deleted in the DB, so
      * it can be restored later on in case of compensation
      *

@@ -88,7 +88,12 @@ public class DefaultCompensationContext implements CompensationContext {
 
     @Override
     public void snapshotEntity(BusinessEntity<?> entity) {
-        snapshotEntityInMemory(entity, entity, SnapshotType.CHANGED_ENTITY);
+        snapshotEntityInMemory(entity, entity, SnapshotType.DELETED_OR_UPDATED_ENTITY);
+    }
+
+    @Override
+    public void snapshotEntityUpdated(BusinessEntity<?> entity) {
+        snapshotEntityInMemory(entity, entity, SnapshotType.UPDATED_ONLY_ENTITY);
     }
 
     @Override

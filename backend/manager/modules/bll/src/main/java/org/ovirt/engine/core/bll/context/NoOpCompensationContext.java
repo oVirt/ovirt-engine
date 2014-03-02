@@ -21,6 +21,10 @@ public class NoOpCompensationContext implements CompensationContext {
     }
 
     @Override
+    public void snapshotEntityUpdated(BusinessEntity<?> entity) {
+    }
+
+    @Override
     public void snapshotNewEntity(BusinessEntity<?> entity) {
     }
 
