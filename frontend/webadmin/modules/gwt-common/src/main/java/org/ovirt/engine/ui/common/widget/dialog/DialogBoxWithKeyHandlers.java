@@ -15,7 +15,7 @@ public class DialogBoxWithKeyHandlers extends ResizableDialogBox {
     protected void onPreviewNativeEvent(NativePreviewEvent event) {
         super.onPreviewNativeEvent(event);
 
-        if (keyPressHandler != null && event.getTypeInt() == Event.ONKEYPRESS) {
+        if (keyPressHandler != null && event.getTypeInt() == Event.ONKEYDOWN) {
             keyPressHandler.onKeyPress(event.getNativeEvent());
         }
     }
