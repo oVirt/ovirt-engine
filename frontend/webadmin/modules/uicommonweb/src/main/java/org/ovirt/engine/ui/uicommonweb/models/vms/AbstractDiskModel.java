@@ -386,7 +386,6 @@ public abstract class AbstractDiskModel extends DiskModel
                 diskModel.getStorageDomain().setSelectedItem(storage);
 
                 if (storage != null) {
-                    updateWipeAfterDelete(storage.getStorageType());
                     diskModel.setMessage(""); //$NON-NLS-1$
                 }
                 else {
@@ -737,6 +736,7 @@ public abstract class AbstractDiskModel extends DiskModel
         StorageDomain selectedStorage = (StorageDomain) getStorageDomain().getSelectedItem();
         if (selectedStorage != null) {
             updateVolumeType(selectedStorage.getStorageType());
+            updateWipeAfterDelete(selectedStorage.getStorageType());
         }
         updateQuota((StoragePool) getDataCenter().getSelectedItem());
     }
