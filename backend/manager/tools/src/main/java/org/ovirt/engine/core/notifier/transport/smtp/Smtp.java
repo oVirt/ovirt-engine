@@ -221,15 +221,15 @@ public class Smtp extends Transport {
         } catch (MessagingException mex) {
             StringBuilder errorMsg = new StringBuilder("Failed to send message ");
             if (from != null) {
-                errorMsg.append(" from " + from.toString());
+                errorMsg.append(" from ").append(from.toString());
             }
             if (StringUtils.isNotBlank(recipient)) {
-                errorMsg.append(" to " + recipient);
+                errorMsg.append(" to ").append(recipient);
             }
             if (StringUtils.isNotBlank(messageSubject)) {
-                errorMsg.append(" with subject " + messageSubject);
+                errorMsg.append(" with subject ").append(messageSubject);
             }
-            errorMsg.append(" due to to error: " + mex.getMessage());
+            errorMsg.append(" due to to error: ").append(mex.getMessage());
             log.error(errorMsg.toString(), mex);
             throw mex;
         }
