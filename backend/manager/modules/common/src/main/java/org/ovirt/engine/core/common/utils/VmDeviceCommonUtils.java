@@ -208,11 +208,8 @@ public class VmDeviceCommonUtils {
      */
     private static int setCDBootOrder(List<VmDevice> devices, int bootOrder) {
         for (VmDevice device : devices) {
-            if (isCD(device)) {
-                if (device.getIsPlugged()) {
-                    device.setBootOrder(++bootOrder);
-                }
-                break; // only one CD is currently supported.
+            if (isCD(device) && device.getIsPlugged()) {
+                device.setBootOrder(++bootOrder);
             }
         }
         return bootOrder;
