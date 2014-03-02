@@ -202,16 +202,9 @@ Create empty database for DAO tests refer to DATABASE CREATION.
 Provided user is 'engine', password is 'engine' and database
 is engine_dao_tests.
 
-Create empty schema (one time):
-
 $ PGPASSWORD=engine \
-    ./packaging/dbscripts/create_schema.sh \
-        -d engine_dao_tests -u engine
-
-Upgrade schema (when needed):
-
-$ PGPASSWORD=engine \
-    ./packaging/dbscripts/upgrade.sh -u engine -d engine_dao_tests
+    ./packaging/dbscripts/schema.sh \
+        -c apply -u engine -d engine_dao_tests
 
 Run build as:
 
