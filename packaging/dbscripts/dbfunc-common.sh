@@ -53,9 +53,11 @@ dbfunc_common_schema_apply() {
 
 	echo "Creating schema ${DBFUNC_DB_USER}@${DBFUNC_DB_HOST}:${DBFUNC_DB_PORT}/${DBFUNC_DB_DATABASE}"
 	if [ "$(dbfunc_psql_statement_parsable "
-                select count(*) as count
-                from information_schema.tables
-                where table_name = 'schema_version'
+		select count(*) as count
+		from pg_catalog.pg_tables
+		where
+			tablename = 'schema_version' and
+			schemaname = 'public'
 	")" -eq 0 ]; then
 		echo "Creating fresh schema"
 		_dbfunc_common_schema_create
