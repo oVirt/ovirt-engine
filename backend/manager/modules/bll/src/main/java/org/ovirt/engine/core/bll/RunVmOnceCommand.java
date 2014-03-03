@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 
+@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T> implements QuotaStorageDependent {
     public RunVmOnceCommand(T runVmParams) {
