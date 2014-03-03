@@ -229,4 +229,14 @@ public class FeatureSupported {
     public static boolean defaultRoute(Version version) {
         return supportedInConfig(ConfigValues.DefaultRouteSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if importing a glance image as template is supported for the given version.
+     */
+    public static boolean importGlanceImageAsTemplate(Version version) {
+        return supportedInConfig(ConfigValues.ImportGlanceImageAsTemplate, version);
+    }
+
 }

@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -199,6 +200,11 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
             // A Template cannot be added in a cluster without a defined architecture
             if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+            }
+
+            setStoragePoolId(getParameters().getStoragePoolId());
+            if (!FeatureSupported.importGlanceImageAsTemplate(getStoragePool().getcompatibility_version())) {
+                return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
             }
         }
 
