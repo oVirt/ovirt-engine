@@ -49,10 +49,6 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
 
     private Boolean consoleEnabled;
 
-    private Boolean virtioScsiEnabled;
-
-    private boolean balloonEnabled;
-
     private String templateVersionName;
 
     private Guid baseTemplateId;
@@ -151,14 +147,6 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
         this.copyVmPermissions = copyVmPermissions;
     }
 
-    public Boolean isVirtioScsiEnabled() {
-        return virtioScsiEnabled;
-    }
-
-    public void setVirtioScsiEnabled(Boolean virtioScsiEnabled) {
-        this.virtioScsiEnabled = virtioScsiEnabled;
-    }
-
     public VmEntityType getTemplateType() {
         return templateType;
     }
@@ -183,11 +171,4 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
         this.baseTemplateId = baseTemplateId;
     }
 
-    public boolean isBalloonEnabled() {
-        return balloonEnabled;
-    }
-
-    public void setBalloonEnabled(boolean balloonEnabled) {
-        this.balloonEnabled = balloonEnabled;
-    }
 }

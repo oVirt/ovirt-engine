@@ -88,7 +88,7 @@ public class VmDeviceUtils {
                 }
             }
             updateUSBSlots(oldVmBase, entity);
-            updateMemoryBalloon(oldVmBase, entity, params.isBalloonEnabled());
+            updateMemoryBalloon(entity, params.isBalloonEnabled());
             updateAudioDevice(oldVm.getStaticData(), entity, oldVm.getVdsGroupCompatibilityVersion(), params.isSoundDeviceEnabled());
             updateSmartcardDevice(oldVm, entity);
             updateConsoleDevice(entity, params.isConsoleEnabled());
@@ -298,7 +298,7 @@ public class VmDeviceUtils {
                 // updating USB slots
                 updateUSBSlots(null, vmBase);
                 // add mem balloon if defined
-                updateMemoryBalloon(null, vmBase, isBalloonEnabled);
+                updateMemoryBalloon(vmBase, isBalloonEnabled);
             }
 
             switch(device.getType()) {
@@ -969,23 +969,27 @@ public class VmDeviceUtils {
                 null);
     }
 
-    private static void updateMemoryBalloon(VmBase oldVm, VmBase newVm, boolean shouldHaveBalloon) {
-        Guid id = newVm.getId();
+    private static void updateMemoryBalloon(VmBase newVm, boolean shouldHaveBalloon) {
+        updateMemoryBalloon(newVm.getId(), shouldHaveBalloon);
+
+    }
+
+    public static void updateMemoryBalloon(Guid id, boolean shouldHaveBalloon) {
         boolean hasBalloon = dao.isMemBalloonEnabled(id);
         if (hasBalloon != shouldHaveBalloon) {
             if (!hasBalloon && shouldHaveBalloon) {
                 // add a balloon device
                 Map<String, Object> specParams = new HashMap<String, Object>();
                 specParams.put(VdsProperties.Model, VdsProperties.Virtio);
-                addManagedDevice(new VmDeviceId(Guid.newGuid(), newVm.getId()) , VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON, specParams, true, true, null);
+                addManagedDevice(new VmDeviceId(Guid.newGuid(), id) , VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON, specParams, true, true, null);
             }
             else {
                 // remove the balloon device
                 List<VmDevice> list = DbFacade
-                .getInstance()
-                .getVmDeviceDao()
-                .getVmDeviceByVmIdAndType(newVm.getId(),
-                        VmDeviceGeneralType.BALLOON);
+                        .getInstance()
+                        .getVmDeviceDao()
+                        .getVmDeviceByVmIdAndType(id,
+                                VmDeviceGeneralType.BALLOON);
                 removeNumberOfDevices(list, 1);
             }
         }

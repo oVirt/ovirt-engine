@@ -13,6 +13,9 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
     private Guid quotaId;
     private boolean privateCheckDisksExists;
     private VmWatchdog watchdog;
+    private Boolean virtioScsiEnabled;
+    private boolean balloonEnabled;
+
     /*
      * see VmManagementParametersBase#updateWatchdog for details
      */
@@ -81,5 +84,19 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
         this.updateWatchdog = updateWatchdog;
     }
 
+    public Boolean isVirtioScsiEnabled() {
+        return virtioScsiEnabled;
+    }
 
+    public void setVirtioScsiEnabled(Boolean virtioScsiEnabled) {
+        this.virtioScsiEnabled = virtioScsiEnabled;
+    }
+
+    public boolean isBalloonEnabled() {
+        return balloonEnabled;
+    }
+
+    public void setBalloonEnabled(boolean balloonEnabled) {
+        this.balloonEnabled = balloonEnabled;
+    }
 }
