@@ -17,6 +17,7 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.Statistics;
@@ -25,7 +26,6 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -74,34 +74,14 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     }
 
     @Test
-    public void testReplaceInvalidParams() throws Exception {
-        setupParentExpectations();
-        setUriInfo(setUpBasicUriExpectations());
+    public void testReplace() throws Exception {
         control.replay();
-
         try {
             resource.replace(new Action());
+            fail("Expected excpetion");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Action", "replace", "Brick.serverId, Brick.brickDir");
+            assertTrue(wae.getResponse().getEntity() instanceof Fault);
         }
-    }
-
-    @Test
-    public void testReplace() throws Exception {
-        setupParentExpectations();
-        setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.ReplaceGlusterVolumeBrick,
-                GlusterVolumeReplaceBrickActionParameters.class,
-                new String[] { "VolumeId", "NewBrick.ServerId", "NewBrick.BrickDirectory" },
-                new Object[] { volumeId, serverId, GlusterTestHelper.brickDir }));
-        resource.setParent(bricksResourceMock);
-
-        Action action = new Action();
-        action.setBrick(new GlusterBrick());
-        action.getBrick().setServerId(serverId.toString());
-        action.getBrick().setBrickDir(GlusterTestHelper.brickDir);
-
-        verifyActionResponse(resource.replace(action));
     }
 
     @Test
