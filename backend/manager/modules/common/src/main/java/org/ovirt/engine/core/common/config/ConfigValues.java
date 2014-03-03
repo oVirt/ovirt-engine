@@ -1635,5 +1635,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     GetFileStats,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    ImportGlanceImageAsTemplate,
+
     Invalid;
 }
