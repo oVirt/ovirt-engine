@@ -9,14 +9,11 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBrickResource;
+import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
 import org.ovirt.engine.api.restapi.resource.BackendStatisticsResource;
 import org.ovirt.engine.api.restapi.resource.BrickStatisticalQuery;
-import org.ovirt.engine.api.restapi.types.Mapper;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskOperation;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -60,15 +57,10 @@ public class BackendGlusterBrickResource
 
     @Override
     public Response replace(Action action) {
-        validateParameters(action, "Brick.serverId", "Brick.brickDir");
-        Mapper<GlusterBrick, GlusterBrickEntity> mapper = getMapper(GlusterBrick.class, GlusterBrickEntity.class);
-        return doAction(VdcActionType.ReplaceGlusterVolumeBrick,
-                new GlusterVolumeReplaceBrickActionParameters(asGuid(getVolumeId()),
-                        GlusterTaskOperation.START,
-                        mapper.map(get(), null),
-                        mapper.map(action.getBrick(), null),
-                        action.isSetForce() ? action.isForce() : false),
-                action);
+        throw new WebFaultException(null,
+                localize(Messages.GLUSTER_VOLUME_REPLACE_BRICK_NOT_SUPPORTED),
+                Response.Status.SERVICE_UNAVAILABLE);
+
     }
 
     public BackendGlusterBricksResource getParent() {
