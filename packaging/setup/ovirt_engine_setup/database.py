@@ -460,8 +460,8 @@ class OvirtUtils(base.Base):
         ret = statement.execute(
             statement="""
                 select count(*) as count
-                from information_schema.tables
-                where table_schema = 'public';
+                from pg_catalog.pg_tables
+                where schemaname = 'public';
             """,
             args=dict(),
             host=host,
