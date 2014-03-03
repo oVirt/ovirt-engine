@@ -60,6 +60,7 @@ public class FirstMatchSimpleFilter {
     }
 
     public void clearFilterEntries() {
+        notify.clear();
         recipients.clear();
     }
 
