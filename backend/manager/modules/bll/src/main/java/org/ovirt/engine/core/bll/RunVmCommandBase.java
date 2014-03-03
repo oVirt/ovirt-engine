@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -298,31 +297,19 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         return true;
     }
 
-    protected void decreasePendingVms() {
-        decreasePendingVms(getCurrentVdsId());
-    }
-
-    private void decreasePendingVms(Guid vdsId) {
+    private void decreasePendingVms() {
+        Guid vdsId = getCurrentVdsId();
+        VM vm = getVm();
         if (vdsId == null || vdsId.equals(lastDecreasedVds)) {
+            log.debugFormat("PendingVms for the guest {0} running on host {1} was already released, not releasing again", vm.getName(), vdsId);
             // do not decrease twice..
             return;
         }
 
-        VM vm = getVm();
-        decreasePendingVms(vdsId, vm.getNumOfCpus(), vm.getMinAllocatedMem(), vm.getName());
-    }
-
-    private void decreasePendingVms(Guid vdsId, int numOfCpus, int minAllocatedMem, String vmName) {
-        getVdsDynamicDao().updatePartialVdsDynamicCalc(vdsId, 0, -numOfCpus, -minAllocatedMem, 0, 0);
-        getBlockingQueue(vdsId).offer(Boolean.TRUE);
-
         lastDecreasedVds = vdsId;
-        log.debugFormat("Decreasing vds {0} pending vcpu count by {1} and vmem size by {2} (Vm: {3})",
-                vdsId, numOfCpus, minAllocatedMem, vmName);
-    }
+        VmHandler.decreasePendingVms(vm, vdsId);
 
-    protected VdsDynamicDAO getVdsDynamicDao() {
-        return DbFacade.getInstance().getVdsDynamicDao();
+        getBlockingQueue(vdsId).offer(Boolean.TRUE);
     }
 
     /**
@@ -377,7 +364,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     @Override
     public void onPowerringUp() {
         VmStatic vmStatic = getVmStaticDAO().get(getVmId());
-        decreasePendingVms(getCurrentVdsId(), vmStatic.getNumOfCpus(),
+        VmHandler.decreasePendingVms(getCurrentVdsId(), vmStatic.getNumOfCpus(),
                 vmStatic.getMinAllocatedMem(), vmStatic.getName());
     }
 

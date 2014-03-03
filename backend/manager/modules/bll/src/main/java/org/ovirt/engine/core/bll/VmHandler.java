@@ -58,6 +58,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VmInitDAO;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -734,4 +735,18 @@ public class VmHandler {
         return validationResult;
     }
 
+    public static void decreasePendingVms(VM vm, Guid vdsId) {
+        decreasePendingVms(vdsId, vm.getNumOfCpus(), vm.getMinAllocatedMem(), vm.getName());
+    }
+
+    public static void decreasePendingVms(Guid vdsId, int numOfCpus, int minAllocatedMem, String vmName) {
+        getVdsDynamicDao().updatePartialVdsDynamicCalc(vdsId, 0, -numOfCpus, -minAllocatedMem, 0, 0);
+
+        log.debugFormat("Decreasing vds {0} pending vcpu count by {1} and vmem size by {2} (Vm: {3})",
+                vdsId, numOfCpus, minAllocatedMem, vmName);
+    }
+
+    private static VdsDynamicDAO getVdsDynamicDao() {
+        return DbFacade.getInstance().getVdsDynamicDao();
+    }
 }
