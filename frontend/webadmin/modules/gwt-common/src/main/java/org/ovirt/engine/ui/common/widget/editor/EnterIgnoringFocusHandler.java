@@ -35,7 +35,7 @@ public class EnterIgnoringFocusHandler implements FocusHandler, BlurHandler {
                     nativeEvent.stopPropagation();
                     event.cancel();
 
-                    if (event.getTypeInt() == Event.ONKEYPRESS) {
+                    if (event.getTypeInt() == Event.ONKEYDOWN) {
                         enterPressed();
                     }
                 }
