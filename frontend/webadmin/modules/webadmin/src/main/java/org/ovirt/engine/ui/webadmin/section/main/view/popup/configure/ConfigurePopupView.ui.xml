@@ -9,7 +9,7 @@
         }
     </ui:style>
 
-	<d:SimpleDialogPanel height="600px" width="1000px">
+	<d:SimpleDialogPanel height="600px" width="1060px">
 		<d:header>
 			<g:Label ui:field="titleLabel" />
 		</d:header>
