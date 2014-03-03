@@ -1364,7 +1364,12 @@ public class UnitVmModel extends Model {
             @Override
             public void setSelectedItem(Integer value) {
                 if (!AsyncDataProvider.osNameExists(value)) {
-                    super.setSelectedItem(AsyncDataProvider.DEFAULT_OS_ID);
+                    DataCenterWithCluster dataCenterWithCluster = getDataCenterWithClustersList().getSelectedItem();
+                    VDSGroup cluster = dataCenterWithCluster == null ? null : dataCenterWithCluster.getCluster();
+                    if (cluster == null) {
+                        return;
+                    }
+                    super.setSelectedItem(AsyncDataProvider.getDefaultOs(cluster.getArchitecture()));
                 } else {
                     super.setSelectedItem(value);
                 }

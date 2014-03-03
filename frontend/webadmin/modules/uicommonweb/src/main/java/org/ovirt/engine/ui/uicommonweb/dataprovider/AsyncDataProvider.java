@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -61,7 +62,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -70,6 +70,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
+import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -77,7 +78,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
@@ -129,7 +129,6 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterServiceQueryParameter
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.ui.uicommonweb.MapWithDefaults;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
@@ -168,8 +167,6 @@ public final class AsyncDataProvider {
 
     private static final String GENERAL = "general"; //$NON-NLS-1$
 
-    public static final int DEFAULT_OS_ID = 0;
-
     // dictionary to hold cache of all config values (per version) queried by client, if the request for them succeeded.
     private static HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object> cachedConfigValues =
             new HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>();
@@ -180,7 +177,7 @@ public final class AsyncDataProvider {
     private static String _defaultConfigurationVersion = null;
 
     // cached OS names
-    private static MapWithDefaults<Integer, String> osNames;
+    private static HashMap<Integer, String> osNames;
 
     // cached list of os ids
     private static List<Integer> osIds;
@@ -205,7 +202,7 @@ public final class AsyncDataProvider {
     private static HashMap<ArchitectureType, Integer> defaultOSes;
 
     // cached os's support for display types (given compatibility version)
-    private static MapWithDefaults<Integer, Map<Version, List<DisplayType>>> displayTypes;
+    private static HashMap<Integer, Map<Version, List<DisplayType>>> displayTypes;
 
     public static String getDefaultConfigurationVersion() {
         return _defaultConfigurationVersion;
@@ -3332,9 +3329,7 @@ public final class AsyncDataProvider {
         callback.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                HashMap<Integer, String> result = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                String defaultValue = result.get(DEFAULT_OS_ID);
-                osNames = new MapWithDefaults<Integer, String>(result, defaultValue);
+                osNames = (HashMap<Integer, String>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                 initOsIds();
             }
         };
@@ -3388,9 +3383,7 @@ public final class AsyncDataProvider {
         callback.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                Map<Integer, Map<Version, List<DisplayType>>> result =
-                        ((VdcQueryReturnValue) returnValue).getReturnValue();
-                displayTypes = new MapWithDefaults<Integer, Map<Version, List<DisplayType>>>(result, result.get(DEFAULT_OS_ID));
+                displayTypes = ((VdcQueryReturnValue) returnValue).getReturnValue();
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetDisplayTypes), callback);
