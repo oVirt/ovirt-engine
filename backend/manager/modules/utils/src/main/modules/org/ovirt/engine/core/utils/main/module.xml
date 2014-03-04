@@ -27,6 +27,7 @@
     <module name="org.ovirt.engine.core.dal"/>
     <module name="org.infinispan"/>
     <module name="org.springframework"/>
+    <module name="org.quartz"/>
   </dependencies>
 
 </module>

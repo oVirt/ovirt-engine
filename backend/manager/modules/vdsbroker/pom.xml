@@ -36,15 +36,6 @@
       <artifactId>dal</artifactId>
       <version>${engine.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>scheduler</artifactId>
-      <version>${engine.version}</version>
-      <scope>provided</scope>
-      <type>ejb</type>
-    </dependency>
-
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>utils</artifactId>
