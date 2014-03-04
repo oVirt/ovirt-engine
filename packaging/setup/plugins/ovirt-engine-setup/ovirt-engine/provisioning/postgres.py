@@ -144,7 +144,7 @@ class Plugin(plugin.PluginBase):
                     osetupcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
                 ] = False
 
-        self._enabled = [
+        self._enabled = self.environment[
             osetupcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
         ]
         if self._enabled:
