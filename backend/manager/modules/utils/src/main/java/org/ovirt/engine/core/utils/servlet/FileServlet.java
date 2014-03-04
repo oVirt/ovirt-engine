@@ -60,6 +60,7 @@ public class FileServlet extends HttpServlet {
     private static final String CACHE = "cache";
     private static final String TYPE = "type";
     private static final String FILE = "file";
+    private static final String REQUIRED = "required";
 
     // The name of the index page:
     private static final String INDEX = "index.html";
@@ -68,6 +69,7 @@ public class FileServlet extends HttpServlet {
     protected boolean cache;
     protected String type;
     protected File base;
+    protected boolean required = true;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -103,6 +105,12 @@ public class FileServlet extends HttpServlet {
             throw new ServletException(message);
         }
 
+        // is the base file required
+        final String isBaseRequired = config.getInitParameter(REQUIRED);
+        if (isBaseRequired != null) {
+            required = Boolean.parseBoolean(isBaseRequired);
+        }
+
         base = new File(expanded);
     }
 
@@ -113,7 +121,7 @@ public class FileServlet extends HttpServlet {
         file = checkForIndex(request, response, file, request.getPathInfo());
         // Send the content of the file:
         // type is the default MIME type of the Servlet.
-        ServletUtils.sendFile(request, response, file, type, cache);
+        ServletUtils.sendFile(request, response, file, type, cache, required);
     }
 
     protected File checkForIndex(HttpServletRequest request, HttpServletResponse response, File file, String path) throws IOException {

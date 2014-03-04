@@ -72,6 +72,10 @@
       <param-value>%{ENGINE_REPORTS_UI}</param-value>
     </init-param>
     <init-param>
+      <param-name>required</param-name>
+      <param-value>false</param-value>
+    </init-param>
+    <init-param>
       <param-name>cache</param-name>
       <param-value>false</param-value>
     </init-param>

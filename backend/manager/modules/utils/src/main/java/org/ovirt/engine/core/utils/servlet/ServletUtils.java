@@ -76,10 +76,23 @@ public class ServletUtils {
     }
 
     public static void sendFile(final HttpServletRequest request, final HttpServletResponse response, final File file, final String defaultType, boolean cache) throws IOException {
+        sendFile(request, response, file, defaultType, cache, true);
+    }
+
+    public static void sendFile(final HttpServletRequest request,
+            final HttpServletResponse response,
+            final File file,
+            final String defaultType,
+            boolean cache,
+            boolean required) throws IOException {
+
         // Make sure the file exits and is readable and send a 404 error
         // response if it doesn't:
         if (!canReadFile(file)) {
-            log.error("Can't read file \"" + (file != null ? file.getAbsolutePath() : "") + "\" for request \"" + request.getRequestURI() + "\", will send a 404 error response.");
+            if (required) {
+                log.error("Can't read file \"" + (file != null ? file.getAbsolutePath() : "") + "\" for request \""
+                        + request.getRequestURI() + "\", will send a 404 error response.");
+            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
         else {
