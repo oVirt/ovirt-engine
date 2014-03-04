@@ -15,19 +15,19 @@
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-definition</artifactId>
-      <version>${engine.api.version}</version>
+      <version>${engine.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>interface-common-jaxrs</artifactId>
-      <version>${engine.api.version}</version>
+      <version>${engine.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-types</artifactId>
-      <version>${project.version}</version>
+      <version>${engine.version}</version>
     </dependency>
 
     <dependency>
@@ -97,7 +97,7 @@
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-types</artifactId>
-      <version>${project.version}</version>
+      <version>${engine.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

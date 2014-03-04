@@ -34,8 +34,7 @@
   <properties>
     <application.baseuri>/ovirt-engine/api</application.baseuri>
     <!--  Version Info -->
-    <engine.version>3.5.0-SNAPSHOT</engine.version>
-    <engine.groupId>org.ovirt.engine</engine.groupId>
+    <engine.version>${project.version}</engine.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.7</maven.compiler.source>

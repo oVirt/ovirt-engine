@@ -13,25 +13,25 @@
     <dependency>
       <groupId>${engine.core.groupId}</groupId>
       <artifactId>common</artifactId>
-      <version>${project.version}</version>
+      <version>${engine.version}</version>
     </dependency>
     <dependency>
       <groupId>${engine.core.groupId}</groupId>
       <artifactId>common</artifactId>
       <classifier>sources</classifier>
-      <version>${project.version}</version>
+      <version>${engine.version}</version>
     </dependency>
     <dependency>
       <groupId>${engine.core.groupId}</groupId>
       <artifactId>compat</artifactId>
       <classifier>sources</classifier>
-      <version>${project.version}</version>
+      <version>${engine.version}</version>
     </dependency>
     <dependency>
       <groupId>${engine.core.groupId}</groupId>
       <artifactId>searchbackend</artifactId>
       <classifier>sources</classifier>
-      <version>${project.version}</version>
+      <version>${engine.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.gwt</groupId>

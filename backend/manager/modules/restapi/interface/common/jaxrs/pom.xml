@@ -17,12 +17,12 @@
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>utils</artifactId>
-      <version>${project.version}</version>
+      <version>${engine.version}</version>
     </dependency>
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-definition</artifactId>
-      <version>${project.version}</version>
+      <version>${engine.version}</version>
     </dependency>
 
     <dependency>

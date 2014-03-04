@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>${engine.core.groupId}</groupId>
 			<artifactId>searchbackend</artifactId>
-			<version>${project.version}</version>
+			<version>${engine.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${engine.groupId}</groupId>
