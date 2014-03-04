@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -280,5 +281,21 @@ public final class NetworkUtils {
      */
     public static String getVlanDeviceName(VdsNetworkInterface underlyingNic, Network network) {
         return underlyingNic.getName() + "." + network.getVlanId();
+    }
+
+    /**
+     * Returns the cluster's display network
+     */
+    public static Network getDisplayNetwork(Collection<Network> clusterNetworks) {
+        Network displayNetwork = null;
+
+        for (Network network : clusterNetworks) {
+            if (network.getCluster().isDisplay()) {
+                displayNetwork = network;
+                break;
+            }
+        }
+
+        return displayNetwork;
     }
 }
