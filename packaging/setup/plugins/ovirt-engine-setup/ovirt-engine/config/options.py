@@ -44,7 +44,7 @@ class Plugin(plugin.PluginBase):
     )
     def _boot(self):
         self.environment[
-            otopicons.BaseEnv.SUPPRESS_ENVIRONMENT_KEYS
+            otopicons.CoreEnv.LOG_FILTER_KEYS
         ].append(
             osetupcons.ConfigEnv.ADMIN_PASSWORD
         )
@@ -132,10 +132,6 @@ class Plugin(plugin.PluginBase):
                 self.environment[
                     osetupcons.ConfigEnv.ADMIN_PASSWORD
                 ] = password
-
-            self.environment[otopicons.CoreEnv.LOG_FILTER].append(
-                self.environment[osetupcons.ConfigEnv.ADMIN_PASSWORD]
-            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
