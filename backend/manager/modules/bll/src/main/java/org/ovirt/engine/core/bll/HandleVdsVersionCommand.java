@@ -83,7 +83,6 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVdsId(),
                 reason,
                 customLogValues);
-        tempVar.setSaveToDb(true);
         Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext());
     }
 }

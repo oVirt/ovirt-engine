@@ -73,7 +73,6 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                 SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVdsId(),
                         NonOperationalReason.ARCHITECTURE_INCOMPATIBLE_WITH_CLUSTER);
 
-                tempVar.setSaveToDb(true);
                 Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds,
                         tempVar,
                         ExecutionHandler.createInternalJobContext());
@@ -113,7 +112,6 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
 
                 SetNonOperationalVdsParameters tempVar2 = new SetNonOperationalVdsParameters(getVdsId(),
                         NonOperationalReason.CPU_TYPE_INCOMPATIBLE_WITH_CLUSTER);
-                tempVar2.setSaveToDb(true);
                 Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds,
                         tempVar2,
                         ExecutionHandler.createInternalJobContext());

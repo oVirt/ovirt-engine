@@ -180,7 +180,6 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private void setNonOperational(NonOperationalReason reason, Map<String, String> customLogValues) {
         SetNonOperationalVdsParameters tempVar =
                 new SetNonOperationalVdsParameters(getVds().getId(), reason, customLogValues);
-        tempVar.setSaveToDb(true);
         Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext());
     }
 

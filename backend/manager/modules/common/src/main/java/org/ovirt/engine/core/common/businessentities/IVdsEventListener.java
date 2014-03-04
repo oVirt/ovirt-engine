@@ -12,11 +12,9 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 public interface IVdsEventListener {
     void vdsNotResponding(VDS vds, boolean executeSshSoftFencing); // BLL
 
-    void vdsNonOperational(Guid vdsId, NonOperationalReason type, boolean logCommand, boolean saveToDb,
-            Guid domainId); // BLL
+    void vdsNonOperational(Guid vdsId, NonOperationalReason type, boolean logCommand, Guid domainId); // BLL
 
-    void vdsNonOperational(Guid vdsId, NonOperationalReason type, boolean logCommand, boolean saveToDb,
-            Guid domainId,
+    void vdsNonOperational(Guid vdsId, NonOperationalReason type, boolean logCommand, Guid domainId,
             Map<String, String> customLogValues); // BLL
 
     void vdsMovedToMaintenance(VDS vds); // BLL

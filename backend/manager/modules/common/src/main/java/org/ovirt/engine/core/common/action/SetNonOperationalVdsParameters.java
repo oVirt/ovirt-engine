@@ -9,16 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class SetNonOperationalVdsParameters extends MaintenanceVdsParameters {
     private static final long serialVersionUID = -2719283555117621122L;
 
-    private boolean privateSaveToDb;
     private Map<String, String> customLogValues;
-
-    public boolean getSaveToDb() {
-        return privateSaveToDb;
-    }
-
-    public void setSaveToDb(boolean value) {
-        privateSaveToDb = value;
-    }
 
     private NonOperationalReason nonOperationalReason;
 

@@ -66,7 +66,6 @@ public class AttestThread extends Thread {
     private void setNonOperational(NonOperationalReason reason, VDS vds, Map<String, String> customLogValues) {
         SetNonOperationalVdsParameters tempVar =
                 new SetNonOperationalVdsParameters(vds.getId(), reason, customLogValues);
-        tempVar.setSaveToDb(true);
         Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,
                 ExecutionHandler.createInternalJobContext());
     }

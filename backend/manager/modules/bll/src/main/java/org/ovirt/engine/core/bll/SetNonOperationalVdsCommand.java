@@ -37,16 +37,14 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
      */
     @Override
     protected void executeCommand() {
-        if (getParameters().getSaveToDb()) {
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.SetVdsStatus,
-                            new SetVdsStatusVDSCommandParameters(getVdsId(),
-                                    VDSStatus.NonOperational,
-                                    getParameters().getNonOperationalReason()));
-            if (getVdsGroup() != null && getVdsGroup().supportsGlusterService()) {
-                updateBrickStatusDown();
-            }
+        Backend.getInstance()
+                .getResourceManager()
+                .RunVdsCommand(VDSCommandType.SetVdsStatus,
+                        new SetVdsStatusVDSCommandParameters(getVdsId(),
+                                VDSStatus.NonOperational,
+                                getParameters().getNonOperationalReason()));
+        if (getVdsGroup() != null && getVdsGroup().supportsGlusterService()) {
+            updateBrickStatusDown();
         }
 
         // if host failed to recover, no point in sending migrate, as it would fail.

@@ -36,7 +36,7 @@ public class GlusterMonitoringStrategy implements MonitoringStrategy {
     }
 
     private void vdsNonOperational(VDS vds, NonOperationalReason reason) {
-        ResourceManager.getInstance().getEventListener().vdsNonOperational(vds.getId(), reason, true, true, Guid.Empty, null);
+        ResourceManager.getInstance().getEventListener().vdsNonOperational(vds.getId(), reason, true, Guid.Empty, null);
     }
 
     @Override

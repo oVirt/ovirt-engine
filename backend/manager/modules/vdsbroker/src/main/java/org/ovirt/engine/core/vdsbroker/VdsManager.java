@@ -352,7 +352,6 @@ public class VdsManager {
                             .vdsNonOperational(vds.getId(),
                                     NonOperationalReason.TIMEOUT_RECOVERING_FROM_CRASH,
                                     true,
-                                    true,
                                 Guid.Empty);
                 setIsSetNonOperationalExecuted(true);
             } catch (RuntimeException exp) {

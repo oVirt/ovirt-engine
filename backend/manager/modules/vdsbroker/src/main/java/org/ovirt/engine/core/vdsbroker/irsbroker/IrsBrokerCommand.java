@@ -1289,7 +1289,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                             .getInstance()
                                             .getEventListener()
                                             .vdsNonOperational(vdsId, NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE,
-                                                    true, true, domainId);
+                                                    true, domainId);
                                 }
                             });
 

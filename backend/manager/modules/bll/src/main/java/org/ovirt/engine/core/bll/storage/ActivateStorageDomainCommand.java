@@ -107,7 +107,6 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         for (Guid vdsId : vdsIdsToSetNonOperational) {
             SetNonOperationalVdsParameters tempVar =
                     new SetNonOperationalVdsParameters(vdsId, STORAGE_DOMAIN_UNREACHABLE);
-            tempVar.setSaveToDb(true);
             tempVar.setStorageDomainId(getStorageDomain().getId());
             tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
             getBackend().runInternalAction(VdcActionType.SetNonOperationalVds,

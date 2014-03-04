@@ -72,7 +72,9 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
     }
 
     protected void vdsNonOperational(VDS vds, NonOperationalReason reason, Map<String, String> customLogValues) {
-        ResourceManager.getInstance().getEventListener().vdsNonOperational(vds.getId(), reason, true, true, Guid.Empty, customLogValues);
+        ResourceManager.getInstance()
+                .getEventListener()
+                .vdsNonOperational(vds.getId(), reason, true, Guid.Empty, customLogValues);
     }
 
     @Override

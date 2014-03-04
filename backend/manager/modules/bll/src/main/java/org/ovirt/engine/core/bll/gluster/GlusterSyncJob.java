@@ -335,7 +335,6 @@ public class GlusterSyncJob extends GlusterJob {
                 new SetNonOperationalVdsParameters(server.getId(),
                         NonOperationalReason.GLUSTER_COMMAND_FAILED,
                         Collections.singletonMap(GlusterConstants.COMMAND, "gluster peer status"));
-        nonOpParams.setSaveToDb(true);
         Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds,
                 nonOpParams,
                 ExecutionHandler.createInternalJobContext());

@@ -261,6 +261,6 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
     private static void setNonOperationl(VDS vds, NonOperationalReason reason, Map<String, String> customLogValues) {
         ResourceManager.getInstance()
                 .getEventListener()
-                .vdsNonOperational(vds.getId(), reason, true, true, Guid.Empty, customLogValues);
+                .vdsNonOperational(vds.getId(), reason, true, Guid.Empty, customLogValues);
     }
 }

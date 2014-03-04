@@ -110,19 +110,16 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, boolean saveToDb,
-            Guid domainId) {
-        vdsNonOperational(vdsId, reason, logCommand, saveToDb, domainId, null);
+    public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, Guid domainId) {
+        vdsNonOperational(vdsId, reason, logCommand, domainId, null);
     }
 
     @Override
-    public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, boolean saveToDb,
-            Guid domainId,
+    public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, Guid domainId,
             Map<String, String> customLogValues) {
         ExecutionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintenanceVds, false);
         SetNonOperationalVdsParameters tempVar =
             new SetNonOperationalVdsParameters(vdsId, reason, customLogValues);
-        tempVar.setSaveToDb(saveToDb);
         tempVar.setStorageDomainId(domainId);
         tempVar.setShouldBeLogged(logCommand);
         Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar, ExecutionHandler.createInternalJobContext());
