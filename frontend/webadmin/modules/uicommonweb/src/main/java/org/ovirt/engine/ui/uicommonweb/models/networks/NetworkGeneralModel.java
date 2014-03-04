@@ -21,6 +21,7 @@ public class NetworkGeneralModel extends EntityModel
     private Integer mtu;
     private String description;
     private Guid id;
+    private String externalId;
 
     public NetworkGeneralModel() {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
@@ -72,6 +73,12 @@ public class NetworkGeneralModel extends EntityModel
             setMtu(null);
         } else {
             setMtu(extendedNetwork.getMtu());
+        }
+
+        if (extendedNetwork.isExternal()) {
+            setExternalId(extendedNetwork.getProvidedBy().getExternalId());
+        } else {
+            setExternalId(null);
         }
     }
 
@@ -153,6 +160,18 @@ public class NetworkGeneralModel extends EntityModel
         {
             id = value;
             onPropertyChanged(new PropertyChangedEventArgs("Id")); //$NON-NLS-1$
+        }
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String value) {
+        if (!ObjectUtils.objectsEqual(externalId, value))
+        {
+            externalId = value;
+            onPropertyChanged(new PropertyChangedEventArgs("External Id")); //$NON-NLS-1$
         }
     }
 }
