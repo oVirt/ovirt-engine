@@ -295,7 +295,8 @@ public class VmMapper {
             if (staticVm.getVmInit() == null) {
                 staticVm.setVmInit(new VmInit());
             }
-            if (staticVm.getVmInit().getDomain() == null) {
+            // We don't want to override the domain if it set via the Initialization object
+            if (!vm.isSetInitialization() || !vm.getInitialization().isSetDomain()) {
                 staticVm.getVmInit().setDomain(vm.getDomain().getName());
             }
         }
