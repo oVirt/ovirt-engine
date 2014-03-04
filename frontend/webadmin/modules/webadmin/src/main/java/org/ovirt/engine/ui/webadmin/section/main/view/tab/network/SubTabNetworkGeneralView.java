@@ -42,6 +42,7 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
     TextBoxLabel role = new TextBoxLabel();
     ValueLabel<Integer> vlan = new ValueLabel<Integer>(new EmptyValueRenderer<Integer>(constants.noneVlan()));
     ValueLabel<Integer> mtu = new ValueLabel<Integer>(new EmptyValueRenderer<Integer>(constants.defaultMtu()));
+    TextBoxLabel externalId = new TextBoxLabel();
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
@@ -61,7 +62,7 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
         driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 2, 3);
+        formBuilder = new FormBuilder(formPanel, 2, 4);
 
         formBuilder.addFormItem(new FormItem(constants.nameNetwork(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.idNetwork(), id, 1, 0));
@@ -70,6 +71,13 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
         formBuilder.addFormItem(new FormItem(constants.roleNetwork(), role, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.vlanNetwork(), vlan, 1, 1));
         formBuilder.addFormItem(new FormItem(constants.mtuNetwork(), mtu, 2, 1));
+
+        formBuilder.addFormItem(new FormItem(constants.externalIdProviderNetwork(), externalId, 3, 0) {
+            @Override
+            public boolean getIsAvailable() {
+                return getDetailModel().getExternalId() != null;
+            }
+        });
     }
 
     @Override
