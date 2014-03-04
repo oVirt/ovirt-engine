@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
@@ -11,13 +13,18 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.CidrValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class ExternalSubnetModel extends Model {
 
     private EntityModel<String> name;
     private EntityModel<String> cidr;
     private ListModel<IpVersion> ipVersion;
+    private EntityModel<String> gateway;
+    private ListModel<EntityModel<String>> dnsServers;
+
     private ExternalSubnet subnet;
     private ProviderNetwork externalNetwork;
 
@@ -26,6 +33,8 @@ public class ExternalSubnetModel extends Model {
         setCidr(new EntityModel<String>());
         setIpVersion(new ListModel<IpVersion>());
         getIpVersion().setItems(Arrays.asList(IpVersion.values()));
+        setGateway(new EntityModel<String>());
+        setDnsServers(new ListModel<EntityModel<String>>());
     }
 
     public EntityModel<String> getName() {
@@ -52,6 +61,22 @@ public class ExternalSubnetModel extends Model {
         this.ipVersion = ipVersion;
     }
 
+    public EntityModel<String> getGateway() {
+        return gateway;
+    }
+
+    private void setGateway(EntityModel<String> gateway) {
+        this.gateway = gateway;
+    }
+
+    public ListModel<EntityModel<String>> getDnsServers() {
+        return dnsServers;
+    }
+
+    private void setDnsServers(ListModel<EntityModel<String>> dnsServers) {
+        this.dnsServers = dnsServers;
+    }
+
     public ExternalSubnet getSubnet() {
         return subnet;
     }
@@ -68,6 +93,8 @@ public class ExternalSubnetModel extends Model {
         getName().setIsChangable(value);
         getCidr().setIsChangable(value);
         getIpVersion().setIsChangable(value);
+        getGateway().setIsChangable(value);
+        getDnsServers().setIsChangable(value);
     }
 
     public void flush() {
@@ -76,15 +103,42 @@ public class ExternalSubnetModel extends Model {
         subnet.setExternalNetwork(getExternalNetwork());
         subnet.setCidr(getCidr().getEntity());
         subnet.setIpVersion(getIpVersion().getSelectedItem());
+        subnet.setGateway(getGateway().getEntity());
+
+        List<String> dnsServers = new ArrayList<String>();
+        for (EntityModel<String> dnsServer : getDnsServers().getItems()) {
+            if (StringUtils.isNotEmpty(dnsServer.getEntity())) {
+                dnsServers.add(dnsServer.getEntity());
+            }
+        }
+        subnet.setDnsServers(dnsServers);
     }
 
     public boolean validate() {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() });
-        getCidr().validateEntity(new IValidation[] { getIpVersion().getSelectedItem() == IpVersion.IPV4
+        boolean ipv4 = getIpVersion().getSelectedItem() == IpVersion.IPV4;
+        getCidr().validateEntity(new IValidation[] { ipv4
                 ? new CidrValidation()
                 : new NotEmptyValidation() });
         getIpVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getGateway().setIsValid(true);
+        if (StringUtils.isNotEmpty(getGateway().getEntity()) && ipv4) {
+            getGateway().validateEntity(new IValidation[] { new IpAddressValidation() });
+        }
 
-        return getName().getIsValid() && getCidr().getIsValid() && getIpVersion().getIsValid();
+        boolean dnsServersValid = true;
+        for (EntityModel<String> dnsServer : getDnsServers().getItems()) {
+            dnsServer.setIsValid(true);
+            if (StringUtils.isNotEmpty(dnsServer.getEntity()) && ipv4) {
+                dnsServer.validateEntity(new IValidation[] { new IpAddressValidation() });
+            }
+            dnsServersValid &= dnsServer.getIsValid();
+        }
+
+        return getName().getIsValid()
+                && getCidr().getIsValid()
+                && getIpVersion().getIsValid()
+                && getGateway().getIsValid()
+                && dnsServersValid;
     }
 }
