@@ -575,7 +575,7 @@ public class VmInitModel extends Model {
                             || !validateHidden(getNetworkNetmask(), params.getNetmask(), null,
                                     new IValidation[] { new SubnetMaskValidation() })
                             || !validateHidden(getNetworkGateway(), params.getGateway(), null,
-                                    new IValidation[] { new IpAddressValidation() })) {
+                                    new IValidation[] { new IpAddressValidation(true) })) {
                         getNetworkList().setSelectedItem(name);
                         networkIsValid = false;
                         break;

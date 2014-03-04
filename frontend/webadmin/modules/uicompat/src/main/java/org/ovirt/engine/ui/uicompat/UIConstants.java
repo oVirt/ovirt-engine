@@ -848,6 +848,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("This field must contain an IP address in format xxx.xxx.xxx.xxx")
     String thisFieldMustContainIPaddressInFormatMsg();
 
+    @DefaultStringValue("This field can be empty or contain an IP address in format xxx.xxx.xxx.xxx")
+    String emptyOrValidIPaddressInFormatMsg();
+
     @DefaultStringValue("This field must contain a subnet in format xxx.xxx.xxx.xxx")
     String thisFieldMustContainSubnetInFormatMsg();
 
