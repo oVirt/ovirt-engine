@@ -1,15 +1,19 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -20,51 +24,44 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class NetworkPolicyUnit extends PolicyUnitImpl {
     public NetworkPolicyUnit(PolicyUnit policyUnit) {
         super(policyUnit);
     }
 
-    private boolean displayNetworkInitialized;
-    private Network displayNetwork;
-
     @Override
     public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, List<String> messages) {
-        List<VDS> toRemoveHostList = new ArrayList<VDS>();
-        List<VmNetworkInterface> vmNICs;
-        List<Network> clusterNetworks;
-        Map<String, Network> networksByName;
-        Guid clusterId = null;
-        if (hosts != null && hosts.size() > 0) {
-            clusterId = hosts.get(0).getVdsGroupId();
-            clusterNetworks = getNetworkDAO().getAllForCluster(clusterId);
-            networksByName = Entities.entitiesByName(clusterNetworks);
-            vmNICs = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
-        } else {
+        if (hosts == null || hosts.isEmpty()) {
             return null;
         }
-        Map<Guid, List<String>> hostNics =
-                getInterfaceDAO().getHostNetworksByCluster(clusterId);
+
+        List<VDS> toRemoveHostList = new ArrayList<VDS>();
+        List<VmNetworkInterface> vmNICs = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
+        Guid clusterId = hosts.get(0).getVdsGroupId();
+        List<Network> clusterNetworks = getNetworkDAO().getAllForCluster(clusterId);
+        Map<String, Network> networksByName = Entities.entitiesByName(clusterNetworks);
+        Map<Guid, List<String>> hostNics = getInterfaceDAO().getHostNetworksByCluster(clusterId);
+        Network displayNetwork = NetworkUtils.getDisplayNetwork(clusterNetworks);
+        Map<Guid, VdsNetworkInterface> hostDisplayNics = getDisplayNics(displayNetwork);
+
         for (VDS host : hosts) {
-            VdcBllMessages returnValue =
+            ValidationResult result =
                     validateRequiredNetworksAvailable(host,
                             vm,
                             vmNICs,
-                            clusterNetworks,
+                            displayNetwork,
                             networksByName,
-                            hostNics.get(host.getId()));
-            if (VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS == returnValue) {
-                StringBuilder sbBuilder = new StringBuilder();
-                sbBuilder.append(Entities.vmInterfacesByNetworkName(vmNICs).keySet());
-                log.debugFormat("host {0} is missing networks required by VM nics {1}",
-                        host.getName(),
-                        sbBuilder.toString());
-            } else if (VdcBllMessages.ACTION_TYPE_FAILED_MISSING_DISPLAY_NETWORK == returnValue) {
-                log.debugFormat("host {0} is missing the cluster's display network", host.getName());
-            }
-            if (returnValue != null) {
-                messages.add(returnValue.toString());
+                            hostNics.get(host.getId()),
+                            hostDisplayNics.get(host.getId()));
+
+            if (!result.isValid()) {
+                messages.add(result.getMessage().name());
+                if (result.getVariableReplacements() != null) {
+                    messages.addAll(result.getVariableReplacements());
+                }
+
                 toRemoveHostList.add(host);
             }
         }
@@ -72,32 +69,44 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
         return hosts;
     }
 
+    public Map<Guid, VdsNetworkInterface> getDisplayNics(Network displayNetwork) {
+        Map<Guid, VdsNetworkInterface> displayNics = new HashMap<>();
+        if (displayNetwork != null) {
+            List<VdsNetworkInterface> nics = getInterfaceDAO().getVdsInterfacesByNetworkId(displayNetwork.getId());
+            for (VdsNetworkInterface nic : nics) {
+                displayNics.put(nic.getVdsId(), nic);
+            }
+        }
+
+        return displayNics;
+    }
+
     /**
      * Determine whether all required Networks are attached to the Host's Nics. A required Network, depending on
      * ConfigValue.OnlyRequiredNetworksMandatoryForVdsSelection, is defined as: 1. false: any network that is defined on
      * an Active vNic of the VM or the cluster's display network. 2. true: a Cluster-Required Network that is defined on
      * an Active vNic of the VM.
+     *
      * @param vds
-     *          the Host
+     *            the Host
      * @param vm
-     *          the VM
+     *            the VM
      * @param vmNICs
-     * @param clusterNetworks
+     * @param displayNetwork
      * @param networksByName
      * @param hostNetworks
-     *          the Host network names
-     * @return <code>VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS</code> if a required network on an active vnic is
-     *         not attached to the host.<br>
-     *         <code>VdcBllMessages.ACTION_TYPE_FAILED_MISSING_DISPLAY_NETWORK</code> if the cluster's display network
-     *         is required and not attached to the host.<br>
-     *         Otherwise, <code>null</code>.
+     *            the Host network names
+     * @param displayNic
+     *            the interface on top the display network is configured
+     * @return the result of network compatibility check
      */
-    private VdcBllMessages validateRequiredNetworksAvailable(VDS vds,
+    private ValidationResult validateRequiredNetworksAvailable(VDS vds,
             VM vm,
             List<VmNetworkInterface> vmNICs,
-            List<Network> clusterNetworks,
+            Network displayNetwork,
             Map<String, Network> networksByName,
-            List<String> hostNetworks) {
+            List<String> hostNetworks,
+            VdsNetworkInterface displayNic) {
 
         boolean onlyRequiredNetworks =
                 Config.<Boolean> getValue(ConfigValues.OnlyRequiredNetworksMandatoryForVdsSelection);
@@ -116,15 +125,16 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                 }
             }
             if (!found) {
-                return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS;
+                StringBuilder sbBuilder = new StringBuilder();
+                sbBuilder.append(Entities.vmInterfacesByNetworkName(vmNICs).keySet());
+                log.debugFormat("host {0} is missing networks required by VM nics {1}",
+                        vds.getName(),
+                        sbBuilder.toString());
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS);
             }
         }
 
-        if (!isDisplayNetworkAvailable(vds, onlyRequiredNetworks, hostNetworks, clusterNetworks)) {
-            return VdcBllMessages.ACTION_TYPE_FAILED_MISSING_DISPLAY_NETWORK;
-        }
-
-        return null;
+        return validateDisplayNetworkAvailability(vds, onlyRequiredNetworks, displayNic, displayNetwork);
     }
 
     private boolean networkRequiredOnVds(VmNetworkInterface vmIface,
@@ -149,48 +159,40 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
      *            the host
      * @param onlyRequiredNetworks
      *            should be false, in order the method to be non-trivial.
-     * @param hostNetworks
-     *            list of hosts networks names
-     * @param allNetworksInCluster
-     * @return <c>true</c> if the cluster's display network is defined on the host or
-     *         ConfigValue.OnlyRequiredNetworksMandatoryForVdsSelection is true; otherwise, <c>false</c>.
+     * @param displayNic
+     *            the interface on top the display network is configured
+     * @param displayNetwork
+     *            the cluster's display network
+     * @return the result of the display network validity check on the given host
      */
-    private boolean isDisplayNetworkAvailable(VDS host,
+    private ValidationResult validateDisplayNetworkAvailability(VDS host,
             boolean onlyRequiredNetworks,
-            List<String> hostNetworks,
-            List<Network> allNetworksInCluster) {
+            VdsNetworkInterface displayNic,
+            Network displayNetwork) {
         if (onlyRequiredNetworks) {
-            return true;
-        }
-
-        if (!displayNetworkInitialized) {
-            resolveClusterDisplayNetwork(host, allNetworksInCluster);
+            return ValidationResult.VALID;
         }
 
         if (displayNetwork == null) {
-            return true;
+            return ValidationResult.VALID;
         }
 
-        // Check if display network attached to host
-        for (String networkName : hostNetworks) {
-            if (displayNetwork.getName().equals(networkName)) {
-                return true;
-            }
+        // Check if display network attached to host and has a proper boot protocol
+        if (displayNic == null) {
+            log.debugFormat("host {0} is missing the cluster's display network", host.getName());
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MISSING_DISPLAY_NETWORK);
         }
 
-        return false;
-    }
-
-    private void resolveClusterDisplayNetwork(VDS host, List<Network> allNetworksInCluster) {
-        // Find the cluster's display network
-        for (Network tempNetwork : allNetworksInCluster) {
-            if (tempNetwork.getCluster().isDisplay()) {
-                displayNetwork = tempNetwork;
-                break;
-            }
+        if (displayNic.getBootProtocol() == NetworkBootProtocol.NONE) {
+            log.debugFormat("Host {0} has the display network {1} configured with improper boot protocol on interface {2}.",
+                    host.getName(),
+                    displayNetwork.getName(),
+                    displayNic.getName());
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL,
+                    String.format("$DisplayNetwork %s", displayNetwork.getName()));
         }
 
-        displayNetworkInitialized = true;
+        return ValidationResult.VALID;
     }
 
     private VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
