@@ -27,6 +27,6 @@ public enum EventNotificationMethod {
      * Returns enum value based on external string representation
      */
     public static EventNotificationMethod valueOfString(String value) {
-        return valueOf(value != null ? value.toUpperCase() : value);
+        return value != null ? valueOf(value.toUpperCase()) : null;
     }
 }
