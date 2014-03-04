@@ -76,6 +76,16 @@ class Plugin(plugin.PluginBase):
         self._enabled = False
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_BOOT,
+    )
+    def _boot(self):
+        self.environment[
+            otopicons.CoreEnv.LOG_FILTER_KEYS
+        ].append(
+            osetupcons.PKIEnv.STORE_PASS
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
@@ -90,12 +100,6 @@ class Plugin(plugin.PluginBase):
         self.environment.setdefault(
             osetupcons.PKIEnv.ORG,
             None
-        )
-
-        self.environment[otopicons.CoreEnv.LOG_FILTER].append(
-            self.environment[
-                osetupcons.PKIEnv.STORE_PASS
-            ]
         )
 
     @plugin.event(
