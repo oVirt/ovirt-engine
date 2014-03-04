@@ -81,7 +81,7 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
             }
 
             if (slavesCount < 2) {
-                return failCanDoAction(VdcBllMessages.IMPROPER_INTERFACE_IS_LABELED);
+                return failCanDoAction(VdcBllMessages.IMPROPER_BOND_IS_LABELED);
             }
         }
 

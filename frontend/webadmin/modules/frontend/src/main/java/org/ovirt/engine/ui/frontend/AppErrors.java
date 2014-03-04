@@ -1957,8 +1957,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("A slave interface is not properly configured. Please verify slaves do not contain any of the following properties: network name, boot protocol, IP address, netmask, gateway or vlan-ID notation (as part of interface's name or explicitly).")
     String SLAVE_INTERFACE_IS_MISCONFIGURED();
 
-    @DefaultStringValue("An improper network interface is labeled. Please verify labels are provided only to interfaces or to bonds (not to slaves nor vlans).")
+    @DefaultStringValue("Cannot ${action} ${type}. An improper network interface is labeled. Please verify labels are provided only to interfaces or to bonds (not to slaves nor vlans).")
     String IMPROPER_INTERFACE_IS_LABELED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. An improper bond is labeled. Please verify labels are provided only to bonds with at least two slaves.")
+    String IMPROPER_BOND_IS_LABELED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The network interface is already labeled with the specified label.")
     String INTERFACE_ALREADY_LABELED();
