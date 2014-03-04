@@ -60,9 +60,6 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         name=osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
-        condition=lambda self: self.environment[
-            osetupcons.DBEnv.PGPASS_FILE
-        ] is None
     )
     def _misc(self):
         database.OvirtUtils(
