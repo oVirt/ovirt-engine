@@ -20,7 +20,7 @@
 
   <properties>
     <engine.groupId>org.ovirt.engine.core</engine.groupId>
-    <engine.version>3.4.0-SNAPSHOT</engine.version>
+    <engine.version>3.4.1-SNAPSHOT</engine.version>
   </properties>
 
 </project>
