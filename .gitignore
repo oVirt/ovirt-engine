@@ -19,6 +19,8 @@ tmp.*
 .project
 .classpath
 .factorypath
+.externalToolBuilders
+maven-eclipse.xml
 .pmd
 *.ipr
 *.iml
