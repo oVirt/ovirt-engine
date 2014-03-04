@@ -6,7 +6,7 @@
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider" >
 
-	<d:SimpleDialogPanel width="350px" height="220px">
+	<d:SimpleDialogPanel width="400px" height="350px">
 		<d:content>
 			<g:FlowPanel>
 				<ge:StringEntityModelLabelEditor ui:field="networkEditor" />

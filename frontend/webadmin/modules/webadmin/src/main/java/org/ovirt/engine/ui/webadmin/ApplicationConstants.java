@@ -1209,6 +1209,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("IP Version")
     String ipVersionExternalSubnet();
 
+    @DefaultStringValue("Gateway")
+    String gatewayExternalSubnet();
+
+    @DefaultStringValue("DNS Servers")
+    String dnsServersExternalSubnet();
+
     // Cluster
     @DefaultStringValue("Name")
     String nameCluster();

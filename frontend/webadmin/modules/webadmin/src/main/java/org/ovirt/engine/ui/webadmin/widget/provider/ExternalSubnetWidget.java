@@ -47,6 +47,15 @@ public class ExternalSubnetWidget extends AbstractModelBoundPopupWidget<External
     @WithElementId("ipVersion")
     ListModelListBoxEditor<IpVersion> ipVersionEditor;
 
+    @UiField
+    @Path("gateway.entity")
+    @WithElementId("gateway")
+    StringEntityModelTextBoxEditor gatewayEditor;
+
+    @UiField
+    @Ignore
+    public DnsServersWidget dnsServersEditor;
+
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
@@ -62,6 +71,7 @@ public class ExternalSubnetWidget extends AbstractModelBoundPopupWidget<External
         nameEditor.setLabel(constants.nameExternalSubnet());
         cidrEditor.setLabel(constants.cidrExternalSubnet());
         ipVersionEditor.setLabel(constants.ipVersionExternalSubnet());
+        gatewayEditor.setLabel(constants.gatewayExternalSubnet());
     }
 
     @Override
@@ -72,10 +82,12 @@ public class ExternalSubnetWidget extends AbstractModelBoundPopupWidget<External
     @Override
     public void edit(final ExternalSubnetModel subnet) {
         driver.edit(subnet);
+        dnsServersEditor.edit(subnet.getDnsServers());
     }
 
     @Override
     public ExternalSubnetModel flush() {
+        dnsServersEditor.flush();
         return driver.flush();
     }
 }
