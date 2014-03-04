@@ -19,7 +19,6 @@
 """database plugin."""
 
 
-import psycopg2
 import urlparse
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
@@ -79,22 +78,16 @@ class Plugin(plugin.PluginBase):
         name=osetupcons.Stages.DB_CONNECTION_AVAILABLE,
     )
     def _connection(self):
-        # must be here as we do not have database at validation
-        self.environment[
-            osetupcons.DBEnv.CONNECTION
-        ] = psycopg2.connect(
-            host=self.environment[osetupcons.DBEnv.HOST],
-            port=self.environment[osetupcons.DBEnv.PORT],
-            user=self.environment[osetupcons.DBEnv.USER],
-            password=self.environment[osetupcons.DBEnv.PASSWORD],
-            database=self.environment[osetupcons.DBEnv.DATABASE],
-        )
         self.environment[
             osetupcons.DBEnv.STATEMENT
         ] = database.Statement(
             dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
+        # must be here as we do not have database at validation
+        self.environment[
+            osetupcons.DBEnv.CONNECTION
+        ] = self.environment[osetupcons.DBEnv.STATEMENT].connect()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,

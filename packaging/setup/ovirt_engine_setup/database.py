@@ -58,6 +58,65 @@ class Statement(base.Base):
         self._environment = environment
         self._dbenvkeys = dbenvkeys
 
+    def connect(
+        self,
+        host=None,
+        port=None,
+        secured=None,
+        securedHostValidation=None,
+        user=None,
+        password=None,
+        database=None,
+    ):
+        if host is None:
+            host = self.environment[self._dbenvkeys['host']]
+        if port is None:
+            port = self.environment[self._dbenvkeys['port']]
+        if secured is None:
+            secured = self.environment[self._dbenvkeys['secured']]
+        if securedHostValidation is None:
+            securedHostValidation = self.environment[
+                self._dbenvkeys['hostValidation']
+            ]
+        if user is None:
+            user = self.environment[self._dbenvkeys['user']]
+        if password is None:
+            password = self.environment[self._dbenvkeys['password']]
+        if database is None:
+            database = self.environment[self._dbenvkeys['database']]
+
+        sslmode = 'allow'
+        if secured:
+            if securedHostValidation:
+                sslmode = 'verify-full'
+            else:
+                sslmode = 'require'
+
+        #
+        # old psycopg2 does not know how to ignore
+        # uselss parameters
+        #
+        if not host:
+            connection = psycopg2.connect(
+                database=database,
+            )
+        else:
+            #
+            # port cast is required as old psycopg2
+            # does not support unicode strings for port.
+            # do not cast to int to avoid breaking usock.
+            #
+            connection = psycopg2.connect(
+                host=host,
+                port=str(port),
+                user=user,
+                password=password,
+                database=database,
+                sslmode=sslmode,
+            )
+
+        return connection
+
     def execute(
         self,
         statement,
@@ -97,30 +156,6 @@ class Statement(base.Base):
                 )
 
         ret = []
-        if host is None:
-            host = self.environment[self._dbenvkeys['host']]
-        if port is None:
-            port = self.environment[self._dbenvkeys['port']]
-        if secured is None:
-            secured = self.environment[self._dbenvkeys['secured']]
-        if securedHostValidation is None:
-            securedHostValidation = self.environment[
-                self._dbenvkeys['hostValidation']
-            ]
-        if user is None:
-            user = self.environment[self._dbenvkeys['user']]
-        if password is None:
-            password = self.environment[self._dbenvkeys['password']]
-        if database is None:
-            database = self.environment[self._dbenvkeys['database']]
-
-        sslmode = 'allow'
-        if secured:
-            if securedHostValidation:
-                sslmode = 'verify-full'
-            else:
-                sslmode = 'require'
-
         old_autocommit = None
         _connection = None
         cursor = None
@@ -136,28 +171,15 @@ class Statement(base.Base):
             else:
                 self.logger.debug('Creating own connection')
 
-                #
-                # old psycopg2 does not know how to ignore
-                # uselss parameters
-                #
-                if not host:
-                    _connection = connection = psycopg2.connect(
-                        database=database,
-                    )
-                else:
-                    #
-                    # port cast is required as old psycopg2
-                    # does not support unicode strings for port.
-                    # do not cast to int to avoid breaking usock.
-                    #
-                    _connection = connection = psycopg2.connect(
-                        host=host,
-                        port=str(port),
-                        user=user,
-                        password=password,
-                        database=database,
-                        sslmode=sslmode,
-                    )
+                _connection = connection = self.connect(
+                    host=host,
+                    port=port,
+                    secured=secured,
+                    securedHostValidation=securedHostValidation,
+                    user=user,
+                    password=password,
+                    database=database,
+                )
 
             if not transaction:
                 old_autocommit = __backup_autocommit(connection)
