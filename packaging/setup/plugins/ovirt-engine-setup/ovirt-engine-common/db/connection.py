@@ -240,8 +240,6 @@ class Plugin(plugin.PluginBase):
                     hidden=True,
                 )
 
-                self.environment[otopicons.CoreEnv.LOG_FILTER].append(password)
-
             dbenv = {
                 osetupcons.DBEnv.HOST: host,
                 osetupcons.DBEnv.PORT: port,

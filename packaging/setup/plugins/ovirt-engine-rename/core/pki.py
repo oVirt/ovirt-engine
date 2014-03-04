@@ -52,17 +52,22 @@ class Plugin(plugin.PluginBase):
         self.uninstall_files = []
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_BOOT,
+    )
+    def _boot(self):
+        self.environment[
+            otopicons.CoreEnv.LOG_FILTER_KEYS
+        ].append(
+            osetupcons.PKIEnv.STORE_PASS
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
         self.environment.setdefault(
             osetupcons.PKIEnv.STORE_PASS,
             osetupcons.Defaults.DEFAULT_PKI_STORE_PASS
-        )
-        self.environment[otopicons.CoreEnv.LOG_FILTER].append(
-            self.environment[
-                osetupcons.PKIEnv.STORE_PASS
-            ]
         )
         self.environment.setdefault(
             osetupcons.RenameEnv.FORCE_IGNORE_AIA_IN_CA,
