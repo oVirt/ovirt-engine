@@ -114,8 +114,6 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
         setInSlot(TYPE_SetSearchPanel, searchPanel);
         setInSlot(TYPE_SetTabBar, tabBar);
         configureFeedbackUrl();
-        // Ensure proper main tab bar position
-        setMainTabBarOffset(MAIN_TABBAR_INITIAL_OFFSET);
     }
 
     private void configureFeedbackUrl() {
