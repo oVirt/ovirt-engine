@@ -33,6 +33,9 @@ public class IntegerParser {
         if (result.compareTo(MAX_UNSIGNED_SHORT) > 0) {
             throw new InvalidValueException("Value " + value + " is greater than maximum unsigned short " + MAX_UNSIGNED_SHORT);
         }
+        if (result.intValue() < 0) {
+            throw new InvalidValueException("Negative value " + value +  " not allowed for unsigned shorts, valid values are between 0 and " + MAX_UNSIGNED_SHORT);
+        }
         return result.intValue();
     }
 
@@ -54,6 +57,9 @@ public class IntegerParser {
         BigInteger result = DatatypeConverter.parseInteger(value);
         if (result.compareTo(MAX_UNSIGNED_INT) > 0) {
             throw new InvalidValueException("Value " + value +  " is greater than maximum unsigned integer " + MAX_UNSIGNED_INT);
+        }
+        if (result.intValue() < 0) {
+            throw new InvalidValueException("Negative value " + value +  " not allowed for unsigned integers, valid values are between 0 and " + MAX_UNSIGNED_INT);
         }
         return result.longValue();
     }
