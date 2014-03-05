@@ -1939,6 +1939,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("'Port Mirroring' is not supported for externally-provided networks")
     String portMirroringNotSupportedExternalNetworks();
 
+    @DefaultStringValue("'Port Mirroring' cannot be changed if the vNIC Profile is used by a VM")
+    String portMirroringNotChangedIfUsedByVms();
+
     @DefaultStringValue("Low")
     String vmLowPriority();
 
