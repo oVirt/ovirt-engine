@@ -100,7 +100,7 @@ public class SimpleJdbcCallsHandler {
     public <T> List<T> executeReadList(final String procedureName,
             final RowMapper<T> mapper,
             final MapSqlParameterSource parameterSource) {
-        Map<String, Object> resultsMap = executeImpl(procedureName, parameterSource, createCallForRead(procedureName, mapper, parameterSource));
+        Map<String, Object> resultsMap = executeImpl(procedureName, parameterSource, createCallForRead(procedureName, mapper, parameterSource), mapper);
         return (List<T>) (resultsMap.get(BaseDAODbFacade.RETURN_VALUE_PARAMETER));
     }
 
@@ -131,9 +131,13 @@ public class SimpleJdbcCallsHandler {
         };
     }
 
-    private Map<String, Object> executeImpl(String procedureName,
-            MapSqlParameterSource paramsSource, CallCreator callCreator) {
-        SimpleJdbcCall call = getCall(procedureName, callCreator);
+    private <T> Map<String, Object> executeImpl(String procedureName,
+                                                MapSqlParameterSource paramsSource, CallCreator callCreatorr) {
+        return executeImpl(procedureName, paramsSource, callCreatorr, null);
+    }
+    private <T> Map<String, Object> executeImpl(String procedureName,
+            MapSqlParameterSource paramsSource, CallCreator callCreator, RowMapper<T> mapper) {
+        SimpleJdbcCall call = getCall(procedureName, callCreator, mapper);
         return call.execute(paramsSource);
     }
 
@@ -148,12 +152,18 @@ public class SimpleJdbcCallsHandler {
      *            calls creator object
      * @return simple JDBC call object
      */
-    protected SimpleJdbcCall getCall(String procedureName, CallCreator callCreator) {
+    protected <T> SimpleJdbcCall getCall(String procedureName, CallCreator callCreator) {
+        return getCall(procedureName, callCreator, null);
+    }
+
+    protected <T> SimpleJdbcCall getCall(String procedureName, CallCreator callCreator, RowMapper<T> mapper) {
         SimpleJdbcCall call = callsMap.get(procedureName);
         if (call == null) {
             call = callCreator.createCall();
             call.compile();
             callsMap.putIfAbsent(procedureName, call);
+        } else if (mapper != null) {
+            call.returningResultSet(BaseDAODbFacade.RETURN_VALUE_PARAMETER, mapper);
         }
         return call;
     }
