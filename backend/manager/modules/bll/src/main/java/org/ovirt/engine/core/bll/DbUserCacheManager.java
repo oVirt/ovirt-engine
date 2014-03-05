@@ -17,7 +17,9 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ExternalId;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DbGroupDAO;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -213,19 +215,23 @@ public class DbUserCacheManager {
         StringBuilder groupNamesBuffer = new StringBuilder();
         StringBuilder groupIdsBuffer = new StringBuilder();
         boolean first = true;
+        DbGroupDAO groupDao = DbFacade.getInstance().getDbGroupDao();
         for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
             if (!first) {
                 groupNamesBuffer.append(',');
                 groupIdsBuffer.append(',');
             }
             DbGroup dbGroup = groupsMap.get(directoryGroup.getId());
-            if (dbGroup != null) {
-                groupNamesBuffer.append(dbGroup.getName());
-                groupIdsBuffer.append(dbGroup.getExternalId());
-            } else {
-                groupNamesBuffer.append(directoryGroup.getName());
-                groupIdsBuffer.append(directoryGroup.getId());
+            if (dbGroup == null) {
+                dbGroup = groupDao.getByExternalId(dbUser.getDomain(), directoryGroup.getId());
             }
+            if (dbGroup == null) {
+                // group is not in map or db
+                groupIdsBuffer.append(Guid.Empty);
+            } else {
+                groupIdsBuffer.append(dbGroup.getId());
+            }
+            groupNamesBuffer.append(directoryGroup.getName());
             first = false;
         }
         String groupNames = groupNamesBuffer.toString();
