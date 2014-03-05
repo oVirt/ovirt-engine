@@ -204,15 +204,15 @@ public abstract class NetworkItemPanel extends FocusPanel {
 
     private MenuBar rootMenu(NetworkItemModel<?> item) {
         MenuBar menuBar = new MenuBar(true);
-        menuBar.addItem("Menu for " + item.getName(), (Command) null); //$NON-NLS-1$
-        menuBar.addSeparator();
         return menuBar;
     }
 
     private void showContextMenu(NetworkItemPanel panel, int clientX, int clientY) {
-        menuPopup.setWidget(menu);
-        menuPopup.setPopupPosition(clientX, clientY);
-        menuPopup.show();
+        if (!menu.isEmpty()){
+            menuPopup.setWidget(menu);
+            menuPopup.setPopupPosition(clientX, clientY);
+            menuPopup.show();
+        }
     }
 
     private MenuBar subMenu() {

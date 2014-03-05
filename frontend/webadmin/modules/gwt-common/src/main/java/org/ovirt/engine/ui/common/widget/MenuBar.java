@@ -61,4 +61,7 @@ public class MenuBar extends com.google.gwt.user.client.ui.MenuBar {
         }
     }
 
+    public boolean isEmpty(){
+        return getItems() == null || getItems().isEmpty();
+    }
 }
