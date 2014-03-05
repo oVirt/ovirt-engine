@@ -796,4 +796,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Failed to get status of gluster volume remove bricks")
     String GlusterVolumeRemoveBrickStatusFailed();
+
+    @DefaultStringValue("Reverting back to last known saved configuration.")
+    String SETUP_NETWORKS_ROLLBACK();
 }
