@@ -432,6 +432,9 @@ public enum VdcBllErrors {
     LABELED_NETWORK_INTERFACE_NOT_FOUND(5200),
     NETWORK_LABEL_CONFLICT(5201),
 
+    // SetupNetwork errors
+    SETUP_NETWORK_ROLLBACK(5300),
+
     // Gluster errors
     NO_UP_SERVER_FOUND(7000),
     // error to indicate backend does not recognize the session

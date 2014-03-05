@@ -3016,6 +3016,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The networks represented by label cannot be configured on the same network interface.")
     String NETWORK_LABEL_CONFLICT();
 
+    @DefaultStringValue("Reverting back to last known saved configuration.")
+    String SETUP_NETWORK_ROLLBACK();
+
     @DefaultStringValue("Cannot ${action} ${type}. Name field input is too long.")
     String AFFINITY_GROUP_NAME_TOO_LONG();
 

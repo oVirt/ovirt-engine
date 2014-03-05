@@ -20,6 +20,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
@@ -134,6 +136,10 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         try {
             VDSReturnValue retVal = setupNetworksTask.get(timeout, TimeUnit.SECONDS);
             if (retVal != null) {
+                if (!retVal.getSucceeded() && retVal.getVdsError() == null && getParameters().isCheckConnectivity()) {
+                    throw new VdcBLLException(VdcBllErrors.SETUP_NETWORK_ROLLBACK, retVal.getExceptionString());
+                }
+
                 VdsHandler.handleVdsResult(retVal);
 
                 if (retVal.getSucceeded()) {
