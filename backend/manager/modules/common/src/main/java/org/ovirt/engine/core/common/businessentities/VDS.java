@@ -107,7 +107,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setVdsName(getName());
         vds.setManagementIp(getManagementIp());
         vds.setHostName(getHostName());
-        setComment(getComment());
+        vds.setComment(getComment());
         vds.setPort(getPort());
         vds.setSshPort(getSshPort());
         vds.setSshUsername(getSshUsername());
