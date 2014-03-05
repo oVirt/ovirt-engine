@@ -198,6 +198,9 @@ public final class AsyncDataProvider {
     // cached disk hotpluggable interfaces map
     private static Map<Pair<Integer, Version>, Set<String>> diskHotpluggableInterfacesMap;
 
+    // cached os's balloon enabled by default map (given compatibility version)
+    private static Map<Integer, Map<Version, Boolean>> balloonSupportMap;
+
     // cached windows OS
     private static List<Integer> windowsOsIds;
     // cached OS Architecture
@@ -257,6 +260,7 @@ public final class AsyncDataProvider {
         initLinuxOsTypes();
         initWindowsOsTypes();
         initDisplayTypes();
+        initBalloonSupportMap();
         initNicHotplugSupportMap();
         initDiskHotpluggableInterfacesMap();
         initOsArchitecture();
@@ -415,6 +419,23 @@ public final class AsyncDataProvider {
         }
 
         return false;
+    }
+
+    public static Boolean isBalloonEnabled(int osId, Version version) {
+        return balloonSupportMap.get(osId).get(version);
+    }
+
+    public static void initBalloonSupportMap() {
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                balloonSupportMap = (Map<Integer, Map<Version, Boolean>>) ((VdcQueryReturnValue) returnValue)
+                        .getReturnValue();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
+                OsRepositoryVerb.GetBalloonSupportMap), callback);
     }
 
     public static void initDiskHotpluggableInterfacesMap() {
