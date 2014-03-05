@@ -383,9 +383,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected List<ValidationError> validateCustomProperties(VmStatic vmStaticFromParams) {
-        return VmPropertiesUtils.getInstance().validateVMProperties(
+        return VmPropertiesUtils.getInstance().validateVmProperties(
                 getVdsGroup().getcompatibility_version(),
-                vmStaticFromParams);
+                vmStaticFromParams.getCustomProperties());
     }
 
     /**

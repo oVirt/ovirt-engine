@@ -112,24 +112,12 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
     }
 
     /**
-     * Validates all the custom properties of a VM
-     *
-     * @param vmStatic
-     * @return
-     */
-    public List<ValidationError> validateVMProperties(Version version, VmStatic vmStatic) {
-        List<ValidationError> errors = validateProperties(version, vmStatic.getCustomProperties());
-        return errors;
-    }
-
-    /**
      * Validates a properties field value (checks if its format matches key1=val1;key2=val2;....)
      *
      * @param fieldValue
      * @return a list of validation errors. if there are no errors - the list will be empty
      */
-    private List<ValidationError> validateProperties(Version version, String properties) {
-
+    public List<ValidationError> validateVmProperties(Version version, String properties) {
         if (StringUtils.isEmpty(properties)) { // No errors in case of empty value
             return Collections.emptyList();
         }
@@ -142,8 +130,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         // 2. Check if the value of the key is valid
         // In case either 1 or 2 fails, add an error to the errors list
         Map<String, String> map = new HashMap<String, String>();
-        List<ValidationError> result = populateVMProperties(version, properties, map);
-        return result;
+        return populateVMProperties(version, properties, map);
     }
 
     private boolean isValueValid(Version version, String key, String value) {

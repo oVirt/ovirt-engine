@@ -105,7 +105,7 @@ public class RunVmValidator {
         }
 
         return
-                validateVmProperties(vm, messages) &&
+                validateVmProperties(vm, runVmParam.getCustomProperties(), messages) &&
                 validate(validateBootSequence(vm, runVmParam.getBootSequence(), getVmDisks(), activeIsoDomainId), messages) &&
                 validate(new VmValidator(vm).vmNotLocked(), messages) &&
                 validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()), messages) &&
@@ -143,38 +143,41 @@ public class RunVmValidator {
     }
 
 
-    protected boolean validateVmProperties(VM vm, List<String> messages) {
+    protected boolean validateVmProperties(VM vm, String runOnceCustomProperties, List<String> messages) {
+        String customProperties = runOnceCustomProperties != null ?
+                runOnceCustomProperties : vm.getCustomProperties();
         List<ValidationError> validationErrors =
-                getVmPropertiesUtils().validateVMProperties(
+                getVmPropertiesUtils().validateVmProperties(
                         vm.getVdsGroupCompatibilityVersion(),
-                        vm.getStaticData());
+                        customProperties);
 
         if (!validationErrors.isEmpty()) {
-            VmPropertiesUtils.getInstance().handleCustomPropertiesError(validationErrors, messages);
+            getVmPropertiesUtils().handleCustomPropertiesError(validationErrors, messages);
             return false;
         }
 
         return true;
     }
 
-    protected ValidationResult validateBootSequence(VM vm, BootSequence bootSequence, List<Disk> vmDisks, Guid activeIsoDomainId) {
-        BootSequence boot_sequence = (bootSequence != null) ?
-                bootSequence : vm.getDefaultBootSequence();
+    protected ValidationResult validateBootSequence(VM vm, BootSequence runOnceBootSequence,
+            List<Disk> vmDisks, Guid activeIsoDomainId) {
+        BootSequence bootSequence = runOnceBootSequence != null ?
+                runOnceBootSequence : vm.getDefaultBootSequence();
         // Block from running a VM with no HDD when its first boot device is
         // HD and no other boot devices are configured
-        if (boot_sequence == BootSequence.C && vmDisks.isEmpty()) {
+        if (bootSequence == BootSequence.C && vmDisks.isEmpty()) {
             return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK);
         }
 
         // If CD appears as first and there is no ISO in storage
         // pool/ISO inactive - you cannot run this VM
-        if (boot_sequence == BootSequence.CD && activeIsoDomainId == null) {
+        if (bootSequence == BootSequence.CD && activeIsoDomainId == null) {
             return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }
 
         // if there is network in the boot sequence, check that the
         // vm has network, otherwise the vm cannot be run in vdsm
-        if (boot_sequence == BootSequence.N
+        if (bootSequence == BootSequence.N
                 && getVmNicDao().getAllForVm(vm.getId()).isEmpty()) {
             return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK);
         }

@@ -59,40 +59,36 @@ public class RunVmValidatorTest {
     @Test
     public void testValidEmptyCustomProerties() {
         VM vm = new VM();
-        vm.setCustomProperties("");
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
         List<String> messages = new ArrayList<String>();
-        assertTrue(runVmValidator.validateVmProperties(vm, messages));
+        assertTrue(runVmValidator.validateVmProperties(vm, "", messages));
         assertTrue(messages.isEmpty());
     }
 
     @Test
     public void testWrongFormatCustomProerties() {
         VM vm = new VM();
-        vm.setCustomProperties("sap_agent;"); // missing '= true'
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
         List<String> messages = new ArrayList<String>();
-        assertFalse(runVmValidator.validateVmProperties(vm, messages));
+        assertFalse(runVmValidator.validateVmProperties(vm, "sap_agent;", messages)); // missing '= true'
         assertFalse(messages.isEmpty());
     }
 
     @Test
     public void testNotValidCustomProerties() {
         VM vm = new VM();
-        vm.setCustomProperties("property=value;");
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
         List<String> messages = new ArrayList<String>();
-        assertFalse(runVmValidator.validateVmProperties(vm, messages));
+        assertFalse(runVmValidator.validateVmProperties(vm, "property=value;", messages));
         assertFalse(messages.isEmpty());
     }
 
     @Test
     public void testValidCustomProerties() {
         VM vm = new VM();
-        vm.setCustomProperties("sap_agent=true;");
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
         List<String> messages = new ArrayList<String>();
-        assertTrue(runVmValidator.validateVmProperties(vm, messages));
+        assertTrue(runVmValidator.validateVmProperties(vm, "sap_agent=true;", messages));
         assertTrue(messages.isEmpty());
     }
 
