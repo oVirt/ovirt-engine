@@ -1,8 +1,12 @@
 package org.ovirt.engine.api.restapi.utils;
 
 import org.ovirt.engine.core.compat.Guid;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class GuidUtils {
+
+    private static final String MD5_SECURITY_ALGORITHM = "MD5";
 
     public static Guid asGuid(String id) {
         try {
@@ -12,4 +16,27 @@ public class GuidUtils {
         }
     }
 
+    /**
+     * There are some business entities in the API, which are not regarded as business entities in the engine, and
+     * therefore they don't have IDs. The API generates uniqute GUIDs for them, according to their attributes. This
+     * method accepts one or more string attributes, concatenates them, and using Md5 hash to generate a unique Guid for
+     * them.
+     *
+     * @param args
+     *            one or more strings, guid will be generated from them
+     * @return unique Guid generated from the given strings.
+     */
+    public static Guid generateGuidUsingMd5(String... args) {
+        String id = "";
+        for (String arg : args) {
+            id = id + arg;
+        }
+        byte[] hash;
+        try {
+            hash = MessageDigest.getInstance(MD5_SECURITY_ALGORITHM).digest(id.getBytes());
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e); // never happens, MD5 algorithm exists
+        }
+        return new Guid(hash, true);
+    }
 }

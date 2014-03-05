@@ -13,7 +13,6 @@ import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.restapi.types.Mapper;
-import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -36,7 +35,6 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
     protected static final javax.ws.rs.core.Response.Status ACCEPTED_STATUS =
         javax.ws.rs.core.Response.Status.ACCEPTED;
 
-    protected MappingLocator mappingLocator;
     protected Class<R> modelType;
     protected Class<Q> entityType;
     protected String[] subCollections;
@@ -53,26 +51,6 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
     protected AbstractBackendResource(Class<R> modelType, Class<Q> entityType, String... subCollections) {
         this(modelType, entityType);
         this.subCollections = subCollections;
-    }
-
-    public void setMappingLocator(MappingLocator mappingLocator) {
-        this.mappingLocator = mappingLocator;
-    }
-
-    public MappingLocator getMappingLocator() {
-        return mappingLocator;
-    }
-
-    //protected <S extends AbstractBackendResource<B extends BaseResource, A>> S inject(S resource) {
-    protected <S extends AbstractBackendResource<?, ?>> S inject(S resource) {
-        resource.setBackend(backend);
-        resource.setMappingLocator(mappingLocator);
-        resource.setValidatorLocator(validatorLocator);
-        resource.setSessionHelper(sessionHelper);
-        resource.setMessageBundle(messageBundle);
-        resource.setUriInfo(uriInfo);
-        resource.setHttpHeaders(httpHeaders);
-        return resource;
     }
 
     protected <F, T> Mapper<F, T> getMapper(Class<F> from, Class<T> to) {

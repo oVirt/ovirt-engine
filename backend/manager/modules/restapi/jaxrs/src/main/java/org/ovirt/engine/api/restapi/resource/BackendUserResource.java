@@ -10,6 +10,7 @@ import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.UserResource;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 /**
@@ -61,5 +62,9 @@ public class BackendUserResource
     @Override
     protected User doPopulate(User model, DbUser entity) {
         return model;
+    }
+
+    public User getUserByName(String name) {
+        return performGet(VdcQueryType.GetDbUserByUserName, new NameQueryParameters(name), BaseResource.class);
     }
 }

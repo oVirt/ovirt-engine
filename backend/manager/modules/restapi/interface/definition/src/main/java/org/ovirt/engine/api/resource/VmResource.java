@@ -162,4 +162,8 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
 
     @Path("reporteddevices")
     public VmReportedDevicesResource getVmReportedDevicesResource();
+
+    @Path("sessions")
+    public VmSessionsResource getVmSessionsResource();
+
 }

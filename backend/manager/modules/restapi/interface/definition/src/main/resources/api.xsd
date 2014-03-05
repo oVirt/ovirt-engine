@@ -2821,7 +2821,6 @@
     </xs:sequence>
   </xs:complexType>
 
-
   <xs:element name="pm_proxy_types" type="PmProxyTypes"/>
 
   <xs:complexType name="PmProxyTypes">
@@ -2836,6 +2835,38 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="Session">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="protocol" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="ip" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="user" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="console_user" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+<xs:element name="session" type="Session"/>
+
+  <xs:complexType name="Sessions">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="Sessions"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="session" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+<xs:element name="sessions" type="Sessions"/>
 
   <!-- Virtual Machine Pools -->
 

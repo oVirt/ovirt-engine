@@ -1005,6 +1005,22 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /vms/{vm:id}/sessions|rel=get
+  description: get the open user-sessions of this VM
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /vms/{vm:id}/sessions/{session:id}|rel=get
+  description: get the deails of a VM user session.
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
 - name: /disks|rel=get
   description: get a list of disks in the system
   request:

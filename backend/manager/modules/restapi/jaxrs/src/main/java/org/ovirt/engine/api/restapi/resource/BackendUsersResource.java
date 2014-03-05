@@ -198,5 +198,4 @@ public class BackendUsersResource
     private boolean isNameContainsDomain(User user) {
         return ((user.getUserName().contains("@")) && (user.getUserName().indexOf('@') != user.getUserName().length() - 1));
     }
-
 }

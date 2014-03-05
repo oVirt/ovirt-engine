@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendUserResourceTest
@@ -55,6 +56,17 @@ public class BackendUserResourceTest
         control.replay();
 
         verifyModel(resource.get(), 0);
+    }
+
+    @Test
+    public void testGetUserByName() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { "admin" }, getEntity(0));
+        control.replay();
+        verifyModel(resource.getUserByName("admin"), 0);
     }
 
     protected void setUpGetEntityExpectations() throws Exception {

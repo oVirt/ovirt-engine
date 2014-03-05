@@ -14,6 +14,8 @@ import org.ovirt.engine.api.model.GuestNicConfiguration;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
+import org.ovirt.engine.api.model.Session;
+import org.ovirt.engine.api.model.Sessions;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.VCpuPin;
 import org.ovirt.engine.api.model.VM;
@@ -187,7 +189,7 @@ public class VmMapperTest extends
         vmDynamic.setStatus(VMStatus.Up);
         vmDynamic.setVmIp("2.2.2.2");
         vm.setDynamicData(vmDynamic);
-        VM map = VmMapper.map(vm, null);
+        VM map = VmMapper.map(vm, (VM) null);
         assertNotNull(map.getGuestInfo().getIps().getIPs().get(0));
         assertEquals(map.getGuestInfo().getIps().getIPs().get(0).getAddress(), "2.2.2.2");
     }
@@ -199,7 +201,7 @@ public class VmMapperTest extends
         vmDynamic.setStatus(VMStatus.Up);
         vmDynamic.setVmFQDN("localhost.localdomain");
         vm.setDynamicData(vmDynamic);
-        VM map = VmMapper.map(vm, null);
+        VM map = VmMapper.map(vm, (VM) null);
         assertNotNull(map.getGuestInfo().getFqdn());
         assertEquals(map.getGuestInfo().getFqdn(), "localhost.localdomain");
     }
@@ -210,7 +212,7 @@ public class VmMapperTest extends
         vmDynamic.setStatus(VMStatus.Up);
         vmDynamic.setVmIp("2.2.2.2 2.2.2.3 2.2.2.4");
         vm.setDynamicData(vmDynamic);
-        VM map = VmMapper.map(vm, null);
+        VM map = VmMapper.map(vm, (VM) null);
         assertNotNull(map.getGuestInfo().getIps().getIPs().get(0));
         assertEquals(map.getGuestInfo().getIps().getIPs().get(0).getAddress(), "2.2.2.2");
         assertEquals(map.getGuestInfo().getIps().getIPs().get(1).getAddress(), "2.2.2.3");
@@ -224,12 +226,12 @@ public class VmMapperTest extends
         entity.setStatus(VMStatus.Up);
         entity.setDisplay(5900);
         entity.setDisplaySecurePort(9999);
-        VM model = VmMapper.map(entity, null);
+        VM model = VmMapper.map(entity, (VM) null);
         assertTrue(model.getDisplay().getPort() == 5900);
         assertTrue(model.getDisplay().getSecurePort() == 9999);
         entity.setDisplay(-1);
         entity.setDisplaySecurePort(-1);
-        model = VmMapper.map(entity, null);
+        model = VmMapper.map(entity, (VM) null);
         assertNull(model.getDisplay().getPort());
         assertNull(model.getDisplay().getSecurePort());
     }
@@ -257,7 +259,7 @@ public class VmMapperTest extends
         entity.setStatus(VMStatus.Up);
         Guid guid = Guid.newGuid();
         entity.setRunOnVds(guid);
-        VM model = VmMapper.map(entity, null);
+        VM model = VmMapper.map(entity, (VM) null);
         assertEquals(guid.toString(), model.getHost().getId());
     }
 
@@ -559,5 +561,28 @@ public class VmMapperTest extends
         usb.setEnabled(true);
         usb.setType("native");
         assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED, null), UsbPolicy.ENABLED_NATIVE);
+    }
+
+    @Test
+    public void testMapSessions() {
+        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
+        VmDynamic vmDynamic = new VmDynamic();
+        vmDynamic.setConsoleCurrentUserName("admin");
+        vmDynamic.setClientIp("1.1.1.1");
+        vmDynamic.setGuestCurrentUserName("Ori");
+        vm.setDynamicData(vmDynamic);
+        Sessions sessions = VmMapper.map(vm, new Sessions());
+        assertNotNull(sessions);
+        assertEquals(sessions.getSessions().size(), 2);
+        Session consoleSession =
+                sessions.getSessions().get(0).getUser().getName().equals("admin") ? sessions.getSessions().get(0)
+                        : sessions.getSessions().get(1);
+        Session guestSession =
+                sessions.getSessions().get(0).getUser().getName().equals("Ori") ? sessions.getSessions().get(0)
+                        : sessions.getSessions().get(1);
+        assertEquals(consoleSession.getUser().getName(), "admin");
+        assertEquals(consoleSession.getIp().getAddress(), "1.1.1.1");
+        assertTrue(consoleSession.isConsoleUser());
+        assertEquals(guestSession.getUser().getName(), "Ori");
     }
 }

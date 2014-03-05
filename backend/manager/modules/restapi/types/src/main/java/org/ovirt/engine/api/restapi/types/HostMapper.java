@@ -1,8 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
 import java.math.BigDecimal;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +50,6 @@ public class HostMapper {
     // REVISIT retrieve from configuration
     private static final int DEFAULT_VDSM_PORT = 54321;
     private static final String MD5_FILE_SIGNATURE = "md5";
-    private static final String MD5_SECURITY_ALGORITHM = "MD5";
 
     private static final String HOST_OS_DELEIMITER = " - ";
 
@@ -674,18 +671,7 @@ public class HostMapper {
     }
 
     private static void setHookId(Hook hook, String hookName, String eventName, String md5) {
-        Guid guid = generateHookId(eventName, hookName, md5);
+        Guid guid = GuidUtils.generateGuidUsingMd5(eventName, hookName, md5);
         hook.setId(guid.toString());
-    }
-
-    public static Guid generateHookId(String eventName, String hookName, String md5) {
-        String idString = eventName + hookName + md5;
-        try {
-            byte[] hash = MessageDigest.getInstance(MD5_SECURITY_ALGORITHM).digest(idString.getBytes());
-            Guid guid = new Guid(hash, true);
-            return guid;
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e); // never happens, MD5 algorithm exists
-        }
     }
 }

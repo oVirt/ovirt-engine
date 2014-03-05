@@ -62,6 +62,7 @@ import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Role;
+import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Step;
@@ -166,6 +167,8 @@ import org.ovirt.engine.api.resource.VmPoolsResource;
 import org.ovirt.engine.api.resource.VmReportedDeviceResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.api.resource.VmResource;
+import org.ovirt.engine.api.resource.VmSessionResource;
+import org.ovirt.engine.api.resource.VmSessionsResource;
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.resource.VnicProfileResource;
 import org.ovirt.engine.api.resource.VnicProfilesResource;
@@ -378,6 +381,9 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(AffinityGroupResource.class, AffinityGroupsResource.class, Cluster.class);
         TYPES.put(AffinityGroup.class, map);
+
+        map = new ParentToCollectionMap(VmSessionResource.class, VmSessionsResource.class, VM.class);
+        TYPES.put(Session.class, map);
     }
 
     /**

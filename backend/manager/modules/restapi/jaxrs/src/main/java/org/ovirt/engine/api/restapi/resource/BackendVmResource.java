@@ -30,6 +30,7 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
+import org.ovirt.engine.api.resource.VmSessionsResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
@@ -509,5 +510,10 @@ public class BackendVmResource extends
     @Override
     public VmReportedDevicesResource getVmReportedDevicesResource() {
         return inject(new BackendVmReportedDevicesResource(guid));
+    }
+
+    @Override
+    public VmSessionsResource getVmSessionsResource() {
+        return inject(new BackendVmSessionsResource(guid));
     }
 }

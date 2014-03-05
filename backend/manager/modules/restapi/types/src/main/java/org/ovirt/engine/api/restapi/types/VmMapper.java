@@ -43,6 +43,8 @@ import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.Quota;
+import org.ovirt.engine.api.model.Session;
+import org.ovirt.engine.api.model.Sessions;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
@@ -1357,5 +1359,69 @@ public class VmMapper {
         default:
             return null; // Should never get here
         }
+    }
+
+    /**
+     * This method maps the VM's open sessions with users. Engine currently does not regard sessions as business
+     * entities, and therefore a session doesn't have an ID. Generating IDs for sessions is outside the scope of this
+     * method and should be done by the method's invoker.
+     *
+     * The session involves a user. Sometimes this is an ovirt-user, and sometimes not. Engine provides only the user
+     * name, and this method maps it by placing it inside a 'User' object in the session. If invokers want to identify
+     * the ovirt user and provide a link to it, it's their responsibility to do so; this is out of the scope of this
+     * method.
+     */
+    public static Sessions map(org.ovirt.engine.core.common.businessentities.VM vm, Sessions sessions) {
+        if (sessions == null) {
+            sessions = new Sessions();
+        }
+        mapConsoleSession(vm, sessions);
+        mapGuestSessions(vm, sessions);
+        return sessions;
+    }
+
+    /**
+     * This method maps the session of the 'console user', if exists. This is the ovirt user who opened a session
+     * through the user-console; the one who is said to be 'logged in' (or 'have the ticket') to this VM. Currently
+     * engine makes available only the name and IP of this user. In the future it may make available also the connection
+     * protocol used in the session (spice/vnc).
+     */
+    private static Sessions mapConsoleSession(org.ovirt.engine.core.common.businessentities.VM vm, Sessions sessions) {
+        String consoleUserName = vm.getConsoleCurentUserName();
+        if (consoleUserName != null && !consoleUserName.isEmpty()) {
+            Session consoleSession = new Session();
+            User consoleUser = new User();
+            consoleUser.setName(consoleUserName);
+            consoleSession.setUser(consoleUser);
+            if (vm.getClientIp()!=null && !vm.getClientIp().isEmpty()) {
+                IP ip = new IP();
+                ip.setAddress(vm.getClientIp());
+                consoleSession.setIp(ip);
+            }
+            consoleSession.setConsoleUser(true);
+            // TODO: in the future, map the connection protocol as well
+            sessions.getSessions().add(consoleSession);
+        }
+        return sessions;
+    }
+
+    /**
+     * This method maps the sessions of users who are connected to the VM, but are not the 'logged-in'/'console' user.
+     * Currently the information that engine supplies about these users is only a string, which contains the name of
+     * only one such user, if exists (the user is not necessarily an ovirt user). In the future the engine may pass
+     * multiple 'guest' users, along with their IPs and perhaps also the connection protocols that they are using (SSH,
+     * RDP...)
+     */
+    private static Sessions mapGuestSessions(org.ovirt.engine.core.common.businessentities.VM vm, Sessions sessions) {
+        String guestUserName = vm.getGuestCurentUserName();
+        if (guestUserName != null && !guestUserName.isEmpty()) {
+            Session guestSession = new Session();
+            User user = new User();
+            user.setName(guestUserName);
+            guestSession.setUser(user);
+            // TODO: in the future, map the user-IP and connection protocol as well
+            sessions.getSessions().add(guestSession);
+        }
+        return sessions;
     }
 }

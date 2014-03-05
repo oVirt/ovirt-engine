@@ -21,6 +21,7 @@ import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
+import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -42,6 +43,27 @@ public class BaseBackendResource {
     protected UriInfo uriInfo;
     protected HttpHeaders httpHeaders;
     protected ValidatorLocator validatorLocator;
+    protected MappingLocator mappingLocator;
+
+    // protected <S extends AbstractBackendResource<B extends BaseResource, A>> S inject(S resource) {
+    protected <S extends BaseBackendResource> S inject(S resource) {
+        resource.setBackend(backend);
+        resource.setMappingLocator(mappingLocator);
+        resource.setValidatorLocator(validatorLocator);
+        resource.setSessionHelper(sessionHelper);
+        resource.setMessageBundle(messageBundle);
+        resource.setUriInfo(uriInfo);
+        resource.setHttpHeaders(httpHeaders);
+        return resource;
+    }
+
+    public void setMappingLocator(MappingLocator mappingLocator) {
+        this.mappingLocator = mappingLocator;
+    }
+
+    public MappingLocator getMappingLocator() {
+        return mappingLocator;
+    }
 
     public void setBackend(BackendLocal backend) {
         this.backend = backend;
