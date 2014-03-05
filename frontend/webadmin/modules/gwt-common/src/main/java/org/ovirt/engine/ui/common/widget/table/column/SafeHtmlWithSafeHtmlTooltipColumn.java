@@ -37,6 +37,7 @@ public abstract class SafeHtmlWithSafeHtmlTooltipColumn<T> extends Column<T, Saf
         });
 
         tooltipPanel.setWidget(tooltip);
+        tooltipPanel.getElement().getStyle().setZIndex(1);
     }
 
     private final HTML tooltip = new HTML();
