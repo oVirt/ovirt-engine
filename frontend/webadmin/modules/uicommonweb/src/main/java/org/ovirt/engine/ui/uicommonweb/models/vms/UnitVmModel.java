@@ -1726,6 +1726,7 @@ public class UnitVmModel extends Model {
             {
                 dataCenterWithClusterSelectedItemChanged(sender, args);
                 updateDisplayProtocol();
+                updateMemoryBalloonDevice();
                 initUsbPolicy();
             }
             else if (sender == getTemplate())
@@ -1747,6 +1748,7 @@ public class UnitVmModel extends Model {
                 getBehavior().oSType_SelectedItemChanged();
                 getVmInitModel().osTypeChanged(getOSType().getSelectedItem());
                 updateDisplayProtocol();
+                updateMemoryBalloonDevice();
                 initUsbPolicy();
 
                 getBehavior().activateInstanceTypeManager();
@@ -2038,6 +2040,28 @@ public class UnitVmModel extends Model {
             getDisplayProtocol().setItems(displayProtocolOptions, oldDisplayProtocolEntity);
         } else if (displayProtocolOptions.size() > 0) {
             getDisplayProtocol().setItems(displayProtocolOptions, displayProtocolOptions.iterator().next());
+        }
+    }
+
+    private void updateMemoryBalloonDevice() {
+
+        VDSGroup cluster = getSelectedCluster();
+        Integer osType = getOSType().getSelectedItem();
+
+        if (cluster == null || osType == null) {
+            return;
+        }
+
+        boolean isBalloonEnabled = AsyncDataProvider.isBalloonEnabled(osType,
+                        cluster.getcompatibility_version());
+
+        getMemoryBalloonDeviceEnabled().setIsChangable(isBalloonEnabled);
+
+        getMemoryBalloonDeviceEnabled().setEntity(isBalloonEnabled);
+        if (!isBalloonEnabled) {
+            getBehavior().deactivateInstanceTypeManager();
+            getMemoryBalloonDeviceEnabled().setEntity(isBalloonEnabled);
+            getBehavior().activateInstanceTypeManager();
         }
     }
 
