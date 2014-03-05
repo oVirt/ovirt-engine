@@ -22,7 +22,7 @@ public class LdapSearchUserByQueryCommand extends LdapSearchGroupsByQueryCommand
         final List<LdapUser> usersList = (List<LdapUser>) directorySearcher.findAll(getLdapQueryData());
         for (final LdapUser searchResult : usersList) {
             {
-                LdapUser user = populateUserData(searchResult, getLdapQueryData().getDomain());
+                LdapUser user = populateUserData(searchResult, getLdapQueryData().getDomain(), false);
                 userList.add(user);
             }
         }

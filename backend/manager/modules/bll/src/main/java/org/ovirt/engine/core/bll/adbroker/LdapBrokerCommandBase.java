@@ -6,14 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.api.extensions.AAAExtensionException.AAAExtensionError;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.ExternalId;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -120,6 +117,10 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     protected abstract void executeQuery(DirectorySearcher directorySearcher);
 
     protected LdapUser populateUserData(LdapUser user, String domain) {
+        return populateUserData(user, domain, true);
+    }
+
+    protected LdapUser populateUserData(LdapUser user, String domain, boolean populateGroups) {
         if (user == null) {
             return null;
         }
@@ -129,11 +130,25 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         java.util.HashMap<String, LdapGroup> groupsDict = new java.util.HashMap<String, LdapGroup>();
 
         GroupsDNQueryGenerator generator = new GroupsDNQueryGenerator();
-        proceedGroupsSearchResult(user.getMemberof(), groupsDict, generator);
+        proceedGroupsSearchResult(null, user.getMemberof(), groupsDict, generator);
         user.setGroups(groupsDict);
         if (user.getUserName() != null && !user.getUserName().contains("@")) {
             user.setUserName(user.getUserName() + "@" + user.getDomainControler());
         }
+
+        if (populateGroups) {
+            if (generator.getHasValues()) {
+                List<LdapQueryData> partialQueries = generator.getLdapQueriesData();
+                for (LdapQueryData currQueryData : partialQueries) {
+                    populateGroup(currQueryData,
+                            getAuthenticationDomain(),
+                            groupsDict,
+                            getLoginName(),
+                            getPassword());
+                }
+            }
+        }
+        user.setGroups(groupsDict);
         return user;
     }
 
@@ -166,10 +181,16 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     private void ProceedGroupsSearchResult(GroupSearchResult groupsResult,
             java.util.Map<String, LdapGroup> groupsDict, GroupsDNQueryGenerator generator) {
         List<String> groupsList = groupsResult.getMemberOf();
-        proceedGroupsSearchResult(groupsList, groupsDict, generator);
+        LdapGroup group = new LdapGroup();
+        group.setid(groupsResult.getId());
+        group.setname(LdapBrokerUtils.generateGroupDisplayValue(groupsResult.getDistinguishedName()));
+        group.setMemberOf(groupsResult.getMemberOf());
+        group.setDistinguishedName(groupsResult.getDistinguishedName());
+        groupsDict.put(group.getname(), group);
+        proceedGroupsSearchResult(groupsResult.getId(), groupsList, groupsDict, generator);
     }
 
-    private void proceedGroupsSearchResult(List<String> groupDNList,
+    private void proceedGroupsSearchResult(ExternalId groupId, List<String> groupDNList,
             Map<String, LdapGroup> groupsDict, GroupsDNQueryGenerator generator) {
         if (groupDNList == null) {
             return;
@@ -177,17 +198,6 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         for (String groupDN : groupDNList) {
             String groupName = LdapBrokerUtils.generateGroupDisplayValue(groupDN);
             if (!groupsDict.containsKey(groupName)) {
-                DbGroup dbGroup = DbFacade.getInstance().getDbGroupDao().getByName(groupName);
-                LdapGroup ldapGroup = null;
-                if (dbGroup != null) {
-                    ldapGroup = new LdapGroup(dbGroup);
-                } else {
-                    ldapGroup = new LdapGroup();
-                    ldapGroup.setid(new ExternalId(Guid.Empty.toByteArray()));
-                    ldapGroup.setname(groupName);
-                }
-                ldapGroup.setDistinguishedName(groupDN);
-                groupsDict.put(groupName, ldapGroup);
                 generator.add(groupDN);
             }
         }

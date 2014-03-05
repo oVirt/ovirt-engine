@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.adbroker;
 
-import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
@@ -60,18 +59,8 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
         } else {
             user = populateUserData((LdapUser) searchResult, getAuthenticationDomain());
             if (user != null) {
+
                 user.setUserName(getLoginName());
-                GroupsDNQueryGenerator generator = createGroupsGeneratorForUser(user);
-                if (generator.getHasValues()) {
-                    List<LdapQueryData> partialQueries = generator.getLdapQueriesData();
-                    for (LdapQueryData currQueryData : partialQueries) {
-                        populateGroup(currQueryData,
-                                getAuthenticationDomain(),
-                                user.getGroups(),
-                                getLoginName(),
-                                getPassword());
-                    }
-                }
                 authResult = new UserAuthenticationResult(user);
                 setSucceeded(true);
             } else {
