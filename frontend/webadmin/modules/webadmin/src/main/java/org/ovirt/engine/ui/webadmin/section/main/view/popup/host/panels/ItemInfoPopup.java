@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterface
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -48,11 +49,12 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     }
 
     public void showItem(NetworkItemModel<?> item, NetworkItemPanel panel) {
-        contents.clear();
         if (item instanceof LogicalNetworkModel) {
             showNetwork((LogicalNetworkModel) item);
         } else if (item instanceof NetworkInterfaceModel) {
             showNic((NetworkInterfaceModel) item);
+        } else if (item instanceof NetworkLabelModel){
+            return;
         }
         showRelativeTo(panel);
     }
