@@ -140,7 +140,7 @@ MAIL_RETRIES=4
 #
 # Create @ENGINE_ETC@/notifier/notifier.conf.d/20-snmp.conf with:
 # SNMP_MANAGERS="host"
-# FILTERS="include:*(snmp:) ${FILTERS}"
+# FILTER="include:*(snmp:) ${FILTER}"
 
 # Default whitespace separated IP/DNS list with optional port, default is 162.
 # SNMP_MANAGERS=manager1.example.com manager2.example.com:164
