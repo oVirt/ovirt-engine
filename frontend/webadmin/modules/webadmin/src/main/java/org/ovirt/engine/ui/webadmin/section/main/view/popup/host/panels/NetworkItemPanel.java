@@ -69,6 +69,7 @@ public abstract class NetworkItemPanel extends FocusPanel {
             @Override
             public void onClick(ClickEvent event) {
                 actionButton.setVisible(false);
+                dragImage.setVisible(false);
                 NetworkItemPanel.this.onAction();
             }
         });
