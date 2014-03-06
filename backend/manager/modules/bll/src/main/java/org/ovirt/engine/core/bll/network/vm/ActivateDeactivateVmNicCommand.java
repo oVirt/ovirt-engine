@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -43,6 +44,8 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     private VnicProfile vnicProfile;
 
     private Network network;
+
+    private NetworkProviderProxy providerProxy;
 
     public ActivateDeactivateVmNicCommand(T parameters) {
         super(parameters);
@@ -118,30 +121,52 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     protected void executeVmCommand() {
         // HotPlug in the host is called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getStatus())) {
-            if (getNetwork() != null && getNetwork().isExternal()) {
-                handleExternalNetworks();
+            boolean externalNetworkIsPlugged = getParameters().getAction() == PlugAction.PLUG
+                    && getNetwork() != null
+                    && getNetwork().isExternal();
+            if (externalNetworkIsPlugged) {
+                plugToExternalNetwork();
             }
 
+            try {
             runVdsCommand(getParameters().getAction().getCommandType(),
                     new VmNicDeviceVDSParameters(getVdsId(),
                             getVm(),
                             getParameters().getNic(),
                             vmDevice));
+            } catch (VdcBLLException e) {
+                if (externalNetworkIsPlugged && getParameters().isNewNic()) {
+                    unplugFromExternalNetwork();
+                }
+
+                throw e;
+            }
         }
         // In any case, the device is updated
         TransactionSupport.executeInNewTransaction(updateDevice());
         setSucceeded(true);
     }
 
-    private void handleExternalNetworks() {
-        Provider<?> provider = getDbFacade().getProviderDao().get(getNetwork().getProvidedBy().getProviderId());
-        NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(provider);
+    private void plugToExternalNetwork() {
         Map<String, String> runtimeProperties =
-                providerProxy.allocate(getNetwork(), vnicProfile, getParameters().getNic());
+                getProviderProxy().allocate(getNetwork(), vnicProfile, getParameters().getNic());
 
         if (runtimeProperties != null) {
             getVm().getRuntimeDeviceCustomProperties().put(vmDevice, runtimeProperties);
         }
+    }
+
+    private void unplugFromExternalNetwork() {
+        getProviderProxy().deallocate(getParameters().getNic());
+    }
+
+    private NetworkProviderProxy getProviderProxy() {
+        if (providerProxy == null) {
+            Provider<?> provider = getDbFacade().getProviderDao().get(getNetwork().getProvidedBy().getProviderId());
+            providerProxy = ProviderProxyFactory.getInstance().create(provider);
+        }
+
+        return providerProxy;
     }
 
     private TransactionMethod<Void> updateDevice() {
