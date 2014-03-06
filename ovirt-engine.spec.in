@@ -250,6 +250,7 @@ Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	httpd
 Requires:	java
 Requires:	logrotate
+Requires:	mailcap
 Requires:	mod_ssl
 Requires:	novnc
 Requires:	openssl
