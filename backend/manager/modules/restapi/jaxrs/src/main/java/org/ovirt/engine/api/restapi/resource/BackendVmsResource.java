@@ -20,6 +20,7 @@ import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Display;
+import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Payload;
@@ -204,7 +205,8 @@ public class BackendVmsResource extends
     }
 
     public Response importVmFromConfiguration(VM vm) {
-        Configuration config = vm.getInitialization().getConfiguration();
+        Initialization initialization = vm.getInitialization();
+        Configuration config = initialization.getConfiguration();
         org.ovirt.engine.core.common.businessentities.VM vmConfiguration =
                 getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
                         VdcQueryType.GetVmFromConfiguration,
@@ -217,6 +219,9 @@ public class BackendVmsResource extends
         ImportVmParameters parameters = new ImportVmParameters();
         parameters.setVm(vmConfiguration);
         parameters.setVdsGroupId(clusterId);
+        if (initialization.isSetRegenerateIds()) {
+            parameters.setImportAsNewEntity(initialization.isRegenerateIds());
+        }
         return performCreate(VdcActionType.ImportVmFromConfiguration,
                 parameters,
                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));

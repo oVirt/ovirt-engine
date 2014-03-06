@@ -658,41 +658,84 @@ public class BackendVmsResourceTest
     }
 
     @Test
-        public void testAdd() throws Exception {
-            setUriInfo(setUpBasicUriExpectations());
-            setUpGetPayloadExpectations(1, 2);
-            setUpGetBallooningExpectations(1, 2);
-            setUpGetCertuficateExpectations(1, 2);
-            setUpGetConsoleExpectations(new int[]{1, 2});
-            setUpGetVirtioScsiExpectations(new int[]{2});
-            setUpGetVmOvfExpectations(new int[]{2});
-            setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
-                                         GetVmTemplateParameters.class,
-                                         new String[] { "Id" },
-                                         new Object[] { GUIDS[1] },
-                                         getTemplateEntity(0));
-            setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                                        IdQueryParameters.class,
-                                        new String[] { "Id" },
-                                        new Object[] { GUIDS[2] },
-                                        getVdsGroupEntity());
-            setUpCreationExpectations(VdcActionType.AddVm,
-                                      VmManagementParametersBase.class,
-                                      new String[] { "StorageDomainId" },
-                                      new Object[] { GUIDS[0] },
-                                      true,
-                                      true,
-                                      GUIDS[2],
-                                      VdcQueryType.GetVmByVmId,
-                                      IdQueryParameters.class,
-                                      new String[] { "Id" },
-                                      new Object[] { GUIDS[2] },
-                                      getEntity(2));
-            Response response = collection.add(createModel(null));
-            assertEquals(201, response.getStatus());
-            assertTrue(response.getEntity() instanceof VM);
-            verifyModel((VM) response.getEntity(), 2);
-        }
+    public void testAdd() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 2);
+        setUpGetCertuficateExpectations(1, 2);
+        setUpGetConsoleExpectations(new int[] { 1, 2 });
+        setUpGetVirtioScsiExpectations(new int[] { 2 });
+        setUpGetVmOvfExpectations(new int[] { 2 });
+        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+                GetVmTemplateParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[1] },
+                getTemplateEntity(0));
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
+        setUpCreationExpectations(VdcActionType.AddVm,
+                VmManagementParametersBase.class,
+                new String[] { "StorageDomainId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true,
+                GUIDS[2],
+                VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getEntity(2));
+        Response response = collection.add(createModel(null));
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VM);
+        verifyModel((VM) response.getEntity(), 2);
+    }
+
+    @Test
+    public void testAddFromConfigurationWithRegenerateTrue() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(1, 3);
+        setUpGetBallooningExpectations(1, 3);
+        setUpGetCertuficateExpectations(1, 3);
+        setUpGetConsoleExpectations(new int[] { 3 });
+        setUpGetVmOvfExpectations(new int[] { 3 });
+        setUpGetVirtioScsiExpectations(new int[] { 3 });
+        VM model = createModel(null);
+        org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
+        model.setInitialization(new Initialization());
+        model.getInitialization().setRegenerateIds(Boolean.TRUE);
+        model.getInitialization().setConfiguration(new Configuration());
+        model.getInitialization().getConfiguration().setData("asdasdasd");
+        model.getInitialization().getConfiguration().setType("ovf");
+        setUpGetEntityExpectations(VdcQueryType.GetVmFromConfiguration,
+                GetVmFromConfigurationQueryParameters.class,
+                new String[] { "VmConfiguration", "ConfigurationType" },
+                new Object[] { model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF },
+                returnedVM);
+        Guid newId = GUIDS[3];
+        setUpCreationExpectations(VdcActionType.ImportVmFromConfiguration,
+                ImportVmParameters.class,
+                new String[] { "Vm", "VdsGroupId", "ImportAsNewEntity" },
+                new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId()), true},
+                true,
+                true,
+                newId,
+                VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { newId },
+                getEntityWithProvidedId(2, newId));
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VM);
+        VM queriedVm = (VM) response.getEntity();
+        assertEquals(newId.toString(), queriedVm.getId());
+        queriedVm.setId(GUIDS[2].toString());
+        verifyModel((VM) response.getEntity(), 2);
+    }
 
     @Test
     public void testAddFromConfiguration() throws Exception {
@@ -716,8 +759,8 @@ public class BackendVmsResourceTest
                 returnedVM);
         setUpCreationExpectations(VdcActionType.ImportVmFromConfiguration,
                 ImportVmParameters.class,
-                new String[] { "Vm", "VdsGroupId" },
-                new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId()) },
+                new String[] { "Vm", "VdsGroupId", "ImportAsNewEntity"},
+                new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId()), false},
                 true,
                 true,
                 GUIDS[2],
@@ -1253,8 +1296,8 @@ public class BackendVmsResourceTest
     }
 
     static org.ovirt.engine.core.common.businessentities.VM setUpEntityExpectations(
-            org.ovirt.engine.core.common.businessentities.VM entity, VmStatistics statistics, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
+            org.ovirt.engine.core.common.businessentities.VM entity, VmStatistics statistics, int index, Guid vmId) {
+        expect(entity.getId()).andReturn(vmId).anyTimes();
         expect(entity.getVdsGroupId()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getVmDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
@@ -1268,6 +1311,11 @@ public class BackendVmsResourceTest
         expect(entity.getRunOnVdsName()).andReturn(NAMES[NAMES.length -1]).anyTimes();
         setUpStatisticalEntityExpectations(entity, statistics);
         return entity;
+    }
+
+    static org.ovirt.engine.core.common.businessentities.VM setUpEntityExpectations(
+            org.ovirt.engine.core.common.businessentities.VM entity, VmStatistics statistics, int index) {
+        return setUpEntityExpectations(entity, statistics, index, GUIDS[index]);
     }
 
     static org.ovirt.engine.core.common.businessentities.VmTemplate setUpEntityExpectations(
@@ -1371,6 +1419,14 @@ public class BackendVmsResourceTest
                 control.createMock(org.ovirt.engine.core.common.businessentities.VM.class),
                 control.createMock(VmStatistics.class),
                 index);
+    }
+
+    protected org.ovirt.engine.core.common.businessentities.VM getEntityWithProvidedId(int index, Guid vmId) {
+        return setUpEntityExpectations(
+                control.createMock(org.ovirt.engine.core.common.businessentities.VM.class),
+                control.createMock(VmStatistics.class),
+                index,
+                vmId);
     }
 
     protected org.ovirt.engine.core.common.businessentities.VmTemplate getTemplateEntity(int index) {
