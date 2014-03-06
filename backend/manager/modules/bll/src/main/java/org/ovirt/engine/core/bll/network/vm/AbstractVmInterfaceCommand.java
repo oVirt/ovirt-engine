@@ -29,10 +29,20 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         super(parameters);
     }
 
-    protected boolean activateOrDeactivateNic(VmNic nic, PlugAction plugAction) {
+    protected boolean activateOrDeactivateNewNic(VmNic nic, PlugAction plugAction) {
+        return activateOrDeactivateNic(nic, plugAction, true);
+    }
+
+    protected boolean activateOrDeactivateExistingNic(VmNic nic, PlugAction plugAction) {
+        return activateOrDeactivateNic(nic, plugAction, false);
+    }
+
+    private boolean activateOrDeactivateNic(VmNic nic, PlugAction plugAction, boolean newNic) {
+        ActivateDeactivateVmNicParameters parameters = new ActivateDeactivateVmNicParameters(nic, plugAction, newNic);
+        parameters.setVmId(getParameters().getVmId());
+
         VdcReturnValueBase returnValue =
-                getBackend().runInternalAction(VdcActionType.ActivateDeactivateVmNic,
-                        createActivateDeactivateParameters(nic, plugAction));
+                getBackend().runInternalAction(VdcActionType.ActivateDeactivateVmNic, parameters);
         if (!returnValue.getSucceeded()) {
             propagateFailure(returnValue);
         }
@@ -40,17 +50,9 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         return returnValue.getSucceeded();
     }
 
-
     @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
-    }
-
-    private ActivateDeactivateVmNicParameters createActivateDeactivateParameters(VmNic nic, PlugAction plugAction) {
-        ActivateDeactivateVmNicParameters parameters = new ActivateDeactivateVmNicParameters(nic, plugAction);
-        parameters.setVmId(getParameters().getVmId());
-
-        return parameters;
     }
 
     protected boolean addMacToPool(String macAddress) {

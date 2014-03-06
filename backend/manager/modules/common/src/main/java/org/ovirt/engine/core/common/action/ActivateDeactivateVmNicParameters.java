@@ -7,14 +7,16 @@ public class ActivateDeactivateVmNicParameters extends VmOperationParameterBase 
     private static final long serialVersionUID = 8972183222927384462L;
     private VmNic nic;
     private PlugAction action;
+    private boolean newNic;
 
     public ActivateDeactivateVmNicParameters() {
     }
 
-    public ActivateDeactivateVmNicParameters(VmNic nic, PlugAction action) {
+    public ActivateDeactivateVmNicParameters(VmNic nic, PlugAction action, boolean newNic) {
         super();
         this.nic = nic;
         this.action = action;
+        this.newNic = newNic;
     }
 
     public VmNic getNic() {
@@ -31,6 +33,14 @@ public class ActivateDeactivateVmNicParameters extends VmOperationParameterBase 
 
     public void setAction(PlugAction action) {
         this.action = action;
+    }
+
+    public boolean isNewNic() {
+        return newNic;
+    }
+
+    public void setNewNic(boolean newNic) {
+        this.newNic = newNic;
     }
 
 }
