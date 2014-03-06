@@ -22,8 +22,6 @@ public class UserPortalRunOnceModel extends RunOnceModel {
        setIsHostTabVisible(false);
        // disable Custom properties sheet
        setIsCustomPropertiesSheetVisible(false);
-
-       getCustomProperties().setEntity(vm.getCustomProperties());
    }
 
    @Override

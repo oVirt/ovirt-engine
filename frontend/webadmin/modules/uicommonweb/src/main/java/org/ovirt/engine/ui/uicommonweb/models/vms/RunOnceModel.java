@@ -314,18 +314,6 @@ public abstract class RunOnceModel extends Model
         this.customPropertySheet = customPropertySheet;
     }
 
-    private EntityModel privateCustomProperties;
-
-    public EntityModel getCustomProperties()
-    {
-        return privateCustomProperties;
-    }
-
-    private void setCustomProperties(EntityModel value)
-    {
-        privateCustomProperties = value;
-    }
-
     private EntityModel privateRunAndPause;
 
     public EntityModel getRunAndPause()
@@ -587,7 +575,6 @@ public abstract class RunOnceModel extends Model
         setVmInit(new VmInitModel());
 
         // Custom Properties tab
-        setCustomProperties(new EntityModel());
         setCustomPropertySheet(new KeyValueModel());
 
         setRunAndPause(new EntityModel(false));
@@ -705,7 +692,7 @@ public abstract class RunOnceModel extends Model
         params.setAcpiEnable(true);
         params.setRunAsStateless((Boolean) getRunAsStateless().getEntity());
         params.setInitializationType(getInitializationType());
-        params.setCustomProperties((String) getCustomProperties().getEntity());
+        params.setCustomProperties(getCustomPropertySheet().serialize());
 
         // kernel params
         if (getKernel_path().getEntity() != null)
