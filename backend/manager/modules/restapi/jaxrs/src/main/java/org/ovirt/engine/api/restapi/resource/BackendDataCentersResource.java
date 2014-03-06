@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -94,7 +93,7 @@ public class BackendDataCentersResource extends
     protected DataCenter deprecatedPopulate(DataCenter model, StoragePool entity) {
         IdQueryParameters parameters = new IdQueryParameters(new Guid(model.getId()));
         model.setSupportedVersions(getMapper(List.class,
-                                             SupportedVersions.class).map(getEntity(ArrayList.class,
+                                             SupportedVersions.class).map(getEntity(List.class,
                                                                                     VdcQueryType.GetAvailableStoragePoolVersions,
                                                                                     parameters,
                                                                                     model.getId()),
