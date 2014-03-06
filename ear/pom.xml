@@ -239,6 +239,13 @@
               <contextRoot>/ovirt-engine</contextRoot>
             </webModule>
 
+            <!-- ** EJB-JARs -->
+            <ejbModule>
+              <groupId>org.ovirt.engine.core</groupId>
+              <artifactId>scheduler</artifactId>
+              <bundleFileName>scheduler.jar</bundleFileName>
+            </ejbModule>
+
             <ejbModule>
               <groupId>org.ovirt.engine.core</groupId>
               <artifactId>bll</artifactId>
