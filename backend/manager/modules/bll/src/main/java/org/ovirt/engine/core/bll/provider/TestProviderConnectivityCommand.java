@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
  * @param <P>
  *            Parameter type.
  */
+@NonTransactiveCommandAttribute
 public class TestProviderConnectivityCommand<P extends ProviderParameters> extends CommandBase<P> {
 
     public TestProviderConnectivityCommand(Guid commandId) {
