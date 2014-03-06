@@ -143,7 +143,7 @@ MAIL_RETRIES=4
 # FILTER="include:*(snmp:) ${FILTER}"
 
 # Default whitespace separated IP/DNS list with optional port, default is 162.
-# SNMP_MANAGERS=manager1.example.com manager2.example.com:164
+# SNMP_MANAGERS="manager1.example.com manager2.example.com:164"
 SNMP_MANAGERS=
 
 # Default SNMP Community String.
