@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -77,10 +76,7 @@ public class BackendDomainUsersResource
     }
 
     private List<DirectoryUser> getDomainUsers() {
-        return asCollection(DirectoryUser.class,
-                getEntity(ArrayList.class,
-                        SearchType.DirectoryUser,
-                        getSearchPattern()));
+        return asCollection(DirectoryUser.class, getEntity(List.class, SearchType.DirectoryUser, getSearchPattern()));
     }
 
     private Users mapUsers(List<DirectoryUser> entities) {

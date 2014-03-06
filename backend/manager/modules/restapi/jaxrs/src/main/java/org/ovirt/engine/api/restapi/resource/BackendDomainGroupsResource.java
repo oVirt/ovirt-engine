@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -80,7 +79,7 @@ public class BackendDomainGroupsResource
     private List<DirectoryGroup> getDomainGroups() {
         return asCollection(
                 DirectoryGroup.class,
-            getEntity(ArrayList.class, SearchType.DirectoryGroup, getSearchPattern())
+            getEntity(List.class, SearchType.DirectoryGroup, getSearchPattern())
         );
     }
 
