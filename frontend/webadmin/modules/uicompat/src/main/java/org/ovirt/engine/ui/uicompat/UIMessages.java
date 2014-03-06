@@ -349,4 +349,10 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Active (Score: {0})")
     String haActive(int score);
+
+    @DefaultMessage("Network couldn''t be assigned to ''{0}'' via label ''{1}''.")
+    String networkLabelConflict(String nicName, String labelName);
+
+    @DefaultMessage("Network should be assigned to ''{0}'' via label ''{1}''. However, for some reason it isn''t.")
+    String labeledNetworkNotAttached(String nicName, String labelName);
 }

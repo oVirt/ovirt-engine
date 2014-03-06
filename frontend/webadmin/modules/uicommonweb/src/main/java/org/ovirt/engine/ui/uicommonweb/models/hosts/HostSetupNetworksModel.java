@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +54,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 /**
  * A Model for the Setup Networks Dialog<BR>
@@ -617,6 +619,8 @@ public class HostSetupNetworksModel extends EntityModel {
                     labelModel = new NetworkLabelModel(network.getLabel(), this);
                     networkLabelMap.put(network.getLabel(), labelModel);
                 }
+                // The network model is candidate to be drawn as part of the label.
+                // This doesn't yet consider whether it actually exists on the interface.
                 labelModel.getNetworks().add(networkModel);
             }
         }
@@ -629,7 +633,7 @@ public class HostSetupNetworksModel extends EntityModel {
         List<VdsNetworkInterface> physicalNics = new ArrayList<VdsNetworkInterface>();
         Map<String, List<VdsNetworkInterface>> bondToNic = new HashMap<String, List<VdsNetworkInterface>>();
         Map<String, Set<LogicalNetworkModel>> nicToNetwork = new HashMap<String, Set<LogicalNetworkModel>>();
-        Map<String, List<NetworkLabelModel>> nicToLabels = new HashMap<String, List<NetworkLabelModel>>();
+        List<LogicalNetworkModel> errorLabelNetworks = new ArrayList<LogicalNetworkModel>();
         labelToIface = new HashMap<String, String>();
 
         // map all nics
@@ -708,30 +712,6 @@ public class HostSetupNetworksModel extends EntityModel {
                     netToBeforeSyncParams.put(networkName, new NetworkParameters(nic));
                 }
             }
-
-            // does this nic have any labels?
-            Set<String> labels = nic.getLabels();
-            if (labels != null) {
-                for (String label : labels) {
-                    labelToIface.put(label, ifName);
-                    NetworkLabelModel labelModel = networkLabelMap.get(label);
-                    if (labelModel != null) {
-                        // attach label networks to nic
-                        for (LogicalNetworkModel networkModel : labelModel.getNetworks()) {
-                            nicToNetwork.get(ifName).add(networkModel);
-                            networkModel.attachViaLabel();
-                        }
-
-                        // attach label itself to nic
-                        List<NetworkLabelModel> nicLabels = nicToLabels.get(ifName);
-                        if (nicLabels == null) {
-                            nicLabels = new ArrayList<NetworkLabelModel>();
-                            nicToLabels.put(ifName, nicLabels);
-                        }
-                        nicLabels.add(labelModel);
-                    }
-                }
-            }
         }
 
         // calculate the next available bond name
@@ -748,15 +728,46 @@ public class HostSetupNetworksModel extends EntityModel {
 
         // build models
         for (VdsNetworkInterface nic : physicalNics) {
-            String nicName = nic.getName();
             // dont show bonded nics
             if (nic.getBondName() != null) {
                 continue;
             }
+
+            String nicName = nic.getName();
             Collection<LogicalNetworkModel> nicNetworks = nicToNetwork.get(nicName);
-            List<NetworkLabelModel> nicLabels = nicToLabels.get(nicName);
+            List<NetworkLabelModel> nicLabels = new ArrayList<NetworkLabelModel>();
+
+            // does this nic have any labels?
+            Set<String> labels = nic.getLabels();
+            if (labels != null) {
+                for (String label : labels) {
+                    labelToIface.put(label, nicName);
+                    NetworkLabelModel labelModel = networkLabelMap.get(label);
+                    if (labelModel != null) {
+                        // attach label networks to nic
+                        for (Iterator<LogicalNetworkModel> iter = labelModel.getNetworks().iterator(); iter.hasNext();) {
+                            LogicalNetworkModel networkModel = iter.next();
+
+                            if (nicNetworks.contains(networkModel)) {
+                                networkModel.attachViaLabel();
+                            } else {
+                                // The network has the same label as the nic but not attached to the nic.
+                                iter.remove();
+                                errorLabelNetworks.add(networkModel);
+                            }
+                        }
+
+                        // attach label itself to nic
+                        if (!labelModel.getNetworks().isEmpty()) {
+                            nicLabels.add(labelModel);
+                        }
+                    }
+                }
+            }
+
             List<VdsNetworkInterface> bondedNics = bondToNic.get(nicName);
             NetworkInterfaceModel nicModel;
+
             if (bondedNics != null) {
                 List<NetworkInterfaceModel> bondedModels = new ArrayList<NetworkInterfaceModel>();
                 for (VdsNetworkInterface bonded : bondedNics) {
@@ -771,7 +782,25 @@ public class HostSetupNetworksModel extends EntityModel {
 
             nicModels.put(nicName, nicModel);
         }
+        initLabeledNetworksErrorMessages(errorLabelNetworks, nicModels);
         setNics(nicModels);
+    }
+
+    private void initLabeledNetworksErrorMessages(List<LogicalNetworkModel> errorLabelNetworks, Map<String, NetworkInterfaceModel> nicModels){
+        for (LogicalNetworkModel networkModel : errorLabelNetworks){
+            NetworkInterfaceModel desiredNic = nicModels.get(labelToIface.get(networkModel.getEntity().getLabel()));
+            NetworkOperation operation = NetworkOperationFactory.operationFor(networkModel, desiredNic);
+            UIMessages messages = ConstantsManager.getInstance().getMessages();
+            // Should be attached but can't due to conflict
+            if (operation.isNullOperation()) {
+                networkModel.setErrorMessage(messages.networkLabelConflict(desiredNic.getName(),
+                        networkModel.getEntity().getLabel())
+                        + " " + operation.getMessage(networkModel, desiredNic)); //$NON-NLS-1$
+            } else {
+                networkModel.setErrorMessage(messages.labeledNetworkNotAttached(desiredNic.getName(),
+                        networkModel.getEntity().getLabel()));
+            }
+        }
     }
 
     private void queryLabels() {
