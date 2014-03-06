@@ -988,7 +988,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        vncKeyboardLayoutEditor = new ListModelListBoxEditor<String>(new VncKeyMapRenderer(messages));
+        vncKeyboardLayoutEditor = new ListModelListBoxEditor<String>(new VncKeyMapRenderer(messages), new ModeSwitchingVisibilityRenderer());
 
         // Host Tab
         specificHost = new RadioButton("runVmOnHostGroup"); //$NON-NLS-1$
