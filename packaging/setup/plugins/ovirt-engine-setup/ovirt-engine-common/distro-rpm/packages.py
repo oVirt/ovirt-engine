@@ -192,18 +192,12 @@ class Plugin(plugin.PluginBase):
             sink=self._getSink(),
             disabledPlugins=('versionlock',),
         )
-        with myum.transaction():
-            myum.update(
-                packages=packages,
-            )
-            if myum.buildTransaction():
-                for p in myum.queryTransaction():
-                    self.logger.debug('PACKAGE: [%s] %s' % (
-                        p['operation'],
-                        p['display_name']
-                    ))
-                    if p['operation'] in ('install', 'update'):
-                        update.append(p['name'])
+        for package in packages:
+            with myum.transaction():
+                myum.update(packages=(package,))
+                if myum.buildTransaction():
+                    if myum.queryTransaction():
+                        update.append(package)
 
         return update
 
