@@ -115,6 +115,10 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
             + "<span style='position: relative; margin-left: 3px; margin-right: 3px; white-space: nowrap; height: 14px; line-height: 14px;'>{1}</span></span>")
     SafeHtml imageTextSetupNetwork(SafeHtml image, String text);
 
+    @Template("<span><span style='position: relative; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{0}</span>"
+            + "<span style='position: relative; margin-left: 3px; margin-right: 3px; white-space: normal; height: 14px; line-height: 14px;'>{1}</span></span>")
+    SafeHtml imageTextSetupNetwork(SafeHtml image, SafeHtml text);
+
     @Template("<div style='font-weight:bold; border-bottom-style:solid; border-bottom-width:1px; border-top-style:solid; border-top-width:1px; width:100%;'>{0}</div> ")
     SafeHtml titleSetupNetworkTooltip(String title);
 
@@ -159,4 +163,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
 
     @Template("<div style='width:90%; display:inline-block; vertical-align: top;'>{0}</div>")
     SafeHtml radioButtonLabel(String text);
+
+    @Template("<div style='max-width: 250px; display:inline-block;'>{0}</div>")
+    SafeHtml maxWidthNteworkItemPopup(String text);
 }

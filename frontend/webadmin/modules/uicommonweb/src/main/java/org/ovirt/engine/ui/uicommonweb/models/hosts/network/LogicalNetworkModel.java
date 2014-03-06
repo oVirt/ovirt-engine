@@ -20,6 +20,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
     private boolean selected;
     private boolean management;
     private boolean attachedViaLabel;
+    private String errorMessage;
     private NetworkInterfaceModel attachedToNic;
     private NetworkInterfaceModel vlanNic;
 
@@ -211,6 +212,14 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
     public void attachViaLabel() {
         attachedViaLabel = true;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     public boolean isManagement() {
