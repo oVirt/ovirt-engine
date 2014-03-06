@@ -78,6 +78,12 @@
     </dependency>
 
     <!-- ** EJB-JARs -->
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>scheduler</artifactId>
+      <version>${engine.version}</version>
+      <type>ejb</type>
+    </dependency>
 
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
