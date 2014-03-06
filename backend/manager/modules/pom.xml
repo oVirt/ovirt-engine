@@ -20,6 +20,7 @@
     <module>common</module>
     <module>dal</module>
     <module>vdsbroker</module>
+    <module>scheduler</module>
     <module>searchbackend</module>
     <module>bll</module>
     <module>restapi</module>

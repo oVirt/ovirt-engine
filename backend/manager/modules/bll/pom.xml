@@ -73,6 +73,14 @@
     </dependency>
 
     <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>scheduler</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+      <type>ejb</type>
+    </dependency>
+
+    <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>keystone-client</artifactId>
       <version>${openstack-client.version}</version>

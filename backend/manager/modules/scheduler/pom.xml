@@ -7,100 +7,28 @@
     <version>3.5.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>vdsbroker</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>scheduler</artifactId>
+  <packaging>ejb</packaging>
 
-  <name>Vds broker</name>
+  <name>engine scheduler bean</name>
 
   <dependencies>
     <dependency>
       <groupId>${engine.groupId}</groupId>
-      <artifactId>compat</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>common</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
       <artifactId>utils</artifactId>
       <version>${engine.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>dal</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>scheduler</artifactId>
-      <version>${engine.version}</version>
-      <scope>provided</scope>
-      <type>ejb</type>
-    </dependency>
-
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>utils</artifactId>
-      <version>${engine.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-
-    <!--  external dependencies-->
-    <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-    </dependency>
-
-    <dependency>
-       <groupId>org.codehaus.jackson</groupId>
-       <artifactId>jackson-core-asl</artifactId>
-       <version>${jackson-core-asl.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-    </dependency>
-
+    <!-- external dependencies -->
     <dependency>
       <groupId>org.jboss.spec.javax.ejb</groupId>
       <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-      <version>${javax.ejb.api.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>javax.transaction</groupId>
-      <artifactId>jta</artifactId>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>${snakeyaml.version}</version>
-    </dependency>
-
-    <!--
-    <dependency>
-      <groupId>org.jboss.jbossas</groupId>
-      <artifactId>jboss-as-client</artifactId>
-      <version>5.1.0.CR1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.jbossas</groupId>
-      <artifactId>jbossall-client</artifactId>
-      <version>5.0.0.GA</version>
-      <scope>test</scope>
-    </dependency>
-    -->
   </dependencies>
 
   <build>
@@ -111,8 +39,21 @@
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/src/test/java</additionalClasspathElement>
           </additionalClasspathElements>
-          <argLine>-Dsun.lang.ClassLoader.allowArraySyntax=true</argLine>
-          <argLine>-Djava.endorsed.dirs='${jbossHome}/lib/endorsed'/</argLine>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-ejb-plugin</artifactId>
+        <configuration>
+          <ejbVersion>3.1</ejbVersion>
+          <generateClient>true</generateClient>
+          <archive>
+            <manifest>
+              <addClasspath>false</addClasspath>
+            </manifest>
+            <manifestEntries>
+              <Dependencies>org.slf4j</Dependencies>
+            </manifestEntries>
+          </archive>
         </configuration>
       </plugin>
     </plugins>

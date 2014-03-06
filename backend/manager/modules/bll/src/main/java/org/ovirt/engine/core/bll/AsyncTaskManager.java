@@ -60,7 +60,7 @@ public final class AsyncTaskManager {
     private boolean logChangedMap = true;
 
     /** The period of time (in minutes) to hold the asynchronous tasks' statuses in the asynchronous tasks cache **/
-    private int _cacheTimeInMinutes;
+    private final int _cacheTimeInMinutes;
 
     /**Map of tasks in DB per storage pool that exist after restart **/
     private ConcurrentMap<Guid, List<AsyncTasks>> tasksInDbAfterRestart = null;
@@ -79,9 +79,6 @@ public final class AsyncTaskManager {
     }
 
     private AsyncTaskManager() {
-    }
-
-    public void initAsyncTaskManager() {
         _tasks = new ConcurrentHashMap<Guid, SPMAsyncTask>();
 
         SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
@@ -93,8 +90,9 @@ public final class AsyncTaskManager {
                 new Object[]{}, Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
                 Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds), TimeUnit.SECONDS);
         _cacheTimeInMinutes = Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
+    }
 
-
+    public void initAsyncTaskManager() {
         tasksInDbAfterRestart = new ConcurrentHashMap();
         Map<Guid, List<AsyncTasks>> rootCommandIdToTasksMap = groupTasksByRootCommandId(DbFacade.getInstance().getAsyncTaskDao().getAll());
         int numberOfCommandsWithEmptyVdsmId = 0;

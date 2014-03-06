@@ -14,11 +14,21 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.DependsOn;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.ejb.BeanProxyType;
+import org.ovirt.engine.core.utils.ejb.BeanType;
+import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -28,6 +38,17 @@ import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 
+// Here we use a Singleton bean, names Scheduler.
+// The @Startup annotation is to make sure the bean is initialized on startup.
+// @ConcurrencyManagement - we use bean managed concurrency:
+// Singletons that use bean-managed concurrency allow full concurrent access to all the
+// business and timeout methods in the singleton.
+// The developer of the singleton is responsible for ensuring that the state of the singleton is synchronized across all clients.
+@Singleton(name = "Scheduler")
+@DependsOn("LockManager")
+@Startup
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class SchedulerUtilQuartzImpl implements SchedulerUtil {
 
     // consts
@@ -45,7 +66,6 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
     private Scheduler sched;
 
     private final AtomicLong sequenceNumber = new AtomicLong(Long.MIN_VALUE);
-    private static volatile SchedulerUtil instance = null;
 
     /**
      * This method is called upon the bean creation as part
@@ -87,14 +107,7 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
      * @return a SchedulerUtil instance
      */
     public static SchedulerUtil getInstance() {
-        if (instance == null) {
-            synchronized (SchedulerUtil.class) {
-                if (instance == null) {
-                    instance = new SchedulerUtilQuartzImpl();
-                }
-            }
-        }
-        return instance;
+        return EjbUtils.findBean(BeanType.SCHEDULER, BeanProxyType.LOCAL);
     }
 
     /**

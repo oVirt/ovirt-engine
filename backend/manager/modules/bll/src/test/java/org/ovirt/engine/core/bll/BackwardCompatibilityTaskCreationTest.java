@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.sql.Connection;
 import java.util.Collections;
@@ -37,14 +38,18 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dao.AsyncTaskDAO;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
+import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
+import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 
 /**
  * A test for task creation in the various commands.
@@ -57,7 +62,14 @@ public class BackwardCompatibilityTaskCreationTest {
     public static final RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @ClassRule
-    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
+    public static final MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.AsyncTaskPollingRate, 10),
+            mockConfig(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds, 10),
+            mockConfig(ConfigValues.AsyncTaskStatusCachingTimeInMinutes, 10)
+            );
+
+    @ClassRule
+    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.SCHEDULER, mock(SchedulerUtil.class));
 
     @BeforeClass
     public static void beforeClass() {
