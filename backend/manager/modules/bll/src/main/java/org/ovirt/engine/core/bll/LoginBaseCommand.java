@@ -160,6 +160,21 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         }
         PasswordAuthenticator passwordAuthenticator = (PasswordAuthenticator) authenticator;
 
+        DbUser curUser = null;
+        String curPassword = null;
+        SessionDataContainer sessionDataContainer = SessionDataContainer.getInstance();
+        if (StringUtils.isEmpty(getParameters().getSessionId())) {
+            curUser = sessionDataContainer.getUser(false);
+            curPassword = sessionDataContainer.getPassword();
+        } else {
+            curUser = sessionDataContainer.getUser(getParameters().getSessionId(), false);
+            curPassword = sessionDataContainer.getPassword(getParameters().getSessionId());
+        }
+        // verify that in auto login mode , user is not taken from session.
+        if (curUser != null && !StringUtils.isEmpty(curPassword)) {
+            loginName = curUser.getLoginName();
+            password = curPassword;
+        }
         // Perform the actual authentication:
         try {
             passwordAuthenticator.authenticate(loginName, password);

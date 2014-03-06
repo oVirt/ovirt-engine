@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.api.extensions.AAAExtensionException.AAAExtensionError;
@@ -75,32 +73,19 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     }
 
     protected void initCredentials(String domain) {
-        DbUser curUser;
-        String curPassword;
-        SessionDataContainer sessionDataContainer = SessionDataContainer.getInstance();
-        if (StringUtils.isEmpty(getParameters().getSessionId())) {
-            curUser = sessionDataContainer.getUser(false);
-            curPassword = sessionDataContainer.getPassword();
-        } else {
-            curUser = sessionDataContainer.getUser(getParameters().getSessionId(), false);
-            curPassword = sessionDataContainer.getPassword(getParameters().getSessionId());
-        }
-        // verify that in auto login mode , user is not taken from session.
-        if (curUser != null && !StringUtils.isEmpty(curPassword)) {
-            setLoginName(curUser.getLoginName());
-            setPassword(curPassword);
-            setAuthenticationDomain(curUser.getDomain());
-        } else {
-            Domain domainObject = UsersDomainsCacheManagerService.getInstance().getDomain(domain);
-            if (domainObject != null) {
-                setLoginName(domainObject.getUserName());
-                setPassword(domainObject.getPassword());
-                if (getLoginName().contains("@")) {
-                    String userDomain = getLoginName().split("@")[1].toLowerCase();
-                    setAuthenticationDomain(userDomain);
-                } else {
-                    setAuthenticationDomain(domain);
-                }
+        setUserDomainCredentials(domain);
+    }
+
+    protected void setUserDomainCredentials(String domain) {
+        Domain domainObject = UsersDomainsCacheManagerService.getInstance().getDomain(domain);
+        if (domainObject != null) {
+            setLoginName(domainObject.getUserName());
+            setPassword(domainObject.getPassword());
+            if (getLoginName().contains("@")) {
+                String userDomain = getLoginName().split("@")[1].toLowerCase();
+                setAuthenticationDomain(userDomain);
+            } else {
+                setAuthenticationDomain(domain);
             }
         }
     }

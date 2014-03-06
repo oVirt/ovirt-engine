@@ -15,6 +15,10 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
         super(parameters);
     }
 
+    protected void initCredentials(String domain) {
+
+    }
+
     @Override
     protected void executeQuery(DirectorySearcher directorySearcher) {
         log.debug("Executing LdapAuthenticateUserCommand");
