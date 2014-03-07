@@ -239,4 +239,43 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.ImportGlanceImageAsTemplate, version);
     }
 
+   /**
+     * @param version
+     * Checks if migration is supported by the given CPU architecture
+     *
+     * @param architecture
+     *            The CPU architecture
+     * @param version
+     *            Compatibility version to check for.
+     * @return
+     */
+    public static boolean isMigrationSupported(ArchitectureType architecture, Version version) {
+        return supportedInConfig(ConfigValues.IsMigrationSupported, version, architecture);
+    }
+
+    /**
+     * Checks if memory snapshot is supported by architecture
+     *
+     * @param architecture
+     *            The CPU architecture
+     * @param version
+     *            Compatibility version to check for.
+     * @return
+     */
+    public static boolean isMemorySnapshotSupportedByArchitecture(ArchitectureType architecture, Version version) {
+        return supportedInConfig(ConfigValues.IsMemorySnapshotSupported, version, architecture);
+    }
+
+    /**
+     * Checks if suspend is supported by architecture
+     *
+     * @param architecture
+     *            The CPU architecture
+     * @param version
+     *            Compatibility version to check for.
+     * @return
+     */
+    public static boolean isSuspendSupportedByArchitecture(ArchitectureType architecture, Version version) {
+        return supportedInConfig(ConfigValues.IsSuspendSupported, version, architecture);
+    }
 }

@@ -292,6 +292,7 @@ public enum VdcQueryType implements Serializable {
 
     GetDefaultConfigurationVersion(VdcQueryAuthType.User),
     OsRepository(VdcQueryAuthType.User),
+    GetArchitectureCapabilities(VdcQueryAuthType.User),
 
     // Providers
     GetAllProviders,

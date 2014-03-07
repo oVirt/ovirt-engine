@@ -80,6 +80,8 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters;
+import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters.ArchCapabilitiesVerb;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAgentFenceOptionsQueryParameters;
@@ -204,6 +206,15 @@ public final class AsyncDataProvider {
     // cached os's support for display types (given compatibility version)
     private static HashMap<Integer, Map<Version, List<DisplayType>>> displayTypes;
 
+    // cached architecture support for live migration
+    private static Map<ArchitectureType, Map<Version, Boolean>> migrationSupport;
+
+    // cached architecture support for memory snapshot
+    private static Map<ArchitectureType, Map<Version, Boolean>> memorySnapshotSupport;
+
+    // cached architecture support for VM suspend
+    private static Map<ArchitectureType, Map<Version, Boolean>> suspendSupport;
+
     public static String getDefaultConfigurationVersion() {
         return _defaultConfigurationVersion;
     }
@@ -245,6 +256,9 @@ public final class AsyncDataProvider {
         initDiskHotpluggableInterfacesMap();
         initOsArchitecture();
         initDefaultOSes();
+        initMigrationSupportMap();
+        initMemorySnapshotSupportMap();
+        initSuspendSupportMap();
     }
 
     public static void initDefaultOSes() {
@@ -258,6 +272,57 @@ public final class AsyncDataProvider {
         };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
                 OsRepositoryVerb.GetDefaultOSes), callback);
+    }
+
+    public static Boolean isMigrationSupported(ArchitectureType architecture, Version version) {
+        return migrationSupport.get(architecture).get(version);
+    }
+
+    public static Boolean isMemorySnapshotSupportedByArchitecture(ArchitectureType architecture, Version version) {
+        return memorySnapshotSupport.get(architecture).get(version);
+    }
+
+    public static Boolean isSuspendSupportedByArchitecture(ArchitectureType architecture, Version version) {
+        return suspendSupport.get(architecture).get(version);
+    }
+
+    private static void initMigrationSupportMap() {
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                migrationSupport = ((VdcQueryReturnValue) returnValue).getReturnValue();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetArchitectureCapabilities,
+                new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMigrationSupport),
+                callback);
+    }
+
+    private static void initMemorySnapshotSupportMap() {
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                memorySnapshotSupport = ((VdcQueryReturnValue) returnValue).getReturnValue();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetArchitectureCapabilities,
+                new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMemorySnapshotSupport),
+                callback);
+    }
+
+    private static void initSuspendSupportMap() {
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                suspendSupport = ((VdcQueryReturnValue) returnValue).getReturnValue();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetArchitectureCapabilities,
+                new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetSuspendSupport),
+                callback);
     }
 
     public static void initNicHotplugSupportMap() {

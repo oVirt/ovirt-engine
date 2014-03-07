@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.api.model.ArchitectureCapabilities;
+import org.ovirt.engine.api.model.ArchitectureCapability;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.BootDevices;
 import org.ovirt.engine.api.model.BootProtocol;
@@ -119,6 +121,8 @@ import org.ovirt.engine.api.restapi.util.VersionHelper;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.VersionUtils;
 import org.ovirt.engine.api.utils.LinkHelper;
+import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
@@ -248,6 +252,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addConfigurationTypes(version, ConfigurationType.values());
         addSnapshotStatuses(version, SnapshotStatus.values());
         addPayloadEncodings(version, PayloadEncoding.values());
+        addArchitectureCapabilities(version);
 
         // External tasks types
         addStepEnumTypes(version, StepEnum.values());
@@ -264,6 +269,49 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         LinkHelper.<VersionCaps>addLinks(getUriInfo(), version);
 
         return version;
+    }
+
+    private void addArchitectureCapabilities(VersionCaps version) {
+        org.ovirt.engine.core.compat.Version backendVersion =
+                new org.ovirt.engine.core.compat.Version(version.getMajor(), version.getMinor());
+
+        version.setArchitectureCapabilities(new ArchitectureCapabilities());
+
+        ArchitectureCapability migrationFeature = new ArchitectureCapability();
+
+        migrationFeature.setName("migration");
+
+        for (ArchitectureType arch : ArchitectureType.values()) {
+            if (FeatureSupported.isMigrationSupported(arch, backendVersion)) {
+                migrationFeature.getArchitectures().add(arch.name());
+            }
+        }
+
+        version.getArchitectureCapabilities().getCapabilities().add(migrationFeature);
+
+        ArchitectureCapability memorySnapshotFeature = new ArchitectureCapability();
+
+        memorySnapshotFeature.setName("memory snapshot");
+
+        for (ArchitectureType arch : ArchitectureType.values()) {
+            if (FeatureSupported.isMemorySnapshotSupportedByArchitecture(arch, backendVersion)) {
+                memorySnapshotFeature.getArchitectures().add(arch.name());
+            }
+        }
+
+        version.getArchitectureCapabilities().getCapabilities().add(memorySnapshotFeature);
+
+        ArchitectureCapability suspendFeature = new ArchitectureCapability();
+
+        suspendFeature.setName("suspend");
+
+        for (ArchitectureType arch : ArchitectureType.values()) {
+            if (FeatureSupported.isSuspendSupportedByArchitecture(arch, backendVersion)) {
+                suspendFeature.getArchitectures().add(arch.name());
+            }
+        }
+
+        version.getArchitectureCapabilities().getCapabilities().add(suspendFeature);
     }
 
     private void addSnapshotStatuses(VersionCaps version, SnapshotStatus[] values) {

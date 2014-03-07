@@ -164,6 +164,16 @@ select fn_db_add_config_value('HotPlugCpuEnabled','{\"x86_64\":\"false\",\"ppc64
 select fn_db_add_config_value('HotPlugCpuEnabled','{\"x86_64\":\"false\",\"ppc64\":\"false\"}','3.2');
 select fn_db_add_config_value('HotPlugCpuEnabled','{\"x86_64\":\"false\",\"ppc64\":\"false\"}','3.3');
 select fn_db_add_config_value('HotPlugCpuEnabled','{\"x86_64\":\"true\",\"ppc64\":\"false\"}','3.4');
+
+-- migration support per architecture
+select fn_db_add_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "false" }','general');
+
+-- snapshot support per architecture
+select fn_db_add_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "false" }','general');
+
+-- suspend support per architecture
+select fn_db_add_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "false" }','general');
+
 select fn_db_add_config_value('MigrationSupportForNativeUsb','false','3.0');
 select fn_db_add_config_value('MigrationSupportForNativeUsb','false','3.1');
 select fn_db_add_config_value('NetworkLinkingSupported','false','3.0');
