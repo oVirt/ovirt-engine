@@ -1307,6 +1307,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Approve")
     String approveHost();
 
+    @DefaultStringValue("Reinstall")
+    String reinstallHost();
+
     @DefaultStringValue("Configure Local Storage")
     String configureLocalStorageHost();
 

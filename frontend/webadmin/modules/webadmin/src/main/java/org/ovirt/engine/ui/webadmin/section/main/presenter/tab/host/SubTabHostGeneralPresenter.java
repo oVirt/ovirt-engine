@@ -125,12 +125,6 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
         if (model.getHasReinstallAlertNonResponsive()) {
             addTextAlert(view, messages.hostHasReinstallAlertNonResponsive());
         }
-        if (model.getHasReinstallAlertInstallFailed()) {
-            addTextAndLinkAlert(view, messages.hostHasReinstallAlertInstallFailed(), model.getInstallCommand());
-        }
-        if (model.getHasReinstallAlertMaintenance()) {
-            addTextAndLinkAlert(view, messages.hostHasReinstallAlertMaintenance(), model.getInstallCommand());
-        }
         if (model.getHasNICsAlert()) {
             addTextAndLinkAlert(view, messages.hostHasNICsAlert(), model.getSaveNICsConfigCommand());
         }

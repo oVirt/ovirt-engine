@@ -2,21 +2,14 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
-import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
-import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.RpmVersionUtils;
@@ -25,7 +18,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -34,9 +26,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -84,18 +74,6 @@ public class HostGeneralModel extends EntityModel
     private void setSaveNICsConfigCommand(UICommand value)
     {
         privateSaveNICsConfigCommand = value;
-    }
-
-    private UICommand privateInstallCommand;
-
-    public UICommand getInstallCommand()
-    {
-        return privateInstallCommand;
-    }
-
-    private void setInstallCommand(UICommand value)
-    {
-        privateInstallCommand = value;
     }
 
     private UICommand privateEditHostCommand;
@@ -891,7 +869,6 @@ public class HostGeneralModel extends EntityModel
         setHashName("general"); //$NON-NLS-1$
 
         setSaveNICsConfigCommand(new UICommand("SaveNICsConfig", this)); //$NON-NLS-1$
-        setInstallCommand(new UICommand("Install", this)); //$NON-NLS-1$
         setEditHostCommand(new UICommand("EditHost", this)); //$NON-NLS-1$
         setGoToEventsCommand(new UICommand("GoToEvents", this)); //$NON-NLS-1$
     }
@@ -909,148 +886,10 @@ public class HostGeneralModel extends EntityModel
                 null);
     }
 
-    public void install() {
-
-        if (getWindow() != null) {
-            return;
-        }
-
-        InstallModel model = new InstallModel();
-        model.setVds(getEntity());
-        setWindow(model);
-        model.setTitle(constants.installHostTitle());
-        model.setHelpTag(HelpTag.install_host);
-        model.setHashName("install_host"); //$NON-NLS-1$
-        model.getOVirtISO().setIsAvailable(false);
-
-        model.getOverrideIpTables().setIsAvailable(false);
-
-        model.getHostVersion().setEntity(getEntity().getHostOs());
-        model.getHostVersion().setIsAvailable(false);
-
-        getWindow().startProgress(null);
-        if (getEntity().getVdsType() == VDSType.oVirtNode) {
-            AsyncDataProvider.getoVirtISOsList(new AsyncQuery(model,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-
-                            InstallModel model = (InstallModel) target;
-
-                            ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
-                            Collections.sort(isos, new Comparator<RpmVersion>() {
-                                @Override
-                                public int compare(RpmVersion rpmV1, RpmVersion rpmV2) {
-                                    return RpmVersionUtils.compareRpmParts(rpmV2.getRpmName(), rpmV1.getRpmName());
-                                }
-                            });
-                            model.getOVirtISO().setItems(isos);
-                            model.getOVirtISO().setSelectedItem(Linq.firstOrDefault(isos));
-                            model.getOVirtISO().setIsAvailable(true);
-                            model.getOVirtISO().setIsChangable(!isos.isEmpty());
-                            model.getHostVersion().setIsAvailable(true);
-
-                            if (isos.isEmpty()) {
-                                model.setMessage(constants
-                                        .thereAreNoISOversionsVompatibleWithHostCurrentVerMsg());
-                            }
-
-                            addInstallCommands(model, isos.isEmpty());
-                            getWindow().stopProgress();
-                        }
-                    }),
-                    getEntity().getId());
-        } else {
-            model.getUserPassword().setIsAvailable(true);
-            model.getUserPassword().setIsChangable(true);
-
-            Version v3 = new Version(3, 0);
-            boolean isLessThan3 = getEntity().getVdsGroupCompatibilityVersion().compareTo(v3) < 0;
-
-            if (!isLessThan3) {
-                model.getOverrideIpTables().setIsAvailable(true);
-                model.getOverrideIpTables().setEntity(true);
-            }
-
-            addInstallCommands(model, false);
-            getWindow().stopProgress();
-        }
-    }
-
-    private void addInstallCommands(InstallModel model, boolean isOnlyClose) {
-
-        if (!isOnlyClose) {
-
-            UICommand command = new UICommand("OnInstall", this); //$NON-NLS-1$
-            command.setTitle(constants.ok());
-            command.setIsDefault(true);
-            model.getCommands().add(command);
-        }
-        model.getUserName().setEntity(getEntity().getSshUsername());
-        UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(isOnlyClose ? constants.close()
-                : constants.cancel());
-        command.setIsCancel(true);
-        model.getCommands().add(command);
-    }
-
     public void editHost()
     {
         // Let's the parent model know about request.
         getRequestEditEvent().raise(this, EventArgs.EMPTY);
-    }
-
-    public void onInstall()
-    {
-        InstallModel model = (InstallModel) getWindow();
-        final boolean isOVirt = getEntity().getVdsType() == VDSType.oVirtNode;
-
-        if (!model.validate(isOVirt))
-        {
-            return;
-        }
-
-        UpdateVdsActionParameters param = new UpdateVdsActionParameters();
-        param.setvds(getEntity());
-        param.setVdsId(getEntity().getId());
-        param.setPassword((String) model.getUserPassword().getEntity());
-        param.setIsReinstallOrUpgrade(true);
-        param.setInstallVds(true);
-        param.setoVirtIsoFile(isOVirt ? ((RpmVersion) model.getOVirtISO().getSelectedItem()).getRpmName() : null);
-        param.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
-        param.setAuthMethod(model.getAuthenticationMethod());
-
-        Provider networkProvider = (Provider) model.getNetworkProviders().getSelectedItem();
-        if (networkProvider != null) {
-            param.setProviderId(networkProvider.getId());
-            param.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
-        }
-
-        AsyncDataProvider.getClusterById(new AsyncQuery(param, new INewAsyncCallback() {
-
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                VDSGroup cluster = (VDSGroup) returnValue;
-                UpdateVdsActionParameters internalParam = (UpdateVdsActionParameters) model;
-
-                internalParam.setRebootAfterInstallation(cluster.supportsVirtService());
-                Frontend.getInstance().runAction(
-                        VdcActionType.UpdateVds,
-                        internalParam,
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult result) {
-                                VdcReturnValueBase returnValue = result.getReturnValue();
-                                if (returnValue != null && returnValue.getSucceeded()) {
-                                    cancel();
-                                }
-                            }
-                        }
-                        );
-            }
-        }), getEntity().getVdsGroupId());
-
-
     }
 
     public void cancel()
@@ -1164,7 +1003,6 @@ public class HostGeneralModel extends EntityModel
         setHasReinstallAlertInstallFailed(false);
         setHasReinstallAlertMaintenance(false);
         setHasNICsAlert(false);
-        getInstallCommand().setIsExecutionAllowed(true);
         getEditHostCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(new ArrayList<VDS>(Arrays.asList(new VDS[]{getEntity()})),
                 VDS.class,
                 VdcActionType.UpdateVds));
@@ -1195,50 +1033,6 @@ public class HostGeneralModel extends EntityModel
         else if (getEntity().getStatus() == VDSStatus.Maintenance)
         {
             setHasReinstallAlertMaintenance(true);
-        }
-
-        else if (getEntity().getVdsType() == VDSType.oVirtNode)
-        {
-            AsyncDataProvider.getoVirtISOsList(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-
-                            HostGeneralModel hostGeneralModel = (HostGeneralModel) target;
-                            ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
-                            if (isos.size() > 0)
-                            {
-                                VDS vds = hostGeneralModel.getEntity();
-                                String [] hostOsInfo = vds.getHostOs().split("-"); //$NON-NLS-1$ //$NON-NLS-2$
-                                for (int counter = 0; counter < hostOsInfo.length; counter++) {
-                                    hostOsInfo[counter] = hostOsInfo[counter].trim();
-                                }
-                                hostGeneralModel.setHasUpgradeAlert(
-                                    shouldAlertUpgrade(
-                                        isos,
-                                        hostOsInfo
-                                        )
-                                );
-
-                                boolean executionAllowed = vds.getStatus() != VDSStatus.Up
-                                    && vds.getStatus() != VDSStatus.Installing
-                                    && vds.getStatus() != VDSStatus.PreparingForMaintenance
-                                    && vds.getStatus() != VDSStatus.Reboot
-                                    && vds.getStatus() != VDSStatus.PendingApproval;
-
-                                if (!executionAllowed)
-                                {
-                                    hostGeneralModel.getInstallCommand()
-                                            .getExecuteProhibitionReasons()
-                                            .add(constants
-                                                    .switchToMaintenanceModeToEnableUpgradeReason());
-                                }
-                                hostGeneralModel.getInstallCommand().setIsExecutionAllowed(executionAllowed);
-                            }
-
-                        }
-                    }),
-                    getEntity().getId());
         }
 
         setNonOperationalReasonEntity((getEntity().getNonOperationalReason() == NonOperationalReason.NONE ? null
@@ -1283,10 +1077,6 @@ public class HostGeneralModel extends EntityModel
         {
             saveNICsConfig();
         }
-        else if (command == getInstallCommand())
-        {
-            install();
-        }
         else if (command == getEditHostCommand())
         {
             editHost();
@@ -1294,10 +1084,6 @@ public class HostGeneralModel extends EntityModel
         else if (command == getGoToEventsCommand())
         {
             goToEvents();
-        }
-        else if ("OnInstall".equals(command.getName())) //$NON-NLS-1$
-        {
-            onInstall();
         }
         else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {

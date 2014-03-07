@@ -79,7 +79,8 @@ public class HostModule extends AbstractGinModule {
             final Provider<ManualFencePopupPresenterWidget> manualFenceConfirmPopupProvider,
             final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider,
-            final Provider<ConfigureLocalStoragePopupPresenterWidget> configureLocalStoragePopupProvider) {
+            final Provider<ConfigureLocalStoragePopupPresenterWidget> configureLocalStoragePopupProvider,
+            final Provider<HostInstallPopupPresenterWidget> installPopupProvider) {
         return new MainTabModelProvider<VDS, HostListModel>(eventBus, defaultConfirmPopupProvider, HostListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostListModel source,
@@ -89,7 +90,9 @@ public class HostModule extends AbstractGinModule {
                         || lastExecutedCommand == getModel().getEditWithPMemphasisCommand()
                         || lastExecutedCommand == getModel().getApproveCommand()) {
                     return popupProvider.get();
-                } else if (lastExecutedCommand == getModel().getAssignTagsCommand()) {
+                }  else if (lastExecutedCommand == getModel().getInstallCommand()) {
+                    return installPopupProvider.get();
+                }  else if (lastExecutedCommand == getModel().getAssignTagsCommand()) {
                     return assignTagsPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getConfigureLocalStorageCommand()) {
                     return configureLocalStoragePopupProvider.get();
@@ -125,8 +128,7 @@ public class HostModule extends AbstractGinModule {
     @Provides
     @Singleton
     public DetailModelProvider<HostListModel, HostGeneralModel> getHostGeneralProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<HostInstallPopupPresenterWidget> installPopupProvider) {
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
         return new DetailTabModelProvider<HostListModel, HostGeneralModel>(
                 eventBus, defaultConfirmPopupProvider,
                 HostListModel.class,
@@ -134,11 +136,7 @@ public class HostModule extends AbstractGinModule {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostGeneralModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getInstallCommand()) {
-                    return installPopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
+                return super.getModelPopup(source, lastExecutedCommand, windowModel);
             }
         };
     }

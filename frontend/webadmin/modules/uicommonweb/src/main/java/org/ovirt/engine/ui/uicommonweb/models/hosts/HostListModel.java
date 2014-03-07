@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,7 +46,9 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -184,6 +187,18 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     private void setApproveCommand(UICommand value)
     {
         privateApproveCommand = value;
+    }
+
+    private UICommand privateInstallCommand;
+
+    public UICommand getInstallCommand()
+    {
+        return privateInstallCommand;
+    }
+
+    private void setInstallCommand(UICommand value)
+    {
+        privateInstallCommand = value;
     }
 
     private UICommand privateRestartCommand;
@@ -353,6 +368,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         setActivateCommand(new UICommand("Activate", this, true)); //$NON-NLS-1$
         setMaintenanceCommand(new UICommand("Maintenance", this, true)); //$NON-NLS-1$
         setApproveCommand(new UICommand("Approve", this)); //$NON-NLS-1$
+        setInstallCommand(new UICommand("Install", this)); //$NON-NLS-1$
         setRestartCommand(new UICommand("Restart", this, true)); //$NON-NLS-1$
         setStartCommand(new UICommand("Start", this, true)); //$NON-NLS-1$
         setStopCommand(new UICommand("Stop", this, true)); //$NON-NLS-1$
@@ -1240,6 +1256,141 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         onSave(true);
     }
 
+    public void install()
+    {
+        final VDS host = (VDS) getSelectedItem();
+        InstallModel model = new InstallModel();
+        model.setVds(host);
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().installHostTitle());
+        model.setHelpTag(HelpTag.install_host);
+        model.setHashName("install_host"); //$NON-NLS-1$
+        model.getOVirtISO().setIsAvailable(false);
+
+        model.getOverrideIpTables().setIsAvailable(false);
+
+        model.getHostVersion().setEntity(host.getHostOs());
+        model.getHostVersion().setIsAvailable(false);
+
+        getWindow().startProgress(null);
+        if (host.getVdsType() == VDSType.oVirtNode) {
+            AsyncDataProvider.getoVirtISOsList(new AsyncQuery(model,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object target, Object returnValue) {
+
+                            InstallModel model = (InstallModel) target;
+
+                            ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
+                            Collections.sort(isos, new Comparator<RpmVersion>() {
+                                @Override
+                                public int compare(RpmVersion rpmV1, RpmVersion rpmV2) {
+                                    return RpmVersionUtils.compareRpmParts(rpmV2.getRpmName(), rpmV1.getRpmName());
+                                }
+                            });
+                            model.getOVirtISO().setItems(isos);
+                            model.getOVirtISO().setSelectedItem(Linq.firstOrDefault(isos));
+                            model.getOVirtISO().setIsAvailable(true);
+                            model.getOVirtISO().setIsChangable(!isos.isEmpty());
+                            model.getHostVersion().setIsAvailable(true);
+
+                            if (isos.isEmpty()) {
+                                model.setMessage(ConstantsManager.getInstance().getConstants()
+                                        .thereAreNoISOversionsVompatibleWithHostCurrentVerMsg());
+                            }
+
+                            addInstallCommands(model, host, isos.isEmpty());
+                            getWindow().stopProgress();
+                        }
+                    }),
+                    host.getId());
+        } else {
+            model.getUserPassword().setIsAvailable(true);
+            model.getUserPassword().setIsChangable(true);
+
+            Version v3 = new Version(3, 0);
+            boolean isLessThan3 = host.getVdsGroupCompatibilityVersion().compareTo(v3) < 0;
+
+            if (!isLessThan3) {
+                model.getOverrideIpTables().setIsAvailable(true);
+                model.getOverrideIpTables().setEntity(true);
+            }
+            addInstallCommands(model, host, false);
+            getWindow().stopProgress();
+        }
+    }
+
+    private void addInstallCommands(InstallModel model, VDS host, boolean isOnlyClose) {
+
+        if (!isOnlyClose) {
+
+            UICommand command = new UICommand("OnInstall", this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            command.setIsDefault(true);
+            model.getCommands().add(command);
+        }
+        model.getUserName().setEntity(host.getSshUsername());
+        UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(isOnlyClose ? ConstantsManager.getInstance().getConstants().close()
+                : ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
+        model.getCommands().add(command);
+    }
+
+    public void onInstall()
+    {
+        final VDS host = (VDS) getSelectedItem();
+        InstallModel model = (InstallModel) getWindow();
+        final boolean isOVirt = host.getVdsType() == VDSType.oVirtNode;
+
+        if (!model.validate(isOVirt))
+        {
+            return;
+        }
+
+        UpdateVdsActionParameters param = new UpdateVdsActionParameters();
+        param.setvds(host);
+        param.setVdsId(host.getId());
+        param.setPassword((String) model.getUserPassword().getEntity());
+        param.setIsReinstallOrUpgrade(true);
+        param.setInstallVds(true);
+        param.setoVirtIsoFile(isOVirt ? ((RpmVersion) model.getOVirtISO().getSelectedItem()).getRpmName() : null);
+        param.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
+        param.setAuthMethod(model.getAuthenticationMethod());
+
+        Provider networkProvider = (Provider) model.getNetworkProviders().getSelectedItem();
+        if (networkProvider != null) {
+            param.setProviderId(networkProvider.getId());
+            param.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
+        }
+
+        AsyncDataProvider.getClusterById(new AsyncQuery(param, new INewAsyncCallback() {
+
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                VDSGroup cluster = (VDSGroup) returnValue;
+                UpdateVdsActionParameters internalParam = (UpdateVdsActionParameters) model;
+
+                internalParam.setRebootAfterInstallation(cluster.supportsVirtService());
+                Frontend.getInstance().runAction(
+                        VdcActionType.UpdateVds,
+                        internalParam,
+                        new IFrontendActionAsyncCallback() {
+                            @Override
+                            public void executed(FrontendActionAsyncResult result) {
+                                VdcReturnValueBase returnValue = result.getReturnValue();
+                                if (returnValue != null && returnValue.getSucceeded()) {
+                                    cancel();
+                                }
+                            }
+                        }
+                );
+            }
+        }), host.getVdsGroupId());
+
+
+    }
+
     public void restart()
     {
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
@@ -1655,6 +1806,15 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         getApproveCommand().setIsExecutionAllowed(approveAvailability);
         getApproveCommand().setIsAvailable(approveAvailability);
 
+        boolean installAvailability = false;
+        if (items.size() == 1 && items.get(0) instanceof VDS) {
+            VDS host = items.get(0);
+            installAvailability = host.getStatus() == VDSStatus.InstallFailed ||
+                    host.getStatus() == VDSStatus.Maintenance;
+        }
+        getInstallCommand().setIsExecutionAllowed(installAvailability);
+        getInstallCommand().setIsAvailable(installAvailability);
+
         getMaintenanceCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.MaintenanceVds));
 
@@ -1789,6 +1949,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         {
             approve();
         }
+        else if (command == getInstallCommand())
+        {
+            install();
+        }
         else if (command == getRestartCommand())
         {
             restart();
@@ -1860,6 +2024,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         else if ("OnApprove".equals(command.getName())) //$NON-NLS-1$
         {
             onApprove();
+        }
+        else if ("OnInstall".equals(command.getName())) //$NON-NLS-1$
+        {
+            onInstall();
         }
         else if ("OnRestart".equals(command.getName())) //$NON-NLS-1$
         {
