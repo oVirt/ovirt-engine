@@ -133,14 +133,18 @@ class Plugin(plugin.PluginBase):
                     "Please create database for ovirt-engine use. "
                     "Use the following commands as an example:\n"
                     "\n"
-                    "create role engine with login encrypted password 'engine'"
+                    "create role {user} with login encrypted password '{user}'"
                     ";\n"
-                    "create database engine owner engine template template0\n"
-                    "encoding 'UTF8' lc_collate 'en_US.UTF-8'\n"
-                    "lc_ctype 'en_US.UTF-8';\n"
+                    "create {database} engine owner {user}\n"
+                    " template template0\n"
+                    " encoding 'UTF8' lc_collate 'en_US.UTF-8'\n"
+                    " lc_ctype 'en_US.UTF-8';\n"
                     "\n"
                     "Make sure that database can be accessed remotely.\n"
                     "\n"
+                ).format(
+                    user=osetupcons.Defaults.DEFAULT_DB_USER,
+                    database=osetupcons.Defaults.DEFAULT_DB_DATABASE,
                 ),
             )
 
