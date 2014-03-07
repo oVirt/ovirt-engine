@@ -21,6 +21,7 @@ import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
+import org.ovirt.engine.core.utils.collections.DomainsPasswordMap;
 
 public class DBConfigUtils extends ConfigUtilsBase {
     private static final Map<String, Map<String, Object>> _vdcOptionCache = new HashMap<String, Map<String, Object>>();

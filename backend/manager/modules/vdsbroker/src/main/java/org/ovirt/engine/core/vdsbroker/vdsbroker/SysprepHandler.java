@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.config.ConfigUtil;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
-import org.ovirt.engine.core.dal.dbbroker.generic.DomainsPasswordMap;
+import org.ovirt.engine.core.utils.collections.DomainsPasswordMap;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;

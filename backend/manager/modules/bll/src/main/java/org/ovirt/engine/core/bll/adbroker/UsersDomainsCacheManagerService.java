@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
-import org.ovirt.engine.core.dal.dbbroker.generic.DomainsPasswordMap;
+import org.ovirt.engine.core.utils.collections.DomainsPasswordMap;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.ldap.LdapSRVLocator;
 import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.dal.dbbroker.generic;
+package org.ovirt.engine.core.utils.collections;
 
 import java.util.Collection;
 import java.util.Collections;
