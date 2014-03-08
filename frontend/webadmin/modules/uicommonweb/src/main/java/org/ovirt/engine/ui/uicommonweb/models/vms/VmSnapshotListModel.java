@@ -370,8 +370,6 @@ public class VmSnapshotListModel extends SearchableListModel
         VM vm = (VM) getEntity();
         if (vm != null)
         {
-            Snapshot snapshot = getPreview();
-
             Frontend.getInstance().runAction(VdcActionType.RestoreAllSnapshots,
                     new RestoreAllSnapshotsParameters(vm.getId(), SnapshotActionEnum.UNDO),
                     null,
@@ -384,8 +382,6 @@ public class VmSnapshotListModel extends SearchableListModel
         VM vm = (VM) getEntity();
         if (vm != null)
         {
-            Snapshot snapshot = getInPreview();
-
             Frontend.getInstance().runAction(VdcActionType.RestoreAllSnapshots,
                     new RestoreAllSnapshotsParameters(vm.getId(), SnapshotActionEnum.COMMIT),
                     null,
@@ -691,15 +687,6 @@ public class VmSnapshotListModel extends SearchableListModel
     public Snapshot getInPreview() {
         for (Snapshot snapshot : (ArrayList<Snapshot>) getItems()) {
             if (snapshot.getStatus() == SnapshotStatus.IN_PREVIEW) {
-                return snapshot;
-            }
-        }
-        return null;
-    }
-
-    public Snapshot getPreview() {
-        for (Snapshot snapshot : (ArrayList<Snapshot>) getItems()) {
-            if (snapshot.getType() == SnapshotType.PREVIEW) {
                 return snapshot;
             }
         }
