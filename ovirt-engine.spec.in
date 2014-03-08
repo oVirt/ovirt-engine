@@ -576,6 +576,7 @@ done << __EOF__
 %{engine_ear}/userportal.war/WEB-INF/lib/branding.jar
 %{engine_ear}/webadmin.war/WEB-INF/lib/branding.jar
 %{engine_ear}/welcome.war/WEB-INF/lib/branding.jar
+%{engine_jboss_modules}/org/ovirt/engine/api/ovirt-engine-extensions-api/main/ovirt-engine-extensions-api.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/aaa/main/aaa.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/common/main/common.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/compat/main/compat.jar
@@ -785,6 +786,7 @@ fi
 %{engine_java}/common.jar
 %{engine_java}/compat.jar
 %{engine_java}/extension-manager.jar
+%{engine_java}/ovirt-engine-extensions-api.jar
 %{engine_java}/utils.jar
 
 #

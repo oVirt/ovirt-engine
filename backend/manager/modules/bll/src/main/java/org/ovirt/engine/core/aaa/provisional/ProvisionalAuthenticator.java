@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
 import org.ovirt.engine.core.bll.adbroker.LdapUserPasswordBaseParameters;
 import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
-import org.ovirt.engine.core.extensions.mgr.Extension.ExtensionProperties;
 
 /**
  * This authenticator implementation is a bridge between the new directory interface and the existing LDAP

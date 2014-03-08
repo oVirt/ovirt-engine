@@ -15,6 +15,7 @@
   <description>parent POM for all oVirt modules</description>
 
   <modules>
+    <module>extensions-api-root</module>
     <module>compat</module>
     <module>utils</module>
     <module>common</module>
@@ -22,6 +23,8 @@
     <module>vdsbroker</module>
     <module>scheduler</module>
     <module>searchbackend</module>
+    <module>aaa</module>
+    <module>extension-manager</module>
     <module>bll</module>
     <module>restapi</module>
     <module>root</module>
@@ -29,8 +32,6 @@
     <module>services</module>
     <module>docs</module>
     <module>welcome</module>
-    <module>aaa</module>
-    <module>extension-manager</module>
   </modules>
 
   <dependencies>

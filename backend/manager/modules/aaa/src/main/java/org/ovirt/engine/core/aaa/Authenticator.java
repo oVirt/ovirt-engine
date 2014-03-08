@@ -3,7 +3,7 @@ package org.ovirt.engine.core.aaa;
 import java.util.Map;
 import java.util.Properties;
 
-import org.ovirt.engine.core.extensions.mgr.Extension;
+import org.ovirt.engine.api.extensions.Extension;
 
 /**
  * A authenticator is an object used to verify an identity.

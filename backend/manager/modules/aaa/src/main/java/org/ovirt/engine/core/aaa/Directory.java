@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.ovirt.engine.core.common.utils.ExternalId;
-import org.ovirt.engine.core.extensions.mgr.Extension;
+import org.ovirt.engine.api.extensions.Extension;
 
 /**
  * A directory is an object that manages a collection of users and groups, usually stored in an external system like an

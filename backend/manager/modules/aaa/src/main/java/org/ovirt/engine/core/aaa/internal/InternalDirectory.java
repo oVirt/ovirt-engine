@@ -10,7 +10,7 @@ import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ExternalId;
-import org.ovirt.engine.core.extensions.mgr.Extension.ExtensionProperties;
+import org.ovirt.engine.api.extensions.Extension.ExtensionProperties;
 
 /**
  * This directory contains only the internal user as specified in the {@code AdminUser} configuration parameter.

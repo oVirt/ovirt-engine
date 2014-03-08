@@ -20,7 +20,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapSearchByUserNameParameters;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.utils.ExternalId;
-import org.ovirt.engine.core.extensions.mgr.Extension.ExtensionProperties;
+import org.ovirt.engine.api.extensions.Extension.ExtensionProperties;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
