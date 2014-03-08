@@ -69,7 +69,9 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         public void eventRaised(Event ev, Object sender, EventArgs args) {
             EntityModel diskViewType = (EntityModel) sender;
             disksViewRadioGroup.setDiskStorageType((DiskStorageType) diskViewType.getEntity());
-            onDiskViewTypeChanged();
+            if (commonModel.getSelectedItem() instanceof DiskListModel) {
+                onDiskViewTypeChanged();
+            }
         }
     };
 
