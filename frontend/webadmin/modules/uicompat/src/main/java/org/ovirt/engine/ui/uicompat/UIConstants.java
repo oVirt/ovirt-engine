@@ -2214,5 +2214,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Not Active")
     String haNotActive();
+
+    @DefaultStringValue("When the VM is running, cannot activate a disk attached with IDE interface.")
+    String cannotHotPlugDiskWithIdeInterface();
 }
 
