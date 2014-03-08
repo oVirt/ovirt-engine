@@ -44,20 +44,34 @@ public class PreviewSnapshotModel extends Model {
                     ArrayList<Snapshot> snapshots = response.getReturnValue();
                     previewSnapshotModel.sortSnapshots(snapshots);
 
+                    Guid activeSnapshotId = null;
+                    Guid userSelectedSnapshotId = previewSnapshotModel.getSnapshotModel().getEntity().getId();
+
                     for (Snapshot snapshot : snapshots) {
                         SnapshotModel snapshotModel = new SnapshotModel();
                         snapshotModel.setEntity(snapshot);
                         snapshotModel.getMemory().setEntity(false);
                         snapshotModel.setDisks((ArrayList<DiskImage>) snapshot.getDiskImages());
                         snapshotModels.add(snapshotModel);
+
+                        if (snapshot.getType() == Snapshot.SnapshotType.ACTIVE) {
+                            activeSnapshotId = snapshot.getId();
+                        }
                     }
 
                     previewSnapshotModel.getSnapshots().setItems(snapshotModels);
                     updateDiskSnapshotsMap();
 
-                    // Update disk-snapshots map and select snapshot
+                    // Update disk-snapshots map
                     updateDiskSnapshotsMap();
-                    previewSnapshotModel.selectSnapshot(previewSnapshotModel.getSnapshotModel().getEntity().getId());
+
+                    // First selecting the active snapshot for ensuring default disks selection
+                    // (i.e. when some disks are missing from the selected snapshot,
+                    // the corresponding disks from the active snapshot should be selected).
+                    previewSnapshotModel.selectSnapshot(activeSnapshotId);
+
+                    // Selecting the snapshot the was selected by the user
+                    previewSnapshotModel.selectSnapshot(userSelectedSnapshotId);
                 }
             }}));
     }
