@@ -656,6 +656,11 @@ public class VmSnapshotListModel extends SearchableListModel
 
     public void updateActionAvailability()
     {
+        if (getItems() == null) {
+            // no need to update action availability
+            return;
+        }
+
         VM vm = (VM) getEntity();
         Snapshot snapshot = (Snapshot) getSelectedItem();
         List<VM> vmList = vm != null ? Collections.singletonList(vm) : Collections.<VM> emptyList();
