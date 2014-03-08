@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -39,7 +38,6 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     SimplePanel tablePanel;
 
     private final ApplicationConstants constants;
-    private final CommonModel commonModel;
     private DisksViewRadioGroup disksViewRadioGroup;
 
     @Inject
@@ -47,7 +45,6 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         super(modelProvider);
 
         this.constants = constants;
-        this.commonModel = CommonModelManager.instance();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTableColumns();
         initTableButtons();
@@ -69,7 +66,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         public void eventRaised(Event ev, Object sender, EventArgs args) {
             EntityModel diskViewType = (EntityModel) sender;
             disksViewRadioGroup.setDiskStorageType((DiskStorageType) diskViewType.getEntity());
-            if (commonModel.getSelectedItem() instanceof DiskListModel) {
+            if (CommonModelManager.instance().getSelectedItem() instanceof DiskListModel) {
                 onDiskViewTypeChanged();
             }
         }
@@ -241,8 +238,8 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         String diskTypeClause = diskTypePostfix != null ?
                 diskTypeSearchPrefix + diskTypePostfix : empty;
 
-        String inputSearchString = commonModel.getSearchString().trim();
-        String inputSearchStringPrefix = commonModel.getSearchStringPrefix().trim();
+        String inputSearchString = CommonModelManager.instance().getSearchString().trim();
+        String inputSearchStringPrefix = CommonModelManager.instance().getSearchStringPrefix().trim();
 
         if (!inputSearchString.isEmpty() && inputSearchStringPrefix.isEmpty()) {
             int indexOfColon = inputSearchString.indexOf(colon);
@@ -279,12 +276,12 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         else {
             searchString = searchConjunctionAnd + inputSearchString;
         }
-        commonModel.setSearchStringPrefix(searchStringPrefix);
-        commonModel.setSearchString(searchString);
+        CommonModelManager.instance().setSearchStringPrefix(searchStringPrefix);
+        CommonModelManager.instance().setSearchString(searchString);
 
         getTable().getSelectionModel().clear();
         getMainModel().setItems(null);
-        getMainModel().setSearchString(commonModel.getEffectiveSearchString());
+        getMainModel().setSearchString(CommonModelManager.instance().getEffectiveSearchString());
         getMainModel().search();
     }
 }
