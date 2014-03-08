@@ -51,6 +51,20 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     private final CommonApplicationMessages messages;
     private final CommonApplicationConstants constants;
 
+    private final IEventListener entityChangedEvent = new IEventListener() {
+        @Override
+        public void eventRaised(Event ev, Object sender, EventArgs args) {
+            updateMemoryColumnVisibility();
+        }
+    };
+
+    private final IEventListener selectedItemChangedEvent = new IEventListener() {
+        @Override
+        public void eventRaised(Event ev, Object sender, EventArgs args) {
+            updateSnapshotInfo();
+        }
+    };
+
     VmSnapshotInfoPanel vmSnapshotInfoPanel;
 
     public VmSnapshotListModelTable(DataBoundTabModelProvider<Snapshot, L> modelProvider,
@@ -85,18 +99,17 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
         initActionButtons(constants);
 
         // Add event listeners
-        getModel().getEntityChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                updateMemoryColumnVisibility();
-            }
-        });
-        getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                updateSnapshotInfo();
-            }
-        });
+        addModelListeners();
+    }
+
+    @Override
+    public void addModelListeners() {
+        if (!getModel().getEntityChangedEvent().getListeners().contains(entityChangedEvent)) {
+            getModel().getEntityChangedEvent().addListener(entityChangedEvent);
+        }
+        if (!getModel().getSelectedItemChangedEvent().getListeners().contains(selectedItemChangedEvent)) {
+            getModel().getSelectedItemChangedEvent().addListener(selectedItemChangedEvent);
+        }
     }
 
     private void updateSnapshotInfo() {
