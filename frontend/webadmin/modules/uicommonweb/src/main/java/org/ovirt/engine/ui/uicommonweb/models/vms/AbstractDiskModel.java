@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
@@ -656,6 +657,7 @@ public abstract class AbstractDiskModel extends DiskModel
         getIsSgIoUnfiltered().setIsAvailable(!isInternal && DiskInterface.VirtIO_SCSI.equals(diskInterface));
 
         updateReadOnlyChangeability();
+        updatePlugChangeability();
     }
 
     protected void updateReadOnlyChangeability() {
@@ -667,6 +669,21 @@ public abstract class AbstractDiskModel extends DiskModel
         }
         else {
             getIsReadOnly().setIsChangable(isEditEnabled());
+        }
+    }
+
+    private void updatePlugChangeability() {
+        DiskInterface diskInterface = (DiskInterface) getDiskInterface().getSelectedItem();
+        boolean isVmRunning = getVm() != null && getVm().getStatus() != VMStatus.Down;
+
+        if (DiskInterface.IDE.equals(diskInterface) && isVmRunning) {
+            getIsPlugged().setChangeProhibitionReason(CONSTANTS.cannotHotPlugDiskWithIdeInterface());
+            getIsPlugged().setIsChangable(false);
+            getIsPlugged().setEntity(false);
+        }
+        else {
+            getIsPlugged().setIsChangable(isEditEnabled());
+            getIsPlugged().setEntity(true);
         }
     }
 
