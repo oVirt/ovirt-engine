@@ -82,4 +82,5 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
      */
     public abstract void initTable(CommonApplicationConstants constants);
 
+    public void addModelListeners() { }
 }

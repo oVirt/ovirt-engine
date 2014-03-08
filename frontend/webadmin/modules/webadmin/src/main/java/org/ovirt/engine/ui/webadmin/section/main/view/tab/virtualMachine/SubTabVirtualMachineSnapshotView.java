@@ -41,4 +41,8 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableWidgetV
         initWidget(getModelBoundTableWidget());
     }
 
+    @Override
+    public void addModelListeners() {
+        getModelBoundTableWidget().addModelListeners();
+    }
 }

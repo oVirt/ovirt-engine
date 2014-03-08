@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
@@ -31,6 +32,9 @@ public class SubTabVirtualMachineSnapshotPresenter extends AbstractSubTabPresent
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VM> {
+
+        void addModelListeners();
+
     }
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
@@ -55,6 +59,13 @@ public class SubTabVirtualMachineSnapshotPresenter extends AbstractSubTabPresent
     @ProxyEvent
     public void onVirtualMachineSelectionChange(VirtualMachineSelectionChangeEvent event) {
         updateMainTabSelection(event.getSelectedItems());
+    }
+
+    @Override
+    public void onUiCommonInit(UiCommonInitEvent event) {
+        super.onUiCommonInit(event);
+
+        getView().addModelListeners();
     }
 
 }
