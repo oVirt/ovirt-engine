@@ -3,12 +3,14 @@ package org.ovirt.engine.core.bll.adbroker;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.api.extensions.AAAExtensionException;
+import org.ovirt.engine.api.extensions.AAAExtensionException.AAAExtensionError;
 
 public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
+
     public LdapAuthenticateUserCommand(LdapUserPasswordBaseParameters parameters) {
         super(parameters);
     }
@@ -50,7 +52,7 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
                     queryData.getLdapQueryType().name());
             setSucceeded(false);
             Exception ex = directorySearcher.getException();
-            authResult = handleDirectorySearcherException(ex);
+            handleDirectorySearcherException(ex);
         } else {
             user = populateUserData((LdapUser) searchResult, getAuthenticationDomain());
             if (user != null) {
@@ -77,29 +79,23 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
         }
 
         if (!getSucceeded()) {
-            if (authResult == null) {
-                authResult = new UserAuthenticationResult(user, VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
-            } else if (authResult.getErrorMessages().isEmpty()) {
-                authResult.getErrorMessages().add(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
-            }
+            throw new AAAExtensionException(AAAExtensionError.GENERAL_ERROR, "User failed to authenticate");
         }
         setReturnValue(authResult);
     }
 
-    private UserAuthenticationResult handleDirectorySearcherException(Exception ex) {
+    private void handleDirectorySearcherException(Exception ex) {
         UserAuthenticationResult authResult = null;
-        VdcBllMessages errorMsg = VdcBllMessages.USER_FAILED_TO_AUTHENTICATE;
+        AAAExtensionException aaaException = null;
         if (ex instanceof AuthenticationResultException) {
             AuthenticationResultException authResultException = (AuthenticationResultException) ex;
             AuthenticationResult result = authResultException.getResult();
             if (result == null) {
                 result = AuthenticationResult.OTHER;
             }
-            errorMsg = VdcBllMessages.valueOf(result.getVdcBllMessage());
             log.error(result.getDetailedMessage());
+            throw new AAAExtensionException(authResultToExceptionMap.get(result), "");
         }
-        authResult = new UserAuthenticationResult(errorMsg);
-        return authResult;
     }
 
     private String constructPrincipalName(String username, String domain) {
@@ -109,8 +105,7 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
     @Override
     protected void handleRootDSEFailure(DirectorySearcher directorySearcher) {
         Exception ex = directorySearcher.getException();
-        UserAuthenticationResult authResult = handleDirectorySearcherException(ex);
-        setReturnValue(authResult);
+        handleDirectorySearcherException(ex);
     }
 
     private static Log log = LogFactory.getLog(LdapAuthenticateUserCommand.class);

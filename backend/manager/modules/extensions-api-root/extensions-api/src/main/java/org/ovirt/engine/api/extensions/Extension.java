@@ -15,7 +15,9 @@ public interface Extension {
         VERSION,
         AUTHOR,
         HOME,
-        EXTENSION_NAME;
+        EXTENSION_NAME,
+        AAA_CHANGE_EXPIRED_PASSWORD_URL,
+        AAA_CHANGE_EXPIRED_PASSWORD_MSG;
     };
 
     /**

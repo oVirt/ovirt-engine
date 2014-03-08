@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.adbroker;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -9,16 +10,55 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.api.extensions.AAAExtensionException.AAAExtensionError;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
+
+    protected static final EnumMap<AuthenticationResult, AAAExtensionError> authResultToExceptionMap =
+            new EnumMap<>(AuthenticationResult.class);
+
+    static {
+        authResultToExceptionMap.put(AuthenticationResult.CANNOT_FIND_LDAP_SERVER_FOR_DOMAIN,
+                AAAExtensionError.SERVER_IS_NOT_AVAILABLE);
+        authResultToExceptionMap.put(AuthenticationResult.CLIENT_NOT_FOUND_IN_KERBEROS_DATABASE,
+                AAAExtensionError.INCORRECT_CREDENTIALS);
+        authResultToExceptionMap.put(AuthenticationResult.CLOCK_SKEW_TOO_GREAT,
+                AAAExtensionError.GENERAL_ERROR);
+        authResultToExceptionMap.put(AuthenticationResult.CONNECTION_ERROR,
+                AAAExtensionError.SERVER_IS_NOT_AVAILABLE);
+        authResultToExceptionMap.put(AuthenticationResult.CONNECTION_TIMED_OUT,
+                AAAExtensionError.TIMED_OUT);
+        authResultToExceptionMap.put(AuthenticationResult.DNS_COMMUNICATION_ERROR,
+                AAAExtensionError.SERVER_IS_NOT_AVAILABLE);
+        authResultToExceptionMap.put(AuthenticationResult.DNS_ERROR,
+                AAAExtensionError.SERVER_IS_NOT_AVAILABLE);
+        authResultToExceptionMap.put(AuthenticationResult.INTERNAL_KERBEROS_ERROR,
+                AAAExtensionError.GENERAL_ERROR);
+        authResultToExceptionMap.put(AuthenticationResult.INVALID_CREDENTIALS,
+                AAAExtensionError.INCORRECT_CREDENTIALS);
+        authResultToExceptionMap.put(AuthenticationResult.NO_KDCS_FOUND,
+                AAAExtensionError.SERVER_IS_NOT_AVAILABLE);
+        authResultToExceptionMap.put(AuthenticationResult.NO_USER_INFORMATION_WAS_FOUND_FOR_USER,
+                AAAExtensionError.INCORRECT_CREDENTIALS);
+        authResultToExceptionMap.put(AuthenticationResult.OTHER,
+                AAAExtensionError.GENERAL_ERROR);
+        authResultToExceptionMap.put(AuthenticationResult.PASSWORD_EXPIRED,
+                AAAExtensionError.CREDENTIALS_EXPIRED);
+        authResultToExceptionMap.put(AuthenticationResult.USER_ACCOUNT_DISABLED_OR_LOCKED,
+                AAAExtensionError.LOCKED_OR_DISABLED_ACCOUNT);
+        authResultToExceptionMap.put(AuthenticationResult.WRONG_REALM,
+                AAAExtensionError.INCORRECT_CREDENTIALS);
+    }
+
     @Override
     protected String getPROTOCOL() {
         return "LDAP://";
@@ -67,7 +107,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
 
     @Override
     public LdapReturnValueBase execute() {
-        boolean exceptionOccured = false;
+        boolean exceptionOccurred = true;
         try {
             log.debugFormat("Running LDAP command: {0}", getClass().getName());
             String loginNameForKerberos =
@@ -75,13 +115,12 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
             LdapCredentials ldapCredentials = new LdapCredentials(loginNameForKerberos, getPassword());
             DirectorySearcher directorySearcher = new DirectorySearcher(ldapCredentials);
             executeQuery(directorySearcher);
-            exceptionOccured = directorySearcher.getException() != null;
-        } catch (RuntimeException e) {
-            log.error(String.format("Failed to run command %s. Domain is %s. User is %s.",
-                    getClass().getSimpleName(), getDomain(), getLoginName()));
+            exceptionOccurred = directorySearcher.getException() != null;
         }
  finally {
-            if (exceptionOccured) {
+            if (exceptionOccurred) {
+                log.error(String.format("Failed to run command %s. Domain is %s. User is %s.",
+                        getClass().getSimpleName(), getDomain(), getLoginName()));
                 _ldapReturnValue.setExceptionString(VdcBllMessages.FAILED_TO_RUN_LDAP_QUERY.name());
                 _ldapReturnValue.setSucceeded(false);
             }

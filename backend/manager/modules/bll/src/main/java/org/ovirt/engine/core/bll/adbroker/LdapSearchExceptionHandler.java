@@ -67,9 +67,6 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
                 .setTranslatedException(new AuthenticationResultException(AuthenticationResult.USER_ACCOUNT_DISABLED_OR_LOCKED,
                         throwable))
                 .setTryNextServer(false);
-        //Account may get locked between kerberos authentication and ldap querying.
-        //The audit log infrastructure prevents double logging in case the scenario in the above line does not occur (which is in most cases)
-        LdapBrokerUtils.logEventForUser(credentials.getUserName(), AuthenticationResult.USER_ACCOUNT_DISABLED_OR_LOCKED.getAuditLogType());
     }
 
     private void handleInterruptException(LdapSearchExceptionHandlingResponse response, Throwable cause) {

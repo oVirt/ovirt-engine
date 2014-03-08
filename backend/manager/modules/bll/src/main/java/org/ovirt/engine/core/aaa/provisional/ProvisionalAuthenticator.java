@@ -1,13 +1,19 @@
 package org.ovirt.engine.core.aaa.provisional;
 
-import org.ovirt.engine.core.aaa.AuthenticationResult;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.ovirt.engine.api.extensions.AAAExtensionException;
+import org.ovirt.engine.api.extensions.AAAExtensionException.AAAExtensionError;
 import org.ovirt.engine.core.aaa.PasswordAuthenticator;
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapBroker;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
-import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
 import org.ovirt.engine.core.bll.adbroker.LdapUserPasswordBaseParameters;
-import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 
 /**
  * This authenticator implementation is a bridge between the new directory interface and the existing LDAP
@@ -20,6 +26,8 @@ public class ProvisionalAuthenticator extends PasswordAuthenticator {
      * The reference to the LDAP broker that implements the authentication.
      */
     private LdapBroker broker;
+    private static volatile Map<String, String> passwordChangeMsgPerDomain = null;
+
 
 
     public ProvisionalAuthenticator() {
@@ -34,6 +42,36 @@ public class ProvisionalAuthenticator extends PasswordAuthenticator {
         context.put(ExtensionProperties.HOME, "http://www.ovirt.org");
         context.put(ExtensionProperties.VERSION, "N/A");
 
+        if (passwordChangeMsgPerDomain == null) {
+            synchronized (ProvisionalAuthenticator.class) {
+                if (passwordChangeMsgPerDomain == null) {
+                    passwordChangeMsgPerDomain = new HashMap<>();
+                    String changePasswordUrl = Config.<String> getValue(ConfigValues.ChangePasswordMsg);
+                    String[] pairs = changePasswordUrl.split(",");
+                    for (String pair : pairs) {
+                        // Split the pair in such a way that if the URL contains :, it will not be split to strings
+                        String[] pairParts = pair.split(":", 2);
+                        if (pairParts.length >= 2) {
+                            try {
+                                passwordChangeMsgPerDomain.put(pairParts[0], URLDecoder.decode(pairParts[1], "UTF-8"));
+                            } catch (UnsupportedEncodingException e) {
+                                throw new AAAExtensionException(AAAExtensionError.INVALID_CONFIGURATION,
+                                        "error in obtaining the password change message or url for " + pairParts[0]);
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        String changePasswordMsgOrUrl = passwordChangeMsgPerDomain.get(getProfileName());
+        if (changePasswordMsgOrUrl != null) {
+            ExtensionProperties key =
+                    containsURL(changePasswordMsgOrUrl) ? ExtensionProperties.AAA_CHANGE_EXPIRED_PASSWORD_URL
+                            : ExtensionProperties.AAA_CHANGE_EXPIRED_PASSWORD_MSG;
+            context.put(key, changePasswordMsgOrUrl);
+        }
     }
 
 
@@ -42,13 +80,16 @@ public class ProvisionalAuthenticator extends PasswordAuthenticator {
      * {@inheritDoc}
      */
     @Override
-    public AuthenticationResult authenticate(String name, String password) {
-        LdapReturnValueBase ldapResult = broker.runAdAction(
+    public void authenticate(String name, String password) {
+        broker.runAdAction(
             AdActionType.AuthenticateUser,
                 new LdapUserPasswordBaseParameters(getProfileName(), name, password)
         );
-        UserAuthenticationResult authResult = (UserAuthenticationResult) ldapResult.getReturnValue();
-        return new ProvisionalAuthenticationResult(getProfileName(), authResult);
     }
+
+    private boolean containsURL(String text) {
+        return text.indexOf("http") == 0 || text.indexOf("https") == 0;
+    }
+
 
 }

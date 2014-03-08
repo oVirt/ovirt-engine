@@ -1,17 +1,20 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.api.extensions.AAAExtensionException;
+import org.ovirt.engine.api.extensions.AAAExtensionException.AAAExtensionError;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
-import org.ovirt.engine.core.aaa.AuthenticationResult;
 import org.ovirt.engine.core.aaa.Authenticator;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.DirectoryUtils;
 import org.ovirt.engine.core.aaa.PasswordAuthenticator;
+import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -28,6 +31,27 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class LoginBaseCommand<T extends LoginUserParameters> extends CommandBase<T> {
     protected static final Log log = LogFactory.getLog(LoginBaseCommand.class);
+
+    private static final EnumMap<AAAExtensionError, AuditLogType> auditLogMap = new EnumMap<>(AAAExtensionError.class);
+    private static final EnumMap<AAAExtensionError, VdcBllMessages> vdcBllMessagesMap = new EnumMap<>(AAAExtensionError.class);
+
+    static {
+        auditLogMap.put(AAAExtensionError.CREDENTIALS_EXPIRED, AuditLogType.USER_ACCOUNT_PASSWORD_EXPIRED);
+        auditLogMap.put(AAAExtensionError.GENERAL_ERROR, AuditLogType.USER_VDC_LOGIN_FAILED);
+        auditLogMap.put(AAAExtensionError.INCORRECT_CREDENTIALS, AuditLogType.AUTH_FAILED_INVALID_CREDENTIALS);
+        auditLogMap.put(AAAExtensionError.LOCKED_OR_DISABLED_ACCOUNT, AuditLogType.USER_ACCOUNT_DISABLED_OR_LOCKED);
+        auditLogMap.put(AAAExtensionError.TIMED_OUT, AuditLogType.AUTH_FAILED_CONNECTION_TIMED_OUT);
+        auditLogMap.put(AAAExtensionError.SERVER_IS_NOT_AVAILABLE, AuditLogType.AUTH_FAILED_CONNECTION_ERROR);
+
+        vdcBllMessagesMap.put(AAAExtensionError.GENERAL_ERROR, VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
+        vdcBllMessagesMap.put(AAAExtensionError.INCORRECT_CREDENTIALS,
+                VdcBllMessages.USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD);
+        vdcBllMessagesMap.put(AAAExtensionError.LOCKED_OR_DISABLED_ACCOUNT, VdcBllMessages.USER_ACCOUNT_DISABLED);
+        vdcBllMessagesMap.put(AAAExtensionError.SERVER_IS_NOT_AVAILABLE,
+                VdcBllMessages.USER_FAILED_TO_AUTHENTICATE_SERVER_IS_NOT_AVAILABLE);
+        vdcBllMessagesMap.put(AAAExtensionError.TIMED_OUT, VdcBllMessages.USER_FAILED_TO_AUTHENTICATE_TIMED_OUT);
+        vdcBllMessagesMap.put(AAAExtensionError.CREDENTIALS_EXPIRED, VdcBllMessages.USER_PASSWORD_EXPIRED);
+    }
 
     public LoginBaseCommand(T parameters) {
         super(parameters);
@@ -137,15 +161,39 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         PasswordAuthenticator passwordAuthenticator = (PasswordAuthenticator) authenticator;
 
         // Perform the actual authentication:
-        AuthenticationResult result = passwordAuthenticator.authenticate(loginName, password);
-        if (!result.isSuccessful()) {
+        try {
+            passwordAuthenticator.authenticate(loginName, password);
+        } catch (AAAExtensionException ex) {
             log.infoFormat(
-                "Can't login user \"{0}\" with authentication profile \"{1}\" because the authentication failed.",
-                loginName,
-                profileName
-            );
-            for (String msg : result.resolveMessage()) {
-                getReturnValue().getCanDoActionMessages().add(msg);
+                    "Can't login user \"{0}\" with authentication profile \"{1}\" because the authentication failed.",
+                    loginName,
+                    profileName);
+            AuditLogType auditLogType = auditLogMap.get(ex.getError());
+            //if found matching audit log type, and it's not general login failure audit log (which will be logged anyway due to CommandBase.log)
+            if (auditLogType != null && auditLogType != AuditLogType.USER_VDC_LOGIN_FAILED) {
+                LdapBrokerUtils.logEventForUser(loginName, auditLogType);
+            }
+
+            VdcBllMessages canDoActionMsg = vdcBllMessagesMap.get(ex.getError());
+
+            getReturnValue().setSucceeded(false);
+            if (canDoActionMsg == VdcBllMessages.USER_PASSWORD_EXPIRED) {
+                boolean addedUserPasswordExpiredCDA = false;
+                if (passwordAuthenticator.getChangeExpiredPasswordMsg() != null) {
+                    addCanDoActionMessage(VdcBllMessages.USER_PASSWORD_EXPIRED_CHANGE_MSG_PROVIDED);
+                    getReturnValue().getCanDoActionMessages().add(String.format("$MSG %1$s", passwordAuthenticator.getChangeExpiredPasswordMsg()));
+                    addedUserPasswordExpiredCDA = true;
+                }
+                if (passwordAuthenticator.getChangeExpiredPasswordURL() != null) {
+                    addCanDoActionMessage(VdcBllMessages.USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED);
+                    getReturnValue().getCanDoActionMessages().add(String.format("$URL %1$s", passwordAuthenticator.getChangeExpiredPasswordURL()));
+                    addedUserPasswordExpiredCDA = true;
+                }
+                if (!addedUserPasswordExpiredCDA) {
+                    addCanDoActionMessage(VdcBllMessages.USER_PASSWORD_EXPIRED);
+                }
+            } else {
+                getReturnValue().getCanDoActionMessages().add(canDoActionMsg.name());
             }
             return false;
         }

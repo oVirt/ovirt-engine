@@ -1060,6 +1060,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Login failed. Please verify your login information or contact the system administrator.")
     String USER_FAILED_TO_AUTHENTICATE();
 
+    @DefaultStringValue("Login failed. One or more servers that are needed for completion of the login process is not available.")
+    String USER_FAILED_TO_AUTHENTICATE_SERVER_IS_NOT_AVAILABLE();
+
+    @DefaultStringValue("Login failed. A timeout has occurred to one or more of the servers that participate in the login process.")
+    String USER_FAILED_TO_AUTHENTICATE_TIMED_OUT();
+
     @DefaultStringValue("Login failed. Client not found in kerberos database. Please verify your login information or contact the system administrator.")
     String USER_FAILED_TO_AUTHENTICATE_KERBEROS_ERROR();
 

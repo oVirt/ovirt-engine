@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.aaa.nop;
 
-import org.ovirt.engine.core.aaa.AuthenticationResult;
 import org.ovirt.engine.core.aaa.PasswordAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +14,10 @@ public class NopAuthenticator extends PasswordAuthenticator {
     }
 
     @Override
-    public AuthenticationResult authenticate(String name, String password) {
-        return new NopAuthenticationResult();
+    public void authenticate(String name, String password) {
     }
 
     @Override
     public void init() {
     }
-
 }
