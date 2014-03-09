@@ -24,6 +24,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
+<!-- As the exntesions-api has a parent which is not modules, and we plan to publish it on maven central we specify the version of findbugs. -->
                     <version>2.5.2</version>
                     <configuration>
                         <xmlOutput>true</xmlOutput>
@@ -43,11 +44,12 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>${findbugs.version}</version>
+<!-- As the exntesions-api has a parent which is not modules, and we plan to publish it on maven central we specify the version of findbugs. -->
+                    <version>2.5.2</version>
                     <configuration>
                         <xmlOutput>true</xmlOutput>
                         <!-- Optional directory to put findbugs xdoc xml report -->
-                        <excludeFilterFile> ${basedir}/exclude-filters.xml, ${basedir}/../../../../exclude-filters-general.xml</excludeFilterFile>
+                        <excludeFilterFile> ${basedir}/exclude-filters.xml, ${basedir}/../../../../../exclude-filters-general.xml</excludeFilterFile>
                         <xmlOutputDirectory>target/site</xmlOutputDirectory>
                     </configuration>
                 </plugin>
