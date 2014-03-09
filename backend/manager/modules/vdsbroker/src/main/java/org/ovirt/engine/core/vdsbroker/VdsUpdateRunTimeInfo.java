@@ -59,6 +59,8 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVmStatsVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
@@ -76,15 +78,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DestroyVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FullListVdsCommand;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.GetAllVmStatsVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.GetStatsVDSCommand;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.GetVmStatsVDSCommand;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.ListVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSErrorException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSProtocolException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 
@@ -908,19 +906,17 @@ public class VdsUpdateRunTimeInfo {
         if (Config.<Boolean> getValue(ConfigValues.DebugTimerLogging)) {
             log.debug("vds::refreshVmList entered");
         }
+        VDSReturnValue vdsReturnValue;
+        VDSCommandType commandType =
+                _vdsManager.getRefreshStatistics()
+                        ? VDSCommandType.GetAllVmStats
+                        : VDSCommandType.List;
+        vdsReturnValue = getResourceManager().runVdsCommand(commandType, new VdsIdAndVdsVDSCommandParametersBase(_vds));
 
-        VdsBrokerCommand<VdsIdAndVdsVDSCommandParametersBase> command;
-        if (!_vdsManager.getRefreshStatistics()) {
-            command = new ListVDSCommand<VdsIdAndVdsVDSCommandParametersBase>(
-                    new VdsIdAndVdsVDSCommandParametersBase(_vds));
-        } else {
-            command = new GetAllVmStatsVDSCommand<VdsIdAndVdsVDSCommandParametersBase>(
-                    new VdsIdAndVdsVDSCommandParametersBase(_vds));
-        }
-        _runningVms = (Map<Guid, VmInternalData>) command.executeWithReturnValue();
+        _runningVms = (Map<Guid, VmInternalData>) vdsReturnValue.getReturnValue();
 
-        if (command.getVDSReturnValue().getSucceeded()) {
-            List<VM> running = checkVmsStatusChanged();
+        if (vdsReturnValue.getSucceeded()) {
+            List<Guid> staleRunningVms = checkVmsStatusChanged();
 
             proceedWatchdogEvents();
 
@@ -933,7 +929,7 @@ public class VdsUpdateRunTimeInfo {
             processExternallyManagedVms();
             // update repository and check if there are any vm in cache that not
             // in vdsm
-            updateRepository(running);
+            updateRepository(staleRunningVms);
             // Going over all returned VMs and updting the data structures
             // accordingly
 
@@ -950,20 +946,22 @@ public class VdsUpdateRunTimeInfo {
 
             updateLunDisks();
 
-        } else if (command.getVDSReturnValue().getExceptionObject() != null) {
-            if (command.getVDSReturnValue().getExceptionObject() instanceof VDSErrorException) {
-                log.errorFormat("Failed vds listing,  vds = {0} : {1}, error = {2}", _vds.getId(),
-                        _vds.getName(), command.getVDSReturnValue().getExceptionString());
-            } else if (command.getVDSReturnValue().getExceptionObject() instanceof VDSNetworkException) {
-                _saveVdsDynamic = _vdsManager.handleNetworkException((VDSNetworkException) command.getVDSReturnValue()
-                        .getExceptionObject(), _vds);
-            } else if (command.getVDSReturnValue().getExceptionObject() instanceof VDSProtocolException) {
-                log.errorFormat("Failed vds listing,  vds = {0} : {1}, error = {2}", _vds.getId(),
-                        _vds.getName(), command.getVDSReturnValue().getExceptionString());
-            }
-            throw command.getVDSReturnValue().getExceptionObject();
         } else {
-            log.error("GetCapabilitiesVDSCommand failed with no exception!");
+            RuntimeException callException = vdsReturnValue.getExceptionObject();
+            if (callException != null) {
+                if (callException instanceof VDSErrorException) {
+                    log.errorFormat("Failed vds listing,  vds = {0} : {1}, error = {2}", _vds.getId(),
+                            _vds.getName(), vdsReturnValue.getExceptionString());
+                } else if (callException instanceof VDSNetworkException) {
+                    _saveVdsDynamic = _vdsManager.handleNetworkException((VDSNetworkException) callException, _vds);
+                } else if (callException instanceof VDSProtocolException) {
+                    log.errorFormat("Failed vds listing,  vds = {0} : {1}, error = {2}", _vds.getId(),
+                            _vds.getName(), vdsReturnValue.getExceptionString());
+                }
+                throw callException;
+            } else {
+                log.errorFormat("{0} failed with no exception!", commandType.name());
+            }
         }
     }
 
@@ -1259,8 +1257,8 @@ public class VdsUpdateRunTimeInfo {
     }
 
     // if not statistics check if status changed and add to running list
-    private List<VM> checkVmsStatusChanged() {
-        List<VM> running = new ArrayList<VM>();
+    private List<Guid> checkVmsStatusChanged() {
+        List<Guid> staleRunningVms = new ArrayList<>();
         if (!_vdsManager.getRefreshStatistics()) {
             List<VmDynamic> tempRunningList = new ArrayList<VmDynamic>();
             for (VmInternalData runningVm : _runningVms.values()) {
@@ -1272,24 +1270,22 @@ public class VdsUpdateRunTimeInfo {
                 if (vmToUpdate == null
                         || (vmToUpdate.getStatus() != runningVm.getStatus() &&
                         !(vmToUpdate.getStatus() == VMStatus.PreparingForHibernate && runningVm.getStatus() == VMStatus.Up))) {
-                    GetVmStatsVDSCommand<GetVmStatsVDSCommandParameters> command =
-                            new GetVmStatsVDSCommand<GetVmStatsVDSCommandParameters>(new GetVmStatsVDSCommandParameters(
-                                    _vds, runningVm.getId()));
-                    command.execute();
-                    if (command.getVDSReturnValue().getSucceeded()) {
-                        _runningVms.put(runningVm.getId(),
-                                (VmInternalData) command.getReturnValue());
+                    VDSReturnValue vdsReturnValue = getResourceManager().runVdsCommand(
+                            VDSCommandType.GetVmStats,
+                            new GetVmStatsVDSCommandParameters(_vds, runningVm.getId()));
+                    if (vdsReturnValue.getSucceeded()) {
+                        _runningVms.put(runningVm.getId(), (VmInternalData) vdsReturnValue.getReturnValue());
                     } else {
                         _runningVms.remove(runningVm.getId());
                     }
                 } else {
                     // status not changed move to next vm
-                    running.add(vmToUpdate);
+                    staleRunningVms.add(vmToUpdate.getId());
                     _runningVms.remove(vmToUpdate.getId());
                 }
             }
         }
-        return running;
+        return staleRunningVms;
     }
 
     private void proceedWatchdogEvents() {
@@ -1631,7 +1627,7 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    private void updateRepository(List<VM> running) {
+    private void updateRepository(List<Guid> staleRunningVms) {
         for (VmInternalData vmInternalData : _runningVms.values()) {
             VmDynamic runningVm = vmInternalData.getVmDynamic();
             VM vmToUpdate = _vmDict.get(runningVm.getId());
@@ -1722,15 +1718,15 @@ public class VdsUpdateRunTimeInfo {
                 if (vmToUpdate != null) {
                     updateVmStatistics(vmToUpdate);
                     if (_vmDict.containsKey(runningVm.getId())) {
-                        running.add(_vmDict.get(runningVm.getId()));
+                        staleRunningVms.add(runningVm.getId());
                         if (!_vdsManager.getInitialized()) {
                             ResourceManager.getInstance().RemoveVmFromDownVms(_vds.getId(), runningVm.getId());
                         }
                     }
                 }
             } else {
-                if (runningVm.getStatus() == VMStatus.MigratingTo && vmToUpdate != null) {
-                    running.add(vmToUpdate);
+                if (runningVm.getStatus() == VMStatus.MigratingTo) {
+                    staleRunningVms.add(runningVm.getId());
                 }
 
                 VmDynamic vmDynamic = getDbFacade().getVmDynamicDao().get(runningVm.getId());
@@ -1740,7 +1736,7 @@ public class VdsUpdateRunTimeInfo {
             }
         }
         // compare between vm in cache and vm from vdsm
-        removeVmsFromCache(running);
+        removeVmsFromCache(staleRunningVms);
     }
 
     private static void logVmStatusTransition(VM vmToUpdate, VmDynamic runningVm) {
@@ -1758,10 +1754,10 @@ public class VdsUpdateRunTimeInfo {
     }
 
     // del from cache all vms that not in vdsm
-    private void removeVmsFromCache(List<VM> running) {
+    private void removeVmsFromCache(List<Guid> staleRunningVms) {
         Guid vmGuid;
         for (VM vmToRemove : _vmDict.values()) {
-            if (running.contains(vmToRemove)) {
+            if (staleRunningVms.contains(vmToRemove.getId())) {
                 continue;
             }
             proceedVmBeforeDeletion(vmToRemove, null);
@@ -2162,4 +2158,7 @@ public class VdsUpdateRunTimeInfo {
         AuditLogDirector.log(auditLogable, AuditLogType.VM_STATUS_RESTORED);
     }
 
+    protected ResourceManager getResourceManager() {
+        return ResourceManager.getInstance();
+    }
 }
