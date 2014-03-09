@@ -62,12 +62,28 @@ dbfunc_common_schema_apply() {
 		echo "Creating fresh schema"
 		_dbfunc_common_schema_create
 	fi
+
+	local permissions
+	echo "Saving custom users permissions on database objects..."
+	permissions="$(_dbfunc_common_get_custom_user_permissions)" || exit $?
+
 	_dbfunc_common_schema_upgrade
+
+	echo "Applying custom users permissions on database objects..."
+	dbfunc_psql_die --command="${permissions}"
 }
 
 dbfunc_common_schema_refresh() {
+	local permissions
+
+	echo "Saving custom users permissions on database objects..."
+	permissions="$(_dbfunc_common_get_custom_user_permissions)" || exit $?
+
 	_dbfunc_common_schema_refresh_drop
 	_dbfunc_common_schema_refresh_create
+
+	echo "Applying custom users permissions on database objects..."
+	dbfunc_psql_die --command="${permissions}"
 }
 
 # gets the configuration value of the given option name and version.
@@ -270,6 +286,13 @@ _dbfunc_common_sps_refresh() {
 		dbfunc_psql_die --file="${file}" > /dev/null
 	done || exit $?
 	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
+}
+
+_dbfunc_common_get_custom_user_permissions() {
+	# Looking for permissions not related to postgres, public our ours (custom user permissions)
+	dbfunc_pg_dump_die --schema-only |
+		sed -n -e '/^grant/Ip' |
+		sed -e "/to \(public\|postgres\)\|${DBFUNC_DB_USER};/Id"
 }
 
 _dbfunc_common_run_pre_upgrade() {
