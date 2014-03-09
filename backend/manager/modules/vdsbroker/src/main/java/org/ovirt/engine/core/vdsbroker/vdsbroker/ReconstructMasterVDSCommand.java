@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.StoragePoolDomainHelper;
 import org.ovirt.engine.core.common.vdscommands.ReconstructMasterVDSCommandParameters;
+import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 
 public class ReconstructMasterVDSCommand<P extends ReconstructMasterVDSCommandParameters> extends VdsBrokerCommand<P> {
     public ReconstructMasterVDSCommand(P parameters) {
