@@ -137,7 +137,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
             VDSReturnValue retVal = setupNetworksTask.get(timeout, TimeUnit.SECONDS);
             if (retVal != null) {
                 if (!retVal.getSucceeded() && retVal.getVdsError() == null && getParameters().isCheckConnectivity()) {
-                    throw new VdcBLLException(VdcBllErrors.SETUP_NETWORK_ROLLBACK, retVal.getExceptionString());
+                    throw new VdcBLLException(VdcBllErrors.SETUP_NETWORKS_ROLLBACK, retVal.getExceptionString());
                 }
 
                 VdsHandler.handleVdsResult(retVal);

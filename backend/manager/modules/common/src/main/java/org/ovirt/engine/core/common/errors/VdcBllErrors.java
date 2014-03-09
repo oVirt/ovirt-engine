@@ -433,7 +433,7 @@ public enum VdcBllErrors {
     NETWORK_LABEL_CONFLICT(5201),
 
     // SetupNetwork errors
-    SETUP_NETWORK_ROLLBACK(5300),
+    SETUP_NETWORKS_ROLLBACK(5300),
 
     // Gluster errors
     NO_UP_SERVER_FOUND(7000),
