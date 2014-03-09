@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -37,11 +38,14 @@ public class AddNetworkParametersBuilder extends NetworkParametersBuilder {
                 throw new VdcBLLException(VdcBllErrors.LABELED_NETWORK_INTERFACE_NOT_FOUND);
             }
 
+            NetworkCluster networkCluster = getNetworkCluster(nicToConfigure, network);
             if (vlanNetwork) {
                 VdsNetworkInterface vlan = createVlanDevice(nic, network);
+                addBootProtocolForRoleNetwork(networkCluster, vlan);
                 setupNetworkParams.getInterfaces().add(vlan);
             } else if (nicToConfigure.getNetworkName() == null) {
                 nicToConfigure.setNetworkName(network.getName());
+                addBootProtocolForRoleNetwork(networkCluster, nicToConfigure);
             } else {
                 // if a network is already assigned to that nic, it cannot be configured
                 nonUpdateableHosts.add(nic.getVdsId());
