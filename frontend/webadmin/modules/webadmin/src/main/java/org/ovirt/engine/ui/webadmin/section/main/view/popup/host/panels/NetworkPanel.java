@@ -7,8 +7,10 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFact
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 
@@ -37,6 +39,7 @@ public abstract class NetworkPanel extends NetworkItemPanel {
         Image monitorImage;
         Image migrationImage;
         Image notSyncImage;
+        Image alertImage;
 
         if (!network.isManaged()) {
             monitorImage = null;
@@ -44,6 +47,7 @@ public abstract class NetworkPanel extends NetworkItemPanel {
             vmImage = null;
             migrationImage = null;
             notSyncImage = null;
+            alertImage = null;
         } else {
             monitorImage = network.getEntity().getCluster().isDisplay() ?
                     new Image(resources.networkMonitor()) : null;
@@ -52,6 +56,7 @@ public abstract class NetworkPanel extends NetworkItemPanel {
             migrationImage = network.getEntity().getCluster().isMigration() ?
                     new Image(resources.migrationNetwork()) : null;
             notSyncImage = !network.isInSync() ? new Image(resources.networkNotSyncImage()) : null;
+            alertImage = network.getErrorMessage() != null ? new Image(resources.alertImage()) : null;
 
             if (network.isManagement()) {
                 mgmtNetworkImage.setStylePrimaryName(style.networkImageBorder());
@@ -75,7 +80,7 @@ public abstract class NetworkPanel extends NetworkItemPanel {
         }
 
         Grid rowPanel = new Grid(1, 9);
-        rowPanel.setCellSpacing(3);
+        rowPanel.setCellSpacing(0);
         rowPanel.setWidth("100%"); //$NON-NLS-1$
         rowPanel.setHeight("100%"); //$NON-NLS-1$
 
@@ -86,9 +91,15 @@ public abstract class NetworkPanel extends NetworkItemPanel {
 
         rowPanel.setWidget(0, 0, dragImage);
 
+        Panel statusPanel = new HorizontalPanel();
+        rowPanel.setWidget(0, 1, statusPanel);
+        if (alertImage != null) {
+            statusPanel.add(alertImage);
+        }
+
         ImageResource statusImage = getStatusImage();
         if (statusImage != null) {
-            rowPanel.setWidget(0, 1, new Image(statusImage));
+            statusPanel.add(new Image(statusImage));
         }
         Label titleLabel = new Label(getItemTitle());
         rowPanel.setWidget(0, 2, titleLabel);

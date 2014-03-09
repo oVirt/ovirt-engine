@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkItemModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
@@ -25,7 +26,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private static final EnumRenderer<NetworkBootProtocol> RENDERER = new EnumRenderer<NetworkBootProtocol>();
     private final ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
     private final ApplicationTemplates templates = ClientGinjectorProvider.getApplicationTemplates();
-    final ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
+    private final ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
+    private final ApplicationMessages messages = ClientGinjectorProvider.getApplicationMessages();
     SafeHtml mgmtNetworkImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork())
             .getHTML());
     SafeHtml vmImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkVm()).getHTML());
@@ -38,6 +40,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.questionMarkImage()).getHTML());
     SafeHtml notInSyncImage =
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkNotSyncImage()).getHTML());
+    SafeHtml alertImage =
+            SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.alertImage()).getHTML());
 
     public ItemInfoPopup() {
         super(true);
@@ -78,6 +82,9 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             addRow(SafeHtmlUtils.fromString(constants.unmanagedNetworkDescriptionItemInfo()));
         }
         else {
+            if (networkModel.getErrorMessage() != null) {
+                addRow(templates.imageTextSetupNetwork(alertImage, templates.maxWidthNteworkItemPopup(networkModel.getErrorMessage())));
+            }
             // Description
             if (entity.getDescription() != null && !entity.getDescription().trim().equals("")) { //$NON-NLS-1$
                 addRow(SafeHtmlUtils.fromString(entity.getDescription()));

@@ -182,7 +182,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         for (LogicalNetworkModel network : allNetworks) {
             if (network.getEntity().isExternal()) {
                 dynamicNetworkPanels.add(new ExternalNetworkPanel(network, style));
-            } else if (!network.isAttached() && !network.isAttachedViaLabel()) {
+            } else if (!network.isAttached()) {
                 staticNetworkPanels.add(new InternalNetworkPanel(network, style));
             }
         }
