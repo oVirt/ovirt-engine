@@ -11,6 +11,8 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -94,10 +96,14 @@ public abstract class NetworkParametersBuilder {
      *            the network to attach
      */
     protected void configureNetwork(VdsNetworkInterface nic, List<VdsNetworkInterface> nics, Network network) {
+        NetworkCluster networkCluster = getNetworkCluster(nic, network);
         if (NetworkUtils.isVlan(network)) {
-            nics.add(createVlanDevice(nic, network));
+            VdsNetworkInterface vlan = createVlanDevice(nic, network);
+            addBootProtocolForRoleNetwork(networkCluster, vlan);
+            nics.add(vlan);
         } else if (StringUtils.isEmpty(nic.getNetworkName())) {
             nic.setNetworkName(network.getName());
+            addBootProtocolForRoleNetwork(networkCluster, nic);
         } else {
             throw new VdcBLLException(VdcBllErrors.NETWORK_LABEL_CONFLICT);
         }
@@ -144,5 +150,17 @@ public abstract class NetworkParametersBuilder {
             setupNetworkParameters.setTotal(parameters.size());
             setupNetworkParameters.setShouldBeLogged(true);
         }
+    }
+
+    protected void addBootProtocolForRoleNetwork(NetworkCluster networkCluster, VdsNetworkInterface nic) {
+        if ((networkCluster.isDisplay() || networkCluster.isMigration())
+                && (nic.getBootProtocol() == null || nic.getBootProtocol() == NetworkBootProtocol.NONE)) {
+            nic.setBootProtocol(NetworkBootProtocol.DHCP);
+        }
+    }
+
+    protected NetworkCluster getNetworkCluster(VdsNetworkInterface nic, Network network) {
+        Guid clusterId = getDbFacade().getVdsStaticDao().get(nic.getVdsId()).getVdsGroupId();
+        return getDbFacade().getNetworkClusterDao().get(new NetworkClusterId(clusterId, network.getId()));
     }
 }
