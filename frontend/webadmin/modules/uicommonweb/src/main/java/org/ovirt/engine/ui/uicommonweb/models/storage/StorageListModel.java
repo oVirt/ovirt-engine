@@ -592,16 +592,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getComment().setIsAvailable(false);
         model.getFormat().setIsAvailable(false);
 
-        ArrayList<IStorageModel> items = new ArrayList<IStorageModel>();
-        NfsStorageModel tempVar = new NfsStorageModel();
-        tempVar.setRole(StorageDomainType.ISO);
-        items.add(tempVar);
-        LocalStorageModel localIsoModel = new LocalStorageModel();
-        localIsoModel.setRole(StorageDomainType.ISO);
-        items.add(localIsoModel);
-        PosixStorageModel posixIsoModel = new PosixStorageModel();
-        posixIsoModel.setRole(StorageDomainType.ISO);
-        items.add(posixIsoModel);
+        List<IStorageModel> items = AsyncDataProvider.getIsoStorageModels();
+
         NfsStorageModel tempVar2 = new NfsStorageModel();
         tempVar2.setRole(StorageDomainType.ImportExport);
         items.add(tempVar2);
