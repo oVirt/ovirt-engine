@@ -32,6 +32,7 @@ BUILD_DEV=0
 BUILD_UT=1
 EXTRA_BUILD_FLAGS=
 BUILD_VALIDATION=1
+BUILD_ENV_VALIDATION=1
 DEV_REBUILD=1
 DEV_BUILD_GWT_DRAFT=0
 DEV_EXTRA_BUILD_FLAGS=
@@ -314,13 +315,15 @@ copy-recursive:
 
 
 validations:	generated-files
-	if [ "$(BUILD_LOCALES)" != 0 ]; then \
-		require="10240"; \
-		current="$$(ulimit -n)"; \
-		if [ "$${current}" -lt "$${require}" ]; then \
-			echo "Building locales requires more than $${require} available file descriptors, currently $${require}" >&2; \
-			echo "Refer to README.developer for further instructions" >&2; \
-			false; \
+	if [ "$(BUILD_ENV_VALIDATION)" != 0 ]; then \
+		if [ "$(BUILD_LOCALES)" != 0 ]; then \
+			require="10240"; \
+			current="$$(ulimit -n)"; \
+			if [ "$${current}" -lt "$${require}" ]; then \
+				echo "Building locales requires more than $${require} available file descriptors, currently $${require}" >&2; \
+				echo "Refer to README.developer for further instructions" >&2; \
+				false; \
+			fi; \
 		fi; \
 	fi
 	if [ "$(BUILD_VALIDATION)" != 0 ]; then \
