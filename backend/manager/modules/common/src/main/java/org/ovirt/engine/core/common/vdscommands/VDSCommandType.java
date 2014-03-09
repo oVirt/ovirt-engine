@@ -151,7 +151,9 @@ public enum VDSCommandType {
     GetGlusterVolumeRebalanceStatus("org.ovirt.engine.core.vdsbroker.gluster"),
     GetDiskAlignment("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GlusterTasksList("org.ovirt.engine.core.vdsbroker.gluster"),
-    ;
+    List("org.ovirt.engine.core.vdsbroker.vdsbroker"),           // get a list of VMs with status only
+    GetVmStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),     // get a VM with full data and statistics
+    GetAllVmStats("org.ovirt.engine.core.vdsbroker.vdsbroker");  // get a list of VMs with full data and statistics
 
     String packageName;
 
