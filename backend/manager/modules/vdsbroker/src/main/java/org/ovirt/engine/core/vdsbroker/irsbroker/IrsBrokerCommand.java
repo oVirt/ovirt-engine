@@ -78,6 +78,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.BrokerCommandBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
@@ -86,6 +87,7 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 @Logged(errorLevel = LogLevel.ERROR)
 public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> extends BrokerCommandBase<P> {
     private static Map<Guid, IrsProxyData> _irsProxyData = new ConcurrentHashMap<Guid, IrsProxyData>();
+    private static final VDSStatus reportingVdsStatus = VDSStatus.Up;
 
     /**
      * process received domain monitoring information from a given vds if necessary (according to it's status).
@@ -95,7 +97,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
      */
     public static void updateVdsDomainsData(VDS vds, Guid storagePoolId,
             ArrayList<VDSDomainsData> vdsDomainData) {
-        if (vds.getStatus() == VDSStatus.Up) {
+        if (vds.getStatus() == reportingVdsStatus) {
             IrsProxyData proxy = _irsProxyData.get(storagePoolId);
             if (proxy != null) {
                 proxy.updateVdsDomainsData(vds.getId(), vds.getName(), vdsDomainData);
@@ -188,11 +190,24 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     if (!_disposed) {
                         StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao()
                                 .get(_storagePoolId);
-                        if (storagePool != null
-                                && (storagePool.getStatus() == StoragePoolStatus.Up
-                                        || storagePool.getStatus() == StoragePoolStatus.NonResponsive || storagePool
-                                        .getStatus() == StoragePoolStatus.Contend)) {
-                            proceedStoragePoolStats(storagePool);
+
+                        if (storagePool != null) {
+                            // when there are no hosts in status up, it means that there shouldn't be domain monitoring
+                            // so all the domains need to move to "unknown" status as otherwise their status won't change.
+                            if (DbFacade.getInstance()
+                                    .getVdsDao()
+                                    .getAllForStoragePoolAndStatus(_storagePoolId, reportingVdsStatus)
+                                    .isEmpty()) {
+                                StoragePoolDomainHelper.updateApplicablePoolDomainsStatuses(_storagePoolId,
+                                        StoragePoolDomainHelper.storageDomainMonitoredStatus,
+                                        StorageDomainStatus.Unknown, "no reporting hosts");
+                            }
+
+                            if (storagePool.getStatus() == StoragePoolStatus.Up
+                                    || storagePool.getStatus() == StoragePoolStatus.NonResponsive || storagePool
+                                            .getStatus() == StoragePoolStatus.Contend) {
+                                proceedStoragePoolStats(storagePool);
+                            }
                         }
 
                     }
