@@ -1142,26 +1142,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         vmStatistics = value;
     }
 
-    private int migreatingToPort;
-
-    public int getMigreatingToPort() {
-        return migreatingToPort;
-    }
-
-    public void setMigreatingToPort(int value) {
-        migreatingToPort = value;
-    }
-
-    private int migreatingFromPort;
-
-    public int getMigreatingFromPort() {
-        return migreatingFromPort;
-    }
-
-    public void setMigreatingFromPort(int value) {
-        migreatingFromPort = value;
-    }
-
     private String runOnVdsName;
 
     public String getRunOnVdsName() {
@@ -1340,8 +1320,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((floppyPath == null) ? 0 : floppyPath.hashCode());
         result = prime * result + ((initializationType == null) ? 0 : initializationType.hashCode());
-        result = prime * result + migreatingFromPort;
-        result = prime * result + migreatingToPort;
         result = prime * result + ((privateGuestAgentVersion == null) ? 0 : privateGuestAgentVersion.hashCode());
         result = prime * result + ((runOnVdsName == null) ? 0 : runOnVdsName.hashCode());
         result = prime * result + (runOnce ? 1231 : 1237);

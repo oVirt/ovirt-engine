@@ -123,8 +123,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         boolean migrateSucceeded = connectLunDisks(getDestinationVdsId()) && migrateVm();
         if (!migrateSucceeded) {
-            getVm().setMigreatingToPort(0);
-            getVm().setMigreatingFromPort(0);
             throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_MIGRATION_FAILED_AT_DST);
         }
         ExecutionHandler.setAsyncJob(getExecutionContext(), true);
