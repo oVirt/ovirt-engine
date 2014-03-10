@@ -1074,7 +1074,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     public boolean isCloudInitUsed() {
         return getInitializationType() == InitializationType.CloudInit
-                && SimpleDependecyInjector.getInstance().get(OsRepository.class).isLinux(getVmOsId());
+                && !SimpleDependecyInjector.getInstance().get(OsRepository.class).isWindows(getVmOsId());
     }
 
     private double _actualDiskWithSnapthotsSize;
