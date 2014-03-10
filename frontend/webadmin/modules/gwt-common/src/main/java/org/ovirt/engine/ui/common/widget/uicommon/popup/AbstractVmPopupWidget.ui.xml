@@ -347,7 +347,7 @@
 
 	</ui:style>
 
-	<t:DialogTabPanel width="100%" height="100%">
+	<t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
 		<t:header>
 			<g:FlowPanel addStyleNames="{style.headerPanel}">
 				<e:ListModelTypeAheadListBoxEditor ui:field="dataCenterWithClusterEditor" />
@@ -450,9 +450,9 @@
 								<e:ListModelListBoxEditor ui:field="numOfSocketsEditor" />
 							</g:FlowPanel>
 						</g:FlowPanel>
-                        <g:Label addStyleNames="{style.sectionLabel}" text="{constants.initialRunGeneral}" />
-              <w:EntityModelWidgetWithInfo ui:field="timeZoneEditorWithInfo" />
-              <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" />
+                        	<g:Label ui:field="generalLabel" addStyleNames="{style.sectionLabel}" text="{constants.initialRunGeneral}" />
+                        	<w:EntityModelWidgetWithInfo ui:field="timeZoneEditorWithInfo" />
+                        	<vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" />
 						</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>
@@ -517,27 +517,31 @@
 			<t:DialogTab ui:field="hostTab">
 				<t:content>
 					<g:FlowPanel>
-						<d:InfoIcon ui:field="nonEditableWhileVmNotDownInfo" addStyleNames="{style.labelToCoupleCoupleLeft}"/>
-						<g:Label addStyleNames="{style.sectionLabel}" text="{constants.runOnVmPopup}" />
-						<g:VerticalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
-							<ge:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor"
-								addStyleNames="{style.radioButton}" />
-                            <g:HorizontalPanel verticalAlignment='ALIGN_MIDDLE'>
-                                <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost}" />
-                                <g:Label ui:field="specificHostLabel" text="{constants.specificVmPopup}" />
-                                <e:ListModelListBoxEditor ui:field="defaultHostEditor" addStyleNames="{style.hostSelector}"/>
-                            </g:HorizontalPanel>
-						</g:VerticalPanel>
+                        <g:FlowPanel ui:field="startRunningOnPanel">
+                            <d:InfoIcon ui:field="nonEditableWhileVmNotDownInfo" addStyleNames="{style.labelToCoupleCoupleLeft}"/>
+                            <g:Label addStyleNames="{style.sectionLabel}" text="{constants.runOnVmPopup}" />
+                            <g:VerticalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
+                                <ge:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor"
+                                    addStyleNames="{style.radioButton}" />
+                                <g:HorizontalPanel verticalAlignment='ALIGN_MIDDLE'>
+                                    <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost}" />
+                                    <g:Label ui:field="specificHostLabel" text="{constants.specificVmPopup}" />
+                                    <e:ListModelListBoxEditor ui:field="defaultHostEditor" addStyleNames="{style.hostSelector}"/>
+                                </g:HorizontalPanel>
+                            </g:VerticalPanel>
+                        </g:FlowPanel>
+
 						<g:Label addStyleNames="{style.sectionLabel}" text="{constants.runMigrationOptionsVmPopup}" />
 						<g:VerticalPanel width="100%" addStyleNames="{style.hostRunMigrationOptions}">
-							<e:ListModelListBoxEditor ui:field="migrationModeEditor" addStyleNames="{style.migrationSelect}"/>
-							<ge:EntityModelCheckBoxEditor ui:field="hostCpuEditor" addStyleNames="{style.checkbox}" />
-              <g:FlowPanel addStyleNames="{style.migrationDowntimePanel}">
-                <ge:EntityModelCheckBoxOnlyEditor ui:field="overrideMigrationDowntimeEditor" addStyleNames="{style.overrideMigrationDowntime}" />
-                <g:Label text="{constants.overrideMigrationDowntimeLabel}" addStyleNames="{style.migrationDowntimeLabel}" />
-                <d:InfoIcon ui:field="migrationDowntimeInfoIcon" addStyleNames="{style.migrationDowntimeInfoIcon}" />
-                <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="migrationDowntimeEditor" addStyleNames="{style.migrationDowntime}" />
-              </g:FlowPanel>
+							 <e:ListModelListBoxEditor ui:field="migrationModeEditor" addStyleNames="{style.migrationSelect}"/>
+							 <ge:EntityModelCheckBoxEditor ui:field="hostCpuEditor" addStyleNames="{style.checkbox}" />
+
+                             <g:FlowPanel addStyleNames="{style.migrationDowntimePanel}">
+                               <ge:EntityModelCheckBoxOnlyEditor ui:field="overrideMigrationDowntimeEditor" addStyleNames="{style.overrideMigrationDowntime}" />
+                               <g:Label text="{constants.overrideMigrationDowntimeLabel}" addStyleNames="{style.migrationDowntimeLabel}" />
+                               <d:InfoIcon ui:field="migrationDowntimeInfoIcon" addStyleNames="{style.migrationDowntimeInfoIcon}" />
+                               <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="migrationDowntimeEditor" addStyleNames="{style.migrationDowntime}" />
+                             </g:FlowPanel>
 						</g:VerticalPanel>
 					</g:FlowPanel>
 				</t:content>
@@ -554,7 +558,7 @@
 							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.priorForRunMigrationQueueVmPopup}" />
 							<e:EntityModelCellTable ui:field="priorityEditor" />
 						</g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.sectionPanel}">
+						<g:FlowPanel addStyleNames="{style.sectionPanel}" ui:field="watchdogPanel">
 							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.watchdog}" />
 							<e:ListModelListBoxEditor ui:field="watchdogModelEditor" />
 							<e:ListModelListBoxEditor ui:field="watchdogActionEditor" />
@@ -567,7 +571,7 @@
 			<t:DialogTab ui:field="resourceAllocationTab">
 				<t:content>
 					<g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.sectionPanelTight}">
+						<g:FlowPanel addStyleNames="{style.sectionPanelTight}" ui:field="cpuAllocationPanel" >
                             <g:Label addStyleNames="{style.sectionLabel}" text="{constants.cpuAllocVmPopup}"/>
 
 							<g:FlowPanel addStyleNames="{style.labelToCouple}">

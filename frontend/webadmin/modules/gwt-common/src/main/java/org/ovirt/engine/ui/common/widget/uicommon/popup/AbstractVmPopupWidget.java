@@ -372,6 +372,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path("assignedVms.entity")
     public ValueLabel<Integer> outOfxInPool;
 
+    @UiField
+    @Ignore
+    // system tab -> general time zone
+    public Label generalLabel;
+
     @Path(value = "timeZone.selectedItem")
     @WithElementId("timeZone")
     public ListModelListBoxOnlyEditor<TimeZoneModel> timeZoneEditor;
@@ -510,6 +515,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("isAutoAssign")
     public EntityModelRadioButtonEditor isAutoAssignEditor;
 
+    @UiField
+    @Ignore
+    public FlowPanel startRunningOnPanel;
+
     @UiField(provided = true)
     InfoIcon cpuPinningInfo;
 
@@ -526,6 +535,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField
     @Ignore
     public Label cpuSharesEditor;
+
+    @UiField
+    @Ignore
+    public FlowPanel cpuAllocationPanel;
 
     @UiField(provided = true)
     @Path(value = "cpuSharesAmount.entity")
@@ -546,6 +559,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Ignore
     @WithElementId("priority")
     public EntityModelCellTable<ListModel> priorityEditor;
+
+    @UiField
+    @Ignore
+    public FlowPanel watchdogPanel;
 
     @UiField(provided = true)
     @Path(value = "watchdogModel.selectedItem")
@@ -682,7 +699,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField
     @Ignore
-    ButtonBase refreshButton;
+    public ButtonBase refreshButton;
+
+    @UiField
+    @Ignore
+    public DialogTabPanel mainTabPanel;
 
     private UnitVmModel unitVmModel;
 
@@ -774,6 +795,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         }, ""); //$NON-NLS-1$
 
         driver.initialize(this);
+
+        initialize();
+    }
+
+    protected void initialize() {
+
     }
 
     protected void initSpiceProxy() {

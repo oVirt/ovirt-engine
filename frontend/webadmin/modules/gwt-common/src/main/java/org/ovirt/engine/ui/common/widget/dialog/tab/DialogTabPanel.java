@@ -99,4 +99,13 @@ public class DialogTabPanel extends Composite {
     public DialogTab getActiveTab() {
         return activeTab;
     }
+
+    public void setHeaderVisible(boolean visible) {
+        if (visible) {
+            tabHeaderContainer.getElement().getStyle().setDisplay(Display.BLOCK);
+        } else {
+            tabHeaderContainer.getElement().getStyle().setDisplay(Display.NONE);
+        }
+
+    }
 }

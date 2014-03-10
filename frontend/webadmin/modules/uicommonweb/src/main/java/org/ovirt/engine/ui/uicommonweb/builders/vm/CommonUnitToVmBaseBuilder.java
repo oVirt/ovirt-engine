@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 public class CommonUnitToVmBaseBuilder<T extends VmBase> extends CompositeBuilder<UnitVmModel, T> {
     public CommonUnitToVmBaseBuilder() {
         super(
-                new CoreUnitToVmBaseBuilder<T>(),
+                new CoreUnitToVmBaseBuilder(),
                 new QuotaUnitToVmBaseBuilder<T>()
         );
     }

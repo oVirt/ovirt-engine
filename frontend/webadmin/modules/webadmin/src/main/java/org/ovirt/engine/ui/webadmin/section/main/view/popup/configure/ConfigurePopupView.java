@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes.InstanceTypesView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyView;
 
 import com.google.gwt.core.client.GWT;
@@ -41,6 +42,9 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
     DialogTab systemPermissionsTab;
 
     @UiField
+    DialogTab instanceTypesTab;
+
+    @UiField
     SimplePanel rolesTabPanel;
 
     @UiField
@@ -49,6 +53,9 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
     @UiField
     SimplePanel systemPermissionTabPanel;
 
+    @UiField
+    SimplePanel instanceTypesTabPanel;
+
     @Inject
     public ConfigurePopupView(
             EventBus eventBus,
@@ -56,16 +63,24 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
             ApplicationConstants constants,
             RoleView roleView,
             ClusterPolicyView clusterPolicyView,
-            SystemPermissionView systemPermissionView) {
+            SystemPermissionView systemPermissionView,
+            InstanceTypesView instanceTypesView
+            ) {
         super(eventBus, resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
+
         roleView.setWidth("100%"); //$NON-NLS-1$
         rolesTabPanel.add(roleView);
+
         clusterPolicyView.setWidth("100%"); //$NON-NLS-1$
         clusterPoliciesTabPanel.add(clusterPolicyView);
+
         systemPermissionTabPanel.setWidth("100%"); //$NON-NLS-1$
         systemPermissionTabPanel.add(systemPermissionView);
+
+        instanceTypesView.setWidth("100%"); //$NON-NLS-1$
+        instanceTypesTabPanel.add(instanceTypesView);
     }
 
     void localize(ApplicationConstants constants) {
@@ -75,6 +90,7 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
         rolesTab.setLabel(constants.configureRoleTabLabel());
         clusterPoliciesTab.setLabel(constants.configureClusterPolicyTabLabel());
         systemPermissionsTab.setLabel(constants.configureSystemPermissionTabLabel());
+        instanceTypesTab.setLabel(constants.instanceTypes());
     }
 
     @Override

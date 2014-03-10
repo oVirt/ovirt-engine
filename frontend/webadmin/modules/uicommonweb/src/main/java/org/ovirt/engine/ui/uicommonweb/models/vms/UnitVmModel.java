@@ -1805,15 +1805,7 @@ public class UnitVmModel extends Model {
         getDisplayProtocol().getSelectedItemChangedEvent().addListener(this);
     }
 
-    private void updateDisplayProtocol()
-    {
-        DisplayType oldDisplayProtocolOption = null;
-        EntityModel<DisplayType> oldDisplayProtocolEntity = null;
-
-        if (getDisplayProtocol().getSelectedItem() != null) {
-            oldDisplayProtocolOption = getDisplayProtocol().getSelectedItem().getEntity();
-        }
-
+    private void updateDisplayProtocol() {
         VDSGroup cluster = getSelectedCluster();
         Integer osType = getOSType().getSelectedItem();
 
@@ -1821,9 +1813,19 @@ public class UnitVmModel extends Model {
             return;
         }
 
-        List<EntityModel<DisplayType>> displayProtocolOptions = new ArrayList<EntityModel<DisplayType>>();
         List<DisplayType> displayTypes = AsyncDataProvider.getDisplayTypes(osType, cluster.getcompatibility_version());
+        initDisplayProtocolWithTypes(displayTypes);
+    }
 
+    public void initDisplayProtocolWithTypes(List<DisplayType> displayTypes) {
+        DisplayType oldDisplayProtocolOption = null;
+        EntityModel<DisplayType> oldDisplayProtocolEntity = null;
+
+        if (getDisplayProtocol().getSelectedItem() != null) {
+            oldDisplayProtocolOption = getDisplayProtocol().getSelectedItem().getEntity();
+        }
+
+        List<EntityModel<DisplayType>> displayProtocolOptions = new ArrayList<EntityModel<DisplayType>>();
         if (displayTypes.contains(DisplayType.vnc)) {
             EntityModel<DisplayType> vncProtocol = new EntityModel<DisplayType>();
             vncProtocol.setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
@@ -1988,7 +1990,7 @@ public class UnitVmModel extends Model {
         }
     }
 
-    private void updateWatchdogItems(Set<VmWatchdogType> vmWatchdogTypes) {
+    public void updateWatchdogItems(Set<VmWatchdogType> vmWatchdogTypes) {
         List<String> watchDogModels = new ArrayList<String>();
         for (VmWatchdogType vmWatchdogType : vmWatchdogTypes) {
             watchDogModels.add(EnumTranslator.createAndTranslate(vmWatchdogType));
@@ -2330,8 +2332,11 @@ public class UnitVmModel extends Model {
     }
 
     public boolean validate() {
+        boolean hwPartValid = validateHwPart();
+
         getDataCenterWithClustersList().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         setIsSystemTabValid(true);
+
         getOSType().validateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
         DataCenterWithCluster dataCenterWithCluster = getDataCenterWithClustersList().getSelectedItem();
@@ -2341,11 +2346,6 @@ public class UnitVmModel extends Model {
         if (dataCenter != null && dataCenter.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
             getQuota().validateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
         }
-
-        getTotalCPUCores().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new IntegerValidation(1, behavior.maxCpus),
-                new TotalCpuCoresComposableValidation() });
 
         if (getOSType().getIsValid()) {
             Integer osType = getOSType().getSelectedItem();
@@ -2366,20 +2366,10 @@ public class UnitVmModel extends Model {
                             new SpecialAsciiI18NOrNoneValidation()
                     });
 
-            // Minimum 'Physical Memory Guaranteed' is 1MB
-            validateMemorySize(getMemSize(), Integer.MAX_VALUE, 1);
-            if (!(getBehavior() instanceof TemplateVmModelBehavior) && getMemSize().getIsValid()) {
-                validateMemorySize(getMinAllocatedMemory(), getMemSize().getEntity(), 1);
-            }
-
             getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
         }
 
-        if (getIsAutoAssign().getEntity() != null && getIsAutoAssign().getEntity() == false) {
-            getDefaultHost().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-        } else {
-            getDefaultHost().setIsValid(true);
-        }
+
 
         getTemplate().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getDisksAllocationModel().validateEntity(new IValidation[] {});
@@ -2388,8 +2378,6 @@ public class UnitVmModel extends Model {
         if (getCdImage().getIsChangable()) {
             getCdImage().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
-
-        getMigrationDowntime().validateEntity(new IValidation[] { new NotNullIntegerValidation(0, Integer.MAX_VALUE) });
 
         if (getIsLinuxOS()) {
             getKernel_path().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
@@ -2416,12 +2404,52 @@ public class UnitVmModel extends Model {
             }
         }
 
+
+        setIsGeneralTabValid(getIsGeneralTabValid()
+                && getDataCenterWithClustersList().getIsValid()
+                && getTemplate().getIsValid());
+
+        setIsFirstRunTabValid(getTimeZone().getIsValid());
+
+        setIsHostTabValid(getIsHostTabValid() && getMigrationDowntime().getIsValid());
+
+        setIsAllocationTabValid(getIsAllocationTabValid() && getCpuSharesAmount().getIsValid());
+        setIsBootSequenceTabValid(getCdImage().getIsValid() && getKernel_path().getIsValid());
+        boolean vmInitIsValid = getVmInitModel().validate();
+
+        return hwPartValid && vmInitIsValid && getDataCenterWithClustersList().getIsValid()
+                && getDisksAllocationModel().getIsValid() && getTemplate().getIsValid() && getComment().getIsValid()
+                && getDefaultHost().getIsValid()
+                && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid()
+                && getKernel_path().getIsValid()
+                && getInitrd_path().getIsValid()
+                && getKernel_parameters().getIsValid()
+                && getCpuSharesAmount().getIsValid()
+                && getQuota().getIsValid();
+    }
+
+    public boolean validateHwPart() {
+        getName().validateEntity(new IValidation[] {new NotEmptyValidation()});
+        getMigrationDowntime().validateEntity(new IValidation[] { new NotNullIntegerValidation(0, Integer.MAX_VALUE) });
+
+        getTotalCPUCores().validateEntity(new IValidation[] {
+                new NotEmptyValidation(),
+                new IntegerValidation(1, behavior.maxCpus),
+                new TotalCpuCoresComposableValidation() });
+
+        if (getIsAutoAssign().getEntity() != null && getIsAutoAssign().getEntity() == false) {
+            getDefaultHost().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        } else {
+            getDefaultHost().setIsValid(true);
+        }
+
         if (getCpuSharesAmount().getIsAvailable()) {
             getCpuSharesAmount().validateEntity(new IValidation[] {new NotEmptyValidation()
                     , new IntegerValidation(0, 262144)});
         }
 
         boolean customPropertySheetValid = getCustomPropertySheet().validate();
+        setIsCustomPropertiesTabValid(customPropertySheetValid);
 
         if (getSerialNumberPolicy().getSelectedSerialNumberPolicy() == SerialNumberPolicy.CUSTOM) {
             getSerialNumberPolicy().getCustomSerialNumber().validateEntity(new IValidation[] { new NotEmptyValidation() });
@@ -2437,39 +2465,28 @@ public class UnitVmModel extends Model {
 
         boolean behaviorValid = behavior.validate();
         setIsGeneralTabValid(getName().getIsValid() && getDescription().getIsValid() && getComment().getIsValid()
-                && getDataCenterWithClustersList().getIsValid()
-                && getTemplate().getIsValid()
-                && getMinAllocatedMemory().getIsValid());
+        && getMinAllocatedMemory().getIsValid());
 
         setIsFirstRunTabValid(getTimeZone().getIsValid());
+
         setIsDisplayTabValid(getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid() && getSpiceProxy().getIsValid());
-        setIsHostTabValid(getDefaultHost().getIsValid() && getMigrationDowntime().getIsValid());
-        setIsAllocationTabValid(getDisksAllocationModel().getIsValid() && getMinAllocatedMemory().getIsValid()
-                && getCpuSharesAmount().getIsValid());
-        setIsBootSequenceTabValid(getCdImage().getIsValid() && getKernel_path().getIsValid());
-        setIsCustomPropertiesTabValid(customPropertySheetValid);
+        setIsHostTabValid(getMigrationDowntime().getIsValid());
+        setIsAllocationTabValid(getMinAllocatedMemory().getIsValid());
 
         setIsSystemTabValid(getMemSize().getIsValid() &&
                             getTotalCPUCores().getIsValid() &&
                             getSerialNumberPolicy().getCustomSerialNumber().getIsValid());
 
-        boolean vmInitIsValid = getVmInitModel().validate();
+        // Minimum 'Physical Memory Guaranteed' is 1MB
+        validateMemorySize(getMemSize(), Integer.MAX_VALUE, 1);
+        if (!(getBehavior() instanceof TemplateVmModelBehavior) && getMemSize().getIsValid()) {
+            validateMemorySize(getMinAllocatedMemory(), getMemSize().getEntity(), 1);
+        }
 
-        return getName().getIsValid() && getDescription().getIsValid() && getDataCenterWithClustersList().getIsValid()
-                && getDisksAllocationModel().getIsValid() && getTemplate().getIsValid() && getComment().getIsValid()
-                && getDefaultHost().getIsValid() && getMinAllocatedMemory().getIsValid()
+        return behaviorValid && customPropertySheetValid && getName().getIsValid() && getDescription().getIsValid()
+                && getMinAllocatedMemory().getIsValid()
                 && getNumOfMonitors().getIsValid() && getUsbPolicy().getIsValid()
-                && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid()
-                && getKernel_path().getIsValid()
-                && getInitrd_path().getIsValid()
-                && getKernel_parameters().getIsValid()
-                && getCpuSharesAmount().getIsValid()
-                && behaviorValid
-                && vmInitIsValid
-                && customPropertySheetValid && getQuota().getIsValid()
-                && getMigrationDowntime().getIsValid()
-                && getIsSystemTabValid();
-
+                && getMigrationDowntime().getIsValid();
     }
 
     public SsoMethod extractSelectedSsoMethod() {

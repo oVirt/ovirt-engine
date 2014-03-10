@@ -2247,5 +2247,14 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Are you sure you want to unplug the VM Network Interface?")
     String areYouSureYouWantUnplugVnicMsg();
+
+    @DefaultStringValue("New Instance Type")
+    String newInstanceTypeTitle();
+
+    @DefaultStringValue("Edit Instance Type")
+    String editInstanceTypeTitle();
+
+    @DefaultStringValue("Remove Instance Type(s)")
+    String removeInstanceTypeTitle();
 }
 

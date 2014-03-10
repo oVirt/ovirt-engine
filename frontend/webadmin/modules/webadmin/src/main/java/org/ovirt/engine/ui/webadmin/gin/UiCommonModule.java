@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin;
 
+import com.google.inject.Singleton;
 import org.ovirt.engine.ui.common.gin.BaseUiCommonModule;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.ClusterModule;
@@ -26,6 +27,8 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyClusterModelProv
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeGeneralModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
@@ -33,8 +36,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
-
-import com.google.inject.Singleton;
 
 /**
  * GIN module containing WebAdmin UiCommon model and integration bindings.
@@ -102,6 +103,9 @@ public class UiCommonModule extends BaseUiCommonModule {
 
         // ClusterPolicyClusterListModel
         bind(ClusterPolicyClusterModelProvider.class).asEagerSingleton();
+
+        bind(InstanceTypeModelProvider.class).asEagerSingleton();
+        bind(InstanceTypeGeneralModelProvider.class).asEagerSingleton();
     }
 
     void bindIntegration() {

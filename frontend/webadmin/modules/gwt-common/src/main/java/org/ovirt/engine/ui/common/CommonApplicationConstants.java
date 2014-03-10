@@ -538,6 +538,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Based on Template")
     String basedOnTemplateVmPopup();
 
+    @DefaultStringValue("Instance Type")
+    String instanceType();
+
     @DefaultStringValue("Memory Size")
     String memSizeVmPopup();
 
@@ -1757,8 +1760,17 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Enable boot menu")
     String bootMenuEnabled();
 
+
     @DefaultStringValue("This option sets the time zone offset of the guest hardware clock. " +
                         "For Windows OS this should correspond to the time zone set in the guest (during installation or afterwards). " +
                         "Most default Linux installations expect hardware clock to be GMT+00:00.")
     String timeZoneInfo();
+
+    // Instance Types
+    @DefaultStringValue("Name")
+    String nameInstanceTypeGeneral();
+
+    @DefaultStringValue("Description")
+    String descriptionInstanceTypeGeneral();
+
 }

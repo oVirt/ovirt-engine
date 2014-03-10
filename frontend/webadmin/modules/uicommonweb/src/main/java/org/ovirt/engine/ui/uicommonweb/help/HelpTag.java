@@ -154,6 +154,8 @@ public enum HelpTag {
 
     edit_template("edit_template", HelpTagType.COMMON, "Templates Tab > Edit Template"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    edit_instance_type("edit_instance_type", HelpTagType.WEBADMIN, "Configure' dialog -> 'Instance Types' section -> 'Edit Instance Type' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
     edit_virtual_disk("edit_virtual_disk", HelpTagType.COMMON, "VMs Tab > Virtual Disks Sub-Tab > Edit Virtual Disk"), //$NON-NLS-1$ //$NON-NLS-2$
 
     edit_vm("edit_vm", HelpTagType.COMMON, "'VMs' main tab -> 'Edit VM' dialog [replaces the old 'Edit Desktop' (edit_desktop) and 'Edit Server' (edit_server)]"), //$NON-NLS-1$ //$NON-NLS-2$
@@ -282,6 +284,8 @@ public enum HelpTag {
 
     new_template("new_template", HelpTagType.COMMON, "VMs Tab > Make Template"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    new_instance_type("new_instance_type", HelpTagType.WEBADMIN, "Configure' dialog -> 'Instance Types' section -> 'New Instance Type' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
     new_virtual_disk("new_virtual_disk", HelpTagType.COMMON, "VMs Tab > Virtual Disks Sub-Tab > New Virtual Disk"), //$NON-NLS-1$ //$NON-NLS-2$
 
     new_virtual_machine___guide_me("new_virtual_machine___guide_me", HelpTagType.WEBADMIN), //$NON-NLS-1$
@@ -357,6 +361,8 @@ public enum HelpTag {
     remove_tag("remove_tag", HelpTagType.WEBADMIN, "Main > tags > Remove Tag(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_template("remove_template", HelpTagType.COMMON, "Templates Tab > Remove Template(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    remove_instance_type("remove_instance_type", HelpTagType.WEBADMIN, "Configure' dialog -> 'Instance Types' section -> 'Remove Instance Type(s)'"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_template_disks("remove_template_disks", HelpTagType.WEBADMIN, "Templates Tab > Storage Sub-Tab > Remove Disk Instance From Storage"), //$NON-NLS-1$ //$NON-NLS-2$
 

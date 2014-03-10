@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.Gluster
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ManageGlusterSwiftPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.NewClusterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.instancetypes.InstanceTypesPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.RolePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterForceRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterPopupPresenterWidget;
@@ -245,6 +246,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.GlusterHookR
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ManageGlusterSwiftPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.NewClusterNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.ConfigurePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes.InstanceTypesPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.RolePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterForceRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterPopupView;
@@ -1266,6 +1268,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(TemplateNewPresenterWidget.class,
                 TemplateNewPresenterWidget.ViewDef.class,
                 TemplateNewPopupView.class);
+
+        // Instance Types
+        bindPresenterWidget(InstanceTypesPopupPresenterWidget.class,
+                InstanceTypesPopupPresenterWidget.ViewDef.class,
+                InstanceTypesPopupView.class);
 
         // Add/Edit Template's NIC
         bindPresenterWidget(TemplateInterfacePopupPresenterWidget.class,

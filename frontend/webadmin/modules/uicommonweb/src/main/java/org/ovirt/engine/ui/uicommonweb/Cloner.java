@@ -438,6 +438,7 @@ public final class Cloner
         obj.setSerialNumberPolicy(instance.getSerialNumberPolicy());
         obj.setCustomSerialNumber(instance.getCustomSerialNumber());
         obj.setBootMenuEnabled(instance.isBootMenuEnabled());
+        obj.setCreatedByUserId(instance.getCreatedByUserId());
 
         return obj;
     }

@@ -3621,4 +3621,20 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Changing the display network will cause any running VMs in the cluster to lose display console connectivity until they are restarted.")
     String changeDisplayNetworkWarning();
+
+    // Instance Types
+    @DefaultStringValue("Instance Types")
+    String instanceTypes();
+
+    @DefaultStringValue("Name")
+    String instanceTypeName();
+
+    @DefaultStringValue("New")
+    String newInstanceType();
+
+    @DefaultStringValue("Edit")
+    String editInstanceType();
+
+    @DefaultStringValue("Remove")
+    String removeInstanceType();
 }

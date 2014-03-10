@@ -473,8 +473,13 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
         VDSGroup cluster = getModel().getSelectedCluster();
-        getModel().getCustomPropertySheet().setKeyValueString(getModel().getCustomPropertiesKeysList()
-                .get(cluster.getcompatibility_version()));
+        updateCustomPropertySheet(cluster.getcompatibility_version());
+    }
+
+    protected void updateCustomPropertySheet(Version clusterVersion) {
+        getModel().getCustomPropertySheet().setKeyValueString(
+                getModel().getCustomPropertiesKeysList().get(clusterVersion)
+        );
     }
 
     public int maxCpus = 0;
@@ -493,10 +498,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 }));
     }
 
-    public void updateMaxNumOfVmCpus()
-    {
-        VDSGroup cluster = getModel().getSelectedCluster();
-        String version = cluster.getcompatibility_version().toString();
+    public void updateMaxNumOfVmCpus() {
+        String version = getClusterCompatibilityVersion().toString();
 
         AsyncDataProvider.getMaxNumOfVmCpus(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -510,10 +513,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 }, getModel().getHash()), version);
     }
 
-    public void postUpdateNumOfSockets2()
-    {
-        VDSGroup cluster = getModel().getSelectedCluster();
-        String version = cluster.getcompatibility_version().toString();
+    public void postUpdateNumOfSockets2() {
+        String version = getClusterCompatibilityVersion().toString();
 
         AsyncDataProvider.getMaxNumOfCPUsPerSocket(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -701,11 +702,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateMemoryBalloon() {
         if (getModel().getSelectedCluster() != null) {
-            VDSGroup cluster = getModel().getSelectedCluster();
-            boolean hasMemoryBalloon = cluster.getcompatibility_version()
-                    .compareTo(VmListModel.BALLOON_DEVICE_MIN_VERSION) >= 0;
-            getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(hasMemoryBalloon);
+            updateMemoryBalloon(getModel().getSelectedCluster().getcompatibility_version());
         }
+    }
+
+    protected void updateMemoryBalloon(Version clusterVersion) {
+        boolean hasMemoryBalloon = clusterVersion
+                .compareTo(VmListModel.BALLOON_DEVICE_MIN_VERSION) >= 0;
+        getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(hasMemoryBalloon);
     }
 
 
@@ -806,9 +810,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void updateUseHostCpuAvailability() {
 
         boolean clusterSupportsHostCpu =
-                getModel().getSelectedCluster() != null
-                        && (getModel().getSelectedCluster()).getcompatibility_version()
-                                .compareTo(Version.v3_2) >= 0;
+                getClusterCompatibilityVersion() != null
+                        && (getClusterCompatibilityVersion().compareTo(Version.v3_2) >= 0);
         boolean nonMigratable = MigrationSupport.PINNED_TO_HOST == getModel().getMigrationMode().getSelectedItem();
         boolean manuallyMigratableAndAnyHostInCluster =
                 MigrationSupport.IMPLICITLY_NON_MIGRATABLE == getModel().getMigrationMode().getSelectedItem()
@@ -992,13 +995,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateNumOfSockets()
     {
-        VDSGroup cluster = getModel().getSelectedCluster();
-        if (cluster == null)
-        {
+        Version version = getClusterCompatibilityVersion();
+        if (version == null) {
             return;
         }
-
-        String version = cluster.getcompatibility_version().toString();
 
         AsyncDataProvider.getMaxNumOfVmSockets(new AsyncQuery(new Object[]{this, getModel()},
                 new INewAsyncCallback() {
@@ -1010,7 +1010,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         behavior.maxNumOfSockets = ((Integer) returnValue);
                         behavior.updataMaxVmsInPool();
                     }
-                }, getModel().getHash()), version);
+                }, getModel().getHash()), version.toString());
     }
 
     /**
@@ -1206,4 +1206,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
+    protected Version getClusterCompatibilityVersion() {
+        VDSGroup cluster = getModel().getSelectedCluster();
+        if (cluster == null) {
+            return null;
+        }
+
+        return cluster.getcompatibility_version();
+    }
 }

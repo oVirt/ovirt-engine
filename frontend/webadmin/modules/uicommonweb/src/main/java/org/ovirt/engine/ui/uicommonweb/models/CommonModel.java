@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.SystemPermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes.InstanceTypeListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.ClusterPolicyListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
@@ -82,6 +83,7 @@ public class CommonModel extends ListModel
     private RoleListModel roleListModel;
     private SystemPermissionListModel systemPermissionListModel;
     private ClusterPolicyListModel clusterPolicyListModel;
+    private InstanceTypeListModel instanceTypeListModel;
 
     // NOTE: when adding a new ListModel here, be sure to add it to the list in initItems()
     private SearchableListModel dataCenterList;
@@ -195,6 +197,9 @@ public class CommonModel extends ListModel
 
         profileList = new VnicProfileListModel();
         list.add(profileList);
+
+        instanceTypeListModel = new InstanceTypeListModel();
+        list.add(instanceTypeListModel);
 
         setItems(list);
 
@@ -527,6 +532,7 @@ public class CommonModel extends ListModel
         getRoleListModel().stopRefresh();
         getSystemPermissionListModel().stopRefresh();
         getClusterPolicyListModel().stopRefresh();
+        getInstanceTypeListModel().stopRefresh();
 
         if (Frontend.getInstance().getIsUserLoggedIn())
         {
@@ -1059,6 +1065,10 @@ public class CommonModel extends ListModel
 
     public ClusterPolicyListModel getClusterPolicyListModel() {
         return clusterPolicyListModel;
+    }
+
+    public InstanceTypeListModel getInstanceTypeListModel() {
+        return instanceTypeListModel;
     }
 
     public Event getSignedOutEvent()

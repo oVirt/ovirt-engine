@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyClusterModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
@@ -26,6 +27,7 @@ public class ConfigurePopupPresenterWidget extends AbstractPopupPresenterWidget<
     private SystemPermissionModelProvider systemPermissionModelProvider;
     private ClusterPolicyModelProvider clusterPolicyModelProvider;
     private ClusterPolicyClusterModelProvider clusterPolicyClusterModelProvider;
+    private InstanceTypeModelProvider instanceTypeModelProvider;
 
     @Inject
     public ConfigurePopupPresenterWidget(EventBus eventBus, ViewDef view,
@@ -33,13 +35,15 @@ public class ConfigurePopupPresenterWidget extends AbstractPopupPresenterWidget<
             RolePermissionModelProvider permissionModelProvider,
             SystemPermissionModelProvider systemPermissionModelProvider,
             ClusterPolicyModelProvider clusterPolicyModelProvider,
-            ClusterPolicyClusterModelProvider clusterPolicyClusterModelProvider) {
+            ClusterPolicyClusterModelProvider clusterPolicyClusterModelProvider,
+            InstanceTypeModelProvider instanceTypeModelProvider) {
         super(eventBus, view);
         this.roleModelProvider = roleModelProvider;
         this.permissionModelProvider = permissionModelProvider;
         this.systemPermissionModelProvider = systemPermissionModelProvider;
         this.clusterPolicyModelProvider = clusterPolicyModelProvider;
         this.clusterPolicyClusterModelProvider = clusterPolicyClusterModelProvider;
+        this.instanceTypeModelProvider = instanceTypeModelProvider;
     }
 
     @Override
@@ -53,6 +57,7 @@ public class ConfigurePopupPresenterWidget extends AbstractPopupPresenterWidget<
         } else {
             getView().hideClusterPolicyTab();
         }
+        instanceTypeModelProvider.getModel().search();
     }
 
     @Override
@@ -63,6 +68,7 @@ public class ConfigurePopupPresenterWidget extends AbstractPopupPresenterWidget<
         systemPermissionModelProvider.getModel().stopRefresh();
         clusterPolicyModelProvider.getModel().stopRefresh();
         clusterPolicyClusterModelProvider.getModel().stopRefresh();
+        instanceTypeModelProvider.getModel().stopRefresh();
     }
 
 }
