@@ -65,7 +65,7 @@ public class VdsManager {
         return (_refreshIteration == _numberRefreshesBeforeSave);
     }
 
-    private static final int VDS_REFRESH_RATE = Config.<Integer> GetValue(ConfigValues.VdsRefreshRate) * 1000;
+    private int VDS_REFRESH_RATE = Config.<Integer> GetValue(ConfigValues.VdsRefreshRate) * 1000;
 
     private String onTimerJobId;
 
@@ -97,7 +97,7 @@ public class VdsManager {
     private final AtomicInteger mUnrespondedAttempts;
     private final AtomicBoolean sshSoftFencingExecuted;
 
-    private static final int VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES = Config
+    private int VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES = Config
             .<Integer> GetValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes);
     private String duringFailureJobId;
     private boolean privateInitialized;
