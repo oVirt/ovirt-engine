@@ -134,11 +134,13 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
 
         // Change refresh rate only when the model timer is currently active and not paused
         if (modelTimer.isActive() && !modelTimer.isPaused()) {
+            modelTimer.stop();
             if (inFocus) {
                 modelTimer.setRefreshRate(readRefreshRate());
             } else {
                 modelTimer.setRefreshRate(OUT_OF_FOCUS_REFRESH_RATE);
             }
+            modelTimer.start();
         }
     }
 

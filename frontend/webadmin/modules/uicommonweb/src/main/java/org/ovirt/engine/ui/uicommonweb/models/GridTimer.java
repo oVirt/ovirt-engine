@@ -200,13 +200,24 @@ public abstract class GridTimer extends Timer implements HasGridTimerStateChange
      * @param interval in seconds
      */
     public void setRefreshRate(int interval) {
+        setRefreshRate(interval, true);
+    }
+
+    /**
+     * Set the refresh rate and fire an event that the state of the timer has changed.
+     *
+     * @param interval in seconds
+     */
+    public void setRefreshRate(int interval, boolean fireEvent) {
         if (getRefreshRate() == interval) {
             return;
         }
         logger.fine("GridTimer[" + name + "]: Refresh Rate set to: " + interval); //$NON-NLS-1$ //$NON-NLS-2$
         // set the NORMAL interval
         normalInterval = interval;
-        GridTimerStateChangeEvent.fire(this, getRefreshRate());
+        if (fireEvent) {
+            GridTimerStateChangeEvent.fire(this, getRefreshRate());
+        }
     }
 
     /**

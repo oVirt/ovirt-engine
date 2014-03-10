@@ -364,24 +364,22 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
                     //Immediately adjust timer and restart if it was active.
                     if (newInterval != timer.getRefreshRate()) {
                         timer.stop();
-                        timer.setRefreshRate(newInterval);
+                        timer.setRefreshRate(newInterval, false);
                         timer.start();
                     }
                 } else {
                     //Update the timer interval for inactive timers, so they are correct when they become active
-                    timer.setRefreshRate(newInterval);
+                    timer.setRefreshRate(newInterval, false);
                 }
             }
         });
     }
 
     protected void replaceTimerChangeHandler() {
-        if (timerChangeHandler == null) {
-            addTimerChangeHandler();
-        } else {
+        if (timerChangeHandler != null) {
             removeTimerChangeHandler();
-            addTimerChangeHandler();
         }
+        addTimerChangeHandler();
     }
 
     @Override
