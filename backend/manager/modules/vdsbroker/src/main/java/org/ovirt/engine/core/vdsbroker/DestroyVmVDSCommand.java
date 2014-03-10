@@ -38,9 +38,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                     getVDSReturnValue().setReturnValue(VMStatus.Down);
                 }
 
-                // Updating the DB
-                ResourceManager.getInstance().InternalSetVmStatus(curVm,
-                        parameters.getGracefully() ? VMStatus.PoweringDown : VMStatus.Down);
+                changeStatus(parameters, curVm);
 
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                     @Override
@@ -88,6 +86,14 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
             }
         } else {
             getVDSReturnValue().setSucceeded(false);
+        }
+    }
+
+    private void changeStatus(DestroyVmVDSCommandParameters parameters, VM curVm) {
+        // do the state transition only if that VM is really running on SRC
+        if (getVdsId().equals(curVm.getRunOnVds())) {
+            ResourceManager.getInstance().InternalSetVmStatus(curVm,
+                    parameters.getGracefully() ? VMStatus.PoweringDown : VMStatus.Down);
         }
     }
 
