@@ -89,7 +89,6 @@ public class RestoreAllSnapshotCommandTest {
     private Guid vmId = Guid.newGuid();
     private Guid diskImageId = Guid.newGuid();
     private Guid storageDomainId = Guid.newGuid();
-    private Guid dstSnapshotId = Guid.newGuid();
     private Guid spId = Guid.newGuid();
     private VmDynamic mockDynamicVm;
     private Snapshot mockSnapshot;
