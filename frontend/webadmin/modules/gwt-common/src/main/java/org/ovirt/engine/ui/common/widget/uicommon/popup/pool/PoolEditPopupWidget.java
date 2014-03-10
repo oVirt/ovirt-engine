@@ -97,9 +97,13 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         descriptionEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         templateEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         memSizeEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        detachableMemSizeEditor.addContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());
         totalvCPUsEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        totalvCPUsEditorWithInfoIcon.getContentWidget().addContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());
         corePerSocketEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        corePerSocketEditorWithDetachable.addContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());
         numOfSocketsEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        numOfSocketsEditorWithDetachable.addContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());
         oSTypeEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         isStatelessEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         isRunAndPauseEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());

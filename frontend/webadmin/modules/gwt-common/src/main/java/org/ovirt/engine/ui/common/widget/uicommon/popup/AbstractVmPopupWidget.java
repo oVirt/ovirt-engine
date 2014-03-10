@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.gwt.event.shared.EventBus;
+import static com.google.gwt.dom.client.Style.Unit;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -30,6 +32,7 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.EntityModelDetachableWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.HasDetachable;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
@@ -41,8 +44,11 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.VncKeyMapRenderer;
+import org.ovirt.engine.ui.common.widget.editor.generic.DetachableLabel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelDetachableWidget;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelDetachableWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxOnlyEditor;
@@ -84,7 +90,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -125,6 +130,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         String labelDisabled();
 
         String generalTabExtendedRightWidgetWidth();
+
+        String generalTabExtendedRightWidgetWrapperWidth();
 
         String cdImageEditor();
 
@@ -222,6 +229,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     protected DialogTab systemTab;
 
     @UiField(provided = true)
+    public EntityModelDetachableWidgetWithLabel detachableMemSizeEditor;
+
     @Path(value = "memSize.entity")
     @WithElementId("memSize")
     public EntityModelTextBoxEditor<Integer> memSizeEditor;
@@ -232,7 +241,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField(provided = true)
     @Ignore
-    public EntityModelWidgetWithInfo<String> totalvCPUsEditorWithInfoIcon;
+    public EntityModelDetachableWidgetWithInfo<String> totalvCPUsEditorWithInfoIcon;
 
     @UiField
     @Ignore
@@ -242,15 +251,19 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Ignore
     Panel vcpusAdvancedParameterExpanderContent;
 
-    @UiField(provided = true)
     @Path(value = "numOfSockets.selectedItem")
     @WithElementId("numOfSockets")
     public ListModelListBoxEditor<Integer> numOfSocketsEditor;
 
-    @UiField(provided = true)
     @Path(value = "coresPerSocket.selectedItem")
     @WithElementId("coresPerSocket")
     public ListModelListBoxEditor<Integer> corePerSocketEditor;
+
+    @UiField(provided = true)
+    public EntityModelDetachableWidgetWithLabel numOfSocketsEditorWithDetachable;
+
+    @UiField(provided = true)
+    public EntityModelDetachableWidgetWithLabel corePerSocketEditorWithDetachable;
 
     @UiField
     @Ignore
@@ -266,10 +279,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("ssoMethodGuestAgent")
     public EntityModelRadioButtonEditor ssoMethodGuestAgent;
 
-    @UiField(provided = true)
     @Path(value = "isSoundcardEnabled.entity")
     @WithElementId("isSoundcardEnabled")
     public EntityModelCheckBoxEditor isSoundcardEnabledEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    public EntityModelDetachableWidget isSoundcardEnabledEditorWithDetachable;
 
     @UiField(provided = true)
     @Path("copyPermissions.entity")
@@ -439,20 +455,26 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("isRunAndPause")
     public EntityModelCheckBoxEditor isRunAndPauseEditor;
 
-    @UiField(provided = true)
     @Path(value = "isSmartcardEnabled.entity")
     @WithElementId("isSmartcardEnabled")
     public EntityModelCheckBoxEditor isSmartcardEnabledEditor;
+
+    @UiField(provided = true)
+    public EntityModelDetachableWidget isSmartcardEnabledEditorWithDetachable;
 
     @UiField(provided = true)
     @Path(value = "allowConsoleReconnect.entity")
     @WithElementId("allowConsoleReconnect")
     public EntityModelCheckBoxEditor allowConsoleReconnectEditor;
 
-    @UiField(provided = true)
+
     @Path(value = "isConsoleDeviceEnabled.entity")
     @WithElementId("isConsoleDeviceEnabled")
     public EntityModelCheckBoxEditor isConsoleDeviceEnabledEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    public EntityModelDetachableWidget isConsoleDeviceEnabledEditorWithDetachable;
 
     @UiField
     @Path(value = "spiceProxy.entity")
@@ -476,15 +498,19 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("hostCpu")
     public EntityModelCheckBoxEditor hostCpuEditor;
 
-    @UiField(provided = true)
     @Path(value = "migrationMode.selectedItem")
     @WithElementId("migrationMode")
     public ListModelListBoxEditor<MigrationSupport> migrationModeEditor;
 
     @UiField(provided = true)
+    public EntityModelDetachableWidget migrationModeEditorWithDetachable;
+
     @Path(value = "overrideMigrationDowntime.entity")
     @WithElementId("overrideMigrationDowntime")
     public EntityModelCheckBoxOnlyEditor overrideMigrationDowntimeEditor;
+
+    @UiField(provided = true)
+    public EntityModelDetachableWidget overrideMigrationDowntimeEditorWithDetachable;
 
     @UiField(provided = true)
     public InfoIcon migrationDowntimeInfoIcon;
@@ -550,10 +576,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField
     protected DialogTab highAvailabilityTab;
 
-    @UiField(provided = true)
     @Path(value = "isHighlyAvailable.entity")
     @WithElementId("isHighlyAvailable")
     public EntityModelCheckBoxEditor isHighlyAvailableEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    public EntityModelDetachableWidget isHighlyAvailableEditorWithDetachable;
 
     // TODO: Priority is a ListModel which is rendered as RadioBox
     @UiField(provided = true)
@@ -563,12 +592,20 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField
     @Ignore
+    public DetachableLabel priorityLabelWithDetachable;
+
+    @UiField
+    @Ignore
     public FlowPanel watchdogPanel;
 
     @UiField(provided = true)
     @Path(value = "watchdogModel.selectedItem")
     @WithElementId("watchdogModel")
     public ListModelListBoxEditor<String> watchdogModelEditor;
+
+    @UiField
+    @Ignore
+    public DetachableLabel watchdogLabel;
 
     @UiField(provided = true)
     @Path(value = "watchdogAction.selectedItem")
@@ -593,6 +630,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("provisioning")
     public ListModelListBoxEditor provisioningEditor;
 
+    @UiField
+    public DetachableLabel memAllocationLabel;
+
     @UiField(provided = true)
     @Path(value = "minAllocatedMemory.entity")
     @WithElementId("minAllocatedMemory")
@@ -612,9 +652,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("provisioningClone")
     public EntityModelRadioButtonEditor provisioningCloneEditor;
 
-    @UiField(provided = true)
     @Path(value = "isVirtioScsiEnabled.entity")
-    EntityModelCheckBoxEditor isVirtioScsiEnabled;
+    @WithElementId("isVirtioScsiEnabled")
+    public EntityModelCheckBoxEditor isVirtioScsiEnabled;
+
+    @UiField(provided = true)
+    @Ignore
+    public EntityModelDetachableWidget isVirtioScsiEnabledWithDetachable;
 
     @UiField(provided = true)
     @Ignore
@@ -729,6 +773,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // Contains a special parser/renderer
         memSizeEditor = new EntityModelTextBoxEditor<Integer>(
                 new MemorySizeRenderer<Integer>(constants), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
+
         minAllocatedMemoryEditor = new EntityModelTextBoxEditor<Integer>(
                 new MemorySizeRenderer<Integer>(constants), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
 
@@ -773,6 +818,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initTextBoxEditors();
         initSpiceProxy();
         initTotalVcpus();
+        initDetachableFields();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
@@ -800,6 +846,18 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initialize();
     }
 
+    private void initDetachableFields() {
+        detachableMemSizeEditor = new EntityModelDetachableWidgetWithLabel(memSizeEditor);
+        isSmartcardEnabledEditorWithDetachable = new EntityModelDetachableWidget(isSmartcardEnabledEditor, Align.RIGHT);
+        isSoundcardEnabledEditorWithDetachable = new EntityModelDetachableWidget(isSoundcardEnabledEditor, Align.RIGHT);
+        isConsoleDeviceEnabledEditorWithDetachable = new EntityModelDetachableWidget(isConsoleDeviceEnabledEditor, Align.RIGHT);
+        isHighlyAvailableEditorWithDetachable = new EntityModelDetachableWidget(isHighlyAvailableEditor, Align.RIGHT);
+        overrideMigrationDowntimeEditorWithDetachable = new EntityModelDetachableWidget(overrideMigrationDowntimeEditor, Align.RIGHT);
+        overrideMigrationDowntimeEditor.getContentWidgetContainer().getElement().getStyle().setWidth(20, Unit.PX);
+        isVirtioScsiEnabledWithDetachable = new EntityModelDetachableWidget(isVirtioScsiEnabled, Align.RIGHT);
+        migrationModeEditorWithDetachable = new EntityModelDetachableWidget(migrationModeEditor, Align.RIGHT);
+    }
+
     protected void initialize() {
 
     }
@@ -815,7 +873,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         StringEntityModelLabel label = new StringEntityModelLabel();
         label.setText(constants.numOfVCPUs());
         totalvCPUsEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
-        totalvCPUsEditorWithInfoIcon = new EntityModelWidgetWithInfo<String>(label, totalvCPUsEditor);
+        totalvCPUsEditorWithInfoIcon = new EntityModelDetachableWidgetWithInfo<String>(label, totalvCPUsEditor);
         totalvCPUsEditorWithInfoIcon.setExplanation(applicationTemplates.italicText(messages.hotPlugUnplugCpuWarning()));
     }
 
@@ -989,9 +1047,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         }, new ModeSwitchingVisibilityRenderer());
 
         vmTypeEditor = new ListModelListBoxEditor<VmType>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
-
         numOfSocketsEditor = new ListModelListBoxEditor<Integer>(new ModeSwitchingVisibilityRenderer());
+        numOfSocketsEditorWithDetachable = new EntityModelDetachableWidgetWithLabel(numOfSocketsEditor);
         corePerSocketEditor = new ListModelListBoxEditor<Integer>(new ModeSwitchingVisibilityRenderer());
+        corePerSocketEditorWithDetachable = new EntityModelDetachableWidgetWithLabel(corePerSocketEditor);
 
         // Pools
         poolTypeEditor = new ListModelListBoxEditor<EntityModel<VmPoolType>>(new NullSafeRenderer<EntityModel<VmPoolType>>() {
@@ -1108,6 +1167,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         templateVersionNameEditor.setLabel(constants.templateVersionName());
         descriptionEditor.setLabel(constants.descriptionVmPopup());
         commentEditor.setLabel(constants.commentLabel());
+
         baseTemplateEditor.setLabel(constants.basedOnTemplateVmPopup());
         templateEditor.setLabel(constants.templateSubVersion());
 
@@ -1179,8 +1239,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         // System tab
         memSizeEditor.setLabel(constants.memSizeVmPopup());
-        corePerSocketEditor.setLabel(constants.coresPerSocket());
-        numOfSocketsEditor.setLabel(constants.numOfSockets());
+        detachableMemSizeEditor.setLabel(constants.memSizeVmPopup());
+        totalvCPUsEditor.setLabel(constants.numOfVCPUs());
+        corePerSocketEditorWithDetachable.setLabel(constants.coresPerSocket());
+        numOfSocketsEditorWithDetachable.setLabel(constants.numOfSockets());
     }
 
     protected void applyStyles() {
@@ -1213,6 +1275,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initTabAvailabilityListeners(model);
         initListeners(model);
         hideAlwaysHiddenFields();
+        decorateDetachableFields();
     }
 
     @UiHandler("refreshButton")
@@ -1269,7 +1332,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable);
 
                 changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable || isDisksAvailable ||
-                    object.getIsVirtioScsiEnabled().getIsAvailable());
+                        object.getIsVirtioScsiEnabled().getIsAvailable());
             }
         });
 
@@ -1715,6 +1778,25 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 );
     }
 
+    protected List<Widget> detachableWidgets() {
+        return Arrays.<Widget> asList(
+                totalvCPUsEditorWithInfoIcon,
+                numOfSocketsEditorWithDetachable,
+                corePerSocketEditorWithDetachable,
+                isSmartcardEnabledEditorWithDetachable,
+                isConsoleDeviceEnabledEditorWithDetachable,
+                isSoundcardEnabledEditorWithDetachable,
+                isHighlyAvailableEditorWithDetachable,
+                priorityLabelWithDetachable,
+                migrationModeEditorWithDetachable,
+                memAllocationLabel,
+                isVirtioScsiEnabledWithDetachable,
+                detachableMemSizeEditor,
+                overrideMigrationDowntimeEditorWithDetachable,
+                watchdogLabel
+        );
+    }
+
     protected void disableAllTabs() {
         generalTab.disableContent();
         poolTab.disableContent();
@@ -1734,6 +1816,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         vmTypeEditor.setEnabled(false);
     }
 
+
+    protected void decorateDetachableFields() {
+        for (Widget decoratedWidget : getWidgetConfiguration().getDetachables().keySet()) {
+            if (decoratedWidget instanceof HasDetachable) {
+                ((HasDetachable) decoratedWidget).setDetachableIconVisible(true);
+            }
+        }
+    }
+
     public void switchAttachToInstanceType(boolean attached) {
         for (Widget detachable : getWidgetConfiguration().getDetachables().keySet()) {
             if (detachable instanceof HasDetachable) {
@@ -1741,5 +1832,4 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         }
     }
-
 }

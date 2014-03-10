@@ -54,11 +54,16 @@
       .overrideMigrationDowntime {
         display: inline;
         float: left;
-        width: 20px;
+        width: 50px;
       }
 
       .overrideMigrationDowntime div {
         width: 20px;
+        margin-top: 0;
+      }
+
+      .overrideMigrationDowntime>div {
+          width: 50px;
       }
 
       .migrationDowntimeLabel {
@@ -79,44 +84,44 @@
       }
       <!-- 			turns off the original styles -->
 
-		.checkboxWithLongLabel,.checkbox {
-			margin-left: -9px;
-		}
+        .checkboxWithLongLabel, .checkbox {
+            margin-left: -9px;
+        }
 
-		.checkboxWithLongLabel label {
-			margin-left: 26px;
-			margin-top: -26px;
-			display: block;
-			line-height: 20px;
-		}
+        .checkboxWithLongLabel label {
+            margin-left: 26px;
+            margin-top: -26px;
+            display: block;
+            line-height: 20px;
+        }
 
-		.longCheckboxContent {
-			width: 90%;
-		}
+        .longCheckboxContent {
+            width: 90%;
+        }
 
-		.provisioningEditor {
-			padding-right: 25px;
-		}
+        .provisioningEditor {
+            padding-right: 25px;
+        }
 
-		.provisioningEditorContent  {
-			display: none;
-		}
+        .provisioningEditorContent {
+            display: none;
+        }
 
-		.provisioningRadioContent  {
-			padding-top: 3px;
-			width: 100%;
-		}
+        .provisioningRadioContent {
+            padding-top: 3px;
+            width: 100%;
+        }
 
-		.disksAllocation {
-			padding-left: 5px;
-			padding-top: 10px;
-		}
+        .disksAllocation {
+            padding-left: 5px;
+            padding-top: 10px;
+        }
 
-		.disksAllocationPanel {
-			width: 490px;
-			padding-top: 5px;
-			padding-bottom: 10px;
-		}
+        .disksAllocationPanel {
+            width: 490px;
+            padding-top: 5px;
+            padding-bottom: 10px;
+        }
 
         .textBox {
             width: 30px;
@@ -138,124 +143,126 @@
             text-align: right;
         }
 
-		.radioButton {
+        .radioButton {
 
-		}
+        }
 
-		.radioButtonSpecificHost {
+        .radioButtonSpecificHost {
             margin-left: 5px;
-		}
+        }
 
-		.label {
-			width: 350px;
-		}
+        .label {
+            width: 350px;
+        }
 
         .labelDisabled {
             color: gray;
         }
 
-		.runHostPanel {
+        .runHostPanel {
 
-		}
+        }
 
-		.attachCdPanel {
-			width: 100%;
-		}
+        .attachCdPanel {
+            width: 100%;
+        }
 
         .cdAttachedLabelWidth {
             width: 30px;
         }
 
-		.hostRunMigrationOptions {
-			margin-left: 6px;
-		}
+        .hostRunMigrationOptions {
+            margin-left: 6px;
+        }
 
-		.warningMessageLabel {
-			color: #CD2127;
-			position: absolute;
-			bottom: 10px;
-		}
+        .warningMessageLabel {
+            color: #CD2127;
+            position: absolute;
+            bottom: 10px;
+        }
 
-
-
-		.cpuPinningStyle {
+        .cpuPinningStyle {
             float: left;
-		}
+        }
 
-		.expanderContent,.generalExpanderContent {
-			padding-left: 10px;
-		}
-		
-		.monitorsStyles {
-			width: 40px;
-			padding-left: 5px;
-		}
+        .expanderContent, .generalExpanderContent {
+            padding-left: 10px;
+        }
 
-		.expanderContent {
-			float: left;
-		}
+        .monitorsStyles {
+            width: 40px;
+            padding-left: 5px;
+        }
 
-		.warningLabel {
+        .expanderContent {
+            float: left;
+        }
+
+        .warningLabel {
             color: red;
             font-weight: bold;
             margin-bottom: 10px;
         }
-        
+
         .poolEditVms, .name {
-			line-height: 30px;
-			padding: 0 5px;
-			padding-bottom: 35px;
+            line-height: 30px;
+            padding: 0 5px;
+            padding-bottom: 35px;
         }
-        
-        .prestartedVmsEditorContent,.nameEditorContent,.maxAssignedVmsPerUserEditorContent {
-        	width: 230px;
+
+        .prestartedVmsEditorContent, .nameEditorContent, .maxAssignedVmsPerUserEditorContent {
+            width: 230px;
         }
-        
-        .prestartedVmsEditor,.nameEditor,.maxAssignedVmsPerUserEditor {
-        	float: right;
-        	width: 230px;
+
+        .prestartedVmsEditor, .nameEditor, .maxAssignedVmsPerUserEditor {
+            float: right;
+            width: 230px;
         }
-        
-        .editPrestartedVmsEditor,.editMaxAssignedVmsPerUserEditor {
-        	float: left;
-        	padding-right: 10px;
+
+        .editPrestartedVmsEditor, .editMaxAssignedVmsPerUserEditor {
+            float: left;
+            padding-right: 10px;
         }
-        
+
         .infoIcon, .prestartedVmsIcon, .poolNameIcon, .maxAssignedVmsPerUserIcon {
-        	float: left;
-        	padding-top: 5px;
+            float: left;
+            padding-top: 5px;
             padding-left: 2px;
         }
-        
-        .prestartedLabelWithHelp,.increasePrestartedLabel,.maxAssignedVmsPerUserLabel {
-        	float: left;
+
+        .prestartedLabelWithHelp, .increasePrestartedLabel, .maxAssignedVmsPerUserLabel {
+            float: left;
         }
 
-        .editPrestartedVms,.editIncreaseVms,.editMaxAssignedVmsPerUser {
+        .editPrestartedVms, .editIncreaseVms, .editMaxAssignedVmsPerUser {
             float: right;
-        	width: 250px;
+            width: 250px;
         }
-        
+
         .prestartedLabel, .nameLabel {
-        	float: left;
-        	color: #333333;
-        }
-        
-        .increaseVmsInPoolVms,.maxAssignedVmsPerUserVms {
-        	float: left;
+            float: left;
+            color: #333333;
         }
 
-		.migrationSelect {
-			margin-right: 7px;
-		}
+        .increaseVmsInPoolVms, .maxAssignedVmsPerUserVms {
+            float: left;
+        }
 
-		.generalTabExtendedRightWidgetWidth {
-			width: 250px !important;
+        .migrationSelect {
+            margin-right: 7px;
+        }
+
+        .generalTabExtendedRightWidgetWidth {
+            width: 250px !important;
+        }
+
+        .generalTabExtendedRightWidgetWrapperWidth {
+            width: 280px !important;
         }
 
         .headerPanel {
-			padding-bottom: 6px;
-		}
+            padding-bottom: 6px;
+        }
 
         .refreshButton {
             float: right;
@@ -270,14 +277,14 @@
         }
 
         .cdImageEditor {
-			width: 197px;
+            width: 197px;
         }
 
         .isVirtioScsiEnabledEditor {
             width: 100%;
         }
 
-		.monitorPanel {
+        .monitorPanel {
             line-height: 30px;
             padding-bottom: 0;
             padding-left: 5px;
@@ -293,9 +300,9 @@
             width: 265px;
         }
 
-		.hostSelector {
-			width: 416px;
-		}
+        .hostSelector {
+            width: 416px;
+        }
 
         .labelToCouple {
             line-height: 30px;
@@ -306,7 +313,7 @@
 
         .labelToCoupleLabel {
             color: gray;
-            font-family: Verdana,sans-serif;
+            font-family: Verdana, sans-serif;
             font-size: 13px;
             line-height: 30px;
             padding: 0 5px;
@@ -341,11 +348,22 @@
             padding-left: 5px;
         }
 
-		.migrationSelectorInner {
-			width: 260px;
-		}
+        .migrationSelectorInner {
+            width: 260px;
+        }
 
-	</ui:style>
+        .headerCol {
+            float: left;
+        }
+
+        .floatLeft {
+            float: left;
+        }
+
+        .fullWidth {
+            width: 100%;
+        }
+    </ui:style>
 
 	<t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
 		<t:header>
@@ -441,13 +459,13 @@
 			<t:DialogTab ui:field="systemTab">
 				<t:content>
 					<g:FlowPanel>
-                        <ge:EntityModelTextBoxEditor ui:field="memSizeEditor"/>
-                        <w:EntityModelWidgetWithInfo ui:field="totalvCPUsEditorWithInfoIcon" />
+                        <ge:EntityModelDetachableWidgetWithLabel ui:field="detachableMemSizeEditor"/>
+                        <w:EntityModelDetachableWidgetWithInfo ui:field="totalvCPUsEditorWithInfoIcon" />
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
 							<d:AdvancedParametersExpander ui:field="vcpusAdvancedParameterExpander"/>
 							<g:FlowPanel ui:field="vcpusAdvancedParameterExpanderContent" addStyleNames="{style.generalExpanderContent}">
-								<e:ListModelListBoxEditor ui:field="corePerSocketEditor" />
-								<e:ListModelListBoxEditor ui:field="numOfSocketsEditor" />
+								<ge:EntityModelDetachableWidgetWithLabel ui:field="corePerSocketEditorWithDetachable" />
+								<ge:EntityModelDetachableWidgetWithLabel ui:field="numOfSocketsEditorWithDetachable" />
 							</g:FlowPanel>
 						</g:FlowPanel>
                         	<g:Label ui:field="generalLabel" addStyleNames="{style.sectionLabel}" text="{constants.initialRunGeneral}" />
@@ -492,9 +510,10 @@
                                  </g:HorizontalPanel>
                               </g:FlowPanel>
                         </g:FlowPanel>
-						<ge:EntityModelCheckBoxEditor ui:field="isSmartcardEnabledEditor" addStyleNames="{style.checkbox}" />
+						<ge:EntityModelDetachableWidget ui:field="isSmartcardEnabledEditorWithDetachable" addStyleNames="{style.floatLeft}" />
 						<g:Label ui:field="nativeUsbWarningMessage" text="{constants.nativeUsbSupportWarning}" addStyleNames="{style.warningMessageLabel}" />
-                        <g:Label ui:field="ssoMethodLabel" text="{constants.ssoMethod}" addStyleNames="{style.sectionLabel}" />
+
+                        <g:Label ui:field="ssoMethodLabel" text="{constants.ssoMethod}" addStyleNames="{style.sectionLabel} {style.floatLeft} {style.fullWidth}" />
                         <g:FlowPanel>
                             <ge:EntityModelRadioButtonEditor ui:field="ssoMethodNone"/>
                             <ge:EntityModelRadioButtonEditor ui:field="ssoMethodGuestAgent"/>
@@ -504,8 +523,11 @@
 							<g:Label addStyleNames="{style.warningLabel}" text="{constants.advancedOptionsLabel}" />
 							<ge:EntityModelCheckBoxEditor ui:field="allowConsoleReconnectEditor" addStyleNames="{style.checkboxWithLongLabel}" />
 						</g:FlowPanel>
-                        <ge:EntityModelCheckBoxEditor ui:field="isSoundcardEnabledEditor" addStyleNames="{style.checkbox}" />
-						<ge:EntityModelCheckBoxEditor ui:field="isConsoleDeviceEnabledEditor" addStyleNames="{style.checkbox}" />
+
+                        <g:FlowPanel>
+                            <ge:EntityModelDetachableWidget ui:field="isSoundcardEnabledEditorWithDetachable"  />
+                            <ge:EntityModelDetachableWidget ui:field="isConsoleDeviceEnabledEditorWithDetachable"  />
+                        </g:FlowPanel>
 
                         <w:EntityModelWidgetWithInfo ui:field="spiceProxyEnabledCheckboxWithInfoIcon" />
                         <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor"/>
@@ -533,15 +555,14 @@
 
 						<g:Label addStyleNames="{style.sectionLabel}" text="{constants.runMigrationOptionsVmPopup}" />
 						<g:VerticalPanel width="100%" addStyleNames="{style.hostRunMigrationOptions}">
-							 <e:ListModelListBoxEditor ui:field="migrationModeEditor" addStyleNames="{style.migrationSelect}"/>
-							 <ge:EntityModelCheckBoxEditor ui:field="hostCpuEditor" addStyleNames="{style.checkbox}" />
-
+                             <ge:EntityModelDetachableWidget ui:field="migrationModeEditorWithDetachable" addStyleNames="{style.migrationSelect}"/>
                              <g:FlowPanel addStyleNames="{style.migrationDowntimePanel}">
-                               <ge:EntityModelCheckBoxOnlyEditor ui:field="overrideMigrationDowntimeEditor" addStyleNames="{style.overrideMigrationDowntime}" />
+                               <ge:EntityModelDetachableWidget ui:field="overrideMigrationDowntimeEditorWithDetachable" addStyleNames="{style.overrideMigrationDowntime}" />
                                <g:Label text="{constants.overrideMigrationDowntimeLabel}" addStyleNames="{style.migrationDowntimeLabel}" />
                                <d:InfoIcon ui:field="migrationDowntimeInfoIcon" addStyleNames="{style.migrationDowntimeInfoIcon}" />
                                <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="migrationDowntimeEditor" addStyleNames="{style.migrationDowntime}" />
                              </g:FlowPanel>
+                             <ge:EntityModelCheckBoxEditor ui:field="hostCpuEditor" addStyleNames="{style.checkbox}"/>
 						</g:VerticalPanel>
 					</g:FlowPanel>
 				</t:content>
@@ -552,14 +573,23 @@
 				<t:content>
 					<g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
-							<ge:EntityModelCheckBoxEditor ui:field="isHighlyAvailableEditor" addStyleNames="{style.checkbox}" />
+							<ge:EntityModelDetachableWidget ui:field="isHighlyAvailableEditorWithDetachable" addStyleNames="{style.checkbox}" />
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
-							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.priorForRunMigrationQueueVmPopup}" />
-							<e:EntityModelCellTable ui:field="priorityEditor" />
+                            <ge:DetachableLabel ui:field="priorityLabelWithDetachable" contentWidgetStyleName="{style.sectionLabel}">
+                                <ge:decorated>
+                                    <g:Label text="{constants.priorForRunMigrationQueueVmPopup}" />
+                                </ge:decorated>
+                            </ge:DetachableLabel>
+							<e:EntityModelCellTable ui:field="priorityEditor" addStyleNames="{style.floatLeft}, {style.fullWidth}"/>
+
 						</g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.sectionPanel}" ui:field="watchdogPanel">
-							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.watchdog}" />
+						<g:FlowPanel addStyleNames="{style.sectionPanel}, {style.floatLeft}" ui:field="watchdogPanel">
+                            <ge:DetachableLabel ui:field="watchdogLabel" contentWidgetStyleName="{style.sectionLabel}">
+                                <ge:decorated>
+                                    <g:Label text="{constants.watchdog}" />
+                                </ge:decorated>
+                            </ge:DetachableLabel>
 							<e:ListModelListBoxEditor ui:field="watchdogModelEditor" />
 							<e:ListModelListBoxEditor ui:field="watchdogActionEditor" />
 						</g:FlowPanel>
@@ -572,8 +602,7 @@
 				<t:content>
 					<g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanelTight}" ui:field="cpuAllocationPanel" >
-                            <g:Label addStyleNames="{style.sectionLabel}" text="{constants.cpuAllocVmPopup}"/>
-
+                            <g:Label text="{constants.cpuAllocVmPopup}" addStyleNames="{style.sectionLabel}" />
 							<g:FlowPanel addStyleNames="{style.labelToCouple}">
                                 <g:Label ui:field="cpuSharesEditor" text="{constants.cpuShares}" addStyleNames="{style.labelToCoupleLabel}"/>
                                 <g:FlowPanel addStyleNames="{style.labelToCoupleCouple}">
@@ -592,7 +621,12 @@
 
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanelTight}">
-							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.memAllocVmPopup}" />
+                            <ge:DetachableLabel ui:field="memAllocationLabel" contentWidgetStyleName="{style.sectionLabel}">
+                                <ge:decorated>
+                                    <g:Label text="{constants.memAllocVmPopup}" />
+                                </ge:decorated>
+                            </ge:DetachableLabel>
+
 							<ge:EntityModelTextBoxEditor ui:field="minAllocatedMemoryEditor" />
 							<ge:EntityModelCheckBoxEditor addStyleNames="{style.checkbox}" ui:field="isMemoryBalloonDeviceEnabled"/>
 						</g:FlowPanel>
@@ -608,10 +642,6 @@
 									<ge:EntityModelRadioButtonEditor ui:field="provisioningCloneEditor"/>
 								</g:VerticalPanel>
 							</g:HorizontalPanel>
-                            <g:HorizontalPanel>
-                                <ge:EntityModelCheckBoxEditor ui:field="isVirtioScsiEnabled" addStyleNames="{style.checkbox}"/>
-                                <d:InfoIcon ui:field="isVirtioScsiEnabledInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
-                            </g:HorizontalPanel>
 							<g:FlowPanel ui:field="disksAllocationPanel">
 							    <g:Label ui:field="disksAllocationLabel" text="{constants.disksAllocation}"  addStyleNames="{style.disksAllocation}" visible="false" />
 								<g:VerticalPanel>
@@ -619,6 +649,10 @@
 								</g:VerticalPanel>
 							</g:FlowPanel>
 						</g:FlowPanel>
+                        <g:HorizontalPanel addStyleNames="{style.floatLeft}">
+                            <ge:EntityModelDetachableWidget ui:field="isVirtioScsiEnabledWithDetachable" addStyleNames="{style.checkbox}" />
+                            <d:InfoIcon ui:field="isVirtioScsiEnabledInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
+                        </g:HorizontalPanel>
 					</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>

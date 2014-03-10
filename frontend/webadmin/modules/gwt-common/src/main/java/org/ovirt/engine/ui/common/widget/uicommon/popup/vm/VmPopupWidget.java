@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
 
 import com.google.gwt.event.shared.EventBus;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -49,6 +50,7 @@ public class VmPopupWidget extends AbstractVmPopupWidget {
     protected PopupWidgetConfigMap createWidgetConfiguration() {
         return super.createWidgetConfiguration().
                 putAll(poolSpecificFields(), hiddenField()).
-                update(templateVersionNameEditor, hiddenField());
+                update(templateVersionNameEditor, hiddenField()).
+                putAll(detachableWidgets(), simpleField().detachable().visibleInAdvancedModeOnly());
     }
 }
