@@ -66,12 +66,11 @@ public class PopupWidgetConfigMap extends HashMap<Widget, PopupWidgetConfig> {
         });
     }
 
-    // will be used as soon as the corresponding widgets will support this flag
-    public PopupWidgetConfigMap getMarkedAsSpecial() {
+    public PopupWidgetConfigMap getDetachables() {
         return filter(new Predicate() {
             @Override
             public boolean apply(PopupWidgetConfig config) {
-                return config.isMarkedAsSpecial();
+                return config.isDetachable();
             }
         });
     }

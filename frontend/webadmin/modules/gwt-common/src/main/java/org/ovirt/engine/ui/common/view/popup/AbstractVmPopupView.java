@@ -25,6 +25,13 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
     }
 
     @Override
+    public void switchAttachToInstanceType(boolean isAttached) {
+        if (getContentWidget() instanceof AbstractVmPopupWidget) {
+            ((AbstractVmPopupWidget) getContentWidget()).switchAttachToInstanceType(isAttached);
+        }
+    }
+
+    @Override
     public void switchMode(boolean isAdvanced) {
         if (getContentWidget() instanceof AbstractVmPopupWidget) {
             ((AbstractVmPopupWidget) getContentWidget()).switchMode(isAdvanced);

@@ -86,6 +86,16 @@ public class UnitVmModel extends Model {
         this.isAdvancedModeLocalStorageKey = isAdvancedModeLocalStorageKey;
     }
 
+    private EntityModel<Boolean> attachedToInstanceType;
+
+    public EntityModel<Boolean> getAttachedToInstanceType() {
+        return attachedToInstanceType;
+    }
+
+    public void setAttachedToInstanceType(EntityModel<Boolean> attachedToInstanceType) {
+        this.attachedToInstanceType = attachedToInstanceType;
+    }
+
     private EntityModel<String> spiceProxy;
 
     public EntityModel<String> getSpiceProxy() {
@@ -1276,6 +1286,7 @@ public class UnitVmModel extends Model {
 
         setNicsWithLogicalNetworks(new VnicInstancesModel());
         setAdvancedMode(new EntityModel<Boolean>(false));
+        setAttachedToInstanceType(new EntityModel<Boolean>(true));
         setStorageDomain(new NotChangableForVmInPoolListModel<StorageDomain>());
         setName(new NotChangableForVmInPoolEntityModel<String>());
         setNumOfMonitors(new NotChangableForVmInPoolListModel<Integer>());

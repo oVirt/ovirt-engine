@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.popup;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
@@ -15,6 +16,8 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
         void switchMode(boolean isAdvanced);
 
         void setSpiceProxyOverrideExplanation(String explanation);
+
+        void switchAttachToInstanceType(boolean isAttached);
     }
 
     private ClientStorage clientStorage;
@@ -47,6 +50,17 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
             }
 
         });
+
+        model.getAttachedToInstanceType().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                swithAttachToInstanceType(model);
+            }
+        });
+    }
+
+    private void swithAttachToInstanceType(final UnitVmModel model) {
+        getView().switchAttachToInstanceType(model.getAttachedToInstanceType().getEntity());
     }
 
     private void swithAccordingToMode(final UnitVmModel model) {

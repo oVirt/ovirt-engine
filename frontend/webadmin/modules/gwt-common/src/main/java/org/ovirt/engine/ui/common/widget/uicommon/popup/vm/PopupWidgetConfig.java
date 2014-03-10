@@ -6,7 +6,7 @@ public class PopupWidgetConfig {
 
     private final boolean alwaysHidden;
 
-    private final boolean markedAsSpecial;
+    private final boolean detachable;
 
     private final boolean adminOnly;
 
@@ -17,12 +17,12 @@ public class PopupWidgetConfig {
 
     private PopupWidgetConfig(boolean advancedOnly,
                               boolean alwaysHidden,
-                              boolean markedAsSpecial,
+                              boolean detachable,
                               boolean adminOnly) {
         super();
         this.advancedOnly = advancedOnly;
         this.alwaysHidden = alwaysHidden;
-        this.markedAsSpecial = markedAsSpecial;
+        this.detachable = detachable;
         this.adminOnly = adminOnly;
     }
 
@@ -34,20 +34,20 @@ public class PopupWidgetConfig {
         return new PopupWidgetConfig(false, true, false, false);
     }
 
-    public PopupWidgetConfig withSpecialMark() {
+    public PopupWidgetConfig detachable() {
         return new PopupWidgetConfig(advancedOnly, alwaysHidden, true, adminOnly);
     }
 
     public PopupWidgetConfig visibleInAdvancedModeOnly() {
-        return new PopupWidgetConfig(true, alwaysHidden, markedAsSpecial, adminOnly);
+        return new PopupWidgetConfig(true, alwaysHidden, detachable, adminOnly);
     }
 
     public PopupWidgetConfig visibleForAdminOnly() {
-        return new PopupWidgetConfig(advancedOnly, alwaysHidden, markedAsSpecial, true);
+        return new PopupWidgetConfig(advancedOnly, alwaysHidden, detachable, true);
     }
 
     public PopupWidgetConfig copy() {
-        PopupWidgetConfig copy = new PopupWidgetConfig(advancedOnly, alwaysHidden, markedAsSpecial, adminOnly);
+        PopupWidgetConfig copy = new PopupWidgetConfig(advancedOnly, alwaysHidden, detachable, adminOnly);
         copy.setApplicationLevelVisible(isApplicationLevelVisible());
         return copy;
     }
@@ -60,8 +60,8 @@ public class PopupWidgetConfig {
         return alwaysHidden;
     }
 
-    public boolean isMarkedAsSpecial() {
-        return markedAsSpecial;
+    public boolean isDetachable() {
+        return detachable;
     }
 
     public boolean isAdminOnly() {

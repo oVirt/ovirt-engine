@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
+import org.ovirt.engine.ui.common.widget.HasDetachable;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
@@ -1731,6 +1732,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         templateEditor.setEnabled(false);
         baseTemplateEditor.setEnabled(false);
         vmTypeEditor.setEnabled(false);
+    }
+
+    public void switchAttachToInstanceType(boolean attached) {
+        for (Widget detachable : getWidgetConfiguration().getDetachables().keySet()) {
+            if (detachable instanceof HasDetachable) {
+                ((HasDetachable) detachable).setAttached(attached);
+            }
+        }
     }
 
 }
