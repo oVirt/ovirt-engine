@@ -5,6 +5,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -18,42 +20,46 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
 
     @Override
     protected void executeVdsIdCommand() {
-        MigrateVDSCommandParameters parameters = getParameters();
-        if (_vdsManager != null) {
-            VMStatus retval;
-            MigrateBrokerVDSCommand<MigrateVDSCommandParameters> command =
-                    new MigrateBrokerVDSCommand<MigrateVDSCommandParameters>(parameters);
-            command.execute();
-            VDSReturnValue vdsReturnValue = command.getVDSReturnValue();
-
-            final VM vm = DbFacade.getInstance().getVmDao().get(parameters.getVmId());
-
-            if (vdsReturnValue.getSucceeded()) {
-                retval = VMStatus.MigratingFrom;
-                ResourceManager.getInstance().InternalSetVmStatus(vm, VMStatus.MigratingFrom);
-                    vm.setMigratingToVds(parameters.getDstVdsId());
-                    ResourceManager.getInstance().AddAsyncRunningVm(parameters.getVmId());
-            } else {
-                retval = vm.getStatus();
-                log.error("VDS::migrate:: Failed Vm migration");
-                getVDSReturnValue().setSucceeded(false);
-                getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
-                getVDSReturnValue().setExceptionString(vdsReturnValue.getExceptionString());
-                getVDSReturnValue().setExceptionObject(vdsReturnValue.getExceptionObject());
-            }
-
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
-                    return null;
-                }
-            });
-
-            getVDSReturnValue().setReturnValue(retval);
-        } else {
+        if (_vdsManager == null) {
             getVDSReturnValue().setSucceeded(false);
+            return;
         }
+
+        MigrateBrokerVDSCommand<?> command = new MigrateBrokerVDSCommand<>(getParameters());
+        command.execute();
+        VDSReturnValue vdsReturnValue = command.getVDSReturnValue();
+
+        final VM vm = getVmDao().get(getParameters().getVmId());
+
+        if (vdsReturnValue.getSucceeded()) {
+            ResourceManager.getInstance().InternalSetVmStatus(vm, VMStatus.MigratingFrom);
+            vm.setMigratingToVds(getParameters().getDstVdsId());
+            ResourceManager.getInstance().AddAsyncRunningVm(getParameters().getVmId());
+            getVDSReturnValue().setReturnValue(VMStatus.MigratingFrom);
+        } else {
+            log.error("Failed Vm migration");
+            getVDSReturnValue().setSucceeded(false);
+            getVDSReturnValue().setReturnValue(vm.getStatus());
+            getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
+            getVDSReturnValue().setExceptionString(vdsReturnValue.getExceptionString());
+            getVDSReturnValue().setExceptionObject(vdsReturnValue.getExceptionObject());
+        }
+
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                getVmDynamicDAO().update(vm.getDynamicData());
+                return null;
+            }
+        });
+    }
+
+    private VmDynamicDAO getVmDynamicDAO() {
+        return DbFacade.getInstance().getVmDynamicDao();
+    }
+
+    private VmDAO getVmDao() {
+        return DbFacade.getInstance().getVmDao();
     }
 
     private static Log log = LogFactory.getLog(MigrateVDSCommand.class);
