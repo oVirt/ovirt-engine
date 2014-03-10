@@ -121,7 +121,10 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     @Override
     protected void executeVmCommand() {
         final boolean restoreMemory = getParameters().isRestoreMemory() &&
-                FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion());
+                FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion()) &&
+                FeatureSupported.isMemorySnapshotSupportedByArchitecture(
+                        getVm().getClusterArch(),
+                        getVm().getVdsGroupCompatibilityVersion());
 
         final Guid newActiveSnapshotId = Guid.newGuid();
         final Snapshot snapshotToBePreviewed = getDstSnapshot();

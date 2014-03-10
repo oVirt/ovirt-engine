@@ -134,7 +134,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         if (cachedMemoryVolumeFromSnapshot == null) {
-            cachedMemoryVolumeFromSnapshot = FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion()) ?
+            boolean archSupportSnapshot = FeatureSupported.isMemorySnapshotSupportedByArchitecture(
+                    getVm().getClusterArch(),
+                    getVm().getVdsGroupCompatibilityVersion());
+            cachedMemoryVolumeFromSnapshot = archSupportSnapshot && FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion()) ?
                     getActiveSnapshot().getMemoryVolume() : StringUtils.EMPTY;
         }
 

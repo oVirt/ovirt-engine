@@ -179,7 +179,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private MemoryImageBuilder createMemoryImageBuilder() {
-        if (!FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion())) {
+        if (!isMemorySnapshotSupported()) {
             return new NullableMemoryImageBuilder();
         }
 
@@ -369,7 +369,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         // 'filteredPluggedDisks' should contain only disks from 'getDisksList()' that are plugged to the VM.
         List<DiskImage> filteredPluggedDisks = ImagesHandler.imagesIntersection(filteredPluggedDisksForVm, getDisksList());
 
-        if (FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion())) {
+        if (isMemorySnapshotSupported()) {
             return new SnapshotVDSCommandParameters(getVm().getRunOnVds(),
                     getVm().getId(),
                     filteredPluggedDisks,
@@ -380,6 +380,15 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     getVm().getId(),
                     filteredPluggedDisks);
         }
+    }
+
+    /**
+     * Check if Memory Snapshot is supported
+     * @return
+     */
+    private boolean isMemorySnapshotSupported () {
+        return FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion())
+                && FeatureSupported.isMemorySnapshotSupportedByArchitecture(getVm().getClusterArch(), getVm().getVdsGroupCompatibilityVersion());
     }
 
     private void handleVdsLiveSnapshotFailure(VdcBLLException e) {
