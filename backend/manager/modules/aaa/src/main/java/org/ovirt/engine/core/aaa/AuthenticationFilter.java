@@ -63,7 +63,7 @@ public class AuthenticationFilter implements Filter {
                     for (AuthenticationProfile profile : AuthenticationProfileRepository.getInstance().getProfiles()) {
                         if (profile != null) {
                             Authenticator authenticator = profile.getAuthenticator();
-                            if (authenticator instanceof NegotiatingAuthenticator) {
+                            if (authenticator.isNegotiationAuth()) {
                                 profiles.add(0, profile);
                             }
 
@@ -123,8 +123,7 @@ public class AuthenticationFilter implements Filter {
                 return;
             }
 
-            NegotiatingAuthenticator authenticator = (NegotiatingAuthenticator) profile.getAuthenticator();
-            NegotiationResult result = authenticator.negotiate(req, rsp);
+            NegotiationResult result = profile.getAuthenticator().negotiate(req, rsp);
 
             // If the negotiation isn't finished then we assume that the response has been populated by the
             // authenticator and we just let the container sent it back to the client:

@@ -17,8 +17,12 @@ public interface Extension {
         HOME,
         EXTENSION_NAME,
         AAA_CHANGE_EXPIRED_PASSWORD_URL,
-        AAA_CHANGE_EXPIRED_PASSWORD_MSG;
+        AAA_CHANGE_EXPIRED_PASSWORD_MSG,
+        AAA_AUTHENTICATION_CAPABILITIES,
     };
+
+    public static final int AAA_AUTH_CAP_FLAGS_PASSWORD = (1 << 0);
+    public static final int AAA_AUTH_CAP_FLAGS_NEGOTIATING = (1 << 1);
 
     /**
      * Sets the context of the Extension

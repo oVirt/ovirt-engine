@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.api.extensions.AAAExtensionException;
 import org.ovirt.engine.api.extensions.AAAExtensionException.AAAExtensionError;
-import org.ovirt.engine.core.aaa.PasswordAuthenticator;
+import org.ovirt.engine.core.aaa.Authenticator;
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapBroker;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
  * infrastructure. It will exist only while the engine is migrated to use the new authentication interfaces, then it
  * will be removed.
  */
-public class ProvisionalAuthenticator extends PasswordAuthenticator {
+public class ProvisionalAuthenticator extends Authenticator {
 
     /**
      * The reference to the LDAP broker that implements the authentication.
@@ -41,6 +41,7 @@ public class ProvisionalAuthenticator extends PasswordAuthenticator {
         context.put(ExtensionProperties.LICENSE, "ASL 2.0");
         context.put(ExtensionProperties.HOME, "http://www.ovirt.org");
         context.put(ExtensionProperties.VERSION, "N/A");
+        context.put(ExtensionProperties.AAA_AUTHENTICATION_CAPABILITIES, AAA_AUTH_CAP_FLAGS_PASSWORD);
 
         if (passwordChangeMsgPerDomain == null) {
             synchronized (ProvisionalAuthenticator.class) {

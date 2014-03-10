@@ -5,7 +5,8 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ovirt.engine.core.aaa.NegotiatingAuthenticator;
+import org.ovirt.engine.api.extensions.Extension.ExtensionProperties;
+import org.ovirt.engine.core.aaa.Authenticator;
 import org.ovirt.engine.core.aaa.NegotiationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * directory.type=nop
  * </pre>
  */
-public class HeaderAuthenticator extends NegotiatingAuthenticator {
+public class HeaderAuthenticator extends Authenticator {
     private static final Logger log = LoggerFactory.getLogger(HeaderAuthenticator.class);
 
     /**
@@ -84,5 +85,11 @@ public class HeaderAuthenticator extends NegotiatingAuthenticator {
 
     @Override
     public void init() {
+        context.put(ExtensionProperties.AUTHOR, "The oVirt Project");
+        context.put(ExtensionProperties.EXTENSION_NAME, "Header authentication (Built-in)");
+        context.put(ExtensionProperties.LICENSE, "ASL 2.0");
+        context.put(ExtensionProperties.HOME, "http://www.ovirt.org");
+        context.put(ExtensionProperties.VERSION, "N/A");
+        context.put(ExtensionProperties.AAA_AUTHENTICATION_CAPABILITIES, AAA_AUTH_CAP_FLAGS_NEGOTIATING);
     }
 }

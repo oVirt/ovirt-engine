@@ -13,7 +13,6 @@ import org.ovirt.engine.core.aaa.Authenticator;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.DirectoryUtils;
-import org.ovirt.engine.core.aaa.PasswordAuthenticator;
 import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -154,7 +153,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
         // Check that the authenticator provided by the profile supports password authentication:
         Authenticator authenticator = profile.getAuthenticator();
-        if (!(authenticator instanceof PasswordAuthenticator)) {
+        if (!(authenticator.isPasswordAuth())) {
             log.errorFormat(
                 "Can't login user \"{0}\" because the authentication profile \"{1}\" doesn't support password " +
                 "authentication.",
@@ -163,8 +162,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
             return false;
         }
-        PasswordAuthenticator passwordAuthenticator = (PasswordAuthenticator) authenticator;
-
         DbUser curUser = null;
         String curPassword = null;
         SessionDataContainer sessionDataContainer = SessionDataContainer.getInstance();
@@ -182,7 +179,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         }
         // Perform the actual authentication:
         try {
-            passwordAuthenticator.authenticate(loginName, password);
+            authenticator.authenticate(loginName, password);
         } catch (AAAExtensionException ex) {
             log.infoFormat(
                     "Can't login user \"{0}\" with authentication profile \"{1}\" because the authentication failed.",
@@ -199,14 +196,14 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             getReturnValue().setSucceeded(false);
             if (canDoActionMsg == VdcBllMessages.USER_PASSWORD_EXPIRED) {
                 boolean addedUserPasswordExpiredCDA = false;
-                if (passwordAuthenticator.getChangeExpiredPasswordMsg() != null) {
+                if (authenticator.getChangeExpiredPasswordMsg() != null) {
                     addCanDoActionMessage(VdcBllMessages.USER_PASSWORD_EXPIRED_CHANGE_MSG_PROVIDED);
-                    getReturnValue().getCanDoActionMessages().add(String.format("$MSG %1$s", passwordAuthenticator.getChangeExpiredPasswordMsg()));
+                    getReturnValue().getCanDoActionMessages().add(String.format("$MSG %1$s", authenticator.getChangeExpiredPasswordMsg()));
                     addedUserPasswordExpiredCDA = true;
                 }
-                if (passwordAuthenticator.getChangeExpiredPasswordURL() != null) {
+                if (authenticator.getChangeExpiredPasswordURL() != null) {
                     addCanDoActionMessage(VdcBllMessages.USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED);
-                    getReturnValue().getCanDoActionMessages().add(String.format("$URL %1$s", passwordAuthenticator.getChangeExpiredPasswordURL()));
+                    getReturnValue().getCanDoActionMessages().add(String.format("$URL %1$s", authenticator.getChangeExpiredPasswordURL()));
                     addedUserPasswordExpiredCDA = true;
                 }
                 if (!addedUserPasswordExpiredCDA) {
