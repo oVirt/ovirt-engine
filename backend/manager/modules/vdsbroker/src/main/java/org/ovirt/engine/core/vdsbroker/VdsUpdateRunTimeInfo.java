@@ -902,20 +902,12 @@ public class VdsUpdateRunTimeInfo {
         auditLog(logable, AuditLogType.VDS_DETECTED);
     }
 
-    private void refreshVmStats() {
+    protected void refreshVmStats() {
         if (Config.<Boolean> getValue(ConfigValues.DebugTimerLogging)) {
             log.debug("vds::refreshVmList entered");
         }
-        VDSReturnValue vdsReturnValue;
-        VDSCommandType commandType =
-                _vdsManager.getRefreshStatistics()
-                        ? VDSCommandType.GetAllVmStats
-                        : VDSCommandType.List;
-        vdsReturnValue = getResourceManager().runVdsCommand(commandType, new VdsIdAndVdsVDSCommandParametersBase(_vds));
 
-        _runningVms = (Map<Guid, VmInternalData>) vdsReturnValue.getReturnValue();
-
-        if (vdsReturnValue.getSucceeded()) {
+        if (fetchRunningVms()) {
             List<Guid> staleRunningVms = checkVmsStatusChanged();
 
             proceedWatchdogEvents();
@@ -945,8 +937,23 @@ public class VdsUpdateRunTimeInfo {
             prepareGuestAgentNetworkDevicesForUpdate();
 
             updateLunDisks();
+        }
+    }
 
-        } else {
+    /**
+     * fetch running VMs and populate the internal structure. if we fail, handle the error
+     * @return true if we could get vms otherwise false
+     */
+    protected boolean fetchRunningVms() {
+        VDSCommandType commandType =
+                _vdsManager.getRefreshStatistics()
+                        ? VDSCommandType.GetAllVmStats
+                        : VDSCommandType.List;
+        VDSReturnValue vdsReturnValue =
+                getResourceManager().runVdsCommand(commandType, new VdsIdAndVdsVDSCommandParametersBase(_vds));
+        _runningVms = (Map<Guid, VmInternalData>) vdsReturnValue.getReturnValue();
+
+        if (!vdsReturnValue.getSucceeded()) {
             RuntimeException callException = vdsReturnValue.getExceptionObject();
             if (callException != null) {
                 if (callException instanceof VDSErrorException) {
@@ -963,6 +970,8 @@ public class VdsUpdateRunTimeInfo {
                 log.errorFormat("{0} failed with no exception!", commandType.name());
             }
         }
+
+        return vdsReturnValue.getSucceeded();
     }
 
     /**
@@ -1256,8 +1265,8 @@ public class VdsUpdateRunTimeInfo {
         return (String) device.get(VdsProperties.Device);
     }
 
-    // if not statistics check if status changed and add to running list
-    private List<Guid> checkVmsStatusChanged() {
+    // if not statistics check if status changed return a list of those
+    protected List<Guid> checkVmsStatusChanged() {
         List<Guid> staleRunningVms = new ArrayList<>();
         if (!_vdsManager.getRefreshStatistics()) {
             List<VmDynamic> tempRunningList = new ArrayList<VmDynamic>();
@@ -1267,21 +1276,31 @@ public class VdsUpdateRunTimeInfo {
             for (VmDynamic runningVm : tempRunningList) {
                 VM vmToUpdate = _vmDict.get(runningVm.getId());
 
+                boolean statusChanged = false;
                 if (vmToUpdate == null
                         || (vmToUpdate.getStatus() != runningVm.getStatus() &&
-                        !(vmToUpdate.getStatus() == VMStatus.PreparingForHibernate && runningVm.getStatus() == VMStatus.Up))) {
-                    VDSReturnValue vdsReturnValue = getResourceManager().runVdsCommand(
-                            VDSCommandType.GetVmStats,
-                            new GetVmStatsVDSCommandParameters(_vds, runningVm.getId()));
-                    if (vdsReturnValue.getSucceeded()) {
-                        _runningVms.put(runningVm.getId(), (VmInternalData) vdsReturnValue.getReturnValue());
+                        !(vmToUpdate.getStatus() == VMStatus.PreparingForHibernate && runningVm.getStatus() == VMStatus.Up)) ) {
+                    VDSReturnValue vmStats =
+                            getResourceManager().runVdsCommand(
+                                    VDSCommandType.GetVmStats,
+                                    new GetVmStatsVDSCommandParameters(_vds, runningVm.getId()));
+                    if (vmStats.getSucceeded()) {
+                        _runningVms.put(runningVm.getId(), (VmInternalData) vmStats.getReturnValue());
+                        statusChanged = true;
                     } else {
-                        _runningVms.remove(runningVm.getId());
+                        if (vmToUpdate != null) {
+                            log.errorFormat(
+                                    "failed to fetch {0} stats. status remain unchanged ({1})",
+                                    vmToUpdate.getName(),
+                                    vmToUpdate.getStatus());
+                        }
                     }
-                } else {
+                }
+
+                if (!statusChanged) {
                     // status not changed move to next vm
-                    staleRunningVms.add(vmToUpdate.getId());
-                    _runningVms.remove(vmToUpdate.getId());
+                    staleRunningVms.add(runningVm.getId());
+                    _runningVms.remove(runningVm.getId());
                 }
             }
         }
@@ -1573,7 +1592,7 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    private void processExternallyManagedVms() {
+    protected void processExternallyManagedVms() {
         List<String> vmsToQuery = new ArrayList<String>();
         // Searching for External VMs that run on the host
         for (VmInternalData vmInternalData : _runningVms.values()) {
@@ -1665,7 +1684,7 @@ public class VdsUpdateRunTimeInfo {
                     if (vmToUpdate.getStatus() != VMStatus.Up && vmToUpdate.getStatus() != VMStatus.MigratingFrom
                             && runningVm.getStatus() == VMStatus.Up) {
                         // Vm moved to Up status - remove its record from Async
-                        // running handling
+                        // reportedAndUnchangedVms handling
                         if (log.isDebugEnabled()) {
                             log.debugFormat("removing VM {0} from successful run VMs list", vmToUpdate.getId());
                         }
