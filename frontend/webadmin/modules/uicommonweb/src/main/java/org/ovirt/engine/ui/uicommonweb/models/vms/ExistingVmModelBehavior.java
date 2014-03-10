@@ -1,42 +1,34 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmWatchdog;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.ExistingVmInstanceTypeManager;
+import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class ExistingVmModelBehavior extends VmModelBehaviorBase
 {
-    private EditProfileBehavior networkBehavior = new EditProfileBehavior();
+    private InstanceTypeManager instanceTypeManager;
 
     protected VM vm;
 
-    private List<VmNetworkInterface> networkInerfaces;
     private int hostCpu;
     private VDS runningOnHost;
 
@@ -56,55 +48,32 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
         super.initialize(systemTreeSelectedItem);
+
         getModel().getVmInitEnabled().setEntity(getVm().getVmInit() != null);
         getModel().getVmInitModel().init(getVm().getStaticData());
         getModel().getVmType().setIsChangable(true);
         getModel().getIsSoundcardEnabled().setIsChangable(true);
+        getModel().getInstanceTypes().setIsChangable(!vm.isRunning());
 
-        AsyncQuery getVmNicsQuery = new AsyncQuery();
-        getVmNicsQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object result) {
-                networkInerfaces = (List<VmNetworkInterface>) result;
-                postNetworkInterfacesLoaded();
-            }
-        };
-        AsyncDataProvider.getVmNicList(getVmNicsQuery, vm.getId());
+        loadDataCenter();
 
-        AsyncDataProvider.getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                UnitVmModel model = (UnitVmModel) target;
-                VdcQueryReturnValue val = (VdcQueryReturnValue) returnValue;
-                @SuppressWarnings("unchecked")
-                Collection<VmWatchdog> watchdogs = val.getReturnValue();
-                for (VmWatchdog watchdog : watchdogs) {
-                    model.getWatchdogAction().setSelectedItem(watchdog.getAction() == null ? null
-                            : watchdog.getAction().name().toLowerCase());
-                    model.getWatchdogModel().setSelectedItem(watchdog.getModel() == null ? ""
-                            : watchdog.getModel().name());
-                }
-            }
-        }), vm.getId());
+        instanceTypeManager = new ExistingVmInstanceTypeManager(getModel(), vm);
     }
 
-    private void postNetworkInterfacesLoaded() {
+    private void loadDataCenter() {
         AsyncDataProvider.getDataCenterById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
-                        if (returnValue != null)
-                        {
+                        if (returnValue != null) {
                             StoragePool dataCenter = (StoragePool) returnValue;
                             final List<StoragePool> dataCenters =
-                                    new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCenter }));
+                                    new ArrayList<StoragePool>(Arrays.asList(new StoragePool[]{dataCenter}));
 
                             initClusters(dataCenters);
-                        }
-                        else
-                        {
+                        } else {
                             ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) model.getBehavior();
                             VM currentVm = behavior.vm;
                             VDSGroup tempVar = new VDSGroup();
@@ -119,7 +88,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                             model.getDataCenterWithClustersList().setSelectedItem(dataCenterWithCluster);
                             behavior.initTemplate();
                             behavior.initCdImage();
-                            behavior.initSoundCard(vm.getId());
                         }
 
                     }
@@ -146,7 +114,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                                 filteredClusters, vm.getVdsGroupId());
                         initTemplate();
                         initCdImage();
-                        initSoundCard(vm.getId());
                     }
                 }, getModel().getHash()),
                 true, false);
@@ -165,18 +132,11 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getName().setEntity(vm.getName());
         getModel().getDescription().setEntity(vm.getVmDescription());
         getModel().getComment().setEntity(vm.getComment());
-        getModel().getMemSize().setEntity(vm.getVmMemSizeMb());
         getModel().getMemSize().setIsChangable(vm.isDown());
-        getModel().getMinAllocatedMemory().setEntity(vm.getMinAllocatedMem());
-        getModel().getOSType().setSelectedItem(vm.getVmOsId());
-        getModel().getUsbPolicy().setSelectedItem(vm.getUsbPolicy());
-        getModel().getNumOfMonitors().setSelectedItem(vm.getNumOfMonitors());
-        getModel().getIsSingleQxlEnabled().setEntity(vm.getSingleQxlPci());
-        getModel().getAllowConsoleReconnect().setEntity(vm.getAllowConsoleReconnect());
-        getModel().setBootSequence(vm.getDefaultBootSequence());
-        getModel().getIsHighlyAvailable().setEntity(vm.isAutoStartup());
 
-        getModel().getTotalCPUCores().setEntity(Integer.toString(vm.getNumOfCpus()));
+        getModel().getOSType().setSelectedItem(vm.getVmOsId());
+        getModel().getAllowConsoleReconnect().setEntity(vm.getAllowConsoleReconnect());
+
         getModel().getTotalCPUCores().setIsChangable(!vm.isRunning());
 
         getModel().getIsStateless().setEntity(vm.isStateless());
@@ -186,62 +146,23 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getIsRunAndPause().setIsChangable(!vm.isRunning());
         getModel().getIsRunAndPause().setIsAvailable(vm.getVmPoolId() == null);
 
-        getModel().getIsSmartcardEnabled().setEntity(vm.isSmartcardEnabled());
         getModel().getIsDeleteProtected().setEntity(vm.isDeleteProtected());
         getModel().selectSsoMethod(vm.getSsoMethod());
 
-        getModel().getNumOfSockets().setSelectedItem(vm.getNumOfSockets());
         getModel().getNumOfSockets().setIsChangable(isHotSetCpuSupported() || !vm.isRunning());
-
         getModel().getCoresPerSocket().setIsChangable(!vm.isRunning());
 
         getModel().getKernel_parameters().setEntity(vm.getKernelParams());
         getModel().getKernel_path().setEntity(vm.getKernelUrl());
         getModel().getInitrd_path().setEntity(vm.getInitrdUrl());
 
-        getModel().getCustomProperties().setEntity(vm.getCustomProperties());
-        getModel().getCustomPropertySheet().deserialize(vm.getCustomProperties());
         getModel().getCpuSharesAmount().setEntity(vm.getCpuShares());
         updateCpuSharesSelection();
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(getVm().getId()), new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        @SuppressWarnings("unchecked")
-                        List<VmWatchdog> watchdogs =
-                                ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        if (watchdogs.isEmpty()) {
-                            getModel().getWatchdogAction().setSelectedItem(null);
-                            getModel().getWatchdogModel().setSelectedItem(null);
-                        } else {
-                            VmWatchdog vmWatchdog = watchdogs.get(0);
-                            getModel().getWatchdogAction().setSelectedItem(vmWatchdog.getAction() == null ? null
-                                    : vmWatchdog.getAction().name().toLowerCase());
-                            getModel().getWatchdogModel().setSelectedItem(vmWatchdog.getModel() == null ? ""
-                                    : vmWatchdog.getModel().name());
-                        }
-                    }
-                }));
-
-        updateConsoleDevice(getVm().getId());
-
-        updateVirtioScsiEnabled(getVm().getId(), getVm().getVmOsId());
-
         getModel().getVncKeyboardLayout().setSelectedItem(vm.getDefaultVncKeyboardLayout());
-
-        Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(getVm().getId()), new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) ((VdcQueryReturnValue)returnValue).getReturnValue());
-                    }
-                }
-        ));
 
         updateTimeZone(vm.getTimeZone());
 
-        updateHostPinning(vm.getMigrationSupport());
         getModel().getHostCpu().setEntity(vm.isUseHostCpuFlags());
 
         // Storage domain and provisioning are not available for an existing VM.
@@ -249,22 +170,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getProvisioning().setIsAvailable(false);
         getModel().getProvisioning().setEntity(Guid.Empty.equals(vm.getVmtGuid()));
 
-        // Select display protocol.
-        for (EntityModel<DisplayType> model : getModel().getDisplayProtocol().getItems())
-        {
-            DisplayType displayType = model.getEntity();
-
-            if (displayType == vm.getDefaultDisplayType())
-            {
-                getModel().getDisplayProtocol().setSelectedItem(model);
-                break;
-            }
-        }
-
         getModel().getCpuPinning().setEntity(vm.getCpuPinning());
-        initPriority(vm.getPriority());
-
-        getModel().setSelectedMigrationDowntime(vm.getMigrationDowntime());
 
         if (isHotSetCpuSupported()) {
             // cancel related events while fetching data
@@ -302,9 +208,10 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         updateCpuPinningVisibility();
         updateMemoryBalloon();
         updateCpuSharesAvailability();
-        updateNetworkInterfaces(networkBehavior, networkInerfaces);
         updateVirtioScsiAvailability();
         updateOSValues();
+
+        instanceTypeManager.updateAll();
     }
 
     @Override
@@ -330,7 +237,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         Integer osType = getModel().getOSType().getSelectedItem();
 
         if (osType != null) {
-            updateVirtioScsiEnabled(vm.getId(), osType);
+            Guid id = basedOnCustomInstanceType() ? vm.getId() : getModel().getInstanceTypes().getSelectedItem().getId();
+            updateVirtioScsiEnabledWithoutDetach(id, osType);
         }
     }
 
@@ -439,5 +347,10 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
     public int getHostCpu() {
         return hostCpu;
+    }
+
+    @Override
+    public InstanceTypeManager getInstanceTypeManager() {
+        return instanceTypeManager;
     }
 }

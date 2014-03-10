@@ -1,12 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -25,18 +19,28 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
+import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewVmInstanceTypeManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements IFrontendMultipleQueryAsyncCallback
 {
     private static final ActionGroup CREATE_VM = ActionGroup.CREATE_VM;
 
+    private InstanceTypeManager instanceTypeManager;
+
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
+        commonInitialize();
         // The custom properties tab should be hidden on the User Portal
         getModel().setIsCustomPropertiesTabAvailable(false);
 
@@ -79,6 +83,8 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                         }
                     }
                 }, getModel().getHash()), CREATE_VM, true, false);
+
+        instanceTypeManager = new NewVmInstanceTypeManager(getModel());
     }
 
     @Override
@@ -170,13 +176,6 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
      * Disabled to change this in userportal
      */
     @Override
-    protected void updateHostPinning(MigrationSupport migrationSupport) {
-    }
-
-    /**
-     * Disabled to change this in userportal
-     */
-    @Override
     protected void doChangeDefautlHost(Guid hostGuid) {
     }
 
@@ -187,5 +186,10 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                 new IdQueryParameters(cluster.getId()),
                 query
                 );
+    }
+
+    @Override
+    public InstanceTypeManager getInstanceTypeManager() {
+        return instanceTypeManager;
     }
 }

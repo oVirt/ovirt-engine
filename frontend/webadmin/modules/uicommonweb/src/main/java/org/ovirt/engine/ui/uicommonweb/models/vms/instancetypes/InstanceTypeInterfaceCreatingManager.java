@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.uicommonweb.models.vms;
+package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;

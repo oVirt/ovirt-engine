@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -45,6 +46,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -190,6 +192,7 @@ public class UnitVmModel extends Model {
 
             getBaseTemplate().setIsChangable(false);
             getTemplate().setIsChangable(false);
+            getInstanceTypes().setIsChangable(false);
             getMemSize().setIsChangable(false);
             getTotalCPUCores().setIsChangable(false);
 
@@ -494,9 +497,18 @@ public class UnitVmModel extends Model {
         return baseTemplate;
     }
 
-    private void setBaseTemplate(NotChangableForVmInPoolListModel<VmTemplate> value)
-    {
+    private void setBaseTemplate(NotChangableForVmInPoolListModel<VmTemplate> value) {
         baseTemplate = value;
+    }
+
+    private NotChangableForVmInPoolListModel<InstanceType> instanceTypes;
+
+    public void setInstanceTypes(NotChangableForVmInPoolListModel<InstanceType> instanceTypes) {
+        this.instanceTypes = instanceTypes;
+    }
+
+    public ListModel<InstanceType> getInstanceTypes() {
+        return instanceTypes;
     }
 
     private NotChangableForVmInPoolListModel<VmType> vmType;
@@ -1360,6 +1372,8 @@ public class UnitVmModel extends Model {
         setTemplate(new NotChangableForVmInPoolListModel<VmTemplate>());
         getTemplate().getSelectedItemChangedEvent().addListener(this);
 
+        setInstanceTypes(new NotChangableForVmInPoolListModel<InstanceType>());
+
         setQuota(new NotChangableForVmInPoolListModel<Quota>());
         getQuota().setIsAvailable(false);
 
@@ -1507,6 +1521,7 @@ public class UnitVmModel extends Model {
 
         setEditingEnabled(new EntityModel<Boolean>());
         getEditingEnabled().setEntity(true);
+
     }
 
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem)
@@ -1559,7 +1574,12 @@ public class UnitVmModel extends Model {
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition))
         {
             if (sender == getVmType()) {
+                deactivateInstanceTypeManagerAndUpdateFields();
+
                 vmTypeChanged();
+
+                getBehavior().activateInstanceTypeManager();
+
             } else if (sender == getDataCenterWithClustersList())
             {
                 dataCenterWithClusterSelectedItemChanged(sender, args);
@@ -1579,11 +1599,15 @@ public class UnitVmModel extends Model {
                 defaultHost_SelectedItemChanged(sender, args);
             }
             else if (sender == getOSType()) {
+                deactivateInstanceTypeManagerAndUpdateFields();
+
                 oSType_SelectedItemChanged(sender, args);
                 getBehavior().oSType_SelectedItemChanged();
                 getVmInitModel().osTypeChanged(getOSType().getSelectedItem());
                 updateDisplayProtocol();
                 initUsbPolicy();
+
+                getBehavior().activateInstanceTypeManager();
             }
             else if (sender == getFirstBootDevice())
             {
@@ -1591,8 +1615,12 @@ public class UnitVmModel extends Model {
             }
             else if (sender == getDisplayProtocol())
             {
+                deactivateInstanceTypeManagerAndUpdateFields();
+
                 displayProtocol_SelectedItemChanged(sender, args);
                 initUsbPolicy();
+
+                getBehavior().activateInstanceTypeManager();
             }
             else if (sender == getNumOfSockets())
             {
@@ -1662,6 +1690,17 @@ public class UnitVmModel extends Model {
             }
 
         }
+    }
+
+    private void deactivateInstanceTypeManagerAndUpdateFields() {
+        getBehavior().deactivateInstanceTypeManager(new InstanceTypeManager.ActivatedListener() {
+            @Override
+            public void activated() {
+                if (getBehavior().getInstanceTypeManager() != null) {
+                    getBehavior().getInstanceTypeManager().updateFields();
+                }
+            }
+        });
     }
 
     private void vmInitEnabledChanged() {
@@ -1973,7 +2012,6 @@ public class UnitVmModel extends Model {
 
         getBehavior().updateDefaultTimeZone();
 
-
         handleQxlClusterLevel();
 
         updateWatchdogModels(osType);
@@ -1992,8 +2030,13 @@ public class UnitVmModel extends Model {
             asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
+                    getBehavior().deactivateInstanceTypeManager();
+
                     updateWatchdogItems((HashSet<VmWatchdogType>) ((VdcQueryReturnValue) returnValue)
                             .getReturnValue());
+
+                    getBehavior().activateInstanceTypeManager();
+
                 }
             };
             AsyncDataProvider.getVmWatchdogTypes(osType,
@@ -2063,6 +2106,7 @@ public class UnitVmModel extends Model {
     {
         if (getDisplayType() == null)
         {
+            getBehavior().activateInstanceTypeManager();
             return;
         }
         DisplayType type = getDisplayType();

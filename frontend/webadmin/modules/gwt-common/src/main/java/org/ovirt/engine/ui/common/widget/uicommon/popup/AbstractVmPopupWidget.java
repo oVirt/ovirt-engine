@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -206,6 +207,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "vmType.selectedItem")
     @WithElementId("vmType")
     public ListModelListBoxEditor<VmType> vmTypeEditor;
+
+    @UiField(provided = true)
+    @Path(value = "instanceTypes.selectedItem")
+    @WithElementId("instanceType")
+    public ListModelTypeAheadListBoxEditor<InstanceType> instanceTypesEditor;
 
     @UiField(provided = true)
     @Path(value = "isDeleteProtected.entity")
@@ -1047,6 +1053,26 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         }, new ModeSwitchingVisibilityRenderer());
 
         vmTypeEditor = new ListModelListBoxEditor<VmType>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+
+        instanceTypesEditor = new ListModelTypeAheadListBoxEditor<InstanceType>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<InstanceType>() {
+
+                    @Override
+                    public String getReplacementStringNullSafe(InstanceType data) {
+                        return data.getName();
+                    }
+
+                    @Override
+                    public String getDisplayStringNullSafe(InstanceType data) {
+                            return typeAheadNameDescriptionTemplateNullSafe(
+                                    data.getName(),
+                                    data.getDescription()
+                            );
+                    }
+                },
+                new ModeSwitchingVisibilityRenderer()
+        );
+
         numOfSocketsEditor = new ListModelListBoxEditor<Integer>(new ModeSwitchingVisibilityRenderer());
         numOfSocketsEditorWithDetachable = new EntityModelDetachableWidgetWithLabel(numOfSocketsEditor);
         corePerSocketEditor = new ListModelListBoxEditor<Integer>(new ModeSwitchingVisibilityRenderer());
@@ -1170,6 +1196,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         baseTemplateEditor.setLabel(constants.basedOnTemplateVmPopup());
         templateEditor.setLabel(constants.templateSubVersion());
+        instanceTypesEditor.setLabel(constants.instanceType());
 
         oSTypeEditor.setLabel(constants.osVmPopup());
         vmTypeEditor.setLabel(constants.optimizedFor());
@@ -1616,6 +1643,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         quotaEditor.setTabIndex(nextTabIndex++);
         oSTypeEditor.setTabIndex(nextTabIndex++);
         baseTemplateEditor.setTabIndex(nextTabIndex++);
+        instanceTypesEditor.setTabIndexes(nextTabIndex++);
         templateEditor.setTabIndex(nextTabIndex++);
 
         nameEditor.setTabIndex(nextTabIndex++);
@@ -1814,6 +1842,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         templateEditor.setEnabled(false);
         baseTemplateEditor.setEnabled(false);
         vmTypeEditor.setEnabled(false);
+        instanceTypesEditor.setEnabled(false);
     }
 
 

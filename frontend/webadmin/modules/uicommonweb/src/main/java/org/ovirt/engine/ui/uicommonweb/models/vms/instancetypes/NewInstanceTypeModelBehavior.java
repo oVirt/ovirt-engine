@@ -1,9 +1,10 @@
-package org.ovirt.engine.ui.uicommonweb.models.vms;
+package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +14,6 @@ public class NewInstanceTypeModelBehavior extends InstanceTypeModelBehaviorBase 
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
         super.initialize(systemTreeSelectedItem);
-
         updateNumOfSockets();
 
         initDisplayTypes(DisplayType.qxl);

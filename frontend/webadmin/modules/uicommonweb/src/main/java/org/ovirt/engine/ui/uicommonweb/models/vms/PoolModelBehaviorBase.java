@@ -1,9 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -16,7 +13,6 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostWithProtocolAndPortAddressValidation;
@@ -28,6 +24,9 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolModel> {
 
@@ -110,15 +109,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             updateQuotaByCluster(vmBase.getQuotaId(), vmBase.getQuotaName());
 
             // Copy VM parameters from template.
-            getModel().getVmType().setSelectedItem(vmBase.getVmType());
             setSelectedOSType(vmBase, getModel().getSelectedCluster().getArchitecture());
-            getModel().getTotalCPUCores().setEntity(Integer.toString(vmBase.getNumOfCpus()));
-            getModel().getNumOfSockets().setSelectedItem(vmBase.getNumOfSockets());
-            getModel().getNumOfMonitors().setSelectedItem(vmBase.getNumOfMonitors());
-            getModel().getIsSingleQxlEnabled().setEntity(vmBase.getSingleQxlPci());
-            getModel().getMemSize().setEntity(vmBase.getMemSizeMb());
-            getModel().setBootSequence(vmBase.getDefaultBootSequence());
-            getModel().getIsHighlyAvailable().setEntity(vmBase.isAutoStartup());
+            getModel().getVmType().setSelectedItem(vmBase.getVmType());
             getModel().getIsDeleteProtected().setEntity(vmBase.isDeleteProtected());
             getModel().selectSsoMethod(vmBase.getSsoMethod());
             getModel().getIsRunAndPause().setEntity(false);
@@ -132,31 +124,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             }
 
             updateTimeZone(vmBase.getTimeZone());
-            updateConsoleDevice(vmBase.getId());
-            updateVirtioScsiEnabled(vmBase.getId(), vmBase.getOsId());
 
-            // Update display protocol selected item
-            EntityModel<DisplayType> displayProtocol = null;
-            boolean isFirst = true;
-            for (EntityModel<DisplayType> item : getModel().getDisplayProtocol().getItems())
-            {
-                if (isFirst)
-                {
-                    displayProtocol = item;
-                    isFirst = false;
-                }
-                DisplayType dt = item.getEntity();
-                if (dt == extractDisplayType(vmBase))
-                {
-                    displayProtocol = item;
-                    break;
-                }
-            }
-            getModel().getDisplayProtocol().setSelectedItem(displayProtocol);
-            getModel().getUsbPolicy().setSelectedItem(vmBase.getUsbPolicy());
             getModel().getVncKeyboardLayout().setSelectedItem(vmBase.getVncKeyboardLayout());
-            getModel().getIsSmartcardEnabled().setEntity(vmBase.isSmartcardEnabled());
-            getModel().setSelectedMigrationDowntime(vmBase.getMigrationDowntime());
 
             // By default, take kernel params from template.
             getModel().getKernel_path().setEntity(vmBase.getKernelUrl());
@@ -181,17 +150,15 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             getModel().getProvisioning().setEntity(false);
 
-            initPriority(vmBase.getPriority());
             initStorageDomains();
 
-            // use min. allocated memory from the template, if specified
-            if (vmBase.getMinAllocatedMem() == 0) {
-                updateMinAllocatedMemory();
-            } else {
-                getModel().getMinAllocatedMemory().setEntity(vmBase.getMinAllocatedMem());
-            }
+            InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();
+            int instanceTypeMinAllocatedMemory = selectedInstanceType != null ? selectedInstanceType.getMinAllocatedMem() : 0;
 
-            initSoundCard(vmBase.getId());
+            // do not update if specified on template or instance type
+            if (vmBase.getMinAllocatedMem() == 0 && instanceTypeMinAllocatedMemory == 0) {
+                updateMinAllocatedMemory();
+            }
 
             getModel().getAllowConsoleReconnect().setEntity(vmBase.isAllowConsoleReconnect());
 
@@ -208,8 +175,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     public void template_SelectedItemChanged() {
         // overrideSerialNumberPolicy if there is a need to do some actions
     }
-
-    protected abstract DisplayType extractDisplayType(VmBase vmBase);
 
     @Override
     public void postDataCenterWithClusterSelectedItemChanged()
@@ -244,8 +209,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     public void oSType_SelectedItemChanged() {
         VmTemplate template = getModel().getTemplate().getSelectedItem();
         Integer osType = getModel().getOSType().getSelectedItem();
-        if (template != null && osType != null) {
-            updateVirtioScsiEnabled(template.getId(), osType);
+        if ((template != null || !basedOnCustomInstanceType()) && osType != null) {
+            Guid id = basedOnCustomInstanceType() ? template.getId() : getModel().getInstanceTypes().getSelectedItem().getId();
+            updateVirtioScsiEnabledWithoutDetach(id, osType);
         }
     }
 
@@ -325,4 +291,5 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 && getModel().getMaxAssignedVmsPerUser().getIsValid()
                 && getModel().getSpiceProxy().getIsValid();
     }
+
 }

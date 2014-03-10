@@ -2256,5 +2256,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Remove Instance Type(s)")
     String removeInstanceTypeTitle();
+
+    @DefaultStringValue("Custom")
+    String customInstanceTypeName();
+
+    @DefaultStringValue("No instance type - if selected the instance will be attached to no instance type")
+    String customInstanceTypeDescription();
 }
 

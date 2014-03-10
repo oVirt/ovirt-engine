@@ -1,17 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -20,12 +14,19 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.ExistingPoolInstanceTypeManager;
+import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.validation.ExistingPoolNameLengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
     private final VM pool;
+
+    private InstanceTypeManager instanceTypeManager;
 
     public ExistingPoolModelBehavior(VM pool) {
         this.pool = pool;
@@ -41,6 +42,8 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
             getModel().getSpiceProxy().setEntity(pool.getVmPoolSpiceProxy());
             getModel().getSpiceProxy().setIsChangable(true);
         }
+
+        instanceTypeManager = new ExistingPoolInstanceTypeManager(getModel(), pool);
     }
 
     @Override
@@ -66,6 +69,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                 .setSelectedItem((selectDataCenterWithCluster != null) ? selectDataCenterWithCluster
                         : Linq.firstOrDefault(dataCenterWithClusters));
 
+        instanceTypeManager.updateAll();
     }
 
     public void initTemplate() {
@@ -75,20 +79,10 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     @Override
     public void template_SelectedItemChanged() {
         getModel().setIsDisksAvailable(true);
-        updateHostPinning(pool.getMigrationSupport());
     }
 
     @Override
     protected void baseTemplateSelectedItemChanged() {
-    }
-
-    @Override
-    protected DisplayType extractDisplayType(VmBase vmBase) {
-        if (vmBase instanceof VmStatic) {
-            return ((VmStatic) vmBase).getDefaultDisplayType();
-        }
-
-        return null;
     }
 
     @Override
@@ -154,5 +148,10 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     @Override
     protected List<VDSGroup> filterClusters(List<VDSGroup> clusters) {
         return AsyncDataProvider.filterByArchitecture(clusters, pool.getClusterArch());
+    }
+
+    @Override
+    public InstanceTypeManager getInstanceTypeManager() {
+        return instanceTypeManager;
     }
 }

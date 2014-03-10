@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.pools;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
@@ -51,6 +52,7 @@ public class BaseVmListModelTest {
     protected static final String KERNEL_PATH_2 = "kernel_path2";    //$NON-NLS-1$
     protected static final String KERNEL_PARAMS_2 = "kernel_params2";  //$NON-NLS-1$
     protected static final String CUSTOM_PROPERTIES = "custom_properties"; //$NON-NLS-1$
+    protected static final Guid INSTANCE_TYPE_ID = Guid.newGuid();
     protected static final Guid QUOTA_ID = Guid.newGuid();
     protected static final String VNC_KEYBOARD_LAYOUT = "en-us"; //$NON-NLS-1$
     protected static final String VNC_KEYBOARD_LAYOUT_2 = "cz-cs"; //$NON-NLS-1$
@@ -71,6 +73,9 @@ public class BaseVmListModelTest {
         template.setId(TEMPLATE_GUID);
         when(model.getTemplate().getSelectedItem()).thenReturn(template);
         when(model.getName().getEntity()).thenReturn(VM_NAME);
+        InstanceType instanceType = new VmTemplate();
+        instanceType.setId(INSTANCE_TYPE_ID);
+        when(model.getInstanceTypes().getSelectedItem()).thenReturn(instanceType);
         when(model.getOSType().getSelectedItem()).thenReturn(OS_TYPE);
         when(model.getNumOfMonitors().getSelectedItem()).thenReturn(NUM_OF_MONITORS);
         when(model.getDescription().getEntity()).thenReturn(DESCRIPTION);
@@ -207,6 +212,7 @@ public class BaseVmListModelTest {
     protected void verifyBuiltVmSpecific(VM vm) {
         assertEquals(TEMPLATE_GUID, vm.getVmtGuid());
         assertEquals(CUSTOM_PROPERTIES, vm.getCustomProperties());
+        assertEquals(INSTANCE_TYPE_ID, vm.getInstanceTypeId());
     }
 
     protected void verifyBuiltOrigVm(VM origVm, VM vm) {

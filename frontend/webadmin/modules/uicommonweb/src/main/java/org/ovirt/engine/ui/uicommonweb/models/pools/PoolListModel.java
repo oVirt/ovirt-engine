@@ -452,6 +452,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
                         vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
                         vm.setStateless(false);
+                        vm.setInstanceTypeId(model.getInstanceTypes().getSelectedItem().getId());
 
                         AddVmPoolWithVmsParameters param =
                                 new AddVmPoolWithVmsParameters(pool, vm, model.getNumOfDesktops().getEntity(), 0);

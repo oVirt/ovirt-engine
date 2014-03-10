@@ -3,21 +3,24 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
+import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewPoolInstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NewPoolNameLengthValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+
 public class NewPoolModelBehavior extends PoolModelBehaviorBase {
+
+    private InstanceTypeManager instanceTypeManager;
 
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
@@ -26,6 +29,8 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         getModel().getVmType().setIsChangable(true);
 
         templateValidate();
+
+        instanceTypeManager = new NewPoolInstanceTypeManager(getModel());
     }
 
     @Override
@@ -68,6 +73,8 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
                 getModel().getBaseTemplate().setItems(templatesWithoutBlank);
             }
         }), dataCenter.getId());
+
+        instanceTypeManager.updateAll();
     }
 
     @Override
@@ -80,17 +87,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         }
 
         setupWindowModelFrom(template);
-        updateHostPinning(template.getMigrationSupport());
         doChangeDefautlHost(template.getDedicatedVmForVds());
-    }
-
-    @Override
-    protected DisplayType extractDisplayType(VmBase vmBase) {
-        if (vmBase instanceof VmTemplate) {
-            return ((VmTemplate) vmBase).getDefaultDisplayType();
-        }
-
-        return null;
     }
 
     @Override
@@ -124,5 +121,10 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     @Override
     protected List<VDSGroup> filterClusters(List<VDSGroup> clusters) {
         return AsyncDataProvider.filterClustersWithoutArchitecture(clusters);
+    }
+
+    @Override
+    public InstanceTypeManager getInstanceTypeManager() {
+        return instanceTypeManager;
     }
 }

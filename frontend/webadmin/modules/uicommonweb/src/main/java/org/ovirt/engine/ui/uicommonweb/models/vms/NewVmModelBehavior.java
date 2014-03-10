@@ -1,42 +1,39 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
+import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewVmInstanceTypeManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewVmModelBehavior extends VmModelBehaviorBase {
 
-    private final ProfileBehavior networkBehavior = new EditProfileBehavior();
+    private InstanceTypeManager instanceTypeManager;
 
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
         super.initialize(systemTreeSelectedItem);
+
         getModel().getIsSoundcardEnabled().setIsChangable(true);
         getModel().getVmType().setIsChangable(true);
 
@@ -65,6 +62,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                                                     dataCenters,
                                                     filteredClusterList, null);
                                             initCdImage();
+
                                         }
                                     }, getModel().getHash()),
                                     true, false);
@@ -78,6 +76,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
         initPriority(0);
         getModel().getVmInitModel().init(null);
+
+        instanceTypeManager = new NewVmInstanceTypeManager(getModel());
     }
 
     @Override
@@ -89,20 +89,10 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         {
             // Copy VM parameters from template.
             setSelectedOSType(template, getModel().getSelectedCluster().getArchitecture());
-            getModel().getTotalCPUCores().setEntity(Integer.toString(template.getNumOfCpus()));
-            getModel().getNumOfSockets().setSelectedItem(template.getNumOfSockets());
-            getModel().getNumOfMonitors().setSelectedItem(template.getNumOfMonitors());
-            getModel().getIsSingleQxlEnabled().setEntity(template.getSingleQxlPci());
-            getModel().getMemSize().setEntity(template.getMemSizeMb());
-            getModel().setBootSequence(template.getDefaultBootSequence());
-            getModel().getIsHighlyAvailable().setEntity(template.isAutoStartup());
-
-            updateHostPinning(template.getMigrationSupport());
             doChangeDefautlHost(template.getDedicatedVmForVds());
 
             getModel().getIsDeleteProtected().setEntity(template.isDeleteProtected());
             getModel().selectSsoMethod(template.getSsoMethod());
-            getModel().setSelectedMigrationDowntime(template.getMigrationDowntime());
 
             getModel().getIsStateless().setEntity(template.isStateless());
 
@@ -114,31 +104,9 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                 getModel().getCdImage().setSelectedItem(template.getIsoPath());
             }
 
-            updateConsoleDevice(template.getId());
-            updateVirtioScsiEnabled(template.getId(), template.getOsId());
             updateTimeZone(template.getTimeZone());
 
-            // Update display protocol selected item
-            EntityModel<DisplayType> displayProtocol = null;
-            boolean isFirst = true;
-            for (EntityModel<DisplayType> item : getModel().getDisplayProtocol().getItems())
-            {
-                if (isFirst)
-                {
-                    displayProtocol = item;
-                    isFirst = false;
-                }
-                DisplayType dt = item.getEntity();
-                if (dt == template.getDefaultDisplayType())
-                {
-                    displayProtocol = item;
-                    break;
-                }
-            }
-            getModel().getDisplayProtocol().setSelectedItem(displayProtocol);
-            getModel().getUsbPolicy().setSelectedItem(template.getUsbPolicy());
             getModel().getVncKeyboardLayout().setSelectedItem(template.getVncKeyboardLayout());
-            getModel().getIsSmartcardEnabled().setEntity(template.isSmartcardEnabled());
 
             // By default, take kernel params from template.
             getModel().getKernel_path().setEntity(template.getKernelUrl());
@@ -155,7 +123,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                 getModel().getCopyPermissions().setIsAvailable(true);
                 getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
                 initDisks();
-                initSoundCard(template.getId());
             }
             else
             {
@@ -168,18 +135,18 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                 getModel().setDisks(null);
             }
 
-            initPriority(template.getPriority());
             initStorageDomains();
 
-            // use min. allocated memory from the template, if specified
-            if (template.getMinAllocatedMem() == 0) {
+            InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();
+            int instanceTypeMinAllocatedMemory = selectedInstanceType != null ? selectedInstanceType.getMinAllocatedMem() : 0;
+
+            // do not update if specified on template or instance type
+            if (template.getMinAllocatedMem() == 0 && instanceTypeMinAllocatedMemory == 0) {
                 updateMinAllocatedMemory();
-            } else {
-                getModel().getMinAllocatedMemory().setEntity(template.getMinAllocatedMem());
             }
+
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
 
-            updateNetworkInterfacesByTemplate(template);
             getModel().getVmInitModel().init(template);
             getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
 
@@ -192,6 +159,13 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
     @Override
     public void postDataCenterWithClusterSelectedItemChanged()
     {
+        deactivateInstanceTypeManager(new InstanceTypeManager.ActivatedListener() {
+            @Override
+            public void activated() {
+                getInstanceTypeManager().updateAll();
+            }
+        });
+
         updateDefaultHost();
         updateCustomPropertySheet();
         updateMinAllocatedMemory();
@@ -202,31 +176,12 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         }
         updateCpuPinningVisibility();
         updateTemplate();
-        updateNetworkInterfaces(networkBehavior, null);
         updateOSValues();
         updateMemoryBalloon();
         updateCpuSharesAvailability();
         updateVirtioScsiAvailability();
-    }
+        activateInstanceTypeManager();
 
-    private void updateNetworkInterfacesByTemplate(VmTemplate template) {
-        AsyncQuery query = new AsyncQuery(getModel(), new INewAsyncCallback() {
-
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                if (returnValue == null) {
-                    return;
-                }
-
-                List<VmNetworkInterface> nics =
-                        (List<VmNetworkInterface>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                updateNetworkInterfaces(networkBehavior, nics);
-            }
-        });
-
-        Frontend.getInstance().runQuery(VdcQueryType.GetTemplateInterfacesByTemplateId,
-                new IdQueryParameters(template.getId()),
-                query);
     }
 
     private boolean profilesExist(List<VnicProfileView> profiles) {
@@ -256,8 +211,9 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
     public void oSType_SelectedItemChanged() {
         VmTemplate template = getModel().getTemplate().getSelectedItem();
         Integer osType = getModel().getOSType().getSelectedItem();
-        if (template != null && osType != null) {
-            updateVirtioScsiEnabled(template.getId(), osType);
+        if ((template != null || !basedOnCustomInstanceType()) && osType != null) {
+            Guid id = basedOnCustomInstanceType() ? template.getId() : getModel().getInstanceTypes().getSelectedItem().getId();
+            updateVirtioScsiEnabledWithoutDetach(id, osType);
         }
     }
 
@@ -381,13 +337,20 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
     @Override
     public void vmTypeChanged(VmType vmType) {
-        super.vmTypeChanged(vmType);
+        deactivateInstanceTypeManager();
 
         // provisioning thin -> false
         // provisioning clone -> true
         if (getModel().getProvisioning().getIsAvailable()) {
             getModel().getProvisioning().setEntity(vmType == VmType.Server);
         }
+
+        super.vmTypeChanged(vmType);
+        activateInstanceTypeManager();
     }
 
+    @Override
+    public InstanceTypeManager getInstanceTypeManager() {
+        return instanceTypeManager;
+    }
 }

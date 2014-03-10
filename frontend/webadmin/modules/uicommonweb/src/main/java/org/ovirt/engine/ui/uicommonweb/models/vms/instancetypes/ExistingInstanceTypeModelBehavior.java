@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.uicommonweb.models.vms;
+package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -8,12 +8,15 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +65,13 @@ public class ExistingInstanceTypeModelBehavior extends InstanceTypeModelBehavior
                 }
         ));
 
+        AsyncDataProvider.isVirtioScsiEnabledForVm(new AsyncQuery(getModel(), new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                getModel().getIsVirtioScsiEnabled().setEntity((Boolean) returnValue);
+            }
+        }), instanceType.getId());
+
         getModel().setBootSequence(instanceType.getDefaultBootSequence());
 
         getModel().getUsbPolicy().setItems(Arrays.asList(UsbPolicy.values()));
@@ -103,4 +113,13 @@ public class ExistingInstanceTypeModelBehavior extends InstanceTypeModelBehavior
         }), instanceType.getId());
     }
 
+    protected void initSoundCard(Guid id) {
+        AsyncDataProvider.isSoundcardEnabled(new AsyncQuery(getModel(), new INewAsyncCallback() {
+
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                getModel().getIsSoundcardEnabled().setEntity((Boolean) returnValue);
+            }
+        }), id);
+    }
 }

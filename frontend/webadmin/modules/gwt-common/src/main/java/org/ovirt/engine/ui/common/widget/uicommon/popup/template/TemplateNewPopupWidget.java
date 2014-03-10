@@ -38,6 +38,7 @@ public class TemplateNewPopupWidget extends AbstractVmPopupWidget {
                 putOne(logicalNetworksEditorPanel, hiddenField()).
                 putAll(poolSpecificFields(), hiddenField()).
                 putOne(templateEditor, hiddenField()).
+                putOne(instanceTypesEditor, hiddenField()).
                 update(resourceAllocationTab, hiddenField());
     }
 

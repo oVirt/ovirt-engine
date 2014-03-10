@@ -63,7 +63,6 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 
                         behavior.initTemplate();
                         behavior.initCdImage();
-                        initSoundCard(vm.getId());
 
                     }
                 }, getModel().getHash()), CREATE_VM, true, false);

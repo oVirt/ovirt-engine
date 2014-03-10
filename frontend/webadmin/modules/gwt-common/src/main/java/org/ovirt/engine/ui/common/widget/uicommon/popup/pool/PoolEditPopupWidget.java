@@ -94,6 +94,7 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         dataCenterWithClusterEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         vmTypeEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         quotaEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        instanceTypesEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         descriptionEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         templateEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         memSizeEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());

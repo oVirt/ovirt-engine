@@ -1,10 +1,12 @@
-package org.ovirt.engine.ui.uicommonweb.models.vms;
+package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -20,6 +22,9 @@ public class InstanceTypeModelBehaviorBase extends VmModelBehaviorBase<UnitVmMod
 
         getModel().getIsVirtioScsiEnabled().setIsAvailable(true);
         getModel().getIsVirtioScsiEnabled().setEntity(false);
+
+        getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(true);
+
         getModel().updateWatchdogItems(new HashSet<VmWatchdogType>(Arrays.asList(VmWatchdogType.values())));
     }
 

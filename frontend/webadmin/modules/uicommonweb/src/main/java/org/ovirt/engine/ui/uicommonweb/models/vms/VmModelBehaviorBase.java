@@ -1,20 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -27,8 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -45,8 +35,17 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
@@ -75,9 +74,22 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         privateSystemTreeSelectedItem = value;
     }
 
+    private PriorityUtil priorityUtil;
+
+    private VirtioScsiUtil virtioScsiUtil;
+
     public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
         this.setSystemTreeSelectedItem(systemTreeSelectedItem);
+        commonInitialize();
+    }
+
+    /**
+     * If someone overrides the initalize not calling the super, at least this has to be called
+     */
+    protected void commonInitialize() {
+        priorityUtil = new PriorityUtil(getModel());
+        virtioScsiUtil = new VirtioScsiUtil(getModel());
     }
 
     public void dataCenterWithClusterSelectedItemChanged() {
@@ -124,6 +136,32 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public abstract void oSType_SelectedItemChanged();
 
     public abstract void updateMinAllocatedMemory();
+
+    public void deactivateInstanceTypeManager(InstanceTypeManager.ActivatedListener activatedListener) {
+        if (getInstanceTypeManager() != null) {
+            getInstanceTypeManager().deactivate(activatedListener);
+        }
+    }
+
+    public void deactivateInstanceTypeManager() {
+        if (getInstanceTypeManager() != null) {
+            getInstanceTypeManager().deactivate();
+        }
+    }
+
+    public void activateInstanceTypeManager() {
+        if (getInstanceTypeManager() != null) {
+            getInstanceTypeManager().activate();
+        }
+    }
+
+    public boolean instanceTypeActive() {
+        return getInstanceTypeManager() != null ? getInstanceTypeManager().isActive() : false;
+    }
+
+    protected InstanceTypeManager getInstanceTypeManager() {
+        return null;
+    }
 
     protected void postOsItemChanged() {
 
@@ -276,97 +314,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         getModel().getTimeZone().setSelectedItem(Linq.firstOrDefault(timeZones, new Linq.TimeZonePredicate(selectedTimeZone)));
     }
 
+    protected void initPriority(int priority) {
+        priorityUtil.initPriority(priority);
+    }
+
     public TimeZoneType getTimeZoneType() {
         // can be null as a consequence of setItems on ListModel
         Integer vmOsType = getModel().getOSType().getSelectedItem();
         return AsyncDataProvider.isWindowsOsType(vmOsType) ? TimeZoneType.WINDOWS_TIMEZONE
                 : TimeZoneType.GENERAL_TIMEZONE;
-    }
-
-    private Integer cachedMaxPriority;
-
-    protected void initPriority(int priority)
-    {
-        AsyncDataProvider.getMaxVmPriority(new AsyncQuery(new Object[] { getModel(), priority },
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-
-                        Object[] array = (Object[]) target;
-                        UnitVmModel model = (UnitVmModel) array[0];
-                        int vmPriority = (Integer) array[1];
-                        cachedMaxPriority = (Integer) returnValue;
-
-                        int value = AsyncDataProvider.getRoundedPriority(vmPriority, cachedMaxPriority);
-                        EntityModel tempVar = new EntityModel();
-                        tempVar.setEntity(value);
-                        model.getPriority().setSelectedItem(tempVar);
-                        updatePriority();
-
-                    }
-                }, getModel().getHash()));
-    }
-
-    protected void updatePriority()
-    {
-        if (cachedMaxPriority == null)
-        {
-            AsyncDataProvider.getMaxVmPriority(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-
-                            VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
-                            cachedMaxPriority = (Integer) returnValue;
-                            behavior.postUpdatePriority();
-
-                        }
-                    }, getModel().getHash()));
-        }
-        else
-        {
-            postUpdatePriority();
-        }
-    }
-
-    private void postUpdatePriority()
-    {
-        List<EntityModel<Integer>> items = new ArrayList<EntityModel<Integer>>();
-        EntityModel tempVar = new EntityModel();
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().lowTitle());
-        tempVar.setEntity(1);
-        items.add(tempVar);
-        EntityModel tempVar2 = new EntityModel();
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().mediumTitle());
-        tempVar2.setEntity(cachedMaxPriority / 2);
-        items.add(tempVar2);
-        EntityModel tempVar3 = new EntityModel();
-        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().highTitle());
-        tempVar3.setEntity(cachedMaxPriority);
-        items.add(tempVar3);
-
-        // If there was some priority selected before, try select it again.
-        EntityModel<Integer> oldPriority = getModel().getPriority().getSelectedItem();
-
-        getModel().getPriority().setItems(items);
-
-        if (oldPriority != null)
-        {
-            for (EntityModel<Integer> item : items)
-            {
-                Integer val1 = item.getEntity();
-                Integer val2 = oldPriority.getEntity();
-                if (val1 != null && val1.equals(val2))
-                {
-                    getModel().getPriority().setSelectedItem(item);
-                    break;
-                }
-            }
-        }
-        else
-        {
-            getModel().getPriority().setSelectedItem(Linq.firstOrDefault(items));
-        }
     }
 
     protected void changeDefualtHost()
@@ -667,33 +623,33 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             }
             Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
                     new IdQueryParameters(cluster.getId()), new AsyncQuery(getModel(),
-                            new INewAsyncCallback() {
+                    new INewAsyncCallback() {
 
-                                @Override
-                                public void onSuccess(Object model, Object returnValue) {
-                                    UnitVmModel vmModel = (UnitVmModel) model;
-                                    ArrayList<Quota> quotaList = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                                    if (quotaList != null && !quotaList.isEmpty()) {
-                                        vmModel.getQuota().setItems(quotaList);
+                        @Override
+                        public void onSuccess(Object model, Object returnValue) {
+                            UnitVmModel vmModel = (UnitVmModel) model;
+                            ArrayList<Quota> quotaList = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                            if (quotaList != null && !quotaList.isEmpty()) {
+                                vmModel.getQuota().setItems(quotaList);
+                            }
+                            if (defaultQuota != null && !Guid.Empty.equals(defaultQuota)) {
+                                boolean hasQuotaInList = false;
+                                for (Quota quota : quotaList) {
+                                    if (quota.getId().equals(defaultQuota)) {
+                                        vmModel.getQuota().setSelectedItem(quota);
+                                        hasQuotaInList = true;
+                                        break;
                                     }
-                                    if (defaultQuota != null && !Guid.Empty.equals(defaultQuota)) {
-                                        boolean hasQuotaInList = false;
-                                        for (Quota quota : quotaList) {
-                                            if (quota.getId().equals(defaultQuota)) {
-                                                vmModel.getQuota().setSelectedItem(quota);
-                                                hasQuotaInList = true;
-                                                break;
-                                            }
-                                        }
-                                        // Add the quota to the list only in edit mode
-                                        if (!hasQuotaInList && !getModel().getIsNew()) {
-                                            Quota quota = new Quota();
-                                            quota.setId(defaultQuota);
-                                            quota.setQuotaName(quotaName);
-                                            quotaList.add(quota);
-                                            vmModel.getQuota().setItems(quotaList);
-                                            vmModel.getQuota().setSelectedItem(quota);
-                                        }
+                                }
+                                // Add the quota to the list only in edit mode
+                                if (!hasQuotaInList && !getModel().getIsNew()) {
+                                    Quota quota = new Quota();
+                                    quota.setId(defaultQuota);
+                                    quota.setQuotaName(quotaName);
+                                    quotaList.add(quota);
+                                    vmModel.getQuota().setItems(quotaList);
+                                    vmModel.getQuota().setSelectedItem(quota);
+                                }
                             }
                         }
                     }));
@@ -1048,14 +1004,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         return res;
     }
 
-    protected void updateHostPinning(MigrationSupport migrationSupport) {
-        List<MigrationSupport> supportedModes = (List<MigrationSupport>) getModel().getMigrationMode().getItems();
-
-        if (supportedModes.contains(migrationSupport)) {
-            getModel().getMigrationMode().setSelectedItem(migrationSupport);
-        }
-    }
-
     protected void updateOSValues() {
 
         List<Integer> vmOsValues;
@@ -1085,93 +1033,29 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         Frontend.getInstance().runQuery(VdcQueryType.GetConsoleDevices, new IdQueryParameters(vmId), new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                List<String> consoleDevices = ((VdcQueryReturnValue)returnValue).getReturnValue();
+                List<String> consoleDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
             }
         }));
     }
 
-    protected void updateVirtioScsiEnabled(final Guid vmId, int osId) {
-        final VDSGroup cluster = getModel().getSelectedCluster();
-        if (cluster == null) {
-            return;
-        }
+    protected void updateVirtioScsiEnabledWithoutDetach(final Guid vmId, int osId) {
+        virtioScsiUtil.updateVirtioScsiEnabled(vmId, osId, new VirtioScsiUtil.VirtioScasiEnablingFinished() {
+            @Override
+            public void beforeUpdates() {
+                getInstanceTypeManager().deactivate();
+            }
 
-        AsyncDataProvider.getDiskInterfaceList(osId, cluster.getcompatibility_version(),
-            new AsyncQuery(getModel(), new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    ArrayList<DiskInterface> diskInterfaces = (ArrayList<DiskInterface>) returnValue;
-                    boolean isOsSupportVirtioScsi = diskInterfaces.contains(DiskInterface.VirtIO_SCSI);
-
-                    getModel().getIsVirtioScsiEnabled().setIsChangable(isOsSupportVirtioScsi);
-
-                    if (!isOsSupportVirtioScsi) {
-                        getModel().getIsVirtioScsiEnabled().setEntity(false);
-                        getModel().getIsVirtioScsiEnabled().setChangeProhibitionReason(constants.cannotEnableVirtioScsiForOs());
-                    }
-                    else {
-                        if (Guid.isNullOrEmpty(vmId)) {
-                            VDSGroup cluster = getModel().getSelectedCluster();
-                            boolean isVirtioScsiEnabled = (Boolean) AsyncDataProvider.getConfigValuePreConverted(
-                                    ConfigurationValues.VirtIoScsiEnabled, cluster.getcompatibility_version().getValue());
-                            getModel().getIsVirtioScsiEnabled().setEntity(isVirtioScsiEnabled);
-                        }
-                        else {
-                            AsyncDataProvider.isVirtioScsiEnabledForVm(new AsyncQuery(getModel(), new INewAsyncCallback() {
-                                @Override
-                                public void onSuccess(Object model, Object returnValue) {
-                                    getModel().getIsVirtioScsiEnabled().setEntity((Boolean) returnValue);
-                                }
-                            }), vmId);
-                        }
-                    }
-                }
-            }));
+            @Override
+            public void afterUpdates() {
+                getInstanceTypeManager().activate();
+            }
+        });
     }
 
     public void vmTypeChanged(VmType vmType) {
         getModel().getIsSoundcardEnabled().setEntity(vmType == VmType.Desktop);
         getModel().getAllowConsoleReconnect().setEntity(vmType == VmType.Server);
-    }
-
-    protected void initSoundCard(Guid id) {
-        AsyncDataProvider.isSoundcardEnabled(new AsyncQuery(getModel(), new INewAsyncCallback() {
-
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                getModel().getIsSoundcardEnabled().setEntity((Boolean) returnValue);
-            }
-        }), id);
-    }
-
-    protected void updateNetworkInterfaces(final ProfileBehavior behavior, final List<VmNetworkInterface> argNics) {
-        boolean hotUpdateSupported =
-                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
-                        getModel().getSelectedCluster().getcompatibility_version().toString());
-
-        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
-
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                List<VnicProfileView> profiles = (List<VnicProfileView>) returnValue;
-                List<VnicInstanceType> vnicInstanceTypes = new ArrayList<VnicInstanceType>();
-                List<VmNetworkInterface> nics = (argNics == null) ? new ArrayList<VmNetworkInterface>() : argNics;
-
-                for (VmNetworkInterface nic : nics) {
-                    final VnicInstanceType vnicInstanceType = new VnicInstanceType(nic);
-                    vnicInstanceType.setItems(profiles);
-                    behavior.initSelectedProfile(vnicInstanceType, vnicInstanceType.getNetworkInterface());
-                    vnicInstanceTypes.add(vnicInstanceType);
-                }
-
-                getModel().getNicsWithLogicalNetworks().getVnicProfiles().setItems(profiles);
-                getModel().getNicsWithLogicalNetworks().setItems(vnicInstanceTypes);
-                getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrDefault(vnicInstanceTypes));
-            }
-        });
-
-        behavior.initProfiles(hotUpdateSupported, getModel().getSelectedCluster().getId(), getModel().getSelectedDataCenter().getId(), query);
     }
 
     public void enableSinglePCI(boolean enabled) {
@@ -1214,4 +1098,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         return cluster.getcompatibility_version();
     }
+
+    protected boolean basedOnCustomInstanceType() {
+        InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();
+        return selectedInstanceType == null || selectedInstanceType instanceof CustomInstanceType;
+    }
+
 }
