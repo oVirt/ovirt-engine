@@ -26,7 +26,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
             groups = { CreateEntity.class, UpdateEntity.class })
     private String description;
 
-    private String comment;
+    private String comment = "";
 
     private boolean local;
 
@@ -72,15 +72,14 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
         this.description = value;
     }
 
+    @Override
     public String getComment() {
-        if (comment == null) {
-            comment = "";
-        }
         return comment;
     }
 
+    @Override
     public void setComment(String value) {
-        this.comment = value;
+        this.comment = (value == null) ? "" : value;
     }
 
     @Override
