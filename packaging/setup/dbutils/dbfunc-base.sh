@@ -7,6 +7,7 @@ DBFUNC_DB_PORT="${DBFUNC_DB_PORT:-5432}"
 #DBFUNC_DB_PGPASSFILE=
 
 PSQL="${PSQL:-psql}"
+PG_DUMP="${PG_DUMP:-pg_dump}"
 NULL=
 
 die() {
@@ -83,4 +84,18 @@ dbfunc_psql_statement_parse_line() {
 		fi
 	done
 	echo "${ret}"
+}
+
+dbfunc_pg_dump() {
+	LC_ALL="C" "${PG_DUMP}" \
+		-w \
+		--host="${DBFUNC_DB_HOST}" \
+		--port="${DBFUNC_DB_PORT}" \
+		--username="${DBFUNC_DB_USER}" \
+		"$@" \
+		"${DBFUNC_DB_DATABASE}"
+}
+
+dbfunc_pg_dump_die() {
+	dbfunc_pg_dump "$@" || die "Cannot execute pg_dump command: $*"
 }

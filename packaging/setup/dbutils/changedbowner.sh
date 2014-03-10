@@ -50,7 +50,7 @@ trap cleanup 0
 
 # Change all schema objects ownership
 echo "Changing database ${DBFUNC_DB_DATABASE} objects ownership"
-( "${PGDUMP:-pg_dump}" -s -h "${DBFUNC_DB_HOST}" -p "${DBFUNC_DB_PORT}" -U "${DBFUNC_DB_USER}" "${DBFUNC_DB_DATABASE}" && echo ok >> "${tempfile}" ) | \
+( dbfunc_pg_dump_die && echo ok >> "${tempfile}" ) | \
 	grep -i 'owner to' | sed "s/OWNER TO ${DBFUNC_DB_USER};/OWNER TO ${TO_USER};/i" | \
 	( dbfunc_psql_die && echo ok >> "${tempfile}" )
 
