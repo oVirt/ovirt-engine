@@ -246,7 +246,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         else {
-            setCommandShouldBeLogged(false);
             runningFailed();
         }
     }

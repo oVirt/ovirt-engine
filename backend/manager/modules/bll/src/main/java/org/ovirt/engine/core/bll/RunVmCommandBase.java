@@ -128,6 +128,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         try {
             decreasePendingVms();
             Backend.getInstance().getResourceManager().RemoveAsyncRunningCommand(getVmId());
+            setCommandShouldBeLogged(false);
             _isRerun = false;
             setSucceeded(false);
             log();
