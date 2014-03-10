@@ -34,8 +34,8 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
             if (vdsReturnValue.getSucceeded()) {
                 retval = VMStatus.MigratingFrom;
                 ResourceManager.getInstance().InternalSetVmStatus(vm, VMStatus.MigratingFrom);
-                    vm.setMigratingToVds(parameters.getDstVdsId());
-                    ResourceManager.getInstance().AddAsyncRunningVm(parameters.getVmId());
+                vm.setMigratingToVds(parameters.getDstVdsId());
+                ResourceManager.getInstance().AddAsyncRunningVm(parameters.getVmId());
             } else {
                 retval = vm.getStatus();
                 log.error("Failed Vm migration");

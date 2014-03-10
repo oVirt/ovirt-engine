@@ -5,22 +5,23 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
-    private String _srcHost;
-    private Guid _dstVdsId;
-    private String _dstHost;
-    private MigrationMethod _migrationMethod;
+    private String srcHost;
+    private Guid dstVdsId;
+    private String dstHost;
+    private MigrationMethod migrationMethod;
     private boolean tunnelMigration;
     private String dstQemu;
     private Version clusterVersion;
     private Integer migrationDowntime;
 
-    public MigrateVDSCommandParameters(Guid vdsId, Guid vmId, String srcHost, Guid dstVdsId, String dstHost,
-            MigrationMethod migrationMethod, boolean tunnelMigration, String dstQemu, Version clusterVersion, int migrationDowntime) {
+    public MigrateVDSCommandParameters(Guid vdsId, Guid vmId, String srcHost, Guid dstVdsId,
+            String dstHost, MigrationMethod migrationMethod, boolean tunnelMigration,
+            String dstQemu, Version clusterVersion, int migrationDowntime) {
         super(vdsId, vmId);
-        _srcHost = srcHost;
-        _dstVdsId = dstVdsId;
-        _dstHost = dstHost;
-        _migrationMethod = migrationMethod;
+        this.srcHost = srcHost;
+        this.dstVdsId = dstVdsId;
+        this.dstHost = dstHost;
+        this.migrationMethod = migrationMethod;
         this.tunnelMigration = tunnelMigration;
         this.dstQemu = dstQemu;
         this.clusterVersion = clusterVersion;
@@ -28,19 +29,19 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     }
 
     public String getSrcHost() {
-        return _srcHost;
+        return srcHost;
     }
 
     public Guid getDstVdsId() {
-        return _dstVdsId;
+        return dstVdsId;
     }
 
     public String getDstHost() {
-        return _dstHost;
+        return dstHost;
     }
 
     public MigrationMethod getMigrationMethod() {
-        return _migrationMethod;
+        return migrationMethod;
     }
 
     public boolean isTunnelMigration() {
@@ -56,7 +57,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     }
 
     public MigrateVDSCommandParameters() {
-        _migrationMethod = MigrationMethod.OFFLINE;
+        migrationMethod = MigrationMethod.OFFLINE;
     }
 
     @Override

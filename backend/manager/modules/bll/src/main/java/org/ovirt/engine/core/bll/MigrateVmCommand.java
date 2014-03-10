@@ -119,29 +119,26 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     private void perform() {
-        getVm().setMigratingToVds(getDestinationVdsId());
-
         getParameters().setStartTime(new Date());
 
-        // Starting migration at src VDS
-        boolean connectToLunDiskSuccess = connectLunDisks(getDestinationVdsId());
-        if (connectToLunDiskSuccess) {
-            setActionReturnValue(Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunAsyncVdsCommand(
-                            VDSCommandType.Migrate,
-                            createMigrateVDSCommandParameters(),
-                            this)
-                    .getReturnValue());
-        }
-        if (!connectToLunDiskSuccess || getActionReturnValue() != VMStatus.MigratingFrom) {
+        boolean migrateSucceeded = connectLunDisks(getDestinationVdsId()) && migrateVm();
+        if (!migrateSucceeded) {
             getVm().setMigreatingToPort(0);
             getVm().setMigreatingFromPort(0);
-            getVm().setMigratingToVds(null);
             throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_MIGRATION_FAILED_AT_DST);
         }
         ExecutionHandler.setAsyncJob(getExecutionContext(), true);
+    }
+
+    private boolean migrateVm() {
+        setActionReturnValue(Backend.getInstance().getResourceManager()
+                .RunAsyncVdsCommand(
+                        VDSCommandType.Migrate,
+                        createMigrateVDSCommandParameters(),
+                        this)
+                .getReturnValue());
+
+        return getActionReturnValue() == VMStatus.MigratingFrom;
     }
 
     private MigrateVDSCommandParameters createMigrateVDSCommandParameters() {
