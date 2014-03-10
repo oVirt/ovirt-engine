@@ -29,8 +29,8 @@
 		
 		.contentWidget {
 			float: right;
-			width: 230px;
 			padding: 0 5px;
+            width: 230px;
 			line-height: 30px;
 		}
 	</ui:style>

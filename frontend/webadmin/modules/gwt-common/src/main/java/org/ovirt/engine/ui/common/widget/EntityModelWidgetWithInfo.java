@@ -28,10 +28,10 @@ public class EntityModelWidgetWithInfo<T> extends Composite {
     InfoIcon infoIcon;
 
     @UiField(provided = true)
-    AbstractValidatedWidget contentWidget;
+    Composite contentWidget;
 
     @Inject
-    public EntityModelWidgetWithInfo(EntityModelLabel<T> label, AbstractValidatedWidget contentWidget) {
+    public EntityModelWidgetWithInfo(EntityModelLabel<T> label, Composite contentWidget) {
 
         this.label = label;
         this.contentWidget = contentWidget;

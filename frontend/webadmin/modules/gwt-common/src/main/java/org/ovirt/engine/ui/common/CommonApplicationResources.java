@@ -274,4 +274,10 @@ public interface CommonApplicationResources extends ClientBundle {
 
     @Source("images/separator.gif")
     ImageResource separator();
+
+    @Source("images/joined.png")
+    ImageResource joinedIcon();
+
+    @Source("images/separated.png")
+    ImageResource separatedIcon();
 }

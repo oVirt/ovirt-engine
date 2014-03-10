@@ -1,12 +1,9 @@
 package org.ovirt.engine.ui.common.widget;
 
-import org.ovirt.engine.ui.common.idhandler.HasElementId;
-import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
-import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LabelElement;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.HasAllKeyHandlers;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressHandler;
@@ -20,6 +17,9 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
+import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
 
 /**
  * Base class for validated widgets that have a label associated with them.
@@ -56,6 +56,9 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     @UiField
     Style style;
 
+    // width in PX
+    public static final int CONTENT_WIDTH = 230;
+
     /**
      * By default the title gets erased, when the setEnabled is called
      * <p>
@@ -68,6 +71,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     public AbstractValidatedWidgetWithLabel(W contentWidget, VisibilityRenderer renderer) {
         this.contentWidget = contentWidget;
         this.renderer = renderer;
+
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 
@@ -90,7 +94,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         }
 
         // Connect label with content widget for better accessibility
-        updateLabelElementId(contentWidgetElement.getId());
+        updateLabelElementId(getContentWidgetElement().getId());
     }
 
     protected void updateLabelElementId(String elementId) {
@@ -196,9 +200,9 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         contentWidget.setEnabled(enabled);
 
         if (enabled) {
-            labelElement.replaceClassName(style.labelDisabled(), style.labelEnabled());
+            getLabelElement().replaceClassName(style.labelDisabled(), style.labelEnabled());
         } else {
-            labelElement.replaceClassName(style.labelEnabled(), style.labelDisabled());
+            getLabelElement().replaceClassName(style.labelEnabled(), style.labelDisabled());
         }
 
         if (!keepTitleOnSetEnabled) {
@@ -225,11 +229,11 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     }
 
     public void setLabelStyleName(String styleName) {
-        labelElement.setClassName(styleName);
+        getLabelElement().setClassName(styleName);
     }
 
     public void addLabelStyleName(String styleName) {
-        labelElement.addClassName(styleName);
+        getLabelElement().addClassName(styleName);
     }
 
     public void addWrapperStyleName(String styleName) {
@@ -237,7 +241,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     }
 
     public void hideLabel() {
-        labelElement.addClassName(style.labelHidden());
+        getLabelElement().addClassName(style.labelHidden());
     }
 
     public void setKeepTitleOnSetEnabled(boolean keepTitleOnSetEnabled) {

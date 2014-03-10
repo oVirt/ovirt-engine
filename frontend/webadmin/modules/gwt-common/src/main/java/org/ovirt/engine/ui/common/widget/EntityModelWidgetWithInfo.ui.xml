@@ -18,7 +18,7 @@
 			</g:HorizontalPanel>
 		</g:cell>
 		<g:cell width="230px">
-			<w:AbstractValidatedWidget ui:field="contentWidget" />
+			<g:Composite ui:field="contentWidget" />
 		</g:cell>
 	</g:HorizontalPanel>
 

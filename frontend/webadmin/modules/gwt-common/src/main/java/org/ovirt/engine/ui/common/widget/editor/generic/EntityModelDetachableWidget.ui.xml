@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+
+    <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+
+    <ui:style type="org.ovirt.engine.ui.common.widget.editor.generic.EntityModelDetachableWidget.Style">
+        .image {
+            margin-top: 7px;
+            float: left;
+        }
+
+        .wrapper {
+            text-align: left;
+            clear: both;
+        }
+
+        .contentWrapper {
+            float: right;
+            width: 230px;
+            padding: 0 5px;
+        }
+
+        .contentWrapperImageOnRight {
+            padding: 0 5px;
+        }
+
+        .contentWidgetWithoutDetachable, .contentWidgetWithDetachable {
+            float: right;
+        }
+        .contentWidgetWithoutDetachable {
+            padding: 0 5px;
+            width: 230px;
+        }
+
+        .contentWidgetWithDetachable {
+            padding: 0 0px;
+            width: 200px;
+        }
+
+        .contentWidgetContainer {
+            /*width: 230px;*/
+         }
+    </ui:style>
+
+    <g:HTMLPanel ui:field="wrapperPanel" addStyleNames="{style.wrapper}">
+        <g:FlowPanel ui:field="contentWrapper" addStyleNames="{style.contentWrapper}">
+            <g:FlowPanel addStyleNames="{style.image}">
+                <g:Image ui:field="attachedSeparatedImage" />
+            </g:FlowPanel>
+
+            <g:SimplePanel ui:field="contentWidgetContainer" addStyleNames="{style.contentWidgetContainer}" />
+        </g:FlowPanel>
+    </g:HTMLPanel>
+
+</ui:UiBinder>
