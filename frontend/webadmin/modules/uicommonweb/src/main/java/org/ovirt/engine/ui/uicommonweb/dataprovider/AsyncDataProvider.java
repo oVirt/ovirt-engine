@@ -2381,6 +2381,19 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(id), aQuery);
     }
 
+    public static void getTemplateNicList(AsyncQuery aQuery, Guid id) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? new ArrayList<VmNetworkInterface>((ArrayList<VmNetworkInterface>) source)
+                        : new ArrayList<VmNetworkInterface>();
+            }
+        };
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetTemplateInterfacesByTemplateId, new IdQueryParameters(id), aQuery);
+    }
+
     public static void getVmSnapshotList(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

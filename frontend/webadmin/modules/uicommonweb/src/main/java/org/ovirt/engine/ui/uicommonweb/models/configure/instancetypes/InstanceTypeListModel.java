@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -18,6 +17,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -33,15 +33,16 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.BaseInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExistingInstanceTypeModelBehavior;
+import org.ovirt.engine.ui.uicommonweb.models.vms.InstanceTypeInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewInstanceTypeModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
@@ -55,6 +56,22 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
     private UICommand editInstanceTypeCommand;
 
     private UICommand deleteInstanceTypeCommand;
+
+    private InstanceTypeInterfaceCreatingManager addInstanceTypeNetworkManager =
+            new InstanceTypeInterfaceCreatingManager(new BaseInterfaceCreatingManager.PostVnicCreatedCallback() {
+                @Override
+                public void vnicCreated(Guid vmId) {
+                    getWindow().stopProgress();
+                    cancel();
+                    updateActionAvailability();
+                }
+
+                @Override
+                public void queryFailed() {
+                    getWindow().stopProgress();
+                    cancel();
+                }
+            });
 
     public InstanceTypeListModel() {
         setDefaultSearchString("Instancetypes:"); //$NON-NLS-1$
@@ -160,7 +177,7 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
                 new MigrationOptionsUnitToVmBaseBuilder()
         );
 
-        // CommonUnitToVmBaseBuilder
+        // from CommonUnitToVmBaseBuilder
         vmBase.setAutoStartup(model.getIsHighlyAvailable().getEntity());
         vmBase.setPriority(model.getPriority().getSelectedItem().getEntity());
     }
@@ -170,6 +187,7 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
         VM vm = new VM();
         buildVmStatic(vm.getStaticData());
         vm.setVmDescription(model.getDescription().getEntity());
+
 
         AddVmTemplateParameters addInstanceTypeParameters =
                 new AddVmTemplateParameters(vm, model.getName().getEntity(), model.getDescription().getEntity());
@@ -186,17 +204,12 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
 
         getWindow().startProgress(null);
 
-        Frontend.getInstance().runAction(VdcActionType.AddVmTemplate, addInstanceTypeParameters,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        getWindow().stopProgress();
-                        VdcReturnValueBase returnValueBase = result.getReturnValue();
-                        if (returnValueBase != null && returnValueBase.getSucceeded()) {
-                            cancel();
-                        }
-                    }
-                }, this);
+        Frontend.getInstance().runAction(
+                VdcActionType.AddVmTemplate,
+                addInstanceTypeParameters,
+                new UnitVmModelNetworkAsyncCallback(model, addInstanceTypeNetworkManager),
+                this
+        );
     }
 
     private void onEditInstanceType() {
@@ -222,19 +235,13 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
 
         getWindow().startProgress(null);
 
-        Frontend.getInstance().runAction(VdcActionType.UpdateVmTemplate, updateInstanceTypeParameters,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        getWindow().stopProgress();
-                        VdcReturnValueBase returnValueBase = result.getReturnValue();
-                        if (returnValueBase != null && returnValueBase.getSucceeded()) {
-                            cancel();
-                        }
-                    }
-                }, this);
+        Frontend.getInstance().runAction(
+                VdcActionType.UpdateVmTemplate,
+                updateInstanceTypeParameters,
+                new UnitVmModelNetworkAsyncCallback(model, addInstanceTypeNetworkManager, instanceType.getId()),
+                this
+        );
     }
-
 
     private void onDeleteInstanceType() {
         final ConfirmationModel model = (ConfirmationModel) getWindow();

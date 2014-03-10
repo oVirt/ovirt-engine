@@ -2,8 +2,10 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class NewInstanceTypeModelBehavior extends InstanceTypeModelBehaviorBase {
@@ -25,6 +27,9 @@ public class NewInstanceTypeModelBehavior extends InstanceTypeModelBehaviorBase 
         updateMemoryBalloon(latestCluster());
         initPriority(0);
         getModel().getTotalCPUCores().setEntity("1"); //$NON-NLS-1$
+
+        getModel().getNicsWithLogicalNetworks().getVnicProfiles().setItems(new ArrayList<VnicProfileView>(Arrays.asList(VnicProfileView.EMPTY)));
+        getModel().getNicsWithLogicalNetworks().setItems(new ArrayList<VnicInstanceType>());
     }
 
 }

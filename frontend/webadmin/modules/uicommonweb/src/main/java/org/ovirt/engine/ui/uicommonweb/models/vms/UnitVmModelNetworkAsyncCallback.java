@@ -8,17 +8,17 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 public class UnitVmModelNetworkAsyncCallback implements IFrontendActionAsyncCallback {
 
     private final UnitVmModel unitVmModel;
-    private final VmInterfaceCreatingManager networkCreatingManager;
+    private final BaseInterfaceCreatingManager networkCreatingManager;
     private final Guid idToUpdate;
 
     public UnitVmModelNetworkAsyncCallback(final UnitVmModel unitVmModel,
-            final VmInterfaceCreatingManager networkCreatingManager) {
+            final BaseInterfaceCreatingManager networkCreatingManager) {
 
         this(unitVmModel, networkCreatingManager, null);
     }
 
     public UnitVmModelNetworkAsyncCallback(final UnitVmModel unitVmModel,
-            final VmInterfaceCreatingManager networkCreatingManager,
+            final BaseInterfaceCreatingManager networkCreatingManager,
             final Guid idToUpdate) {
 
         this.unitVmModel = unitVmModel;

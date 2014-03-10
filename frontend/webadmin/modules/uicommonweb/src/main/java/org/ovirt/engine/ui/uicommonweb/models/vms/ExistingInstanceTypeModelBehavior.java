@@ -3,17 +3,22 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class ExistingInstanceTypeModelBehavior extends InstanceTypeModelBehaviorBase {
 
@@ -61,6 +66,27 @@ public class ExistingInstanceTypeModelBehavior extends InstanceTypeModelBehavior
 
         getModel().getUsbPolicy().setItems(Arrays.asList(UsbPolicy.values()));
         getModel().getUsbPolicy().setSelectedItem(instanceType.getUsbPolicy());
+
+        AsyncQuery getVmNicsQuery = new AsyncQuery();
+        getVmNicsQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result) {
+                List<VnicProfileView> profiles = new ArrayList<VnicProfileView>(Arrays.asList(VnicProfileView.EMPTY));
+                List<VnicInstanceType> vnicInstanceTypes = new ArrayList<VnicInstanceType>();
+
+                for (VmNetworkInterface nic : (List<VmNetworkInterface>) result) {
+                    final VnicInstanceType vnicInstanceType = new VnicInstanceType(nic);
+                    vnicInstanceType.setItems(profiles);
+                    vnicInstanceType.setSelectedItem(VnicProfileView.EMPTY);
+                    vnicInstanceTypes.add(vnicInstanceType);
+                }
+
+                getModel().getNicsWithLogicalNetworks().getVnicProfiles().setItems(profiles);
+                getModel().getNicsWithLogicalNetworks().setItems(vnicInstanceTypes);
+                getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrDefault(vnicInstanceTypes));
+            }
+        };
+        AsyncDataProvider.getTemplateNicList(getVmNicsQuery, instanceType.getId());
 
         AsyncDataProvider.getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
             @Override
