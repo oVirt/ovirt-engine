@@ -1248,7 +1248,10 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         setVmHost(vm.getVmHost());
         setVmIp(vm.getVmIp());
         setVmFQDN(vm.getVmFQDN());
-        setCurrentCd(vm.getCurrentCd());
+        // update only if vdsm actually provides some value, otherwise engine has more information
+        if (vm.getCurrentCd() != null) {
+            setCurrentCd(vm.getCurrentCd());
+        }
 
         // if (!string.IsNullOrEmpty(vm.app_list))
         // {

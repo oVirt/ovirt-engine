@@ -470,6 +470,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (StringUtils.isNotEmpty(cdPath)) {
             log.infoFormat("Running VM with attached cd {0}", cdPath);
         }
+        updateCurrentCd(cdPath);
         getVm().setCdPath(cdPathWindowsToLinux(cdPath));
 
         if (!StringUtils.isEmpty(getParameters().getFloppyPath())) {
@@ -494,6 +495,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         // After VM was create (or not), we can remove the quota vds group memory.
         return vmStatus;
+    }
+
+    protected void updateCurrentCd(String cdPath) {
+        VmHandler.updateCurrentCd(getVdsId(), getVm(), cdPath);
     }
 
 

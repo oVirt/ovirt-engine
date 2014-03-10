@@ -297,6 +297,8 @@ public class RunVmCommandTest {
         doReturn(vmDAO).when(command).getVmDAO();
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
         doReturn(new VDSGroup()).when(command).getVdsGroup();
+        // Avoid referencing the unmockable static VmHandler.updateCurrentCd
+        doNothing().when(command).updateCurrentCd(any(String.class));
         return vm;
     }
 

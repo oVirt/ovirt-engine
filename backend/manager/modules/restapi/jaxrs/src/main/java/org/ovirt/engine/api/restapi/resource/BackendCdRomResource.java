@@ -50,12 +50,9 @@ public class BackendCdRomResource extends BackendDeviceResource<CdRom, CdRoms, V
             if (vm == null) {
                 return notFound();
             }
-            // if the CD has changed during the run of VM
-            if (vm.getCurrentCd() != null) {
-                // change the iso path so the result of 'map' will contain current cd instead of the
-                // persistent configuration
-                vm.setIsoPath(vm.getCurrentCd());
-            }
+            // change the iso path so the result of 'map' will contain current cd instead of the
+            // persistent configuration
+            vm.setIsoPath(vm.getCurrentCd());
             return addLinks(populate(map(vm), vm));
         } else {
             return super.get();

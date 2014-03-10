@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -748,5 +749,14 @@ public class VmHandler {
 
     private static VdsDynamicDAO getVdsDynamicDao() {
         return DbFacade.getInstance().getVdsDynamicDao();
+    }
+
+    public static void updateCurrentCd(Guid vdsId, VM vm, String currentCd) {
+        VmDynamic vmDynamic = vm.getDynamicData();
+        vmDynamic.setCurrentCd(currentCd);
+        Backend.getInstance()
+               .getResourceManager()
+               .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
+                              new UpdateVmDynamicDataVDSCommandParameters(vdsId, vmDynamic));
     }
 }

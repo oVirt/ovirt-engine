@@ -292,8 +292,6 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.containsKey(VdsProperties.CDRom)) {
             String isoName = Paths.get((String) xmlRpcStruct.get(VdsProperties.CDRom)).getFileName().toString();
             vm.setCurrentCd(isoName);
-        } else {
-            vm.setCurrentCd(null);
         }
     }
 
