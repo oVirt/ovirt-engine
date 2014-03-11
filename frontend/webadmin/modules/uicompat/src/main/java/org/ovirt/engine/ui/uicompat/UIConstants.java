@@ -216,6 +216,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Data Center is uninitialized, in order to initialize add a data domain")
     String dataCenterUninitializedAlert();
 
+    @DefaultStringValue("The selected domain already has an ISO domain and an export domains attached")
+    String noStoragesToImport();
+
     @DefaultStringValue("Detach Storage")
     String detachStorageTitle();
 

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -10,6 +11,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class ImportStorageModelBehavior extends StorageModelBehavior
@@ -75,6 +77,15 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
         model.setIsSelectable(isItemSelectable);
 
         onStorageModelUpdated(item);
+    }
+
+    @Override
+    public void filterUnSelectableModels() {
+        super.filterUnSelectableModels();
+        if (((Collection) getModel().getAvailableStorageItems().getItems()).isEmpty()) {
+            getModel().getDataCenterAlert().setIsAvailable(true);
+            getModel().getDataCenterAlert().setEntity(ConstantsManager.getInstance().getConstants().noStoragesToImport());
+        }
     }
 
     private boolean isItemSelectable(IStorageModel item, StoragePool dataCenter, boolean isNoStorageAttached) {
