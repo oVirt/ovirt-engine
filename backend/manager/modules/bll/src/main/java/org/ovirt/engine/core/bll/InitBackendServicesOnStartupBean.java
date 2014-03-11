@@ -15,6 +15,8 @@ import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Authenticator;
 import org.ovirt.engine.core.aaa.Directory;
+import org.ovirt.engine.core.aaa.internal.InternalAuthenticator;
+import org.ovirt.engine.core.aaa.internal.InternalDirectory;
 import org.ovirt.engine.core.aaa.provisional.ProvisionalAuthenticator;
 import org.ovirt.engine.core.aaa.provisional.ProvisionalDirectory;
 import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
@@ -29,6 +31,8 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.extensions.Extension.ExtensionProperties;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
@@ -60,7 +64,30 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
         // Create authentication profiles for all the domains that exist in the database:
         // TODO: remove this later, and rely only on the custom and built in extensions directories configuration
-        for (String domain : LdapBrokerUtils.getDomainsList()) {
+        InternalAuthenticator internalAuthenticator = new InternalAuthenticator();
+        Map<ExtensionProperties, Object> internalAuthContext = new EnumMap<>(ExtensionProperties.class);
+        Properties internalAuthProps = new Properties();
+        String internalProfileName = Config.<String> getValue(ConfigValues.AdminDomain).trim();
+        internalAuthProps.put("ovirt.engine.aaa.authn.profile.name", internalProfileName);
+        internalAuthContext.put(ExtensionProperties.CONFIGURATION, internalAuthProps);
+        internalAuthContext.put(ExtensionProperties.NAME, internalProfileName);
+        internalAuthenticator.setContext(internalAuthContext);
+        internalAuthenticator.init();
+
+        InternalDirectory internalDirectory = new InternalDirectory();
+        Map<ExtensionProperties, Object> internalDirContext = new EnumMap<>(ExtensionProperties.class);
+        Properties internalDirProps = new Properties();
+        internalDirProps.put("ovirt.engine.aaa.authz.profile.name", internalProfileName);
+        internalDirContext.put(ExtensionProperties.CONFIGURATION, internalDirProps);
+        internalDirContext.put(ExtensionProperties.NAME, internalProfileName);
+        internalDirectory.setContext(internalDirContext);
+        internalDirectory.init();
+
+        AuthenticationProfileRepository.getInstance().registerProfile(
+                new AuthenticationProfile(internalAuthenticator,
+                        internalDirectory)
+                );
+        for (String domain : LdapBrokerUtils.getDomainsList(true)) {
             Map<ExtensionProperties, Object> dirContext = new EnumMap<>(ExtensionProperties.class);
             Properties dirProps = new Properties();
             dirProps.put("ovirt.engine.aaa.authz.profile.name", domain);
