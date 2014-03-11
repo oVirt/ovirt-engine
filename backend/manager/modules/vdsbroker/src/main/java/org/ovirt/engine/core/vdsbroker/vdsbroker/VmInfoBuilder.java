@@ -728,8 +728,16 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             struct.put(VdsProperties.Path, (isPayload) ? "" : path);
         }
         if (isPayload) {
-            // 3 is magic number for payload - we are using it as hdd
-            struct.put(VdsProperties.Index, "3");
+            String cdInterface = osRepository.getCdInterface(vm.getOs(),
+                    vm.getVdsGroupCompatibilityVersion());
+
+            if ("scsi".equals(cdInterface)) {
+                struct.put(VdsProperties.Index, "1"); // SCSI unit 1 is reserved for payload
+                struct.put(VdsProperties.Address, createAddressForScsiDisk(0, 1));
+            } else if ("ide".equals(cdInterface)) {
+                // 3 is magic number for payload - we are using it as hdd
+                struct.put(VdsProperties.Index, "3");
+            }
         }
         struct.put(VdsProperties.SpecParams, specParams);
         struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
@@ -959,7 +967,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     public static Map<VmDevice, Integer> getVmDeviceUnitMapForScsiDisks(VM vm,
             DiskInterface scsiInterface,
-            boolean reserveFirstLun) {
+            boolean reserveFirstTwoLuns) {
         List<Disk> disks = new ArrayList<Disk>(vm.getDiskMap().values());
         Map<VmDevice, Integer> vmDeviceUnitMap = new HashMap<>();
         Map<VmDevice, Disk> vmDeviceDiskMap = new HashMap<>();
@@ -983,15 +991,15 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
         // Find available unit (disk's index in VirtIO-SCSI controller) for disks with empty address
         for (Entry<VmDevice, Disk> entry : vmDeviceDiskMap.entrySet()) {
-            int unit = getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstLun);
+            int unit = getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstTwoLuns);
             vmDeviceUnitMap.put(entry.getKey(), unit);
         }
 
         return vmDeviceUnitMap;
     }
 
-    public static int getAvailableUnitForScsiDisk(Map<VmDevice, Integer> vmDeviceUnitMap, boolean reserveFirstLun) {
-        int unit = reserveFirstLun ? 1 : 0;
+    public static int getAvailableUnitForScsiDisk(Map<VmDevice, Integer> vmDeviceUnitMap, boolean reserveFirstTwoLuns) {
+        int unit = reserveFirstTwoLuns ? 2 : 0;
         while (vmDeviceUnitMap.containsValue(unit)) {
             unit++;
         }
