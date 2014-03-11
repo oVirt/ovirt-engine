@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool;
 
 import com.google.gwt.event.shared.EventBus;
+
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -45,7 +46,7 @@ public abstract class BasePoolPopupPresenterWidget<V extends AbstractVmBasedPopu
         if (!StringHelper.isNullOrEmpty(spiceProxyOnCluster)) {
             getView().setSpiceProxyOverrideExplanation(messages.consoleOverrideSpiceProxyMessage(messages.consoleOverrideDefinedOnCluster(),
                     spiceProxyOnCluster));
-        } else if (!StringHelper.isNullOrEmpty(spiceProxyOnCluster)) {
+        } else if (!StringHelper.isNullOrEmpty(spiceProxyInConfig)) {
             getView().setSpiceProxyOverrideExplanation(messages.consoleOverrideSpiceProxyMessage(messages.consoleOverrideDefinedInGlobalConfig(),
                     spiceProxyInConfig));
         } else {
