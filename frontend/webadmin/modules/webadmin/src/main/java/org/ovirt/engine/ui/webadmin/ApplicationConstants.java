@@ -3323,7 +3323,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Action Items")
     String actionItems();
 
-    @DefaultStringValue("For allowing PK authentication, copy the following PK to host under .ssh/authorized_keys")
+    @DefaultStringValue("For allowing PK authentication, copy the following PK to host under /root/.ssh/authorized_keys")
     String publicKeyUsage();
 
     @Override
