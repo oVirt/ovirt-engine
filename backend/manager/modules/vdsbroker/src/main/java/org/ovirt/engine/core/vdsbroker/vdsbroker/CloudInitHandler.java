@@ -244,6 +244,7 @@ public class CloudInitHandler {
 
         // Don't create ec2-user
         userData.put("user", "root");
+        userData.put("disable_root", 0);
 
         // Redirect log output from cloud-init execution from terminal
         Map<String, String> output = new HashMap<String, String>();
@@ -254,6 +255,11 @@ public class CloudInitHandler {
         List<String> runcmd = new ArrayList<String>();
         runcmd.add("sed -i '/^datasource_list: /d' /etc/cloud/cloud.cfg; echo 'datasource_list: [\"NoCloud\", \"ConfigDrive\"]' >> /etc/cloud/cloud.cfg");
         userData.put("runcmd", runcmd);
+
+        Map<String, Object> opts = new HashMap<String, Object>();
+        opts.put("expire", false);
+        userData.put("chpasswd", opts);
+        userData.put("ssh_pwauth", true);
     }
 
 
