@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DbGroup;
-import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.api.extensions.AAAExtensionException.AAAExtensionError;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
