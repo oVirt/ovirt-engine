@@ -54,6 +54,8 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
                 AAAExtensionError.INCORRECT_CREDENTIALS);
     }
 
+    private Map<String, LdapGroup> globalGroupsDict = new HashMap<>();
+
     @Override
     protected String getPROTOCOL() {
         return "LDAP://";
@@ -188,6 +190,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         group.setMemberOf(groupsResult.getMemberOf());
         group.setDistinguishedName(groupsResult.getDistinguishedName());
         groupsDict.put(group.getname(), group);
+        globalGroupsDict.put(group.getname(), group);
         proceedGroupsSearchResult(groupsResult.getId(), groupsList, groupsDict, generator);
     }
 
@@ -199,7 +202,12 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         for (String groupDN : groupDNList) {
             String groupName = LdapBrokerUtils.generateGroupDisplayValue(groupDN);
             if (!groupsDict.containsKey(groupName)) {
-                generator.add(groupDN);
+                LdapGroup group = globalGroupsDict.get(groupDN);
+                if (group == null) {
+                    generator.add(groupDN);
+                } else {
+                    groupsDict.put(groupName, group);
+                }
             }
         }
     }

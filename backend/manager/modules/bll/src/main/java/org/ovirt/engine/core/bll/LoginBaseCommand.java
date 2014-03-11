@@ -13,7 +13,6 @@ import org.ovirt.engine.core.aaa.Authenticator;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.DirectoryUtils;
-import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -188,7 +187,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             AuditLogType auditLogType = auditLogMap.get(ex.getError());
             //if found matching audit log type, and it's not general login failure audit log (which will be logged anyway due to CommandBase.log)
             if (auditLogType != null && auditLogType != AuditLogType.USER_VDC_LOGIN_FAILED) {
-                LdapBrokerUtils.logEventForUser(loginName, auditLogType);
+                logEventForUser(loginName, auditLogType);
             }
 
             VdcBllMessages canDoActionMsg = vdcBllMessagesMap.get(ex.getError());
@@ -261,6 +260,12 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         SessionDataContainer.getInstance().setPassword(password);
 
         return true;
+    }
+
+    private void logEventForUser(String userName, AuditLogType auditLogType) {
+        AuditLogableBase msg = new AuditLogableBase();
+        msg.setUserName(userName);
+        AuditLogDirector.log(msg, auditLogType);
     }
 
     @Override

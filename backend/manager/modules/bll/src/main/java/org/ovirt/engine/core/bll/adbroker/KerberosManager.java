@@ -1,38 +1,18 @@
 package org.ovirt.engine.core.bll.adbroker;
 
 import java.io.File;
-import javax.annotation.PostConstruct;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.DependsOn;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import sun.security.krb5.Config;
-import sun.security.krb5.KrbException;
 
 /**
  * Manage the container's Kerberos initialization.
  *
  */
-// Here we use a Singleton bean
-// The @Startup annotation is to make sure the bean is initialized on startup.
-// @ConcurrencyManagement - we use bean managed concurrency:
-// Singletons that use bean-managed concurrency allow full concurrent access to all the
-// business and timeout methods in the singleton.
-// The developer of the singleton is responsible for ensuring that the state of the singleton is synchronized across all clients.
-// The @DependsOn annotation is in order to make sure it is started after the Backend bean is initialized
-@SuppressWarnings("restriction")
-@Singleton
-@Startup
-@DependsOn("Backend")
-@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
-public class KerberosManager implements KerberosManagerSericeManagmentMBean {
+public class KerberosManager {
 
     private static Log log = LogFactory.getLog(KerberosManager.class);
+    private static volatile KerberosManager instance = null;
 
     private boolean isKerberosAuth() {
         boolean isKerberosAuth = false;
@@ -53,16 +33,18 @@ public class KerberosManager implements KerberosManagerSericeManagmentMBean {
         return isKerberosAuth;
     }
 
-    @PostConstruct
-    public void postConstruct() {
-        create();
+    public static KerberosManager getInstance() {
+        if (instance == null) {
+            synchronized (KerberosManager.class) {
+                if (instance == null) {
+                    instance = new KerberosManager();
+                }
+            }
+        }
+        return instance;
     }
 
-    /**
-     * This method is called upon the bean creation as part
-     * of the management Service bean lifecycle.
-     */
-    public void create() {
+    private KerberosManager() {
         if (!isKerberosAuth()) {
             return;
         }
@@ -81,17 +63,6 @@ public class KerberosManager implements KerberosManagerSericeManagmentMBean {
             log.error("Failed loading kerberos setting. File " + krb5File + " not found.");
         }
         System.setProperty("sun.security.krb5.msinterop.kstring", "true");
-    }
-
-    @SuppressWarnings("restriction")
-    @Override
-    public void refresh() throws KrbException {
-        if (!isKerberosAuth()) {
-            return;
-        }
-        log.info("Refreshing kerberos configuration");
-        Config.refresh();
-
     }
 
 }

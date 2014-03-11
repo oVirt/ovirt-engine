@@ -19,6 +19,7 @@ import org.ovirt.engine.core.aaa.internal.InternalAuthenticator;
 import org.ovirt.engine.core.aaa.internal.InternalDirectory;
 import org.ovirt.engine.core.aaa.provisional.ProvisionalAuthenticator;
 import org.ovirt.engine.core.aaa.provisional.ProvisionalDirectory;
+import org.ovirt.engine.core.bll.adbroker.KerberosManager;
 import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
 import org.ovirt.engine.core.bll.adbroker.UsersDomainsCacheManagerService;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
@@ -113,7 +114,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
         AuthenticationProfileRepository.getInstance();
 
+        KerberosManager.getInstance();
         UsersDomainsCacheManagerService.getInstance().init();
+        DbUserCacheManager.getInstance().init();
         AsyncTaskManager.getInstance().initAsyncTaskManager();
         ResourceManager.getInstance().init();
         OvfDataUpdater.getInstance().initOvfDataUpdater();

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -27,7 +26,6 @@ public class LdapGetAdUserByUserIdListCommand extends LdapBrokerCommandBase {
     @Override
     protected void executeQuery(DirectorySearcher directorySearcher) {
         PopulateUsers();
-        PopulateGroups();
         setSucceeded(true);
     }
 
@@ -62,28 +60,6 @@ public class LdapGetAdUserByUserIdListCommand extends LdapBrokerCommandBase {
             generator.add(id);
         }
         return generator.getLdapQueriesData(getDomain());
-    }
-
-    private void PopulateGroups() {
-        try {
-            boolean performPopulate = true;
-            List<LdapUser> users = (List<LdapUser>) getReturnValue();
-            if (getParameters() instanceof LdapSearchByUserIdListParameters) {
-                LdapSearchByUserIdListParameters params = (LdapSearchByUserIdListParameters) getParameters();
-                performPopulate = params.getPerformGroupsQueryInsideCmd();
-            }
-            if (performPopulate) {
-                LdapBrokerUtils.performGroupPopulationForUsers(users,
-                        getLoginName(),
-                        getPassword(),
-                        getDomain(),
-                        new ArrayList<LdapGroup>());
-            }
-
-        } catch (RuntimeException ex) {
-            log.infoFormat("GetAdUserByUserIdListCommand failed. Exception: {0}", ex);
-        }
-
     }
 
     private static Log log = LogFactory.getLog(LdapGetAdUserByUserIdListCommand.class);

@@ -12,6 +12,7 @@ import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
+import org.ovirt.engine.core.aaa.DirectoryUtils;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.config.Config;
@@ -137,6 +138,9 @@ public class DbUserCacheManager {
         List<DbUser> refreshed = new ArrayList<>();
         for (DbUser dbUser : dbUsers) {
             DirectoryUser directoryUser = index.get(dbUser.getExternalId());
+            String groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
+            dbUser.setActive(false);
+            dbUser.setGroupIds(groupIds);
             dbUser = refreshUser(dbUser, directoryUser);
             if (dbUser != null) {
                 refreshed.add(dbUser);
@@ -162,7 +166,6 @@ public class DbUserCacheManager {
                     "User \"{0}\" will be marked as not active as it wasn't found in the directory \"{1}\".",
                     dbUser.getLoginName(), dbUser.getDomain()
                 );
-                dbUser.setActive(false);
             }
             return dbUser;
         }

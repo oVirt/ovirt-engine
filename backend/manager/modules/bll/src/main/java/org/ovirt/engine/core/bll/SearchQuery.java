@@ -10,12 +10,6 @@ import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
-import org.ovirt.engine.core.aaa.provisional.ProvisionalDirectory;
-import org.ovirt.engine.core.bll.adbroker.LdapBroker;
-import org.ovirt.engine.core.bll.adbroker.LdapFactory;
-import org.ovirt.engine.core.bll.adbroker.LdapQueryData;
-import org.ovirt.engine.core.bll.adbroker.LdapQueryDataImpl;
-import org.ovirt.engine.core.bll.adbroker.LdapQueryType;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
@@ -188,18 +182,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         }
 
         // Run the query:
-        if (directory instanceof ProvisionalDirectory) {
-            LdapQueryData query = new LdapQueryDataImpl();
-            query.setLdapQueryType(LdapQueryType.searchUsers);
-            query.setDomain(directoryName);
-            query.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
-            ProvisionalDirectory provisional = (ProvisionalDirectory) directory;
-            return provisional.queryUsers(query);
-        }
-        else {
-            String query = data.getQuery();
-            return directory.queryUsers(query);
-        }
+        String query = data.getQuery();
+        return directory.queryUsers(query);
     }
 
     private List<DirectoryGroup> searchDirectoryGroups() {
@@ -217,18 +201,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         }
 
         // Run the query:
-        if (directory instanceof ProvisionalDirectory) {
-            LdapQueryData query = new LdapQueryDataImpl();
-            query.setLdapQueryType(LdapQueryType.searchGroups);
-            query.setDomain(directoryName);
-            query.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
-            ProvisionalDirectory provisional = (ProvisionalDirectory) directory;
-            return provisional.queryGroups(query);
-        }
-        else {
-            String query = data.getQuery();
-            return directory.queryGroups(query);
-        }
+        String query = data.getQuery();
+        return directory.queryGroups(query);
     }
 
     private List<DbUser> searchDbUsers() {
@@ -414,10 +388,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     protected String getDefaultDomain() {
         return AuthenticationProfileRepository.getInstance().getProfiles().get(0).getDirectory().getName();
-    }
-
-    protected LdapBroker getLdapFactory(String domain) {
-        return LdapFactory.getInstance(domain);
     }
 
     private static boolean containsStaticInValues(String query) {

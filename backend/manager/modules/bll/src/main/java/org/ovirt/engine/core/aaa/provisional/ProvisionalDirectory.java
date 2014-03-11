@@ -8,10 +8,12 @@ import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
+import org.ovirt.engine.core.bll.adbroker.LdapQueryDataImpl;
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapBroker;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryData;
+import org.ovirt.engine.core.bll.adbroker.LdapQueryType;
 import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByQueryParameters;
@@ -99,18 +101,16 @@ public class ProvisionalDirectory extends Directory {
 
     @Override
     public List<DirectoryUser> queryUsers(String query) {
-        throw new UnsupportedOperationException();
-    }
-
-    public List<DirectoryUser> queryUsers(LdapQueryData data) {
+        LdapQueryData queryData = new LdapQueryDataImpl();
+        queryData.setLdapQueryType(LdapQueryType.searchUsers);
+        queryData.setDomain(getProfileName());
+        queryData.setFilterParameters(new Object[] { query });
         // Find the users using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.SearchUserByQuery,
-                new LdapSearchByQueryParameters(null, getName(), data)
+                new LdapSearchByQueryParameters(null, getName(), queryData)
         );
         List<LdapUser> ldapUsers = (List<LdapUser>) ldapResult.getReturnValue();
-
-        // Map the users:
         return mapUsers(ldapUsers);
     }
 
@@ -195,7 +195,18 @@ public class ProvisionalDirectory extends Directory {
 
     @Override
     public List<DirectoryGroup> queryGroups(String query) {
-        throw new UnsupportedOperationException();
+        LdapQueryData queryData = new LdapQueryDataImpl();
+        queryData.setLdapQueryType(LdapQueryType.searchGroups);
+        queryData.setDomain(getProfileName());
+        queryData.setFilterParameters(new Object[] { query });
+        // Find the users using the old mechanism:
+        LdapReturnValueBase ldapResult = broker.runAdAction(
+                AdActionType.SearchGroupsByQuery,
+                new LdapSearchByQueryParameters(null, getName(), queryData)
+                );
+        List<LdapGroup> ldapGroups = (List<LdapGroup>) ldapResult.getReturnValue();
+        return mapGroups(ldapGroups);
+
     }
 
     public List<DirectoryGroup> queryGroups(LdapQueryData data) {
