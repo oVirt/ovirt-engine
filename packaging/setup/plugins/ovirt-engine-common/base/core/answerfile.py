@@ -50,10 +50,10 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_CLOSEUP,
+        stage=plugin.Stages.STAGE_CLEANUP,
         priority=plugin.Stages.PRIORITY_LAST,
     )
-    def _closeup(self):
+    def _cleanup(self):
         answers = []
         answers.append(
             os.path.join(
