@@ -297,6 +297,8 @@ public class VmDeviceUtils {
                 if (addCD) {
                     setCdPath(specParams, "", isoPath);
                     addManagedDevice(new VmDeviceId(Guid.newGuid(), dstId) , VmDeviceGeneralType.DISK, VmDeviceType.CDROM, specParams, true, true, null);
+                    hasAlreadyCD = true;
+                    addCD = false;
                 }
                 // updating USB slots
                 updateUSBSlots(null, vmBase);
