@@ -160,7 +160,8 @@ public class VmItemBehavior extends ItemBehavior {
                 VdcActionType.RunVm));
         getItem().getPauseCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
                 VM.class,
-                VdcActionType.HibernateVm));
+                VdcActionType.HibernateVm)
+                && AsyncDataProvider.canVmsBePaused(entities));
         getItem().getShutdownCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
                 VM.class,
                 VdcActionType.ShutdownVm));

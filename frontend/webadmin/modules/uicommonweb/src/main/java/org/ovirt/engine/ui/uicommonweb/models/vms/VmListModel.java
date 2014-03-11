@@ -2327,7 +2327,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getCloneVmCommand().setIsExecutionAllowed(items.size() == 1
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.CloneVm));
         getPauseCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.HibernateVm));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.HibernateVm)
+                && AsyncDataProvider.canVmsBePaused(items));
         getShutdownCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ShutdownVm));
         getStopCommand().setIsExecutionAllowed(items.size() > 0

@@ -386,6 +386,17 @@ public final class AsyncDataProvider {
                 && archMemorySnapshotSupported;
     }
 
+    public static boolean canVmsBePaused(List<VM> items) {
+        for (VM vm : items) {
+            if (!AsyncDataProvider.isSuspendSupportedByArchitecture(vm.getClusterArch(),
+                vm.getVdsGroupCompatibilityVersion())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static void initNicHotplugSupportMap() {
         AsyncQuery callback = new AsyncQuery();
         callback.asyncCallback = new INewAsyncCallback() {
