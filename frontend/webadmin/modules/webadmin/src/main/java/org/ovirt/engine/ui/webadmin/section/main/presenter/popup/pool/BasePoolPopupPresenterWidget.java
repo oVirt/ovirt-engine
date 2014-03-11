@@ -45,7 +45,7 @@ public abstract class BasePoolPopupPresenterWidget<V extends AbstractVmBasedPopu
         if (!StringHelper.isNullOrEmpty(spiceProxyOnCluster)) {
             getView().setSpiceProxyOverrideExplanation(messages.consoleOverrideSpiceProxyMessage(messages.consoleOverrideDefinedOnCluster(),
                     spiceProxyOnCluster));
-        } else if (!StringHelper.isNullOrEmpty(spiceProxyOnCluster)) {
+        } else if (!StringHelper.isNullOrEmpty(spiceProxyInConfig)) {
             getView().setSpiceProxyOverrideExplanation(messages.consoleOverrideSpiceProxyMessage(messages.consoleOverrideDefinedInGlobalConfig(),
                     spiceProxyInConfig));
         } else {
