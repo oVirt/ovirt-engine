@@ -585,6 +585,7 @@ done << __EOF__
 %{engine_jboss_modules}/org/ovirt/engine/core/searchbackend/main/searchbackend.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/tools/main/tools.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/utils/main/utils.jar
+%{engine_jboss_modules}/org/ovirt/engine/extensions/builtin/main/builtin.jar
 %{engine_restapi_war}/WEB-INF/lib/interface-common-jaxrs.jar
 %{engine_restapi_war}/WEB-INF/lib/restapi-definition.jar
 %{engine_restapi_war}/WEB-INF/lib/restapi-jaxrs.jar
@@ -783,6 +784,7 @@ fi
 %{engine_etc}/engine.conf.d/
 %{engine_java}/aaa.jar
 %{engine_java}/branding.jar
+%{engine_java}/builtinjar
 %{engine_java}/common.jar
 %{engine_java}/compat.jar
 %{engine_java}/extensions-manager.jar

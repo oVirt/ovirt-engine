@@ -26,7 +26,7 @@ import org.ovirt.engine.core.notifier.NotificationServiceException;
 import org.ovirt.engine.core.notifier.filter.FirstMatchSimpleFilter;
 import org.ovirt.engine.core.notifier.transport.Observable;
 import org.ovirt.engine.core.notifier.transport.Observer;
-import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
+import org.ovirt.engine.core.utils.db.StandaloneDataSource;
 import org.ovirt.engine.core.utils.db.DbUtils;
 
 public class EventsManager implements Observer {

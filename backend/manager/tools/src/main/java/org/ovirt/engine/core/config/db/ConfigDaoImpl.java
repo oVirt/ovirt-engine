@@ -16,7 +16,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.config.entity.ConfigKeyFactory;
-import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
+import org.ovirt.engine.core.utils.db.StandaloneDataSource;
 
 public class ConfigDaoImpl implements ConfigDAO {
 

@@ -15,13 +15,13 @@ import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Authenticator;
 import org.ovirt.engine.core.aaa.Directory;
-import org.ovirt.engine.core.aaa.internal.InternalAuthenticator;
-import org.ovirt.engine.core.aaa.internal.InternalDirectory;
-import org.ovirt.engine.core.aaa.provisional.ProvisionalAuthenticator;
-import org.ovirt.engine.core.aaa.provisional.ProvisionalDirectory;
-import org.ovirt.engine.core.bll.adbroker.KerberosManager;
-import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
-import org.ovirt.engine.core.bll.adbroker.UsersDomainsCacheManagerService;
+import org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthenticator;
+import org.ovirt.engine.extensions.aaa.builtin.internal.InternalDirectory;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapAuthenticator;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapDirectory;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosManager;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.LdapBrokerUtils;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.UsersDomainsCacheManagerService;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -94,7 +94,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             dirProps.put("ovirt.engine.aaa.authz.profile.name", domain);
             dirContext.put(ExtensionProperties.CONFIGURATION, dirProps);
             dirContext.put(ExtensionProperties.NAME, domain);
-            Directory directory = new ProvisionalDirectory();
+            Directory directory = new KerberosLdapDirectory();
             directory.setContext(dirContext);
             directory.init();
 
@@ -103,7 +103,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             authProps.put("ovirt.engine.aaa.authn.profile.name", domain);
             authContext.put(ExtensionProperties.CONFIGURATION, authProps);
             authContext.put(ExtensionProperties.NAME, domain);
-            Authenticator authenticator = new ProvisionalAuthenticator();
+            Authenticator authenticator = new KerberosLdapAuthenticator();
             authenticator.setContext(authContext);
             authenticator.init();
 

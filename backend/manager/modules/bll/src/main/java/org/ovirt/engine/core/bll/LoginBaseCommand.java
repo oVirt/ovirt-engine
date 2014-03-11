@@ -229,7 +229,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
 
         // Check that the user exists in the database, if it doesn't exist then we need to add it now:
-        dbUser = getDbUserDAO().getByExternalId(directory.getName(), directoryUser.getId());
+        dbUser = getDbUserDAO().getByExternalId(directory.getProfileName(), directoryUser.getId());
         if (dbUser == null) {
             dbUser = new DbUser(directoryUser);
             dbUser.setId(Guid.newGuid());

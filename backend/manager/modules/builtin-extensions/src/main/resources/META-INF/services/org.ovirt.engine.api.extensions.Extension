@@ -1,0 +1,5 @@
+org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthenticator
+org.ovirt.engine.extensions.aaa.builtin.internal.InternalDirectory
+org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapDirectory
+org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapAuthenticator
+org.ovirt.engine.extensions.aaa.builtin.header.HeaderAuthenticator
