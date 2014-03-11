@@ -179,6 +179,7 @@
 								<ge:StringEntityModelTextAreaLabelEditor addStyleNames="{style.fingerprintLabel}" ui:field="glusterHostFingerprintEditor" />
 								<ge:StringEntityModelPasswordBoxEditor ui:field="glusterHostPasswordEditor" />
 								<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
+                                <ge:EntityModelCheckBoxEditor ui:field="enableOptionalReasonEditor" />
 							</g:FlowPanel>
 						</t:content>
 					</t:DialogTab>

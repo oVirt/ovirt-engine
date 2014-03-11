@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
@@ -71,6 +72,8 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         CommentColumn<VM> commentColumn = new CommentColumn<VM>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
+        ReasonColumn<VM> reasonColumn = new ReasonColumn<VM>();
+        getTable().addColumnWithHtmlHeader(reasonColumn, reasonColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
             @Override

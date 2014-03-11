@@ -59,6 +59,7 @@ public class AuditLogableBase extends TimeoutBase {
     private Guid mUserId = Guid.Empty;
     private String mUserName;
     private String mVmName;
+    private String mReason;
     private Map<String, String> customValues = Collections.emptyMap();
     private Guid mVdsId;
     private String mVdsName;
@@ -215,6 +216,17 @@ public class AuditLogableBase extends TimeoutBase {
 
     protected void setVmName(final String value) {
         mVmName = value;
+    }
+
+    public String getReason() {
+        if (mReason == null && getVm() != null) {
+            mReason = getVm().getStopReason();
+        }
+        return mReason;
+    }
+
+    public void setReason(String value) {
+        mReason = value;
     }
 
     public Guid getVdsIdRef() {

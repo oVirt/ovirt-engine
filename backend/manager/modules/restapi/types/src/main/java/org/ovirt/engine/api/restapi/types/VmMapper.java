@@ -378,6 +378,9 @@ public class VmMapper {
                 model.getStatus().setDetail(entity.getVmPauseStatus().name().toLowerCase());
             }
         }
+        if (entity.getStopReason() != null) {
+            model.setStopReason(entity.getStopReason());
+        }
         if (entity.getBootSequence() != null ||
             entity.getKernelUrl() != null ||
             entity.getInitrdUrl() != null ||

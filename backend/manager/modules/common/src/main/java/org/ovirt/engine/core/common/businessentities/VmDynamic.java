@@ -67,6 +67,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     @UnchangeableByVdsm
     private String cpuName;
     private String currentCd;
+    @UnchangeableByVdsm
+    private String stopReason;
 
     public static final String APPLICATIONS_LIST_FIELD_NAME = "appList";
     public static final String STATUS_FIELD_NAME = "status";
@@ -116,6 +118,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + (runOnce ? 1231 : 1237);
         result = prime * result + (cpuName == null ? 0 : cpuName.hashCode());
         result = prime * result + (currentCd == null ? 0 : currentCd.hashCode());
+        result = prime * result + (stopReason == null ? 0 : stopReason.hashCode());
         return result;
     }
 
@@ -171,7 +174,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(lastWatchdogAction, other.lastWatchdogAction)
                 && runOnce == other.runOnce
                 && ObjectUtils.objectsEqual(cpuName, other.cpuName)
-                && ObjectUtils.objectsEqual(currentCd, other.currentCd));
+                && ObjectUtils.objectsEqual(currentCd, other.currentCd)
+                && ObjectUtils.objectsEqual(stopReason, other.stopReason));
     }
 
     public String getExitMessage() {
@@ -538,5 +542,13 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setCurrentCd(String currentCd) {
         this.currentCd = currentCd;
+    }
+
+    public String getStopReason() {
+        return stopReason;
+    }
+
+    public void setStopReason(String stopReason) {
+        this.stopReason = stopReason;
     }
 }

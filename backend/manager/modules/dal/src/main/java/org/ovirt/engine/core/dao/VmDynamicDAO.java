@@ -64,4 +64,6 @@ public interface VmDynamicDAO extends GenericDao<VmDynamic, Guid>, StatusAwareDa
      *   otherwise
      */
     boolean updateConsoleUserWithOptimisticLocking(VmDynamic vm);
+
+    void clearStopReason(Guid vmGuid);
 }

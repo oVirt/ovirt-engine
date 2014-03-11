@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresent
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -64,6 +65,14 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     @Ignore
     protected HTML noteHTML;
 
+    @UiField
+    @Path(value = "reason.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor reasonEditor;
+
+    @UiField
+    FlowPanel reasonPanel;
+
     @Inject
 
     public RemoveConfirmationPopupView(EventBus eventBus,
@@ -82,6 +91,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         driver.initialize(this);
+        reasonPanel.setVisible(false);
     }
 
     @Override
@@ -169,10 +179,25 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
                 }
             }
         });
+
+        // Bind "ReasonVisible"
+        object.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if ("ReasonVisible".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+                    updateReasonVisibility((ConfirmationModel) sender);
+                }
+            }
+        });
+    }
+
+    public void updateReasonVisibility(ConfirmationModel model) {
+        reasonPanel.setVisible(model.getReasonVisible());
     }
 
     protected void localize(CommonApplicationConstants constants) {
         latch.setLabel(constants.latchApproveOperationLabel());
+        reasonEditor.setLabel(constants.reasonLabel());
     }
 
     @Override

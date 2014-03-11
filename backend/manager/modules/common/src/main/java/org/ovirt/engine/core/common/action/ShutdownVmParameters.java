@@ -3,17 +3,22 @@ package org.ovirt.engine.core.common.action;
 import java.io.Serializable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ShutdownVmParameters extends VmOperationParameterBase implements Serializable {
+public class ShutdownVmParameters extends StopVmParametersBase implements Serializable {
     private static final long serialVersionUID = 7007574816935458890L;
-    private boolean _waitBeforeShutdown;
+    private boolean waitBeforeShutdown;
 
     public ShutdownVmParameters() {
-        _waitBeforeShutdown = true;
+        waitBeforeShutdown = true;
     }
 
     public ShutdownVmParameters(Guid vmID, boolean waitBeforeShutdown) {
+        this(vmID, waitBeforeShutdown, null);
+    }
+
+    public ShutdownVmParameters(Guid vmID, boolean waitBeforeShutdown, String reason) {
         super(vmID);
-        _waitBeforeShutdown = waitBeforeShutdown;
+        this.waitBeforeShutdown = waitBeforeShutdown;
+        setStopReason(reason);
     }
 
     /**
@@ -21,11 +26,11 @@ public class ShutdownVmParameters extends VmOperationParameterBase implements Se
      * message is displayed within the guest.
      */
     public boolean getWaitBeforeShutdown() {
-        return _waitBeforeShutdown;
+        return waitBeforeShutdown;
     }
 
     public void setWaitBeforeShutdown(boolean value) {
-        _waitBeforeShutdown = value;
+        waitBeforeShutdown = value;
     }
 
 }

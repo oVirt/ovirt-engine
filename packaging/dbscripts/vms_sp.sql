@@ -312,7 +312,8 @@ Create or replace FUNCTION UpdateVmDynamic(v_app_list VARCHAR(4000) ,
         v_last_watchdog_action VARCHAR(8),
         v_is_run_once BOOLEAN,
         v_cpu_name VARCHAR(255),
-        v_current_cd VARCHAR(4000))
+        v_current_cd VARCHAR(4000),
+        v_reason VARCHAR(4000))
 RETURNS VOID
 
 	--The [vm_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -337,7 +338,8 @@ BEGIN
       hibernation_vol_handle = v_hibernation_vol_handle,exit_status = v_exit_status,
       pause_status = v_pause_status,exit_message = v_exit_message, hash=v_hash, guest_agent_nics_hash = v_guest_agent_nics_hash,
       last_watchdog_event = v_last_watchdog_event, last_watchdog_action = v_last_watchdog_action, is_run_once = v_is_run_once, cpu_name = v_cpu_name,
-      current_cd = v_current_cd
+      current_cd = v_current_cd,
+      reason = v_reason
       WHERE vm_guid = v_vm_guid;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -374,6 +376,21 @@ BEGIN
       UPDATE vm_dynamic
       SET
       status = v_status
+      WHERE vm_guid = v_vm_guid;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+Create or replace FUNCTION ClearStopReason(
+	v_vm_guid UUID)
+RETURNS VOID
+
+   AS $procedure$
+BEGIN
+      UPDATE vm_dynamic
+      SET
+      reason = null
       WHERE vm_guid = v_vm_guid;
 END; $procedure$
 LANGUAGE plpgsql;

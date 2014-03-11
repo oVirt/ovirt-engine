@@ -45,6 +45,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                     public Void runInTransaction() {
 
                         curVm.guestLogoutTimeTreatmentAfterDestroy();
+                        curVm.setStopReason(getParameters().getReason());
                         // SaveVmDynamicToDBThreaded(curVm);
                         DbFacade.getInstance().getVmDynamicDao().update(curVm.getDynamicData());
                         DbFacade.getInstance().getVmStatisticsDao().update(curVm.getStatisticsData());

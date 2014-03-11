@@ -93,6 +93,9 @@ public class ClusterMapper {
         if (model.isSetHaReservation()) {
             entity.setHaReservation(model.isHaReservation());
         }
+        if (model.isSetOptionalReason()) {
+            entity.setOptionalReasonRequired(model.isOptionalReason());
+        }
         if (model.isSetBallooningEnabled()) {
             entity.setEnableBallooning(model.isBallooningEnabled());
         }
@@ -143,6 +146,7 @@ public class ClusterMapper {
         model.setTunnelMigration(entity.isTunnelMigration());
         model.setTrustedService(entity.supportsTrustedService());
         model.setHaReservation(entity.supportsHaReservation());
+        model.setOptionalReason(entity.isOptionalReasonRequired());
         model.setBallooningEnabled(entity.isEnableBallooning());
         model.setKsm(new KSM());
         model.getKsm().setEnabled(entity.isEnableKsm());

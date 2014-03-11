@@ -529,6 +529,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Comment")
     String commentLabel();
 
+    @DefaultStringValue("Reason")
+    String reasonLabel();
+
     @DefaultStringValue("Based on Template")
     String basedOnTemplateVmPopup();
 

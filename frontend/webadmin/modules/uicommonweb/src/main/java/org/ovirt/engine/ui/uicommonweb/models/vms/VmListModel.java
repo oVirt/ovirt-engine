@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -1596,10 +1597,48 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
     }
 
-    private void powerAction(String actionName, String title, String message) {
+    private void powerAction(final String actionName, final String title, final String message) {
+        Guid clusterId = getClusterIdOfSelectedVms();
+        if (clusterId == null) {
+            powerAction(actionName, title, message, false);
+        } else {
+            AsyncDataProvider.getClusterById(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        VDSGroup cluster = (VDSGroup) returnValue;
+                        if (cluster != null) {
+                            powerAction(actionName, title, message, cluster.isOptionalReasonRequired());
+                        }
+                    }
+                }), clusterId);
+        }
+    }
+
+    /**
+     * Returns the cluster id if all vms are from the same cluster else returns null.
+     * @return
+     */
+    private Guid getClusterIdOfSelectedVms() {
+        Guid clusterId = null;
+        for (Object item : getSelectedItems())
+        {
+            VM a = (VM) item;
+            if (clusterId == null) {
+                clusterId = a.getVdsGroupId();
+            } else if (!clusterId.equals(a.getVdsGroupId())) {
+                clusterId = null;
+                break;
+            }
+        }
+        return clusterId;
+    }
+
+    private void powerAction(String actionName, String title, String message, boolean reasonVisible) {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(title);
+        model.setReasonVisible(reasonVisible);
 
         if (actionName.equals(SHUTDOWN)) {
             model.setHelpTag(HelpTag.shutdown_virtual_machine);
@@ -1676,10 +1715,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     private void onShutdown() {
+        final ConfirmationModel model = (ConfirmationModel) getWindow();
         onPowerAction(VdcActionType.ShutdownVm, new PowerActionParametersFactory<VdcActionParametersBase>() {
             @Override
             public VdcActionParametersBase createActionParameters(VM vm) {
-                return new ShutdownVmParameters(vm.getId(), true);
+                return new ShutdownVmParameters(vm.getId(), true, model.getReason().getEntity());
             }
         });
     }
@@ -1692,10 +1732,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     private void onStop() {
+        final ConfirmationModel model = (ConfirmationModel) getWindow();
         onPowerAction(VdcActionType.StopVm, new PowerActionParametersFactory<VdcActionParametersBase>() {
             @Override
             public VdcActionParametersBase createActionParameters(VM vm) {
-                return new StopVmParameters(vm.getId(), StopVmTypeEnum.NORMAL);
+                return new StopVmParameters(vm.getId(), StopVmTypeEnum.NORMAL, model.getReason().getEntity());
             }
         });
     }
@@ -1704,7 +1745,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         UIConstants constants = ConstantsManager.getInstance().getConstants();
         powerAction(REBOOT,
                     constants.rebootVirtualMachinesTitle(),
-                    constants.areYouSureYouWantToRebootTheFollowingVirtualMachinesMsg());
+                    constants.areYouSureYouWantToRebootTheFollowingVirtualMachinesMsg(),
+                    false);
     }
 
     private void onReboot() {

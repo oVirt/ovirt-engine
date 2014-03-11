@@ -27,6 +27,8 @@ public final class AuditLogDirector {
     private static final Map<AuditLogType, String> messages = new EnumMap<AuditLogType, String>(AuditLogType.class);
     private static final Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match ${<alphanumeric>...}
     static final String UNKNOWN_VARIABLE_VALUE = "Non interactive user";
+    static final String UNKNOWN_REASON_VALUE = "Not Specified";
+    static final String REASON_TOKEN = "reason";
     private static final String APP_ERRORS_MESSAGES_FILE_NAME = "bundles/AuditLogMessages";
 
     static {
@@ -278,7 +280,13 @@ public final class AuditLogDirector {
             value = values.get(token.toLowerCase());
             if (value == null || value.isEmpty()) {
                 // replace value with UNKNOWN_VARIABLE_VALUE if value not defined
-                value = UNKNOWN_VARIABLE_VALUE;
+                switch(token.toLowerCase()) {
+                    case REASON_TOKEN:
+                        value = UNKNOWN_REASON_VALUE;
+                        break;
+                    default:
+                        value = UNKNOWN_VARIABLE_VALUE;
+                }
             }
             matcher.appendReplacement(buffer, Matcher.quoteReplacement(value)); // put the value into message
         }

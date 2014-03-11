@@ -48,6 +48,14 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
     }
 
     @Override
+    public void clearStopReason(Guid vmGuid) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_guid", vmGuid);
+
+        getCallsHandler().executeModification("ClearStopReason", parameterSource);
+    }
+
+    @Override
     public boolean updateConsoleUserWithOptimisticLocking(VmDynamic vm) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", vm.getId())
@@ -115,7 +123,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("last_watchdog_action", vm.getLastWatchdogAction())
                 .addValue("is_run_once", vm.isRunOnce())
                 .addValue("cpu_name", vm.getCpuName())
-                .addValue("current_cd", vm.getCurrentCd());
+                .addValue("current_cd", vm.getCurrentCd())
+                .addValue("reason", vm.getStopReason());
     }
 
     @Override
@@ -180,6 +189,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 entity.setRunOnce(rs.getBoolean("is_run_once"));
                 entity.setCpuName(rs.getString("cpu_name"));
                 entity.setCurrentCd(rs.getString("current_cd"));
+                entity.setStopReason(rs.getString("reason"));
                 return entity;
             }
         };
@@ -230,7 +240,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                         .addValue("last_watchdog_action", entity.getLastWatchdogAction())
                         .addValue("is_run_once", entity.isRunOnce())
                         .addValue("cpu_name", entity.getCpuName())
-                        .addValue("current_cd", entity.getCurrentCd());
+                        .addValue("current_cd", entity.getCurrentCd())
+                        .addValue("reason", entity.getStopReason());
 
                 return paramValue;
             }

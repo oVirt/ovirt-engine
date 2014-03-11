@@ -1383,6 +1383,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         cluster.setcompatibility_version(version);
         cluster.setVirtService(model.getEnableOvirtService().getEntity());
         cluster.setGlusterService(model.getEnableGlusterService().getEntity());
+        cluster.setOptionalReasonRequired(model.getEnableOptionalReason().getEntity());
         if (model.getClusterPolicy().getSelectedItem() != null) {
             ClusterPolicy selectedPolicy = model.getClusterPolicy().getSelectedItem();
             cluster.setClusterPolicyId(selectedPolicy.getId());

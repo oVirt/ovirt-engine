@@ -170,6 +170,11 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @Ignore
     Label messageLabel;
 
+    @UiField(provided = true)
+    @Path(value = "enableOptionalReason.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor enableOptionalReasonEditor;
+
     @UiField
     @WithElementId
     DialogTab optimizationTab;
@@ -255,6 +260,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @Path(value = "enableHaReservation.entity")
     @WithElementId
     EntityModelCheckBoxEditor enableHaReservationEditor;
+
 
     @UiField(provided = true)
     @Path(value = "clusterPolicy.selectedItem")
@@ -367,6 +373,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         countThreadsAsCoresEditor.setContentWidgetStyleName(style.fullWidth());
         enableTrustedServiceEditor.setContentWidgetStyleName(style.fullWidth());
         enableHaReservationEditor.setContentWidgetStyleName(style.fullWidth());
+        enableOptionalReasonEditor.setContentWidgetStyleName(style.fullWidth());
     }
 
     private void localize(ApplicationConstants constants) {
@@ -410,6 +417,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         additionPropsPanelTitle.setText(constants.clusterPolicyAdditionalPropsPanelTitle());
         enableTrustedServiceEditor.setLabel(constants.clusterPolicyEnableTrustedServiceLabel());
         enableHaReservationEditor.setLabel(constants.clusterPolicyEnableHaReservationLabel());
+        enableOptionalReasonEditor.setLabel(constants.clusterPolicyEnableReasonLabel());
         clusterPolicyEditor.setLabel(constants.clusterPolicySelectPolicyLabel());
 
         enableKsm.setLabel(constants.enableKsmLabel());
@@ -494,6 +502,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         enableTrustedServiceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         enableHaReservationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
+        enableOptionalReasonEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         enableKsm = new EntityModelCheckBoxEditor(Align.RIGHT);
         enableKsm.getContentWidgetContainer().setWidth("350px"); //$NON-NLS-1$

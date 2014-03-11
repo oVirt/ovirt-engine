@@ -619,7 +619,7 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_static.default_display_type as default_display_type, vm_static.priority as priority,vm_static.iso_path as iso_path, vm_static.origin as origin, vds_groups.compatibility_version as vds_group_compatibility_version,
                       vm_static.initrd_url as initrd_url, vm_static.kernel_url as kernel_url, vm_static.kernel_params as kernel_params, vm_dynamic.pause_status as pause_status, vm_dynamic.exit_message as exit_message, vm_dynamic.exit_status as exit_status,vm_static.migration_support as migration_support,vm_static.predefined_properties as predefined_properties,vm_static.userdefined_properties as userdefined_properties,vm_static.min_allocated_mem as min_allocated_mem,  vm_dynamic.hash as hash, vm_static.cpu_pinning as cpu_pinning, vm_static.db_generation as db_generation, vm_static.host_cpu_flags as host_cpu_flags,
                       vm_static.tunnel_migration as tunnel_migration, vm_static.vnc_keyboard_layout as vnc_keyboard_layout, vm_static.is_run_and_pause as is_run_and_pause, vm_static.created_by_user_id as created_by_user_id,
-                      vm_dynamic.last_watchdog_event as last_watchdog_event, vm_dynamic.last_watchdog_action as last_watchdog_action, vm_dynamic.is_run_once as is_run_once, vm_dynamic.vm_fqdn as vm_fqdn, vm_dynamic.cpu_name as cpu_name, vm_dynamic.current_cd as current_cd,
+                      vm_dynamic.last_watchdog_event as last_watchdog_event, vm_dynamic.last_watchdog_action as last_watchdog_action, vm_dynamic.is_run_once as is_run_once, vm_dynamic.vm_fqdn as vm_fqdn, vm_dynamic.cpu_name as cpu_name, vm_dynamic.current_cd as current_cd, vm_dynamic.reason as reason,
                       vm_static.instance_type_id as instance_type_id, vm_static.image_type_id as image_type_id, vds_groups.architecture as architecture, vm_static.original_template_id as original_template_id, vm_static.original_template_name as original_template_name, vm_dynamic.last_stop_time as last_stop_time,
                       vm_static.migration_downtime as migration_downtime, vm_static.template_version_number as template_version_number,
                       vm_static.serial_number_policy as serial_number_policy, vm_static.custom_serial_number as custom_serial_number
@@ -663,7 +663,7 @@ SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.cpu_shares, vms
             vms.vm_pool_spice_proxy as vm_pool_spice_proxy, vms.vds_group_spice_proxy as vds_group_spice_proxy,
             vms.instance_type_id as instance_type_id, vms.image_type_id as image_type_id, vms.architecture as architecture, vms.original_template_id as original_template_id, vms.original_template_name as original_template_name,
             vms.migration_downtime as migration_downtime, vms.template_version_number as template_version_number,
-            vms.current_cd as current_cd,
+            vms.current_cd as current_cd, vms.reason as reason,
             vms.serial_number_policy as serial_number_policy, vms.custom_serial_number as custom_serial_number
 FROM        vms LEFT OUTER JOIN
             tags_vm_map_view ON vms.vm_guid = tags_vm_map_view.vm_id LEFT OUTER JOIN

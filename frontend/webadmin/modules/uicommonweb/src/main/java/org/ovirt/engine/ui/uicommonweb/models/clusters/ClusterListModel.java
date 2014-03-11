@@ -361,6 +361,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.init(true);
         clusterModel.getEnableTrustedService().setEntity(cluster.supportsTrustedService());
         clusterModel.getEnableHaReservation().setEntity(cluster.supportsHaReservation());
+        clusterModel.getEnableOptionalReason().setEntity(cluster.isOptionalReasonRequired());
         setWindow(clusterModel);
         clusterModel.setTitle(ConstantsManager.getInstance().getConstants().editClusterTitle());
         clusterModel.setHelpTag(HelpTag.edit_cluster);
@@ -725,6 +726,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setGlusterService(model.getEnableGlusterService().getEntity());
         cluster.setTrustedService(model.getEnableTrustedService().getEntity());
         cluster.setHaReservation(model.getEnableHaReservation().getEntity());
+        cluster.setOptionalReasonRequired(model.getEnableOptionalReason().getEntity());
         cluster.setClusterPolicyId(model.getClusterPolicy().getSelectedItem().getId());
         cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet().serialize()));
         if (model.getOptimizeForSpeed().getEntity()) {

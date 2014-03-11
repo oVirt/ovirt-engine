@@ -253,6 +253,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void executeVmCommand() {
+        getVm().setStopReason(null);
+        getVmDynamicDao().clearStopReason(this.getVm().getId());
         setActionReturnValue(VMStatus.Down);
         initVm();
         perform();

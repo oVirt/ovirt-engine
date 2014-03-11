@@ -73,6 +73,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private boolean haReservation;
 
+    private boolean optionalReasonRequired;
+
     private Guid clusterPolicyId;
 
     private String clusterPolicyName;
@@ -259,6 +261,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     public void setHaReservation(boolean haReservation) {
         this.haReservation = haReservation;
+    }
+
+    public boolean isOptionalReasonRequired() {
+        return optionalReasonRequired;
+    }
+
+    public void setOptionalReasonRequired(boolean optionalReasonRequired) {
+        this.optionalReasonRequired = optionalReasonRequired;
     }
 
     public Guid getClusterPolicyId() {

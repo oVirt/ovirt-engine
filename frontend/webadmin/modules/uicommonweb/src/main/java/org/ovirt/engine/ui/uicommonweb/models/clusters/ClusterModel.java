@@ -679,6 +679,16 @@ public class ClusterModel extends EntityModel
         }
     }
 
+    private EntityModel<Boolean> enableOptionalReason;
+
+    public EntityModel<Boolean> getEnableOptionalReason() {
+        return enableOptionalReason;
+    }
+
+    public void setEnableOptionalReason(EntityModel<Boolean> value) {
+        this.enableOptionalReason = value;
+    }
+
     private EntityModel<Boolean> privateEnableTrustedService;
 
     private EntityModel<Boolean> privateEnableHaReservation;
@@ -766,6 +776,7 @@ public class ClusterModel extends EntityModel
         setComment(new EntityModel<String>());
         setEnableTrustedService(new EntityModel<Boolean>(false));
         setEnableHaReservation(new EntityModel<Boolean>(false));
+        setEnableOptionalReason(new EntityModel<Boolean>(false));
         setAllowClusterWithVirtGlusterEnabled(true);
         AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override

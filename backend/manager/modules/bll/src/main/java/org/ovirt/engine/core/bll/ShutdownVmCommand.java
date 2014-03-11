@@ -60,7 +60,7 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.DestroyVm,
-                            new DestroyVmVDSCommandParameters(getVdsId(), getVmId(), false, true, secondsToWait))
+                            new DestroyVmVDSCommandParameters(getVdsId(), getVmId(), getParameters().getStopReason(), false, true, secondsToWait))
                     .getReturnValue());
         }
         else {

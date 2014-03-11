@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -62,6 +64,35 @@ public class ConfirmationModel extends ListModel
         }
     }
 
+    private EntityModel<String> reason;
+
+    public EntityModel<String> getReason()
+    {
+        return reason;
+    }
+
+    public void setReason(EntityModel<String> value)
+    {
+        reason = value;
+    }
+
+    private boolean reasonVisible;
+
+    public boolean getReasonVisible()
+    {
+        return reasonVisible;
+    }
+
+    public void setReasonVisible(boolean value)
+    {
+        if (reasonVisible != value)
+        {
+            reasonVisible = value;
+            onPropertyChanged(new PropertyChangedEventArgs("ReasonVisible")); //$NON-NLS-1$
+        }
+
+    }
+
     public ConfirmationModel()
     {
         setLatch(new EntityModel<Boolean>());
@@ -71,6 +102,9 @@ public class ConfirmationModel extends ListModel
         setForce(new EntityModel<Boolean>());
         getForce().setEntity(false);
         getForce().setIsAvailable(false);
+
+        setReason(new EntityModel());
+        setReasonVisible(false);
     }
 
     public boolean validate()
@@ -84,6 +118,8 @@ public class ConfirmationModel extends ListModel
             getLatch().setIsValid(false);
         }
 
-        return getLatch().getIsValid();
+        getReason().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
+
+        return getLatch().getIsValid() && getReason().getIsValid();
     }
 }

@@ -13,9 +13,9 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveVmHibernationVolumesParameters;
+import org.ovirt.engine.core.common.action.StopVmParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -31,7 +31,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-public abstract class StopVmCommandBase<T extends VmOperationParameterBase> extends VmOperationCommandBase<T>
+public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends VmOperationCommandBase<T>
         implements QuotaVdsDependent, QuotaStorageDependent {
     private boolean suspendedVm;
 
@@ -41,6 +41,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
 
     public StopVmCommandBase(T parameters) {
         super(parameters);
+        setReason(parameters.getStopReason());
     }
 
     protected boolean getSuspendedVm() {
@@ -78,14 +79,14 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
                     .RunVdsCommand(
                             VDSCommandType.DestroyVm,
                             new DestroyVmVDSCommandParameters(new Guid(getVm().getMigratingToVds().toString()),
-                                    getVmId(), true, false, 0));
+                                    getVmId(), getParameters().getStopReason(), true, false, 0));
         }
 
         setActionReturnValue(Backend
                 .getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.DestroyVm,
-                        new DestroyVmVDSCommandParameters(getVdsId(), getVmId(), false, false, 0)).getReturnValue());
+        new DestroyVmVDSCommandParameters(getVdsId(), getVmId(), getParameters().getStopReason(), false, false, 0)).getReturnValue());
 
         if (wasPaused) {
             VmHandler.decreasePendingVms(getVm(), getVdsId());
