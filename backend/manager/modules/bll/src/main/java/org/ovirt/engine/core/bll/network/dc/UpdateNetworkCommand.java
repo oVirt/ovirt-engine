@@ -303,18 +303,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     }
 
-    private boolean labelChanged() {
-        return !Objects.equals(getNetwork().getLabel(), getOldNetwork().getLabel());
-    }
-
-    private boolean labelAdded() {
-        return !NetworkUtils.isLabeled(getOldNetwork()) && NetworkUtils.isLabeled(getNetwork());
-    }
-
-    private boolean labelRemoved() {
-        return NetworkUtils.isLabeled(getOldNetwork()) && !NetworkUtils.isLabeled(getNetwork());
-    }
-
     private class SyncNetworkParametersBuilder extends NetworkParametersBuilder{
 
         private ArrayList<VdcActionParametersBase> buildParameters(Network network, Network oldNetwork) {
@@ -329,7 +317,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             }
 
             // add network to labeled interfaces and sync network on the rest
-            if (labelAdded()) {
+            if (labelAdded() || labelRenamed()) {
                 List<VdsNetworkInterface> labeledNics = getLabeledNics(network);
                 Map<Guid, VdsNetworkInterface> hostToNic = mapHostToNic(nics);
                 List<VdsNetworkInterface> nicsForAdd = new ArrayList<>();
@@ -439,5 +427,22 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 parameters.add(setupNetworkParams);
             }
         }
+
+        private boolean labelChanged() {
+            return !Objects.equals(getNetwork().getLabel(), getOldNetwork().getLabel());
+        }
+
+        private boolean labelAdded() {
+            return !NetworkUtils.isLabeled(getOldNetwork()) && NetworkUtils.isLabeled(getNetwork());
+        }
+
+        private boolean labelRemoved() {
+            return NetworkUtils.isLabeled(getOldNetwork()) && !NetworkUtils.isLabeled(getNetwork());
+        }
+
+        private boolean labelRenamed() {
+            return NetworkUtils.isLabeled(getOldNetwork()) && NetworkUtils.isLabeled(getNetwork()) && labelChanged();
+        }
+
     }
 }
