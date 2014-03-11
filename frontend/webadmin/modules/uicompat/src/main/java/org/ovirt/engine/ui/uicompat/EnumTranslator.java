@@ -7,24 +7,24 @@ import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 
-public class EnumTranslator<T> extends Translator {
+public class EnumTranslator<T extends Enum<?>> extends Translator {
     private static final Logger logger = Logger.getLogger(EnumTranslator.class.getName());
     private static final UIConstants constants = GWT.create(UIConstants.class);
 
-    private static Map<Class<?>, EnumTranslator> translatorsMap = new HashMap<Class<?>, EnumTranslator>();
+    private static final Map<Class<? extends Enum<?>>, EnumTranslator> translatorsMap = new HashMap<Class<? extends Enum<?>>, EnumTranslator>();
 
     private Enums enums = GWT.create(Enums.class);
-    private T type;
+    private Class<T> type;
 
-    public EnumTranslator(T type) {
+    public EnumTranslator(Class<T> type) {
         this.type = type;
     }
 
-    public static <T> Translator create(T type) {
+    public static <T extends Enum<?>> Translator create(Class<T> type) {
         EnumTranslator translator = translatorsMap.get(type);
         if (translator == null) {
-            translator = new EnumTranslator(type);
-            translatorsMap.put((Class<?>) type, translator);
+            translator = new EnumTranslator<T>(type);
+            translatorsMap.put(type, translator);
         }
 
         return translator;
@@ -56,8 +56,8 @@ public class EnumTranslator<T> extends Translator {
         }
         String enumName = type.toString();
         enumName = enumName.substring(enumName.lastIndexOf(".")+1,enumName.length()); //$NON-NLS-1$
-        String trasnlatedEnum = enums.getString(enumName + "___" + key.toString()); //$NON-NLS-1$
+        String translatedEnum = enums.getString(enumName + "___" + key.toString()); //$NON-NLS-1$
 
-        return trasnlatedEnum;
+        return translatedEnum;
     }
 }
