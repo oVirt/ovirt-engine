@@ -2252,9 +2252,7 @@ public class UnitVmModel extends Model {
                 dataCentersWithClusters.add(new DataCenterWithCluster(dataCenter, cluster));
             }
         }
-        getDataCenterWithClustersList().setItems(dataCentersWithClusters);
-
-        selectDataCenterWithCluster(model, selectedCluster, dataCentersWithClusters);
+        selectDataCenterWithCluster(selectedCluster, dataCentersWithClusters);
     }
 
     protected void setupDataCenterWithClusters(UnitVmModel model,
@@ -2284,20 +2282,15 @@ public class UnitVmModel extends Model {
                 }
             }
         }
-        getDataCenterWithClustersList().setItems(dataCentersWithClusters);
-
-        selectDataCenterWithCluster(model, selectedCluster, dataCentersWithClusters);
+        selectDataCenterWithCluster(selectedCluster, dataCentersWithClusters);
     }
 
-    protected void selectDataCenterWithCluster(UnitVmModel model,
-            Guid selectedCluster,
-            List<DataCenterWithCluster> dataCentersWithClusters) {
-        if (selectedCluster == null) {
-            getDataCenterWithClustersList().setSelectedItem(Linq.firstOrDefault(dataCentersWithClusters));
-        } else {
-            model.getDataCenterWithClustersList().setSelectedItem(Linq.firstOrDefault(dataCentersWithClusters,
-                    new Linq.DataCenterWithClusterAccordingClusterPredicate(selectedCluster)));
-        }
+    protected void selectDataCenterWithCluster(Guid selectedCluster, List<DataCenterWithCluster> dataCentersWithClusters) {
+        DataCenterWithCluster selectedDataCenterWithCluster =
+                (selectedCluster == null) ? Linq.firstOrDefault(dataCentersWithClusters)
+                        : Linq.firstOrDefault(dataCentersWithClusters,
+                                new Linq.DataCenterWithClusterAccordingClusterPredicate(selectedCluster));
+        getDataCenterWithClustersList().setItems(dataCentersWithClusters, selectedDataCenterWithCluster);
     }
 
     private StoragePool getDataCenterAccordingSystemTree(UnitVmModel model, List<StoragePool> list) {
