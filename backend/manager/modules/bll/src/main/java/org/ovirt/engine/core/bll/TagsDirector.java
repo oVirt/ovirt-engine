@@ -36,13 +36,11 @@ public class TagsDirector {
     /**
      * In memory nodes cache for quicker access to each node by ID: O(1) instead O(lnN) of tree
      */
-    private final Map<Guid, Tags> tagsMapByID =
-            new CopyOnAccessMap<Guid, Tags>(new HashMap<Guid, Tags>());
+    private final Map<Guid, Tags> tagsMapByID = new CopyOnAccessMap<>(new HashMap<Guid, Tags>());
     /**
      * In memory nodes cache for quicker access to each node by name
      */
-    private final Map<String, Tags> tagsMapByName =
-            new CopyOnAccessMap<String, Tags>(new HashMap<String, Tags>());
+    private final Map<String, Tags> tagsMapByName = new CopyOnAccessMap<>(new HashMap<String, Tags>());
 
     private static TagsDirector instance = new TagsDirector();
 
@@ -262,7 +260,7 @@ public class TagsDirector {
 
     public HashSet<Guid> GetTagIdAndChildrenIdsAsSet(Guid tagId) {
         Tags tag = GetTagById(tagId);
-        HashSet<Guid> set = new HashSet<Guid>();
+        HashSet<Guid> set = new HashSet<>();
         tag.getTagIdAndChildrenIdsAsList(set);
         return set;
     }
@@ -356,7 +354,7 @@ public class TagsDirector {
      * @return a tags list.
      */
     public ArrayList<Tags> GetAllTags() {
-        ArrayList<Tags> ret = new ArrayList<Tags>(tagsMapByID.values());
+        ArrayList<Tags> ret = new ArrayList<>(tagsMapByID.values());
         // remove the root - it is not a real tag:
         ret.remove(GetRootTag());
         return ret;
