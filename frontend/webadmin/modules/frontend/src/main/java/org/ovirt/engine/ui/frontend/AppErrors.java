@@ -625,7 +625,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. There are no available HA hosts in the VM's Cluster.")
     String ACTION_TYPE_FAILED_NO_HA_VDS();
 
-    @DefaultStringValue("The following Hosts have running VMs and cannot be switched to maintenance mode: ${HostsList}.Please ensure that the following Clusters have at least one Host in UP state: ${ClustersList}.")
+    @DefaultStringValue("The following Hosts have running VMs and cannot be switched to maintenance mode: ${HostsList}.\nPlease ensure that the following Clusters have at least one Host in UP state: ${ClustersList}.")
     String CANNOT_MAINTENANCE_VDS_RUN_VMS_NO_OTHER_RUNNING_VDS();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM's tools version (${toolsVersion}) mismatch with the Host's (${serverVersion}) version.")
