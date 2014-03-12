@@ -237,8 +237,11 @@ public class EventListModel extends ListWithDetailsModel
             {
                 list.remove(list.size() - 1);
             }
-
-            list.add(0, item);
+            // This check is for an issue in FF where somehow the event lists gets items twice. This
+            // simply checks if the event is already there and only adds it if it is not there.
+            if (!list.contains(item)) {
+                list.add(0, item);
+            }
         }
         getItemsChangedEvent().raise(this, EventArgs.EMPTY);
         setLastEvent(Linq.firstOrDefault(list));
