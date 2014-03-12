@@ -1,39 +1,74 @@
 .TH engine-config 8 "May 9, 2013" "" ""
 .SH NAME
-engine-config \- Engine management settings tool
+engine-config \- Engine configuration management tool
 .SH SYNOPSIS
-.B engine-config ACTION [--cver=version] [-p | --properties=/path/to/alternate/property/fie] [-c | --config=/path/to/alternate/config/file]
-
-Where:
-    ACTION            action to perform, \f see details below
-    version           relevant configuration version to use.
-    -p, --properties= (optional) use the given alternate properties file.
-    -c, --config=     (optional) use the given alternate configuration file.
-
-Available actions:
-     \fB\-l\fR, \fB\-\-list\fR
-       list available configuration keys.
-
-     \fB\-a\fR, \fB\-\-all\fR
-           get all available configuration values.
-
-     \fB\-g key\fR, \fB\-\-get\fR=key [--cversion=version]
-           get the value of the given key for the given version. If a version is not given, the values of all existing
-versions are returned.
-
-     \fB\-s\fR key=val --cver=version, \fB\-\-set\fR key=val --cver=version
-           set the value of the given key for the given version. The cver version is mandatory for this action
-
-     \fB\-h\fR, \fB\-\-help\fR
-       list available configuration keys.
-           display this help and exit.
-
-.B NOTE:
-      In order for your change(s) to take effect, restart the oVirt engine
-      For more info about the engine-config keys: http://www.ovirt.org/Engine_config_options
+.B engine-config <action> [<args>]
+.SH AVAILABLE ACTIONS
+.PP
+\fB\-l\fR, \fB\-\-list\fR
+.RS 4
+List available configuration keys.
+.RE
+.PP
+\fB\-a\fR, \fB\-\-all\fR
+.RS 4
+Get all available configuration values.
+.RE
+.PP
+\fB\-g\fR \fIKEY\fR, \fB\-\-get\fR=\fIKEY\fR
+.RS 4
+Get the value of the given key for the given version. If a version is not given, the values of all existing versions are returned.
+.RE
+.PP
+\fB\-s\fR \fIKEY\fR=\fIVALUE\fR, \fB\-\-set\fR \fIKEY\fR=\fIVALUE\fR
+.RS 4
+Set the value of the given key for the given version. The version is required for this action only when the version is not 'general'.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show this help message and exit.
+.RE
+.SH OPTIONS
+.PP
+\fB\-\-cver\fR=\fIVERSION\fR
+.RS 4
+Relevant configuration version to use.
+.RE
+.PP
+\fB\-p\fR \fIPROP_FILE\fR, \fB\-\-properties\fR=\fIPROP_FILE\fR
+.RS 4
+Use the given alternate properties file.
+.RE
+.PP
+\fB\-c\fR \fICFG_FILE\fR, \fB\-\-config\fR=\fICFG_FILE\fR
+.RS 4
+Use the given alternate configuration file.
+.RE
+.SH SETTING PASSWORDS
+Passwords can be set in interactive mode:
+.RS 4
+.BR
+.nf
+engine-config -s PasswordEntry=interactive
+.fi
+.BR
+.RE
+or via file with one of the following options:
+.RS 4
+.BR
+.nf
+engine-config -s PasswordEntry --admin-pass-file=/tmp/mypass
+engine-config -s PasswordEntry=/tmp/mypass
+.fi
+.BR
+.RE
+PasswordEntry varies between the different password options.
+.SH NOTE
+In order for your change(s) to take effect, restart the oVirt engine.
 
 .SH BUGS
 Report bugs to <http://bugzilla.redhat.com>
 
 .SH COPYRIGHT
-Copyright 2010-2013 Red Hat, Inc.
+Copyright 2010-2014 Red Hat, Inc.
