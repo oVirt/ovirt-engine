@@ -231,7 +231,6 @@ public class VdsUpdateRunTimeInfoTest {
         when(dbFacade.getVmDynamicDao()).thenReturn(vmDynamicDao);
         when(dbFacade.getDiskDao()).thenReturn(diskDAO);
         when(groupDAO.get((Guid) any())).thenReturn(cluster);
-        Map<Guid, VM> emptyMap = Collections.emptyMap();
         initVm();
         when(vmDAO.getAllRunningByVds(vds.getId())).thenReturn(Collections.singletonMap(VM_1, vm_1_db));
     }
