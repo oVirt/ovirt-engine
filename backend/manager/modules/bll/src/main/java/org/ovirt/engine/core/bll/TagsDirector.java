@@ -237,18 +237,6 @@ public class TagsDirector {
     }
 
     /**
-     * This function will return the tag's ID and its parents IDs.
-     *
-     * @param tagName
-     *            the tag name.
-     * @return a comma separated list of IDs.
-     */
-    public String GetTagIdAndParentsIds(String tagName) {
-        Tags tag = GetTagByName(tagName);
-        return GetTagIdAndParentsIds(tag);
-    }
-
-    /**
      * This function will return the tag's ID and its children IDs. Its used to determine if a tag is assigned to an
      * entity. Tag is determined as assigned to an entity if the entity is assigned to the tag or to one of its
      * children.
