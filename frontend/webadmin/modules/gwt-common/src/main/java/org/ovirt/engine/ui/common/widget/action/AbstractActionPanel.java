@@ -50,6 +50,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -64,7 +65,7 @@ import com.google.gwt.user.client.ui.Widget;
  *            Action panel item type.
  */
 public abstract class AbstractActionPanel<T> extends Composite implements ActionPanel<T>, HasElementId,
-        ProvidesElementId {
+        ProvidesElementId, RequiresResize {
     /**
      * The cascading menu/panel CSS resources.
      */
@@ -219,6 +220,11 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
                 unregisterResizeHandler();
             }
         });
+    }
+
+    @Override
+    public void onResize() {
+        initializeCascadeMenuPanel();
     }
 
     /**

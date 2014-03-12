@@ -5,6 +5,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -30,7 +31,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     }
 
     @UiField
-    SimplePanel snapshotsTableContainer;
+    LayoutPanel snapshotsTableContainer;
 
     @UiField
     SimplePanel snapshotInfoContainer;
