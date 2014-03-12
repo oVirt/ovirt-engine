@@ -34,7 +34,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
 
         HasClickHandlers getFeedbackLink();
 
-        void setFeedbackText(String feedbackText);
+        void setFeedbackText(String feedbackText, String feedbackTitle);
     }
 
     @ContentSlot
@@ -125,7 +125,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
                 String version = (String) result;
                 feedbackUrl = dynamicMessages.feedbackUrl(version);
                 if (feedbackUrl != null && feedbackUrl.length() > 0) {
-                    getView().setFeedbackText(feedbackLinkLabel);
+                    getView().setFeedbackText(feedbackLinkLabel, dynamicMessages.feedbackLinkTooltip());
                     registerHandler(getView().getFeedbackLink().addClickHandler(new ClickHandler() {
                         @Override
                         public void onClick(ClickEvent event) {

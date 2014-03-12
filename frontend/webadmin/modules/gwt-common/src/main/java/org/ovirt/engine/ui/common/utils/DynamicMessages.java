@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Set;
+
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 
 /**
@@ -35,6 +36,7 @@ public class DynamicMessages {
         COPY_RIGHT_NOTICE("copy_right_notice"), //$NON-NLS-1$
         FEEDBACK_URL("feedback_url"), //$NON-NLS-1$
         FEEDBACK_LINK_LABEL("feedback_link_label"), //$NON-NLS-1$
+        FEEDBACK_LINK_TOOLTIP("feedback_link_tooltip"), //$NON-NLS-1$
         GUIDE_URL("guide_url"), //$NON-NLS-1$
         EXTENDED_GUIDE_URL("extended_guide_url"), //$NON-NLS-1$
         GUIDE_LINK_LABEL("guide_link_label"), //$NON-NLS-1$
@@ -264,6 +266,16 @@ public class DynamicMessages {
      */
     public final String feedbackLinkLabel() {
         return getString(DynamicMessageKey.FEEDBACK_LINK_LABEL);
+    }
+
+    /**
+     * Get the feedback link tooltip using the {@code Dictionary} in the host page. With a fall back to the standard GWT
+     * Constant.
+     *
+     * @return The feedback link tooltip.
+     */
+    public final String feedbackLinkTooltip() {
+        return getString(DynamicMessageKey.FEEDBACK_LINK_TOOLTIP);
     }
 
     /**

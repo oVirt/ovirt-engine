@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget;
+import org.ovirt.engine.ui.webadmin.widget.label.LabelWithToolTip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor.Ignore;
@@ -73,7 +74,7 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
     HTMLPanel feedbackImagePanel;
 
     @UiField
-    Label feedbackImageLabel;
+    LabelWithToolTip feedbackImageLabel;
 
     @Inject
     public HeaderView(ApplicationConstants constants,
@@ -135,9 +136,12 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
     }
 
     @Override
-    public void setFeedbackText(String feedbackText) {
+    public void setFeedbackText(String feedbackText, String feedbackTitle) {
         feedbackImagePanel.setVisible(true);
         feedbackImageLabel.setText(feedbackText);
+        if (feedbackTitle != null) {
+            feedbackImageLabel.setTitle(feedbackTitle);
+        }
     }
 
 }

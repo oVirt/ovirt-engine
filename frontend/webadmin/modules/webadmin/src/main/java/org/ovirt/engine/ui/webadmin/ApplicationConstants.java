@@ -3335,6 +3335,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Feedback")
     String feedbackMessage();
 
+    @DefaultStringValue("Clicking this link will open the feedback in a new browser window/tab."
+            + " If nothing appears to happen make sure you have your e-mail client configured.")
+    String feedbackTooltip();
+
     @DefaultStringValue("Remove Filter")
     String removeFilter();
 
