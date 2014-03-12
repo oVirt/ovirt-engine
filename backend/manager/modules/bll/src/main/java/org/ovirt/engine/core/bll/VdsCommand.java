@@ -34,6 +34,9 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class VdsCommand<T extends VdsActionParameters> extends CommandBase<T> {
 
+    private static final String GENERIC_ERROR = "Please refer to engine.log and log files under /var/log/ovirt-engine/host-deploy/ on the engine for further details.";
+    protected String _failureMessage = null;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -245,5 +248,53 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
                 + " finished. Lock released. Monitoring can run now for host {0} from data-center {1}",
                 vds.getName(),
                 vds.getStoragePoolName());
+    }
+
+    protected void handleError(Exception e, VDSStatus status) {
+        log.errorFormat(
+                "Host installation failed for host {0}, {1}.",
+                getVds().getId(),
+                getVds().getName(),
+                e
+        );
+        setVdsStatus(status);
+        setSucceeded(false);
+        _failureMessage = e.getMessage();
+    }
+
+    /**
+     * Set vds object status.
+     *
+     * @param status
+     *            new status.
+     */
+    protected void setVdsStatus(VDSStatus status) {
+        runVdsCommand(
+                VDSCommandType.SetVdsStatus,
+                new SetVdsStatusVDSCommandParameters(getVdsId(), status)
+        );
+    }
+
+    protected String getErrorMessage(String msg) {
+        return StringUtils.isEmpty(msg) ? GENERIC_ERROR : msg;
+    }
+
+    @SuppressWarnings("serial")
+    protected static class VdsInstallException extends RuntimeException {
+        private VDSStatus status;
+
+        VdsInstallException(VDSStatus status, String message) {
+            super(message);
+            this.status = status;
+        }
+
+        VdsInstallException(VDSStatus status, String message, Exception cause) {
+            super(message, cause);
+            this.status = status;
+        }
+
+        public VDSStatus getStatus() {
+            return status;
+        }
     }
 }

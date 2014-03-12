@@ -58,6 +58,7 @@ public abstract class HostModel extends Model
     public static final String PmSlotKey = "slot"; //$NON-NLS-1$
     public static final String BeginTestStage = "BeginTest"; //$NON-NLS-1$
     public static final String EndTestStage = "EndTest"; //$NON-NLS-1$
+    public static final String AdminUserName = "admin"; //$NON-NLS-1$
     public static final String RootUserName = "root"; //$NON-NLS-1$
 
     private UICommand privateTestCommand;

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
 @NonTransactiveCommandAttribute
-public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVdsCommand<T> {
+public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVdsInternalCommand<T> {
 
     public ApproveVdsCommand(T parameters) {
         super(parameters);

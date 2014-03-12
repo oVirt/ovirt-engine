@@ -252,6 +252,12 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return getMainModel().getInstallCommand();
             }
         });
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.upgradeOVirtNode()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getUpgradeCommand();
+            }
+        });
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.configureLocalStorageHost()) {
             @Override
             protected UICommand resolveCommand() {

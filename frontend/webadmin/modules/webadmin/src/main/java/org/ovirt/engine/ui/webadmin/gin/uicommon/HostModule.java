@@ -90,7 +90,8 @@ public class HostModule extends AbstractGinModule {
                         || lastExecutedCommand == getModel().getEditWithPMemphasisCommand()
                         || lastExecutedCommand == getModel().getApproveCommand()) {
                     return popupProvider.get();
-                }  else if (lastExecutedCommand == getModel().getInstallCommand()) {
+                }  else if (lastExecutedCommand == getModel().getInstallCommand()
+                                || lastExecutedCommand == getModel().getUpgradeCommand()) {
                     return installPopupProvider.get();
                 }  else if (lastExecutedCommand == getModel().getAssignTagsCommand()) {
                     return assignTagsPopupProvider.get();

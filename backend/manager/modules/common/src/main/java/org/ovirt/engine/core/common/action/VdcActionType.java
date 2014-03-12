@@ -62,7 +62,7 @@ public enum VdcActionType {
     MaintenanceVds(106, QuotaDependency.NONE),
     MaintenanceNumberOfVdss(107, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
     ActivateVds(108, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
-    InstallVds(109, QuotaDependency.NONE),
+    InstallVdsInternal(109, QuotaDependency.NONE),
     ClearNonResponsiveVdsVms(110, QuotaDependency.NONE),
     ApproveVds(112, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
     HandleVdsCpuFlagsOrClusterChanged(114, QuotaDependency.NONE),
@@ -78,6 +78,9 @@ public enum VdcActionType {
     RefreshHostCapabilities(126, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
     SshSoftFencing(127, QuotaDependency.NONE),
     VdsPowerDown(128, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
+    UpgradeOvirtNodeInternal(129, QuotaDependency.NONE),
+    InstallVds(130, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
+    UpgradeOvirtNode(131, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
 
     // Network
     UpdateNetworkToVdsInterface(149, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),

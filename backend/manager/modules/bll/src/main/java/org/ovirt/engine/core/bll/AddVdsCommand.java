@@ -160,7 +160,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
-                    Backend.getInstance().runInternalAction(VdcActionType.InstallVds,
+                    Backend.getInstance().runInternalAction(VdcActionType.InstallVdsInternal,
                             installVdsParameters,
                             new CommandContext(installCtx));
                 }

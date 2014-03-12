@@ -201,6 +201,18 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         privateInstallCommand = value;
     }
 
+    private UICommand privateUpgradeCommand;
+
+    public UICommand getUpgradeCommand()
+    {
+        return privateUpgradeCommand;
+    }
+
+    private void setUpgradeCommand(UICommand value)
+    {
+        privateUpgradeCommand = value;
+    }
+
     private UICommand privateRestartCommand;
 
     public UICommand getRestartCommand()
@@ -369,6 +381,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         setMaintenanceCommand(new UICommand("Maintenance", this, true)); //$NON-NLS-1$
         setApproveCommand(new UICommand("Approve", this)); //$NON-NLS-1$
         setInstallCommand(new UICommand("Install", this)); //$NON-NLS-1$
+        setUpgradeCommand(new UICommand("Upgrade", this)); //$NON-NLS-1$
         setRestartCommand(new UICommand("Restart", this, true)); //$NON-NLS-1$
         setStartCommand(new UICommand("Start", this, true)); //$NON-NLS-1$
         setStopCommand(new UICommand("Stop", this, true)); //$NON-NLS-1$
@@ -1010,7 +1023,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                         localModel.postOnSaveInternal(result.getReturnValue(), localApproveInitiated);
 
                     }
-                }, new Object[] { this, approveInitiated });
+                }, new Object[]{this, approveInitiated});
     }
 
     public void postOnSaveInternal(VdcReturnValueBase returnValue, boolean approveInitiated)
@@ -1259,6 +1272,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     public void install()
     {
         final VDS host = (VDS) getSelectedItem();
+        if (host.getVdsType() == VDSType.oVirtNode) {
+            host.setSshUsername(HostModel.AdminUserName);
+        }
         InstallModel model = new InstallModel();
         model.setVds(host);
         setWindow(model);
@@ -1273,57 +1289,24 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getHostVersion().setIsAvailable(false);
 
         getWindow().startProgress(null);
-        if (host.getVdsType() == VDSType.oVirtNode) {
-            AsyncDataProvider.getoVirtISOsList(new AsyncQuery(model,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
+        model.getUserPassword().setIsAvailable(true);
+        model.getUserPassword().setIsChangable(true);
 
-                            InstallModel model = (InstallModel) target;
+        Version v3 = new Version(3, 0);
+        boolean isLessThan3 = host.getVdsGroupCompatibilityVersion().compareTo(v3) < 0;
 
-                            ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
-                            Collections.sort(isos, new Comparator<RpmVersion>() {
-                                @Override
-                                public int compare(RpmVersion rpmV1, RpmVersion rpmV2) {
-                                    return RpmVersionUtils.compareRpmParts(rpmV2.getRpmName(), rpmV1.getRpmName());
-                                }
-                            });
-                            model.getOVirtISO().setItems(isos);
-                            model.getOVirtISO().setSelectedItem(Linq.firstOrDefault(isos));
-                            model.getOVirtISO().setIsAvailable(true);
-                            model.getOVirtISO().setIsChangable(!isos.isEmpty());
-                            model.getHostVersion().setIsAvailable(true);
-
-                            if (isos.isEmpty()) {
-                                model.setMessage(ConstantsManager.getInstance().getConstants()
-                                        .thereAreNoISOversionsVompatibleWithHostCurrentVerMsg());
-                            }
-
-                            addInstallCommands(model, host, isos.isEmpty());
-                            getWindow().stopProgress();
-                        }
-                    }),
-                    host.getId());
-        } else {
-            model.getUserPassword().setIsAvailable(true);
-            model.getUserPassword().setIsChangable(true);
-
-            Version v3 = new Version(3, 0);
-            boolean isLessThan3 = host.getVdsGroupCompatibilityVersion().compareTo(v3) < 0;
-
-            if (!isLessThan3) {
-                model.getOverrideIpTables().setIsAvailable(true);
-                model.getOverrideIpTables().setEntity(true);
-            }
-            addInstallCommands(model, host, false);
-            getWindow().stopProgress();
+        if (!isLessThan3) {
+            model.getOverrideIpTables().setIsAvailable(true);
+            model.getOverrideIpTables().setEntity(true);
         }
+        addInstallCommands(model, host, false);
+        getWindow().stopProgress();
     }
 
-    private void addInstallCommands(InstallModel model, VDS host, boolean isOnlyClose) {
+    private void addInstallCommands(InstallModel model, VDS host, boolean isOnlyClose)
+    {
 
         if (!isOnlyClose) {
-
             UICommand command = new UICommand("OnInstall", this); //$NON-NLS-1$
             command.setTitle(ConstantsManager.getInstance().getConstants().ok());
             command.setIsDefault(true);
@@ -1338,6 +1321,122 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     public void onInstall()
+    {
+        final VDS host = (VDS) getSelectedItem();
+        InstallModel model = (InstallModel) getWindow();
+
+        UpdateVdsActionParameters param = new UpdateVdsActionParameters();
+        param.setvds(host);
+        param.setVdsId(host.getId());
+        param.setPassword((String) model.getUserPassword().getEntity());
+        param.setIsReinstallOrUpgrade(true);
+        param.setInstallVds(true);
+        param.setoVirtIsoFile(null);
+        param.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
+        param.setAuthMethod(model.getAuthenticationMethod());
+
+        Provider networkProvider = (Provider) model.getNetworkProviders().getSelectedItem();
+        if (networkProvider != null) {
+            param.setProviderId(networkProvider.getId());
+            param.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
+        }
+
+        AsyncDataProvider.getClusterById(new AsyncQuery(param, new INewAsyncCallback() {
+
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                VDSGroup cluster = (VDSGroup) returnValue;
+                UpdateVdsActionParameters internalParam = (UpdateVdsActionParameters) model;
+
+                internalParam.setRebootAfterInstallation(cluster.supportsVirtService());
+                Frontend.getInstance().runAction(
+                        VdcActionType.InstallVds,
+                        internalParam,
+                        new IFrontendActionAsyncCallback() {
+                            @Override
+                            public void executed(FrontendActionAsyncResult result) {
+                                VdcReturnValueBase returnValue = result.getReturnValue();
+                                if (returnValue != null && returnValue.getSucceeded()) {
+                                    cancel();
+                                }
+                            }
+                        }
+                );
+            }
+        }), host.getVdsGroupId());
+
+
+    }
+
+    public void upgrade()
+    {
+        final VDS host = (VDS) getSelectedItem();
+        host.setSshUsername(HostModel.AdminUserName);
+        InstallModel model = new InstallModel();
+        model.setVds(host);
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().installHostTitle());
+        model.setHelpTag(HelpTag.install_host);
+        model.setHashName("install_host"); //$NON-NLS-1$
+        model.getOVirtISO().setIsAvailable(false);
+
+        model.getOverrideIpTables().setIsAvailable(false);
+
+        model.getHostVersion().setEntity(host.getHostOs());
+        model.getHostVersion().setIsAvailable(false);
+
+        getWindow().startProgress(null);
+
+        AsyncDataProvider.getoVirtISOsList(new AsyncQuery(model,
+                new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object target, Object returnValue) {
+
+                            InstallModel model = (InstallModel) target;
+
+                            ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
+                            Collections.sort(isos, new Comparator<RpmVersion>() {
+                                @Override
+                                public int compare(RpmVersion rpmV1, RpmVersion rpmV2) {
+                                return RpmVersionUtils.compareRpmParts(rpmV2.getRpmName(), rpmV1.getRpmName());
+                            }
+                            });
+                            model.getOVirtISO().setItems(isos);
+                            model.getOVirtISO().setSelectedItem(Linq.firstOrDefault(isos));
+                            model.getOVirtISO().setIsAvailable(true);
+                            model.getOVirtISO().setIsChangable(!isos.isEmpty());
+                            model.getHostVersion().setIsAvailable(true);
+
+                            if (isos.isEmpty()) {
+                                model.setMessage(ConstantsManager.getInstance().getConstants()
+                                        .thereAreNoISOversionsVompatibleWithHostCurrentVerMsg());
+                            }
+
+                            addUpgradeCommands(model, host, isos.isEmpty());
+                            getWindow().stopProgress();
+                    }
+                }),
+                host.getId());
+    }
+
+    private void addUpgradeCommands(InstallModel model, VDS host, boolean isOnlyClose)
+    {
+
+        if (!isOnlyClose) {
+            UICommand command = new UICommand("OnUpgrade", this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            command.setIsDefault(true);
+            model.getCommands().add(command);
+        }
+        model.getUserName().setEntity(host.getSshUsername());
+        UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(isOnlyClose ? ConstantsManager.getInstance().getConstants().close()
+                : ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
+        model.getCommands().add(command);
+    }
+
+    public void onUpgrade()
     {
         final VDS host = (VDS) getSelectedItem();
         InstallModel model = (InstallModel) getWindow();
@@ -1373,7 +1472,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
                 internalParam.setRebootAfterInstallation(cluster.supportsVirtService());
                 Frontend.getInstance().runAction(
-                        VdcActionType.UpdateVds,
+                        VdcActionType.UpgradeOvirtNode,
                         internalParam,
                         new IFrontendActionAsyncCallback() {
                             @Override
@@ -1815,6 +1914,16 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         getInstallCommand().setIsExecutionAllowed(installAvailability);
         getInstallCommand().setIsAvailable(installAvailability);
 
+        boolean upgradeAvailability = false;
+        if (installAvailability) {
+            VDS host = items.get(0);
+            if (host.getVdsType() == VDSType.oVirtNode) {
+                upgradeAvailability = true;
+            }
+        }
+        getUpgradeCommand().setIsExecutionAllowed(upgradeAvailability);
+        getUpgradeCommand().setIsAvailable(upgradeAvailability);
+
         getMaintenanceCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.MaintenanceVds));
 
@@ -1953,6 +2062,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         {
             install();
         }
+        else if (command == getUpgradeCommand())
+        {
+            upgrade();
+        }
         else if (command == getRestartCommand())
         {
             restart();
@@ -2028,6 +2141,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         else if ("OnInstall".equals(command.getName())) //$NON-NLS-1$
         {
             onInstall();
+        }
+        else if ("OnUpgrade".equals(command.getName())) //$NON-NLS-1$
+        {
+            onUpgrade();
         }
         else if ("OnRestart".equals(command.getName())) //$NON-NLS-1$
         {

@@ -37,13 +37,24 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
 
     private VDS _oldVds;
     private static final List<String> UPDATE_FIELDS_VDS_BROKER = Arrays.asList("host_name", "ip", "vds_unique_id", "port", "vds_group_id");
+    private VdcActionType actionType;
 
     public UpdateVdsCommand(T parameters) {
+        this(parameters, VdcActionType.InstallVdsInternal);
+    }
+
+    public UpdateVdsCommand(T parameters, VdcActionType actionType) {
         super(parameters);
+        this.actionType = actionType;
     }
 
     protected UpdateVdsCommand(Guid commandId) {
+        this(commandId, VdcActionType.InstallVdsInternal);
+    }
+
+    protected UpdateVdsCommand(Guid commandId, VdcActionType actionType) {
         super(commandId);
+        this.actionType = actionType;
     }
 
     @Override
@@ -140,7 +151,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             tempVar.setNetworkMappings(getParameters().getNetworkMappings());
             tempVar.setAuthMethod(getParameters().getAuthMethod());
             ArrayList<VdcReturnValueBase> resultList = Backend.getInstance().runInternalMultipleActions(
-                    VdcActionType.InstallVds,
+                    actionType,
                     new ArrayList<VdcActionParametersBase>(Arrays
                             .asList(tempVar)));
 
