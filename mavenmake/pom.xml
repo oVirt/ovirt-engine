@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.ovirt.engine</groupId>
+        <artifactId>root</artifactId>
+        <version>3.5.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>make</artifactId>
+    <packaging>pom</packaging>
+
+    <name>ovirt-engine maven make</name>
+    <description>ovirt-engine maven make wrapper</description>
+
+    <properties>
+        <prefix>${env.OVIRT_ENGINE_PREFIX}</prefix>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>make</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <executable>make</executable>
+                            <!-- for some reason it refuses to work with argument -C ${project.parent.basedir} -->
+                            <workingDirectory>${project.parent.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>install-dev</argument>
+                                <argument>PREFIX=${prefix}</argument>
+                                <argument>DEV_REBUILD=0</argument>
+                                <argument>MVN=true</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

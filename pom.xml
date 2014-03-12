@@ -29,6 +29,7 @@
     <module>backend</module>
     <module>frontend</module>
     <module>ear</module>
+    <module>mavenmake</module>
   </modules>
 
   <properties>
