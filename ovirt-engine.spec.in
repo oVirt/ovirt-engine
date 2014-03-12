@@ -581,7 +581,7 @@ done << __EOF__
 %{engine_jboss_modules}/org/ovirt/engine/core/common/main/common.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/compat/main/compat.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/dal/main/dal.jar
-%{engine_jboss_modules}/org/ovirt/engine/core/extension-manager/main/extension-manager.jar
+%{engine_jboss_modules}/org/ovirt/engine/core/extensions-manager/main/extensions-manager.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/searchbackend/main/searchbackend.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/tools/main/tools.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/utils/main/utils.jar
@@ -785,7 +785,7 @@ fi
 %{engine_java}/branding.jar
 %{engine_java}/common.jar
 %{engine_java}/compat.jar
-%{engine_java}/extension-manager.jar
+%{engine_java}/extensions-manager.jar
 %{engine_java}/ovirt-engine-extensions-api.jar
 %{engine_java}/utils.jar
 

@@ -24,7 +24,7 @@
     <module>scheduler</module>
     <module>searchbackend</module>
     <module>aaa</module>
-    <module>extension-manager</module>
+    <module>extensions-manager</module>
     <module>bll</module>
     <module>restapi</module>
     <module>root</module>

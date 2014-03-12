@@ -26,7 +26,7 @@
 
     <dependency>
       <groupId>${engine.groupId}</groupId>
-      <artifactId>extension-manager</artifactId>
+      <artifactId>extensions-manager</artifactId>
       <version>${engine.version}</version>
     </dependency>
 

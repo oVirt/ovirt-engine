@@ -11,10 +11,10 @@
     <version>3.5.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>extension-manager</artifactId>
+  <artifactId>extensions-manager</artifactId>
   <packaging>jar</packaging>
 
-  <name>Extension manager</name>
+  <name>Extensions manager</name>
 
   <dependencies>
     <dependency>
