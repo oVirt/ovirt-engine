@@ -15,7 +15,7 @@ public class AddTagCommand<T extends TagsOperationParameters> extends TagsComman
     protected void executeCommand() {
 
         DbFacade.getInstance().getTagDao().save(getTag());
-        TagsDirector.getInstance().AddTag(getTag());
+        TagsDirector.getInstance().addTag(getTag());
 
         setSucceeded(true);
     }

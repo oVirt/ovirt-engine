@@ -21,7 +21,7 @@ public class MoveTagCommand<T extends MoveTagParameters> extends TagsCommandBase
             returnValue = false;
         }
         if (TagsDirector.getInstance()
-                .IsTagDescestorOfTag(getParameters().getTagId(), getParameters().getNewParentId())) {
+                .isTagDescestorOfTag(getParameters().getTagId(), getParameters().getNewParentId())) {
             addCanDoActionMessage(VdcBllMessages.TAGS_SPECIFIED_TAG_CANNOT_BE_THE_PARENT_OF_ITSELF);
             returnValue = false;
         }

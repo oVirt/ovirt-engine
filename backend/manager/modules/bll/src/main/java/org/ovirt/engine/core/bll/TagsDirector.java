@@ -64,13 +64,13 @@ public class TagsDirector {
         tagsMapByID.clear();
         tagsMapByName.clear();
         Tags root = new Tags("root", null, true, ROOT_TAG_ID, "root");
-        AddTagToHash(root);
-        AddChildren(root);
+        addTagToHash(root);
+        addChildren(root);
         log.info("Finished initializing " + getClass().getSimpleName());
     }
 
 
-    private void AddTagToHash(Tags tag) {
+    private void addTagToHash(Tags tag) {
         tagsMapByID.put(tag.gettag_id(), tag);
         tagsMapByName.put(tag.gettag_name(), tag);
         if (tag.getparent_id() != null) {
@@ -83,7 +83,7 @@ public class TagsDirector {
             }
             List<Tags> parentChildren = parentTag.getChildren();
             replaceTagInChildren(tag, parentChildren);
-            AddTagToHash(parentTag); // replace the parent tag after the modification
+            addTagToHash(parentTag); // replace the parent tag after the modification
         }
     }
 
@@ -107,15 +107,15 @@ public class TagsDirector {
      * @param tag
      */
 
-    private void AddChildren(Tags tag) {
+    private void addChildren(Tags tag) {
         log.infoFormat("Tag {0} added to tree", tag.gettag_name());
         List<Tags> children = getTagDAO().getAllForParent(tag.gettag_id());
         for (Tags child : children) {
-            AddChildren(child);
+            addChildren(child);
             log.infoFormat("Tag {0} added as child to parent {1}", child.gettag_name(), tag.gettag_name());
             tag.getChildren().add(child);
-            AddTagToHash(tag);
-            AddTagToHash(child);
+            addTagToHash(tag);
+            addTagToHash(child);
         }
     }
 
@@ -134,12 +134,12 @@ public class TagsDirector {
         return instance;
     }
 
-    public void AddTag(Tags tag) {
+    public void addTag(Tags tag) {
         if (tagsMapByID.containsKey(tag.getparent_id())) {
             Tags parent = tagsMapByID.get(tag.getparent_id());
             parent.getChildren().add(tag);
-            AddTagToHash(tag);
-            AddTagToHash(parent);
+            addTagToHash(tag);
+            addTagToHash(parent);
         } else {
             log.errorFormat("Trying to add tag {0}, parent doesn't exist in Data Structure - {1}", tag.gettag_name(),
                     tag.getparent_id());
@@ -158,7 +158,7 @@ public class TagsDirector {
             RemoveTagAndChildren(tag);
             Tags parent = tagsMapByID.get(tag.getparent_id());
             parent.getChildren().remove(tag);
-            AddTagToHash(parent);
+            addTagToHash(parent);
         } else {
             log.warnFormat("Trying to remove tag, not exists in Data Structure - {0}", tagId);
         }
@@ -182,7 +182,7 @@ public class TagsDirector {
             // Copy the children of the cached tag to keep the object hierarchy consistent.
             tag.setChildren(tagFromCache.getChildren());
 
-            AddTagToHash(tag);
+            addTagToHash(tag);
         } else {
             log.warnFormat("Trying to update tag, not exists in Data Structure - {0}", tag.gettag_name());
         }
@@ -195,7 +195,7 @@ public class TagsDirector {
                 if (tagsMapByID.containsKey(tag.getparent_id())) {
                     Tags parentTag = tagsMapByID.get(tag.getparent_id());
                     parentTag.getChildren().remove(tag);
-                    AddTagToHash(parentTag);
+                    addTagToHash(parentTag);
                 } else {
                     log.warnFormat("Trying to move tag from parent that doesn't exist in Data Structure - {0}",
                             tag.getparent_id());
@@ -203,7 +203,7 @@ public class TagsDirector {
                 Tags newParentTag = tagsMapByID.get(newParent);
                 newParentTag.getChildren().add(tag);
                 tag.setparent_id(newParent);
-                AddTagToHash(newParentTag); // Parent got changed, modify it.
+                addTagToHash(newParentTag); // Parent got changed, modify it.
                 updateTagInBackend(tag);
             } else {
                 log.errorFormat("Trying to move tag, to parent not exists in Data Structure - {0}", newParent);
@@ -294,7 +294,7 @@ public class TagsDirector {
         // convert to the regular expression format:
         tagNameRegExp = tagNameRegExp.replace("*", ".*");
         StringBuilder sb = new StringBuilder();
-        RecursiveGetTagsAndChildrenByRegExp(tagNameRegExp, sb, GetRootTag(), TagReturnValueIndicator.NAME);
+        RecursiveGetTagsAndChildrenByRegExp(tagNameRegExp, sb, getRootTag(), TagReturnValueIndicator.NAME);
         return sb.toString();
     }
 
@@ -361,10 +361,10 @@ public class TagsDirector {
      *
      * @return a tags list.
      */
-    public ArrayList<Tags> GetAllTags() {
+    public ArrayList<Tags> getAllTags() {
         ArrayList<Tags> ret = new ArrayList<>(tagsMapByID.values());
         // remove the root - it is not a real tag:
-        ret.remove(GetRootTag());
+        ret.remove(getRootTag());
         return ret;
     }
 
@@ -373,18 +373,18 @@ public class TagsDirector {
      *
      * @return the root tag.
      */
-    public Tags GetRootTag() {
+    public Tags getRootTag() {
         return tagsMapByID.get(ROOT_TAG_ID);
     }
 
-    public boolean IsTagDescestorOfTag(Guid sourceTagId, Guid potentialDescestorId) {
+    public boolean isTagDescestorOfTag(Guid sourceTagId, Guid potentialDescestorId) {
         if (sourceTagId.equals(potentialDescestorId)) {
             return true;
         }
         Tags tag = GetTagById(sourceTagId);
         if (tag != null && tag.getChildren() != null) {
             for (Tags childTag : tag.getChildren()) {
-                if (IsTagDescestorOfTag(childTag.gettag_id(), potentialDescestorId)) {
+                if (isTagDescestorOfTag(childTag.gettag_id(), potentialDescestorId)) {
                     return true;
                 }
             }

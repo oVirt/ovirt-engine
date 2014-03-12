@@ -9,6 +9,6 @@ public class GetRootTagQuery<P extends VdcQueryParametersBase> extends QueriesCo
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(TagsDirector.getInstance().GetRootTag());
+        getQueryReturnValue().setReturnValue(TagsDirector.getInstance().getRootTag());
     }
 }

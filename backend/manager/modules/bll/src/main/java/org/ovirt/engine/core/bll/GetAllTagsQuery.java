@@ -9,6 +9,6 @@ public class GetAllTagsQuery<P extends VdcQueryParametersBase> extends QueriesCo
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(TagsDirector.getInstance().GetAllTags());
+        getQueryReturnValue().setReturnValue(TagsDirector.getInstance().getAllTags());
     }
 }
