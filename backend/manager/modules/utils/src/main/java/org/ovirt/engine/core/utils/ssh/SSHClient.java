@@ -43,7 +43,7 @@ public class SSHClient implements Closeable {
     private static final int THREAD_JOIN_WAIT_TIME = 2000;
     private static final int DEFAULT_SSH_PORT = 22;
 
-    private static Log log = LogFactory.getLog(SSHClient.class);
+    private static final Log log = LogFactory.getLog(SSHClient.class);
 
     private SshClient _client;
     private ClientSession _session;

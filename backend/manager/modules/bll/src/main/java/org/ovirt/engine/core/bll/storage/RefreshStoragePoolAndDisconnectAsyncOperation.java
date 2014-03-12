@@ -41,5 +41,5 @@ public class RefreshStoragePoolAndDisconnectAsyncOperation extends ActivateDeact
 
     }
 
-    private static Log log = LogFactory.getLog(RefreshStoragePoolAndDisconnectAsyncOperation.class);
+    private static final Log log = LogFactory.getLog(RefreshStoragePoolAndDisconnectAsyncOperation.class);
 }

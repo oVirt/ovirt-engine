@@ -32,7 +32,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 // The @DependsOn annotation is in order to make sure it is started after the stated beans are initialized
 public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager {
 
-    private static Log log = LogFactory.getLog(UsersDomainsCacheManagerService.class);
+    private static final Log log = LogFactory.getLog(UsersDomainsCacheManagerService.class);
     private Map<String, Domain> domainsByName = new HashMap<String, Domain>();
     private Map<String, ConcurrentHashMap<String, UserDomainInfo>> domainsUsersInfoByUserNameAndDomainName =
             new HashMap<String, ConcurrentHashMap<String, UserDomainInfo>>();

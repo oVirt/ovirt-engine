@@ -41,7 +41,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
 
     private Guid clusterId;
     private final Map<Guid, GlusterVolumeEntity> volumes = new HashMap<Guid, GlusterVolumeEntity>();
-    private static Log log = LogFactory.getLog(GlusterVolumesListReturnForXmlRpc.class);
+    private static final Log log = LogFactory.getLog(GlusterVolumesListReturnForXmlRpc.class);
     private static final GlusterDBUtils dbUtils = GlusterDBUtils.getInstance();
 
     @SuppressWarnings("unchecked")

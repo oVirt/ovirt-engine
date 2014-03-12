@@ -35,5 +35,5 @@ public class DisconnectStoragePoolAsyncOperation extends ActivateDeactivateSingl
         }
     }
 
-    private static Log log = LogFactory.getLog(DisconnectStoragePoolAsyncOperation.class);
+    private static final Log log = LogFactory.getLog(DisconnectStoragePoolAsyncOperation.class);
 }

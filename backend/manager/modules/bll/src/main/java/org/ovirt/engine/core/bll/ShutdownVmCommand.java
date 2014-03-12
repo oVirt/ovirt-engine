@@ -84,5 +84,5 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
                 (Boolean.TRUE.equals(getVm().getAcpiEnable()) || getVm().getHasAgent());
     }
 
-    private static Log log = LogFactory.getLog(ShutdownVmCommand.class);
+    private static final Log log = LogFactory.getLog(ShutdownVmCommand.class);
 }

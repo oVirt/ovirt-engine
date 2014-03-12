@@ -17,7 +17,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class VersionSupport implements Serializable {
 
     private static final long serialVersionUID = 8368679686604395114L;
-    private static Log log = LogFactory.getLog(VersionSupport.class);
+    private static final Log log = LogFactory.getLog(VersionSupport.class);
 
     private VersionSupport() {
     }

@@ -116,5 +116,5 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
         });
     }
 
-    private static Log log = LogFactory.getLog(DestroyVmVDSCommand.class);
+    private static final Log log = LogFactory.getLog(DestroyVmVDSCommand.class);
 }

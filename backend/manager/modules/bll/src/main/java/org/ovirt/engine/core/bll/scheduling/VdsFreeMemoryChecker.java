@@ -10,7 +10,7 @@ public class VdsFreeMemoryChecker {
 
     private RunVmDelayer delayer;
 
-    private static Log log = LogFactory.getLog(VdsFreeMemoryChecker.class);
+    private static final Log log = LogFactory.getLog(VdsFreeMemoryChecker.class);
 
     public VdsFreeMemoryChecker(RunVmDelayer delayer) {
         this.delayer = delayer;

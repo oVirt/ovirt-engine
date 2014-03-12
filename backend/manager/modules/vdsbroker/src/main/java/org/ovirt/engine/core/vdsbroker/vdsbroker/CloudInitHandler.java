@@ -21,7 +21,7 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 public class CloudInitHandler {
-    private static Log log = LogFactory.getLog(CloudInitHandler.class);
+    private static final Log log = LogFactory.getLog(CloudInitHandler.class);
 
     private final VmInit vmInit;
     private final Map<String, Object> metaData;

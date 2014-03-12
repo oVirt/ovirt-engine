@@ -20,7 +20,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class ADGroupContextMapper implements ContextMapper {
 
-    private static Log log = LogFactory.getLog(LdapBrokerImpl.class);
+    private static final Log log = LogFactory.getLog(LdapBrokerImpl.class);
 
     static final String[] GROUP_ATTRIBUTE_FILTER = { memberof.name(), objectGuid.name() };
 

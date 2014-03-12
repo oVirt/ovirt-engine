@@ -12,7 +12,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  * Provides utilities for handling resource files.
  */
 public class ResourceUtils {
-    private static Log log = LogFactory.getLog(ResourceUtils.class);
+    private static final Log log = LogFactory.getLog(ResourceUtils.class);
 
     /**
      * Loads a collection of {@link Properties} from a resource file.

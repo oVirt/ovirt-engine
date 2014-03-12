@@ -1766,5 +1766,5 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         return returnValue;
     }
 
-    private static Log log = LogFactory.getLog(IrsBrokerCommand.class);
+    private static final Log log = LogFactory.getLog(IrsBrokerCommand.class);
 }

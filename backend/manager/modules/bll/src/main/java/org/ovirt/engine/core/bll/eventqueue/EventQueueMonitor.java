@@ -33,7 +33,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 @Local(EventQueue.class)
 public class EventQueueMonitor implements EventQueue {
 
-    private static Log log = LogFactory.getLog(EventQueueMonitor.class);
+    private static final Log log = LogFactory.getLog(EventQueueMonitor.class);
 
     private static final ConcurrentMap<Guid, ReentrantLock> poolsLockMap = new ConcurrentHashMap<Guid, ReentrantLock>();
     private static final Map<Guid, LinkedList<Pair<Event, FutureTask<EventResult>>>> poolsEventsMap =

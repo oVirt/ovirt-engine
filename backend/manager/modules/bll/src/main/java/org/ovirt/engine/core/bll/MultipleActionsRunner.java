@@ -16,7 +16,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class MultipleActionsRunner {
 
-    private static Log log = LogFactory.getLog(MultipleActionsRunner.class);
+    private static final Log log = LogFactory.getLog(MultipleActionsRunner.class);
     private final static int CONCURRENT_ACTIONS = 10;
 
     private VdcActionType actionType = VdcActionType.Unknown;

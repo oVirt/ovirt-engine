@@ -59,5 +59,5 @@ public class CopyImageVDSCommand<P extends CopyImageVDSCommandParameters> extend
                 new AsyncTaskCreationInfo(taskID, AsyncTaskType.copyImage, getParameters().getStoragePoolId()));
     }
 
-    private static Log log = LogFactory.getLog(CopyImageVDSCommand.class);
+    private static final Log log = LogFactory.getLog(CopyImageVDSCommand.class);
 }

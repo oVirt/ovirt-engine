@@ -17,7 +17,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
  */
 public class JobRepositoryCleanupManager {
 
-    private static Log log = LogFactory.getLog(JobRepositoryCleanupManager.class);
+    private static final Log log = LogFactory.getLog(JobRepositoryCleanupManager.class);
     private static JobRepositoryCleanupManager instance = new JobRepositoryCleanupManager();
     private int succeededJobTime;
     private int failedJobTime;

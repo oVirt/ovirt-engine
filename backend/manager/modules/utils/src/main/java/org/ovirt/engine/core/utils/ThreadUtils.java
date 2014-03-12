@@ -5,7 +5,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class ThreadUtils {
 
-    private static Log log = LogFactory.getLog(ThreadUtils.class);
+    private static final Log log = LogFactory.getLog(ThreadUtils.class);
 
     public static void sleep(int milliseconds) {
         try {

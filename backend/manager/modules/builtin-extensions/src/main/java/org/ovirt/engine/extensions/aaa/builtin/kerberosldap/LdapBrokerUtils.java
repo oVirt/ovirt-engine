@@ -23,7 +23,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  */
 public class LdapBrokerUtils {
 
-    private static Log log = LogFactory.getLog(LdapBrokerUtils.class);
+    private static final Log log = LogFactory.getLog(LdapBrokerUtils.class);
 
     /**
      * getDomainsList as stored in DB - trims the domains if needed

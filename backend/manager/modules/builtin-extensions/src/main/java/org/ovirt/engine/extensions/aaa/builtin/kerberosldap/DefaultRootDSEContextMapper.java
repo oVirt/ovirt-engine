@@ -13,7 +13,7 @@ import org.springframework.ldap.core.DirContextAdapter;
 
 public class DefaultRootDSEContextMapper implements ContextMapper {
 
-    private static Log log = LogFactory.getLog(DefaultRootDSEContextMapper.class);
+    private static final Log log = LogFactory.getLog(DefaultRootDSEContextMapper.class);
 
     static final String[] ROOTDSE_ATTRIBUTE_FILTER = { namingContexts.name() };
 

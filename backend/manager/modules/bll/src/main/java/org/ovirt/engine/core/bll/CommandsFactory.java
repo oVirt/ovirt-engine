@@ -170,6 +170,6 @@ public final class CommandsFactory {
         return constructor;
     }
 
-    private static Log log = LogFactory.getLog(CommandsFactory.class);
+    private static final Log log = LogFactory.getLog(CommandsFactory.class);
 
 }

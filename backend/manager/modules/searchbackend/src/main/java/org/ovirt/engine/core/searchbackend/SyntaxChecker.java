@@ -1186,7 +1186,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         }
     }
 
-    private static Log log = LogFactory.getLog(SyntaxChecker.class);
+    private static final Log log = LogFactory.getLog(SyntaxChecker.class);
 
     private static enum PgMajorRelease {
         PG8(8),

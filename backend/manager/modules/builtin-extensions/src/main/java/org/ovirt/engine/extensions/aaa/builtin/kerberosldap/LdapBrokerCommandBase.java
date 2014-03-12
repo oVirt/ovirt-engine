@@ -221,5 +221,5 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         return generator;
     }
 
-    private static Log log = LogFactory.getLog(LdapBrokerCommandBase.class);
+    private static final Log log = LogFactory.getLog(LdapBrokerCommandBase.class);
 }

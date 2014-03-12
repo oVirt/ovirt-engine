@@ -35,7 +35,7 @@ public class ExecutionMessageDirector {
     /**
      * Logger
      */
-    private static Log log = LogFactory.getLog(ExecutionMessageDirector.class);
+    private static final Log log = LogFactory.getLog(ExecutionMessageDirector.class);
 
     /**
      * Stores the job messages

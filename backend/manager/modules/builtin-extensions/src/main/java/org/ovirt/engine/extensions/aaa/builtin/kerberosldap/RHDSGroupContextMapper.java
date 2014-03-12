@@ -19,7 +19,7 @@ import org.springframework.ldap.core.DirContextAdapter;
 
 public class RHDSGroupContextMapper implements ContextMapper {
 
-    private static Log log = LogFactory.getLog(LdapBrokerImpl.class);
+    private static final Log log = LogFactory.getLog(LdapBrokerImpl.class);
 
     static final String[] GROUP_ATTRIBUTE_FILTER = { memberof.name(), nsUniqueId.name() };
 

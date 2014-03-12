@@ -138,5 +138,5 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         DbFacade.getInstance().getVmDao().saveIsInitialized(vmId, true);
     }
 
-    private static Log log = LogFactory.getLog(CreateVmVDSCommand.class);
+    private static final Log log = LogFactory.getLog(CreateVmVDSCommand.class);
 }

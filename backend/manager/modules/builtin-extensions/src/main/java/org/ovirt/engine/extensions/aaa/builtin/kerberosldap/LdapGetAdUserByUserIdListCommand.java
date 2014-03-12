@@ -66,5 +66,5 @@ public class LdapGetAdUserByUserIdListCommand extends LdapBrokerCommandBase {
         return generator.getLdapQueriesData(getDomain());
     }
 
-    private static Log log = LogFactory.getLog(LdapGetAdUserByUserIdListCommand.class);
+    private static final Log log = LogFactory.getLog(LdapGetAdUserByUserIdListCommand.class);
 }

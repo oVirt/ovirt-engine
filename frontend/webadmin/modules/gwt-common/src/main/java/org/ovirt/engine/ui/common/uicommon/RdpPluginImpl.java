@@ -19,7 +19,7 @@ import com.google.gwt.user.client.Window;
 
 public class RdpPluginImpl extends AbstractRdp implements IRdpPlugin, IEventListener {
 
-    private static Logger logger = Logger.getLogger(RdpPluginImpl.class.getName());
+    private static final Logger logger = Logger.getLogger(RdpPluginImpl.class.getName());
 
     private static EventDefinition RdpDisconnectedEventDefinition = new EventDefinition("RdpDisconnected", RdpConsoleModel.class); //$NON-NLS-1$
     private final Event disconnectedEvent = new Event(RdpDisconnectedEventDefinition);

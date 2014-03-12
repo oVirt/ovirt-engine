@@ -66,5 +66,5 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
         }
     }
 
-    private static Log log = LogFactory.getLog(RefreshPoolSingleAsyncOperation.class);
+    private static final Log log = LogFactory.getLog(RefreshPoolSingleAsyncOperation.class);
 }

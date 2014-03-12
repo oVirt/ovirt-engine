@@ -54,7 +54,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 public abstract class SearchableListModel<T> extends ListModel<T> implements GridController
 {
     private static final int UnknownInteger = -1;
-    private static Logger logger = Logger.getLogger(SearchableListModel.class.getName());
+    private static final Logger logger = Logger.getLogger(SearchableListModel.class.getName());
     private static final String PAGE_STRING_REGEX = "[\\s]+page[\\s]+[1-9]+[0-9]*[\\s]*$"; //$NON-NLS-1$
     private static final String PAGE_NUMBER_REGEX = "[1-9]+[0-9]*$"; //$NON-NLS-1$
 

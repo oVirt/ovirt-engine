@@ -51,7 +51,7 @@ import org.ovirt.engine.core.vdsbroker.VdsMonitor;
 public abstract class RunVmCommandBase<T extends VmOperationParameterBase> extends VmCommand<T> implements
         IVdsAsyncCommand, RunVmDelayer {
 
-    private static Log log = LogFactory.getLog(RunVmCommandBase.class);
+    private static final Log log = LogFactory.getLog(RunVmCommandBase.class);
     protected boolean _isRerun;
     private SnapshotsValidator snapshotsValidator=new SnapshotsValidator();
     private final List<Guid> runVdsList = new ArrayList<Guid>();

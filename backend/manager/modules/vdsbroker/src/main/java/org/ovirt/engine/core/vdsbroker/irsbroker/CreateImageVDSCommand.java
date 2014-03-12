@@ -43,5 +43,5 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
                         .getStoragePoolId()));
     }
 
-    private static Log log = LogFactory.getLog(CreateImageVDSCommand.class);
+    private static final Log log = LogFactory.getLog(CreateImageVDSCommand.class);
 }

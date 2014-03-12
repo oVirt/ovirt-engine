@@ -50,7 +50,7 @@ import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 public class SchedulingManager {
-    private static Log log = LogFactory.getLog(SchedulingManager.class);
+    private static final Log log = LogFactory.getLog(SchedulingManager.class);
     /**
      * singleton
      */

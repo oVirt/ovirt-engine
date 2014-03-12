@@ -25,7 +25,7 @@ public final class SysprepHandler {
     public static final Map<String, Integer> timeZoneIndex = new HashMap<String, Integer>();
     private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
-    private static Log log = LogFactory.getLog(SysprepHandler.class);
+    private static final Log log = LogFactory.getLog(SysprepHandler.class);
 
     static {
         initTimeZones();

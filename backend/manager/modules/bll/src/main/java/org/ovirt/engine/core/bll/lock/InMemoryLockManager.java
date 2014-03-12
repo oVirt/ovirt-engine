@@ -51,7 +51,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
 
     private MBeanServer platformMBeanServer;
     private ObjectName objectName = null;
-    private static Log log = LogFactory.getLog(InMemoryLockManager.class);
+    private static final Log log = LogFactory.getLog(InMemoryLockManager.class);
 
     @PostConstruct
     public void registerInJMX() {

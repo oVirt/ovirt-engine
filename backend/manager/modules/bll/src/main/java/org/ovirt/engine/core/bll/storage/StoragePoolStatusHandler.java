@@ -112,5 +112,5 @@ public final class StoragePoolStatusHandler {
         }
     }
 
-    private static Log log = LogFactory.getLog(StoragePoolStatusHandler.class);
+    private static final Log log = LogFactory.getLog(StoragePoolStatusHandler.class);
 }

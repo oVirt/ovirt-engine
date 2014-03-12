@@ -25,5 +25,5 @@ public class SPMGetAllTasksInfoVDSCommand<P extends IrsBaseVDSCommandParameters>
                 .getReturnValue());
     }
 
-    private static Log log = LogFactory.getLog(SPMGetAllTasksInfoVDSCommand.class);
+    private static final Log log = LogFactory.getLog(SPMGetAllTasksInfoVDSCommand.class);
 }

@@ -46,7 +46,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     private static final long POLLING_BREAK = 500;
     private static final List<VDSStatus> SUPPORTED_HOST_STATUSES =
             Arrays.asList(VDSStatus.Maintenance, VDSStatus.Up, VDSStatus.NonOperational);
-    private static Log log = LogFactory.getLog(SetupNetworksCommand.class);
+    private static final Log log = LogFactory.getLog(SetupNetworksCommand.class);
     private SetupNetworksHelper helper;
 
     public SetupNetworksCommand(T parameters) {

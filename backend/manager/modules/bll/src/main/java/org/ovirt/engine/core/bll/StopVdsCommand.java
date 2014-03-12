@@ -89,7 +89,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
         }
     }
 
-    private static Log log = LogFactory.getLog(StopVdsCommand.class);
+    private static final Log log = LogFactory.getLog(StopVdsCommand.class);
 
     @Override
     protected int getRerties() {

@@ -20,5 +20,5 @@ public class UpgradeStoragePoolVDSCommand<P extends UpgradeStoragePoolVDSCommand
         proceedProxyReturnValue();
     }
 
-    final private static Log log = LogFactory.getLog(UpgradeStoragePoolVDSCommand.class);
+    private static final Log log = LogFactory.getLog(UpgradeStoragePoolVDSCommand.class);
 }

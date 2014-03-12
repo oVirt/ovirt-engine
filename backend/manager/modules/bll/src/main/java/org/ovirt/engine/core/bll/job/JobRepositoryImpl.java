@@ -28,7 +28,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  */
 public class JobRepositoryImpl implements JobRepository {
 
-    private static Log log = LogFactory.getLog(JobRepositoryImpl.class);
+    private static final Log log = LogFactory.getLog(JobRepositoryImpl.class);
 
     private JobDao jobDao;
     private JobSubjectEntityDao jobSubjectEntityDao;

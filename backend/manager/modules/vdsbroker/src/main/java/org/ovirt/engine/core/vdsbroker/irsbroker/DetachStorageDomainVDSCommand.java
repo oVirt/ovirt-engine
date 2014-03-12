@@ -32,5 +32,5 @@ public class DetachStorageDomainVDSCommand<P extends DetachStorageDomainVDSComma
         }
     }
 
-    private static Log log = LogFactory.getLog(DetachStorageDomainVDSCommand.class);
+    private static final Log log = LogFactory.getLog(DetachStorageDomainVDSCommand.class);
 }

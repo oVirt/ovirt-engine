@@ -25,7 +25,7 @@ public class DwhHeartBeat {
     /**
      * Logger instance
      */
-    private static Log log = LogFactory.getLog(DwhHeartBeat.class);
+    private static final Log log = LogFactory.getLog(DwhHeartBeat.class);
 
     /**
      * Instance of heartBeat variable

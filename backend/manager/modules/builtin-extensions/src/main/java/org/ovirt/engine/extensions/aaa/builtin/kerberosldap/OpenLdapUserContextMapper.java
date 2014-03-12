@@ -27,7 +27,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class OpenLdapUserContextMapper implements ContextMapper {
 
-    private static Log log = LogFactory.getLog(LdapBrokerImpl.class);
+    private static final Log log = LogFactory.getLog(LdapBrokerImpl.class);
 
     static final String[] USERS_ATTRIBUTE_FILTER = { entryuuid.name(),
         givenname.name(), uid.name(), title.name(), mail.name(), memberof.name(),

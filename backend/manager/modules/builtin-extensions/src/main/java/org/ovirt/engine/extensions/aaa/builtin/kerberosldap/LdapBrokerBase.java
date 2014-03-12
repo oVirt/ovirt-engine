@@ -9,7 +9,7 @@ public abstract class LdapBrokerBase implements LdapBroker {
     private static final String CommandsContainerAssemblyName = LdapBrokerBase.class.getPackage().getName();
     private static final String CommandPrefix = "Command";
 
-    private static Log log = LogFactory.getLog(LdapBrokerBase.class);
+    private static final Log log = LogFactory.getLog(LdapBrokerBase.class);
 
     protected abstract String getBrokerType();
 

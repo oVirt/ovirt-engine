@@ -13,7 +13,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class ExternalTrustStoreInitializer {
 
-    private static Log log = LogFactory.getLog(ExternalTrustStoreInitializer.class);
+    private static final Log log = LogFactory.getLog(ExternalTrustStoreInitializer.class);
 
     private static String getTrustStorePath() {
         File varDir = EngineLocalConfig.getInstance().getVarDir();

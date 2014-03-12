@@ -377,6 +377,6 @@ public class VdsEventListener implements IVdsEventListener {
         SchedulingManager.getInstance().updateHostSchedulingStats(vds);
     }
 
-    private static Log log = LogFactory.getLog(VdsEventListener.class);
+    private static final Log log = LogFactory.getLog(VdsEventListener.class);
 
 }

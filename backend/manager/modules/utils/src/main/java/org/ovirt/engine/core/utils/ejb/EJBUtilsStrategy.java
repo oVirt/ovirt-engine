@@ -17,7 +17,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  */
 public abstract class EJBUtilsStrategy {
 
-    private static Log log = LogFactory.getLog(EJBUtilsStrategy.class);
+    private static final Log log = LogFactory.getLog(EJBUtilsStrategy.class);
 
     // Map from resource types (for example ResourceTypeEnum.DATA_SOURCE ) to
     // their JNDI names

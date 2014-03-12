@@ -190,5 +190,5 @@ public class CommandMultiAsyncTasks {
         return taskState == AsyncTaskState.Cleared || taskState == AsyncTaskState.ClearFailed;
     }
 
-    private static Log log = LogFactory.getLog(CommandMultiAsyncTasks.class);
+    private static final Log log = LogFactory.getLog(CommandMultiAsyncTasks.class);
 }

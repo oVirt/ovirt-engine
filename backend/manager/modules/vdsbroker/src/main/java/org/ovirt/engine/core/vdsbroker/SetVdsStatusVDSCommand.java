@@ -72,5 +72,5 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
         vds.getDynamicData().setNonOperationalReason(parameters.getNonOperationalReason());
     }
 
-    private static Log log = LogFactory.getLog(SetVdsStatusVDSCommand.class);
+    private static final Log log = LogFactory.getLog(SetVdsStatusVDSCommand.class);
 }

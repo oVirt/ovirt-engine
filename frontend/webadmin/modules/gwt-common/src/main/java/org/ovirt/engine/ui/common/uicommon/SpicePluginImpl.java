@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 
 public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
-    private static Logger logger = Logger.getLogger(SpicePluginImpl.class.getName());
+    private static final Logger logger = Logger.getLogger(SpicePluginImpl.class.getName());
     private final Configurator configurator = (Configurator) TypeResolver.getInstance().resolve(Configurator.class);
     private final ConsoleUtils cu = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
 

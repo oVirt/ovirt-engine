@@ -197,6 +197,6 @@ public abstract class OvfLogEventHandler<T> {
         return aliases;
     }
 
-    private static Log log = LogFactory.getLog(OvfLogEventHandler.class);
+    private static final Log log = LogFactory.getLog(OvfLogEventHandler.class);
 
 }

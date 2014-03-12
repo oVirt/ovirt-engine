@@ -265,5 +265,5 @@ public class DBConfigUtils extends ConfigUtilsBase {
         return ConfigValues.class.getField(optionName).isAnnotationPresent(Reloadable.class);
     }
 
-    private static Log log = LogFactory.getLog(DBConfigUtils.class);
+    private static final Log log = LogFactory.getLog(DBConfigUtils.class);
 }

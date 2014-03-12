@@ -27,7 +27,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class RegisterServlet extends HttpServlet {
 
-    private static Log log = LogFactory.getLog(RegisterServlet.class);
+    private static final Log log = LogFactory.getLog(RegisterServlet.class);
 
     private static final int SSH_PORT = 22;
     private static final int VDSM_PORT = 54321;

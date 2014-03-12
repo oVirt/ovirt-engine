@@ -30,7 +30,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 
 public class FenceExecutor {
-    private static Log log = LogFactory.getLog(FenceExecutor.class);
+    private static final Log log = LogFactory.getLog(FenceExecutor.class);
 
     private final VDS _vds;
     private FenceActionType _action = FenceActionType.forValue(0);

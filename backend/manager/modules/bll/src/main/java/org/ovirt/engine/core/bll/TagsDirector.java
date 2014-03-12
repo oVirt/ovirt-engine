@@ -36,7 +36,7 @@ public class TagsDirector {
         NAME
     }
 
-    private static Log log = LogFactory.getLog(TagsDirector.class);
+    private static final Log log = LogFactory.getLog(TagsDirector.class);
 
     protected static final Guid ROOT_TAG_ID = Guid.Empty;
 

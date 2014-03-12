@@ -13,7 +13,7 @@ import com.google.gwt.user.client.Timer;
 public abstract class TimerFactory {
 
     private static Map<String, Timer> timerList = new HashMap<String, Timer>();
-    private static Logger logger = Logger.getLogger(TimerFactory.class.getName());
+    private static final Logger logger = Logger.getLogger(TimerFactory.class.getName());
 
     public static Timer factoryTimer(String timerName, Timer timer) {
         logger.fine("Adding timer '" + timerName + "' to the timers list"); //$NON-NLS-1$ //$NON-NLS-2$

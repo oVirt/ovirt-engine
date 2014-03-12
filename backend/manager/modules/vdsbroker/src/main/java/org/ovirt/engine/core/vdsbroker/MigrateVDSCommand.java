@@ -13,7 +13,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateBrokerVDSCommand;
 
 public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
 
-    private static Log log = LogFactory.getLog(MigrateVDSCommand.class);
+    private static final Log log = LogFactory.getLog(MigrateVDSCommand.class);
 
     public MigrateVDSCommand(P parameters) {
         super(parameters);

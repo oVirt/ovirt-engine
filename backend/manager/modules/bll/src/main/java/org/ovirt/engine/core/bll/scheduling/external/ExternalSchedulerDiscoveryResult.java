@@ -12,7 +12,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 
 public class ExternalSchedulerDiscoveryResult {
-    private static Log log = LogFactory.getLog(ExternalSchedulerDiscoveryResult.class);
+    private static final Log log = LogFactory.getLog(ExternalSchedulerDiscoveryResult.class);
     private static final String FILTERS = "filters";
     private static final String SCORES = "scores";
     private static final String BALANCE = "balance";

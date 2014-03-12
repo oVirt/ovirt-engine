@@ -23,5 +23,5 @@ public class MarkPoolInReconstructModeVDSCommand<P extends IrsBaseVDSCommandPara
         getVDSReturnValue().setSucceeded(true);
     }
 
-    private static Log log = LogFactory.getLog(MarkPoolInReconstructModeVDSCommand.class);
+    private static final Log log = LogFactory.getLog(MarkPoolInReconstructModeVDSCommand.class);
 }

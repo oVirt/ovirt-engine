@@ -17,7 +17,7 @@ public class LDAPTemplateWrapperFactory {
 
     private static HashMap<LDAPSecurityAuthentication, Class<? extends LDAPTemplateWrapper>> classesOfLDAPTemplateWrappers =
             new HashMap<LDAPSecurityAuthentication, Class<? extends LDAPTemplateWrapper>>();
-    private static Log log = LogFactory.getLog(LDAPTemplateWrapperFactory.class);
+    private static final Log log = LogFactory.getLog(LDAPTemplateWrapperFactory.class);
 
     static {
         registerClass(LDAPSecurityAuthentication.GSSAPI, GSSAPILdapTemplateWrapper.class);

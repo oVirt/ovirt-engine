@@ -213,5 +213,5 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         return AuditLogType.USER_CONNECT_HOSTS_TO_LUN_FAILED;
     }
 
-    private static Log log = LogFactory.getLog(ConnectAllHostsToLunCommand.class);
+    private static final Log log = LogFactory.getLog(ConnectAllHostsToLunCommand.class);
 }

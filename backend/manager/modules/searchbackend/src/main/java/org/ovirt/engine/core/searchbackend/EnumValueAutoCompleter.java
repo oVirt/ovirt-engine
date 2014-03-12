@@ -32,5 +32,5 @@ public class EnumValueAutoCompleter extends BaseAutoCompleter implements ICondit
         return retval;
     }
 
-    private static Log log = LogFactory.getLog(EnumValueAutoCompleter.class);
+    private static final Log log = LogFactory.getLog(EnumValueAutoCompleter.class);
 }

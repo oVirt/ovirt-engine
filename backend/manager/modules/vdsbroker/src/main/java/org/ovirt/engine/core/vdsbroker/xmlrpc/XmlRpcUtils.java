@@ -44,7 +44,7 @@ public class XmlRpcUtils {
 
     private static final String HTTP = "http://";
     private static final String HTTPS = "https://";
-    private static Log log = LogFactory.getLog(XmlRpcUtils.class);
+    private static final Log log = LogFactory.getLog(XmlRpcUtils.class);
     static {
         if (Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)) {
             URL keystoreUrl;

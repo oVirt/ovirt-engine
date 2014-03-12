@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class OpenLdapUserContextMapper implements ContextMapper {
 
-    private static Log log = LogFactory.getLog(OpenLdapUserContextMapper.class);
+    private static final Log log = LogFactory.getLog(OpenLdapUserContextMapper.class);
 
     @Override
     public Object mapFromContext(Object ctx) {

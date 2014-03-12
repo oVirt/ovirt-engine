@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class StringFormat {
 
-    private static Log log = LogFactory.getLog(StringFormat.class);
+    private static final Log log = LogFactory.getLog(StringFormat.class);
 
     /**
      * Format string using Java String.format() syntax (see {@link String#format(String, Object...)}) using a port of

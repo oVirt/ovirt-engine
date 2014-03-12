@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 @DependsOn({ "Backend"})
 public class InitBackendServicesOnStartupBean implements InitBackendServicesOnStartup{
 
-    private static Logger log = LoggerFactory.getLogger(InitBackendServicesOnStartupBean.class);
+    private static final Logger log = LoggerFactory.getLogger(InitBackendServicesOnStartupBean.class);
 
     /**
      * This method is called upon the bean creation as part

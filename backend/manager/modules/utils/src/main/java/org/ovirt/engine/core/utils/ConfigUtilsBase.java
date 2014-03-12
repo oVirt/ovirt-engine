@@ -154,7 +154,7 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
         }
     }
 
-    private static Log log = LogFactory.getLog(ConfigUtilsBase.class);
+    private static final Log log = LogFactory.getLog(ConfigUtilsBase.class);
 
     @SuppressWarnings("unchecked")
     @Override

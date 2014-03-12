@@ -60,7 +60,7 @@ public class VdsManager {
     private long updateStartTime;
     private long nextMaintenanceAttemptTime;
 
-    private static Log log = LogFactory.getLog(VdsManager.class);
+    private static final Log log = LogFactory.getLog(VdsManager.class);
 
     public boolean getRefreshStatistics() {
         return (_refreshIteration == _numberRefreshesBeforeSave);

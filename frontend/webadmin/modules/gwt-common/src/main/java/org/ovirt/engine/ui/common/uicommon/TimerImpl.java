@@ -12,7 +12,7 @@ import com.google.gwt.user.client.Timer;
 public class TimerImpl implements ITimer {
 
     private final Event tickEvent;
-    private static Logger logger = Logger.getLogger(TimerImpl.class.getName());
+    private static final Logger logger = Logger.getLogger(TimerImpl.class.getName());
     private int interval;
 
     private final Timer timer = TimerFactory.factoryTimer("UICommon Timer", new Timer() { //$NON-NLS-1$

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 public class AuditLogCleanupManager {
-    private static Log log = LogFactory.getLog(AuditLogCleanupManager.class);
+    private static final Log log = LogFactory.getLog(AuditLogCleanupManager.class);
 
     private static final AuditLogCleanupManager _instance = new AuditLogCleanupManager();
 

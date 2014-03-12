@@ -137,5 +137,5 @@ public class VmPoolMonitor {
         return prestartingVmSucceeded;
     }
 
-    private static Log log = LogFactory.getLog(VmPoolMonitor.class);
+    private static final Log log = LogFactory.getLog(VmPoolMonitor.class);
 }

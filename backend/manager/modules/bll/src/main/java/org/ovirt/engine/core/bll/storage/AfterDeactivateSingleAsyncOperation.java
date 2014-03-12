@@ -54,5 +54,5 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
         }
     }
 
-    private static Log log = LogFactory.getLog(AfterDeactivateSingleAsyncOperation.class);
+    private static final Log log = LogFactory.getLog(AfterDeactivateSingleAsyncOperation.class);
 }

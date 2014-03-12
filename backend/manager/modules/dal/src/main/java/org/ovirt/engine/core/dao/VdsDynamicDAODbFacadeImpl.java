@@ -29,7 +29,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<VdsDynamic, Guid> implements VdsDynamicDAO {
 
-    private static Log log = LogFactory.getLog(VdsDynamicDAODbFacadeImpl.class);
+    private static final Log log = LogFactory.getLog(VdsDynamicDAODbFacadeImpl.class);
 
     public VdsDynamicDAODbFacadeImpl() {
         super("VdsDynamic");

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 // as it's becomes possible.
 public class UploadImageVDSCommand<P extends UploadImageVDSCommandParameters> extends IrsCreateCommand<P> {
 
-    private static Log log = LogFactory.getLog(UploadImageVDSCommand.class);
+    private static final Log log = LogFactory.getLog(UploadImageVDSCommand.class);
 
     public UploadImageVDSCommand(P parameters) {
         super(parameters);

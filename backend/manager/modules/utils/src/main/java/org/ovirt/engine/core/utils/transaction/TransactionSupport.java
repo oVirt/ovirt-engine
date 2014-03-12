@@ -19,7 +19,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class TransactionSupport {
 
-    private static Log log = LogFactory.getLog(TransactionSupport.class);
+    private static final Log log = LogFactory.getLog(TransactionSupport.class);
 
     /**
      * JBoss specific location of TransactionManager

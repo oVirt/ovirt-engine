@@ -34,7 +34,7 @@ public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthent
 
     private static final String GSS_API_AUTHENTICATION = "GSSAPI";
     private static final String LOGIN_MODULE_POLICY_NAME = "EngineKerberosAuth";
-    private static Log log = LogFactory.getLog(GSSAPIDirContextAuthenticationStrategy.class);
+    private static final Log log = LogFactory.getLog(GSSAPIDirContextAuthenticationStrategy.class);
     private LoginContext loginContext;
     private String password;
     private String userName;

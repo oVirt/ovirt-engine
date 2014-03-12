@@ -23,7 +23,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class ThreadPoolUtil {
 
-    private static Log log = LogFactory.getLog(ThreadPoolUtil.class);
+    private static final Log log = LogFactory.getLog(ThreadPoolUtil.class);
 
     private static class InternalThreadExecutor extends ThreadPoolExecutor {
 

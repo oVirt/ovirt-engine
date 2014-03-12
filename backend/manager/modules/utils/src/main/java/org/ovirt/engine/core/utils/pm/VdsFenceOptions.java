@@ -29,7 +29,7 @@ public class VdsFenceOptions implements Serializable {
     private static final String AGENT_ERROR = "Cannot find fence agent named {0} in fence option mapping";
     private static final String MAPPING_FORMAT_ERROR = "Illegal fencing mapping format {0}";
 
-    private static Log log = LogFactory.getLog(VdsFenceOptions.class);
+    private static final Log log = LogFactory.getLog(VdsFenceOptions.class);
     private HashMap<String, HashMap<String, String>> fencingOptionMapping;
     private static HashMap<String, String> fencingOptionTypes;
 

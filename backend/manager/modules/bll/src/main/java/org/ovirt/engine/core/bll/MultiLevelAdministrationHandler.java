@@ -30,7 +30,7 @@ public class MultiLevelAdministrationHandler {
      */
     public static final Guid BOTTOM_OBJECT_ID = new Guid("BBB00000-0000-0000-0000-123456789BBB");
 
-    private static Log log = LogFactory.getLog(MultiLevelAdministrationHandler.class);
+    private static final Log log = LogFactory.getLog(MultiLevelAdministrationHandler.class);
 
     public static PermissionDAO getPermissionDAO() {
         return DbFacade.getInstance().getPermissionDao();

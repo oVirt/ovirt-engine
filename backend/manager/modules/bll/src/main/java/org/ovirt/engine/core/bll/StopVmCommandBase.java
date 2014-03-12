@@ -212,7 +212,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         setSucceeded(true);
     }
 
-    private static Log log = LogFactory.getLog(StopVmCommandBase.class);
+    private static final Log log = LogFactory.getLog(StopVmCommandBase.class);
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {

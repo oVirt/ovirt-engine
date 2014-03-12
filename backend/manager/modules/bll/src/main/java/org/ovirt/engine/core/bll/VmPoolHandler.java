@@ -61,5 +61,5 @@ public class VmPoolHandler {
         }
     }
 
-    private static Log log = LogFactory.getLog(VmPoolHandler.class);
+    private static final Log log = LogFactory.getLog(VmPoolHandler.class);
 }

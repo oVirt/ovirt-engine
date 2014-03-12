@@ -10,7 +10,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class DownloadImageVDSCommand<P extends DownloadImageVDSCommandParameters> extends IrsCreateCommand<P> {
 
-    private static Log log = LogFactory.getLog(DownloadImageVDSCommand.class);
+    private static final Log log = LogFactory.getLog(DownloadImageVDSCommand.class);
 
     public DownloadImageVDSCommand(P parameters) {
         super(parameters);

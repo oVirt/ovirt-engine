@@ -169,5 +169,5 @@ public class ObjectIdentityChecker {
         log.errorFormat("Field {0} can not be updated when status is {1}", name, status);
     }
 
-    private static Log log = LogFactory.getLog(ObjectIdentityChecker.class);
+    private static final Log log = LogFactory.getLog(ObjectIdentityChecker.class);
 }

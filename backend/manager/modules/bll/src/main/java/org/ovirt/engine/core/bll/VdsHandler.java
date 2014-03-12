@@ -22,7 +22,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class VdsHandler extends BaseHandler {
-    private static Log log = LogFactory.getLog(VdsHandler.class);
+    private static final Log log = LogFactory.getLog(VdsHandler.class);
     private static ObjectIdentityChecker mUpdateVdsStatic;
 
     /**

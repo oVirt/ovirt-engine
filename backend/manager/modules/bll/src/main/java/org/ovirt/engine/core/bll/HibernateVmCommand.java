@@ -385,5 +385,5 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         return storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
     }
 
-    private static Log log = LogFactory.getLog(HibernateVmCommand.class);
+    private static final Log log = LogFactory.getLog(HibernateVmCommand.class);
 }

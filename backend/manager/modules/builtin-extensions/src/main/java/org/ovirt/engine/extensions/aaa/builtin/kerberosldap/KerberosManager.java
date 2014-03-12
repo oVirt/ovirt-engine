@@ -11,7 +11,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  */
 public class KerberosManager {
 
-    private static Log log = LogFactory.getLog(KerberosManager.class);
+    private static final Log log = LogFactory.getLog(KerberosManager.class);
     private static volatile KerberosManager instance = null;
 
     private boolean isKerberosAuth() {

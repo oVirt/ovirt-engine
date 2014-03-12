@@ -104,5 +104,5 @@ public class OvfParser {
         }
     }
 
-    private static Log log = LogFactory.getLog(OvfParser.class);
+    private static final Log log = LogFactory.getLog(OvfParser.class);
 }

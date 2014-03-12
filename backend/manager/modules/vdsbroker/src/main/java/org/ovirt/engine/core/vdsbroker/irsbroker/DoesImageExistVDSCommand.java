@@ -34,5 +34,5 @@ public class DoesImageExistVDSCommand<P extends GetImageInfoVDSCommandParameters
         setReturnValue(true);
     }
 
-    private static Log log = LogFactory.getLog(DoesImageExistVDSCommand.class);
+    private static final Log log = LogFactory.getLog(DoesImageExistVDSCommand.class);
 }

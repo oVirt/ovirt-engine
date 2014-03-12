@@ -30,7 +30,7 @@ public class MacPoolManager {
     private static final String INIT_ERROR_MSG = "{0}: Error in initializing MAC Addresses pool manager.";
     private static final MacPoolManager INSTANCE = new MacPoolManager();
 
-    private static Log log = LogFactory.getLog(MacPoolManager.class);
+    private static final Log log = LogFactory.getLog(MacPoolManager.class);
 
     /**
      * A Map that holds the allocated MAC addresses as keys, and counters as values. These MAC addresses were taken from

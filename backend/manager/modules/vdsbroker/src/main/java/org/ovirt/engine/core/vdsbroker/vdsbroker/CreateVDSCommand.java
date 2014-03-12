@@ -79,5 +79,5 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         builder.buildVmSerialNumber();
     }
 
-    private static Log log = LogFactory.getLog(CreateVDSCommand.class);
+    private static final Log log = LogFactory.getLog(CreateVDSCommand.class);
 }

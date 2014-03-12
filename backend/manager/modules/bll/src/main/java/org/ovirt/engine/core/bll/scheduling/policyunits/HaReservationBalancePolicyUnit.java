@@ -31,7 +31,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  */
 public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
 
-    private static Log log = LogFactory.getLog(HaReservationBalancePolicyUnit.class);
+    private static final Log log = LogFactory.getLog(HaReservationBalancePolicyUnit.class);
 
     private static final int DEFAULT_OVER_UTILIZATION_VALUE = 200;
     private static final long serialVersionUID = 4926515666890804243L;

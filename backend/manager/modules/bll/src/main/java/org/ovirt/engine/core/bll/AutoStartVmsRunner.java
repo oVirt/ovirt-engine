@@ -35,7 +35,7 @@ import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
  */
 public class AutoStartVmsRunner {
 
-    private static Log log = LogFactory.getLog(AutoStartVmsRunner.class);
+    private static final Log log = LogFactory.getLog(AutoStartVmsRunner.class);
     /** How long to wait before rerun HA VM that failed to start (not because of lock acquisition) */
     private static final int RETRY_TO_RUN_HA_VM_INTERVAL =
             Config.<Integer> getValue(ConfigValues.RetryToRunAutoStartVmIntervalInSeconds);

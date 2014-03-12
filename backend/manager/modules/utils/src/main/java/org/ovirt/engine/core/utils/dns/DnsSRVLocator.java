@@ -421,6 +421,6 @@ public class DnsSRVLocator {
         return new URI(uriSB.toString());
     }
 
-    private static Log log = LogFactory.getLog(DnsSRVLocator.class);
+    private static final Log log = LogFactory.getLog(DnsSRVLocator.class);
 
 }

@@ -42,5 +42,5 @@ public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParamete
                         getParameters().getStoragePoolId()));
     }
 
-    private static Log log = LogFactory.getLog(CreateSnapshotVDSCommand.class);
+    private static final Log log = LogFactory.getLog(CreateSnapshotVDSCommand.class);
 }

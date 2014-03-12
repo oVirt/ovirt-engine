@@ -130,5 +130,5 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
         return new Date(ctime * 1000L);
     }
 
-    private static Log log = LogFactory.getLog(GetImageInfoVDSCommand.class);
+    private static final Log log = LogFactory.getLog(GetImageInfoVDSCommand.class);
 }

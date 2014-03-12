@@ -38,5 +38,5 @@ public class ResumeVDSCommand<P extends ResumeVDSCommandParameters> extends VdsI
         }
     }
 
-    private static Log log = LogFactory.getLog(ResumeVDSCommand.class);
+    private static final Log log = LogFactory.getLog(ResumeVDSCommand.class);
 }

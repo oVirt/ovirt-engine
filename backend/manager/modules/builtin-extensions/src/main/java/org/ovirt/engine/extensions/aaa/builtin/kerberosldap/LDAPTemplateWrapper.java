@@ -21,7 +21,7 @@ import com.sun.jndi.ldap.LdapCtxFactory;
 
 public abstract class LDAPTemplateWrapper {
 
-    private static Log log = LogFactory.getLog(LDAPTemplateWrapper.class);
+    private static final Log log = LogFactory.getLog(LDAPTemplateWrapper.class);
 
     protected LdapTemplate ldapTemplate;
     protected LdapContextSource contextSource;

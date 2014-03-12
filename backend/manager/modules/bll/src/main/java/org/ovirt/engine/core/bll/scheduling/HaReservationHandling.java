@@ -23,7 +23,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  */
 public class HaReservationHandling {
 
-    private static Log log = LogFactory.getLog(HaReservationHandling.class);
+    private static final Log log = LogFactory.getLog(HaReservationHandling.class);
     /**
      * @param cluster
      *            - Cluster to check

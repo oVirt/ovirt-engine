@@ -21,7 +21,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
 
-    private static Log log = LogFactory.getLog(HaReservationWeightPolicyUnit.class);
+    private static final Log log = LogFactory.getLog(HaReservationWeightPolicyUnit.class);
 
     private static final int RATIO_FACTOR = 100;
     private static final int DEFAULT_SCORE = 0;

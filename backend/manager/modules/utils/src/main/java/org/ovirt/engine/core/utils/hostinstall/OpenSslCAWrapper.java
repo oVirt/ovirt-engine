@@ -182,5 +182,5 @@ public class OpenSslCAWrapper {
         return Runtime.getRuntime();
     }
 
-    private static Log log = LogFactory.getLog(OpenSslCAWrapper.class);
+    private static final Log log = LogFactory.getLog(OpenSslCAWrapper.class);
 }

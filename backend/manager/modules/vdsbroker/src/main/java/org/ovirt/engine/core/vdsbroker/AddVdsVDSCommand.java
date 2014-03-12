@@ -20,5 +20,5 @@ public class AddVdsVDSCommand<P extends AddVdsVDSCommandParameters> extends VdsI
         ResourceManager.getInstance().AddVds(vds, false);
     }
 
-    private static Log log = LogFactory.getLog(AddVdsVDSCommand.class);
+    private static final Log log = LogFactory.getLog(AddVdsVDSCommand.class);
 }

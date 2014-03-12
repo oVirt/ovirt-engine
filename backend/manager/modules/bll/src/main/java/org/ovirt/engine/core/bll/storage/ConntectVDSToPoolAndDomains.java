@@ -13,7 +13,7 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class ConntectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOperation {
 
-    private static Log log = LogFactory.getLog(ConntectVDSToPoolAndDomains.class);
+    private static final Log log = LogFactory.getLog(ConntectVDSToPoolAndDomains.class);
 
     public ConntectVDSToPoolAndDomains(ArrayList<VDS> vdss, StorageDomain domain, StoragePool storagePool) {
         super(vdss, domain, storagePool);

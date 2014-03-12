@@ -29,7 +29,7 @@ public class GetSessionUser extends HttpServlet {
     private int SUCCESS_CODE = HttpURLConnection.HTTP_OK;
     private int FAILED_CODE = HttpURLConnection.HTTP_INTERNAL_ERROR;
 
-    private static Log log = LogFactory.getLog(GetSessionUser.class);
+    private static final Log log = LogFactory.getLog(GetSessionUser.class);
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doProcessRequest(request, response);

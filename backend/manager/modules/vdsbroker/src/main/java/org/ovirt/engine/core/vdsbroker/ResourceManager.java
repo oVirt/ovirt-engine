@@ -54,7 +54,7 @@ public class ResourceManager {
 
     private static final String VDSCommandPrefix = "VDSCommand";
 
-    private static Log log = LogFactory.getLog(ResourceManager.class);
+    private static final Log log = LogFactory.getLog(ResourceManager.class);
 
     private ResourceManager() {
 

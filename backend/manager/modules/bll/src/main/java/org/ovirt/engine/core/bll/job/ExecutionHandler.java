@@ -45,7 +45,7 @@ import org.ovirt.engine.core.utils.log.LoggedUtils;
  */
 public class ExecutionHandler {
 
-    private static Log log = LogFactory.getLog(ExecutionHandler.class);
+    private static final Log log = LogFactory.getLog(ExecutionHandler.class);
 
     private static final List<Class<?>> validationGroups = Arrays.asList(new Class<?>[] { PreRun.class });
 

@@ -31,7 +31,7 @@ import org.ovirt.engine.core.utils.ejb.EjbUtils;
  */
 public class HealthStatus extends HttpServlet {
 
-    private static Log log = LogFactory.getLog(HealthStatus.class);
+    private static final Log log = LogFactory.getLog(HealthStatus.class);
 
     private boolean runQuery(HttpServletRequest request, PrintWriter out) {
         boolean fReturn = false;

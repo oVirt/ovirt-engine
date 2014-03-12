@@ -26,5 +26,5 @@ public class ConnectSingleAsyncOperation extends ActivateDeactivateSingleAsyncOp
         }
     }
 
-    private static Log log = LogFactory.getLog(ConnectSingleAsyncOperation.class);
+    private static final Log log = LogFactory.getLog(ConnectSingleAsyncOperation.class);
 }

@@ -101,5 +101,5 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
         handleDirectorySearcherException(ex);
     }
 
-    private static Log log = LogFactory.getLog(LdapAuthenticateUserCommand.class);
+    private static final Log log = LogFactory.getLog(LdapAuthenticateUserCommand.class);
 }
