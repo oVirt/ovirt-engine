@@ -294,11 +294,6 @@ public class OvfVmReader extends OvfReader {
             _vm.getStaticData().setOriginalTemplateName(node.innerText);
         }
 
-        node = content.SelectSingleNode("AutoStartup");
-        if (node != null) {
-           _vm.setAutoStartup(Boolean.parseBoolean(node.innerText));
-        }
-
         node = content.SelectSingleNode("UseLatestVersion");
         if (node != null) {
             _vm.setUseLatestVersion(Boolean.parseBoolean(node.innerText));

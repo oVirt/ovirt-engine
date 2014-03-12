@@ -321,6 +321,14 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteRaw(String.valueOf(vmBase.isRunAndPause()));
         _writer.WriteEndElement();
 
+        _writer.WriteStartElement(OvfProperties.AUTO_STARTUP);
+        _writer.WriteRaw(String.valueOf(vmBase.isAutoStartup()));
+        _writer.WriteEndElement();
+
+        _writer.WriteStartElement(OvfProperties.PRIORITY);
+        _writer.WriteRaw(String.valueOf(vmBase.getPriority()));
+        _writer.WriteEndElement();
+
         if (vmBase.getCreatedByUserId() != null) {
             _writer.WriteStartElement("CreatedByUserId");
             _writer.WriteRaw(String.valueOf(vmBase.getCreatedByUserId()));

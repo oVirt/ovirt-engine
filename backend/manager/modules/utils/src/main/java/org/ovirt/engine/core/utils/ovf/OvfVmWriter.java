@@ -86,10 +86,6 @@ public class OvfVmWriter extends OvfWriter {
             _writer.WriteEndElement();
         }
 
-        _writer.WriteStartElement("AutoStartup");
-        _writer.WriteRaw(String.valueOf(_vm.isAutoStartup()));
-        _writer.WriteEndElement();
-
         _writer.WriteStartElement("UseLatestVersion");
         _writer.WriteRaw(String.valueOf(_vm.isUseLatestVersion()));
         _writer.WriteEndElement();
