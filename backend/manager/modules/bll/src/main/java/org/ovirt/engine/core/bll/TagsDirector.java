@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.utils.collections.CopyOnAccessMap;
@@ -302,7 +301,8 @@ public class TagsDirector {
         if ((tag.getChildren() != null) && !tag.getChildren().isEmpty()) {
             tagNameRegExp = BACKSLASH_REMOVER.matcher(tagNameRegExp).replaceAll("");
             for (Tags child : tag.getChildren()) {
-                if (Regex.IsMatch(child.gettag_name(), tagNameRegExp)) {
+                Pattern tagNamePattern = Pattern.compile(tagNameRegExp);
+                if (tagNamePattern.matcher(child.gettag_name()).find()) {
                 // the tag matches the regular expression -> add it and all its
                 // children
                 // (we prevent searching a regular expression match on them -
