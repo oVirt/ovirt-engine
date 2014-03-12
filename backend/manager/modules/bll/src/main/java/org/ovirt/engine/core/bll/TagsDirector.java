@@ -308,15 +308,17 @@ public class TagsDirector {
                 // (we prevent searching a regular expression match on them -
                 // unnecessary).
                     if (sb.length() == 0) {
-                        if (indicator == TagReturnValueIndicator.ID)
+                        if (indicator == TagReturnValueIndicator.ID) {
                             sb.append(child.getTagIdAndChildrenIds());
-                        else
+                        } else {
                             sb.append(child.getTagNameAndChildrenNames());
+                        }
                     } else {
-                        if (indicator == TagReturnValueIndicator.ID)
+                        if (indicator == TagReturnValueIndicator.ID) {
                             sb.append(String.format(",%1$s", child.getTagIdAndChildrenIds()));
-                        else
+                        } else {
                             sb.append(String.format(",%1$s", child.getTagNameAndChildrenNames()));
+                        }
                     }
                 } else {
                     RecursiveGetTagsAndChildrenByRegExp(tagNameRegExp, sb, child, indicator);
