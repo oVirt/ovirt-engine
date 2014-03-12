@@ -509,6 +509,16 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
+        node = content.SelectSingleNode(OvfProperties.AUTO_STARTUP);
+        if (node != null) {
+            vmBase.setAutoStartup(Boolean.parseBoolean(node.innerText));
+        }
+
+        node = content.SelectSingleNode(OvfProperties.PRIORITY);
+        if (node != null) {
+            vmBase.setPriority(Integer.parseInt(node.innerText));
+        }
+
         readGeneralData(content);
 
         readVmInit(content);
