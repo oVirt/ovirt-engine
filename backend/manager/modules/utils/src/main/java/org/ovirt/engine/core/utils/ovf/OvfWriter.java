@@ -233,91 +233,91 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     protected void writeGeneralData() {
-        _writer.WriteStartElement("Description");
+        _writer.WriteStartElement(OvfProperties.DESCRIPTION);
         _writer.WriteRaw(vmBase.getDescription());
         _writer.WriteEndElement();
 
         if (!vmInitEnabled() && vmBase.getVmInit() != null && vmBase.getVmInit().getDomain() != null) {
-            _writer.WriteStartElement("Domain");
+            _writer.WriteStartElement(OvfProperties.DOMAIN);
             _writer.WriteRaw(vmBase.getVmInit().getDomain());
             _writer.WriteEndElement();
         }
 
-        _writer.WriteStartElement("CreationDate");
+        _writer.WriteStartElement(OvfProperties.CREATION_DATE);
         _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(vmBase.getCreationDate()));
         _writer.WriteEndElement();
 
-        _writer.WriteStartElement("ExportDate");
+        _writer.WriteStartElement(OvfProperties.EXPORT_DATE);
         _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(new Date()));
         _writer.WriteEndElement();
 
-        _writer.WriteStartElement("DeleteProtected");
+        _writer.WriteStartElement(OvfProperties.DELETE_PROTECTED);
         _writer.WriteRaw(String.valueOf(vmBase.isDeleteProtected()));
         _writer.WriteEndElement();
 
         if (vmBase.getSsoMethod() != null) {
-            _writer.WriteStartElement("SsoMethod");
+            _writer.WriteStartElement(OvfProperties.SSO_METHOD);
             _writer.WriteRaw(vmBase.getSsoMethod().toString());
             _writer.WriteEndElement();
         }
 
-        _writer.WriteStartElement("IsSmartcardEnabled");
+        _writer.WriteStartElement(OvfProperties.IS_SMARTCARD_ENABLED);
         _writer.WriteRaw(String.valueOf(vmBase.isSmartcardEnabled()));
         _writer.WriteEndElement();
 
-        _writer.WriteStartElement("TimeZone");
+        _writer.WriteStartElement(OvfProperties.TIMEZONE);
         _writer.WriteRaw(vmBase.getTimeZone());
         _writer.WriteEndElement();
 
-        _writer.WriteStartElement("default_boot_sequence");
+        _writer.WriteStartElement(OvfProperties.DEFAULT_BOOT_SEQUENCE);
         _writer.WriteRaw(String.valueOf(vmBase.getDefaultBootSequence().getValue()));
         _writer.WriteEndElement();
 
         if (!StringUtils.isBlank(vmBase.getInitrdUrl())) {
-            _writer.WriteStartElement("initrd_url");
+            _writer.WriteStartElement(OvfProperties.INITRD_URL);
             _writer.WriteRaw(vmBase.getInitrdUrl());
             _writer.WriteEndElement();
         }
         if (!StringUtils.isBlank(vmBase.getKernelUrl())) {
-            _writer.WriteStartElement("kernel_url");
+            _writer.WriteStartElement(OvfProperties.KERNEL_URL);
             _writer.WriteRaw(vmBase.getKernelUrl());
             _writer.WriteEndElement();
         }
         if (!StringUtils.isBlank(vmBase.getKernelParams())) {
-            _writer.WriteStartElement("kernel_params");
+            _writer.WriteStartElement(OvfProperties.KERNEL_PARAMS);
             _writer.WriteRaw(vmBase.getKernelParams());
             _writer.WriteEndElement();
         }
 
-        _writer.WriteStartElement("Generation");
+        _writer.WriteStartElement(OvfProperties.GENERATION);
         _writer.WriteRaw(String.valueOf(vmBase.getDbGeneration()));
         _writer.WriteEndElement();
 
-        _writer.WriteStartElement("VmType");
+        _writer.WriteStartElement(OvfProperties.VM_TYPE);
         _writer.WriteRaw(String.valueOf(vmBase.getVmType().getValue()));
         _writer.WriteEndElement();
 
         if (vmBase.getTunnelMigration() != null) {
-            _writer.WriteStartElement("TunnelMigration");
+            _writer.WriteStartElement(OvfProperties.TUNNEL_MIGRATION);
             _writer.WriteRaw(String.valueOf(vmBase.getTunnelMigration()));
             _writer.WriteEndElement();
         }
 
         if (vmBase.getVncKeyboardLayout() != null) {
-            _writer.WriteStartElement("VncKeyboardLayout");
+            _writer.WriteStartElement(OvfProperties.VNC_KEYBOARD_LAYOUT);
             _writer.WriteRaw(vmBase.getVncKeyboardLayout());
             _writer.WriteEndElement();
         }
 
-        _writer.WriteStartElement("MinAllocatedMem");
+        _writer.WriteStartElement(OvfProperties.MIN_ALLOCATED_MEMORY);
         _writer.WriteRaw(String.valueOf(vmBase.getMinAllocatedMem()));
         _writer.WriteEndElement();
 
-        _writer.WriteStartElement("IsStateless");
+        _writer.WriteStartElement(OvfProperties.IS_STATELESS);
         _writer.WriteRaw(String.valueOf(vmBase.isStateless()));
         _writer.WriteEndElement();
 
-        _writer.WriteStartElement("IsRunAndPause");
+        _writer.WriteStartElement(OvfProperties.IS_RUN_AND_PAUSE);
         _writer.WriteRaw(String.valueOf(vmBase.isRunAndPause()));
         _writer.WriteEndElement();
 
@@ -330,26 +330,26 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteEndElement();
 
         if (vmBase.getCreatedByUserId() != null) {
-            _writer.WriteStartElement("CreatedByUserId");
+            _writer.WriteStartElement(OvfProperties.CREATED_BY_USER_ID);
             _writer.WriteRaw(String.valueOf(vmBase.getCreatedByUserId()));
             _writer.WriteEndElement();
         }
 
         if (vmBase.getMigrationDowntime() != null) {
-            _writer.WriteStartElement("MigrationDowntime");
+            _writer.WriteStartElement(OvfProperties.MIGRATION_DOWNTIME);
             _writer.WriteRaw(String.valueOf(vmBase.getMigrationDowntime()));
             _writer.WriteEndElement();
         }
         writeVmInit();
 
         if (vmBase.getSerialNumberPolicy() != null) {
-            _writer.WriteStartElement("SerialNumberPolicy");
+            _writer.WriteStartElement(OvfProperties.SERIAL_NUMBER_POLICY);
             _writer.WriteRaw(String.valueOf(vmBase.getSerialNumberPolicy().getValue()));
             _writer.WriteEndElement();
         }
 
         if (vmBase.getCustomSerialNumber() != null) {
-            _writer.WriteStartElement("CustomSerialNumber");
+            _writer.WriteStartElement(OvfProperties.CUSTOM_SERIAL_NUMBER);
             _writer.WriteRaw(vmBase.getCustomSerialNumber());
             _writer.WriteEndElement();
         }

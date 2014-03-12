@@ -170,34 +170,34 @@ public class OvfTemplateReader extends OvfReader {
     @Override
     protected void readGeneralData(XmlNode content) {
         // General Vm
-        XmlNode node = content.SelectSingleNode("Name");
+        XmlNode node = content.SelectSingleNode(OvfProperties.NAME);
         if (node != null) {
             _vmTemplate.setName(node.innerText);
             name = _vmTemplate.getName();
         }
-        node = content.SelectSingleNode("TemplateId");
+        node = content.SelectSingleNode(OvfProperties.TEMPLATE_ID);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 _vmTemplate.setId(new Guid(node.innerText));
             }
         }
 
-        node = content.SelectSingleNode("IsDisabled");
+        node = content.SelectSingleNode(OvfProperties.IS_DISABLED);
         if (node != null) {
             _vmTemplate.setDisabled(Boolean.parseBoolean(node.innerText));
         }
 
-        node = content.SelectSingleNode("TrustedService");
+        node = content.SelectSingleNode(OvfProperties.TRUSTED_SERVICE);
         if (node != null) {
             _vmTemplate.setTrustedService(Boolean.parseBoolean(node.innerText));
         }
 
-        node = content.SelectSingleNode("TemplateType");
+        node = content.SelectSingleNode(OvfProperties.TEMPLATE_TYPE);
         if (node != null) {
             _vmTemplate.setTemplateType(VmEntityType.valueOf(node.innerText));
         }
 
-        node = content.SelectSingleNode("BaseTemplateId");
+        node = content.SelectSingleNode(OvfProperties.BASE_TEMPLATE_ID);
         if (node != null) {
             _vmTemplate.setBaseTemplateId(Guid.createGuidFromString(node.innerText));
         } else {
@@ -205,12 +205,12 @@ public class OvfTemplateReader extends OvfReader {
             _vmTemplate.setBaseTemplateId(_vmTemplate.getId());
         }
 
-        node = content.SelectSingleNode("TemplateVersionNumber");
+        node = content.SelectSingleNode(OvfProperties.TEMPLATE_VERSION_NUMBER);
         if (node != null) {
             _vmTemplate.setTemplateVersionNumber(Integer.parseInt(node.innerText));
         }
 
-        node = content.SelectSingleNode("TemplateVersionName");
+        node = content.SelectSingleNode(OvfProperties.TEMPLATE_VERSION_NAME);
         if (node != null) {
             _vmTemplate.setTemplateVersionName(node.innerText);
         }
@@ -218,6 +218,6 @@ public class OvfTemplateReader extends OvfReader {
 
     @Override
     protected String getDefaultDisplayTypeStringRepresentation() {
-        return "default_display_type";
+        return OvfProperties.TEMPLATE_DEFAULT_DISPLAY_TYPE;
     }
 }

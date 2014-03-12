@@ -324,17 +324,17 @@ public abstract class OvfReader implements IOvfBuilder {
         // set ovf version to the ovf object
         vmBase.setOvfVersion(getVersion());
 
-        node = content.SelectSingleNode("Description");
+        node = content.SelectSingleNode(OvfProperties.DESCRIPTION);
         if (node != null) {
             vmBase.setDescription(node.innerText);
         }
 
-        node = content.SelectSingleNode("Domain");
+        node = content.SelectSingleNode(OvfProperties.DOMAIN);
         if (node != null) {
             vmBase.getVmInit().setDomain(node.innerText);
         }
 
-        node = content.SelectSingleNode("CreationDate");
+        node = content.SelectSingleNode(OvfProperties.CREATION_DATE);
         if (node != null) {
             Date creationDate = OvfParser.UtcDateStringToLocaDate(node.innerText);
             if (creationDate != null) {
@@ -342,7 +342,7 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
-        node = content.SelectSingleNode("ExportDate");
+        node = content.SelectSingleNode(OvfProperties.EXPORT_DATE);
         if (node != null) {
             Date exportDate = OvfParser.UtcDateStringToLocaDate(node.innerText);
             if (exportDate != null) {
@@ -350,42 +350,42 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
-        node = content.SelectSingleNode("TimeZone");
+        node = content.SelectSingleNode(OvfProperties.TIMEZONE);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 vmBase.setTimeZone(node.innerText);
             }
         }
 
-        node = content.SelectSingleNode("default_boot_sequence");
+        node = content.SelectSingleNode(OvfProperties.DEFAULT_BOOT_SEQUENCE);
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
                 vmBase.setDefaultBootSequence(BootSequence.forValue(Integer.parseInt(node.innerText)));
             }
         }
 
-        node = content.SelectSingleNode("initrd_url");
+        node = content.SelectSingleNode(OvfProperties.INITRD_URL);
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
                 vmBase.setInitrdUrl(node.innerText);
             }
         }
 
-        node = content.SelectSingleNode("kernel_url");
+        node = content.SelectSingleNode(OvfProperties.KERNEL_URL);
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
                 vmBase.setKernelUrl(node.innerText);
             }
         }
 
-        node = content.SelectSingleNode("kernel_params");
+        node = content.SelectSingleNode(OvfProperties.KERNEL_PARAMS);
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
                 vmBase.setKernelParams(node.innerText);
             }
         }
 
-        node = content.SelectSingleNode("Generation");
+        node = content.SelectSingleNode(OvfProperties.GENERATION);
         if (node != null) {
             vmBase.setDbGeneration(Long.parseLong(node.innerText));
         } else {
@@ -426,98 +426,98 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
-        node = content.SelectSingleNode("Origin");
+        node = content.SelectSingleNode(OvfProperties.ORIGIN);
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
                 vmBase.setOrigin(OriginType.forValue(Integer.parseInt(node.innerText)));
             }
         }
 
-        node = content.SelectSingleNode("VmType");
+        node = content.SelectSingleNode(OvfProperties.VM_TYPE);
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
                 vmBase.setVmType(VmType.forValue(Integer.parseInt(node.innerText)));
             }
         }
 
-        node = content.SelectSingleNode("IsSmartcardEnabled");
+        node = content.SelectSingleNode(OvfProperties.IS_SMARTCARD_ENABLED);
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
                 vmBase.setSmartcardEnabled(Boolean.parseBoolean(node.innerText));
             }
         }
 
-        node = content.SelectSingleNode("DeleteProtected");
+        node = content.SelectSingleNode(OvfProperties.DELETE_PROTECTED);
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
                 vmBase.setDeleteProtected(Boolean.parseBoolean(node.innerText));
             }
         }
 
-        node = content.SelectSingleNode("SsoMethod");
+        node = content.SelectSingleNode(OvfProperties.SSO_METHOD);
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
                 vmBase.setSsoMethod(SsoMethod.fromString(node.innerText));
             }
         }
 
-        node = content.SelectSingleNode("TunnelMigration");
+        node = content.SelectSingleNode(OvfProperties.TUNNEL_MIGRATION);
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
                 vmBase.setTunnelMigration(Boolean.parseBoolean(node.innerText));
             }
         }
 
-        node = content.SelectSingleNode("VncKeyboardLayout");
+        node = content.SelectSingleNode(OvfProperties.VNC_KEYBOARD_LAYOUT);
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
                 vmBase.setVncKeyboardLayout(node.innerText);
             }
         }
 
-        node = content.SelectSingleNode("MinAllocatedMem");
+        node = content.SelectSingleNode(OvfProperties.MIN_ALLOCATED_MEMORY);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 vmBase.setMinAllocatedMem(Integer.parseInt(node.innerText));
             }
         }
 
-        node = content.SelectSingleNode("IsStateless");
+        node = content.SelectSingleNode(OvfProperties.IS_STATELESS);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 vmBase.setStateless(Boolean.parseBoolean(node.innerText));
             }
         }
 
-        node = content.SelectSingleNode("IsRunAndPause");
+        node = content.SelectSingleNode(OvfProperties.IS_RUN_AND_PAUSE);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 vmBase.setRunAndPause(Boolean.parseBoolean(node.innerText));
             }
         }
 
-        node = content.SelectSingleNode("CreatedByUserId");
+        node = content.SelectSingleNode(OvfProperties.CREATED_BY_USER_ID);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 vmBase.setCreatedByUserId(Guid.createGuidFromString(node.innerText));
             }
         }
 
-        node = content.SelectSingleNode("MigrationDowntime");
+        node = content.SelectSingleNode(OvfProperties.MIGRATION_DOWNTIME);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 vmBase.setMigrationDowntime(Integer.parseInt(node.innerText));
             }
         }
 
-        node = content.SelectSingleNode("SerialNumberPolicy");
+        node = content.SelectSingleNode(OvfProperties.SERIAL_NUMBER_POLICY);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 vmBase.setSerialNumberPolicy(SerialNumberPolicy.forValue(Integer.parseInt(node.innerText)));
             }
         }
 
-        node = content.SelectSingleNode("CustomSerialNumber");
+        node = content.SelectSingleNode(OvfProperties.CUSTOM_SERIAL_NUMBER);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 vmBase.setCustomSerialNumber(node.innerText);

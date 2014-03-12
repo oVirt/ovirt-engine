@@ -205,40 +205,40 @@ public class OvfVmReader extends OvfReader {
     @Override
     protected void readGeneralData(XmlNode content) {
         // General Vm
-        XmlNode node = content.SelectSingleNode("Name");
+        XmlNode node = content.SelectSingleNode(OvfProperties.NAME);
         if (node != null) {
             _vm.getStaticData().setName(node.innerText);
             name = _vm.getStaticData().getName();
         }
-        node = content.SelectSingleNode("TemplateId");
+        node = content.SelectSingleNode(OvfProperties.TEMPLATE_ID);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 _vm.getStaticData().setVmtGuid(new Guid(node.innerText));
             }
         }
-        node = content.SelectSingleNode("TemplateName");
+        node = content.SelectSingleNode(OvfProperties.TEMPLATE_NAME);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 _vm.setVmtName(node.innerText);
             }
         }
-        node = content.SelectSingleNode("InstanceTypeId");
+        node = content.SelectSingleNode(OvfProperties.INSTANCE_TYPE_ID);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 _vm.setInstanceTypeId(new Guid(node.innerText));
             }
         }
-        node = content.SelectSingleNode("ImageTypeId");
+        node = content.SelectSingleNode(OvfProperties.IMAGE_TYPE_ID);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 _vm.setImageTypeId(new Guid(node.innerText));
             }
         }
-        node = content.SelectSingleNode("IsInitilized");
+        node = content.SelectSingleNode(OvfProperties.IS_INITIALIZED);
         if (node != null) {
             _vm.getStaticData().setInitialized(Boolean.parseBoolean(node.innerText));
         }
-        node = content.SelectSingleNode("quota_id");
+        node = content.SelectSingleNode(OvfProperties.QUOTA_ID);
         if (node != null) {
             Guid quotaId = new Guid(node.innerText);
             if (!Guid.Empty.equals(quotaId)) {
@@ -259,7 +259,7 @@ public class OvfVmReader extends OvfReader {
             }
         }
 
-        node = content.SelectSingleNode("app_list");
+        node = content.SelectSingleNode(OvfProperties.APPLICATIONS_LIST);
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 _vm.setAppList(node.innerText);
@@ -279,22 +279,22 @@ public class OvfVmReader extends OvfReader {
                 _vm.setAppList(_images.get(0).getAppList());
             }
         }
-       node = content.SelectSingleNode("TrustedService");
+       node = content.SelectSingleNode(OvfProperties.TRUSTED_SERVICE);
        if (node != null) {
            _vm.setTrustedService(Boolean.parseBoolean(node.innerText));
        }
 
-        node = content.SelectSingleNode("OriginalTemplateId");
+        node = content.SelectSingleNode(OvfProperties.ORIGINAL_TEMPLATE_ID);
         if (node != null) {
             _vm.getStaticData().setOriginalTemplateGuid(new Guid(node.innerText));
         }
 
-        node = content.SelectSingleNode("OriginalTemplateName");
+        node = content.SelectSingleNode(OvfProperties.ORIGINAL_TEMPLATE_NAME);
         if (node != null) {
             _vm.getStaticData().setOriginalTemplateName(node.innerText);
         }
 
-        node = content.SelectSingleNode("UseLatestVersion");
+        node = content.SelectSingleNode(OvfProperties.USE_LATEST_VERSION);
         if (node != null) {
             _vm.setUseLatestVersion(Boolean.parseBoolean(node.innerText));
         }
@@ -302,7 +302,7 @@ public class OvfVmReader extends OvfReader {
 
     @Override
     protected String getDefaultDisplayTypeStringRepresentation() {
-        return "DefaultDisplayType";
+        return OvfProperties.VM_DEFAULT_DISPLAY_TYPE;
     }
 
     // function returns the index of the image that has no parent

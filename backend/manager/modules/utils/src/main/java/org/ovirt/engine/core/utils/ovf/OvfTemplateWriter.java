@@ -25,34 +25,34 @@ public class OvfTemplateWriter extends OvfWriter {
     @Override
     protected void writeGeneralData() {
         super.writeGeneralData();
-        _writer.WriteStartElement("Name");
+        _writer.WriteStartElement(OvfProperties.NAME);
         _writer.WriteRaw(_vmTemplate.getName());
         _writer.WriteEndElement();
-        _writer.WriteStartElement("TemplateId");
+        _writer.WriteStartElement(OvfProperties.TEMPLATE_ID);
         _writer.WriteRaw(_vmTemplate.getId().toString());
         _writer.WriteEndElement();
-        _writer.WriteStartElement("Origin");
+        _writer.WriteStartElement(OvfProperties.ORIGIN);
         _writer.WriteRaw(_vmTemplate.getOrigin() == null ? "" : String.valueOf(_vmTemplate.getOrigin().getValue()));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("default_display_type");
+        _writer.WriteStartElement(OvfProperties.TEMPLATE_DEFAULT_DISPLAY_TYPE);
         _writer.WriteRaw(String.valueOf(_vmTemplate.getDefaultDisplayType().getValue()));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("IsDisabled");
+        _writer.WriteStartElement(OvfProperties.IS_DISABLED);
         _writer.WriteRaw(String.valueOf(_vmTemplate.isDisabled()));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("TrustedService");
+        _writer.WriteStartElement(OvfProperties.TRUSTED_SERVICE);
         _writer.WriteRaw(String.valueOf(_vmTemplate.isTrustedService()));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("TemplateType");
+        _writer.WriteStartElement(OvfProperties.TEMPLATE_TYPE);
         _writer.WriteRaw(_vmTemplate.getTemplateType().name());
         _writer.WriteEndElement();
-        _writer.WriteStartElement("BaseTemplateId");
+        _writer.WriteStartElement(OvfProperties.BASE_TEMPLATE_ID);
         _writer.WriteRaw(_vmTemplate.getBaseTemplateId().toString());
         _writer.WriteEndElement();
-        _writer.WriteStartElement("TemplateVersionNumber");
+        _writer.WriteStartElement(OvfProperties.TEMPLATE_VERSION_NUMBER);
         _writer.WriteRaw(String.valueOf(_vmTemplate.getTemplateVersionNumber()));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("TemplateVersionName");
+        _writer.WriteStartElement(OvfProperties.TEMPLATE_VERSION_NAME);
         _writer.WriteRaw(_vmTemplate.getTemplateVersionName());
         _writer.WriteEndElement();
     }
