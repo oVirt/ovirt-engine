@@ -40,12 +40,16 @@ while getopts hs:d:u:p:l:v option; do
 done
 
 #Dropping all views & sps
+echo "Saving custom users permissions on database objects..."
+permissions="$(get_custom_user_permissions)"
 drop_views
 drop_sps
 
 #Refreshing  all views & sps
 refresh_views
 refresh_sps
+echo "Applying custom users permissions on database objects..."
+execute_command "${permissions}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 
 printf "Done.\n"
 popd>/dev/null

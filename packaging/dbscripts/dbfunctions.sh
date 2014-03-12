@@ -144,6 +144,11 @@ delete_async_tasks_and_compensation_data() {
     execute_file "delete_async_tasks_and_compensation_data.sql" ${DATABASE} ${SERVERNAME} ${PORT}> /dev/null
 }
 
+get_custom_user_permissions() {
+    pg_dump -w -s --host="${SERVVERNAME}" --port="${PORT}" --username="${USERNAME}" "${DATABASE}" | \
+    sed -n -e '/^grant/Ip' | sed -e "/to \(public\|postgres\)\|${USERNAME};/Id"
+}
+
 run_pre_upgrade() {
     #Dropping all views & sps
     drop_views
@@ -308,6 +313,7 @@ run_upgrade_files() {
         state="FAILED"
         comment=""
         updated=0
+        permissions=""
         validate_version_uniqueness
         if [ "${NOMD5}" = "false" ]; then
             is_view_or_sp_changed
@@ -316,6 +322,8 @@ run_upgrade_files() {
         # Checks if a view or sp file has been changed
         if [[ $? -ne 0 || "${NOMD5}" = "true" ]]; then
             echo "upgrade script detected a change in Config, View or Stored Procedure..."
+            echo "Saving custom users permissions on database objects..."
+            permissions="$(get_custom_user_permissions)"
             run_pre_upgrade
             updated=1
         fi
@@ -359,6 +367,8 @@ run_upgrade_files() {
                     # force pre upgrade to run in case no md5 change was
                     # found but we still upgrade, like in db restore.
                     if [ $updated -eq 0 ]; then
+                       echo "Saving custom users permissions on database objects..."
+                       permissions="$(get_custom_user_permissions)"
                        run_pre_upgrade
                        updated=1
                     fi
@@ -386,6 +396,8 @@ run_upgrade_files() {
         # restore views & SPs if dropped
         if [ $updated -eq 1 ]; then
             run_post_upgrade
+            echo "Applying custom users permissions on database objects..."
+            execute_command "${permissions}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
         else
 	    echo "database is up to date."
         fi
