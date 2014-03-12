@@ -79,7 +79,7 @@ public class TagsDirector {
         }
     }
 
-    private void replaceTagInChildren(Tags tag, List<Tags> parentChildren) {
+    private static void replaceTagInChildren(Tags tag, List<Tags> parentChildren) {
         for (int counter = 0; counter < parentChildren.size(); counter++) {
             if (parentChildren.get(counter).gettag_id().equals(tag.gettag_id())) {
                 parentChildren.set(counter, tag);
@@ -290,7 +290,7 @@ public class TagsDirector {
         return sb.toString();
     }
 
-    private void RecursiveGetTagsAndChildrenByRegExp(String tagNameRegExp, StringBuilder sb, Tags tag, TagReturnValueIndicator indicator ) {
+    private static void RecursiveGetTagsAndChildrenByRegExp(String tagNameRegExp, StringBuilder sb, Tags tag, TagReturnValueIndicator indicator) {
         if ((tag.getChildren() != null) && (tag.getChildren().size() > 0)) {
             // The following line replaces '\\' in the expression that may be added by handling a '_' character with empty string.
             // since we have here both String and RegExp , each backslash char is represented by four backslash chars , so for marching 2 we will need 8
