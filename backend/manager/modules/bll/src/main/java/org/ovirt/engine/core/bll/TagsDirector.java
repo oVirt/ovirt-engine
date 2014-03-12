@@ -18,16 +18,16 @@ import org.ovirt.engine.core.utils.collections.CopyOnAccessMap;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
-enum TagReturnValueIndicator {
-    ID,
-    NAME
-}
 /**
  * This class responsible to In memory Tags handling. On Vdc starting in memory tags tree initialized. All Tags changing
  * operations go throw this class
  */
 public class TagsDirector {
 
+    private enum TagReturnValueIndicator {
+        ID,
+        NAME
+    }
 
     private static Log log = LogFactory.getLog(TagsDirector.class);
 
