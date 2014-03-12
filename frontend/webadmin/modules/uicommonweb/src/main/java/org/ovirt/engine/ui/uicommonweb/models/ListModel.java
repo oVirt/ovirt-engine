@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -101,13 +102,17 @@ public class ListModel<T> extends EntityModel<T>
         return items;
     }
 
-    public void setItems(Collection<T> value)
+    public void setItems(Collection<T> value) {
+        setItems(value, null);
+    }
+
+    public void setItems(Collection<T> value, T selectedItem)
     {
         if (items != value)
         {
             itemsChanging(value, items);
             items = value;
-            itemsChanged();
+            itemsChanged(selectedItem);
             getItemsChangedEvent().raise(this, EventArgs.EMPTY);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
@@ -241,6 +246,17 @@ public class ListModel<T> extends EntityModel<T>
      */
     protected void itemPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
+    }
+
+    protected void itemsChanged(T selectedItem) {
+        if (selectedItem == null) {
+            itemsChanged();
+        } else {
+            List<T> selectedItems = new ArrayList<T>();
+            selectedItems.add(selectedItem);
+            setSelectedItem(selectedItem);
+            setSelectedItems(selectedItems);
+        }
     }
 
     protected void itemsChanged()
