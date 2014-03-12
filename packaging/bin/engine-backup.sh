@@ -330,12 +330,18 @@ verifyConnection() {
 		>> "${LOG}" 2>&1 \
 		|| logdie "Can't connect to the database. Please see '${0} --help'."
 
+	local IGNORED_PATTERN=$(cat << __EOF | tr '\012' '|' | sed 's/|$//'
+^create extension
+^create procedural language
+__EOF
+)
+
 	PGPASSFILE="${MYPGPASS}" pg_dump \
 		-U "${ENGINE_DB_USER}" \
 		-h "${ENGINE_DB_HOST}" \
 		-p "${ENGINE_DB_PORT}" \
 		"${ENGINE_DB_DATABASE}" | \
-		grep -vi '^create extension' | \
+		grep -Evi "${IGNORED_PATTERN}" | \
 		grep -iq '^create' && \
 		logdie "Database is not empty"
 }
@@ -349,6 +355,7 @@ verifyVersion() {
 
 restoreDB() {
 	local backupfile="$1"
+	local psqllog="${TEMP_FOLDER}/psql-restore-log"
 	PGPASSFILE="${MYPGPASS}" psql \
 		-w \
 		-U "${ENGINE_DB_USER}" \
@@ -356,8 +363,19 @@ restoreDB() {
 		-p "${ENGINE_DB_PORT}" \
 		-d "${ENGINE_DB_DATABASE}" \
 		-f "${backupfile}" \
-		>> "${LOG}"  2>&1 \
+		>> "${psqllog}"  2>&1 \
 		|| logdie "Database restore failed"
+
+	cat "${psqllog}" >> "${LOG}"  2>&1 \
+		|| logdie "Failed to append psql log to restore log"
+
+	local IGNORED_ERRORS=$(cat << __EOF | tr '\012' '|' | sed 's/|$//'
+language "plpgsql" already exists
+must be owner of language plpgsql
+__EOF
+)
+	local numerrors=$(grep 'ERROR: ' "${psqllog}" | grep -Ev "${IGNORED_ERRORS}" | wc -l)
+	[ ${numerrors} -ne 0 ] && logdie "Errors while restoring database ${ENGINE_DB_DATABASE}"
 }
 
 restoreFiles() {
