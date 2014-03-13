@@ -410,7 +410,8 @@ public abstract class OvfReader implements IOvfBuilder {
             if (node != null) {
                 readOsSection(node);
                 if (!osRepository.isLinux(vmBase.getOsId())
-                        || !FeatureSupported.singleQxlPci(new Version(getVersion()))) {
+                        || !FeatureSupported.singleQxlPci(new Version(getVersion()))
+                        || vmBase.getDefaultDisplayType() != DisplayType.qxl) {
                     vmBase.setSingleQxlPci(false);
                 }
             }
