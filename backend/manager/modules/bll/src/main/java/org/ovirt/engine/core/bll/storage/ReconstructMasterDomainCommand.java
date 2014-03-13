@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -149,7 +150,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         boolean reconstructOpSucceeded = reconstructMaster();
         setActionReturnValue(reconstructOpSucceeded);
         connectAndRefreshAllUpHosts(reconstructOpSucceeded);
-        if (!_isLastMaster && reconstructOpSucceeded) {
+        if (!_isLastMaster && reconstructOpSucceeded && !FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getcompatibility_version())) {
             // all vms/templates metadata should be copied to the new master domain, so we need
             // to perform increment of the db version for all the vms in the storage pool.
             // currently this method is used for both templates and vms.

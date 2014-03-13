@@ -287,4 +287,13 @@ public class FeatureSupported {
     public static boolean serialNumberPolicy(Version version) {
         return supportedInConfig(ConfigValues.SerialNumberPolicySupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if hot plug disk snapshot is supported for the given version.
+     */
+    public static boolean ovfStoreOnAnyDomain(Version version) {
+        return supportedInConfig(ConfigValues.OvfStoreOnAnyDomain, version);
+    }
 }

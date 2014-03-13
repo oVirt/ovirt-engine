@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +13,16 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
+import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -21,6 +31,10 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.constants.StorageConstants;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -29,7 +43,10 @@ import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
@@ -37,6 +54,9 @@ import org.ovirt.engine.core.dao.VmTemplateDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockManager;
+import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -48,11 +68,12 @@ public class OvfDataUpdater {
     private static final Log log = LogFactory.getLog(OvfDataUpdater.class);
     private static final OvfDataUpdater INSTANCE = new OvfDataUpdater();
     private int itemsCountPerUpdate;
-    protected static final int MAX_ITEMS_PER_SQL_STATEMENT = 100;
 
     private List<Guid> proccessedIdsInfo;
     private List<Long> proccessedOvfGenerationsInfo;
     private List<String> proccessedOvfConfigurationsInfo;
+    private HashSet<Guid> proccessedDomains;
+    private List<Guid> removedOvfIdsInfo;
 
     private OvfManager ovfManager;
 
@@ -80,49 +101,141 @@ public class OvfDataUpdater {
         return Config.<Integer> getValue(ConfigValues.OvfItemsCountPerUpdate);
     }
 
+    private LockManager getLockManager() {
+        return LockManagerFactory.getLockManager();
+    }
+
+    protected boolean acquireLock(EngineLock engineLock) {
+        return LockManagerFactory.getLockManager().acquireLock(engineLock).getFirst();
+    }
+
+    protected void releaseLock(EngineLock engineLock) {
+        LockManagerFactory.getLockManager().releaseLock(engineLock);
+    }
+
+    private void logInfoIfNeeded(StoragePool pool, String message, Object... args) {
+        // if supported, the info would be logged when executing for each domain
+        if (!ovfOnAnyDomainSupported(pool)) {
+            log.infoFormat(message, args);
+        }
+    }
+
+    protected void proceedPoolOvfUpdate(StoragePool pool) {
+        proccessedDomains = new HashSet<>();
+        if (ovfOnAnyDomainSupported(pool)) {
+            proccessDomainsForOvfUpdate(pool);
+        }
+
+        logInfoIfNeeded(pool, "Attempting to update VM OVFs in Data Center {0}",
+                pool.getName());
+        initProcessedInfoLists();
+
+        updateOvfForVmsOfStoragePool(pool);
+
+        logInfoIfNeeded(pool, "Successfully updated VM OVFs in Data Center {0}",
+                pool.getName());
+        logInfoIfNeeded(pool, "Attempting to update template OVFs in Data Center {0}",
+                pool.getName());
+
+        updateOvfForTemplatesOfStoragePool(pool);
+
+        logInfoIfNeeded(pool, "Successfully updated templates OVFs in Data Center {0}",
+                pool.getName());
+        logInfoIfNeeded(pool, "Attempting to remove unneeded template/vm OVFs in Data Center {0}",
+                pool.getName());
+
+        removeOvfForTemplatesAndVmsOfStoragePool(pool);
+
+        logInfoIfNeeded(pool, "Successfully removed unneeded template/vm OVFs in Data Center {0}",
+                pool.getName());
+    }
+
+    protected void performOvfUpdateForDomain(Guid storagePoolId, Guid domainId) {
+        Backend.getInstance().runInternalAction(VdcActionType.ProcessOvfUpdateForStorageDomain, new StorageDomainParametersBase(storagePoolId, domainId));
+    }
+
+    private EngineLock buildPoolEngineLock(StoragePool pool) {
+        Map<String, Pair<String, String>> exclusiveLocks =
+                Collections.singletonMap(pool.getId().toString(),
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.OVF_UPDATE,
+                                VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        return new EngineLock(exclusiveLocks, null);
+    }
+
     @OnTimerMethodAnnotation("ovfUpdate_timer")
     public void ovfUpdate_timer() {
         itemsCountPerUpdate = reloadConfigValue();
         log.info("Attempting to update VMs/Templates Ovf.");
         List<StoragePool> storagePools = getStoragePoolDao().getAllByStatus(StoragePoolStatus.Up);
         for (StoragePool pool : storagePools) {
+            EngineLock poolLock = buildPoolEngineLock(pool);
+            if (!acquireLock(poolLock)) {
+                    log.errorFormat("Failed to update OVFs in Data Center {0} as there is a related operation in progress.", pool.getName());
+                continue;
+            }
+
+            boolean lockReleased = false;
+
             try {
-                log.infoFormat("Attempting to update VM OVFs in Data Center {0}",
-                        pool.getName());
-                initProcessedInfoLists();
+                proceedPoolOvfUpdate(pool);
+                if (ovfOnAnyDomainSupported(pool)) {
+                    logInfoIfNeeded(pool, "Attempting to update ovfs in domain in Data Center {0}",
+                            pool.getName());
 
-                updateOvfForVmsOfStoragePool(pool.getId());
+                    releaseLock(poolLock);
+                    lockReleased = true;
 
-                log.infoFormat("Successfully updated VM OVFs in Data Center {0}",
-                        pool.getName());
-                log.infoFormat("Attempting to update template OVFs in Data Center {0}",
-                        pool.getName());
-
-                updateOvfForTemplatesOfStoragePool(pool.getId());
-
-                log.infoFormat("Successfully updated templates OVFs in Data Center {0}",
-                        pool.getName());
-                log.infoFormat("Attempting to remove unneeded template/vm OVFs in Data Center {0}",
-                        pool.getName());
-
-                removeOvfForTemplatesAndVmsOfStoragePool(pool.getId());
-
-                log.infoFormat("Successfully removed unneeded template/vm OVFs in Data Center {0}",
-                        pool.getName());
+                    for (Guid id : proccessedDomains) {
+                        performOvfUpdateForDomain(pool.getId(), id);
+                    }
+                }
             } catch (Exception ex) {
                 addAuditLogError(pool.getName());
                 log.errorFormat("Exception while trying to update or remove VMs/Templates ovf in Data Center {0}.", pool.getName(), ex);
+            } finally {
+                if (!lockReleased) {
+                    releaseLock(poolLock);
+                }
             }
         }
         proccessedIdsInfo = null;
+        removedOvfIdsInfo = null;
         proccessedOvfGenerationsInfo = null;
+        proccessedOvfConfigurationsInfo = null;
+        proccessedDomains = null;
+    }
+
+
+    protected void proccessDomainsForOvfUpdate(StoragePool pool) {
+        List<StorageDomain> domainsInPool = getStorageDomainDao().getAllForStoragePool(pool.getId());
+        for (StorageDomain domain : domainsInPool) {
+            if (!domain.getStorageDomainType().isDataDomain() || domain.getStatus() != StorageDomainStatus.Active) {
+               continue;
+            }
+
+            Integer ovfStoresCountForDomain = Config.<Integer> getValue(ConfigValues.StorageDomainOvfStoreCount);
+            List<StorageDomainOvfInfo> storageDomainOvfInfos = getStorageDomainOvfInfoDao().getAllForDomain(domain.getId());
+
+            if (storageDomainOvfInfos.size() < ovfStoresCountForDomain) {
+                proccessedDomains.add(domain.getId());
+                continue;
+            }
+
+            for (StorageDomainOvfInfo storageDomainOvfInfo : storageDomainOvfInfos) {
+                if (storageDomainOvfInfo.getStatus() == StorageDomainOvfInfoStatus.OUTDATED) {
+                    proccessedDomains.add(storageDomainOvfInfo.getStorageDomainId());
+                    break;
+                }
+            }
+        }
     }
 
     /**
      * Update ovfs for updated/newly vms since last run for the given storage pool
      *
      */
-    protected void updateOvfForVmsOfStoragePool(Guid poolId) {
+    protected void updateOvfForVmsOfStoragePool(StoragePool pool) {
+        Guid poolId = pool.getId();
         List<Guid> vmsIdsForUpdate = getVmAndTemplatesGenerationsDao().getVmsIdsForOvfUpdate(poolId);
         int i = 0;
         while (i < vmsIdsForUpdate.size()) {
@@ -133,7 +246,7 @@ public class OvfDataUpdater {
             Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata =
                     populateVmsMetadataForOvfUpdate(idsToProcess);
             if (!vmsAndTemplateMetadata.isEmpty()) {
-                performOvfUpdate(poolId, vmsAndTemplateMetadata);
+                performOvfUpdate(pool, vmsAndTemplateMetadata);
             }
         }
     }
@@ -143,28 +256,41 @@ public class OvfDataUpdater {
      * run.
      *
      */
-    protected void removeOvfForTemplatesAndVmsOfStoragePool(Guid poolId) {
-        List<Guid> idsForRemoval = getVmAndTemplatesGenerationsDao().getIdsForOvfDeletion(poolId);
+    protected void removeOvfForTemplatesAndVmsOfStoragePool(StoragePool pool) {
+        Guid poolId = pool.getId();
+        removedOvfIdsInfo = getVmAndTemplatesGenerationsDao().getIdsForOvfDeletion(poolId);
 
-        if (!idsForRemoval.isEmpty()) {
-            for (Guid id : idsForRemoval) {
+        if (!ovfOnAnyDomainSupported(pool)) {
+            for (Guid id : removedOvfIdsInfo) {
                 executeRemoveVmInSpm(poolId, id, Guid.Empty);
             }
-
-            getVmAndTemplatesGenerationsDao().deleteOvfGenerations(idsForRemoval);
         }
+
+        markDomainsWithOvfsForOvfUpdate(removedOvfIdsInfo);
+        getVmAndTemplatesGenerationsDao().deleteOvfGenerations(removedOvfIdsInfo);
+    }
+
+    protected void markDomainsWithOvfsForOvfUpdate(Collection<Guid> ovfIds) {
+        List<Guid> relevantDomains = getStorageDomainOvfInfoDao().loadStorageDomainIdsForOvfIds(ovfIds);
+        proccessedDomains.addAll(relevantDomains);
+        getStorageDomainOvfInfoDao().updateOvfUpdatedInfo(proccessedDomains, StorageDomainOvfInfoStatus.OUTDATED, StorageDomainOvfInfoStatus.DISABLED);
     }
 
     /**
      * Perform vdsm call which performs ovf update for the given metadata map
      *
      */
-    protected void performOvfUpdate(Guid poolId,
+    protected void performOvfUpdate(StoragePool pool,
             Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata) {
-        executeUpdateVmInSpmCommand(poolId, vmsAndTemplateMetadata, Guid.Empty);
+        if (!ovfOnAnyDomainSupported(pool)) {
+            executeUpdateVmInSpmCommand(pool.getId(), vmsAndTemplateMetadata, Guid.Empty);
+        } else {
+            markDomainsWithOvfsForOvfUpdate(vmsAndTemplateMetadata.keySet());
+        }
+
         int i = 0;
         while (i < proccessedIdsInfo.size()) {
-            int sizeToUpdate = Math.min(MAX_ITEMS_PER_SQL_STATEMENT, proccessedIdsInfo.size() - i);
+            int sizeToUpdate = Math.min(StorageConstants.OVF_MAX_ITEMS_PER_SQL_STATEMENT, proccessedIdsInfo.size() - i);
             List<Guid> guidsForUpdate = proccessedIdsInfo.subList(i, i + sizeToUpdate);
             List<Long> ovfGenerationsForUpdate = proccessedOvfGenerationsInfo.subList(i, i + sizeToUpdate);
             List<String> ovfConfigurationsInfo = proccessedOvfConfigurationsInfo.subList(i, i + sizeToUpdate);
@@ -194,6 +320,7 @@ public class OvfDataUpdater {
                         proccessedOvfConfigurationsInfo.add(buildMetadataDictionaryForTemplate(template, vmsAndTemplateMetadata));
                         proccessedIdsInfo.add(template.getId());
                         proccessedOvfGenerationsInfo.add(template.getDbGeneration());
+                        proccessDisksDomains(template.getDiskList());
                     }
                 }
             }
@@ -213,7 +340,8 @@ public class OvfDataUpdater {
     /**
      * Update ovfs for updated/added templates since last for the given storage pool
      */
-    protected void updateOvfForTemplatesOfStoragePool(Guid poolId) {
+    protected void updateOvfForTemplatesOfStoragePool(StoragePool pool) {
+        Guid poolId = pool.getId();
         List<Guid> templateIdsForUpdate =
                 getVmAndTemplatesGenerationsDao().getVmTemplatesIdsForOvfUpdate(poolId);
         int i = 0;
@@ -225,7 +353,7 @@ public class OvfDataUpdater {
             Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata =
                     populateTemplatesMetadataForOvfUpdate(idsToProcess);
             if (!vmsAndTemplateMetadata.isEmpty()) {
-                performOvfUpdate(poolId, vmsAndTemplateMetadata);
+                performOvfUpdate(pool, vmsAndTemplateMetadata);
             }
         }
     }
@@ -248,11 +376,18 @@ public class OvfDataUpdater {
                         proccessedOvfConfigurationsInfo.add(buildMetadataDictionaryForVm(vm, vmsAndTemplateMetadata));
                         proccessedIdsInfo.add(vm.getId());
                         proccessedOvfGenerationsInfo.add(vm.getStaticData().getDbGeneration());
+                        proccessDisksDomains(vm.getDiskList());
                     }
                 }
             }
         }
         return vmsAndTemplateMetadata;
+    }
+
+    protected void proccessDisksDomains(List<DiskImage> disks) {
+        for (DiskImage disk : disks) {
+            proccessedDomains.addAll(disk.getStorageIds());
+        }
     }
 
     /**
@@ -356,12 +491,24 @@ public class OvfDataUpdater {
         return DbFacade.getInstance().getVmTemplateDao();
     }
 
+    protected StoragePoolIsoMapDAO getSoragePoolIsoMapDao() {
+        return DbFacade.getInstance().getStoragePoolIsoMapDao();
+    }
+
+    protected StorageDomainDAO getStorageDomainDao() {
+        return DbFacade.getInstance().getStorageDomainDao();
+    }
+
     protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
     }
 
     protected VmAndTemplatesGenerationsDAO getVmAndTemplatesGenerationsDao() {
         return DbFacade.getInstance().getVmAndTemplatesGenerationsDao();
+    }
+
+    protected StorageDomainOvfInfoDao getStorageDomainOvfInfoDao() {
+        return DbFacade.getInstance().getStorageDomainOvfInfoDao();
     }
 
     protected VmStaticDAO getVmStaticDao() {
@@ -375,6 +522,7 @@ public class OvfDataUpdater {
         proccessedIdsInfo = new LinkedList<Guid>();
         proccessedOvfGenerationsInfo = new LinkedList<Long>();
         proccessedOvfConfigurationsInfo = new LinkedList<>();
+        removedOvfIdsInfo = null;
     }
 
     /**
@@ -401,5 +549,9 @@ public class OvfDataUpdater {
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("StoragePoolName", storagePoolName);
         AuditLogDirector.log(logable, AuditLogType.UPDATE_OVF_FOR_STORAGE_POOL_FAILED);
+    }
+
+    protected boolean ovfOnAnyDomainSupported(StoragePool pool) {
+        return FeatureSupported.ovfStoreOnAnyDomain(pool.getcompatibility_version());
     }
 }

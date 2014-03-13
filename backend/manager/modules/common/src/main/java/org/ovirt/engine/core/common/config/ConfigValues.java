@@ -1559,6 +1559,10 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
+    OvfStoreOnAnyDomain,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
     UseFqdnForRdpIfAvailable,
 
     @TypeConverterAttribute(Boolean.class)
