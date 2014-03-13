@@ -1,0 +1,114 @@
+.TH engine-backup 8 "March 13, 2014" "" ""
+.SH NAME
+engine-backup - backup and restore ovirt-engine environment
+.SH SYNOPSIS
+.B engine-backup [\-\-mode=\fIMODE\fR] [\-\-scope=\fISCOPE\fR] [\-\-file=\fIFILE\fR] [\-\-log=\fILOG_FILE\fR]
+.PP
+.SH MODES
+\fBbackup\fR    backup system into \fIFILE\fR
+.br
+\fBrestore\fR   restore system from \fIFILE\fR
+.SH SCOPES
+\fBall\fR       complete backup/restore (default)
+.br
+\fBdb\fR        database only
+.SH OPTIONS
+.PP
+\fB\-\-file\fR=\fIFILE\fR
+.RS 4
+file to use during backup or restore
+.RE
+.PP
+\fB\-\-log\fR=\fILOG_FILE\fR
+.RS 4
+log file to use
+.RE
+.PP
+\fB\-\-change\-db\-credentials\fR
+.RS 4
+activate the following options, to restore the database to a different location etc. If used, existing credentials are ignored.
+.RE
+.PP
+\fB\-\-db\-host\fR=\fIHOST\fR
+.RS 4
+set database host
+.RE
+.PP
+\fB\-\-db\-port\fR=\fIPORT\fR
+.RS 4
+set database port
+.RE
+.PP
+\fB\-\-db\-user\fR=\fIUSER\fR
+.RS 4
+set database user
+.RE
+.PP
+\fB\-\-db\-passfile\fR=\fIPASS_FILE\fR
+.RS 4
+read database password from file
+.RE
+.PP
+\fB\-\-db\-password\fR=\fIPASSWORD\fR
+.RS 4
+set database password. If \fIPASSWORD\fR is empty, the password is read interactively.
+.RE
+.PP
+\fB\-\-db\-name\fR=\fINAME\fR
+.RS 4
+set database name
+.RE
+.PP
+\fB\-\-db\-secured\fR
+.RS 4
+set a secured connection
+.RE
+.PP
+\fB\-\-db\-secured\-validation\fR
+.RS 4
+validate host
+.RE
+.SH ENVIRONMENT VARIABLES
+.PP
+\fBOVIRT_ENGINE_DATABASE_PASSWORD\fR
+.RS 4
+Database password as if provided by \fB\-\-db\-password\fR=\fIPASSWORD\fR option.
+.RE
+.SH NOTES
+See http://www.ovirt.org/Ovirt-engine-backup for more info.
+.PP
+\fBTo create a new user/database:\fR
+.PP
+.RS 4
+create role <user> with login encrypted password '<password>';
+.PP
+create database <database> owner <user> template template0 encoding 'UTF8' lc_collate 'en_US.UTF-8' lc_ctype 'en_US.UTF-8';
+.RE
+.PP
+Open access in the firewall/iptables/etc. to the postgresql port, 5432/tcp by default.
+.PP
+Locate pg_hba.conf within your distribution, common locations are:
+.PP
+.RS 4
+/var/lib/pgsql/data/pg_hba.conf
+.br
+/etc/postgresql-*/pg_hba.conf
+.br
+/etc/postgresql/*/main/pg_hba.conf
+.RE
+.PP
+and open access there by adding the following lines:
+.PP
+.RS 4
+host    <database>      <user>          0.0.0.0/0               md5
+host    <database>      <user>          ::0/0                   md5
+.RE
+.PP
+Replace <user>, <password>, <database> with appropriate values.
+
+.SH BUGS
+Report bugs to <http://bugzilla.redhat.com>
+
+.SH COPYRIGHT
+Copyright 2010-2013 Red Hat, Inc.
+
