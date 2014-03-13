@@ -37,7 +37,7 @@ public class KerberosLdapDirectory extends Directory {
 
     @Override
     public void init() {
-        broker = LdapFactory.getInstance(getProfileName());
+        broker = LdapFactory.getInstance(getName());
         context.put(ExtensionProperties.AUTHOR, "The oVirt Project");
         context.put(ExtensionProperties.EXTENSION_NAME, "Internal Kerberos/LDAP authorization (Built-in)");
         context.put(ExtensionProperties.LICENSE, "ASL 2.0");
@@ -50,7 +50,7 @@ public class KerberosLdapDirectory extends Directory {
         // Find the user with the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.GetAdUserByUserId,
-                new LdapSearchByIdParameters(getProfileName(), id)
+                new LdapSearchByIdParameters(getName(), id)
         );
         LdapUser ldapUser = (LdapUser) ldapResult.getReturnValue();
 
@@ -63,7 +63,7 @@ public class KerberosLdapDirectory extends Directory {
         // Find the user with the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.GetAdUserByUserName,
-                new LdapSearchByUserNameParameters(null, getProfileName(), name)
+                new LdapSearchByUserNameParameters(null, getName(), name)
         );
         LdapUser ldapUser = (LdapUser) ldapResult.getReturnValue();
         if (ldapUser == null) {
@@ -79,7 +79,7 @@ public class KerberosLdapDirectory extends Directory {
         // Find the users using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.GetAdUserByUserIdList,
-                new LdapSearchByUserIdListParameters(getProfileName(), ids, false)
+                new LdapSearchByUserIdListParameters(getName(), ids, false)
         );
         @SuppressWarnings("unchecked")
         List<LdapUser> ldapUsers = (List<LdapUser>) ldapResult.getReturnValue();
@@ -92,12 +92,12 @@ public class KerberosLdapDirectory extends Directory {
     public List<DirectoryUser> queryUsers(String query) {
         LdapQueryData queryData = new LdapQueryDataImpl();
         queryData.setLdapQueryType(LdapQueryType.searchUsers);
-        queryData.setDomain(getProfileName());
+        queryData.setDomain(getName());
         queryData.setFilterParameters(new Object[] { query });
         // Find the users using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.SearchUserByQuery,
-                new LdapSearchByQueryParameters(null, getProfileName(), queryData)
+                new LdapSearchByQueryParameters(null, getName(), queryData)
         );
         List<LdapUser> ldapUsers = (List<LdapUser>) ldapResult.getReturnValue();
         return mapUsers(ldapUsers);
@@ -115,7 +115,7 @@ public class KerberosLdapDirectory extends Directory {
         }
 
         // Create the directory user and populate the basic attributes:
-        DirectoryUser directoryUser = new DirectoryUser(this.getProfileName(), ldapUser.getUserId(), name);
+        DirectoryUser directoryUser = new DirectoryUser(this.getName(), ldapUser.getUserId(), name);
         directoryUser.setFirstName(ldapUser.getName());
         directoryUser.setLastName(ldapUser.getSurName());
         directoryUser.setDepartment(ldapUser.getDepartment());
@@ -125,12 +125,12 @@ public class KerberosLdapDirectory extends Directory {
         // Populate the groups of the user (note that as we a calling a method of this directory to do so we should
         // first locate it using the manager, calling the method directory would bypass any decorator that may put on
         // top of the directory):
-        Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(getProfileName());
+        Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(getName());
         if (directory == null) {
             log.warnFormat(
                 "Can't find domain \"{0}\" to retrieve groups for user \"{1}\", the groups and related permissions " +
                 "won't be available.",
-                    getProfileName(),
+                    getName(),
                     ldapUser.getUserId()
             );
         }
@@ -174,7 +174,7 @@ public class KerberosLdapDirectory extends Directory {
         // Find the group using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.GetAdGroupByGroupId,
-                new LdapSearchByIdParameters(getProfileName(), id)
+                new LdapSearchByIdParameters(getName(), id)
         );
         LdapGroup ldapGroup = (LdapGroup) ldapResult.getReturnValue();
 
@@ -186,12 +186,12 @@ public class KerberosLdapDirectory extends Directory {
     public List<DirectoryGroup> queryGroups(String query) {
         LdapQueryData queryData = new LdapQueryDataImpl();
         queryData.setLdapQueryType(LdapQueryType.searchGroups);
-        queryData.setDomain(getProfileName());
+        queryData.setDomain(getName());
         queryData.setFilterParameters(new Object[] { query });
         // Find the users using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
                 AdActionType.SearchGroupsByQuery,
-                new LdapSearchByQueryParameters(null, getProfileName(), queryData)
+                new LdapSearchByQueryParameters(null, getName(), queryData)
                 );
         List<LdapGroup> ldapGroups = (List<LdapGroup>) ldapResult.getReturnValue();
         return mapGroups(ldapGroups);
@@ -202,7 +202,7 @@ public class KerberosLdapDirectory extends Directory {
         // Find the groups using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.SearchGroupsByQuery,
-                new LdapSearchByQueryParameters(null, getProfileName(), data)
+                new LdapSearchByQueryParameters(null, getName(), data)
         );
         List<LdapGroup> ldapGroups = (List<LdapGroup>) ldapResult.getReturnValue();
 
@@ -214,7 +214,7 @@ public class KerberosLdapDirectory extends Directory {
      * Transforms a LDAP group into a directory group.
      */
     private DirectoryGroup mapGroup(LdapGroup ldapGroup) {
-        return new DirectoryGroup(this.getProfileName(), ldapGroup.getid(), ldapGroup.getname());
+        return new DirectoryGroup(this.getName(), ldapGroup.getid(), ldapGroup.getname());
     }
 
     /**

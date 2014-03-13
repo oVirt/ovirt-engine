@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
-import org.ovirt.engine.core.extensions.mgr.ExtensionManager;
-import org.ovirt.engine.core.extensions.mgr.ExtensionManager.ExtensionEntry;
+import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
+import org.ovirt.engine.core.extensions.mgr.ExtensionsManager.ExtensionEntry;
 
 public class AuthenticationProfileRepository {
 
-    private static final String AUTHN_SERVICE = "org.ovirt.engine.core.authentication";
+    private static final String AUTHN_SERVICE = "org.ovirt.engine.authentication";
     private static final String AUTHN_AUTHZ_PLUGIN = "ovirt.engine.aaa.authn.authz.plugin";
 
 
@@ -74,11 +74,11 @@ public class AuthenticationProfileRepository {
         // Get the extensions that correspond to authn (authentication) service.
         // For each extension - get the relevant authn extension.
 
-        for (ExtensionEntry authnExtension : ExtensionManager.getInstance().getProvidedExtensions(AUTHN_SERVICE)) {
+        for (ExtensionEntry authnExtension : ExtensionsManager.getInstance().getProvidedExtensions(AUTHN_SERVICE)) {
             registerProfile(
                     new AuthenticationProfile(
                     (Authenticator) authnExtension.getExtension(),
-                    (Directory) ExtensionManager.getInstance().getExtensionByName(
+                    (Directory) ExtensionsManager.getInstance().getExtensionByName(
                             authnExtension.getConfig().getProperty(AUTHN_AUTHZ_PLUGIN)
                             ).getExtension()
                     )

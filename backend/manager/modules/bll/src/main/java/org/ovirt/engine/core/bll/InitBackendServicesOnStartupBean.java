@@ -1,9 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
@@ -11,17 +9,7 @@ import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
-import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
-import org.ovirt.engine.core.aaa.Authenticator;
-import org.ovirt.engine.core.aaa.Directory;
-import org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthenticator;
-import org.ovirt.engine.extensions.aaa.builtin.internal.InternalDirectory;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapAuthenticator;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapDirectory;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosManager;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.LdapBrokerUtils;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.UsersDomainsCacheManagerService;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -35,7 +23,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.extensions.Extension.ExtensionProperties;
+import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.exceptions.InitializationException;
@@ -65,57 +53,11 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
         // Create authentication profiles for all the domains that exist in the database:
         // TODO: remove this later, and rely only on the custom and built in extensions directories configuration
-        InternalAuthenticator internalAuthenticator = new InternalAuthenticator();
-        Map<ExtensionProperties, Object> internalAuthContext = new EnumMap<>(ExtensionProperties.class);
-        Properties internalAuthProps = new Properties();
-        String internalProfileName = Config.<String> getValue(ConfigValues.AdminDomain).trim();
-        internalAuthProps.put("ovirt.engine.aaa.authn.profile.name", internalProfileName);
-        internalAuthContext.put(ExtensionProperties.CONFIGURATION, internalAuthProps);
-        internalAuthContext.put(ExtensionProperties.NAME, internalProfileName);
-        internalAuthenticator.setContext(internalAuthContext);
-        internalAuthenticator.init();
 
-        InternalDirectory internalDirectory = new InternalDirectory();
-        Map<ExtensionProperties, Object> internalDirContext = new EnumMap<>(ExtensionProperties.class);
-        Properties internalDirProps = new Properties();
-        internalDirProps.put("ovirt.engine.aaa.authz.profile.name", internalProfileName);
-        internalDirContext.put(ExtensionProperties.CONFIGURATION, internalDirProps);
-        internalDirContext.put(ExtensionProperties.NAME, internalProfileName);
-        internalDirectory.setContext(internalDirContext);
-        internalDirectory.init();
-
-        AuthenticationProfileRepository.getInstance().registerProfile(
-                new AuthenticationProfile(internalAuthenticator,
-                        internalDirectory)
-                );
-        for (String domain : LdapBrokerUtils.getDomainsList(true)) {
-            Map<ExtensionProperties, Object> dirContext = new EnumMap<>(ExtensionProperties.class);
-            Properties dirProps = new Properties();
-            dirProps.put("ovirt.engine.aaa.authz.profile.name", domain);
-            dirContext.put(ExtensionProperties.CONFIGURATION, dirProps);
-            dirContext.put(ExtensionProperties.NAME, domain);
-            Directory directory = new KerberosLdapDirectory();
-            directory.setContext(dirContext);
-            directory.init();
-
-            Map<ExtensionProperties, Object> authContext = new EnumMap<>(ExtensionProperties.class);
-            Properties authProps = new Properties();
-            authProps.put("ovirt.engine.aaa.authn.profile.name", domain);
-            authContext.put(ExtensionProperties.CONFIGURATION, authProps);
-            authContext.put(ExtensionProperties.NAME, domain);
-            Authenticator authenticator = new KerberosLdapAuthenticator();
-            authenticator.setContext(authContext);
-            authenticator.init();
-
-            AuthenticationProfile profile = new AuthenticationProfile(authenticator, directory);
-
-            AuthenticationProfileRepository.getInstance().registerProfile(profile);
-        }
-
+        createInternalAAAConfigurations();
+        createKerberosLdapAAAConfigurations();
+        ExtensionsManager.getInstance().dump();
         AuthenticationProfileRepository.getInstance();
-
-        KerberosManager.getInstance();
-        UsersDomainsCacheManagerService.getInstance().init();
         DbUserCacheManager.getInstance().init();
         AsyncTaskManager.getInstance().initAsyncTaskManager();
         ResourceManager.getInstance().init();
@@ -162,6 +104,57 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         SchedulingManager.getInstance().init();
 
         new DwhHeartBeat().init();
+    }
+
+    private void createInternalAAAConfigurations() {
+        Properties authConfig = new Properties();
+        authConfig.put(ExtensionsManager.CLASS,
+                "org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthenticator");
+        authConfig.put(ExtensionsManager.PROVIDES, "org.ovirt.engine.authentication");
+        authConfig.put(ExtensionsManager.ENABLED, "true");
+        authConfig.put(ExtensionsManager.MODULE, "org.ovirt.engine.extensions.builtin");
+        authConfig.put(ExtensionsManager.NAME, "builtin-authn-internal");
+        authConfig.put("ovirt.engine.aaa.authn.profile.name", "internal");
+        authConfig.put("ovirt.engine.aaa.authn.authz.plugin", "internal");
+        authConfig.put("config.authn.user.name", Config.<String> getValue(ConfigValues.AdminUser));
+        authConfig.put("config.authn.user.password", Config.<String> getValue(ConfigValues.AdminPassword));
+        authConfig.put(ExtensionsManager.SENSITIVE_KEYS, "config.authn.user.password)");
+        ExtensionsManager.getInstance().load(authConfig);
+
+        Properties dirConfig = new Properties();
+        dirConfig.put(ExtensionsManager.CLASS, "org.ovirt.engine.extensions.aaa.builtin.internal.InternalDirectory");
+        dirConfig.put(ExtensionsManager.PROVIDES, "org.ovirt.engine.authorization");
+        dirConfig.put(ExtensionsManager.ENABLED, "true");
+        dirConfig.put(ExtensionsManager.MODULE, "org.ovirt.engine.extensions.builtin");
+        dirConfig.put(ExtensionsManager.NAME, "internal");
+        dirConfig.put("config.authz.user.name", Config.<String> getValue(ConfigValues.AdminUser));
+        ExtensionsManager.getInstance().load(dirConfig);
+    }
+
+    private void createKerberosLdapAAAConfigurations() {
+
+        List<Properties> results = new ArrayList<>();
+        for (String domain : Config.<String> getValue(ConfigValues.DomainName).split("[,]", -1)) {
+            Properties authConfig = new Properties();
+            authConfig.put(ExtensionsManager.CLASS,
+                    "org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapAuthenticator");
+            authConfig.put(ExtensionsManager.PROVIDES, "org.ovirt.engine.authentication");
+            authConfig.put(ExtensionsManager.ENABLED, "true");
+            authConfig.put(ExtensionsManager.MODULE, "org.ovirt.engine.extensions.builtin");
+            authConfig.put(ExtensionsManager.NAME, String.format("builtin-authn-%1$s", domain));
+            authConfig.put("ovirt.engine.aaa.authn.profile.name", domain);
+            authConfig.put("ovirt.engine.aaa.authn.authz.plugin", domain);
+            ExtensionsManager.getInstance().load(authConfig);
+
+            Properties dirConfig = new Properties();
+            dirConfig.put(ExtensionsManager.CLASS,
+                    "org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapDirectory");
+            dirConfig.put(ExtensionsManager.PROVIDES, "org.ovirt.engine.authorization");
+            dirConfig.put(ExtensionsManager.ENABLED, "true");
+            dirConfig.put(ExtensionsManager.MODULE, "org.ovirt.engine.extensions.builtin");
+            dirConfig.put(ExtensionsManager.NAME, domain);
+            ExtensionsManager.getInstance().load(dirConfig);
+        }
     }
 
 }

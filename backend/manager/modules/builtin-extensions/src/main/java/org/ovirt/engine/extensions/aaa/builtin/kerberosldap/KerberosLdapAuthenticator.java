@@ -69,6 +69,9 @@ public class KerberosLdapAuthenticator extends Authenticator {
                             : ExtensionProperties.AAA_CHANGE_EXPIRED_PASSWORD_MSG;
             context.put(key, changePasswordMsgOrUrl);
         }
+
+        KerberosManager.getInstance();
+        UsersDomainsCacheManagerService.getInstance().init();
     }
 
 

@@ -2,7 +2,6 @@ package org.ovirt.engine.core.aaa;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.api.extensions.Extension;
@@ -21,10 +20,6 @@ public abstract class Directory implements Extension {
 
     public String getName() {
         return (String) context.get(ExtensionProperties.NAME);
-    }
-
-    public String getProfileName() {
-        return ((Properties) context.get(ExtensionProperties.CONFIGURATION)).getProperty("ovirt.engine.aaa.authz.profile.name");
     }
 
     /**

@@ -3,14 +3,12 @@ package org.ovirt.engine.extensions.aaa.builtin.internal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ExternalId;
-import org.ovirt.engine.api.extensions.Extension.ExtensionProperties;
 
 /**
  * This directory contains only the internal user as specified in the {@code AdminUser} configuration parameter.
@@ -20,12 +18,6 @@ public class InternalDirectory extends Directory {
      *
      */
     private static final long serialVersionUID = 6614140186031169227L;
-
-
-    /**
-     * The name of the admin user and of the internal domain come from the configuration of the engine.
-     */
-    private static final String ADMIN_NAME = Config.getValue(ConfigValues.AdminUser);
 
     /**
      * The identifier of the admin user of the internal directory is inserted in the database when it is created, we
@@ -45,7 +37,7 @@ public class InternalDirectory extends Directory {
      */
     @Override
     public DirectoryUser findUser(String name) {
-        return ADMIN_NAME.equals(name)? admin: null;
+        return getAdminName().equals(name) ? admin : null;
     }
 
     /**
@@ -105,12 +97,17 @@ public class InternalDirectory extends Directory {
 
     @Override
     public void init() {
-        admin = new DirectoryUser(getProfileName(), ADMIN_ID, ADMIN_NAME);
+        admin = new DirectoryUser(getName(), ADMIN_ID, getAdminName());
+        admin.setAdmin(true);
         context.put(ExtensionProperties.AUTHOR, "The oVirt Project");
         context.put(ExtensionProperties.EXTENSION_NAME, "Internal Authorization (Built-in)");
         context.put(ExtensionProperties.LICENSE, "ASL 2.0");
         context.put(ExtensionProperties.HOME, "http://www.ovirt.org");
         context.put(ExtensionProperties.VERSION, "N/A");
 
+    }
+
+    private String getAdminName() {
+        return ((Properties) context.get(ExtensionProperties.CONFIGURATION)).getProperty("config.authz.user.name");
     }
 }

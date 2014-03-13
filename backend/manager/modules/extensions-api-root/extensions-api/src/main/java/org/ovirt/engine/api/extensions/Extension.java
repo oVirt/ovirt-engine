@@ -18,7 +18,7 @@ public interface Extension {
         EXTENSION_NAME,
         AAA_CHANGE_EXPIRED_PASSWORD_URL,
         AAA_CHANGE_EXPIRED_PASSWORD_MSG,
-        AAA_AUTHENTICATION_CAPABILITIES
+        AAA_AUTHENTICATION_CAPABILITIES,
     };
 
     public static final int AAA_AUTH_CAP_FLAGS_PASSWORD = (1 << 0);

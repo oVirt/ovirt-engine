@@ -1,10 +1,9 @@
 package org.ovirt.engine.extensions.aaa.builtin.internal;
 
-import org.apache.commons.lang.ObjectUtils;
+import java.util.Properties;
+
 import org.ovirt.engine.api.extensions.AAAExtensionException;
 import org.ovirt.engine.core.aaa.Authenticator;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 
 /**
  * This authenticator authenticates the internal user as specified in the {@code AdminUser} and {@code AdminPassword}
@@ -14,9 +13,9 @@ public class InternalAuthenticator extends Authenticator {
 
     @Override
     public void authenticate(String user, String password) {
-        String adminName = Config.<String> getValue(ConfigValues.AdminUser);
-        String adminPassword = Config.<String> getValue(ConfigValues.AdminPassword);
-        if (!ObjectUtils.equals(user, adminName) || !ObjectUtils.equals(password, adminPassword)) {
+        String adminUser = ((Properties)context.get(ExtensionProperties.CONFIGURATION)).getProperty("config.authn.user.name");
+        String adminPassword =  ((Properties)context.get(ExtensionProperties.CONFIGURATION)).getProperty("config.authn.user.password");
+        if (!(user.equals(adminUser) && password.equals(adminPassword))) {
             throw new AAAExtensionException(AAAExtensionException.AAAExtensionError.INCORRECT_CREDENTIALS, "");
         }
     }
