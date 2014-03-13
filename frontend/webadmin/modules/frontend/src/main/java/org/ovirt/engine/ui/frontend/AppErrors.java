@@ -1768,7 +1768,13 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} is being removed.")
     String ACTION_TYPE_FAILED_DISK_IS_BEING_REMOVED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} is being moved or copied.")
+    @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} OVF data is currently being updated.")
+    String ACTION_TYPE_FAILED_OVF_DISK_IS_BEING_UPDATED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Storage Domain OVF data is currently being updated.")
+    String ACTION_TYPE_FAILED_DOMAIN_OVF_ON_UPDATE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Disk is being moved or copied.")
     String ACTION_TYPE_FAILED_DISK_IS_BEING_MIGRATED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Source and target domains must both be either file domains or block domains.")

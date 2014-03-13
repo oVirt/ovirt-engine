@@ -2,7 +2,6 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,13 +10,11 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
+import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.yaml.snakeyaml.DumperOptions;
@@ -241,15 +238,8 @@ public class CloudInitHandler {
     }
 
 
-    private String mapToJson(Map<String, Object> input)
-            throws IOException, JsonGenerationException, JsonMappingException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonFactory factory = new JsonFactory();
-        StringWriter writer = new StringWriter();
-        JsonGenerator generator = factory.createJsonGenerator(writer);
-        generator.useDefaultPrettyPrinter();
-        mapper.writeValue(generator, input);
-        return writer.toString();
+    private String mapToJson(Map<String, Object> input) throws IOException {
+        return JsonHelper.mapToJson(input);
     }
 
     private String mapToYaml(Map<String, Object> input) {

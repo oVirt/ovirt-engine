@@ -18,6 +18,11 @@ public class StorageDomainParametersBase extends StoragePoolParametersBase {
         setStorageDomainId(storageDomainId);
     }
 
+    public StorageDomainParametersBase(Guid storagePoolId, Guid storageDomainId) {
+        super(storagePoolId);
+        setStorageDomainId(storageDomainId);
+    }
+
     public Guid getStorageDomainId() {
         return storageDomainId;
     }

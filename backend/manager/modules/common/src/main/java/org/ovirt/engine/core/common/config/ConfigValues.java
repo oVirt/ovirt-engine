@@ -1670,5 +1670,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("5")
     UploadFileMaxTimeInMinutes,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("2")
+    StorageDomainOvfStoreCount,
+
     Invalid;
 }
