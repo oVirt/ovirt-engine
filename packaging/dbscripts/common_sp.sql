@@ -554,3 +554,27 @@ begin
     RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
+
+-- Remove a value from a CSV string in vdc_options
+Create or replace FUNCTION fn_db_remove_csv_config_value(v_option_name varchar(100), v_value varchar(4000), v_version varchar(40))
+returns void
+AS $procedure$
+DECLARE
+v varchar[];
+e varchar;
+v_result varchar;
+v_sep varchar(1);
+BEGIN
+v_result := '';
+v_sep := '';
+    v := string_to_array(option_value, ',') from vdc_options where option_name = v_option_name and version = v_version;
+    FOREACH e in ARRAY v
+    LOOP
+        IF (e != v_value) THEN
+            v_result := v_result || v_sep || e;
+            v_sep := ',';
+        END IF;
+    END LOOP;
+    UPDATE vdc_options set option_value = v_result where option_name = v_option_name and version = v_version;
+END; $procedure$
+LANGUAGE plpgsql;
