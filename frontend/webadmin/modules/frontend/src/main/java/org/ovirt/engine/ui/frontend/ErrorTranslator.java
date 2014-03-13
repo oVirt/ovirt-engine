@@ -90,8 +90,9 @@ public class ErrorTranslator {
                 if (!isDynamicVariable(errorMsg)) {
                     errorMsg = errorMsg.replace('.', '_');
                 }
-                if (errors.getString(errorMsg) != null) {
-                    ret = errors.getString(errorMsg).replace("\n", "<br/>"); //$NON-NLS-1$ //$NON-NLS-2$
+                String errorsString = errors.getString(errorMsg);
+                if (errorsString != null) {
+                    ret = errorsString.replace("\n", "<br/>"); //$NON-NLS-1$ //$NON-NLS-2$
                 } else {
                     if ((isDynamicVariable(errorMsg)) || (!changeIfNotFound)) {
                         ret = errorMsg;
