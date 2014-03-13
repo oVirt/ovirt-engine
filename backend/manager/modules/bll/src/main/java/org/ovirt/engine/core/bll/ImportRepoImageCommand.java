@@ -38,6 +38,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         super(parameters);
 
         getParameters().setCommandType(getActionType());
+        getParameters().setParametersCurrentUser(getCurrentUser());
     }
 
     protected ProviderProxyFactory getProviderProxyFactory() {
