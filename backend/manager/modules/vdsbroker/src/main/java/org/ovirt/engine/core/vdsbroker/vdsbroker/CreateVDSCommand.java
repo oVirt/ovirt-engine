@@ -24,8 +24,8 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     @Override
     protected void executeVdsBrokerCommand() {
         buildVmData();
-        mVmReturn = getBroker().create(createInfo);
         logCommandInfo();
+        mVmReturn = getBroker().create(createInfo);
         proceedProxyReturnValue();
         VdsBrokerObjectsBuilder.updateVMDynamicData(vm.getDynamicData(),
                 mVmReturn.mVm);
