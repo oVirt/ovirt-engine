@@ -237,10 +237,13 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     private void initImportClonedTemplate() {
-        getParameters().getVmTemplate().setId(Guid.newGuid());
+        Guid newTemplateId = Guid.newGuid();
+        getParameters().getVmTemplate().setId(newTemplateId);
         for (VmNetworkInterface iface : getParameters().getVmTemplate().getInterfaces()) {
             iface.setId(Guid.newGuid());
         }
+        // cloned template is always base template, as its a new entity
+        getParameters().getVmTemplate().setBaseTemplateId(newTemplateId);
     }
 
     private void initImportClonedTemplateDisks() {
