@@ -1778,7 +1778,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private void changeCD()
     {
-        VM vm = (VM) getSelectedItem();
+        final VM vm = (VM) getSelectedItem();
         if (vm == null)
         {
             return;
@@ -1812,7 +1812,13 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 _attachCdModel.getIsoImage().setItems(images);
                 if (_attachCdModel.getIsoImage().getIsChangable())
                 {
-                    _attachCdModel.getIsoImage().setSelectedItem(Linq.firstOrDefault(images));
+                    String selectedIso = Linq.firstOrDefault(images, new Linq.IPredicate<String>() {
+                        @Override
+                        public boolean match(String s) {
+                            return vm.getCurrentCd().equals(s);
+                        }
+                    });
+                    _attachCdModel.getIsoImage().setSelectedItem(selectedIso == null ? ConsoleModel.getEjectLabel() : selectedIso);
                 }
             }
         };
@@ -1844,8 +1850,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
 
         String isoName =
-                (ObjectUtils.objectsEqual(model.getIsoImage().getSelectedItem().toString(), ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
-                        : model.getIsoImage().getSelectedItem().toString();
+                (ObjectUtils.objectsEqual(model.getIsoImage().getSelectedItem(), ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
+                        : model.getIsoImage().getSelectedItem();
 
         model.startProgress(null);
 

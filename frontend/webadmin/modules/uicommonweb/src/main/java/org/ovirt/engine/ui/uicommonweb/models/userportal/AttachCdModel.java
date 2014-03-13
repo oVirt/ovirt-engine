@@ -7,20 +7,19 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 public class AttachCdModel extends Model
 {
 
-    private ListModel privateIsoImage;
+    private ListModel<String> privateIsoImage;
 
-    public ListModel getIsoImage()
+    public ListModel<String> getIsoImage()
     {
         return privateIsoImage;
     }
 
-    private void setIsoImage(ListModel value)
+    private void setIsoImage(ListModel<String> value)
     {
         privateIsoImage = value;
     }
 
-    public AttachCdModel()
-    {
-        setIsoImage(new ListModel());
+    public AttachCdModel() {
+        setIsoImage(new ListModel<String>());
     }
 }

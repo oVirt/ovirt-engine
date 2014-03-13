@@ -871,7 +871,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             return;
         }
 
-        VM vm = (VM) selectedItem.getEntity();
+        final VM vm = (VM) selectedItem.getEntity();
 
         AttachCdModel model = new AttachCdModel();
         setWindow(model);
@@ -900,7 +900,13 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                 _attachCdModel.getIsoImage().setItems(images);
                 if (_attachCdModel.getIsoImage().getIsChangable())
                 {
-                    _attachCdModel.getIsoImage().setSelectedItem(Linq.firstOrDefault(images));
+                    String selectedIso = Linq.firstOrDefault(images, new Linq.IPredicate<String>() {
+                        @Override
+                        public boolean match(String s) {
+                            return vm.getCurrentCd().equals(s);
+                        }
+                    });
+                    _attachCdModel.getIsoImage().setSelectedItem(selectedIso == null ? ConsoleModel.getEjectLabel() : selectedIso);
                 }
             }
         };
@@ -930,8 +936,8 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         AttachCdModel model = (AttachCdModel) getWindow();
         model.startProgress(null);
         String isoName =
-                (model.getIsoImage().getSelectedItem().toString().equals(ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
-                        : model.getIsoImage().getSelectedItem().toString();
+                (model.getIsoImage().getSelectedItem().equals(ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
+                        : model.getIsoImage().getSelectedItem();
 
         Frontend.getInstance().runAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
                 new IFrontendActionAsyncCallback() {

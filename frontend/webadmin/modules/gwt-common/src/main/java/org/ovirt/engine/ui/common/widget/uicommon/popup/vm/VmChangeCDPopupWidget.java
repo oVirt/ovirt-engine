@@ -38,7 +38,7 @@ public class VmChangeCDPopupWidget extends AbstractModelBoundPopupWidget<AttachC
     @UiField
     @Path(value = "isoImage.selectedItem")
     @WithElementId("isoImage")
-    ListModelListBoxEditor<Object> isoImageEditor;
+    ListModelListBoxEditor<String> isoImageEditor;
 
     private final Driver driver = GWT.create(Driver.class);
 
