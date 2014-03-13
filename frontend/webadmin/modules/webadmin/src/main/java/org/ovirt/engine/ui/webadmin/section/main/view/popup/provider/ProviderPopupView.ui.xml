@@ -31,13 +31,13 @@
 
 		.testResultImage {
 			float: left;
-			vertical-align: middle;
 			margin-left: 3px;
 		}
 
 		.testResultMessage {
 			float: left;
-			vertical-align: middle;
+			display: inline-block;
+			width: 450px;
 			margin-left: 5px;
 			font-size: 8pt;
 		}

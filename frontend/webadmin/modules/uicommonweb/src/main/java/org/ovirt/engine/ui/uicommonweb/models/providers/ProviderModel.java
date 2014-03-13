@@ -13,6 +13,8 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -45,6 +47,9 @@ public class ProviderModel extends Model {
     private static final String CMD_IMPORT_CHAIN = "ImportChain"; //$NON-NLS-1$
     private static final String CMD_CANCEL_IMPORT = "CancelImport"; //$NON-NLS-1$
     private static final String EMPTY_ERROR_MESSAGE = ""; //$NON-NLS-1$
+
+    private final String keystoneUrl =
+            (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.KeystoneAuthUrl);
 
     protected final SearchableListModel sourceListModel;
     private final VdcActionType action;
@@ -411,10 +416,10 @@ public class ProviderModel extends Model {
 
     private void setTestResultValue(VdcReturnValueBase result) {
         String errorMessage = EMPTY_ERROR_MESSAGE;
-        if (result == null) {
-            errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
-        } else if (!result.getSucceeded()) {
-            if (result.getFault() != null) {
+        if (result == null || !result.getSucceeded()) {
+            if ((Boolean) requiresAuthentication.getEntity() && StringHelper.isNullOrEmpty(keystoneUrl)) {
+                errorMessage = ConstantsManager.getInstance().getConstants().noAuthUrl();
+            } else if (result != null) {
                 errorMessage = Frontend.getInstance().translateVdcFault(result.getFault());
             } else {
                 errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();

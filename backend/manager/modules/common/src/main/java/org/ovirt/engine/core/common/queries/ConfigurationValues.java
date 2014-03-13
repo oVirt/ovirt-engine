@@ -124,7 +124,8 @@ public enum ConfigurationValues {
     SerialNumberPolicySupported(ConfigAuthType.User),
     IscsiMultipathingSupported,
     BootMenuSupported(ConfigAuthType.User),
-    MixedDomainTypesInDataCenter;
+    MixedDomainTypesInDataCenter,
+    KeystoneAuthUrl;
 
     public static enum ConfigAuthType {
         Admin,
