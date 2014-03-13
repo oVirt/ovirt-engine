@@ -280,6 +280,14 @@ class Plugin(plugin.PluginBase):
             osetupcons.RPMDistroEnv.VERSION_LOCK_FILTER,
             []
         )
+        self.environment.setdefault(
+            osetupcons.RPMDistroEnv.ENGINE_PACKAGES,
+            osetupcons.Const.ENGINE_PACKAGE_NAME
+        )
+        self.environment.setdefault(
+            osetupcons.RPMDistroEnv.ENGINE_SETUP_PACKAGES,
+            osetupcons.Const.ENGINE_PACKAGE_SETUP_NAME
+        )
         self.environment[
             osetupcons.RPMDistroEnv.PACKAGES_UPGRADE_LIST
         ] = []

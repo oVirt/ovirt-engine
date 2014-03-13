@@ -44,6 +44,9 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_SETUP,
     )
     def _setup(self):
+        def tolist(s):
+            return [e.strip() for e in s.split(',')]
+
         self.environment[
             osetupcons.RPMDistroEnv.VERSION_LOCK_FILTER
         ].append(osetupcons.Const.ENGINE_PACKAGE_NAME)
@@ -55,13 +58,17 @@ class Plugin(plugin.PluginBase):
         ].append(
             {
                 'group': osetupcons.Const.UPGRADE_YUM_GROUP,
-                'packages': (osetupcons.Const.ENGINE_PACKAGE_NAME,),
+                'packages': tolist(
+                    self.environment[osetupcons.RPMDistroEnv.ENGINE_PACKAGES]
+                ),
             },
         )
         self.environment[
             osetupcons.RPMDistroEnv.PACKAGES_SETUP
-        ].append(
-            osetupcons.Const.ENGINE_PACKAGE_SETUP_NAME,
+        ].extend(
+            tolist(
+                self.environment[osetupcons.RPMDistroEnv.ENGINE_SETUP_PACKAGES]
+            )
         )
 
 
