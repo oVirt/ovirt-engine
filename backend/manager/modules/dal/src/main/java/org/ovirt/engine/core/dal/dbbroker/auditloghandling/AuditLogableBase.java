@@ -78,7 +78,7 @@ public class AuditLogableBase extends TimeoutBase {
     private String customId;
     private String origin = "oVirt";
     private int customEventId = -1;
-    private int eventFloodInSec = 30;
+    private int eventFloodInSec = 0;
     private String customData = "";
     private boolean external = false;
     private String compatibilityVersion;
