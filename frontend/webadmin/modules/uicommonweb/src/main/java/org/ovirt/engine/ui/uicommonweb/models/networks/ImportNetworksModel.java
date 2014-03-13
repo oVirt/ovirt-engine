@@ -29,9 +29,12 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -46,6 +49,8 @@ public class ImportNetworksModel extends Model {
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
 
     private final SearchableListModel sourceListModel;
+
+    private final StoragePool treeSelectedDc;
 
     private final ListModel providers = new ListModel();
     private final ListModel providerNetworks = new ListModel();
@@ -92,6 +97,11 @@ public class ImportNetworksModel extends Model {
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
         getCommands().add(cancelCommand);
+
+        SystemTreeItemModel treeSelectedDcItem =
+                SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter,
+                        (SystemTreeItemModel) CommonModel.getInstance().getSystemTree().getSelectedItem());
+        treeSelectedDc = (treeSelectedDcItem == null) ? null : (StoragePool) treeSelectedDcItem.getEntity();
 
         providers.getSelectedItemChangedEvent().addListener(new IEventListener() {
 
@@ -149,7 +159,9 @@ public class ImportNetworksModel extends Model {
                         }
                     }
                     externalNetwork.getDataCenters().setItems(availableDataCenters);
-                    externalNetwork.getDataCenters().setSelectedItem(Linq.firstOrDefault(availableDataCenters));
+                    externalNetwork.getDataCenters().setSelectedItem(treeSelectedDc != null
+                            && availableDataCenters.contains(treeSelectedDc) ? treeSelectedDc
+                            : Linq.firstOrDefault(availableDataCenters));
 
                     items.add(externalNetwork);
                 }
