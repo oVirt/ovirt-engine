@@ -996,6 +996,7 @@ fi
 %{_bindir}/engine-backup
 %{_bindir}/engine-config
 %{_bindir}/engine-manage-domains
+%{_mandir}/man8/engine-backup.*
 %{_mandir}/man8/engine-config.*
 %{_mandir}/man8/engine-manage-domains.*
 %{engine_data}/bin/engine-backup.sh
