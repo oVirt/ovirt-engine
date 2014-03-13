@@ -41,6 +41,14 @@ public class BackendStorageDomainImageResource
         importParameters.setStoragePoolId(getDataCenterId(getStorageDomainId(action)));
         importParameters.setStorageDomainId(getStorageDomainId(action));
 
+        if (action.isSetImportAsTemplate()) {
+            if (action.isImportAsTemplate()) {
+                validateParameters(action, "cluster.id|name");
+                importParameters.setClusterId(getClusterId(action));
+            }
+            importParameters.setImportAsTemplate(action.isImportAsTemplate());
+        }
+
         return doAction(VdcActionType.ImportRepoImage, importParameters, action);
     }
 

@@ -199,6 +199,8 @@
       <xs:element ref="bricks" minOccurs="0" />
       <!-- ... etc., explicitly enumerate all the parameter types -->
       <xs:element name="job" type="Job" minOccurs="0"/>
+      <!-- indicates whether to import the image as template or not -->
+      <xs:element name="import_as_template" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:group>
 
