@@ -326,7 +326,7 @@ public class NetworkValidatorTest {
     }
 
     private Matcher<ValidationResult> failsWithNetworkInUse() {
-        return failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_USE);
+        return failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE);
     }
 
     private void networkNotUsedByVmsTest(Matcher<ValidationResult> matcher, List<VM> vms) {

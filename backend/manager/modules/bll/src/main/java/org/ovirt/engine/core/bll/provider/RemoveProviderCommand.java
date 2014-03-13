@@ -96,7 +96,7 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
         }
 
         public ValidationResult providerNetworksNotUsed() {
-            List<Network> networksInUse = new ArrayList<Network>();
+            List<Network> networksInUse = new ArrayList<>();
             List<Network> networks = getNetworkDao().getAllForProvider(provider.getId());
 
             for (Network network : networks) {
@@ -108,8 +108,17 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
             }
 
             return networksInUse.isEmpty() ? ValidationResult.VALID
-                    : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED,
+                    : new ValidationResult(getProviderNetworkUsedValidationMessage(networksInUse.size()),
                             ReplacementUtils.replaceWithNameable("NETWORK_NAMES", networksInUse));
+        }
+
+        protected VdcBllMessages getProviderNetworkUsedValidationMessage(int numberOfNetworks) {
+            boolean singular = numberOfNetworks == 1;
+            if (singular) {
+                return VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_ONCE;
+            } else {
+                return VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_MULTIPLE_TIMES;
+            }
         }
 
         protected NetworkDao getNetworkDao() {

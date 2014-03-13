@@ -66,19 +66,19 @@ public class RemoveProviderValidatorTest {
         return net;
     }
 
-    private void networksUsedTest(Network net,
-            boolean vmsNotUsingNetwork,
+    private void networksUsedTest(boolean vmsNotUsingNetwork,
             boolean templatesNotUsingNetwork,
             Matcher<ValidationResult> matcher) {
 
         NetworkValidator networkValidator = mock(NetworkValidator.class);
-        when(validator.getValidator(net)).thenReturn(networkValidator);
+        for (Network network : networks) {
+            when(validator.getValidator(network)).thenReturn(networkValidator);
+        }
 
         when(networkValidator.networkNotUsedByVms()).thenReturn(createValidationResult(vmsNotUsingNetwork));
         when(networkValidator.networkNotUsedByTemplates()).thenReturn(createValidationResult(templatesNotUsingNetwork));
 
-        assertThat(validator.providerNetworksNotUsed(),
-                matcher);
+        assertThat(validator.providerNetworksNotUsed(), matcher);
     }
 
     private ValidationResult createValidationResult(boolean valid) {
@@ -87,30 +87,55 @@ public class RemoveProviderValidatorTest {
 
     @Test
     public void networksNotUsedByVmsNorTemplates() throws Exception {
-        Network net = mockNetwork();
-
-        networksUsedTest(net, true, true, isValid());
+        mockNetwork();
+        networksUsedTest(true, true, isValid());
     }
 
     @Test
     public void networksUsedByAVm() throws Exception {
         Network net = mockNetwork();
 
-        networksUsedTest(net,
+        networksUsedTest(
                 false,
                 true,
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED))
+                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_ONCE))
                 .and(replacements(hasItem(containsString(net.getName())))));
+    }
+
+    @Test
+    public void networksUsedByAVmMultipleNetworks() throws Exception {
+        Network net = mockNetwork();
+        Network net2 = mockNetwork();
+
+        networksUsedTest(
+                false,
+                true,
+                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_MULTIPLE_TIMES))
+                .and(replacements(hasItem(containsString(net.getName()))))
+                .and(replacements(hasItem(containsString(net2.getName())))));
     }
 
     @Test
     public void networksUsedByATemplate() throws Exception {
         Network net = mockNetwork();
 
-        networksUsedTest(net,
+        networksUsedTest(
                 false,
                 true,
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED))
+                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_ONCE))
                 .and(replacements(hasItem(containsString(net.getName())))));
+    }
+
+    @Test
+    public void networksUsedByATemplateMultipleNetworks() throws Exception {
+        Network net = mockNetwork();
+        Network net2 = mockNetwork();
+
+        networksUsedTest(
+                false,
+                true,
+                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_MULTIPLE_TIMES))
+                .and(replacements(hasItem(containsString(net.getName()))))
+                        .and(replacements(hasItem(containsString(net2.getName())))));
     }
 }

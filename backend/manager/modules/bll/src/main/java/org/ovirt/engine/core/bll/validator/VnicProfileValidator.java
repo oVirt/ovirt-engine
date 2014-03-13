@@ -75,12 +75,12 @@ public class VnicProfileValidator {
     }
 
     public ValidationResult vnicProfileNotUsedByVms() {
-        return vnicProfileNotUsed(getVmsUsingProfile(), VdcBllMessages.VAR__ENTITIES__VMS);
+        return vnicProfileNotUsed(getVmsUsingProfile(), VdcBllMessages.VAR__ENTITIES__VMS, VdcBllMessages.VAR__ENTITIES__VM);
     }
 
     public ValidationResult vnicProfileNotUsedByTemplates() {
         return vnicProfileNotUsed(getDbFacade().getVmTemplateDao().getAllForVnicProfile(vnicProfile.getId()),
-                VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES);
+                VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES, VdcBllMessages.VAR__ENTITIES__VM_TEMPLATE);
     }
 
     public ValidationResult vnicProfileForVmNetworkOnly() {
@@ -88,14 +88,24 @@ public class VnicProfileValidator {
                 : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK);
     }
 
-    protected ValidationResult vnicProfileNotUsed(List<? extends Nameable> entities, VdcBllMessages entitiesReplacement) {
+    protected ValidationResult vnicProfileNotUsed(List<? extends Nameable> entities, VdcBllMessages entitiesReplacementPlural, VdcBllMessages entitiesReplacementSingular) {
         if (entities.isEmpty()) {
             return ValidationResult.VALID;
         }
 
         Collection<String> replacements = ReplacementUtils.replaceWithNameable("ENTITIES_USING_VNIC_PROFILE", entities);
-        replacements.add(entitiesReplacement.name());
-        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_IN_USE, replacements);
+        VdcBllMessages replacementMessageToUse = entities.size() == 1 ? entitiesReplacementSingular : entitiesReplacementPlural;
+        replacements.add(replacementMessageToUse.name());
+        return new ValidationResult(getVNicProfileInUseValidationMessage(entities.size()), replacements);
+    }
+
+    private VdcBllMessages getVNicProfileInUseValidationMessage(int numberOfEntities) {
+        boolean singular = numberOfEntities == 1;
+        if (singular) {
+            return VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_IN_ONE_USE;
+        } else {
+            return VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_IN_MANY_USES;
+        }
     }
 
     public ValidationResult portMirroringNotChangedIfUsedByVms() {

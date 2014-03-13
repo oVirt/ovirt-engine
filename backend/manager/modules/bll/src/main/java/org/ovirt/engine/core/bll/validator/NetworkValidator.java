@@ -158,21 +158,31 @@ public class NetworkValidator {
         return String.format("$NetworkName %s", network.getName());
     }
 
-    protected ValidationResult networkNotUsed(List<? extends Nameable> entities, VdcBllMessages entitiesReplacement) {
+    protected ValidationResult networkNotUsed(List<? extends Nameable> entities, VdcBllMessages entitiesReplacementPlural, VdcBllMessages entitiesReplacementSingular) {
         if (entities.isEmpty()) {
             return ValidationResult.VALID;
         }
 
         Collection<String> replacements = ReplacementUtils.replaceWithNameable("ENTITIES_USING_NETWORK", entities);
-        replacements.add(entitiesReplacement.name());
-        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_USE, replacements);
+        VdcBllMessages replacementMessageToUse = entities.size() == 1 ? entitiesReplacementSingular : entitiesReplacementPlural;
+        replacements.add(replacementMessageToUse.name());
+        return new ValidationResult(getNetworkInUseValidationMessage(entities.size()), replacements);
+    }
+
+    private VdcBllMessages getNetworkInUseValidationMessage(int numberOfEntities) {
+        boolean singular = numberOfEntities == 1;
+        if (singular) {
+            return VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE;
+        } else {
+            return VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_MANY_USES;
+        }
     }
 
     /**
      * @return An error iff the network is in use by any VMs.
      */
     public ValidationResult networkNotUsedByVms() {
-        return networkNotUsed(getVms(), VdcBllMessages.VAR__ENTITIES__VMS);
+        return networkNotUsed(getVms(), VdcBllMessages.VAR__ENTITIES__VMS, VdcBllMessages.VAR__ENTITIES__VM);
     }
 
     /**
@@ -180,14 +190,14 @@ public class NetworkValidator {
      */
     public ValidationResult networkNotUsedByHosts() {
         return networkNotUsed(getDbFacade().getVdsDao().getAllForNetwork(network.getId()),
-                VdcBllMessages.VAR__ENTITIES__HOSTS);
+                VdcBllMessages.VAR__ENTITIES__HOSTS, VdcBllMessages.VAR__ENTITIES__HOST);
     }
 
     /**
      * @return An error iff the network is in use by any templates.
      */
     public ValidationResult networkNotUsedByTemplates() {
-        return networkNotUsed(getTemplates(), VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES);
+        return networkNotUsed(getTemplates(), VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES, VdcBllMessages.VAR__ENTITIES__VM_TEMPLATE);
     }
 
     /**

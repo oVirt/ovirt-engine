@@ -757,6 +757,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$entities hosts")
     String VAR__ENTITIES__HOSTS();
 
+    @DefaultStringValue("$entities host")
+    String VAR__ENTITIES__HOST();
+
     @DefaultStringValue("$type Networks")
     String VAR__TYPE__NETWORKS();
 
@@ -781,6 +784,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$entities virtual machines")
     String VAR__ENTITIES__VMS();
 
+    @DefaultStringValue("$entities virtual machine")
+    String VAR__ENTITIES__VM();
+
     @DefaultStringValue("$type Quota")
     String VAR__TYPE__QUOTA();
 
@@ -792,6 +798,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$entities templates")
     String VAR__ENTITIES__VM_TEMPLATES();
+
+    @DefaultStringValue("$entities template")
+    String VAR__ENTITIES__VM_TEMPLATE();
 
     @DefaultStringValue("$type Snapshot")
     String VAR__TYPE__SNAPSHOT();
@@ -1447,8 +1456,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The VM network interface profile's name is already used by an existing profile for the same network.\n-Please choose a different name.")
     String ACTION_TYPE_FAILED_VNIC_PROFILE_NAME_IN_USE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Several ${entities} (${ENTITIES_USING_VNIC_PROFILE_COUNTER}) are using this VM network interface profile:\n${ENTITIES_USING_VNIC_PROFILE}\n - Please remove it from all ${entities} that are using it and try again.")
-    String ACTION_TYPE_FAILED_VNIC_PROFILE_IN_USE();
+    @DefaultStringValue("Cannot ${action} ${type}. This VM network interface profile is used by ${entities}:  ${ENTITIES_USING_VNIC_PROFILE}.\\n - Please remove it from this ${entities} and try again.")
+    String ACTION_TYPE_FAILED_VNIC_PROFILE_IN_ONE_USE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. This VM network interface profile is used by ${entities} (${ENTITIES_USING_VNIC_PROFILE_COUNTER}): ${ENTITIES_USING_VNIC_PROFILE}\n - Please detach ${entities} using this profile and try again.")
+    String ACTION_TYPE_FAILED_VNIC_PROFILE_IN_MANY_USES();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM network interface profile's network cannot be changed.")
     String ACTION_TYPE_FAILED_CANNOT_CHANGE_VNIC_PROFILE_NETWORK();
@@ -1510,8 +1522,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The name of the logical network '${NetworkName}' is already used by an existing logical network in the same data-center.\n-Please choose a different name.")
     String ACTION_TYPE_FAILED_NETWORK_NAME_IN_USE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Several ${entities} (${ENTITIES_USING_NETWORK_COUNTER}) are using this logical network:\n${ENTITIES_USING_NETWORK}\n - Please remove it from all ${entities} that are using it and try again.")
-    String ACTION_TYPE_FAILED_NETWORK_IN_USE();
+    @DefaultStringValue("Cannot ${action} ${type}. This logical network is used by ${entities}: ${ENTITIES_USING_NETWORK}\n - Please remove it from this ${entities} and try again.")
+    String ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. This logical network is used by ${entities}: (${ENTITIES_USING_NETWORK_COUNTER}): ${ENTITIES_USING_NETWORK}\n - Please detach ${entities} using this logical network and try again.")
+    String ACTION_TYPE_FAILED_NETWORK_IN_MANY_USES();
 
     @DefaultStringValue("Volume Group (VGs) and Logical Volumes (LVs) are not specified.")
     String ERROR_CANNOT_CREATE_STORAGE_DOMAIN_WITHOUT_VG_LV();
@@ -1679,7 +1694,10 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_MISSING_MESSAGING_BROKER_PROPERTIES();
 
     @DefaultStringValue("Cannot ${action} ${type}. Several external networks (${NETWORK_NAMES_COUNTER}) are being used by virtual machines and/or templates:\n${NETWORK_NAMES}\n - Please resolve the external networks usage first and try again.")
-    String ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED();
+    String ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_MULTIPLE_TIMES();
+
+    @DefaultStringValue("Cannot ${action} ${type}. External network is used by virtual machines and/or templates:\\n${NETWORK_NAMES}\\n - Please resolve the external networks usage first and try again.")
+    String ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_ONCE();
 
     @DefaultStringValue("Cannot ${action} ${type}. The external network already exists as '${NetworkName}' in the data center.")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_ALREADY_EXISTS();

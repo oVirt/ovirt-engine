@@ -278,7 +278,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 }
             }
 
-            return networkNotUsed(runningVms, VdcBllMessages.VAR__ENTITIES__VMS);
+            return networkNotUsed(runningVms, VdcBllMessages.VAR__ENTITIES__VMS, VdcBllMessages.VAR__ENTITIES__VM);
         }
 
         public ValidationResult nonVmNetworkNotUsedByTemplates(Network updatedNetwork) {

@@ -114,7 +114,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         public ValidationResult clusterNetworkNotUsedByVms() {
             return networkNotUsed(getVmStaticDAO().getAllByGroupAndNetworkName(networkCluster.getClusterId(),
                     network.getName()),
-                    VdcBllMessages.VAR__ENTITIES__VMS);
+                    VdcBllMessages.VAR__ENTITIES__VMS, VdcBllMessages.VAR__ENTITIES__VM);
         }
 
         public ValidationResult clusterNetworkNotUsedByTemplates() {
@@ -126,7 +126,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
                     }
                 }
             }
-            return networkNotUsed(templatesUsingNetwork, VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES);
+            return networkNotUsed(templatesUsingNetwork, VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES, VdcBllMessages.VAR__ENTITIES__VM_TEMPLATE);
         }
     }
 }

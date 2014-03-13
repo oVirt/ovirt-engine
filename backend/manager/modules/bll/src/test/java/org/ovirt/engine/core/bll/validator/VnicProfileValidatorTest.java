@@ -187,7 +187,7 @@ public class VnicProfileValidatorTest {
     }
 
     private Matcher<ValidationResult> failsWithVnicProfileInUse() {
-        return failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_IN_USE);
+        return failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_IN_ONE_USE);
     }
 
     @Test
