@@ -86,13 +86,13 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
 
     protected boolean processImageInIrs() {
         Guid taskId = getAsyncTaskId();
-
+        String diskDescription = getParameters().getDiskInfo().getDiskDescription();
         VDSReturnValue vdsReturnValue = runVdsCommand(
                         VDSCommandType.CreateImage,
                         new CreateImageVDSCommandParameters(getParameters().getStoragePoolId(), getParameters()
                                 .getStorageDomainId(), getImageGroupId(), getParameters().getDiskInfo().getSize(),
                                 getParameters().getDiskInfo().getVolumeType(), getParameters().getDiskInfo()
-                                        .getVolumeFormat(), getDestinationImageId(), ""));
+                                        .getVolumeFormat(), getDestinationImageId(), diskDescription != null ? diskDescription : ""));
         if (vdsReturnValue.getSucceeded()) {
             getParameters().setVdsmTaskIds(new ArrayList<Guid>());
             getParameters().getVdsmTaskIds().add(
