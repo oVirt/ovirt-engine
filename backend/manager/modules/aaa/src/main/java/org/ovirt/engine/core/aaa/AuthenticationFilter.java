@@ -125,12 +125,6 @@ public class AuthenticationFilter implements Filter {
 
             NegotiationResult result = profile.getAuthenticator().negotiate(req, rsp);
 
-            // If the negotiation isn't finished then we assume that the response has been populated by the
-            // authenticator and we just let the container sent it back to the client:
-            if (result == null) {
-                return;
-            }
-
             // If the negotiation is finished and authentication succeeded then we have to remember in the session that
             // the user has been authenticated and its login name, also we need to clean the stack of authenticators and
             // replace the request with a wrapper that contains the user name returned by the authenticator:
