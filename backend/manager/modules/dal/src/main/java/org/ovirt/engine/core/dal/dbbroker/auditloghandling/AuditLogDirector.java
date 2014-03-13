@@ -174,9 +174,9 @@ public final class AuditLogDirector {
      *            the log type which determine if timeout is used for it
      */
     private static void updateTimeoutLogableObject(AuditLogableBase auditLogable, AuditLogType logType) {
-        int eventFloodRate = (auditLogable.isExternal())
+        int eventFloodRate = (auditLogable.isExternal() && auditLogable.getEventFloodInSec() == 0)
                 ?
-                Math.max(auditLogable.getEventFloodInSec(), 30) // Min duration for External Events is 30 sec
+                30 // Minimal default duration for External Events is 30 seconds.
                 :
                 logType.getEventFloodRate();
         if (eventFloodRate > 0) {
