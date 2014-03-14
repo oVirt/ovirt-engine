@@ -156,6 +156,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         for (VmNic a : interfaces) {
             if (a.getType() != null && VmInterfaceType.forValue(a.getType()) == VmInterfaceType.rtl8139_pv) {
                 pciInUse += 2;
+            } else if (a.getType() != null && VmInterfaceType.forValue(a.getType()) == VmInterfaceType.spaprVlan) {
+                // Do not count sPAPR VLAN devices since they are not PCI
             } else {
                 pciInUse += 1;
             }
