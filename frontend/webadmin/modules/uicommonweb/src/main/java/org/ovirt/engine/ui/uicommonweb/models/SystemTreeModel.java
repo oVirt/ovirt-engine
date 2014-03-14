@@ -103,14 +103,14 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         }
     }
 
-    private ArrayList<StoragePool> privateDataCenters;
+    private List<StoragePool> privateDataCenters;
 
-    public ArrayList<StoragePool> getDataCenters()
+    public List<StoragePool> getDataCenters()
     {
         return privateDataCenters;
     }
 
-    public void setDataCenters(ArrayList<StoragePool> value)
+    public void setDataCenters(List<StoragePool> value)
     {
         privateDataCenters = value;
     }
@@ -196,156 +196,183 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         super.syncSearch();
+        doDataCenterSearch();
+        doClusterSearch();
+        doHostSearch();
+        doVolumeSearch();
+        doProviderSearch();
+    }
 
+    /**
+     * Create and run the query for all data centers.
+     */
+    private void doDataCenterSearch() {
         final AsyncQuery dcQuery = new AsyncQuery();
         dcQuery.setModel(this);
         dcQuery.asyncCallback = new INewAsyncCallback() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onSuccess(Object model, Object result) {
+                final SystemTreeModel systemTreeModel = (SystemTreeModel) model;
+                systemTreeModel.setDataCenters((List<StoragePool>) result);
+                //These need to be here so we can get data center ids for use in the queries.
+                doNetworksSearch();
+            }
+        };
+        AsyncDataProvider.getDataCenterList(dcQuery);
+    }
+
+    /**
+     * Create and run the query for all clusters.
+     */
+    private void doClusterSearch() {
+        AsyncQuery clusterQuery = new AsyncQuery();
+        clusterQuery.setModel(this);
+        clusterQuery.asyncCallback = new INewAsyncCallback() {
+            @SuppressWarnings("unchecked")
             @Override
             public void onSuccess(Object model, Object result)
             {
-                final SystemTreeModel systemTreeModel = (SystemTreeModel) model;
-                systemTreeModel.setDataCenters((ArrayList<StoragePool>) result);
+                SystemTreeModel systemTreeModel = (SystemTreeModel) model;
+                List<VDSGroup> clusters = (List<VDSGroup>) result;
 
-                AsyncQuery clusterQuery = new AsyncQuery();
-                clusterQuery.setModel(systemTreeModel);
-                clusterQuery.asyncCallback = new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model1, Object result1)
-                    {
-                        SystemTreeModel systemTreeModel1 = (SystemTreeModel) model1;
-                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result1;
-
-                        systemTreeModel1.setClusterMap(new HashMap<Guid, ArrayList<VDSGroup>>());
-                        for (VDSGroup cluster : clusters)
-                        {
-                            if (cluster.getStoragePoolId() != null)
-                            {
-                                Guid key = cluster.getStoragePoolId();
-                                if (!systemTreeModel1.getClusterMap().containsKey(key))
-                                {
-                                    systemTreeModel1.getClusterMap().put(key, new ArrayList<VDSGroup>());
-                                }
-                                ArrayList<VDSGroup> list1 = systemTreeModel1.getClusterMap().get(key);
-                                list1.add(cluster);
-                            }
+                systemTreeModel.setClusterMap(new HashMap<Guid, ArrayList<VDSGroup>>());
+                for (VDSGroup cluster : clusters) {
+                    if (cluster.getStoragePoolId() != null) {
+                        Guid key = cluster.getStoragePoolId();
+                        if (!systemTreeModel.getClusterMap().containsKey(key)) {
+                            systemTreeModel.getClusterMap().put(key, new ArrayList<VDSGroup>());
                         }
-                        AsyncQuery hostQuery = new AsyncQuery();
-                        hostQuery.setModel(systemTreeModel1);
-                        hostQuery.asyncCallback = new INewAsyncCallback() {
-                            @Override
-                            public void onSuccess(Object model2, Object result2)
-                            {
-                                SystemTreeModel systemTreeModel2 = (SystemTreeModel) model2;
-                                ArrayList<VDS> hosts = (ArrayList<VDS>) result2;
-                                systemTreeModel2.setHostMap(new HashMap<Guid, ArrayList<VDS>>());
-                                for (VDS host : hosts)
-                                {
-                                    Guid key = host.getVdsGroupId();
-                                    if (!systemTreeModel2.getHostMap().containsKey(key))
-                                    {
-                                        systemTreeModel2.getHostMap().put(key, new ArrayList<VDS>());
-                                    }
-                                    ArrayList<VDS> list = systemTreeModel2.getHostMap().get(key);
-                                    list.add(host);
-                                }
-
-                                AsyncQuery volumeQuery = new AsyncQuery();
-                                volumeQuery.setModel(systemTreeModel2);
-                                volumeQuery.asyncCallback = new INewAsyncCallback() {
-                                    @Override
-                                    public void onSuccess(Object model3, Object result3)
-                                    {
-                                        SystemTreeModel systemTreeModel3 = (SystemTreeModel) model3;
-                                        ArrayList<GlusterVolumeEntity> volumes =
-                                                (ArrayList<GlusterVolumeEntity>) result3;
-                                        systemTreeModel3.setVolumeMap(new HashMap<Guid, ArrayList<GlusterVolumeEntity>>());
-
-                                        for (GlusterVolumeEntity volume : volumes)
-                                        {
-                                            Guid key = volume.getClusterId();
-                                            if (!systemTreeModel3.getVolumeMap().containsKey(key))
-                                            {
-                                                systemTreeModel3.getVolumeMap().put(key,
-                                                        new ArrayList<GlusterVolumeEntity>());
-                                            }
-                                            ArrayList<GlusterVolumeEntity> list =
-                                                    systemTreeModel3.getVolumeMap().get(key);
-                                            list.add(volume);
-                                        }
-
-
-                                        // Networks
-                                        ArrayList<VdcQueryType> queryTypeList =
-                                                new ArrayList<VdcQueryType>();
-                                        ArrayList<VdcQueryParametersBase> queryParamList =
-                                                new ArrayList<VdcQueryParametersBase>();
-
-                                        for (StoragePool dataCenter : systemTreeModel.getDataCenters())
-                                        {
-                                            queryTypeList.add(VdcQueryType.GetAllNetworks);
-                                            queryParamList.add(new IdQueryParameters(dataCenter.getId()));
-                                        }
-
-                                        Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamList, new IFrontendMultipleQueryAsyncCallback() {
-
-                                            @Override
-                                            public void executed(FrontendMultipleQueryAsyncResult result) {
-
-                                                systemTreeModel.setNetworkMap(new HashMap<Guid, List<Network>>());
-
-                                                List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
-                                                List<Network> dcNetworkList;
-                                                Guid dcId;
-
-                                                for (int i = 0; i < returnValueList.size(); i++)
-                                                {
-                                                    VdcQueryReturnValue returnValue = returnValueList.get(i);
-                                                    if (returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-                                                    {
-                                                        dcNetworkList = (List<Network>) returnValue.getReturnValue();
-                                                        dcId = systemTreeModel.getDataCenters().get(i).getId();
-                                                        systemTreeModel.getNetworkMap().put(dcId, dcNetworkList);
-                                                    }
-                                                }
-
-                                                // Storages
-                                                ArrayList<VdcQueryType> queryTypeList =
-                                                        new ArrayList<VdcQueryType>();
-                                                ArrayList<VdcQueryParametersBase> queryParamList =
-                                                        new ArrayList<VdcQueryParametersBase>();
-
-                                                for (StoragePool dataCenter : systemTreeModel.getDataCenters())
-                                                {
-                                                    queryTypeList.add(VdcQueryType.GetStorageDomainsByStoragePoolId);
-                                                    queryParamList.add(new IdQueryParameters(dataCenter.getId()));
-                                                }
-                                                if ((ApplicationModeHelper.getUiMode().getValue() & ApplicationMode.VirtOnly.getValue()) == 0) {
-                                                    FrontendMultipleQueryAsyncResult dummyResult =
-                                                            new FrontendMultipleQueryAsyncResult();
-                                                    VdcQueryReturnValue value = new VdcQueryReturnValue();
-                                                    value.setSucceeded(true);
-                                                    dummyResult.getReturnValues().add(value);
-                                                    SystemTreeModel.this.executed(dummyResult);
-                                                } else {
-                                                    Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamList, systemTreeModel);
-                                                }
-                                            }
-                                        });
-                                    }
-                                };
-                                AsyncDataProvider.getVolumeList(volumeQuery, null);
-                            }
-                        };
-                        AsyncDataProvider.getHostList(hostQuery);
+                        List<VDSGroup> list = systemTreeModel.getClusterMap().get(key);
+                        list.add(cluster);
                     }
-                };
-                AsyncDataProvider.getClusterList(clusterQuery);
+                }
             }
         };
+        AsyncDataProvider.getClusterList(clusterQuery);
+    }
 
+    /**
+     * Create and run the query for all hosts.
+     */
+    private void doHostSearch() {
+        AsyncQuery hostQuery = new AsyncQuery();
+        hostQuery.setModel(this);
+        hostQuery.asyncCallback = new INewAsyncCallback() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onSuccess(Object model, Object result) {
+                SystemTreeModel systemTreeModel = (SystemTreeModel) model;
+                List<VDS> hosts = (List<VDS>) result;
+                systemTreeModel.setHostMap(new HashMap<Guid, ArrayList<VDS>>());
+                for (VDS host : hosts) {
+                    Guid key = host.getVdsGroupId();
+                    if (!systemTreeModel.getHostMap().containsKey(key)) {
+                        systemTreeModel.getHostMap().put(key, new ArrayList<VDS>());
+                    }
+                    List<VDS> list = systemTreeModel.getHostMap().get(key);
+                    list.add(host);
+                }
+            }
+        };
+        AsyncDataProvider.getHostList(hostQuery);
+    }
+
+    /**
+     * Create and run the query for all volumes.
+     */
+    private void doVolumeSearch() {
+        AsyncQuery volumeQuery = new AsyncQuery();
+        volumeQuery.setModel(this);
+        volumeQuery.asyncCallback = new INewAsyncCallback() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onSuccess(Object model, Object result) {
+                final SystemTreeModel systemTreeModel = (SystemTreeModel) model;
+                List<GlusterVolumeEntity> volumes = (List<GlusterVolumeEntity>) result;
+                systemTreeModel.setVolumeMap(new HashMap<Guid, ArrayList<GlusterVolumeEntity>>());
+
+                for (GlusterVolumeEntity volume : volumes) {
+                    Guid key = volume.getClusterId();
+                    if (!systemTreeModel.getVolumeMap().containsKey(key)) {
+                        systemTreeModel.getVolumeMap().put(key, new ArrayList<GlusterVolumeEntity>());
+                    }
+                    List<GlusterVolumeEntity> list = systemTreeModel.getVolumeMap().get(key);
+                    list.add(volume);
+                }
+            }
+        };
+        AsyncDataProvider.getVolumeList(volumeQuery, null);
+    }
+
+    /**
+     * Create and run the query for all networks.
+     */
+    private void doNetworksSearch() {
+        // Networks
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryParametersBase> queryParamList = new ArrayList<VdcQueryParametersBase>();
+
+        for (StoragePool dataCenter : getDataCenters()) {
+            queryTypeList.add(VdcQueryType.GetAllNetworks);
+            queryParamList.add(new IdQueryParameters(dataCenter.getId()));
+        }
+
+        Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamList,
+                new IFrontendMultipleQueryAsyncCallback() {
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public void executed(FrontendMultipleQueryAsyncResult result) {
+
+                setNetworkMap(new HashMap<Guid, List<Network>>());
+
+                List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
+                List<Network> dcNetworkList;
+                Guid dcId;
+
+                for (int i = 0; i < returnValueList.size(); i++) {
+                    VdcQueryReturnValue returnValue = returnValueList.get(i);
+                    if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
+                        dcNetworkList = (List<Network>) returnValue.getReturnValue();
+                        dcId = getDataCenters().get(i).getId();
+                        getNetworkMap().put(dcId, dcNetworkList);
+                    }
+                }
+                doStorageSearch();
+            }
+        });
+    }
+
+    /**
+     * Create and run the query for all storage domains.
+     */
+    private void doStorageSearch() {
+        // Storages
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryParametersBase> queryParamList = new ArrayList<VdcQueryParametersBase>();
+
+        for (StoragePool dataCenter : getDataCenters()) {
+            queryTypeList.add(VdcQueryType.GetStorageDomainsByStoragePoolId);
+            queryParamList.add(new IdQueryParameters(dataCenter.getId()));
+        }
+        if ((ApplicationModeHelper.getUiMode().getValue() & ApplicationMode.VirtOnly.getValue()) == 0) {
+            FrontendMultipleQueryAsyncResult dummyResult = new FrontendMultipleQueryAsyncResult();
+            VdcQueryReturnValue value = new VdcQueryReturnValue();
+            value.setSucceeded(true);
+            dummyResult.getReturnValues().add(value);
+            SystemTreeModel.this.executed(dummyResult);
+        } else {
+            Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamList, this);
+        }
+    }
+
+    /**
+     * Create and run the query for all providers.
+     */
+    private void doProviderSearch() {
         AsyncQuery providersQuery = new AsyncQuery();
         providersQuery.setModel(this);
         providersQuery.asyncCallback = new INewAsyncCallback() {
@@ -354,7 +381,6 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 setProviders((List<Provider>) returnValue);
-                AsyncDataProvider.getDataCenterList(dcQuery);
             }
         };
         AsyncDataProvider.getAllProviders(providersQuery);
@@ -407,7 +433,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     @Override
     public void executed(FrontendMultipleQueryAsyncResult result)
     {
-        ArrayList<StorageDomain> storages = null;
+        List<StorageDomain> storageDomains = null;
         int count = -1;
         treeItemById = new HashMap<Guid, SystemTreeItemModel>();
 
@@ -425,14 +451,12 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         systemItem.addChild(dataCentersItem);
 
         // Populate everything under Data Centers
-        for (VdcQueryReturnValue returnValue : result.getReturnValues())
-        {
+        for (VdcQueryReturnValue returnValue : result.getReturnValues()) {
             ++count;
-            if (!returnValue.getSucceeded())
-            {
+            if (!returnValue.getSucceeded()) {
                 continue;
             }
-            storages = (ArrayList<StorageDomain>) returnValue.getReturnValue();
+            storageDomains = (List<StorageDomain>) returnValue.getReturnValue();
 
             SystemTreeItemModel dataCenterItem = new SystemTreeItemModel();
             dataCenterItem.setType(SystemTreeItemType.DataCenter);
@@ -450,12 +474,10 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             storagesItem.setEntity(dataCenter);
             dataCenterItem.addChild(storagesItem);
 
-            if (storages != null && storages.size() > 0)
-            {
+            if (storageDomains != null && storageDomains.size() > 0) {
                 // sort by name first
-                Collections.sort(storages, new Linq.StorageDomainComparator());
-                for (StorageDomain storage : storages)
-                {
+                Collections.sort(storageDomains, new Linq.StorageDomainComparator());
+                for (StorageDomain storage : storageDomains) {
                     SystemTreeItemModel storageItem = new SystemTreeItemModel();
                     storageItem.setType(SystemTreeItemType.Storage);
                     storageItem.setApplicationMode(ApplicationMode.VirtOnly);
@@ -474,12 +496,10 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             dataCenterItem.addChild(networksItem);
 
             List<Network> dcNetworks = getNetworkMap().get(dataCenter.getId());
-            if (dcNetworks != null)
-            {
+            if (dcNetworks != null) {
                 // sort by name first
                 Collections.sort(dcNetworks, new Linq.NetworkComparator());
-                for (Network network : dcNetworks)
-                {
+                for (Network network : dcNetworks) {
                     SystemTreeItemModel networkItem = new SystemTreeItemModel();
                     networkItem.setType(SystemTreeItemType.Network);
                     networkItem.setApplicationMode(ApplicationMode.VirtOnly);
@@ -503,12 +523,10 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             clustersItem.setEntity(dataCenter);
             dataCenterItem.addChild(clustersItem);
 
-            if (getClusterMap().containsKey(dataCenter.getId()))
-            {
+            if (getClusterMap().containsKey(dataCenter.getId())) {
                 List<VDSGroup> clusters = getClusterMap().get(dataCenter.getId());
                 Collections.sort(clusters, new Linq.VDSGroupComparator());
-                for (VDSGroup cluster : clusters)
-                {
+                for (VDSGroup cluster : clusters) {
                     SystemTreeItemModel clusterItem = new SystemTreeItemModel();
                     clusterItem.setType(cluster.supportsGlusterService() ? SystemTreeItemType.Cluster_Gluster
                             : SystemTreeItemType.Cluster);
@@ -523,10 +541,8 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                     hostsItem.setEntity(cluster);
                     clusterItem.addChild(hostsItem);
 
-                    if (getHostMap().containsKey(cluster.getId()))
-                    {
-                        for (VDS host : getHostMap().get(cluster.getId()))
-                        {
+                    if (getHostMap().containsKey(cluster.getId())) {
+                        for (VDS host : getHostMap().get(cluster.getId())) {
                             SystemTreeItemModel hostItem = new SystemTreeItemModel();
                             hostItem.setType(SystemTreeItemType.Host);
                             hostItem.setTitle(host.getName());
@@ -535,8 +551,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                             treeItemById.put(host.getId(), hostItem);
                         }
                     }
-                    if (cluster.supportsGlusterService())
-                    {
+                    if (cluster.supportsGlusterService()) {
                         SystemTreeItemModel volumesItem = new SystemTreeItemModel();
                         volumesItem.setType(SystemTreeItemType.Volumes);
                         volumesItem.setApplicationMode(ApplicationMode.GlusterOnly);
@@ -557,8 +572,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                         }
                     }
 
-                    if (cluster.supportsVirtService())
-                    {
+                    if (cluster.supportsVirtService()) {
                         SystemTreeItemModel vmsItem = new SystemTreeItemModel();
                         vmsItem.setType(SystemTreeItemType.VMs);
                         vmsItem.setApplicationMode(ApplicationMode.VirtOnly);
