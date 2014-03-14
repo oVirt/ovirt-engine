@@ -90,9 +90,10 @@ public class EngineConfigCLIParser {
      */
     private void parseSecondArgWithoutDash(String arg, boolean passFileExists) {
         int delimiterIndex = arg.indexOf("=");
-        if (getConfigAction().equals(ConfigActionType.ACTION_SET) && delimiterIndex == -1 &&
-                 !passFileExists) {
-            throw new IllegalArgumentException("Argument for set action must be in format of key=value.");
+        if (isSetOrMergeAction()
+                && delimiterIndex == -1
+                && !passFileExists) {
+            throw new IllegalArgumentException("Argument for set/merge action must be in format of key=value.");
         }
 
         String key = getStringBeforeEqualChar(arg, delimiterIndex);
@@ -100,7 +101,7 @@ public class EngineConfigCLIParser {
         if (!key.isEmpty()) {
             if (!value.isEmpty()) {
                 parseSecondArgWithKeyValue(arg, key, value);
-            } else if (getConfigAction().equals(ConfigActionType.ACTION_SET) && getKey() == null) {
+            } else if (isSetOrMergeAction() && getKey() == null) {
                 engineConfigMap.setKey(key);
                 engineConfigMap.setValue(value);
             } else if ((getConfigAction().equals(ConfigActionType.ACTION_GET) || getConfigAction().equals(ConfigActionType.ACTION_HELP))
@@ -120,7 +121,7 @@ public class EngineConfigCLIParser {
      * @param arg
      */
     private void parseSecondArgWithKeyValue(String arg, String key, String value) {
-        if (getConfigAction().equals(ConfigActionType.ACTION_SET)) {
+        if (isSetOrMergeAction()) {
             engineConfigMap.setKey(key);
             engineConfigMap.setValue(value);
         } else {
@@ -128,6 +129,11 @@ public class EngineConfigCLIParser {
                     + arg + "' has an '=' char but action is not 'set'.");
             throw new IllegalArgumentException("Illegal second argument: " + arg + ".");
         }
+    }
+
+    private boolean isSetOrMergeAction() {
+        return getConfigAction().equals(ConfigActionType.ACTION_SET)
+                || getConfigAction().equals(ConfigActionType.ACTION_MERGE);
     }
 
     /**

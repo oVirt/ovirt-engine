@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.security.InvalidParameterException;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +37,12 @@ public class EngineConfigLogic {
     private static final ToolConsole console = ToolConsole.getInstance();
 
     private final static String ALTERNATE_KEY = "alternateKey";
-
+    private final static String MERGABLE_TOKEN = "mergable";
+    private final static String DELIMITER_TOKEN = "delimiter";
+    private final static String MERGE_NOT_SUPPORTED_MSG = "%s does not support merge of values.";
+    private final static String MERGE_SAME_VALUE_MSG = "Merge operation cancelled as value is unchanged.";
+    private static final String MERGE_PERSIST_ERR_MSG = "setValue: error merging %s value. No such entry%s.";
+    private static final String KEY_NOT_FOUND_ERR_MSG = "Cannot display help for key %1$s. The key does not exist at the configuration file of engine-config.";
 
     private Configuration appConfig;
     private HierarchicalConfiguration keysConfig;
@@ -104,6 +110,9 @@ public class EngineConfigLogic {
             break;
         case ACTION_SET:
             persistValue();
+            break;
+        case ACTION_MERGE:
+            mergeValue();
             break;
         case ACTION_HELP:
             printHelpForKey();
@@ -299,10 +308,10 @@ public class EngineConfigLogic {
 
     private void printKeyInFormat(ConfigKey key) {
         console.writeFormat(
-            "%s: %s (Value Type: %s)\n",
-            key.getKey(),
-            key.getDescription(),
-            key.getType()
+                "%s: %s (Value Type: %s)\n",
+                key.getKey(),
+                key.getDescription(),
+                key.getType()
         );
     }
 
@@ -370,6 +379,59 @@ public class EngineConfigLogic {
         }
     }
 
+    /**
+     * Concatenates the value of the given key for the given version. Is the actual execution of the
+     * 'merge' action ('-m', '--merge')
+     */
+    private void mergeValue() throws Exception {
+        String key = parser.getKey();
+        String value = parser.getValue();
+        if(!keysConfig.getBoolean(key + "/" + MERGABLE_TOKEN, false)) {
+            console.writeFormat(MERGE_NOT_SUPPORTED_MSG, key);
+            console.writeLine();
+            return;
+        }
+        String version = parser.getVersion();
+        if (version == null) {
+            version = startVersionDialog(key);
+        }
+        ConfigKey configKey = fetchConfigKey(key, version);
+        if (configKey != null && configKey.getKey() != null && configKey.getDisplayValue().trim().length() > 0) {
+            String valueInDb = configKey.getDisplayValue().trim();
+            String delimiter = keysConfig.getString(key + "/" + DELIMITER_TOKEN, ";");
+            value = mergedValues(value, valueInDb, delimiter);
+            if(valueInDb.equals(value)) {
+                console.writeFormat(MERGE_SAME_VALUE_MSG);
+                console.writeLine();
+                return;
+            }
+        }
+        if (!persist(key, value, version)) {
+            String msg = MessageFormat.format(MERGE_PERSIST_ERR_MSG, key, (version == null ? "" : " with version " + version));
+            log.debug(msg);
+            throw new IllegalArgumentException(msg);
+        }
+    }
+
+    private String mergedValues(String valueToAppend, String currentValue, String delimiter) {
+        String retValue = currentValue;
+        for (String val : valueToAppend.split(delimiter)) {
+            retValue = mergedValue(val, retValue, delimiter);
+        }
+        return retValue;
+    }
+
+    private String mergedValue(String valueToAppend, String currentValue, String delimiter) {
+        StringBuilder retValue = new StringBuilder(currentValue);
+        if (!Arrays.asList(currentValue.split(delimiter)).contains(valueToAppend)) {
+            if (!currentValue.endsWith(delimiter)) {
+                retValue.append(delimiter);
+            }
+            retValue.append(valueToAppend);
+        }
+        return retValue.toString();
+    }
+
     private void printHelpForKey() throws Exception {
         final String keyName = parser.getKey();
         boolean foundKey = iterateAllKeys(this.configKeyFactory, keysConfig, new ConfigKeyHandler() {
@@ -385,10 +447,7 @@ public class EngineConfigLogic {
         });
 
         if (!foundKey) {
-            console.writeFormat(
-                "Cannot display help for key %1$s. The key does not " +
-                "exist at the configuration file of engine-config.",
-                keyName);
+            console.writeFormat(KEY_NOT_FOUND_ERR_MSG, keyName);
         }
     }
 
