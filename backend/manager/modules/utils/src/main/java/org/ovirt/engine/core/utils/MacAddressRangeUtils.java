@@ -24,18 +24,22 @@ public class MacAddressRangeUtils {
 
         long startNum = Long.parseLong(parsedRangeStart, HEX_RADIX);
         long endNum = Long.parseLong(parsedRangeEnd, HEX_RADIX);
+        return innerInitRange(stopAfter, startNum, endNum);
+    }
+
+    private static List<String> innerInitRange(int stopAfter, long startNum, long endNum) {
         if (startNum > endNum) {
             return Collections.emptyList();
         }
 
-        List<String> macAddresses = new ArrayList<String>();
+        // Initialize ArrayList for all potential records. (ignore that there need not be that many records.
+        List<String> macAddresses = new ArrayList<>(Math.min(stopAfter, (int) (endNum - startNum)));
         for (long i = startNum; i <= endNum; i++) {
             if ((MAC_ADDRESS_MULTICAST_BIT & i) != 0) {
                 continue;
             }
 
-            String value = String.format("%012x", i);
-            macAddresses.add(StringUtils.join(value.split("(?<=\\G..)"), ':'));
+            macAddresses.add(macToString(i));
 
             if (stopAfter-- <= 0) {
                 return macAddresses;
@@ -43,6 +47,21 @@ public class MacAddressRangeUtils {
         }
 
         return macAddresses;
+    }
+
+    public static String macToString(long macAddress) {
+        String value = String.format("%012x", macAddress).toUpperCase();
+        char[] chars = value.toCharArray();
+
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(chars[0]).append(chars[1]);
+        for (int pos = 2; pos < value.length(); pos += 2) {
+            stringBuilder.append(":")
+                    .append(chars[pos])
+                    .append(chars[pos + 1]);
+        }
+
+        return stringBuilder.toString();
     }
 
     public static boolean isRangeValid(String start, String end) {
