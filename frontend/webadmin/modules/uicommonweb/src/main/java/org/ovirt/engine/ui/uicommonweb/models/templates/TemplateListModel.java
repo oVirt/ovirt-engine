@@ -513,6 +513,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         template.setCreatedByUserId(selectedItem.getCreatedByUserId());
         template.setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
         template.setMigrationDowntime(model.getSelectedMigrationDowntime());
+        template.setTemplateVersionName(model.getTemplateVersionName().getEntity());
 
         if (model.getQuota().getIsAvailable() && model.getQuota().getSelectedItem() != null) {
             template.setQuotaId(model.getQuota().getSelectedItem().getId());

@@ -46,6 +46,7 @@ public class VmPopupWidget extends AbstractVmPopupWidget {
     @Override
     protected PopupWidgetConfigMap createWidgetConfiguration() {
         return super.createWidgetConfiguration().
-                putAll(poolSpecificFields(), hiddenField());
+                putAll(poolSpecificFields(), hiddenField()).
+                update(templateVersionNameEditor, hiddenField());
     }
 }

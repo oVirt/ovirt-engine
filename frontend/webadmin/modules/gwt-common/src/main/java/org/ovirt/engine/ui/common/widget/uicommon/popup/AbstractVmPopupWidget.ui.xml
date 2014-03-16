@@ -374,6 +374,7 @@
 								</g:FlowPanel>
 								<ge:EntityModelTextBoxOnlyEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}" contentWidgetStyleName="{style.nameEditorContent}"/>
 							</g:FlowPanel>
+							<ge:StringEntityModelTextBoxEditor ui:field="templateVersionNameEditor" />
 							<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
 							<ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
 

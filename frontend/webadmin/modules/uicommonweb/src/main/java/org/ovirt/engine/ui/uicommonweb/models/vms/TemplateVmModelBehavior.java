@@ -37,6 +37,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getStorageDomain().setIsChangable(false);
         getModel().getIsSoundcardEnabled().setIsChangable(true);
         getModel().getVmType().setIsChangable(true);
+        getModel().getTemplateVersionName().setIsChangable(!template.getId().equals(template.getBaseTemplateId()));
 
         if (template.getStoragePoolId() != null && !template.getStoragePoolId().equals(Guid.Empty))
         {
@@ -216,6 +217,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         updateConsoleDevice(template.getId());
         getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
         getModel().getVmInitModel().init(template);
+        getModel().getTemplateVersionName().setEntity(template.getTemplateVersionName());
 
         initPriority(template.getPriority());
     }
