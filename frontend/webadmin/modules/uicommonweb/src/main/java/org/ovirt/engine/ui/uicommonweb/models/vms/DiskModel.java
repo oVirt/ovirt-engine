@@ -23,6 +23,8 @@ public class DiskModel extends Model
     private ListModel storageDomain;
     private ListModel quota;
 
+    private boolean pluggedToRunningVm;
+
     public Disk getDisk() {
         return disk;
     }
@@ -109,6 +111,14 @@ public class DiskModel extends Model
 
     public void setQuota(ListModel quota) {
         this.quota = quota;
+    }
+
+    public boolean isPluggedToRunningVm() {
+        return pluggedToRunningVm;
+    }
+
+    public void setPluggedToRunningVm(boolean pluggedToRunningVm) {
+        this.pluggedToRunningVm = pluggedToRunningVm;
     }
 
     public DiskModel() {
