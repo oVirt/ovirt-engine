@@ -530,6 +530,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
         }
 
+        if (vmFromParams.getMinAllocatedMem() > vmFromParams.getMemSizeMb()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
+        }
+
         return true;
     }
 

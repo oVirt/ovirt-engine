@@ -426,6 +426,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN, "$device VirtIO-SCSI");
         }
 
+        if (vmFromParams.getMinAllocatedMem() > vmFromParams.getMemSizeMb()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
+        }
+
         return true;
     }
 
