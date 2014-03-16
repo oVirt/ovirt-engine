@@ -20,7 +20,6 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mVerbs.add("STATUS");
         mVerbs.add("IP");
         mVerbs.add("UPTIME");
-        mVerbs.add("DOMAIN");
         mVerbs.add("OS");
         mVerbs.add("CREATIONDATE");
         mVerbs.add("ADDRESS");
@@ -48,7 +47,6 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put("STATUS", VMStatus.class);
         getTypeDictionary().put("IP", String.class);
         getTypeDictionary().put("UPTIME", TimeSpan.class);
-        getTypeDictionary().put("DOMAIN", String.class);
         getTypeDictionary().put("OS", String.class);
         getTypeDictionary().put("CREATIONDATE", java.util.Date.class);
         getTypeDictionary().put("ADDRESS", String.class);
