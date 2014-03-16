@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -31,7 +30,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
         Guid storageDomainId = !CollectionUtils.isEmpty(getDiskImage().getStorageIds()) ?
                 getDiskImage().getStorageIds().get(0) : Guid.Empty;
 
-        Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.RemoveSnapshot);
+        Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
         VDSReturnValue vdsReturnValue = mergeSnapshots(storagePoolId, storageDomainId);
         if (vdsReturnValue != null && vdsReturnValue.getCreationInfo() != null) {
             getReturnValue().getInternalVdsmTaskIdList().add(createTask(taskId, vdsReturnValue, storageDomainId));
@@ -53,7 +52,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
         String message = ExecutionMessageDirector.resolveStepMessage(StepEnum.MERGE_SNAPSHOTS,
                 getJobMessageProperties());
 
-        return super.createTask(taskId, vdsReturnValue.getCreationInfo(), VdcActionType.RemoveSnapshot,
+        return super.createTask(taskId, vdsReturnValue.getCreationInfo(), getParameters().getParentCommand(),
                 message, VdcObjectType.Storage, storageDomainId);
     }
 
