@@ -246,8 +246,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         VM vmFromParams = getParameters().getVm();
 
         if (!isVmExist()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -255,15 +254,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (StringUtils.isEmpty(vmFromParams.getName())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
         }
 
         // check that VM name is not too long
         boolean vmNameValidLength = isVmNameValidLength(vmFromParams);
         if (!vmNameValidLength) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
         }
 
         // Checking if a desktop with same name already exists
@@ -271,8 +268,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             boolean exists = isVmWithSameNameExists(vmFromParams.getName());
 
             if (exists) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
-                return false;
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             }
         }
 
@@ -297,13 +293,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (!areUpdatedFieldsLegal()) {
-            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_UPDATE_ILLEGAL_FIELD);
-            return false;
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_ILLEGAL_FIELD);
         }
 
         if (!vmFromDB.getVdsGroupId().equals(vmFromParams.getVdsGroupId())) {
-            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_UPDATE_CLUSTER);
-            return false;
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_CLUSTER);
         }
 
         if (!isDedicatedVdsOnSameCluster(vmFromParams.getStaticData())) {
@@ -328,8 +322,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (vmFromDB.getVmPoolId() != null && vmFromParams.isStateless()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_FROM_POOL_CANNOT_BE_STATELESS);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_FROM_POOL_CANNOT_BE_STATELESS);
         }
 
         if (!AddVmCommand.checkCpuSockets(vmFromParams.getNumOfSockets(),
@@ -391,14 +384,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (getParameters().isConsoleEnabled() != null && !getVm().isDown()
                 && vmDeviceChanged(VmDeviceGeneralType.CONSOLE, getParameters().isConsoleEnabled())) {
-            addCanDoActionMessage("$device console");
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN);
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN, "$device console");
         }
 
         if (getParameters().isSoundDeviceEnabled() != null && !getVm().isDown()
                 && vmDeviceChanged(VmDeviceGeneralType.SOUND, getParameters().isSoundDeviceEnabled())) {
-            addCanDoActionMessage("$device sound");
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN);
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN, "$device sound");
         }
 
         if (!isCpuSharesValid(vmFromParams)) {
@@ -432,8 +423,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 && vmDeviceChanged(VmDeviceGeneralType.CONTROLLER,
                         VmDeviceType.VIRTIOSCSI.getName(),
                         getParameters().isVirtioScsiEnabled())) {
-            addCanDoActionMessage("$device VirtIO-SCSI");
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN);
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN, "$device VirtIO-SCSI");
         }
 
         return true;
