@@ -143,6 +143,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             }
         }
 
+        if (getParameters().getVmTemplateData().getMinAllocatedMem() > getParameters().getVmTemplateData().getMemSizeMb()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
+        }
+
         return returnValue;
     }
 

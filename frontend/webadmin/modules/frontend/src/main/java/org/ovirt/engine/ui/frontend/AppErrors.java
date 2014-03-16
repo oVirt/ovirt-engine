@@ -67,6 +67,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. This VM is not managed by the engine.")
     String ACTION_TYPE_FAILED_CANNOT_RUN_ACTION_ON_NON_MANAGED_VM();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Physical Memory Guaranteed cannot exceed Memory Size.")
+    String ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE();
+
     @DefaultStringValue("Storage Domain cannot be accessed.\nPossible reasons:\nNo operational Host in Data Center or Data Center state is not Up.")
     String IMAGE_REPOSITORY_NOT_FOUND();
 
