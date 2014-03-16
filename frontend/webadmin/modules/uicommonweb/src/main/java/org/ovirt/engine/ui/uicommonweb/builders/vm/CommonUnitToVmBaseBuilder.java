@@ -11,11 +11,11 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
  * This builder is further subsumed by {@link FullUnitToVmBaseBuilder}
  * that performs full mapping of VmBase fields.
  */
-public class CommonUnitToVmBaseBuilder extends CompositeBuilder<UnitVmModel, VmBase> {
+public class CommonUnitToVmBaseBuilder<T extends VmBase> extends CompositeBuilder<UnitVmModel, T> {
     public CommonUnitToVmBaseBuilder() {
         super(
-                new CoreUnitToVmBaseBuilder(),
-                new QuotaUnitToVmBaseBuilder()
+                new CoreUnitToVmBaseBuilder<T>(),
+                new QuotaUnitToVmBaseBuilder<T>()
         );
     }
 

@@ -90,7 +90,8 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
                 putOne(editPoolEditVmsPanel, hiddenField()).
                 putOne(editPoolIncraseNumOfVmsPanel, hiddenField()).
                 putOne(logicalNetworksEditorPanel, hiddenField()).
-                putOne(editPoolEditMaxAssignedVmsPerUserPanel, hiddenField());
+                putOne(editPoolEditMaxAssignedVmsPerUserPanel, hiddenField()).
+                update(templateVersionNameEditor, hiddenField());
     }
 
 }

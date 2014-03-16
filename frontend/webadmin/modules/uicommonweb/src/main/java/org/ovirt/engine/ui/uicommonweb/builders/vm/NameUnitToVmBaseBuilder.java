@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.ui.uicommonweb.builders.BaseSyncBuilder;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
-public class NameUnitToVmBaseBuilder extends BaseSyncBuilder<UnitVmModel, VmBase> {
+public class NameUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<UnitVmModel, T> {
     @Override
     protected void build(UnitVmModel model, VmBase vm) {
         vm.setName(model.getName().getEntity());

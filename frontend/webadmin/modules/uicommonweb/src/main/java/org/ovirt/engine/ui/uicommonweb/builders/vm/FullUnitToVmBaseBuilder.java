@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
  * or further yet in {@link CoreUnitToVmBaseBuilder} if this mapping should also apply to pool Vms.
  * (most fields fall into the "Core" category)
  */
-public class FullUnitToVmBaseBuilder extends CompositeBuilder<UnitVmModel, VmBase> {
+public class FullUnitToVmBaseBuilder<T extends VmBase> extends CompositeBuilder<UnitVmModel, T> {
     public FullUnitToVmBaseBuilder() {
         super(
                 new CommonUnitToVmBaseBuilder(),

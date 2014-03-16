@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.builders.template.VersionNameUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -503,8 +504,9 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                 }, this);
     }
 
+    @SuppressWarnings("unchecked")
     protected static void buildTemplateOnSave(UnitVmModel model, VmTemplate template) {
-        BuilderExecutor.build(model, template, new FullUnitToVmBaseBuilder());
+        BuilderExecutor.build(model, template, new FullUnitToVmBaseBuilder<VmTemplate>(), new VersionNameUnitToVmBaseBuilder());
     }
 
     private void setVmWatchdogToParams(final UnitVmModel model, UpdateVmTemplateParameters updateVmParams) {

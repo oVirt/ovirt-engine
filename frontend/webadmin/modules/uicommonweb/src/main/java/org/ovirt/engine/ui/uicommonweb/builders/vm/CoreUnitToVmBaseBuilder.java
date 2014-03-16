@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
  * If you are adding a more specific property you may need to add it instead to {@link CommonUnitToVmBaseBuilder} or
  * {@link FullUnitToVmBaseBuilder}
  */
-public class CoreUnitToVmBaseBuilder extends BaseSyncBuilder<UnitVmModel, VmBase> {
+public class CoreUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<UnitVmModel, T> {
     @Override
     protected void build(UnitVmModel model, VmBase vm) {
         vm.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());

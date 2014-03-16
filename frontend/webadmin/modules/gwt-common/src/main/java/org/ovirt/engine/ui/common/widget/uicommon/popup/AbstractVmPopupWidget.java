@@ -158,6 +158,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public StringEntityModelTextBoxOnlyEditor nameEditor;
 
     @UiField(provided = true)
+    @Path(value = "templateVersionName.entity")
+    @WithElementId("templateVersionName")
+    public StringEntityModelTextBoxEditor templateVersionNameEditor;
+
+    @UiField(provided = true)
     @Ignore
     public InfoIcon poolNameIcon;
 
@@ -776,6 +781,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     private void initTextBoxEditors() {
+        templateVersionNameEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         descriptionEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         commentEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         numOfVmsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
@@ -1059,6 +1065,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         dataCenterWithClusterEditor.setLabel(constants.hostClusterVmPopup());
         quotaEditor.setLabel(constants.quotaVmPopup());
         nameLabel.setText(constants.nameVmPopup());
+        templateVersionNameEditor.setLabel(constants.templateVersionName());
         descriptionEditor.setLabel(constants.descriptionVmPopup());
         commentEditor.setLabel(constants.commentLabel());
         baseTemplateEditor.setLabel(constants.basedOnTemplateVmPopup());
@@ -1496,6 +1503,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         templateEditor.setTabIndex(nextTabIndex++);
 
         nameEditor.setTabIndex(nextTabIndex++);
+        templateVersionNameEditor.setTabIndex(nextTabIndex++);
         descriptionEditor.setTabIndex(nextTabIndex++);
         commentEditor.setTabIndex(nextTabIndex++);
         isStatelessEditor.setTabIndex(nextTabIndex++);
