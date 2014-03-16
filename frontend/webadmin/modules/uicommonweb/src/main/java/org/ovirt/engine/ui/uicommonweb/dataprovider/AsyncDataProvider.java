@@ -1358,7 +1358,9 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolById, new IdQueryParameters(dataCenterId), aQuery);
+        IdQueryParameters params = new IdQueryParameters(dataCenterId);
+        params.setRefresh(false);
+        Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolById, params, aQuery);
     }
 
     public static void getNetworkLabelsByDataCenterId(Guid dataCenterId, AsyncQuery query) {
@@ -1732,7 +1734,9 @@ public final class AsyncDataProvider {
                 return retMap;
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmCustomProperties, new VdcQueryParametersBase(), aQuery);
+        VdcQueryParametersBase params = new VdcQueryParametersBase();
+        params.setRefresh(false);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmCustomProperties, params, aQuery);
     }
 
     public static void getPermissionsByAdElementId(AsyncQuery aQuery, Guid userId) {
@@ -2544,9 +2548,10 @@ public final class AsyncDataProvider {
                 return source != null ? (VM) source : null;
             }
         };
-
+        IdQueryParameters params = new IdQueryParameters(snapshotSourceId);
+        params.setRefresh(false);
         Frontend.getInstance().runQuery(VdcQueryType.GetVmConfigurationBySnapshot,
-                new IdQueryParameters(snapshotSourceId),
+                params,
                 aQuery);
     }
 
@@ -2642,7 +2647,9 @@ public final class AsyncDataProvider {
         if (cachedCommandsCompatibilityVersions != null) {
             aQuery.asyncCallback.onSuccess(aQuery.getModel(), isCommandCompatible(vdcActionType, cluster, dc));
         } else {
-            Frontend.getInstance().runQuery(VdcQueryType.GetCommandsCompatibilityVersions, new VdcQueryParametersBase(), aQuery);
+            VdcQueryParametersBase params = new VdcQueryParametersBase();
+            params.setRefresh(false);
+            Frontend.getInstance().runQuery(VdcQueryType.GetCommandsCompatibilityVersions, params, aQuery);
         }
     }
 
