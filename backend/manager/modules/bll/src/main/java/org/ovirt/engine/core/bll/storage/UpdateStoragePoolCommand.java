@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -109,6 +110,9 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     public Object runInTransaction() {
                              getStoragePoolDAO().updatePartial(storagePool);
                         updateMemberDomainsFormat(targetFormat);
+                        if (FeatureSupported.ovfStoreOnAnyDomain(spVersion)) {
+                            getVmStaticDAO().incrementDbGenerationForAllInStoragePool(spId);
+                        }
                         return null;
                     }
         });
