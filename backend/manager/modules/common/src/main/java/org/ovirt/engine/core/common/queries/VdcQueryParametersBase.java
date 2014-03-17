@@ -53,6 +53,11 @@ public class VdcQueryParametersBase implements Serializable {
         this.refresh = refresh;
     }
 
+    public VdcQueryParametersBase withoutRefresh() {
+        setRefresh(false);
+        return this;
+    }
+
     public boolean isFiltered() {
         return isFiltered;
     }

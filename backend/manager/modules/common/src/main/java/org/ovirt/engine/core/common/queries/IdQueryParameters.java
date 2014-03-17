@@ -20,4 +20,10 @@ public class IdQueryParameters extends VdcQueryParametersBase {
     public Guid getId() {
         return id;
     }
+
+    @Override
+    public IdQueryParameters withoutRefresh() {
+        super.withoutRefresh();
+        return this;
+    }
 }

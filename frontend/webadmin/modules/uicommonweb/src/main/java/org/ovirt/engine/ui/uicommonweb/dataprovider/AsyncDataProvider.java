@@ -55,7 +55,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -874,7 +873,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
-                    return ((List<String>) source).size() > 0;
+                    return !((List<?>) source).isEmpty();
                 }
 
                 return false;
@@ -888,7 +887,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
-                    return ((List<VmDevice>) source).size() > 0;
+                    return !((List<?>) source).isEmpty();
                 }
 
                 return false;
@@ -1358,9 +1357,8 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        IdQueryParameters params = new IdQueryParameters(dataCenterId);
-        params.setRefresh(false);
-        Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolById, params, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolById,
+                new IdQueryParameters(dataCenterId).withoutRefresh(), aQuery);
     }
 
     public static void getNetworkLabelsByDataCenterId(Guid dataCenterId, AsyncQuery query) {
@@ -1547,7 +1545,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                if (source != null && ((List) source).size() > 0) {
+                if (source != null && !((List<?>) source).isEmpty()) {
                     return true;
                 }
                 return false;
@@ -1734,9 +1732,8 @@ public final class AsyncDataProvider {
                 return retMap;
             }
         };
-        VdcQueryParametersBase params = new VdcQueryParametersBase();
-        params.setRefresh(false);
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmCustomProperties, params, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmCustomProperties,
+                new VdcQueryParametersBase().withoutRefresh(), aQuery);
     }
 
     public static void getPermissionsByAdElementId(AsyncQuery aQuery, Guid userId) {
@@ -2377,9 +2374,9 @@ public final class AsyncDataProvider {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        ArrayList<StoragePool> pools =
-                                (ArrayList<StoragePool>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        if (pools != null && pools.size() > 0) {
+                        List<StoragePool> pools =
+                                (List<StoragePool>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        if (pools != null && !pools.isEmpty()) {
                             StoragePool pool = pools.get(0);
                             getClusterList((AsyncQuery) model, pool.getId());
                         }
@@ -2548,10 +2545,8 @@ public final class AsyncDataProvider {
                 return source != null ? (VM) source : null;
             }
         };
-        IdQueryParameters params = new IdQueryParameters(snapshotSourceId);
-        params.setRefresh(false);
         Frontend.getInstance().runQuery(VdcQueryType.GetVmConfigurationBySnapshot,
-                params,
+                new IdQueryParameters(snapshotSourceId).withoutRefresh(),
                 aQuery);
     }
 
@@ -2647,9 +2642,8 @@ public final class AsyncDataProvider {
         if (cachedCommandsCompatibilityVersions != null) {
             aQuery.asyncCallback.onSuccess(aQuery.getModel(), isCommandCompatible(vdcActionType, cluster, dc));
         } else {
-            VdcQueryParametersBase params = new VdcQueryParametersBase();
-            params.setRefresh(false);
-            Frontend.getInstance().runQuery(VdcQueryType.GetCommandsCompatibilityVersions, params, aQuery);
+            Frontend.getInstance().runQuery(VdcQueryType.GetCommandsCompatibilityVersions,
+                    new VdcQueryParametersBase().withoutRefresh(), aQuery);
         }
     }
 
@@ -2980,13 +2974,7 @@ public final class AsyncDataProvider {
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
                 ArrayList<VdsNetworkInterface> siblingVlanInterfaces = (ArrayList<VdsNetworkInterface>) source;
-
-                if (siblingVlanInterfaces.size() > 0)
-                {
-                    return true;
-                }
-
-                return false;
+                return !siblingVlanInterfaces.isEmpty();
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetAllSiblingVlanInterfaces,
