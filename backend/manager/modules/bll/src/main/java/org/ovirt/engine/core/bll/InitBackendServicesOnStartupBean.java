@@ -133,7 +133,6 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
     private void createKerberosLdapAAAConfigurations() {
 
-        List<Properties> results = new ArrayList<>();
         for (String domain : Config.<String> getValue(ConfigValues.DomainName).split("[,]", -1)) {
             Properties authConfig = new Properties();
             authConfig.put(ExtensionsManager.CLASS,

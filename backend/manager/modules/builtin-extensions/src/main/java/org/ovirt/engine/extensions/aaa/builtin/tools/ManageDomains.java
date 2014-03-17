@@ -97,7 +97,6 @@ public class ManageDomains {
     private boolean useDnsLookup;
 
     private final static Logger log = Logger.getLogger(ManageDomains.class);
-    private static final String DEFAULT_LDAP_SERVER_PORT = "389";
 
     private final ManageDomainsArguments args;
 
@@ -237,14 +236,8 @@ public class ManageDomains {
                     getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.LDAPProviderTypes);
             String ldapPort =
                     getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.LDAPServerPort);
-            if (ldapPort == null) {
-                ldapPort = DEFAULT_LDAP_SERVER_PORT;
-            }
             String changePasswordUrl =
                     getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.ChangePasswordMsg);
-            if (changePasswordUrl == null) {
-                changePasswordUrl = "";
-            }
 
             configurationProvider =
                     new ConfigurationProvider(adUserName,

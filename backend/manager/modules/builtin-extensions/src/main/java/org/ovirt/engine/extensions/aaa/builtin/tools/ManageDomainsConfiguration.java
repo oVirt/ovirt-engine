@@ -15,7 +15,9 @@ public class ManageDomainsConfiguration {
 
     ManageDomainsConfiguration(String confFilePath) throws Exception {
         manageDomainsConf = new Properties();
-        manageDomainsConf.load(new FileInputStream(confFilePath));
+        try (FileInputStream inputStream = new FileInputStream(confFilePath)) {
+            manageDomainsConf.load(inputStream);
+        }
     }
 
     public String getJaasFilePath() {
