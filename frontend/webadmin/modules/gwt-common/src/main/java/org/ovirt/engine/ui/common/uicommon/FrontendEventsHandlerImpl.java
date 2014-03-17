@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.uicommon;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -50,18 +51,27 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 
     @Override
     public void runMultipleActionFailed(VdcActionType action, List<VdcReturnValueBase> returnValues) {
+        List<VdcActionType> actions = new ArrayList<VdcActionType>(returnValues.size());
+        Collections.fill(actions, action);
+        runMultipleActionsFailed(actions, returnValues);
+    }
+
+    @Override
+    public void runMultipleActionsFailed(List<VdcActionType> actions, List<VdcReturnValueBase> returnValues) {
 
         List<Message> errors = new ArrayList<Message>();
 
         int actionNum = 0;
         for (VdcReturnValueBase v : returnValues) {
-            ++actionNum;
-            if (isRaiseErrorModalPanel(action, v.getFault())) {
-                for (String canDo : v.getCanDoActionMessages()) {
-                    String description =
-                            (v.getDescription() != null && !"".equals(v.getDescription().trim())) || returnValues.size() == 1 ? v.getDescription() : ConstantsManager.getInstance().getConstants().action() + " " + actionNum; //$NON-NLS-1$ //$NON-NLS-2$
-                    Message msg = new Message(description, canDo);
-                    errors.add(msg);
+            if (isRaiseErrorModalPanel(actions.get(actionNum++), v.getFault())) {
+                String description =
+                        (v.getDescription() != null && !"".equals(v.getDescription().trim())) || returnValues.size() == 1 ? v.getDescription() : ConstantsManager.getInstance().getConstants().action() + " " + actionNum; //$NON-NLS-1$ //$NON-NLS-2$
+                if (!v.getCanDoActionMessages().isEmpty()) {
+                    for (String canDo : v.getCanDoActionMessages()) {
+                        errors.add(new Message(description, canDo));
+                    }
+                } else {
+                    errors.add(new Message(description, v.getFault().getMessage()));
                 }
             }
         }

@@ -457,7 +457,7 @@ public class FrontendActionTest {
         returnValue.setDescription("This is a description"); //$NON-NLS-1$
         returnValue.setCanDoAction(false); // Yes this is the default, but to make sure.
         frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
-                testState, false);
+                testState, true);
         verify(mockActionCallback).executed(callbackParam.capture());
         assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
         assertEquals("Result should match", returnValue, callbackParam.getValue().getReturnValue()); //$NON-NLS-1$
@@ -498,7 +498,7 @@ public class FrontendActionTest {
         returnValue.getCanDoActionMessages().add("Message 1"); //$NON-NLS-1$
         returnValue.setCanDoAction(false); // Yes this is the default, but to make sure.
         frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
-                testState, false);
+                testState, true);
         verify(mockActionCallback).executed(callbackParam.capture());
         assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
         assertEquals("Result should match", returnValue, callbackParam.getValue().getReturnValue()); //$NON-NLS-1$
@@ -541,7 +541,7 @@ public class FrontendActionTest {
         returnValue.getCanDoActionMessages().add("Message 2"); //$NON-NLS-1$
         returnValue.setCanDoAction(false); // Yes this is the default, but to make sure.
         frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
-                testState, false);
+                testState, true);
         verify(mockActionCallback).executed(callbackParam.capture());
         assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
         assertEquals("Result should match", returnValue, callbackParam.getValue().getReturnValue()); //$NON-NLS-1$

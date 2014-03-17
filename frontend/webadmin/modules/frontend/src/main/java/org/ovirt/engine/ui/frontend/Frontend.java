@@ -700,6 +700,19 @@ public class Frontend implements HasHandlers {
     }
 
     /**
+     * Overloaded method for
+     * {@link #runMultipleActions(List, List, List, IFrontendActionAsyncCallback, Object, boolean, List)} without error
+     * message aggregation.
+     */
+    public void runMultipleActions(final List<VdcActionType> actionTypes,
+            final List<VdcActionParametersBase> parameters,
+            final List<IFrontendActionAsyncCallback> callbacks,
+            final IFrontendActionAsyncCallback failureCallback,
+            final Object state) {
+        runMultipleActions(actionTypes, parameters, callbacks, failureCallback, state, false);
+    }
+
+    /**
      * This method allows us to run a transaction like set of actions. If one
      * fails the rest do not get executed.
      * @param actionTypes The list of actions to execute.
@@ -707,13 +720,36 @@ public class Frontend implements HasHandlers {
      * @param callbacks The list of callbacks, the number must match the number of actions.
      * @param failureCallback The callback to call in case of failure.
      * @param state The state.
+     * @param aggregateErrors Whether error messages should be aggregated.
      */
     public void runMultipleActions(final List<VdcActionType> actionTypes,
             final List<VdcActionParametersBase> parameters,
             final List<IFrontendActionAsyncCallback> callbacks,
             final IFrontendActionAsyncCallback failureCallback,
-            final Object state) {
+            final Object state,
+            boolean aggregateErrors) {
+        runMultipleActions(actionTypes,
+                parameters,
+                callbacks,
+                failureCallback,
+                state,
+                aggregateErrors,
+                aggregateErrors ? new ArrayList<VdcActionType>() : null,
+                aggregateErrors ? new ArrayList<VdcReturnValueBase>() : null);
+    }
+
+    private void runMultipleActions(final List<VdcActionType> actionTypes,
+            final List<VdcActionParametersBase> parameters,
+            final List<IFrontendActionAsyncCallback> callbacks,
+            final IFrontendActionAsyncCallback failureCallback,
+            final Object state,
+            final boolean aggregateErrors,
+            final List<VdcActionType> failedActions,
+            final List<VdcReturnValueBase> failedReturnValues) {
         if (actionTypes.isEmpty() || parameters.isEmpty() || callbacks.isEmpty()) {
+            if (aggregateErrors && failedReturnValues != null && !failedReturnValues.isEmpty()) {
+                getEventsHandler().runMultipleActionsFailed(failedActions, failedReturnValues);
+            }
             return;
         }
 
@@ -728,15 +764,26 @@ public class Frontend implements HasHandlers {
                             if (callback != null) {
                                 callback.executed(result);
                             }
+                            if (aggregateErrors && returnValue != null && (!returnValue.getCanDoAction() || !returnValue.getSucceeded())) {
+                                failedActions.add(actionTypes.get(0));
+                                failedReturnValues.add(returnValue);
+                            }
                             actionTypes.remove(0);
                             parameters.remove(0);
                             callbacks.remove(0);
-                            runMultipleActions(actionTypes, parameters, callbacks, failureCallback, state);
+                            runMultipleActions(actionTypes,
+                                    parameters,
+                                    callbacks,
+                                    failureCallback,
+                                    state,
+                                    aggregateErrors,
+                                    failedActions,
+                                    failedReturnValues);
                         } else {
                             failureCallback.executed(result);
                         }
                     }
-                }, state, true);
+                }, state, !aggregateErrors);
     }
 
     /**
@@ -904,14 +951,18 @@ public class Frontend implements HasHandlers {
         boolean failedOnCanDoAction = !result.getCanDoAction();
         if (failedOnCanDoAction) {
             result.setCanDoActionMessages((ArrayList<String>) translateError(result));
-        } else if (showErrorDialog && result.getIsSyncronious() && !result.getSucceeded()) {
-            runActionExecutionFailed(actionType, result.getFault());
+        } else if (!result.getSucceeded()) {
+            VdcFault fault = result.getFault();
+            fault.setMessage(translateVdcFault(fault));
+            if (showErrorDialog && result.getIsSyncronious() && getEventsHandler() != null) {
+                getEventsHandler().runActionExecutionFailed(actionType, fault);
+            }
         }
         callback.executed(f);
 
         // 'runActionExecutionFailed' invokes an error pop-up displaying, therefore calling 'failureEventHandler' is
         // only needed for canDoAction failure
-        if (failedOnCanDoAction && (getEventsHandler() != null)
+        if (showErrorDialog && failedOnCanDoAction && (getEventsHandler() != null)
                 && (getEventsHandler().isRaiseErrorModalPanel(actionType, result.getFault()))) {
             ArrayList<String> messages = result.getCanDoActionMessages();
             failureEventHandler(result.getDescription(),
@@ -986,20 +1037,6 @@ public class Frontend implements HasHandlers {
     private void raiseQueryCompleteEvent(final List<VdcQueryType> queryTypeList, final String context) {
         for (VdcQueryType queryType : queryTypeList) {
             raiseQueryCompleteEvent(queryType, context);
-        }
-    }
-
-    /**
-     * execute the event handler when an action failed.
-     * @param actionType The type of action that failed.
-     * @param fault The reason the action failed.
-     */
-    private void runActionExecutionFailed(final VdcActionType actionType, final VdcFault fault) {
-        if (getEventsHandler() != null) {
-            // The VdcFault error property takes precedence, if it's null we try to translate the message property
-            String translatedMessage = translateVdcFault(fault);
-            fault.setMessage(translatedMessage);
-            getEventsHandler().runActionExecutionFailed(actionType, fault);
         }
     }
 

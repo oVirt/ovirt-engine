@@ -17,6 +17,8 @@ public interface IFrontendEventsHandler {
 
     void runMultipleActionFailed(VdcActionType action, List<VdcReturnValueBase> returnValues);
 
+    void runMultipleActionsFailed(List<VdcActionType> actions, List<VdcReturnValueBase> returnValues);
+
     void runQueryFailed(List<VdcQueryReturnValue> returnValue);
 
     void publicConnectionClosed(Exception ex);
