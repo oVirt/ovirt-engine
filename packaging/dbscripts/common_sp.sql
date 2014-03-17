@@ -568,7 +568,7 @@ BEGIN
 v_result := '';
 v_sep := '';
     v := string_to_array(option_value, ',') from vdc_options where option_name = v_option_name and version = v_version;
-    FOREACH e in ARRAY v
+    FOR e in select unnest(v)
     LOOP
         IF (e != v_value) THEN
             v_result := v_result || v_sep || e;
@@ -578,3 +578,4 @@ v_sep := '';
     UPDATE vdc_options set option_value = v_result where option_name = v_option_name and version = v_version;
 END; $procedure$
 LANGUAGE plpgsql;
+
