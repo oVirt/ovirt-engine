@@ -133,7 +133,8 @@ public class NetworkValidator {
         for (Network otherNetwork : getNetworks()) {
             if (otherNetwork.getName().equals(network.getName()) &&
                     !otherNetwork.getId().equals(network.getId())) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NAME_IN_USE);
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NAME_IN_USE,
+                        getNetworkNameReplacement());
             }
         }
         return ValidationResult.VALID;
@@ -142,8 +143,12 @@ public class NetworkValidator {
     public ValidationResult notManagementNetwork() {
         return NetworkUtils.isManagementNetwork(network)
                 ? new ValidationResult(VdcBllMessages.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK,
-                        String.format("$NetworkName %s", network.getName()))
+                        getNetworkNameReplacement())
                 : ValidationResult.VALID;
+    }
+
+    private String getNetworkNameReplacement() {
+        return String.format("$NetworkName %s", network.getName());
     }
 
     protected ValidationResult networkNotUsed(List<? extends Nameable> entities, VdcBllMessages entitiesReplacement) {
