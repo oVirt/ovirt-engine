@@ -100,7 +100,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             }
         }
 
-        if (shouldResizeDiskImage()) {
+        if (resizeDiskImageRequested()) {
             exclusiveLock.put(getOldDisk().getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED));
         }
@@ -112,7 +112,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     protected void executeVmCommand() {
         ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
 
-        if (shouldResizeDiskImage()) {
+        if (resizeDiskImageRequested()) {
             extendDiskImageSize();
         } else {
             try {
@@ -135,7 +135,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
         if (!vmsDiskOrSnapshotPluggedTo.isEmpty()) {
             // only virtual drive size can be updated when VMs is running
-            if (isAtLeastOneVmIsNotDown(vmsDiskOrSnapshotPluggedTo) && shouldUpdatePropertiesOtherThanSizeAndAlias()) {
+            if (isAtLeastOneVmIsNotDown(vmsDiskOrSnapshotPluggedTo) && updateParametersRequiringVmDownRequested()) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             }
 
@@ -258,7 +258,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private boolean validateCanUpdateReadOnly() {
-        if (shouldUpdateReadOnly() && getVm().getStatus() != VMStatus.Down && vmDeviceForVm.getIsPlugged()) {
+        if (updateReadOnlyRequested() && getVm().getStatus() != VMStatus.Down && vmDeviceForVm.getIsPlugged()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
         }
         return true;
@@ -354,7 +354,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             }
 
             private void updateDeviceProperties() {
-                if (shouldUpdateReadOnly()) {
+                if (updateReadOnlyRequested()) {
                     vmDeviceForVm.setIsReadOnly(getNewDisk().getReadOnly());
                     getVmDeviceDao().update(vmDeviceForVm);
                 }
@@ -527,16 +527,16 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return list;
     }
 
-    private boolean shouldResizeDiskImage() {
+    private boolean resizeDiskImageRequested() {
         return getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE &&
                vmDeviceForVm.getSnapshotId() == null && getNewDisk().getSize() != getOldDisk().getSize();
     }
 
-    private boolean shouldUpdatePropertiesOtherThanSizeAndAlias() {
-        return shouldUpdateDiskProperties() || shouldUpdateImageProperties();
+    private boolean updateParametersRequiringVmDownRequested() {
+        return updateDiskParametersRequiringVmDownRequested() || updateImageParametersRequiringVmDownRequested();
     }
 
-    private boolean shouldUpdateDiskProperties() {
+    private boolean updateDiskParametersRequiringVmDownRequested() {
         return getOldDisk().isBoot() != getNewDisk().isBoot() ||
                 getOldDisk().getDiskInterface() != getNewDisk().getDiskInterface() ||
                 getOldDisk().getPropagateErrors() != getNewDisk().getPropagateErrors() ||
@@ -546,7 +546,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 !StringUtils.equals(getOldDisk().getDiskDescription(), getNewDisk().getDiskDescription());
     }
 
-    private boolean shouldUpdateImageProperties() {
+    private boolean updateImageParametersRequiringVmDownRequested() {
         if (getOldDisk().getDiskStorageType() != DiskStorageType.IMAGE) {
             return false;
         }
@@ -554,7 +554,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return !Objects.equals(oldQuotaId, getQuotaId());
     }
 
-    protected boolean shouldUpdateReadOnly() {
+    protected boolean updateReadOnlyRequested() {
         return !vmDeviceForVm.getIsReadOnly().equals(getNewDisk().getReadOnly());
     }
 

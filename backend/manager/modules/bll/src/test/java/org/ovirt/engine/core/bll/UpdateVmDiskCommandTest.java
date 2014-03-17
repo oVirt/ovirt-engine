@@ -408,8 +408,8 @@ public class UpdateVmDiskCommandTest {
         initializeCommand(parameters);
         command.executeVmCommand();
 
-        assertFalse(command.shouldUpdateReadOnly());
-        verify(command, atLeast(1)).shouldUpdateReadOnly();
+        assertFalse(command.updateReadOnlyRequested());
+        verify(command, atLeast(1)).updateReadOnlyRequested();
         verify(vmDeviceDAO, never()).update(any(VmDevice.class));
     }
 
