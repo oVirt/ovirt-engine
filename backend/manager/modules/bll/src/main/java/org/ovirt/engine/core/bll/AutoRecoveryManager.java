@@ -10,11 +10,15 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AutoRecoverDAO;
@@ -69,12 +73,20 @@ public class AutoRecoveryManager {
             @Override
             public List<VDS> filter(List<VDS> list) {
                         List<VDS> filtered = new ArrayList<>(list.size());
+                        List<VdsNetworkInterface> nics;
 
                         for (VDS vds : list) {
+                            if (vds.getNonOperationalReason() == NonOperationalReason.NETWORK_INTERFACE_IS_DOWN) {
+                                getBackend().getResourceManager().RunVdsCommand(VDSCommandType.GetStats,
+                                        new VdsIdAndVdsVDSCommandParametersBase(vds));
+                                nics = vds.getInterfaces();
+                            } else {
+                                nics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(vds.getId());
+                            }
+
                             Pair<List<String>, List<String>> problematicNics =
-                                    VdsUpdateRunTimeInfo.determineProblematicNics(getDbFacade().getInterfaceDao()
-                                            .getAllInterfacesForVds(vds.getId()), getDbFacade().getNetworkDao()
-                                            .getAllForCluster(vds.getVdsGroupId()));
+                                    VdsUpdateRunTimeInfo.determineProblematicNics(nics, getDbFacade().getNetworkDao()
+                                    .getAllForCluster(vds.getVdsGroupId()));
                             if (problematicNics.getFirst().isEmpty()) {
                                 filtered.add(vds);
                             }
