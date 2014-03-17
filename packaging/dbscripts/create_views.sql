@@ -619,7 +619,8 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_dynamic.last_watchdog_event as last_watchdog_event, vm_dynamic.last_watchdog_action as last_watchdog_action, vm_dynamic.is_run_once as is_run_once, vm_dynamic.vm_fqdn as vm_fqdn, vm_dynamic.cpu_name as cpu_name, vm_dynamic.current_cd as current_cd,
                       vm_static.instance_type_id as instance_type_id, vm_static.image_type_id as image_type_id, vds_groups.architecture as architecture, vm_static.original_template_id as original_template_id, vm_static.original_template_name as original_template_name, vm_dynamic.last_stop_time as last_stop_time,
                       vm_static.migration_downtime as migration_downtime, vm_static.template_version_number as template_version_number,
-                      vm_static.serial_number_policy as serial_number_policy, vm_static.custom_serial_number as custom_serial_number
+                      vm_static.serial_number_policy as serial_number_policy, vm_static.custom_serial_number as custom_serial_number,
+                      vm_interface.mac_addr as vm_interface_mac_addr
 FROM         vm_static INNER JOIN
 vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid INNER JOIN
 vm_static AS vm_templates ON vm_static.vmt_guid = vm_templates.vm_guid INNER JOIN
@@ -629,7 +630,8 @@ storage_pool ON vm_static.vds_group_id = vds_groups.vds_group_id
 and vds_groups.storage_pool_id = storage_pool.id LEFT OUTER JOIN
 quota ON vm_static.quota_id = quota.id LEFT OUTER JOIN
 vds_static ON vm_dynamic.run_on_vds = vds_static.vds_id LEFT OUTER JOIN
-vm_pool_map_view ON vm_static.vm_guid = vm_pool_map_view.vm_guid
+vm_pool_map_view ON vm_static.vm_guid = vm_pool_map_view.vm_guid LEFT OUTER JOIN
+vm_interface ON vm_static.vm_guid = vm_interface.vm_guid
 WHERE vm_static.entity_type = 'VM';
 
 
@@ -661,7 +663,7 @@ SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.cpu_shares, vms
             vms.instance_type_id as instance_type_id, vms.image_type_id as image_type_id, vms.architecture as architecture, vms.original_template_id as original_template_id, vms.original_template_name as original_template_name,
             vms.migration_downtime as migration_downtime, vms.template_version_number as template_version_number,
             vms.current_cd as current_cd,
-            vms.serial_number_policy as serial_number_policy, vms.custom_serial_number as custom_serial_number
+            vms.serial_number_policy as serial_number_policy, vms.custom_serial_number as custom_serial_number, vms.vm_interface_mac_addr as vm_interface_mac_addr
 FROM        vms LEFT OUTER JOIN
             tags_vm_map_view ON vms.vm_guid = tags_vm_map_view.vm_id LEFT OUTER JOIN
             vm_device ON vm_device.vm_id = vms.vm_guid LEFT OUTER JOIN

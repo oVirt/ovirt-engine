@@ -19,6 +19,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mVerbs.add("COMMENT");
         mVerbs.add("STATUS");
         mVerbs.add("IP");
+        mVerbs.add("MAC");
         mVerbs.add("UPTIME");
         mVerbs.add("DOMAIN");
         mVerbs.add("OS");
@@ -47,6 +48,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put("COMMENT", String.class);
         getTypeDictionary().put("STATUS", VMStatus.class);
         getTypeDictionary().put("IP", String.class);
+        getTypeDictionary().put("MAC", String.class);
         getTypeDictionary().put("UPTIME", TimeSpan.class);
         getTypeDictionary().put("DOMAIN", String.class);
         getTypeDictionary().put("OS", String.class);
@@ -74,6 +76,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put("COMMENT", "vm_comment");
         columnNameDict.put("STATUS", "status");
         columnNameDict.put("IP", "vm_ip");
+        columnNameDict.put("MAC", "vm_interface_mac_addr");
         columnNameDict.put("UPTIME", "elapsed_time");
         columnNameDict.put("OS", "vm_os");
         columnNameDict.put("CREATIONDATE", "vm_creation_date");
