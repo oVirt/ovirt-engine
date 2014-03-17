@@ -52,7 +52,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         implements QuotaStorageDependent {
 
     private List<PermissionSubject> listPermissionSubjects;
-    private Map<Guid, List<Disk>> otherVmDisks = new HashMap<Guid, List<Disk>>();
+    private Map<Guid, List<Disk>> otherVmDisks = new HashMap<>();
     private List<VM> vmsDiskSnapshotPluggedTo = new LinkedList<>();
     private List<VM> vmsDiskPluggedTo = new LinkedList<>();
     private List<VM> vmsDiskOrSnapshotPluggedTo = new LinkedList<>();
@@ -80,7 +80,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
-        Map<String, Pair<String, String>> sharedLock = new HashMap<String, Pair<String, String>>();
+        Map<String, Pair<String, String>> sharedLock = new HashMap<>();
 
         for (VM vm : vmsDiskOrSnapshotPluggedTo) {
             sharedLock.put(vm.getId().toString(),
@@ -91,7 +91,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        Map<String, Pair<String, String>> exclusiveLock = new HashMap<String, Pair<String, String>>();
+        Map<String, Pair<String, String>> exclusiveLock = new HashMap<>();
 
         if (getNewDisk().isBoot()) {
             for (VM vm : vmsDiskPluggedTo) {
@@ -172,7 +172,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     protected boolean validatePciAndIdeLimit(List<VM> vmsDiskPluggedTo) {
         for (VM vm : vmsDiskPluggedTo) {
             List<VmNic> allVmInterfaces = getVmNicDao().getAllForVm(vm.getId());
-            List<Disk> allVmDisks = new LinkedList<Disk>(getOtherVmDisks(vm.getId()));
+            List<Disk> allVmDisks = new LinkedList<>(getOtherVmDisks(vm.getId()));
             allVmDisks.add(getNewDisk());
 
             if (!checkPciAndIdeLimit(vm.getOs(),
@@ -310,7 +310,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         if (listPermissionSubjects == null) {
-            listPermissionSubjects = new ArrayList<PermissionSubject>();
+            listPermissionSubjects = new ArrayList<>();
 
             Guid diskId = (getOldDisk() == null) ? null : getOldDisk().getId();
             listPermissionSubjects.add(new PermissionSubject(diskId,
@@ -432,7 +432,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private ValidationResult noVmsContainBootableDisks(List<VM> vms) {
-        List<String> vmsWithBoot = new ArrayList<String>(vms.size());
+        List<String> vmsWithBoot = new ArrayList<>(vms.size());
 
         for (VM vm : vms) {
             Disk bootDisk = getDiskDao().getVmBootActiveDisk(vm.getId());
@@ -495,7 +495,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
 
         if (isQuotaValidationNeeded()) {
             DiskImage oldDiskImage = (DiskImage) getOldDisk();
