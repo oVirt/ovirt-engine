@@ -784,7 +784,7 @@ fi
 %{engine_etc}/engine.conf.d/
 %{engine_java}/aaa.jar
 %{engine_java}/branding.jar
-%{engine_java}/builtinjar
+%{engine_java}/builtin.jar
 %{engine_java}/common.jar
 %{engine_java}/compat.jar
 %{engine_java}/extensions-manager.jar
