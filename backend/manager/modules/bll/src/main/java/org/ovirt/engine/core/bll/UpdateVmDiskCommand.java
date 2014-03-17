@@ -151,7 +151,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             }
         }
 
-        if (DiskStorageType.IMAGE.equals(getOldDisk().getDiskStorageType()) && !validateCanResizeDisk()) {
+        if (DiskStorageType.IMAGE == getOldDisk().getDiskStorageType() && !validateCanResizeDisk()) {
             return false;
         }
 
