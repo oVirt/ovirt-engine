@@ -599,10 +599,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return vmsDiskPluggedTo;
     }
 
-    private List<VM> getVmsDiskSnapshotPluggedTo() {
-        return vmsDiskSnapshotPluggedTo;
-    }
-
     private void loadVmDiskAttachedToInfo() {
         if (getOldDisk() != null) {
             List<Pair<VM, VmDevice>> attachedVmsInfo = getVmDAO().getVmsWithPlugInfo(getOldDisk().getId());
