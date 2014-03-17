@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 
@@ -24,12 +23,10 @@ public class GetStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> e
         infoReturn = getBroker().getVdsStats();
         proceedProxyReturnValue();
         if (getVds().getInterfaces().isEmpty()) {
-            List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(
-                    getVds().getId());
-            for (VdsNetworkInterface iface : interfaces) {
-                getVds().getInterfaces().add(iface);
-            }
+            List<VdsNetworkInterface> nics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(getVds().getId());
+            getVds().getInterfaces().addAll(nics);
         }
+
         VdsBrokerObjectsBuilder.updateVDSStatisticsData(getVds(), infoReturn.mInfo);
         VdsBrokerObjectsBuilder.checkTimeDrift(getVds(), infoReturn.mInfo);
     }
