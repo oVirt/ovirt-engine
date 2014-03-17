@@ -311,6 +311,28 @@ public class UpdateVmDiskCommandTest {
     }
 
     @Test
+    public void canDoActionUpdateWipeAfterDeleteVmDown() {
+        canDoActionUpdateWipeAfterDelete(VMStatus.Down);
+    }
+
+    @Test
+    public void canDoActionUpdateWipeAfterDeleteVmUp() {
+        canDoActionUpdateWipeAfterDelete(VMStatus.Up);
+    }
+
+    private void canDoActionUpdateWipeAfterDelete(VMStatus status) {
+        DiskImage disk  = createDiskImage();
+        disk.setReadOnly(false);
+        when(diskDao.get(diskImageGuid)).thenReturn(disk);
+        UpdateVmDiskParameters parameters = createParameters();
+        parameters.getDiskInfo().setReadOnly(false);
+        parameters.getDiskInfo().setWipeAfterDelete(true);
+        initializeCommand(parameters, Arrays.asList(createVm(status)));
+
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
     public void clearAddressOnInterfaceChange() {
         final UpdateVmDiskParameters parameters = createParameters();
         // update new disk interface so it will be different than the old one

@@ -540,7 +540,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return getOldDisk().isBoot() != getNewDisk().isBoot() ||
                 getOldDisk().getDiskInterface() != getNewDisk().getDiskInterface() ||
                 getOldDisk().getPropagateErrors() != getNewDisk().getPropagateErrors() ||
-                getOldDisk().isWipeAfterDelete() != getNewDisk().isWipeAfterDelete() ||
                 getOldDisk().isShareable() != getNewDisk().isShareable() ||
                 getOldDisk().getSgio() != getNewDisk().getSgio() ||
                 !StringUtils.equals(getOldDisk().getDiskDescription(), getNewDisk().getDiskDescription());
