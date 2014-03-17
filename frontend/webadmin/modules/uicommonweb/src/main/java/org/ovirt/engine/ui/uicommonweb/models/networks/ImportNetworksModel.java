@@ -225,7 +225,7 @@ public class ImportNetworksModel extends Model {
             });
         }
 
-        Frontend.getInstance().runMultipleActions(VdcActionType.AddNetwork, multipleActionParameters, callbacks);
+        Frontend.getInstance().runMultipleActions(VdcActionType.AddNetwork, multipleActionParameters, callbacks, true);
         cancel();
     }
 
