@@ -128,7 +128,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
     /**
      * A custom menu bar for 'RefreshRateOptionMenuItem' items.
      */
-    private class RefreshRateOptionsMenu extends MenuBar {
+    private static class RefreshRateOptionsMenu extends MenuBar {
         public RefreshRateOptionsMenu(boolean vertical) {
             super(vertical);
         }

@@ -37,7 +37,7 @@ public class ExtensionsManager {
     public static final String SENSITIVE_KEYS = "ovirt.engine.extension.sensitiveKeys";
     private static final String ENGINE_EXTENSION_ENABLED = "ENGINE_EXTENSION_ENABLED_";
 
-    public class ExtensionEntry {
+    public static class ExtensionEntry {
         private File file;
         private boolean enabled;
         private boolean activated;

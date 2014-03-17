@@ -300,7 +300,7 @@ public class MacPoolManager {
     }
 
     @SuppressWarnings("serial")
-    private class MacPoolExceededMaxException extends RuntimeException {
+    private static class MacPoolExceededMaxException extends RuntimeException {
     }
 
     private boolean allowDuplicate() {

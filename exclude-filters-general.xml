@@ -56,15 +56,6 @@
     <!--
     Currently Ignoring.
     findbugs reason:
-    SIC: Should be a static inner class (SIC_INNER_SHOULD_BE_STATIC)
-    -->
-    <Match>
-        <Bug code="SIC" />
-    </Match>
-
-    <!--
-    Currently Ignoring.
-    findbugs reason:
     ST: Write to static field from instance method (ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD)
     -->
     <Match>

@@ -221,7 +221,7 @@ public class XmlRpcUtils {
             return new InternalCallable(obj, m, args, correlationId);
         }
 
-        private final class InternalCallable implements Callable<Object> {
+        private static final class InternalCallable implements Callable<Object> {
 
             private Object obj;
             private Method m;

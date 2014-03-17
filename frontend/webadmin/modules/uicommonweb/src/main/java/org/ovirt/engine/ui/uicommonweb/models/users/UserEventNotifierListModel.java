@@ -302,7 +302,7 @@ public class UserEventNotifierListModel extends SearchableListModel
         cancel();
     }
 
-    private final class EventSubscriptionFrontendActionAsyncCallback implements IFrontendActionAsyncCallback {
+    private static final class EventSubscriptionFrontendActionAsyncCallback implements IFrontendActionAsyncCallback {
         private ArrayList<VdcActionParametersBase> toAddList;
         ArrayList<VdcActionParametersBase> toRemoveList;
         private int sucessCount = 0;

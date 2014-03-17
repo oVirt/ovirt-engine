@@ -246,7 +246,7 @@ public abstract class Configurator {
         return wsConfig != null && !"".equals(wsConfig) && !"Off".equalsIgnoreCase(wsConfig); //$NON-NLS-1$ $NON-NLS-2$
     }
 
-    public final class FileFetchEventArgs extends EventArgs {
+    public static final class FileFetchEventArgs extends EventArgs {
         private String fileContent;
 
         public String getFileContent() {

@@ -389,7 +389,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
      * This class guards, that only one row can be selected at a given time and the selection survives the refresh. The
      * single instance of this class should be used for more instances of EntityModelCellTable
      */
-    class VmSingleSelectionModel extends SingleSelectionModel<EntityModel> {
+    static class VmSingleSelectionModel extends SingleSelectionModel<EntityModel> {
 
         private VM selectedVM = null;
 
@@ -453,7 +453,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
     /**
      * An empty column - only for the header
      */
-    private class EmptyColumn extends TextColumn<VM> {
+    private static class EmptyColumn extends TextColumn<VM> {
 
         @Override
         public String getValue(VM object) {

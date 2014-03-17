@@ -154,7 +154,7 @@ public class AddClusterRM extends IEnlistmentNotification {
 
     private final Context context = new Context();
 
-    public final class Context {
+    public static final class Context {
 
         public Enlistment enlistment;
         public VDSGroup clusterFoundByName;

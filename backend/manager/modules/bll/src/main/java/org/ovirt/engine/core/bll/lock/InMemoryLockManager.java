@@ -306,7 +306,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
     /**
      * The following class represents different locks which are kept inside InMemoryLockManager
      */
-    private class InternalLockView {
+    private static class InternalLockView {
 
         /** Number for shared locks **/
         private int count;

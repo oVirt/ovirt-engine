@@ -222,7 +222,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         clientStorage.setLocalItem(key, Boolean.toString(value));
     }
 
-    class KeyMaker {
+    static class KeyMaker {
         private final String id;
 
         private final boolean isPool;

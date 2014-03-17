@@ -628,7 +628,7 @@ public class ConfigureLocalStorageModel extends Model {
 
     private final Context context = new Context();
 
-    public final class Context {
+    public static final class Context {
 
         public VDS host;
         public StoragePool hostDataCenter;

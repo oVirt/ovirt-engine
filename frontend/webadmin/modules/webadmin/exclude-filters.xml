@@ -261,6 +261,14 @@
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
+    <!--
+      Ignore non-static inner classes.
+      This pattern is used by GWT-generated code, which we have no control of
+      -->
+     <Match>
+        <Bug pattern="SIC_INNER_SHOULD_BE_STATIC" />
+     </Match>
+
     <Match>
       <Class name="org.ovirt.engine.ui.webadmin.ApplicationConstants" />
       <Bug pattern="SKIPPED_CLASS_TOO_BIG"/>

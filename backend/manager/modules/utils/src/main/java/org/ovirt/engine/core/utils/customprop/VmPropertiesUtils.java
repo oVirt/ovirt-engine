@@ -76,7 +76,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         return Config.<String> getValue(ConfigValues.PredefinedVMProperties, version.getValue());
     }
 
-    public class VMCustomProperties {
+    public static class VMCustomProperties {
         private final String predefinedProperties;
         private final String userDefinedProperties;
 

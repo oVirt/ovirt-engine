@@ -238,7 +238,7 @@ public class Smtp extends Transport {
     /**
      * An implementation of the {@link Authenticator}, holds the authentication credentials for a network connection.
      */
-    private class EmailAuthenticator extends Authenticator {
+    private static class EmailAuthenticator extends Authenticator {
         private String userName;
         private String password;
         public EmailAuthenticator(String userName, String password) {
@@ -252,7 +252,7 @@ public class Smtp extends Transport {
         }
     }
 
-    private class DispatchAttempt {
+    private static class DispatchAttempt {
          public final AuditLogEvent event;
          public final String address;
          public int retries = 0;
