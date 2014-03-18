@@ -549,7 +549,7 @@ install -dm 755 "%{buildroot}/%{engine_run}/notifier"
 #
 # Force TLS/SSL for selected applications.
 #
-for war in restapi userportal webadmin; do
+for war in restapi legacy_restapi userportal webadmin; do
 	sed -i \
 		's#<transport-guarantee>NONE</transport-guarantee>#<transport-guarantee>CONFIDENTIAL</transport-guarantee>#' \
 		"%{buildroot}%{engine_ear}/${war}.war/WEB-INF/web.xml"
