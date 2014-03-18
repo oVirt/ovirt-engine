@@ -176,4 +176,11 @@ public interface VdsGroupDAO extends DAO, SearchDAO<VDSGroup> {
      * @return
      */
     List<VDSGroup> getClustersByClusterPolicyId(Guid clusterPolicyId);
+
+    /**
+     * Retrieves the number of the VMs in the cluster
+     * @param vdsGroupId
+     * @return
+     */
+    int getVmsCountByClusterId(Guid vdsGroupId);
 }

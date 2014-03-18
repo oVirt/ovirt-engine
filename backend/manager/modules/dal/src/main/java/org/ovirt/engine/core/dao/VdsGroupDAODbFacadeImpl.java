@@ -160,6 +160,14 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
         getCallsHandler().executeModification("UpdateVdsGroupEmulatedMachine", parameterSource);
     }
 
+    @Override
+    public int getVmsCountByClusterId(Guid vdsGroupId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vds_group_id", vdsGroupId);
+        return getCallsHandler().executeRead("GetNumberOfVmsInCluster",
+                getIntegerMapper(),
+                parameterSource);
+    }
+
     public List<VDSGroup> getTrustedClusters() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("trusted_service", true);

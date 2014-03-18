@@ -257,3 +257,12 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+
+Create or replace FUNCTION GetNumberOfVmsInCluster(v_vds_group_id UUID) RETURNS SETOF BIGINT STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT COUNT (vms.*)
+      FROM vm_static vms
+      WHERE vms.vds_group_id = v_vds_group_id AND vms.entity_type = 'VM';
+END; $procedure$
+LANGUAGE plpgsql;
