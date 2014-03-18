@@ -3,19 +3,23 @@ package org.ovirt.engine.core.searchbackend;
 
 public class NetworkInterfaceConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     private static final String NETWORK_NAME = "NETWORK_NAME";
+    private static final String MAC_ADDR = "MAC";
 
     public NetworkInterfaceConditionFieldAutoCompleter() {
         // Building the basic verbs dict.
         mVerbs.add(NETWORK_NAME);
+        mVerbs.add(MAC_ADDR);
 
         // Building the autoCompletion dict.
         buildCompletions();
 
         // Building the types dict.
         getTypeDictionary().put(NETWORK_NAME, String.class);
+        getTypeDictionary().put(MAC_ADDR, String.class);
 
         // building the ColumnName dict.
         columnNameDict.put(NETWORK_NAME, "network_name");
+        columnNameDict.put(MAC_ADDR, "mac_addr");
 
         // Building the validation dict.
         buildBasicValidationTable();
