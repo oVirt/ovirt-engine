@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -62,7 +64,12 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         boolean shouldBeFenced = validator.shouldVdsBeFenced();
         if (shouldBeFenced) {
             getParameters().setParentCommand(VdcActionType.VdsNotRespondingTreatment);
+            // Make sure that the StopVdsCommand that runs by the RestartVds
+            // don't write over our job, and disrupt marking the job status correctly
+            ExecutionContext ec = (ExecutionContext) ObjectUtils.clone(this.getExecutionContext());
+            ec.setJob(this.getExecutionContext().getJob());
             super.executeCommand();
+            this.setExecutionContext(ec);
         } else {
             setCommandShouldBeLogged(false);
             log.infoFormat("Host {0}({1}) not fenced since it's status is ok, or it doesn't exist anymore.",
