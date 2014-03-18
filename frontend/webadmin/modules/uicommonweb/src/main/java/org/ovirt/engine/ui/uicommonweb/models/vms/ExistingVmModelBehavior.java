@@ -166,6 +166,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getDescription().setEntity(vm.getVmDescription());
         getModel().getComment().setEntity(vm.getComment());
         getModel().getMemSize().setEntity(vm.getVmMemSizeMb());
+        getModel().getMemSize().setIsChangable(vm.isDown());
         getModel().getMinAllocatedMemory().setEntity(vm.getMinAllocatedMem());
         getModel().getOSType().setSelectedItem(vm.getVmOsId());
         getModel().getUsbPolicy().setSelectedItem(vm.getUsbPolicy());
