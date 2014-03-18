@@ -622,6 +622,32 @@ public abstract class HostModel extends Model
         }
     }
 
+    private boolean ciscoUcsPrimaryPmTypeSelected;
+
+    public boolean isCiscoUcsPrimaryPmTypeSelected() {
+        return ciscoUcsPrimaryPmTypeSelected;
+    }
+
+    public void setCiscoUcsPrimaryPmTypeSelected(boolean value) {
+        if (ciscoUcsPrimaryPmTypeSelected != value) {
+            ciscoUcsPrimaryPmTypeSelected = value;
+            onPropertyChanged(new PropertyChangedEventArgs("IsCiscoUcsPrimaryPmTypeSelected")); //$NON-NLS-1$
+        }
+    }
+
+    private boolean ciscoUcsSecondaryPmTypeSelected;
+
+    public boolean isCiscoUcsSecondaryPmTypeSelected() {
+        return ciscoUcsSecondaryPmTypeSelected;
+    }
+
+    public void setCiscoUcsSecondaryPmTypeSelected(boolean value) {
+        if (ciscoUcsSecondaryPmTypeSelected != value) {
+            ciscoUcsSecondaryPmTypeSelected = value;
+            onPropertyChanged(new PropertyChangedEventArgs("IsCiscoUcsSecondaryPmTypeSelected")); //$NON-NLS-1$
+        }
+    }
+
     public HashMap<String, String> getPmOptionsMap() {
         return getPmOptionsMapInternal(getPmPort(), getPmSlot(), getPmSecure(), getPmOptions());
     }
@@ -981,7 +1007,7 @@ public abstract class HostModel extends Model
             return;
         }
 
-        List list = new ArrayList((List) getPmProxyPreferencesList().getItems());
+        List list = new ArrayList(getPmProxyPreferencesList().getItems());
         Object selectedItem = getPmProxyPreferencesList().getSelectedItem();
         int selectedItemIndex = list.indexOf(selectedItem);
 
@@ -1000,7 +1026,7 @@ public abstract class HostModel extends Model
             return;
         }
 
-        List list = new ArrayList((List) getPmProxyPreferencesList().getItems());
+        List list = new ArrayList(getPmProxyPreferencesList().getItems());
         Object selectedItem = getPmProxyPreferencesList().getSelectedItem();
         int selectedItemIndex = list.indexOf(selectedItem);
 
@@ -1046,13 +1072,11 @@ public abstract class HostModel extends Model
                 if (fingerprint != null && fingerprint.length() > 0)
                 {
                     getFetchSshFingerprint().setEntity(result);
-                    getFetchResult().setEntity((String)
-                            ConstantsManager.getInstance().getConstants().successLoadingFingerprint());
+                    getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().successLoadingFingerprint());
                 }
                 else
                 {
-                    getFetchResult().setEntity((String)
-                             ConstantsManager.getInstance().getConstants().errorLoadingFingerprint());
+                    getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().errorLoadingFingerprint());
                 }
             }
         };
@@ -1066,7 +1090,7 @@ public abstract class HostModel extends Model
                     + getHost().getInvalidityReasons().get(0));
         }
         else {
-            getFetchResult().setEntity((String) ConstantsManager.getInstance().getConstants().loadingFingerprint());
+            getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().loadingFingerprint());
             AsyncDataProvider.getHostFingerprint(aQuery, getHost().getEntity().toString());
         }
     }
@@ -1365,6 +1389,7 @@ public abstract class HostModel extends Model
     private void updatePmModels()
     {
         boolean isPm = (Boolean) getIsPm().getEntity();
+        final String ciscoUcsValue = "cisco_ucs"; //$NON-NLS-1$
 
         // Update primary PM fields.
         getManagementIp().setIsChangable(isPm);
@@ -1405,12 +1430,12 @@ public abstract class HostModel extends Model
                     }
                 }
             }), pmType, version);
+            setCiscoUcsPrimaryPmTypeSelected(pmType.equals(ciscoUcsValue));
         } else {
             getPmPort().setIsAvailable(false);
             getPmSlot().setIsAvailable(false);
             getPmSecure().setIsAvailable(false);
         }
-
 
         // Update secondary PM fields.
         getPmSecondaryIp().setIsChangable(isPm);
@@ -1445,12 +1470,12 @@ public abstract class HostModel extends Model
                     }
                 }
             }), pmSecondaryType, version);
+            setCiscoUcsSecondaryPmTypeSelected(pmSecondaryType.equals(ciscoUcsValue));
         } else {
             getPmSecondaryPort().setIsAvailable(false);
             getPmSecondarySlot().setIsAvailable(false);
             getPmSecondarySecure().setIsAvailable(false);
         }
-
 
         // Update other PM fields.
         getPmVariants().setIsChangable(isPm);

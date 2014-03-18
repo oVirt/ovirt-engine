@@ -524,6 +524,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Slot")
     String hostPopupPmSlotLabel();
 
+    @DefaultStringValue("Service Profile")
+    String hostPopupPmCiscoUcsSlotLabel();
+
     @DefaultStringValue("Options")
     String hostPopupPmOptionsLabel();
 

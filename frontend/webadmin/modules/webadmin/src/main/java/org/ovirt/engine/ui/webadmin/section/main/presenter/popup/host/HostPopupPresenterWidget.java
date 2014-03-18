@@ -26,6 +26,10 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
          */
         void showPowerManagement();
         void setHostProviderVisibility(boolean visible);
+
+        void updatePrimaryPmSlotLabelText(boolean ciscoUcsSelected);
+        void updateSecondaryPmSlotLabelText(boolean ciscoUcsSelected);
+
     }
 
     @Inject
@@ -36,16 +40,15 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
     @Override
     public void init(final HostModel model) {
         super.init(model);
-
         addTestButtonListener();
         addUpdateHostsListener(model);
         addPowerManagementListener(model);
         addHostProviderListener(model);
+        addCiscoUcsPmTypeListener(model);
     }
 
     private void addPowerManagementListener(final HostModel model) {
         model.getPropertyChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).propertyName;
@@ -54,6 +57,20 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
                 }
                 if (model.getIsPowerManagementTabSelected()) {
                     getView().showPowerManagement();
+                }
+            }
+        });
+    }
+
+    private void addCiscoUcsPmTypeListener(final HostModel model) {
+        model.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
+                if ("IsCiscoUcsPrimaryPmTypeSelected".equals(propName)) { //$NON-NLS-1$
+                    getView().updatePrimaryPmSlotLabelText(model.isCiscoUcsPrimaryPmTypeSelected());
+                } else if ("IsCiscoUcsSecondaryPmTypeSelected".equals(propName)) { //$NON-NLS-1$
+                    getView().updateSecondaryPmSlotLabelText(model.isCiscoUcsSecondaryPmTypeSelected());
                 }
             }
         });
@@ -79,7 +96,6 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
     }
     private void addHostProviderListener(final HostModel model) {
         model.getProviderSearchFilter().getPropertyChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$

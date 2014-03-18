@@ -2,8 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import java.util.List;
 
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -15,6 +13,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.HasLabel;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
@@ -51,6 +50,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -957,4 +958,19 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     public void setHostProviderVisibility(boolean visible) {
         searchProviderPanel.setVisible(visible);
     }
+
+    @Override
+    public void updatePrimaryPmSlotLabelText(boolean ciscoUcsSelected) {
+        updatePmSlotLabelText(pmSlotEditor, ciscoUcsSelected);
+    }
+
+    @Override
+    public void updateSecondaryPmSlotLabelText(boolean ciscoUcsSelected) {
+        updatePmSlotLabelText(pmSecondarySlotEditor, ciscoUcsSelected);
+    }
+
+    void updatePmSlotLabelText(HasLabel widget, boolean ciscoUcsSelected) {
+        widget.setLabel(ciscoUcsSelected ? constants.hostPopupPmCiscoUcsSlotLabel() : constants.hostPopupPmSlotLabel());
+    }
+
 }
