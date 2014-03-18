@@ -328,6 +328,7 @@ public enum VdcActionType {
     UploadStream(1901, QuotaDependency.NONE),
     ProcessOvfUpdateForStorageDomain(1902, QuotaDependency.NONE),
     CreateOvfVolumeForStorageDomain(1903, QuotaDependency.NONE),
+    CreateOvfStoresForStorageDomain(1904, QuotaDependency.NONE),
 
     // Affinity Groups
     AddAffinityGroup(1950, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),

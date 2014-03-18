@@ -8,9 +8,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -43,8 +41,8 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends StorageDomainParam
         DiskImage createdDisk = createDisk(getStorageDomainId());
         AddDiskParameters diskParameters = new AddDiskParameters(null, createDisk(getStorageDomainId()));
         diskParameters.setStorageDomainId(getStorageDomainId());
-        diskParameters.setParentCommand(VdcActionType.CreateOvfVolumeForStorageDomain);
-        diskParameters.setParentParameters(getParameters());
+        diskParameters.setParentCommand(getParameters().getParentCommand());
+        diskParameters.setParentParameters(getParameters().getParentParameters());
         diskParameters.setShouldRemainIllegalOnFailedExecution(true);
         VdcReturnValueBase vdcReturnValueBase = Backend.getInstance().runInternalAction(VdcActionType.AddDisk, diskParameters,
                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
@@ -64,7 +62,7 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends StorageDomainParam
             setSucceeded(false);
         }
 
-        getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValueBase.getInternalVdsmTaskIdList());
+        getReturnValue().getInternalVdsmTaskIdList().addAll(vdcReturnValueBase.getInternalVdsmTaskIdList());
         setSucceeded(true);
     }
 
@@ -92,34 +90,7 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends StorageDomainParam
         getStorageDomainOvfInfoDao().save(storageDomainOvfInfo);
     }
 
-    @Override
-    protected void endSuccessfully() {
-        endChildCommands();
-        Guid diskId = ((AddImageFromScratchParameters) getParameters().getImagesParameters()
-                .get(0)).getDiskInfo().getId();
-        StorageDomainOvfInfo storageDomainOvfInfoDb =
-                getStorageDomainOvfInfoDao()
-                        .get(diskId);
-        storageDomainOvfInfoDb.setStatus(StorageDomainOvfInfoStatus.OUTDATED);
-        getStorageDomainOvfInfoDao().update(storageDomainOvfInfoDb);
-        getBackend().runInternalAction(VdcActionType.ProcessOvfUpdateForStorageDomain, getParameters());
-        setSucceeded(true);
-    }
-
     protected StorageDomainOvfInfoDao getStorageDomainOvfInfoDao() {
         return getDbFacade().getStorageDomainOvfInfoDao();
-    }
-
-    private void endChildCommands() {
-        for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
-            getBackend().endAction(p.getCommandType(), p);
-        }
-    }
-
-    @Override
-    protected void endWithFailure() {
-        endChildCommands();
-        AuditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
-        setSucceeded(true);
     }
 }

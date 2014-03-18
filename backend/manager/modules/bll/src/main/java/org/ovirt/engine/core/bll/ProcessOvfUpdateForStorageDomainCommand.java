@@ -16,6 +16,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.CreateOvfStoresForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -216,15 +217,15 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
 
     @Override
     protected void executeCommand() {
-        Integer ovfStoresCountForDomain = Config.<Integer> getValue(ConfigValues.StorageDomainOvfStoreCount);
-
-        for (int i = ovfDiskCount; i < ovfStoresCountForDomain; i++) {
-            Backend.getInstance().runInternalAction(VdcActionType.CreateOvfVolumeForStorageDomain,
-                    new StorageDomainParametersBase(getParameters().getStoragePoolId(),
-                            getParameters().getStorageDomainId()));
-        }
-
         updateOvfStoreContent();
+
+        int missingDiskCount = Config.<Integer> getValue(ConfigValues.StorageDomainOvfStoreCount) - ovfDiskCount;
+
+        if (missingDiskCount > 0) {
+            getBackend().runInternalAction(VdcActionType.CreateOvfStoresForStorageDomain,
+                    new CreateOvfStoresForStorageDomainCommandParameters(getParameters().getStoragePoolId(),
+                            getParameters().getStorageDomainId(), missingDiskCount));
+        }
 
         setSucceeded(true);
     }
