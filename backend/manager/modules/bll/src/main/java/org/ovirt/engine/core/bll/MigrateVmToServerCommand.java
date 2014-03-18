@@ -2,7 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -56,5 +58,14 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
     @Override
     protected List<Guid> getVdsWhiteList() {
         return Arrays.asList(getDestinationVdsId());
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        jobProperties = super.getJobMessageProperties();
+        if (getDestinationVdsName() != null) {
+            jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), getDestinationVdsName());
+        }
+        return jobProperties;
     }
 }
