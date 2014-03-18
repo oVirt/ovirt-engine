@@ -403,7 +403,7 @@ public class VdsUpdateRunTimeInfo {
                     ResourceManager
                             .getInstance()
                             .getEventListener()
-                            .vdsNonOperational(_vds.getId(), _vds.getNonOperationalReason(), false, true,
+                            .vdsNonOperational(_vds.getId(), _vds.getNonOperationalReason(), true, true,
                                     Guid.Empty);
                 } else {
 
