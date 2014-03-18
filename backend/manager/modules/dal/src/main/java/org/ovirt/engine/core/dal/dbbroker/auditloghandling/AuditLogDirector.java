@@ -158,11 +158,26 @@ public final class AuditLogDirector {
             auditLog.setQuotaName(auditLogable.getQuotaNameForLog());
             auditLog.setCallStack(auditLogable.getCallStack());
             getDbFacadeInstance().getAuditLogDao().save(auditLog);
+            String logMessage;
             if (!"".equals(loggerString)) {
-                log.infoFormat(loggerString, resolvedMessage);
+                logMessage = log.transform(loggerString, resolvedMessage);
             } else {
-                log.info(auditLog.toStringForLogging());
+                logMessage = auditLog.toStringForLogging();
             }
+
+            switch (severity) {
+            case NORMAL:
+                log.info(logMessage);
+                break;
+            case ERROR:
+                log.error(logMessage);
+                break;
+            case ALERT:
+            case WARNING:
+                log.warn(logMessage);
+                break;
+            }
+
         }
     }
 
