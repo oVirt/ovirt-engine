@@ -1382,7 +1382,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("There are no active Data-Centers in the system.")
     String noActiveDataCenters();
 
-    @DefaultStringValue("There are no active Storage Domains in the relevant Data-Center.")
+    @DefaultStringValue("There are no active Storage Domains that you have permissions to create a disk on in the relevant Data-Center.")
     String noActiveStorageDomainsInDC();
 
     @DefaultStringValue("The relevant Data-Center is not active.")
