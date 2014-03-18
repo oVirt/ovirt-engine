@@ -135,7 +135,7 @@ class Plugin(plugin.PluginBase):
                     "\n"
                     "create role {user} with login encrypted password '{user}'"
                     ";\n"
-                    "create {database} engine owner {user}\n"
+                    "create {database} owner {user}\n"
                     " template template0\n"
                     " encoding 'UTF8' lc_collate 'en_US.UTF-8'\n"
                     " lc_ctype 'en_US.UTF-8';\n"
