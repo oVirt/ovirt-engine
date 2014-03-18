@@ -172,6 +172,14 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(uptimeColumn, constants.uptimeVm(), "120px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<VM> descriptionColumn = new TextColumnWithTooltip<VM>() {
+            @Override
+            public String getValue(VM object) {
+                return object.getDescription();
+            }
+        };
+        getTable().addColumn(descriptionColumn, constants.description(), "150px"); //$NON-NLS-1$
+
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.newVm()) {
 
             @Override
