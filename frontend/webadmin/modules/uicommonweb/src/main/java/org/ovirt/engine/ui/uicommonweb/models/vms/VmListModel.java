@@ -2044,20 +2044,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
                             @Override
                             public void vnicCreated(Guid vmId) {
-                                getWindow().stopProgress();
-                                cancel();
-                                setGuideContext(vmId);
-                                updateActionAvailability();
-                                getGuideCommand().execute();
+                                // do nothing
                             }
 
                             @Override
                             public void queryFailed() {
-                                getWindow().stopProgress();
-                                cancel();
+                                // do nothing
                             }
                         });
-
 
                 model.startProgress(null);
 
@@ -2071,7 +2065,24 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                 setVmWatchdogToParams(model, parameters);
 
-                Frontend.getInstance().runAction(VdcActionType.AddVmFromScratch, parameters, new UnitVmModelNetworkAsyncCallback(model, addVmFromScratchNetworkManager), this);
+                Frontend.getInstance().runAction(VdcActionType.AddVmFromScratch,
+                        parameters,
+                        new UnitVmModelNetworkAsyncCallback(model, addVmFromScratchNetworkManager) {
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        getWindow().stopProgress();
+                        VdcReturnValueBase returnValue = result.getReturnValue();
+                        if (returnValue != null && returnValue.getSucceeded()) {
+                            setWindow(null);
+                            setGuideContext(returnValue.getActionReturnValue());
+                            updateActionAvailability();
+                            getGuideCommand().execute();
+                        } else {
+                            cancel();
+                        }
+                        super.executed(result);
+                    }
+                }, this);
             }
             else
             {
