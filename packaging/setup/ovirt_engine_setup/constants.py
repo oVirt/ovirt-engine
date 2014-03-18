@@ -598,7 +598,7 @@ class Const(object):
 
     ENGINE_PACKAGE_NAME = 'ovirt-engine'
     ENGINE_PACKAGE_SETUP_NAME = '%s-setup' % ENGINE_PACKAGE_NAME
-    UPGRADE_YUM_GROUP = 'ovirt-engine-3.4'
+    UPGRADE_YUM_GROUP_NAME = 'ovirt-engine-3.4'
 
     @classproperty
     def RPM_LOCK_LIST(self):
@@ -1050,6 +1050,7 @@ class RPMDistroEnv(object):
     ENGINE_SETUP_PACKAGES = 'OVESETUP_RPMDISTRO/engineSetupPackages'
     PACKAGES_UPGRADE_LIST = 'OVESETUP_RPMDISTRO/packagesUpgradeList'
     PACKAGES_SETUP = 'OVESETUP_RPMDISTRO/packagesSetup'
+    UPGRADE_YUM_GROUP = 'OVESETUP_RPMDISTRO/upgradeYumGroup'
 
 
 @util.export
