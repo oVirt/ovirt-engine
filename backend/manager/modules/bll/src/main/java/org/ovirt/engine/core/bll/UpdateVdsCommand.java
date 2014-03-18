@@ -24,8 +24,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
-import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -211,10 +209,6 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             }
         });
 
-        if (getParameters().getInstallVds()) {
-            runVdsCommand(VDSCommandType.SetVdsStatus,
-                    new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Installing));
-        }
     }
 
     private boolean NeedToUpdateVdsBroker() {

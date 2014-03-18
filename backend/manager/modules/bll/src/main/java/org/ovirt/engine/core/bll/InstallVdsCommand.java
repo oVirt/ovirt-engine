@@ -35,6 +35,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
     private static final String GENERIC_ERROR = "Please refer to engine.log and log files under /var/log/ovirt-engine/host-deploy/ on the engine for further details.";
     protected String _failureMessage = null;
     protected File _iso = null;
+    private VDSStatus vdsInitialStatus;
 
     private File resolveISO(String iso) {
         File ret = null;
@@ -134,6 +135,8 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             return;
         }
 
+        vdsInitialStatus = getVds().getStatus();
+
         if (isOvirtReInstallOrUpgrade()) {
             upgradeNode();
         } else {
@@ -231,7 +234,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     throw new VdsInstallException(VDSStatus.InstallFailed, "Partial installation");
                 case Reboot:
                     setVdsStatus(VDSStatus.Reboot);
-                    RunSleepOnReboot();
+                    RunSleepOnReboot(getStatusOnReboot());
                 break;
                 case Complete:
                     if (!configureNetworkUsingHostDeploy) {
@@ -275,7 +278,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     throw new VdsInstallException(VDSStatus.InstallFailed, StringUtils.EMPTY);
                 case Reboot:
                     setVdsStatus(VDSStatus.Reboot);
-                    RunSleepOnReboot();
+                    RunSleepOnReboot(getStatusOnReboot());
                 break;
                 case Complete:
                     setVdsStatus(VDSStatus.Initializing);
@@ -293,6 +296,10 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         } catch (Exception e) {
             handleError(e, VDSStatus.InstallFailed);
         }
+    }
+
+    private VDSStatus getStatusOnReboot() {
+        return (VDSStatus.Maintenance.equals(vdsInitialStatus)) ? VDSStatus.Maintenance : VDSStatus.NonResponsive;
     }
 
     private void handleError(Exception e, VDSStatus status) {
