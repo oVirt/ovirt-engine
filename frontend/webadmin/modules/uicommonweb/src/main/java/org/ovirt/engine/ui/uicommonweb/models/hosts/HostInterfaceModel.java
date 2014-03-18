@@ -391,9 +391,7 @@ public class HostInterfaceModel extends EntityModel
         {
             getAddress().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
             getSubnet().validateEntity(new IValidation[] { new NotEmptyValidation(), new SubnetMaskValidation() });
-            if (getGateway().getEntity() != null) {
-                getGateway().validateEntity(new IValidation[] { new IpAddressValidation() });
-            }
+            getGateway().validateEntity(new IValidation[] { new IpAddressValidation(true) });
         }
 
         getQosModel().validate();
