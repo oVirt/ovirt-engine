@@ -70,15 +70,19 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     }
 
     protected void RunSleepOnReboot() {
+        RunSleepOnReboot(VDSStatus.NonResponsive);
+    }
+
+    protected void RunSleepOnReboot(final VDSStatus status) {
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
-                SleepOnReboot();
+                SleepOnReboot(status);
             }
         });
     }
 
-    private void SleepOnReboot() {
+    private void SleepOnReboot(final VDSStatus status) {
         int sleepTimeInSec = Config.<Integer> getValue(ConfigValues.ServerRebootTimeout);
         log.infoFormat("Waiting {0} seconds, for server to finish reboot process.",
                 sleepTimeInSec);
@@ -86,7 +90,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         Backend.getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.SetVdsStatus,
-                        new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.NonResponsive));
+                        new SetVdsStatusVDSCommandParameters(getVdsId(), status));
     }
 
     /**

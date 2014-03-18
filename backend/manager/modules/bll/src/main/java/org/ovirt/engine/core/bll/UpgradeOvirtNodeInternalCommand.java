@@ -24,6 +24,7 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
 
     private static Log log = LogFactory.getLog(UpgradeOvirtNodeInternalCommand.class);
     protected File _iso = null;
+    private VDSStatus vdsInitialStatus;
 
     private File resolveISO(String iso) {
         File ret = null;
@@ -125,6 +126,7 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
             return;
         }
 
+        vdsInitialStatus = getVds().getStatus();
         if (isOvirtReInstallOrUpgrade()) {
             upgradeNode();
         }
@@ -151,7 +153,7 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
                     throw new VdsInstallException(VDSStatus.InstallFailed, StringUtils.EMPTY);
                 case Reboot:
                     setVdsStatus(VDSStatus.Reboot);
-                    RunSleepOnReboot();
+                    RunSleepOnReboot(getStatusOnReboot());
                 break;
                 case Complete:
                     setVdsStatus(VDSStatus.Initializing);
@@ -189,4 +191,7 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
         );
     }
 
+    private VDSStatus getStatusOnReboot() {
+        return (VDSStatus.Maintenance.equals(vdsInitialStatus)) ? VDSStatus.Maintenance : VDSStatus.NonResponsive;
+    }
 }

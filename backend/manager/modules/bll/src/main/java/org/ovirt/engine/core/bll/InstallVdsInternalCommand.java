@@ -26,6 +26,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends VdsCommand<T> {
 
     private static Log log = LogFactory.getLog(InstallVdsInternalCommand.class);
+    private VDSStatus vdsInitialStatus;
 
     public InstallVdsInternalCommand(T parameters) {
         super(parameters);
@@ -62,6 +63,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             return;
         }
 
+        vdsInitialStatus = getVds().getStatus();
         installHost();
     }
 
@@ -144,7 +146,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     throw new VdsInstallException(VDSStatus.InstallFailed, "Partial installation");
                 case Reboot:
                     setVdsStatus(VDSStatus.Reboot);
-                    RunSleepOnReboot();
+                    RunSleepOnReboot(getStatusOnReboot());
                 break;
                 case Complete:
                     if (!configureNetworkUsingHostDeploy) {
@@ -203,5 +205,9 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                         VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED
                 )
         );
+    }
+
+    private VDSStatus getStatusOnReboot() {
+        return (VDSStatus.Maintenance.equals(vdsInitialStatus)) ? VDSStatus.Maintenance : VDSStatus.NonResponsive;
     }
 }
