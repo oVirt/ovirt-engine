@@ -41,6 +41,15 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+    )
+    def _init(self):
+        self.environment.setdefault(
+            osetupcons.RPMDistroEnv.UPGRADE_YUM_GROUP,
+            osetupcons.Const.UPGRADE_YUM_GROUP_NAME
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
     )
     def _setup(self):
@@ -57,7 +66,9 @@ class Plugin(plugin.PluginBase):
             osetupcons.RPMDistroEnv.PACKAGES_UPGRADE_LIST
         ].append(
             {
-                'group': osetupcons.Const.UPGRADE_YUM_GROUP,
+                'group': self.environment[
+                    osetupcons.RPMDistroEnv.UPGRADE_YUM_GROUP
+                ],
                 'packages': tolist(
                     self.environment[osetupcons.RPMDistroEnv.ENGINE_PACKAGES]
                 ),
