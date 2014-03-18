@@ -382,6 +382,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         getspice().setSmartcardEnabled(getEntity().isSmartcardEnabled());
         getspice().setPort((getEntity().getDisplay() == null ? 0 : getEntity().getDisplay()));
         getspice().setPassword(ticket);
+        getspice().setTicketValiditySeconds(TICKET_VALIDITY_SECONDS);
         getspice().setNumberOfMonitors(getEntity().getNumOfMonitors());
         getspice().setGuestHostName(getEntity().getVmHost().split("[ ]", -1)[0]); //$NON-NLS-1$
         if (getEntity().getDisplaySecurePort() != null)
@@ -544,7 +545,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
     private void setVmTicket() {
         // Create ticket for single sign on.
-        Frontend.getInstance().runAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(), null, 120),
+        Frontend.getInstance().runAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(), null, TICKET_VALIDITY_SECONDS),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {

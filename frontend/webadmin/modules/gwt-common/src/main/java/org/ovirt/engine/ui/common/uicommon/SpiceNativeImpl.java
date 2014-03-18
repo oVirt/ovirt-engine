@@ -38,6 +38,7 @@ public class SpiceNativeImpl extends AbstractSpice implements ISpiceNative {
             .append("\nhost=").append(getHost()) //$NON-NLS-1$
             .append("\nport=").append(Integer.toString(getPort())) //$NON-NLS-1$
             .append("\npassword=").append(getPassword()) //$NON-NLS-1$
+            .append("\n# Password is valid for ").append(getTicketValiditySeconds()).append(" seconds.") //$$NON-NLS-1$NON-NLS-2$
             .append("\ntls-port=").append(getSecurePort()) //$NON-NLS-1$
             .append("\nfullscreen=").append(fullscreen) //$NON-NLS-1$
             .append("\ntitle=").append(getTitle()) //$NON-NLS-1$

@@ -29,8 +29,6 @@ public class VncConsoleModel extends ConsoleModel {
 
     public enum ClientConsoleMode { Native, NoVnc }
 
-    private static final int TICKET_VALIDITY_SECONDS = 120;
-
     private String host;
 
     private String otp64 = null;
@@ -164,6 +162,7 @@ public class VncConsoleModel extends ConsoleModel {
         vncImpl.setVncPort(getPort());
         vncImpl.setTicket(getOtp64());
         vncImpl.setTitle(getTitle());
+        vncImpl.setTicketValiditySeconds(TICKET_VALIDITY_SECONDS);
 
         vncImpl.invokeClient();
     }

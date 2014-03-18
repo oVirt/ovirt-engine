@@ -31,6 +31,8 @@ public abstract class ConsoleModel extends EntityModel {
     public static final String GET_ATTACHMENT_SERVLET_URL = BaseContextPathData.getInstance().getPath()
             + "services/attachment/"; //$NON-NLS-1$
 
+    protected static final int TICKET_VALIDITY_SECONDS = 120;
+
     private static String EJECT_LABEL;
 
     public static String getEjectLabel() {

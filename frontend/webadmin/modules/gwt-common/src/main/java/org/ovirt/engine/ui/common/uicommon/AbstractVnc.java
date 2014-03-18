@@ -12,7 +12,7 @@ public class AbstractVnc {
     private boolean remapCtrlAltDelete;
 
     private final ConsoleUtils consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
-
+    private int ticketValiditySeconds;
 
     public AbstractVnc() {
         setRemapCtrlAltDelete(true);
@@ -62,4 +62,10 @@ public class AbstractVnc {
         return consoleUtils.getRemapCtrlAltDelHotkey();
     }
 
-}
+    public int getTicketValiditySeconds() {
+        return ticketValiditySeconds;
+    }
+
+    public void setTicketValiditySeconds(int ticketValiditySeconds) {
+        this.ticketValiditySeconds = ticketValiditySeconds;
+    }}

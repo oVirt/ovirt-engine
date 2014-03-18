@@ -10,8 +10,7 @@ import org.ovirt.engine.ui.uicompat.Event;
  * case of WPF there will be direct Spice ActiveX instantiation, while Web implementor of Spice will generate
  * corresponding HTML.
  */
-public interface ISpice
-{
+public interface ISpice {
     // event EventHandler<ErrorCodeEventArgs> Disconnected;
     // event EventHandler<SpiceMenuItemEventArgs> MenuItemSelected;
 
@@ -160,4 +159,9 @@ public interface ISpice
     void setSpiceProxyEnabled(boolean enabled);
 
     boolean isSpiceProxyEnabled();
+
+    void setTicketValiditySeconds(int seconds);
+
+    int getTicketValiditySeconds();
+
 }

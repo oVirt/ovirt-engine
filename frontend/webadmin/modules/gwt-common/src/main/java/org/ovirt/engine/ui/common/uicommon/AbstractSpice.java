@@ -61,6 +61,7 @@ public abstract class AbstractSpice {
     protected String spiceBaseURL;
     protected boolean smartcardEnabled = false;
     protected String spiceProxy = null;
+    private int ticketValiditySeconds;
 
     // the user can choose to disable the smartcard even when it is enabled, but can not choose to enable it, when it is
     // disabled
@@ -446,4 +447,11 @@ public abstract class AbstractSpice {
         return consoleUtils.getRemapCtrlAltDelHotkey();
     }
 
+    public int getTicketValiditySeconds() {
+        return ticketValiditySeconds;
+    }
+
+    public void setTicketValiditySeconds(int ticketValiditySeconds) {
+        this.ticketValiditySeconds = ticketValiditySeconds;
+    }
 }
