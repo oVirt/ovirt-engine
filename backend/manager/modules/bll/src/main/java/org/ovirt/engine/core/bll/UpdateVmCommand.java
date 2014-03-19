@@ -20,6 +20,8 @@ import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.HotSetNumerOfCpusParameters;
+import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -108,16 +110,22 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         int newSockets = newVmStatic.getNumOfSockets();
 
         if (getVm().getStatus() == VMStatus.Up && currentSockets != newSockets) {
-            setNumberOfCpusResult = getBackend().runInternalAction(
-                    VdcActionType.HotSetNumberOfCpus, new VmManagementParametersBase(newVmStatic));
+            HotSetNumerOfCpusParameters params =
+                    new HotSetNumerOfCpusParameters(
+                            newVmStatic,
+                            currentSockets < newSockets ? PlugAction.PLUG : PlugAction.UNPLUG);
+            setNumberOfCpusResult =
+                    getBackend().runInternalAction(
+                            VdcActionType.HotSetNumberOfCpus,
+                            params);
             newVmStatic.setNumOfSockets(setNumberOfCpusResult.getSucceeded() ? newSockets : currentSockets);
-            auditLogHotSetCpusCandos();
+            auditLogHotSetCpusCandos(params);
         }
     }
 
-    private void auditLogHotSetCpusCandos() {
+    private void auditLogHotSetCpusCandos(HotSetNumerOfCpusParameters params) {
         if (!setNumberOfCpusResult.getCanDoAction()) {
-            AuditLogableBase logable = new HotSetNumberOfCpusCommand<>(new VmManagementParametersBase(newVmStatic));
+            AuditLogableBase logable = new HotSetNumberOfCpusCommand<>(params);
             List<String> canDos = getBackend().getErrorsTranslator().
                     TranslateErrorText(setNumberOfCpusResult.getCanDoActionMessages());
             logable.addCustomValue(HotSetNumberOfCpusCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(canDos, ","));

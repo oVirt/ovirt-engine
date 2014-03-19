@@ -2455,6 +2455,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Activate/Deactivate while VM is running, is only supported for Clusters of version 3.1 and above.")
     String HOT_PLUG_IS_NOT_SUPPORTED();
 
+    @DefaultStringValue("Hot plugging a CPU is not supported for cluster version ${clusterVersion} and architecture ${architecture}.")
+    String HOT_PLUG_CPU_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Hot un-plugging a CPU is not supported for cluster version ${clusterVersion} and architecture ${architecture}.")
+    String HOT_UNPLUG_CPU_IS_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Activation/Deactivation of Disk Snapshot is not supported for clusters of version ${clusterVersion}.")
     String HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED();
 
