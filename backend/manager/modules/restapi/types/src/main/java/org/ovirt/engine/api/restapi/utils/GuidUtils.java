@@ -27,13 +27,13 @@ public class GuidUtils {
      * @return unique Guid generated from the given strings.
      */
     public static Guid generateGuidUsingMd5(String... args) {
-        String id = "";
+        StringBuilder builder = new StringBuilder();
         for (String arg : args) {
-            id = id + arg;
+            builder.append(arg);
         }
         byte[] hash;
         try {
-            hash = MessageDigest.getInstance(MD5_SECURITY_ALGORITHM).digest(id.getBytes());
+            hash = MessageDigest.getInstance(MD5_SECURITY_ALGORITHM).digest(builder.toString().getBytes());
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(e); // never happens, MD5 algorithm exists
         }
