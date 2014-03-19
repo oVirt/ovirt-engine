@@ -1849,6 +1849,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Import Template failed - Template Id already exist in the system. Please remove the Template (${TemplateName}) from the system first")
     String VMT_CANNOT_IMPORT_TEMPLATE_EXISTS();
 
+    @DefaultStringValue("Cannot import Template Version, Base Template for this Version is missing, please first Import Baste Template, or Import Version as Base Template using Clone.")
+    String VMT_CANNOT_IMPORT_TEMPLATE_VERSION_MISSING_BASE();
+
     @DefaultStringValue("Import Template failed - Template Name already exist in the system. Please rename the Template in the system first")
     String VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS();
 
