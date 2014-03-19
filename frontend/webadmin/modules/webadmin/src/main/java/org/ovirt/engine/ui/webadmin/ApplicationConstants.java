@@ -3504,7 +3504,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Error getting status of Reports Webapp")
     String reportsWebAppErrorMsg();
 
-    @DefaultStringValue("Reports Webapp not deployed, please try later.")
+    @DefaultStringValue("Reports Webapp deployment is in progress, please try again in a few minutes.")
     String reportsWebAppNotDeployedMsg();
 
     @DefaultStringValue("Console")
