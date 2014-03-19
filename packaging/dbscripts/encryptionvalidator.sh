@@ -79,6 +79,7 @@ encryptall() {
     rm -f ${filename}
 }
 
+ENGINE_CERTIFICATE=/etc/pki/ovirt-engine/certs/engine.cer
 while getopts hs:d:u:p:l:c:fv option; do
     case $option in
         s) SERVERNAME=$OPTARG;;
@@ -86,7 +87,7 @@ while getopts hs:d:u:p:l:c:fv option; do
         d) DATABASE=$OPTARG;;
         u) USERNAME=$OPTARG;;
         l) LOGFILE=$OPTARG;;
-        c) ENIGNE_CERTIFICATE=$OPTARG;;
+        c) ENGINE_CERTIFICATE=$OPTARG;;
         f) FIXIT=true;;
         v) VERBOSE=true;;
         h) ret=0 && usage;;
@@ -94,8 +95,8 @@ while getopts hs:d:u:p:l:c:fv option; do
     esac
 done
 
-if [[ -z "${ENGINE_CERTIFICATE}" ]]; then
-    echo "Engine certificate was not set"
+if [[ ! -e "${ENGINE_CERTIFICATE}" ]]; then
+    echo "Supplied Engine certificate \"${ENGINE_CERTIFICATE}\" does not exist."
     exit 1
 fi
 
