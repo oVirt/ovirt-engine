@@ -10,16 +10,12 @@ public class ObjectUtils {
      * @param obj2
      * @return
      */
-    public static <T> boolean objectsEqual(T obj1, T obj2) {
-        if(obj1 == null) {
-            return obj2 == null;
-        } else {
-            return obj1.equals(obj2);
-        }
+    public static <T> boolean objectsEqual(T a, T b) {
+        return (a == b) || (a != null && a.equals(b));
     }
 
-    public static boolean bigDecimalEqual(BigDecimal bd1, BigDecimal bd2) {
-        return bd1 == bd2 || bd1 != null && bd2 != null && bd1.compareTo(bd2) == 0;
+    public static boolean bigDecimalEqual(BigDecimal a, BigDecimal b) {
+        return (a == b) || (a != null && b != null && a.compareTo(b) == 0);
     }
 
 }

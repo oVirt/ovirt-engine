@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -51,7 +50,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
  * Represents a list model with ability to fetch items both sync and async.
  */
 // TODO once all the children of this class will be refactored to use generics, change from <T> to <T extends IVdcQueryable>
-public abstract class SearchableListModel<T> extends ListModel<T> implements GridController
+public abstract class SearchableListModel<T> extends SortedListModel<T> implements GridController
 {
     private static final int UnknownInteger = -1;
     private static final Logger logger = Logger.getLogger(SearchableListModel.class.getName());
@@ -709,29 +708,71 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
 
     /**
      * Override this method to take care on sync fetching.
+     * <p>
+     * If server-side sorting via the search query is supported by this model:
+     * <ul>
+     * <li>override {@link #supportsServerSideSorting} to return {@code true}
+     * <li>make sure {@link #syncSearch} implementation uses {@link #applySortOptions}
+     * </ul>
      */
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
     }
 
-    private Comparator<T> comparator;
+    // Field to sort by within the search query, or null for undefined sort order
+    private String sortBy;
 
-    protected void setComparator(Comparator<T> comparator) {
-        if (comparator == this.comparator) {
+    // Sort direction for server-side sorting, effective only when sortBy != null
+    private boolean sortAscending;
+
+    /**
+     * Updates current server-side sort options, performing {@link #refresh} if necessary.
+     */
+    public void updateSortOptions(String sortBy, boolean sortAscending) {
+        if (!supportsServerSideSorting()) {
             return;
         }
-        this.comparator = comparator;
 
-        Iterable<T> items = getItems();
-        if (items == null) {
-            return;
+        boolean shouldRefresh = !ObjectUtils.objectsEqual(this.sortBy, sortBy)
+                || this.sortAscending != sortAscending;
+
+        this.sortBy = sortBy;
+        this.sortAscending = sortAscending;
+
+        if (shouldRefresh) {
+            refresh();
+        }
+    }
+
+    /**
+     * Returns the given search query with current server-side sort options applied.
+     */
+    protected String applySortOptions(String searchQuery) {
+        StringBuilder result = new StringBuilder(searchQuery);
+
+        if (sortBy != null) {
+            result.append(" SORTBY ").append(sortBy) //$NON-NLS-1$
+                    .append(" ").append(sortAscending ? "ASC" : "DESC"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
 
-        Collection<T> identicalItems = (comparator == null) ? new ArrayList<T>() : new TreeSet<T>(comparator);
-        for (T item : items) {
-            identicalItems.add(item);
+        return result.toString();
+    }
+
+    /**
+     * Returns {@code true} if this model's {@link #syncSearch} implementation supports server-side sorting.
+     */
+    public boolean supportsServerSideSorting() {
+        return false;
+    }
+
+    @Override
+    public void setComparator(Comparator<? super T> comparator, boolean sortAscending) {
+        super.setComparator(comparator, sortAscending);
+
+        Collection<T> items = getItems();
+        if (items != null) {
+            Collection<T> maybeSortedItems = (comparator != null) ? sortItems(items) : new ArrayList<T>(items);
+            setItems(maybeSortedItems);
         }
-        setItems(identicalItems);
     }
 
     @Override
@@ -750,21 +791,16 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
                 }
             }
 
-            if (comparator == null
-                    || ((value instanceof SortedSet) && (((SortedSet) value).comparator() == comparator))) {
+            if (comparator == null || ((value instanceof SortedSet)
+                    && ObjectUtils.objectsEqual(((SortedSet<?>) value).comparator(), comparator))) {
                 itemsChanging(value, items);
                 items = value;
             } else {
-                TreeSet<T> sortedValue = null;
-                if (value != null) {
-                    sortedValue = new TreeSet<T>(comparator);
-                    for (T item : value) {
-                        sortedValue.add(item);
-                    }
-                }
-                itemsChanging(sortedValue, items);
-                items = sortedValue;
+                Collection<T> sortedItems = sortItems(value);
+                itemsChanging(sortedItems, items);
+                items = sortedItems;
             }
+
             updatePagingAvailability();
             getItemsChangedEvent().raise(this, EventArgs.EMPTY);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$

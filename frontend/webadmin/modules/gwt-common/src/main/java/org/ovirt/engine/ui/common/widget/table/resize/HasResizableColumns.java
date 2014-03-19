@@ -57,11 +57,4 @@ public interface HasResizableColumns<T> {
      */
     int getMinimumColumnWidth(Column<T, ?> column);
 
-    /**
-     * Determine the column ahead of this column, we need this in order to properly resize when we attempt to
-     * resize from the left part of the passed in column (which controls the size of the previous column).
-     * @param column The column to use to determine the previous column.
-     * @return The column ahead of the passed in column, or null if this is the first column.
-     */
-    Column<T, ?> getPreviousColumn(Column<T, ?> column);
 }

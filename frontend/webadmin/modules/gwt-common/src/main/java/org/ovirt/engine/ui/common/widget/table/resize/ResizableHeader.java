@@ -7,6 +7,7 @@ import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
@@ -26,14 +27,11 @@ public class ResizableHeader<T> extends Header<SafeHtml> {
 
     private final SafeHtml text;
     private final Column<T, ?> column;
-    private Column<T, ?> previousColumn;
     private final HasResizableColumns<T> table;
 
-    public ResizableHeader(SafeHtml text, Column<T, ?> column,
-            HasResizableColumns<T> table) {
-        this(text, column, table,
-                new SafeHtmlCellWithTooltip("click", "mousedown", //$NON-NLS-1$ //$NON-NLS-2$
-                        "mousemove", "mouseover")); //$NON-NLS-1$ //$NON-NLS-2$
+    public ResizableHeader(SafeHtml text, Column<T, ?> column, HasResizableColumns<T> table) {
+        this(text, column, table, new SafeHtmlCellWithTooltip(
+                "click", "mousedown", "mousemove", "mouseover")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     }
 
     public ResizableHeader(SafeHtml text, Column<T, ?> column, HasResizableColumns<T> table,
@@ -53,35 +51,42 @@ public class ResizableHeader<T> extends Header<SafeHtml> {
     public void onBrowserEvent(Context context, Element target, NativeEvent event) {
         super.onBrowserEvent(context, target, event);
 
-        if (previousColumn == null) {
-            previousColumn = table.getPreviousColumn(column);
-        }
         int clientX = event.getClientX();
         int absoluteLeft = target.getAbsoluteLeft();
         int offsetWidth = target.getOffsetWidth();
-        boolean mouseOverRightResizeBarArea = clientX > absoluteLeft + offsetWidth - RESIZE_BAR_WIDTH;
-        boolean mouseOverLeftResizeBarArea = (clientX >= absoluteLeft && clientX < absoluteLeft + RESIZE_BAR_WIDTH)
-                && previousColumn != null;
+        boolean mouseOverResizeBarArea = clientX > absoluteLeft + offsetWidth - RESIZE_BAR_WIDTH;
 
-        // Update mouse cursor for the header element, using resize
-        // cursor when the mouse hovers over the resize bar area
-        if (mouseOverRightResizeBarArea || mouseOverLeftResizeBarArea) {
-            target.getStyle().setCursor(Cursor.COL_RESIZE);
+        // Resolve th element (header cell for given column)
+        Element headerElement = findThElement(target);
+        assert headerElement != null;
+
+        // Update mouse cursor for the header element
+        if (mouseOverResizeBarArea) {
+            headerElement.getStyle().setCursor(Cursor.COL_RESIZE);
+        } else if (column.isSortable()) {
+            headerElement.getStyle().setCursor(Cursor.POINTER);
         } else {
-            target.getStyle().setCursor(Cursor.DEFAULT);
+            headerElement.getStyle().setCursor(Cursor.DEFAULT);
         }
 
         // On mouse down event, which initiates the column resize operation,
         // register a column resize handler that listens to mouse move events
         if ("mousedown".equals(event.getType())) { //$NON-NLS-1$
-            if (mouseOverRightResizeBarArea) {
-                new ColumnResizeHandler<T>(target, column, table);
-            } else if (mouseOverLeftResizeBarArea) {
-                new ColumnResizeHandler<T>(target.getPreviousSiblingElement(), previousColumn, table);
+            if (mouseOverResizeBarArea) {
+                new ColumnResizeHandler<T>(headerElement, column, table);
             }
             event.preventDefault();
             event.stopPropagation();
         }
+    }
+
+    Element findThElement(Element elm) {
+        if (elm == null) {
+            return null;
+        } else if (TableCellElement.TAG_TH.equalsIgnoreCase(elm.getTagName())) {
+            return elm;
+        }
+        return findThElement(elm.getParentElement());
     }
 
 }

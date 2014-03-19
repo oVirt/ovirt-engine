@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -10,14 +11,17 @@ import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
 import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
+import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -34,7 +38,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
+import com.google.gwt.user.cellview.client.ColumnSortList.ColumnSortInfo;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.user.cellview.client.RowStyles;
@@ -66,9 +71,6 @@ import com.google.gwt.view.client.SelectionModel;
  *            Table row data type.
  */
 public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements ActionTable<T> {
-
-    // Click event type
-    private static final String CLICK = "click"; //$NON-NLS-1$
 
     @UiField
     @WithElementId
@@ -113,7 +115,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                 // Enable multiple selection only when Control/Shift key is pressed
                 mousePosition[0] = event.getClientX();
                 mousePosition[1] = event.getClientY();
-                if (CLICK.equals(event.getType()) && !multiSelectionDisabled) {
+                if (BrowserEvents.CLICK.equals(event.getType()) && !multiSelectionDisabled) {
                     selectionModel.setMultiSelectEnabled(event.getCtrlKey());
                     selectionModel.setMultiRangeSelectEnabled(event.getShiftKey());
                 }
@@ -305,9 +307,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         // Set up table data provider
         getDataProvider().addDataDisplay(table);
 
-        // Add default sort handler that delegates to the data provider
-        AsyncHandler columnSortHandler = new AsyncHandler(table);
-        table.addColumnSortHandler(columnSortHandler);
+        // Set up sort handler
+        initSortHandler();
 
         // Set up table selection model
         table.setSelectionModel(selectionModel);
@@ -378,6 +379,50 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         // Reset main table container's scroll position
         enforceScrollPosition();
         this.doAutoSelect = true;
+    }
+
+    void initSortHandler() {
+        // Allow sorting by one column at a time
+        tableHeader.getColumnSortList().setLimit(1);
+        table.getColumnSortList().setLimit(1);
+
+        // Attach column sort handler
+        ActionCellTable<T> tableWithHeader = isTableHeaderVisible() ? tableHeader : table;
+        tableWithHeader.addColumnSortHandler(new ColumnSortEvent.Handler() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onColumnSort(ColumnSortEvent event) {
+                Object model = getDataProvider().getModel();
+                Column<?, ?> column = event.getColumn();
+
+                if (model instanceof SearchableListModel) {
+                    SearchableListModel<T> searchableModel = (SearchableListModel<T>) model;
+                    SortableColumn<T, ?> sortedColumn = null;
+
+                    // Sorted column can be null (which indicates no sort)
+                    if (column instanceof SortableColumn) {
+                        sortedColumn = (SortableColumn<T, ?>) column;
+                    }
+
+                    // Apply server-side sorting, if supported by the model
+                    if (searchableModel.supportsServerSideSorting()) {
+                        String sortBy = (sortedColumn != null) ? sortedColumn.getSortBy() : null;
+                        searchableModel.updateSortOptions(sortBy, event.isSortAscending());
+                    }
+
+                    // Otherwise, fall back to client-side sorting
+                    else {
+                        Comparator<? super T> comparator = (sortedColumn != null) ? sortedColumn.getComparator() : null;
+                        searchableModel.setComparator(comparator, event.isSortAscending());
+                    }
+
+                    // Synchronize column sort info
+                    ColumnSortInfo columnSortInfo = event.getColumnSortList().get(0);
+                    tableHeader.getColumnSortList().push(columnSortInfo);
+                    table.getColumnSortList().push(columnSortInfo);
+                }
+            }
+        });
     }
 
     void enforceScrollPosition() {

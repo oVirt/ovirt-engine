@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
-import com.google.gwt.user.cellview.client.Column;
 
 /**
  * Column for displaying text using {@link TextCellWithTooltip}.
@@ -8,7 +7,7 @@ import com.google.gwt.user.cellview.client.Column;
  * @param <T>
  *            Table row data type.
  */
-public abstract class TextColumnWithTooltip<T> extends Column<T, String> implements ColumnWithElementId {
+public abstract class TextColumnWithTooltip<T> extends SortableColumn<T, String> implements ColumnWithElementId {
 
     public TextColumnWithTooltip() {
         this(TextCellWithTooltip.UNLIMITED_LENGTH);

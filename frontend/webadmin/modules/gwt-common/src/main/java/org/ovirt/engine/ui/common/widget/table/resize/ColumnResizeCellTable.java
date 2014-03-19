@@ -365,14 +365,4 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         return null;
     }
 
-    @Override
-    public Column<T, ?> getPreviousColumn(Column<T, ?> column) {
-        final int columnIndex = getColumnIndex(column);
-        Column<T, ?> result = null;
-        if(columnIndex > 0) {
-            result = getColumn(columnIndex - 1);
-        }
-        return result;
-    }
-
 }
