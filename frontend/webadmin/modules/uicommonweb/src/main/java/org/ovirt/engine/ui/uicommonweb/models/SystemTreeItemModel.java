@@ -36,6 +36,7 @@ public class SystemTreeItemModel extends EntityModel implements TreeNodeInfo {
 
     private List<SystemTreeItemModel> privateChildren;
 
+    @Override
     public List<SystemTreeItemModel> getChildren()
     {
         return privateChildren;
@@ -55,6 +56,7 @@ public class SystemTreeItemModel extends EntityModel implements TreeNodeInfo {
 
     private SystemTreeItemModel privateParent;
 
+    @Override
     public SystemTreeItemModel getParent()
     {
         return privateParent;
@@ -88,7 +90,7 @@ public class SystemTreeItemModel extends EntityModel implements TreeNodeInfo {
 
     public static SystemTreeItemModel findAncestor(SystemTreeItemType type, SystemTreeItemModel root)
     {
-        if (root.getType() != type)
+        if (root != null && root.getType() != type)
         {
             if (root.getParent() != null)
             {
@@ -99,6 +101,52 @@ public class SystemTreeItemModel extends EntityModel implements TreeNodeInfo {
         }
 
         return root;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return equals(other, false);
+    }
+
+    public boolean equals(Object other, boolean deepCompare) {
+        if (other == this) {
+            return true;
+        }
+        if (other == null || other.getClass() != getClass()) {
+            return false;
+        }
+        boolean result = true;
+        SystemTreeItemModel otherModel = (SystemTreeItemModel) other;
+        if (getChildren().size() > 0 && deepCompare) {
+            if (otherModel.getChildren().size() == getChildren().size()) {
+                for (int i = 0; i < getChildren().size(); i++) {
+                    result = getChildren().get(i).equals(otherModel.getChildren().get(i), deepCompare);
+                    if (!result) {
+                        break;
+                    }
+                }
+            } else {
+                result = false;
+            }
+        }
+        if (result) {
+            if (!((otherModel.getEntity() == null && getEntity() == null)
+                    || (otherModel.getEntity() != null && otherModel.getEntity().equals(getEntity())
+                    && ((otherModel.getTitle() == null && getTitle() == null)
+                            || (otherModel.getTitle() != null && otherModel.getTitle().equals(getTitle())))))) {
+                result = false;
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((getEntity() == null) ? 0 : getEntity().hashCode());
+        result = prime * result + ((getTitle() == null) ? 0 : getTitle().hashCode());
+        return result;
     }
 
 }

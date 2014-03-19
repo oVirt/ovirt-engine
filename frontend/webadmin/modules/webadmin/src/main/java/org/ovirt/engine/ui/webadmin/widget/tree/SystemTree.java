@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.webadmin.widget.tree;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
@@ -25,7 +27,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.user.cellview.client.CellTree.Style;
-import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.TreeNode;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -35,6 +36,14 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
 
     private static final int ALL_LEVELS = Integer.MAX_VALUE;
     private static final int ITEM_LEVEL = 3;
+
+    /**
+     * This map will store the current state of the system tree right before it is redrawn. When redrawing a tree
+     * the state is reset and the current state is lost. This map will be populated right before the underlying
+     * model is updated which causes a redraw to happen. Then after the redraw we can use the map to restore the
+     * state of the tree to what it was before the redraw.
+     */
+    protected final Map<Object, Map<String, Boolean>> nodeStateMap = new HashMap<Object, Map<String, Boolean>>();
 
     interface WidgetUiBinder extends UiBinder<Widget, SystemTree> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -97,7 +106,11 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
         treeModel.getItemsChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                expandTree(getDataDisplayWidget().getRootTreeNode(), ITEM_LEVEL);
+                if (modelProvider.getModel().getSelectedItem() == null) {
+                    expandTree(getDataDisplayWidget().getRootTreeNode(), ITEM_LEVEL);
+                } else {
+                    expandPathUsingMap(getDataDisplayWidget().getRootTreeNode(), nodeStateMap);
+                }
             }
         });
         treeModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
@@ -106,6 +119,63 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
                 expandPath(modelProvider.getSelectionModel().getSelectedObject());
             }
         });
+        treeModel.getBeforeItemsChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                //Empty the state map so we can capture the new state.
+                nodeStateMap.clear();
+                getNodeOpenMap(getDataDisplayWidget().getRootTreeNode(), nodeStateMap );
+            }
+        });
+    }
+
+    /**
+     * This method captures the current expansion state of the tree before it gets refreshed.
+     * @param treeNode The root node to capture.
+     * @param expandedStateMap The map to store the state in.
+     */
+    private void getNodeOpenMap(TreeNode treeNode, Map<Object, Map<String, Boolean>> expandedStateMap) {
+        if (treeNode == null) {
+            return;
+        }
+        for (int i = 0; i < treeNode.getChildCount(); i++) {
+            if (treeNode.getChildValue(i) != null) {
+                Object entity = ((SystemTreeItemModel) treeNode.getChildValue(i)).getEntity();
+                Map<String, Boolean> entityStringMap = expandedStateMap.get(entity);
+                if (entityStringMap == null) {
+                    entityStringMap = new HashMap<String, Boolean>();
+                    expandedStateMap.put(entity, entityStringMap);
+                }
+                entityStringMap.put(((SystemTreeItemModel) treeNode.getChildValue(i)).getTitle(),
+                        treeNode.isChildOpen(i));
+            }
+            // This gets the child node, but doesn't change the open status (there's no other way to get the child).
+            getNodeOpenMap(treeNode.setChildOpen(i, treeNode.isChildOpen(i)), expandedStateMap);
+        }
+    }
+
+    /**
+     * This method expands the system tree based on the state in the passed in map. The map is key
+     * on both entity and title of the node as several nodes will have the same entity but will have different
+     * titles.
+     * @param rootNode The root node to expand.
+     * @param expandedStateMap The map that contains the expansion state.
+     */
+    private void expandPathUsingMap(TreeNode rootNode, Map<Object, Map<String, Boolean>> expandedStateMap) {
+        if (rootNode == null) {
+            return;
+        }
+        for (int i = 0; i < rootNode.getChildCount(); i++) {
+            Boolean expandNode = false;
+            Map<String, Boolean> entityStringMap =
+                    expandedStateMap.get(((SystemTreeItemModel)rootNode.getChildValue(i)).getEntity());
+            if (entityStringMap != null) {
+                expandNode = entityStringMap.get(((SystemTreeItemModel)rootNode.getChildValue(i)).getTitle());
+            }
+            if (expandNode != null && expandNode) {
+                expandPathUsingMap(rootNode.setChildOpen(i, expandNode), expandedStateMap);
+            }
+        }
     }
 
     @Override
@@ -117,7 +187,6 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
             }
         };
         display.setAnimationEnabled(true);
-        display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
         modelProvider.setDataDisplay(display);
         return display;
     }

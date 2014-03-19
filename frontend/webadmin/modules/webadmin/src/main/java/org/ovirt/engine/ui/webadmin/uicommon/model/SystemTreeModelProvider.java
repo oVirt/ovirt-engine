@@ -80,7 +80,7 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
         // Update data provider only for non-empty data
         if (!items.isEmpty()) {
             super.updateDataProvider(items);
-            selectionModel.setSelected(items.get(0), true);
+            selectionModel.setSelected(getModel().getSelectedItem(), true);
         }
     }
 

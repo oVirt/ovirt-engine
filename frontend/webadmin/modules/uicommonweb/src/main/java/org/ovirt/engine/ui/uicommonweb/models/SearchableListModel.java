@@ -790,25 +790,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
 
                 if (newItems != null)
                 {
-                    for (T newItem : newItems)
-                    {
-                        // Search for selected item
-                        if (((IVdcQueryable) newItem).getQueryableId().equals(((IVdcQueryable) lastSelectedItem).getQueryableId()))
-                        {
-                            newSelectedItem = newItem;
-                        }
-                        else
-                        {
-                            // Search for selected items
-                            for (T item : lastSelectedItems)
-                            {
-                                if (((IVdcQueryable) newItem).getQueryableId().equals(((IVdcQueryable) item).getQueryableId()))
-                                {
-                                    selectedItems.add(newItem);
-                                }
-                            }
-                        }
-                    }
+                    newSelectedItem = determineSelectedItems(newItems, lastSelectedItem, lastSelectedItems);
                 }
                 if (newSelectedItem != null)
                 {
@@ -822,6 +804,25 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
             }
             onSelectedItemChanged();
         }
+    }
+
+    protected T determineSelectedItems(List<T> newItems, T lastSelectedItem, List<T> lastSelectedItems) {
+        T newSelectedItem = null;
+        for (T newItem : newItems) {
+            // Search for selected item
+            if (((IVdcQueryable) newItem).getQueryableId().equals(((IVdcQueryable) lastSelectedItem).getQueryableId())) {
+                newSelectedItem = newItem;
+            } else {
+                // Search for selected items
+                for (T item : lastSelectedItems) {
+                    if (((IVdcQueryable) newItem).getQueryableId().equals(((IVdcQueryable) item)
+                            .getQueryableId())) {
+                        selectedItems.add(newItem);
+                    }
+                }
+            }
+        }
+        return newSelectedItem;
     }
 
     public void syncSearch(VdcQueryType vdcQueryType, VdcQueryParametersBase vdcQueryParametersBase)
@@ -971,6 +972,10 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
         return true;
     }
 
+    protected boolean refreshOnInactiveTimer() {
+        return false;
+    }
+
     @Override
     protected void registerHandlers() {
         // Register to listen for operation complete events.
@@ -978,7 +983,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
                 new RefreshActiveModelHandler() {
             @Override
             public void onRefreshActiveModel(RefreshActiveModelEvent event) {
-                if (getTimer().isActive()) { // Only if we are active should we refresh.
+                if (getTimer().isActive() || refreshOnInactiveTimer()) { // Only if we are active should we refresh.
                     if (handleRefreshActiveModel(event)) {
                         syncSearch();
                     }

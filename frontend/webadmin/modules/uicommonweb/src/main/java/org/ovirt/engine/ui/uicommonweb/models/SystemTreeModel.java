@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +35,12 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class SystemTreeModel extends SearchableListModel implements IFrontendMultipleQueryAsyncCallback {
+public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> implements IFrontendMultipleQueryAsyncCallback {
 
     public static final EventDefinition resetRequestedEventDefinition;
+    public static final EventDefinition beforeItemsChangedEventDefinition;
     private Event privateResetRequestedEvent;
+    private Event privateBeforeItemsChangedEvent;
 
     public Event getResetRequestedEvent()
     {
@@ -47,6 +50,16 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     private void setResetRequestedEvent(Event value)
     {
         privateResetRequestedEvent = value;
+    }
+
+    public Event getBeforeItemsChangedEvent()
+    {
+        return privateBeforeItemsChangedEvent;
+    }
+
+    private void setBeforeItemsChangedEvent(Event value)
+    {
+        privateBeforeItemsChangedEvent = value;
     }
 
     private UICommand privateResetCommand;
@@ -89,6 +102,12 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     public ArrayList<SystemTreeItemModel> getItems()
     {
         return (ArrayList<SystemTreeItemModel>) super.getItems();
+    }
+
+    @Override
+    public void setItems(Collection<SystemTreeItemModel> value) {
+        getBeforeItemsChangedEvent().raise(this, EventArgs.EMPTY);
+        super.setItems(value);
     }
 
     public void setItems(ArrayList<SystemTreeItemModel> value)
@@ -180,11 +199,14 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     static
     {
         resetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class); //$NON-NLS-1$
+        beforeItemsChangedEventDefinition = new EventDefinition("BeforeItemsChanged", //$NON-NLS-1$
+                SystemTreeModel.class);
     }
 
     public SystemTreeModel()
     {
         setResetRequestedEvent(new Event(resetRequestedEventDefinition));
+        setBeforeItemsChangedEvent(new Event(beforeItemsChangedEventDefinition));
 
         setResetCommand(new UICommand("Reset", this)); //$NON-NLS-1$
         setExpandAllCommand(new UICommand("ExpandAll", this)); //$NON-NLS-1$
@@ -605,7 +627,49 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         if (!ApplicationModeHelper.getUiMode().equals(ApplicationMode.AllModes)) {
             ApplicationModeHelper.filterSystemTreeByApplictionMode(systemItem);
         }
-        setItems(new ArrayList<SystemTreeItemModel>(Arrays.asList(new SystemTreeItemModel[] { systemItem })));
+        List<SystemTreeItemModel> newItems =
+                new ArrayList<SystemTreeItemModel>(Arrays.asList(new SystemTreeItemModel[] { systemItem }));
+        if (items == null || items.size() == 0 || !newItems.get(0).equals(items.toArray()[0], true)) {
+            setItems(newItems);
+        }
+    }
+
+    @Override
+    protected SystemTreeItemModel determineSelectedItems(List<SystemTreeItemModel> newItems,
+            SystemTreeItemModel lastSelectedItem, List<SystemTreeItemModel> lastSelectedItems) {
+        SystemTreeItemModel newSelectedItem = null;
+        for (SystemTreeItemModel newItem : newItems) {
+            newSelectedItem = findNode(newItem, lastSelectedItem);
+            // Search for selected item
+            if (newSelectedItem == null) {
+                // Search for selected items
+                for (SystemTreeItemModel item : lastSelectedItems) {
+                    if (newItem.equals(item)) {
+                        selectedItems.add(newItem);
+                    }
+                }
+            }
+        }
+        return newSelectedItem;
+    }
+
+    public SystemTreeItemModel findNode(SystemTreeItemModel root, SystemTreeItemModel match) {
+        SystemTreeItemModel result = null;
+        if (root != null && match != null) {
+            if (root.equals(match)) {
+                result = root; //match found.
+            } else {
+                if (root.getChildren().size() > 0) {
+                    for (int i = 0; i < root.getChildren().size(); i++) {
+                        result = findNode(root.getChildren().get(i), match);
+                        if (result != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -613,4 +677,8 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         return "SystemTreeModel"; //$NON-NLS-1$
     }
 
+    @Override
+    protected boolean refreshOnInactiveTimer() {
+        return true;
+    }
 }
