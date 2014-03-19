@@ -230,7 +230,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_VDC_LOGOUT, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_VDC_LOGOUT_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.AD_COMPUTER_ACCOUNT_SUCCEEDED, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.AD_COMPUTER_ACCOUNT_FAILED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.AD_COMPUTER_ACCOUNT_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_ADD_PERMISSION, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_ADD_PERMISSION_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_REMOVE_PERMISSION, AuditLogSeverity.NORMAL);
@@ -363,7 +363,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.VDS_LOW_DISK_SPACE_ERROR, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_ACTIVATE_ASYNC, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VDS_ACTIVATE_MANUAL_HA_ASYNC, AuditLogSeverity.WARNING);
-        severities.put(AuditLogType.VDS_ACTIVATE_FAILED_ASYNC, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.VDS_ACTIVATE_FAILED_ASYNC, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VDS_TIME_DRIFT_ALERT, AuditLogSeverity.WARNING);
@@ -670,13 +670,13 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_FAILED_DETACH_USER_FROM_VM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VM_DOWN, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_CHANGE_FLOPPY_VM, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.USER_FAILED_CHANGE_FLOPPY_VM, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.VM_MIGRATION_FAILED_FROM_TO, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_FAILED_CHANGE_FLOPPY_VM, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.VM_MIGRATION_FAILED_FROM_TO, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_UPDATE_VM_POOL_WITH_VMS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_LOGGED_IN_VM, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_LOCKED_VM, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_UNLOCKED_VM, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.VM_MIGRATION_ON_CONNECT_CHECK_FAILED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.VM_MIGRATION_ON_CONNECT_CHECK_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VM_MIGRATION_ON_CONNECT_CHECK_SUCCEEDED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VM_CLEARED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE, AuditLogSeverity.WARNING);
