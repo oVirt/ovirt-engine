@@ -212,6 +212,10 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.HotPlugCpuSupported, version, arch);
     }
 
+    public static boolean hotUnplugCpu(Version version, ArchitectureType arch) {
+        return supportedInConfig(ConfigValues.HotUnplugCpuSupported, version, arch);
+    }
+
     /**
      * @param version
      *            Compatibility version to check for.

@@ -1634,6 +1634,11 @@ public enum ConfigValues {
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"x86_64\":\"true\",\"ppc64\":\"false\"}")
     HotPlugCpuSupported,
+
+    @TypeConverterAttribute(Map.class)
+    @DefaultValueAttribute("{\"x86_64\":\"false\",\"ppc64\":\"false\"}")
+    HotUnplugCpuSupported,
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ChangePasswordMsg,
