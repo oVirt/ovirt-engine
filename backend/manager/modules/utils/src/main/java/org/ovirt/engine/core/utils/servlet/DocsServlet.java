@@ -109,6 +109,7 @@ public class DocsServlet extends FileServlet {
         Cookie cookie = new Cookie(LANG_PAGE_SHOWN, Boolean.toString(value));
         // Scope this cookie to the (root) application context URL
         cookie.setPath(getServletContext().getContextPath());
+        cookie.setHttpOnly(true);
         // Don't set max age, i.e. let this be a session cookie
         response.addCookie(cookie);
     }
