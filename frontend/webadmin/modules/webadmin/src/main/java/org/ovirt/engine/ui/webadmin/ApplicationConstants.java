@@ -1443,6 +1443,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Action Items")
     String actionItemsHostGeneral();
 
+    @DefaultStringValue("Boot Time")
+    String bootTimeHostGeneral();
+
     // Storage
     @DefaultStringValue("Domain Name")
     String domainNameStorage();

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -854,6 +855,32 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
+    private Date bootTime;
+
+    public Date getBootTime() {
+        return bootTime;
+    }
+
+    public void setBootTime(Long value) {
+        /* Factor by 1000 since Date works with millis since epoch and we store seconds (as provided by machines) */
+        if (value == null) {
+            if (bootTime == null) {
+                return;
+            }
+            bootTime = null;
+        } else {
+            if (bootTime == null) {
+                bootTime = new Date(value * 1000);
+            } else if ((bootTime.getTime() / 1000) != value) {
+                bootTime.setTime(value * 1000);
+            } else {
+                return;
+            }
+        }
+
+        onPropertyChanged(new PropertyChangedEventArgs("bootTime")); //$NON-NLS-1$
+    }
+
     static
     {
         requestEditEventDefinition = new EventDefinition("RequestEditEvent", HostGeneralModel.class); //$NON-NLS-1$
@@ -975,6 +1002,7 @@ public class HostGeneralModel extends EntityModel
         setSharedMemory(vds.getMemSharedPercent());
         setMemoryPageSharing(vds.getKsmState());
         setAutomaticLargePage(vds.getTransparentHugePagesState());
+        setBootTime(vds.getBootTime());
 
         if (!vds.getHighlyAvailableIsConfigured()) {
             setHostedEngineHaIsConfigured(false);

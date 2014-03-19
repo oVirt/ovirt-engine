@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget;
 import org.ovirt.engine.ui.webadmin.widget.label.DetailsTextBoxLabel;
+import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberTextBoxLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentTextBoxLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.VersionTextBoxLabel;
@@ -68,6 +69,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     NullableNumberTextBoxLabel<Integer> coresPerSocket = new NullableNumberTextBoxLabel<Integer>(constants.unknown());
     TextBoxLabel spmPriority = new TextBoxLabel();
     TextBoxLabel hostedEngineHa = new TextBoxLabel();
+    FullDateTimeLabel bootTime = new FullDateTimeLabel();
 
     MemorySizeTextBoxLabel<Integer> physicalMemory;
     MemorySizeTextBoxLabel<Integer> usedMemory;
@@ -153,6 +155,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formBuilder.addFormItem(new FormItem(constants.numOfSocketsHostGeneral(), numberOfSockets, 1).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.numOfCoresPerSocketHostGeneral(), coresPerSocket, 1).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.numOfThreadsPerCoreHostGeneral(), threadsPerCore, 1).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.bootTimeHostGeneral(), bootTime, 1).withAutoPlacement());
 
         formBuilder.addFormItem(new FormItem(constants.physMemHostGeneral(), physicalMemoryDetails, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.swapSizeHostGeneral(), swapSizeDetails, 2).withAutoPlacement());
