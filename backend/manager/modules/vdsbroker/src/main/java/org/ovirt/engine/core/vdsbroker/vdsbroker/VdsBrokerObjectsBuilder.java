@@ -404,6 +404,7 @@ public class VdsBrokerObjectsBuilder {
             hbas.put(el.getKey(), devicesList);
         }
         vds.setHBAs(hbas);
+        vds.setBootTime(AssignLongValue(xmlRpcStruct, VdsProperties.bootTime));
     }
 
     public static void checkTimeDrift(VDS vds, Map<String, Object> xmlRpcStruct) {
@@ -690,6 +691,8 @@ public class VdsBrokerObjectsBuilder {
         vds.setHighlyAvailableIsActive(haIsActive != null ? haIsActive : false);
         vds.setHighlyAvailableGlobalMaintenance(haGlobalMaint != null ? haGlobalMaint : false);
         vds.setHighlyAvailableLocalMaintenance(haLocalMaint != null ? haLocalMaint : false);
+
+        vds.setBootTime(AssignLongValue(xmlRpcStruct, VdsProperties.bootTime));
 
     }
 

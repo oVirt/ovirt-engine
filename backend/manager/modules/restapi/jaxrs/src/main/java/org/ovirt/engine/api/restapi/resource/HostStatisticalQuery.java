@@ -26,6 +26,7 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
     private final static Statistic CPU_SYS     = create("cpu.current.system", "System CPU usage",      GAUGE, PERCENT, DECIMAL);
     private final static Statistic CPU_IDLE    = create("cpu.current.idle",   "Idle CPU usage",        GAUGE, PERCENT, DECIMAL);
     private final static Statistic CPU_LOAD    = create("cpu.load.avg.5m",    "CPU 5 minute load average", GAUGE, PERCENT, DECIMAL);
+    private final static Statistic BOOT_TIME   = create("boot.time",          "Boot time of the machine", GAUGE, NONE, INTEGER);
 
     protected HostStatisticalQuery(Host parent) {
         this(null, parent);
@@ -54,7 +55,8 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
                       setDatum(clone(CPU_USER),    (s==null || s.getcpu_user()==null) ? 0 : s.getcpu_user()),
                       setDatum(clone(CPU_SYS),     (s==null || s.getcpu_sys()==null) ? 0 : s.getcpu_sys()),
                       setDatum(clone(CPU_IDLE),    (s==null || s.getcpu_idle()==null) ? 0 : s.getcpu_idle()),
-                      setDatum(clone(CPU_LOAD),    (s==null || s.getcpu_load()==null) ? 0 : s.getcpu_load()/100));
+                      setDatum(clone(CPU_LOAD),    (s==null || s.getcpu_load()==null) ? 0 : s.getcpu_load()/100),
+                      setDatum(clone(BOOT_TIME),   (s==null || s.getboot_time()==null) ? 0 : s.getboot_time()));
     }
 
     public Statistic adopt(Statistic statistic) {

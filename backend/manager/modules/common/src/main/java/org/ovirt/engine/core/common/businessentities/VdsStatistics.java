@@ -25,6 +25,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     private Long ksm_pages;
     private Boolean ksm_state;
     private int anonymousHugePages;
+    private Long boot_time;
     // The following values store the state of the Hosted Engine HA environment
     // for each host and allow the user to see/change that state through the
     // engine UI.  They originate in the HA agent and are updated with the other
@@ -46,6 +47,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         swap_free = 0L;
         swap_total = 0L;
         ksm_pages = 0L;
+        boot_time = null;
         highlyAvailableScore = 0;
         highlyAvailableIsConfigured = false;
         highlyAvailableIsActive = false;
@@ -81,6 +83,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         result = prime * result + ((swap_total == null) ? 0 : swap_total.hashCode());
         result = prime * result + ((swap_free == null) ? 0 : swap_free.hashCode());
         result = prime * result + anonymousHugePages;
+        result = prime * result + ((boot_time == null) ? 0 : boot_time.hashCode());
         result = prime * result + highlyAvailableScore;
         result = prime * result + (highlyAvailableIsConfigured ? 1231 : 1237);
         result = prime * result + (highlyAvailableIsActive ? 1231 : 1237);
@@ -117,6 +120,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
                 && ObjectUtils.objectsEqual(swap_total, other.swap_total)
                 && ObjectUtils.objectsEqual(swap_free, other.swap_free)
                 && (anonymousHugePages == other.anonymousHugePages)
+                && ObjectUtils.objectsEqual(boot_time, other.boot_time)
                 && (highlyAvailableScore == other.highlyAvailableScore)
                 && (highlyAvailableIsConfigured == other.highlyAvailableIsConfigured)
                 && (highlyAvailableIsActive == other.highlyAvailableIsActive)
@@ -265,6 +269,14 @@ public class VdsStatistics implements BusinessEntity<Guid> {
 
     public void setksm_state(Boolean value) {
         this.ksm_state = value;
+    }
+
+    public Long getboot_time() {
+        return this.boot_time;
+    }
+
+    public void setboot_time(Long value) {
+        this.boot_time = value;
     }
 
     public int getHighlyAvailableScore() {

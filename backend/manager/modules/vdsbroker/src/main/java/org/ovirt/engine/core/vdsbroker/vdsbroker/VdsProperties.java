@@ -42,6 +42,7 @@ public final class VdsProperties {
     public static final String Protocol = "protocol";
     public static final String vm_types = "vmTypes"; // Currently not in use
     public static final String reservedMem = "reservedMem";
+    public static final String bootTime = "bootTime";
     // vds runtime (i.e. VdsDynamic req getVdsStats)
     public static final String netConfigDirty = "netConfigDirty";
     public static final String status = "status"; // in vm also

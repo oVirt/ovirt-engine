@@ -25,6 +25,7 @@ Create or replace FUNCTION InsertVdsStatistics(v_cpu_idle DECIMAL(18,0) ,
  v_ksm_pages BIGINT ,
  v_ksm_state BOOLEAN,
  v_anonymous_hugepages INTEGER,
+ v_boot_time BIGINT,
  v_ha_score INTEGER,
  v_ha_configured BOOLEAN,
  v_ha_active BOOLEAN,
@@ -35,8 +36,8 @@ RETURNS VOID
 BEGIN
 
    BEGIN
-INSERT INTO vds_statistics(cpu_idle, cpu_load, cpu_sys, cpu_user, usage_cpu_percent, usage_mem_percent, usage_network_percent, vds_id, mem_available, mem_free, mem_shared,swap_free,swap_total,ksm_cpu_percent,ksm_pages,ksm_state, anonymous_hugepages, ha_score, ha_configured, ha_active, ha_global_maintenance, ha_local_maintenance)
-	VALUES(v_cpu_idle, v_cpu_load, v_cpu_sys, v_cpu_user, v_usage_cpu_percent, v_usage_mem_percent, v_usage_network_percent, v_vds_id, v_mem_available, v_mem_free, v_mem_shared,v_swap_free,v_swap_total,v_ksm_cpu_percent,v_ksm_pages,v_ksm_state, v_anonymous_hugepages, v_ha_score, v_ha_configured, v_ha_active, v_ha_global_maintenance, v_ha_local_maintenance);
+INSERT INTO vds_statistics(cpu_idle, cpu_load, cpu_sys, cpu_user, usage_cpu_percent, usage_mem_percent, usage_network_percent, vds_id, mem_available, mem_free, mem_shared,swap_free,swap_total,ksm_cpu_percent,ksm_pages,ksm_state, anonymous_hugepages, boot_time, ha_score, ha_configured, ha_active, ha_global_maintenance, ha_local_maintenance)
+	VALUES(v_cpu_idle, v_cpu_load, v_cpu_sys, v_cpu_user, v_usage_cpu_percent, v_usage_mem_percent, v_usage_network_percent, v_vds_id, v_mem_available, v_mem_free, v_mem_shared,v_swap_free,v_swap_total,v_ksm_cpu_percent,v_ksm_pages,v_ksm_state, v_anonymous_hugepages, v_boot_time, v_ha_score, v_ha_configured, v_ha_active, v_ha_global_maintenance, v_ha_local_maintenance);
    END;
 
    RETURN;
@@ -64,6 +65,7 @@ Create or replace FUNCTION UpdateVdsStatistics(v_cpu_idle DECIMAL(18,0) ,
  v_ksm_pages BIGINT ,
  v_ksm_state BOOLEAN,
  v_anonymous_hugepages INTEGER,
+ v_boot_time BIGINT,
  v_ha_score INTEGER,
  v_ha_configured BOOLEAN,
  v_ha_active BOOLEAN,
@@ -83,6 +85,7 @@ BEGIN
       mem_available = v_mem_available, mem_free = v_mem_free, mem_shared = v_mem_shared,
       swap_free = v_swap_free,swap_total = v_swap_total,ksm_cpu_percent = v_ksm_cpu_percent,
       ksm_pages = v_ksm_pages,ksm_state = v_ksm_state, anonymous_hugepages = v_anonymous_hugepages,
+      boot_time = v_boot_time,
       ha_score = v_ha_score, ha_configured = v_ha_configured, ha_active = v_ha_active,
       ha_global_maintenance = v_ha_global_maintenance, ha_local_maintenance = v_ha_local_maintenance,
       _update_date = LOCALTIMESTAMP

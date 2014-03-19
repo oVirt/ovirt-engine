@@ -137,6 +137,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setUsageCpuPercent(getUsageCpuPercent());
         vds.setUsageNetworkPercent(getUsageNetworkPercent());
         vds.setReservedMem(getReservedMem());
+        vds.setBootTime(getBootTime());
         vds.setGuestOverhead(getGuestOverhead());
         vds.setPreviousStatus(getPreviousStatus());
         vds.setMemAvailable(getMemAvailable());
@@ -656,9 +657,16 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     public Integer getReservedMem() {
         return this.mVdsDynamic.getreserved_mem();
     }
-
     public void setReservedMem(Integer value) {
         this.mVdsDynamic.setreserved_mem(value);
+    }
+
+    public Long getBootTime() {
+        return this.mVdsStatistics.getboot_time();
+    }
+
+    public void setBootTime(Long value) {
+        this.mVdsStatistics.setboot_time(value);
     }
 
     public VDSStatus getPreviousStatus() {
