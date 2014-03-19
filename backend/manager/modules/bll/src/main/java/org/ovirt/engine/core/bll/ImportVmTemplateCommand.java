@@ -206,7 +206,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             VmTemplate baseTemplate = getVmTemplateDAO().get(getVmTemplate().getBaseTemplateId());
             if (baseTemplate == null) {
                 retVal = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+                addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_MISSING_BASE);
             }
         }
         if (!retVal) {
