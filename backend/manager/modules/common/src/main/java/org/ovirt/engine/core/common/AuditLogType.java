@@ -950,7 +950,7 @@ public enum AuditLogType {
 
     // HA Reservation
     CLUSTER_ALERT_HA_RESERVATION(10300, AuditLogSeverity.ALERT,
-            AuditLogTimeInterval.HOUR.getValue()),
+            AuditLogTimeInterval.MINUTE.getValue() * 10),
 
     //affinity groups
     USER_ADDED_AFFINITY_GROUP(10350),
