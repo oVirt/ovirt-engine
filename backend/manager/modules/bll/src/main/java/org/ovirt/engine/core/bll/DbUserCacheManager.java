@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
@@ -81,7 +82,19 @@ public class DbUserCacheManager {
         Map<Directory, List<DbUser>> index = new HashMap<>();
 
         for (DbUser dbUser : dbUsers) {
-            Directory key = AuthenticationProfileRepository.getInstance().getProfile(dbUser.getDomain()).getDirectory();
+            AuthenticationProfile profile = AuthenticationProfileRepository.getInstance().getProfile(dbUser.getDomain());
+            if (profile == null) {
+                log.warn(String.format("No profile was found for user %1$s. It is possible that the relevant " +
+                        "domain for the user was removed for the user. Marking the user as inactive",
+                        dbUser.getLoginName()));
+                if (dbUser.isActive()) {
+                    dbUser.setActive(false);
+                    dao.update(dbUser);
+                }
+                continue;
+
+            }
+            Directory key = profile.getDirectory();
             List<DbUser> value = index.get(key);
             if (value == null) {
                 value = new ArrayList<DbUser>();
