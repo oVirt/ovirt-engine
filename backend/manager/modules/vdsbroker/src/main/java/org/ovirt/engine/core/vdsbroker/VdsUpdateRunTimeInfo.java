@@ -932,6 +932,9 @@ public class VdsUpdateRunTimeInfo {
         }
 
         if (fetchRunningVms()) {
+            // refreshCommitedMemory must be called before we modify _runningVms, because
+            // we iterate over it there, assuming it is the same as it was received from VDSM
+            refreshCommitedMemory();
             List<Guid> staleRunningVms = checkVmsStatusChanged();
 
             proceedWatchdogEvents();
@@ -952,7 +955,6 @@ public class VdsUpdateRunTimeInfo {
             // checking the db for incoherent vm status;
             // setVmStatusDownForVmNotFound();
 
-            refreshCommitedMemory();
             // Handle VM devices were changed (for 3.1 cluster and above)
             if (!VmDeviceCommonUtils.isOldClusterVersion(_vds.getVdsGroupCompatibilityVersion())) {
                 handleVmDeviceChange();
@@ -1912,13 +1914,18 @@ public class VdsUpdateRunTimeInfo {
     private void refreshCommitedMemory() {
         Integer memCommited = _vds.getGuestOverhead();
         int vmsCoresCount = 0;
-        for (VM vm : _vmDict.values()) {
+        for (VmInternalData runningVm : _runningVms.values()) {
+            VmDynamic vmDynamic = runningVm.getVmDynamic();
             // VMs' pending resources are cleared in powering up, so in launch state
             // we shouldn't include them as committed.
-            if (vm.getStatus() != VMStatus.WaitForLaunch) {
-                memCommited += vm.getVmMemSizeMb();
-                memCommited += _vds.getGuestOverhead();
-                vmsCoresCount += vm.getNumOfCpus();
+            if (vmDynamic.getStatus() != VMStatus.WaitForLaunch &&
+                    vmDynamic.getStatus() != VMStatus.Down) {
+                VM vm = _vmDict.get(vmDynamic.getId());
+                if (vm != null) {
+                    memCommited += vm.getVmMemSizeMb();
+                    memCommited += _vds.getGuestOverhead();
+                    vmsCoresCount += vm.getNumOfCpus();
+                }
             }
         }
         if (memCommited == null || !memCommited.equals(_vds.getMemCommited())) {
