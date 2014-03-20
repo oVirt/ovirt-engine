@@ -22,8 +22,9 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DbGroupDAO;
 import org.ovirt.engine.core.dao.AsyncTaskDAO;
+import org.ovirt.engine.core.dao.AuditLogDAO;
+import org.ovirt.engine.core.dao.DbGroupDAO;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.RoleDAO;
@@ -641,6 +642,10 @@ public class AuditLogableBase extends TimeoutBase {
     }
     public ProviderDao getProviderDao() {
         return getDbFacade().getProviderDao();
+    }
+
+    public AuditLogDAO getAuditLogDao() {
+        return getDbFacade().getAuditLogDao();
     }
 
     protected DbFacade getDbFacade() {

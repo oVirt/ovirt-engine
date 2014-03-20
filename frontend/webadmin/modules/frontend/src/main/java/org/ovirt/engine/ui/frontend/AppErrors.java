@@ -2851,9 +2851,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue(".Cannot ${action} ${type}.External Event does not exist.")
     String ACTION_TYPE_FAILED_EXTERNAL_EVENT_NOT_FOUND();
 
-    @DefaultStringValue("Cannot ${action} ${type}.Only Alerts can be removed.")
-    String ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLRGAL_OPERATION();
-
     @DefaultStringValue("$type External Job.")
     String VAR__TYPE__EXTERNAL_JOB();
 

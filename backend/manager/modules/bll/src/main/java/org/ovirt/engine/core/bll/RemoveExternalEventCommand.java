@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.action.RemoveExternalEventParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -20,15 +19,12 @@ public class RemoveExternalEventCommand <T extends RemoveExternalEventParameters
     @Override
     protected boolean canDoAction() {
         // check if such event exists
-        AuditLog event = DbFacade.getInstance().getAuditLogDao().get(getParameters().getId());
+        AuditLog event = getAuditLogDao().get(getParameters().getId());
         if (event == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_NOT_FOUND);
         }
         if (OVIRT.equalsIgnoreCase(event.getOrigin())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
-        }
-        if (event.getseverity() == AuditLogSeverity.ALERT) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_OPERATION);
         }
 
         return true;
