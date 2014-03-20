@@ -17,6 +17,7 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.Engine, AuditLogType.VDC_STOP);
         // VDS GROUP
         AddEventNotificationEntry(EventNotificationEntity.VdsGroup, AuditLogType.CLUSTER_ALERT_HA_RESERVATION);
+        AddEventNotificationEntry(EventNotificationEntity.VdsGroup, AuditLogType.CLUSTER_ALERT_HA_RESERVATION_DOWN);
         // VDS
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_FAILURE);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.USER_VDS_MAINTENANCE);
