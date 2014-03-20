@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -47,7 +48,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class MainSectionView extends AbstractView implements MainSectionPresenter.ViewDef {
 
+    private static final int TREE_INDEX = 0;
     private static final int BOOKMARK_INDEX = 1;
+    private static final int TAG_INDEX = 2;
     private static final int SPLITTER_THICKNESS = 4;
 
     interface ViewUiBinder extends UiBinder<Widget, MainSectionView> {
@@ -144,8 +147,8 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
         tagsHeader = new Label(constants.tagsMainSection());
     }
 
-    StackLayoutPanel createWestStackPanel(SystemTreeModelProvider treeModelProvider,
-            final BookmarkModelProvider bookmarkModelProvider, TagModelProvider tagModelProvider) {
+    StackLayoutPanel createWestStackPanel(final SystemTreeModelProvider treeModelProvider,
+            final BookmarkModelProvider bookmarkModelProvider, final TagModelProvider tagModelProvider) {
         final StackLayoutPanel panel = new StackLayoutPanel(Unit.PX) {
             @Override
             public void onResize() {
@@ -163,10 +166,22 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
                 if (event == null) {
                     return;
                 }
-                if (event.getSelectedItem() == BOOKMARK_INDEX) {
-                    bookmarkModelProvider.getModel().executeBookmarksSearch();
-                } else {
-                    bookmarkModelProvider.getModel().stopRefresh();
+                treeModelProvider.getModel().setSearchString(StringUtils.EMPTY);
+                treeModelProvider.getModel().refresh();
+                switch(event.getSelectedItem()) {
+                    case TREE_INDEX:
+                        bookmarkModelProvider.getModel().stopRefresh();
+                        tagModelProvider.getModel().stopRefresh();
+                        break;
+                    case BOOKMARK_INDEX:
+                        treeModelProvider.getModel().stopRefresh();
+                        tagModelProvider.getModel().stopRefresh();
+                        bookmarkModelProvider.getModel().executeBookmarksSearch();
+                        break;
+                    case TAG_INDEX:
+                        treeModelProvider.getModel().stopRefresh();
+                        bookmarkModelProvider.getModel().stopRefresh();
+                        break;
                 }
             }
         });
