@@ -276,6 +276,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___HOST_BOND_SLAVE_STATE_DOWN();
 
+    String AuditLogType___CLUSTER_ALERT_HA_RESERVATION_DOWN();
+
     // Gluster Audit log types
     String AuditLogType___GLUSTER_VOLUME_CREATE();
 

@@ -88,6 +88,8 @@ public class SchedulingManager {
     private final VdsFreeMemoryChecker noWaitingMemoryChecker = new VdsFreeMemoryChecker(new NonWaitingDelayer());
     private MigrationHandler migrationHandler;
 
+    private final Map<Guid, Boolean> clusterId2isHaReservationSafe = new HashMap<>();
+
     private SchedulingManager() {
         policyMap = new ConcurrentHashMap<Guid, ClusterPolicy>();
         policyUnits = new ConcurrentHashMap<Guid, PolicyUnitImpl>();
@@ -786,9 +788,9 @@ public class SchedulingManager {
             for (VDSGroup cluster : clusters) {
                 if (cluster.supportsHaReservation()) {
                     List<VDS> returnedFailedHosts = new ArrayList<VDS>();
-                    boolean status =
+                    boolean clusterHaStatus =
                             haReservationHandling.checkHaReservationStatusForCluster(cluster, returnedFailedHosts);
-                    if (!status) {
+                    if (!clusterHaStatus) {
                         // create Alert using returnedFailedHosts
                         AuditLogableBase logable = new AuditLogableBase();
                         logable.setVdsGroupId(cluster.getId());
@@ -799,6 +801,21 @@ public class SchedulingManager {
                         logable.addCustomValue("Hosts", failedHostsStr);
                         AlertDirector.Alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION);
                         log.infoFormat("Cluster: {0} fail to pass HA reservation check.", cluster.getName());
+                    }
+
+                    boolean clusterHaStatusFromPreviousCycle =
+                            clusterId2isHaReservationSafe.containsKey(cluster.getId()) ? clusterId2isHaReservationSafe.get(cluster.getId())
+                                    : true;
+
+                    // Update the status map with the new status
+                    clusterId2isHaReservationSafe.put(cluster.getId(), clusterHaStatus);
+
+                    // Create Alert if the status was changed from false to true
+                    if (!clusterHaStatusFromPreviousCycle && clusterHaStatus) {
+                        AuditLogableBase logable = new AuditLogableBase();
+                        logable.setVdsGroupId(cluster.getId());
+                        logable.addCustomValue("ClusterName", cluster.getName());
+                        AlertDirector.Alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION_DOWN);
                     }
                 }
             }

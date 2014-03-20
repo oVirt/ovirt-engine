@@ -966,6 +966,9 @@ public enum AuditLogType {
     CLUSTER_ALERT_HA_RESERVATION(10300, AuditLogSeverity.ALERT,
             AuditLogTimeInterval.MINUTE.getValue() * 10),
 
+    CLUSTER_ALERT_HA_RESERVATION_DOWN(10301, AuditLogSeverity.ALERT),
+
+
     //affinity groups
     USER_ADDED_AFFINITY_GROUP(10350),
     USER_FAILED_TO_ADD_AFFINITY_GROUP(10351, AuditLogSeverity.ERROR),
