@@ -496,11 +496,13 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         return super.getAuditLogTypeValue();
     }
 
-    protected boolean updateVmImSpm() {
+    protected boolean updateVmInSpm() {
         Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary =
                 new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
         OvfDataUpdater.getInstance().loadVmData(getVm());
-        OvfDataUpdater.getInstance().buildMetadataDictionaryForVm(getVm(), metaDictionary);
+        OvfDataUpdater.getInstance().buildMetadataDictionaryForVm(getVm(),
+                metaDictionary,
+                OvfDataUpdater.getInstance().getVmImagesFromDb(getVm()));
         return OvfDataUpdater.getInstance().executeUpdateVmInSpmCommand(getVm().getStoragePoolId(),
                 metaDictionary, getParameters().getStorageDomainId());
     }
@@ -538,7 +540,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     private void updateSnapshotOvf(VM vm) {
         vm.setSnapshots(getDbFacade().getSnapshotDao().getAllWithConfiguration(getVm().getId()));
-        updateVmImSpm();
+        updateVmInSpm();
     }
 
     @Override

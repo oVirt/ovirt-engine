@@ -38,6 +38,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
@@ -55,6 +56,7 @@ import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -82,6 +84,9 @@ public class OvfDataUpdaterTest {
 
     @Mock
     private VmStaticDAO vmStaticDAO;
+
+    @Mock
+    private SnapshotDao snapshotDAO;
 
     @Mock
     private VmTemplateDAO vmTemplateDAO;
@@ -129,6 +134,7 @@ public class OvfDataUpdaterTest {
         doReturn(vmAndTemplatesGenerationsDAO).when(updater).getVmAndTemplatesGenerationsDao();
         doReturn(vmDAO).when(updater).getVmDao();
         doReturn(vmStaticDAO).when(updater).getVmStaticDao();
+        doReturn(snapshotDAO).when(updater).getSnapshotDao();
         doReturn(vmTemplateDAO).when(updater).getVmTemplateDao();
         doReturn(storageDomainOvfInfoDao).when(updater).getStorageDomainOvfInfoDao();
         doReturn(storageDomainDAO).when(updater).getStorageDomainDao();
@@ -145,6 +151,8 @@ public class OvfDataUpdaterTest {
 
         // dao related mocks.
         doReturn(1L).when(vmStaticDAO).getDbGeneration(any(Guid.class));
+        List<Snapshot> snapshots = new ArrayList<Snapshot>();
+        doReturn(snapshots).when(snapshotDAO).getAllWithConfiguration(any(Guid.class));
         mockAnswers();
     }
 

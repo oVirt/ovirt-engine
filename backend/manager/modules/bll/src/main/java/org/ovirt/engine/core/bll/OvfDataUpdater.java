@@ -19,6 +19,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
@@ -43,6 +45,7 @@ import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -311,7 +314,7 @@ public class OvfDataUpdater {
         for (VmTemplate template : templates) {
             if (VmTemplateStatus.Locked != template.getStatus()) {
                 updateTemplateDisksFromDb(template);
-                boolean verifyDisksNotLocked = verifyDisksNotLocked(template.getDiskList());
+                boolean verifyDisksNotLocked = verifyImagesStatus(template.getDiskList());
                 if (verifyDisksNotLocked) {
                     loadTemplateData(template);
                     Long currentDbGeneration = getVmStaticDao().getDbGeneration(template.getId());
@@ -368,20 +371,41 @@ public class OvfDataUpdater {
         for (VM vm : vms) {
             if (VMStatus.ImageLocked != vm.getStatus()) {
                 updateVmDisksFromDb(vm);
-                if (verifyDisksNotLocked(vm.getDiskList())) {
-                    loadVmData(vm);
-                    Long currentDbGeneration = getVmStaticDao().getDbGeneration(vm.getId());
-                    // currentDbGeneration can be null in case that the vm was deleted during the run of OvfDataUpdater.
-                    if (currentDbGeneration != null && vm.getStaticData().getDbGeneration() == currentDbGeneration) {
-                        proccessedOvfConfigurationsInfo.add(buildMetadataDictionaryForVm(vm, vmsAndTemplateMetadata));
-                        proccessedIdsInfo.add(vm.getId());
-                        proccessedOvfGenerationsInfo.add(vm.getStaticData().getDbGeneration());
-                        proccessDisksDomains(vm.getDiskList());
-                    }
+                if (!verifyImagesStatus(vm.getDiskList())) {
+                    continue;
+                }
+                ArrayList<DiskImage> vmImages = getVmImagesFromDb(vm);
+                if (!verifyImagesStatus(vmImages)) {
+                    continue;
+                }
+                vm.setSnapshots(getSnapshotDao().getAllWithConfiguration(vm.getId()));
+                if (!verifySnapshotsStatus(vm.getSnapshots())) {
+                    continue;
+                }
+
+                loadVmData(vm);
+                Long currentDbGeneration = getVmStaticDao().getDbGeneration(vm.getId());
+
+                // currentDbGeneration can be null in case that the vm was deleted during the run of OvfDataUpdater.
+                if (currentDbGeneration != null && vm.getStaticData().getDbGeneration() == currentDbGeneration) {
+                    proccessedOvfConfigurationsInfo.add(buildMetadataDictionaryForVm(vm, vmsAndTemplateMetadata, vmImages));
+                    proccessedIdsInfo.add(vm.getId());
+                    proccessedOvfGenerationsInfo.add(vm.getStaticData().getDbGeneration());
+                    proccessDisksDomains(vm.getDiskList());
                 }
             }
         }
         return vmsAndTemplateMetadata;
+    }
+
+    protected ArrayList<DiskImage> getVmImagesFromDb(VM vm) {
+        ArrayList<DiskImage> allVmImages = new ArrayList<>();
+        List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskList(), false, true, true);
+
+        for (DiskImage diskImage : filteredDisks) {
+            allVmImages.addAll(getAllImageSnapshots(diskImage));
+        }
+        return allVmImages;
     }
 
     protected void proccessDisksDomains(List<DiskImage> disks) {
@@ -391,11 +415,23 @@ public class OvfDataUpdater {
     }
 
     /**
+     * Returns true if all snapshots have a valid status to use in the OVF.
+     */
+    protected boolean verifySnapshotsStatus(List<Snapshot> snapshots) {
+        for (Snapshot snapshot : snapshots) {
+            if (snapshot.getStatus() != SnapshotStatus.OK) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Returns true if none of the given disks is in status 'LOCKED', otherwise false.
      */
-    protected boolean verifyDisksNotLocked(List<DiskImage> disks) {
-        for (DiskImage disk : disks) {
-            if (disk.getImageStatus() == ImageStatus.LOCKED) {
+    protected boolean verifyImagesStatus(List<DiskImage> diskImages) {
+        for (DiskImage diskImage : diskImages) {
+            if (diskImage.getImageStatus() == ImageStatus.LOCKED) {
                 return false;
             }
         }
@@ -462,15 +498,10 @@ public class OvfDataUpdater {
     /**
      * Adds the given vm metadata to the given map
      */
-    protected String buildMetadataDictionaryForVm(VM vm, Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary) {
-        ArrayList<DiskImage> AllVmImages = new ArrayList<DiskImage>();
-        List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskList(), false, true, true);
-
-        for (DiskImage diskImage : filteredDisks) {
-            AllVmImages.addAll(getAllImageSnapshots(diskImage));
-        }
-
-        String vmMeta = generateVmMetadata(vm, AllVmImages);
+    protected String buildMetadataDictionaryForVm(VM vm,
+            Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary,
+            ArrayList<DiskImage> allVmImages) {
+        String vmMeta = generateVmMetadata(vm, allVmImages);
         metaDictionary.put(
                 vm.getId(),
                 new KeyValuePairCompat<String, List<Guid>>(vmMeta, LinqUtils.foreach(vm.getDiskMap().values(),
@@ -513,6 +544,10 @@ public class OvfDataUpdater {
 
     protected VmStaticDAO getVmStaticDao() {
         return DbFacade.getInstance().getVmStaticDao();
+    }
+
+    protected SnapshotDao getSnapshotDao() {
+        return DbFacade.getInstance().getSnapshotDao();
     }
 
     /**
