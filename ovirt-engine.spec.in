@@ -254,7 +254,7 @@ Requires:	mailcap
 Requires:	mod_ssl
 Requires:	novnc
 Requires:	openssl
-Requires:	ovirt-host-deploy-java >= 1.1.2-1
+Requires:	ovirt-host-deploy-java >= 1.2.0-1
 Requires:	python-cheetah
 Requires:	spice-html5
 
@@ -321,7 +321,7 @@ Requires:	bind-utils
 Requires:	iproute
 Requires:	libxml2-python
 Requires:	logrotate
-Requires:	otopi >= 1.2.0-0.9
+Requires:	otopi >= 1.2.0-1
 
 %description setup-base
 %{ovirt_product_name_short} suite base setup components.
@@ -518,8 +518,8 @@ Group:		%{ovirt_product_group}
 Requires:	%{name}-sdk >= 3.3.0.5
 Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
 Requires:	openssh-server
-Requires:	ovirt-host-deploy >= 1.1.2-1
-Requires:	ovirt-host-deploy-offline >= 1.1.2-1
+Requires:	ovirt-host-deploy >= 1.2.0-1
+Requires:	ovirt-host-deploy-offline >= 1.2.0-1
 
 %description setup-plugin-allinone
 All-in-one plugin for %{ovirt_product_name_short}'s setup
