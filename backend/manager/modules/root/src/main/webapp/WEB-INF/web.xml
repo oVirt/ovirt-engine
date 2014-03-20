@@ -6,6 +6,17 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
   version="3.0">
 
+  <!-- Header filter to automatically add some headers to each response -->
+  <filter>
+    <filter-name>HeaderFilter</filter-name>
+    <filter-class>org.ovirt.engine.core.utils.servlet.HeaderFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>HeaderFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
   <!-- File servlet instance to serve the CA certificate: -->
   <servlet>
     <servlet-name>PKIResourceServlet.ca</servlet-name>

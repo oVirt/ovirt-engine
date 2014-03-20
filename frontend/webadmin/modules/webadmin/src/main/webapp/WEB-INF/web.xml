@@ -60,6 +60,11 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
+    <filter-mapping>
+        <filter-name>HeaderFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
 	<servlet-mapping>
 		<servlet-name>WebAdminHostPageServlet</servlet-name>
 		<url-pattern>/WebAdmin.html</url-pattern>
