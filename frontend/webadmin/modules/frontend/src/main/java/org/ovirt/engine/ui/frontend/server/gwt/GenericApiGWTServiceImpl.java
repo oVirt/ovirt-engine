@@ -55,7 +55,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
             VdcQueryParametersBase searchParameters) {
         log.debug("Server: RunQuery invoked!"); //$NON-NLS-1$
         debugQuery(search, searchParameters);
-        searchParameters.setSessionId(getSessionId());
+        searchParameters.setSessionId(getSession().getId());
         return getBackend().runQuery(search, searchParameters);
     }
 
@@ -112,7 +112,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
         log.debug("Server: RunMultipleAction invoked! [amount of actions: " + multipleParams.size() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
         for (VdcActionParametersBase params : multipleParams) {
-            params.setSessionId(getSessionId());
+            params.setSessionId(getSession().getId());
         }
 
         ArrayList<VdcReturnValueBase> returnValues =
@@ -126,7 +126,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
             VdcActionParametersBase params) {
         log.debug("Server: RunAction invoked!"); //$NON-NLS-1$
         debugAction(actionType, params);
-        params.setSessionId(getSessionId());
+        params.setSessionId(getSession().getId());
 
         if (noBackend) {
             VdcReturnValueBase rValue = new VdcReturnValueBase();
@@ -140,8 +140,8 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
     @Override
     public DbUser getLoggedInUser() {
         VdcQueryParametersBase queryParams = new VdcQueryParametersBase();
-        queryParams.setSessionId(getSessionId());
-        queryParams.setHttpSessionId(getSessionId());
+        queryParams.setSessionId(getSession().getId());
+        queryParams.setHttpSessionId(getSession().getId());
 
         VdcQueryReturnValue vqrv = RunQuery(VdcQueryType.GetUserBySessionId,
                 queryParams);
@@ -162,7 +162,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
     @Override
     public VdcReturnValueBase logOff(DbUser userToLogoff) {
         LogoutUserParameters params = new LogoutUserParameters(userToLogoff.getId());
-        params.setSessionId(getSessionId());
+        params.setSessionId(getSession().getId());
         VdcReturnValueBase returnValue = getBackend().logoff(params);
         return returnValue;
     }
@@ -170,19 +170,26 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
     @Override
     public VdcReturnValueBase Login(String userName, String password, String profileName, VdcActionType loginType) {
         LoginUserParameters params = new LoginUserParameters(profileName, userName, password);
-        params.setSessionId(getSessionId());
+        HttpSession originalSession = getSession();
+        // Prevent session fixation.
+        getSession().invalidate();
+        // Calling getSession again after invalidating it should create a new session.
+        HttpSession newSession = getSession();
+        assert !newSession.equals(originalSession) : "new session the same as old session"; //$NON-NLS-1$
+
+        params.setSessionId(getSession().getId());
         params.setActionType(loginType);
         VdcReturnValueBase returnValue = getBackend().login(params);
         return returnValue;
     }
 
-    private String getSessionId() {
+    private HttpSession getSession() {
         HttpServletRequest request = this.getThreadLocalRequest();
         HttpSession session = request.getSession();
 
         log.debug("IP [" + request.getRemoteAddr() + "], Session ID [" + session.getId() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-        return session.getId();
+        return session;
     }
 
     @Override
