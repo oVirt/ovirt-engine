@@ -398,6 +398,8 @@ public enum HelpTag {
 
     template_not_found_on_export_domain("template_not_found_on_export_domain", HelpTagType.WEBADMIN, "VMs Tab > Export VM(s) > Confirm VM's Template not on Export Domain"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    base_template_not_found_on_export_domain("base_template_not_found_on_export_domain", HelpTagType.WEBADMIN, "Templates Tab > Export Template Version(s) > Confirm Base Template not on Export Domain"), //$NON-NLS-1$ //$NON-NLS-2$
+
     templates("templates", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     users("users", HelpTagType.UNKNOWN), //$NON-NLS-1$

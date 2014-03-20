@@ -12,7 +12,9 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -212,6 +214,113 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         {
             return;
         }
+
+        model.startProgress(null);
+
+        getTemplatesNotPresentOnExportDomain();
+    }
+
+    private void getTemplatesNotPresentOnExportDomain()
+    {
+        ExportVmModel model = (ExportVmModel) getWindow();
+        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
+
+        AsyncDataProvider.getDataCentersByStorageDomain(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        TemplateListModel templateListModel = (TemplateListModel) target;
+                        ArrayList<StoragePool> storagePools =
+                                (ArrayList<StoragePool>) returnValue;
+                        StoragePool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
+
+                        templateListModel.postGetTemplatesNotPresentOnExportDomain(storagePool);
+                    }
+                }), storageDomainId);
+    }
+
+    private void postGetTemplatesNotPresentOnExportDomain(StoragePool storagePool)
+    {
+        ExportVmModel model = (ExportVmModel) getWindow();
+        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
+
+        if (storagePool != null)
+        {
+            AsyncDataProvider.getAllTemplatesFromExportDomain(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object target, Object returnValue) {
+                            TemplateListModel templateListModel = (TemplateListModel) target;
+                            HashMap<VmTemplate, ArrayList<DiskImage>> templatesDiskSet =
+                                    (HashMap<VmTemplate, ArrayList<DiskImage>>) returnValue;
+                            ArrayList<String> verTempMissingBase = new ArrayList<String>();
+
+                            // check if relevant templates are already there
+                            for (Object selectedItem : templateListModel.getSelectedItems()) {
+                                VmTemplate template = (VmTemplate) selectedItem;
+                                // only relevant for template versions
+                                if (!template.isBaseTemplate()) {
+                                    boolean hasMatch = false;
+                                    for (VmTemplate a : templatesDiskSet.keySet()) {
+                                        if (template.getBaseTemplateId().equals(a.getId())) {
+                                            hasMatch = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (!template.getBaseTemplateId().equals(Guid.Empty) && !hasMatch) {
+                                        verTempMissingBase.add(template.getName());
+                                    }
+                                }
+                            }
+
+                            templateListModel.postExportGetMissingTemplates(verTempMissingBase);
+                        }
+                    }),
+                    storagePool.getId(),
+                    storageDomainId);
+        }
+    }
+
+    private void postExportGetMissingTemplates(ArrayList<String> missingTemplatesFromVms)
+    {
+        ExportVmModel model = (ExportVmModel) getWindow();
+
+        if (!missingTemplatesFromVms.isEmpty())
+        {
+            model.stopProgress();
+
+            ConfirmationModel confirmModel = new ConfirmationModel();
+            setConfirmWindow(confirmModel);
+            confirmModel.setTitle(ConstantsManager.getInstance()
+                    .getConstants()
+                    .baseTemplatesNotFoundOnExportDomainTitle());
+            confirmModel.setHelpTag(HelpTag.base_template_not_found_on_export_domain);
+            confirmModel.setHashName("base_template_not_found_on_export_domain"); //$NON-NLS-1$
+
+            confirmModel.setMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .theFollowingTemplatesAreMissingOnTargetExportDomainForTemplateVersionsMsg());
+            confirmModel.setItems(missingTemplatesFromVms);
+
+            UICommand tempVar = new UICommand("OnExportNoTemplates", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            tempVar.setIsDefault(true);
+            confirmModel.getCommands().add(tempVar);
+            UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+            tempVar2.setIsCancel(true);
+            confirmModel.getCommands().add(tempVar2);
+        }
+        else
+        {
+            doExport();
+        }
+    }
+
+    private void doExport()
+    {
+        ExportVmModel model = (ExportVmModel) getWindow();
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
@@ -539,7 +648,16 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     {
         Frontend.getInstance().unsubscribe();
 
+        cancelConfirmation();
+
         setWindow(null);
+
+        updateActionAvailability();
+    }
+
+    private void cancelConfirmation()
+    {
+        setConfirmWindow(null);
     }
 
     @Override
@@ -684,6 +802,14 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
+        }
+        else if ("OnExportNoTemplates".equals(command.getName())) //$NON-NLS-1$
+        {
+            doExport();
+        }
+        else if ("CancelConfirmation".equals(command.getName())) //$NON-NLS-1$
+        {
+            cancelConfirmation();
         }
     }
 
