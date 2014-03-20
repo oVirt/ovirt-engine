@@ -565,4 +565,11 @@ public class FixturesTool {
      * </ul>
      */
     public static final String STORAGE_CONNECTION_ID = "0cc146e8-e5ed-482c-8814-270bc48c297e";
+
+
+    /**
+     * Number of VMs on clusters
+     */
+    public static final int NUMBER_OF_VMS_IN_VDS_GROUP_RHEL6_NFS_CLUSTER = 0;
+    public static final int NUMBER_OF_VMS_IN_VDS_GROUP_RHEL6_ISCSI = 7;
 }

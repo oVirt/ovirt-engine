@@ -447,4 +447,18 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         assertFalse(result.isEmpty());
         assertEquals(NUMBER_OF_GROUPS, result.size());
     }
+
+    @Test
+    public void testGetVmsCountByClusterId() {
+        // Cluster with no VMs
+        assertEquals("Incorrect number of VMs in cluster", dao.getVmsCountByClusterId(FixturesTool.VDS_GROUP_RHEL6_NFS),
+                FixturesTool.NUMBER_OF_VMS_IN_VDS_GROUP_RHEL6_NFS_CLUSTER);
+
+        // Cluster with VMs
+        assertEquals("Incorrect number of VMs in cluster", dao.getVmsCountByClusterId(FixturesTool.VDS_GROUP_RHEL6_ISCSI),
+                FixturesTool.NUMBER_OF_VMS_IN_VDS_GROUP_RHEL6_ISCSI);
+
+        // Non existing cluster, should return 0
+        assertEquals("Incorrect number of VMs in cluster", dao.getVmsCountByClusterId(Guid.newGuid()), 0);
+    }
 }
