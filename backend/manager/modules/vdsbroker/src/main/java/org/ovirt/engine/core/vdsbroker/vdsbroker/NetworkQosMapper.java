@@ -21,10 +21,10 @@ public class NetworkQosMapper {
     }
 
     public void serialize(NetworkQoS qos) {
-        if (qos != null) {
-            addQosData(inboundEntry, qos.getInboundAverage(), qos.getInboundPeak(), qos.getInboundBurst());
-            addQosData(outboundEntry, qos.getOutboundAverage(), qos.getOutboundPeak(), qos.getOutboundBurst());
-        }
+        map.put(inboundEntry,
+                constructQosData(qos.getInboundAverage(), qos.getInboundPeak(), qos.getInboundBurst()));
+        map.put(outboundEntry,
+                constructQosData(qos.getOutboundAverage(), qos.getOutboundPeak(), qos.getOutboundBurst()));
     }
 
     public NetworkQoS deserialize() {
@@ -48,15 +48,14 @@ public class NetworkQosMapper {
         return qos;
     }
 
-    private void addQosData(String qosEntryName, Integer average, Integer peak, Integer burst) {
-
+    private Map<String, Integer> constructQosData(Integer average, Integer peak, Integer burst) {
+        Map<String, Integer> qosData = new HashMap<>();
         if (average != null && average > 0) {
-            Map<String, Integer> qosData = new HashMap<>();
             qosData.put(VdsProperties.QOS_AVERAGE, average * MEGABITS_TO_KILOBYTES);
             qosData.put(VdsProperties.QOS_PEAK, peak * MEGABITS_TO_KILOBYTES);
             qosData.put(VdsProperties.QOS_BURST, burst * MEGABYTES_TO_KILOBYTES);
-            map.put(qosEntryName, qosData);
         }
+        return qosData;
     }
 
     private static Integer divide(Integer num, int divisor) {
