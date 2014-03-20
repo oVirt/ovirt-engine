@@ -283,6 +283,7 @@ public class NetworkDaoTest extends BaseDAOTestCase {
     /**
      * Ensures a list of networks labels is returned for a given data-center
      */
+    @Test
     public void testGetAllNetworkLabelsForDataCenter() {
         Set<String> result = dao.getAllNetworkLabelsForDataCenter(datacenter);
         assertNotNull(result);
@@ -292,6 +293,7 @@ public class NetworkDaoTest extends BaseDAOTestCase {
     /**
      * Ensures a list of networks is returned for a given cluster by a specific label
      */
+    @Test
     public void getAllByLabelForCluster() {
         List<Network> result = dao.getAllByLabelForCluster(NETWORK_LABEL, cluster);
         assertNotNull(result);
