@@ -1678,5 +1678,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("2")
     StorageDomainOvfStoreCount,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    IscsiMultipathingSupported,
+
     Invalid;
 }

@@ -296,4 +296,13 @@ public class FeatureSupported {
     public static boolean ovfStoreOnAnyDomain(Version version) {
         return supportedInConfig(ConfigValues.OvfStoreOnAnyDomain, version);
     }
+
+    /**
+     * @param version
+     *          Compatibility version to check for.
+     * @return  <code>true</code> if iSCSI multipathing is supported for the given version.
+     */
+    public static boolean isIscsiMultipathingSupported(Version version) {
+        return supportedInConfig(ConfigValues.IscsiMultipathingSupported, version);
+    }
 }

@@ -118,7 +118,8 @@ public enum ConfigurationValues {
     IsMigrationSupported(ConfigAuthType.User),
     IsMemorySnapshotSupported(ConfigAuthType.User),
     IsSuspendSupported(ConfigAuthType.User),
-    SerialNumberPolicySupported;
+    SerialNumberPolicySupported,
+    IscsiMultipathingSupported;
 
     public static enum ConfigAuthType {
         Admin,
