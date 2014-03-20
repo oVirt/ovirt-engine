@@ -639,6 +639,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Template(s) not Found on Export Domain")
     String templatesNotFoundOnExportDomainTitle();
 
+    @DefaultStringValue("Base Template(s) not Found on Export Domain")
+    String baseTemplatesNotFoundOnExportDomainTitle();
+
     @DefaultStringValue("Run Virtual Machine(s)")
     String runVirtualMachinesTitle();
 
@@ -1373,6 +1376,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("The following templates are missing on the target Export Domain:")
     String theFollowingTemplatesAreMissingOnTargetExportDomainMsg();
+
+    @DefaultStringValue("The following template versions are based on templates which do not exist on the export domain and are required for the template version to function.\n" +
+            "If you proceed you will not be able to import these template versions unless you already have the relevant templates on the target domains, or by using Clone.\n" +
+            "Do you wish to continue anyway?")
+    String theFollowingTemplatesAreMissingOnTargetExportDomainForTemplateVersionsMsg();
 
     @DefaultStringValue("There are no active Data-Centers in the system.")
     String noActiveDataCenters();
