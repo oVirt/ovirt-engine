@@ -3653,6 +3653,11 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetNumberOfActiveVmsInVdsGroupByVdsGroupId, new IdQueryParameters(clusterId), aQuery);
     }
 
+    public static void getNumberOfVmsInCluster(AsyncQuery aQuery, Guid clusterId) {
+        Frontend.getInstance().runQuery(VdcQueryType.GetNumberOfVmsInVdsGroupByVdsGroupId, new IdQueryParameters(clusterId),
+                aQuery);
+    }
+
     private static ArrayList<VDSGroup> getClusterByServiceList(ArrayList<VDSGroup> list,
             boolean supportsVirtService,
             boolean supportsGlusterService) {

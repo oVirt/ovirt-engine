@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -46,6 +47,7 @@ public class ClusterGeneralModel extends EntityModel {
     private Integer noOfVolumesTotal;
     private Integer noOfVolumesUp;
     private Integer noOfVolumesDown;
+    private Integer numberOfVms;
 
     // set to true, if some hosts in the cluster has the console address overridden and some not
     private Boolean consoleAddressPartiallyOverridden = Boolean.FALSE;
@@ -72,6 +74,18 @@ public class ClusterGeneralModel extends EntityModel {
 
     public void setNoOfVolumesDown(Integer noOfVolumesDown) {
         this.noOfVolumesDown = noOfVolumesDown;
+    }
+
+    public String getNumberOfVms() {
+        return numberOfVms == null ? "0" : Integer.toString(numberOfVms); //$NON-NLS-1$
+    }
+
+    public void setNumberOfVms(Integer numberOfVms) {
+        if (!ObjectUtils.objectsEqual(this.numberOfVms, numberOfVms))
+        {
+            this.numberOfVms = numberOfVms;
+            onPropertyChanged(new PropertyChangedEventArgs("numberOfVms")); //$NON-NLS-1$
+        }
     }
 
     private GlusterServiceStatus glusterSwiftStatus;
@@ -230,6 +244,13 @@ public class ClusterGeneralModel extends EntityModel {
         setEmulatedMachine(vdsGroup.getEmulatedMachine());
         setCompatibilityVersion(vdsGroup.getcompatibility_version().getValue());
         generateClusterType(vdsGroup.supportsGlusterService(), vdsGroup.supportsVirtService());
+        AsyncDataProvider.getNumberOfVmsInCluster(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                setNumberOfVms((Integer) ((VdcQueryReturnValue) returnValue).getReturnValue());
+            }
+        }), vdsGroup.getId());
+
     }
 
     private void updateConsoleAddressPartiallyOverridden(VDSGroup cluster) {

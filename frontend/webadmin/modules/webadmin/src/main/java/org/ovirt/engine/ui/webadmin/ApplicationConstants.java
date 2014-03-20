@@ -3061,6 +3061,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Resilience Policy")
     String resiliencePolicyCluster();
 
+    @DefaultStringValue("Number of VMs")
+    String numberOfVmsCluster();
+
     @DefaultStringValue("Emulated Machine")
     String emulatedMachine();
 
