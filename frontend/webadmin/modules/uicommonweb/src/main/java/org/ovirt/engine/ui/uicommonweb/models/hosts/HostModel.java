@@ -1657,10 +1657,13 @@ public abstract class HostModel extends Model
         getConsoleAddress().setEntity(vds.getConsoleAddress());
         getConsoleAddress().setIsChangable(consoleAddressEnabled);
 
-        getPkSection().setIsChangable(false);
-        getPkSection().setIsAvailable(false);
-        // Use public key when edit or approve host
-        setAuthenticationMethod(AuthenticationMethod.PublicKey);
+        if (!showInstallationProperties()) {
+            getPkSection().setIsChangable(false);
+            getPkSection().setIsAvailable(false);
+
+            // Use public key when edit or approve host
+            setAuthenticationMethod(AuthenticationMethod.PublicKey);
+        }
 
         setAllowChangeHost(vds);
 
