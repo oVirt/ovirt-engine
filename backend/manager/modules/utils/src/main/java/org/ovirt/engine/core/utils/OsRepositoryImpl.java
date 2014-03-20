@@ -58,6 +58,9 @@ public enum OsRepositoryImpl implements OsRepository {
         buildIdToUnameLookup();
         buildBackCompatMapping();
         validateTree();
+        if (log.isDebugEnabled()) {
+            log.debugFormat("Osinfo Repository:\n {0}", toString());
+        }
     }
 
     private void validateTree() {
@@ -522,5 +525,38 @@ public enum OsRepositoryImpl implements OsRepository {
     @Override
     public Map<ArchitectureType, Integer> getDefaultOSes() {
         return defaultOsMap;
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        try {
+            walkTree(sb, preferences);
+        } catch (BackingStoreException e) {
+            log.error(e.getStackTrace());
+        }
+        return sb.toString();
+    }
+
+    private void walkTree(StringBuilder sb, Preferences node) throws BackingStoreException {
+        if (node.childrenNames().length == 0) {
+            sb.append(
+                    node.absolutePath()
+                            .replaceFirst("/", "")
+                            .replace("/", "."));
+            for (String k : node.keys()) {
+                sb.append("\n\t")
+                        .append(k)
+                        .append("=")
+                        .append(node.get(k, ""));
+            }
+            sb.append("\n");
+        } else {
+            for (String nodePath : node.childrenNames()) {
+                walkTree(sb, node.node(nodePath));
+            }
+        }
+
     }
 }

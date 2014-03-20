@@ -5,15 +5,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import junit.framework.Assert;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
 import org.ovirt.engine.core.compat.Version;
 
 public class OsRepositoryImplTest {
@@ -56,6 +58,14 @@ public class OsRepositoryImplTest {
         preferences.node("/os/windows_8/id").put("value", "20");
         preferences.node("/backwardCompatibility").put("Windows8", "20");
         OsRepositoryImpl.INSTANCE.init(preferences);
+    }
+
+    @Test
+    public void testDumpRepoToString() {
+        String actual = OsRepositoryImpl.INSTANCE.toString();
+        String expected = OsRepositoryImpl.INSTANCE.name();
+        Assert.assertNotSame(expected, actual);
+        System.out.println(actual);
     }
 
     @Test
