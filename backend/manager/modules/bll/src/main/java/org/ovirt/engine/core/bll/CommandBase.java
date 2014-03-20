@@ -44,6 +44,8 @@ import org.ovirt.engine.core.bll.utils.BackendUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.CommandExecutionReason;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -500,8 +502,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     private void initiateLockEndAction() {
         if (context.getLock() == null) {
-            LockIdNameAttribute annotation = getClass().getAnnotation(LockIdNameAttribute.class);
-            if (annotation != null && !annotation.isReleaseAtEndOfExecute()) {
+            LockProperties lockProperties = getLockProperties();
+            if (Scope.Command.equals(lockProperties.getScope())) {
                 context.withLock(buildLock());
             }
 
@@ -1699,12 +1701,40 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         context.withLock(lock);
     }
 
+    /**
+     * The default lock property settings for the commands
+     */
+    protected final LockProperties getLockingPropertiesSettings() {
+        return LockProperties.create(Scope.None).withWait(false);
+    }
+
+    /**
+     * Commands that need exclusive locks will override this method
+     * to provide custom locking property settings
+     */
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties;
+    }
+
+    /**
+     * gets the lock properties for the command, sets the properties in the
+     * command parameters
+     */
+    protected LockProperties getLockProperties() {
+        LockProperties lockProperties = _parameters.getLockProperties();
+        if (lockProperties == null) {
+            lockProperties = applyLockProperties(getLockingPropertiesSettings());
+            _parameters.setLockProperties(lockProperties);
+        }
+        return lockProperties;
+    }
+
     protected boolean acquireLock() {
-        LockIdNameAttribute annotation = getClass().getAnnotation(LockIdNameAttribute.class);
+        LockProperties lockProperties = getLockProperties();
         boolean returnValue = true;
-        if (annotation != null) {
-            releaseLocksAtEndOfExecute = annotation.isReleaseAtEndOfExecute();
-            if (!annotation.isWait()) {
+        if (!Scope.None.equals(lockProperties.getScope())) {
+            releaseLocksAtEndOfExecute = Scope.Execution.equals(lockProperties.getScope());
+            if (!lockProperties.isWait()) {
                 returnValue = acquireLockInternal();
             } else {
                 acquireLockAndWait();
@@ -1718,10 +1748,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @return
      */
     public final boolean acquireLockAsyncTask() {
-        LockIdNameAttribute annotation = getClass().getAnnotation(LockIdNameAttribute.class);
+        LockProperties lockProperties = getLockProperties();
         boolean returnValue = true;
-        if (annotation != null) {
-            releaseLocksAtEndOfExecute = annotation.isReleaseAtEndOfExecute();
+        if (!Scope.None.equals(lockProperties.getScope())) {
+            releaseLocksAtEndOfExecute = Scope.Execution.equals(lockProperties.getScope());
             if (!releaseLocksAtEndOfExecute) {
                 returnValue = acquireLockInternal();
             }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -12,7 +14,6 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplateParameters> extends ImportVmTemplateCommand {
 
@@ -26,6 +27,11 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     public ImportVmTemplateFromConfigurationCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override

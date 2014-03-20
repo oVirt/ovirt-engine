@@ -8,6 +8,8 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -27,7 +29,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
-@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends MoveOrCopyTemplateCommand<T> {
 
     private String cachedTemplateIsBeingExportedMessage;
@@ -42,6 +43,11 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     protected ExportVmTemplateCommand(Guid commandId) {
         super(commandId);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Command);
     }
 
     @Override

@@ -8,10 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -37,13 +38,17 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-@LockIdNameAttribute
 public class UpdateStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends ConnectStorageToVdsCommand<T> {
     private List<StorageDomain> domains = new ArrayList<>();
     private List<LUNs> luns = new ArrayList<>();
 
     public UpdateStorageServerConnectionCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override

@@ -12,6 +12,8 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskAlignment;
@@ -43,8 +45,6 @@ import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> extends CommandBase<T> {
     private Disk diskToScan;
@@ -54,6 +54,11 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
 
     public GetDiskAlignmentCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override

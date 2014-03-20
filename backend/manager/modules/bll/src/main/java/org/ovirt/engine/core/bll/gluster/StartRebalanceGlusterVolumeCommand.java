@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -20,11 +21,15 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRebalanceVD
  */
 
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class StartRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<GlusterVolumeRebalanceParameters> {
 
     public StartRebalanceGlusterVolumeCommand(GlusterVolumeRebalanceParameters params) {
         super(params);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Command);
     }
 
     @Override

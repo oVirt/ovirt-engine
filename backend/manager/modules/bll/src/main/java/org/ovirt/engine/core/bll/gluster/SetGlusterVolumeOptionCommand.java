@@ -2,10 +2,11 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
@@ -18,7 +19,6 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeOptionVDSPa
  * BLL Command to set a Gluster Volume Option
  */
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isWait = true)
 public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<GlusterVolumeOptionParameters> {
 
     private boolean optionValueExists;
@@ -29,6 +29,11 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
 
     public SetGlusterVolumeOptionCommand(GlusterVolumeOptionParameters params, CommandContext commandContext) {
         super(params, commandContext);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution).withWait(true);
     }
 
     @Override

@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -19,11 +20,15 @@ import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
  * BLL command to stop a Gluster volume
  */
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isWait = true)
 public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeActionParameters> {
 
     public StopGlusterVolumeCommand(GlusterVolumeActionParameters params) {
         super(params);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution).withWait(true);
     }
 
     @Override

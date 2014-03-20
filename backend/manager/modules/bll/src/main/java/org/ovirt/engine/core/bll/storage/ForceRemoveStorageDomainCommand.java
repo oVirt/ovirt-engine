@@ -3,9 +3,10 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.Collections;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -23,10 +24,14 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-@LockIdNameAttribute
 public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
     public ForceRemoveStorageDomainCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override
@@ -62,7 +67,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                 // todo: when iso in multiple pools will be implemented, we
                 // should reset iso path for all related pools
                 runVdsCommand(VDSCommandType.ResetISOPath,
-                                new IrsBaseVDSCommandParameters(getStoragePool().getId()));
+                        new IrsBaseVDSCommandParameters(getStoragePool().getId()));
             }
             if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
                 calcStoragePoolStatusByDomainsStatus();

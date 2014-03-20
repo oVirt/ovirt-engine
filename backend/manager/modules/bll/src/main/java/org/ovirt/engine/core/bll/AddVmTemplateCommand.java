@@ -31,6 +31,8 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -71,7 +73,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-@LockIdNameAttribute
 public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateCommand<T>
         implements QuotaStorageDependent, QuotaVdsDependent {
 
@@ -131,6 +132,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     public AddVmTemplateCommand(T parameters) {
         this(parameters, null);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     protected void updateDiskInfoDestinationMap() {

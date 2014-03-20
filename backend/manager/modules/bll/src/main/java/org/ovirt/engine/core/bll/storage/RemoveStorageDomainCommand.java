@@ -3,11 +3,12 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.Collections;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -27,7 +28,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters> extends StorageDomainCommandBase<T> {
     public RemoveStorageDomainCommand(T parameters) {
@@ -36,6 +36,11 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
     public RemoveStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override

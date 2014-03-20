@@ -18,6 +18,8 @@ import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -50,7 +52,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBase<T>
         implements QuotaStorageDependent {
@@ -63,6 +64,11 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     public RemoveDiskCommand(T parameters) {
         super(parameters);
         setStorageDomainId(getParameters().getStorageDomainId());
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override

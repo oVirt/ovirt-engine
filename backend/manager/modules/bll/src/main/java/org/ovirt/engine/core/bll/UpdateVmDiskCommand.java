@@ -22,6 +22,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -45,7 +47,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends AbstractDiskVmCommand<T>
         implements QuotaStorageDependent {
@@ -75,6 +76,11 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
      */
     public UpdateVmDiskCommand(Guid commandId) {
         super(commandId);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Command);
     }
 
     @Override

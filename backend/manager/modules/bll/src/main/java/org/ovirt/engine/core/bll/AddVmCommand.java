@@ -28,6 +28,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -89,7 +91,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * This class adds a thinly provisioned VM over a template
  */
 @DisableInPrepareMode
-@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 @NonTransactiveCommandAttribute
 public class AddVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
         implements QuotaStorageDependent, QuotaVdsDependent {
@@ -176,6 +177,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
         VmHandler.updateDefaultTimeZone(parameters.getVmStaticData());
 
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Command);
     }
 
     @Override

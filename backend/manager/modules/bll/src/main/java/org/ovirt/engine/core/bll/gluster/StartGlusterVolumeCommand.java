@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -16,11 +17,15 @@ import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
  * BLL command to start a Gluster volume
  */
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isWait = true)
 public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeActionParameters> {
 
     public StartGlusterVolumeCommand(GlusterVolumeActionParameters params) {
         super(params);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution).withWait(true);
     }
 
     @Override

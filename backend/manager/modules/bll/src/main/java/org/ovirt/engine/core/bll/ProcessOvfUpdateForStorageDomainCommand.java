@@ -17,6 +17,8 @@ import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.CreateOvfStoresForStorageDomainCommandParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -45,7 +47,6 @@ import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
     private LinkedList<Pair<StorageDomainOvfInfo, DiskImage>> domainOvfStoresInfoForUpdate = new LinkedList<>();
     private StorageDomain storageDomain;
@@ -62,6 +63,11 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
 
     protected ProcessOvfUpdateForStorageDomainCommand(Guid commandId) {
         super(commandId);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Command);
     }
 
     @Override

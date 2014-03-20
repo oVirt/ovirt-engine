@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -18,11 +20,15 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
  * @see RestartVdsCommand
  * @see FenceVdsBaseCommand#restartVdsVms()
  */
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
     public StartVdsCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override

@@ -9,6 +9,8 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -28,7 +30,6 @@ import org.ovirt.engine.core.utils.linq.Predicate;
  * This class adds a thinly provisioned VM based on disks list.
  */
 @DisableInPrepareMode
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> extends AddVmCommand<T> {
     public AddVmFromScratchCommand(T parameters) {
@@ -42,6 +43,11 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
 
     protected AddVmFromScratchCommand(Guid commandId) {
         super(commandId);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override

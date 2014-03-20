@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.config.Config;
@@ -21,7 +23,6 @@ import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 @InternalCommandAttribute
-@LockIdNameAttribute(isWait = true)
 public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
     /**
@@ -35,6 +36,11 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
 
     public AddVdsSpmIdCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution).withWait(true);
     }
 
     @Override

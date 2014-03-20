@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -12,13 +13,17 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
  * BLL command to Disable Gluster hook
  */
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isWait = true)
 public class DisableGlusterHookCommand<T extends GlusterHookParameters> extends GlusterHookStatusChangeCommand<T> {
     private static final long serialVersionUID = 2267182025441596357L;
 
 
     public DisableGlusterHookCommand(T params) {
         super(params);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution).withWait(true);
     }
 
     @Override

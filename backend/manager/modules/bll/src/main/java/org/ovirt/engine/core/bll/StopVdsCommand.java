@@ -5,6 +5,8 @@ import static org.ovirt.engine.core.common.errors.VdcBllMessages.VAR__ACTION__ST
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -24,7 +26,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  * @see RestartVdsCommand
  * @see FenceVdsBaseCommand#restartVdsVms()
  */
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
     public StopVdsCommand(T parameters) {
@@ -35,6 +36,10 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
         super(parameters, commandContext);
     }
 
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
+    }
 
     @Override
     protected boolean canDoAction() {
@@ -93,7 +98,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
             );
             restartVmsOper.restartVms(mVmList);
             runVdsCommand(VDSCommandType.UpdateVdsVMsCleared,
-                            new UpdateVdsVMsClearedVDSCommandParameters(getVds().getId()));
+                    new UpdateVdsVMsClearedVDSCommandParameters(getVds().getId()));
         }
     }
 

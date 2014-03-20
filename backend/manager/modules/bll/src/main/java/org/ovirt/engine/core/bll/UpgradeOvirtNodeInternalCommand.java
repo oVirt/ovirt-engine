@@ -4,6 +4,8 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -20,7 +22,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> extends VdsCommand<T> {
 
@@ -43,6 +44,11 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
         }
 
         return ret;
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     private boolean isISOCompatible(

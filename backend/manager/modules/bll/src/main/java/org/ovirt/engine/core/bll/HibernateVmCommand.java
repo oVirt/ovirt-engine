@@ -10,6 +10,8 @@ import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -36,7 +38,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@LockIdNameAttribute
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
@@ -61,6 +62,11 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         super(parameters);
         setStoragePoolId(getVm().getStoragePoolId());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     private Guid _storageDomainId = Guid.Empty;

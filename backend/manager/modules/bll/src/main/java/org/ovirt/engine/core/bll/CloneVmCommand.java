@@ -6,6 +6,8 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -31,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 @DisableInPrepareMode
-@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneImageCommand<T> {
 
@@ -54,6 +55,11 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
             setupParameters();
         }
 
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Command);
     }
 
     @Override

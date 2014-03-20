@@ -4,11 +4,12 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -37,7 +38,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStoragesParameter> extends
         UpdateStoragePoolCommand<T> {
@@ -57,6 +57,11 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     protected AddStoragePoolWithStoragesCommand(Guid commandId) {
         super(commandId);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     private StorageDomain masterStorageDomain = null;

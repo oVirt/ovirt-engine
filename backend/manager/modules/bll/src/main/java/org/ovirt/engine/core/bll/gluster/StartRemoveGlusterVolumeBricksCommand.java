@@ -2,10 +2,11 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.List;
 
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -22,11 +23,15 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBrick
  * the migration task.
  */
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class StartRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBase<GlusterVolumeRemoveBricksParameters> {
 
     public StartRemoveGlusterVolumeBricksCommand(GlusterVolumeRemoveBricksParameters params) {
         super(params);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Command);
     }
 
     @Override

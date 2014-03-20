@@ -17,6 +17,8 @@ import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -37,7 +39,6 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> extends CopyImageGroupCommand<T>
         implements QuotaStorageDependent {
 
@@ -52,6 +53,11 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     public MoveOrCopyDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         defineVmTemplate();
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Command);
     }
 
     protected void defineVmTemplate() {

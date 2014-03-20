@@ -14,6 +14,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
@@ -40,7 +42,6 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
  *
  * @see FenceVdsBaseCommand#restartVdsVms() The critical section restaring the VMs
  */
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class RestartVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
 
@@ -61,6 +62,11 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
 
     public RestartVdsCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     /**

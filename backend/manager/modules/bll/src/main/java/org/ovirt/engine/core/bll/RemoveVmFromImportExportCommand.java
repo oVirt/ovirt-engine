@@ -12,6 +12,8 @@ import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -33,7 +35,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportParameters> extends RemoveVmCommand<T>{
 
     // this is needed since overriding getVmTemplate()
@@ -44,6 +45,11 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
         setVmId(parameters.getVmId());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, parameters.getVmId()));
         setStorageDomainId(parameters.getStorageDomainId());
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Command);
     }
 
     @Override

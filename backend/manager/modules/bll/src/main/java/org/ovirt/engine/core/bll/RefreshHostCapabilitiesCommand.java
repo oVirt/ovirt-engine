@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -12,12 +14,16 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class RefreshHostCapabilitiesCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
     public RefreshHostCapabilitiesCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override

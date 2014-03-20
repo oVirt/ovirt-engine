@@ -7,8 +7,9 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
@@ -24,7 +25,6 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
  * BLL command to enable Gluster hook
  */
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isWait = true)
 public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParameters> extends GlusterHookCommandBase<T> {
     protected List<String> errors = new ArrayList<String>();
 
@@ -32,7 +32,12 @@ public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParame
 
     public GlusterHookStatusChangeCommand(T params) {
         super(params);
-     }
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution).withWait(true);
+    }
 
     private List<VDS> getAllUpServers() {
         if (upServers == null) {

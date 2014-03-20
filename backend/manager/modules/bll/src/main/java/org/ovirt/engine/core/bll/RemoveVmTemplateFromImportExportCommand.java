@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -41,6 +42,11 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
     public RemoveVmTemplateFromImportExportCommand(T parameters) {
         super(parameters);
         setStorageDomainId(parameters.getStorageDomainId());
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties;
     }
 
     @Override

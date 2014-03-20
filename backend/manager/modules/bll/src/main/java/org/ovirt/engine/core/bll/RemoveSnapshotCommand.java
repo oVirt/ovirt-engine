@@ -22,6 +22,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -50,13 +52,17 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * Merges snapshots either live or non-live based on VM status
  */
 @DisableInPrepareMode
-@LockIdNameAttribute
 public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends VmCommand<T>
         implements QuotaStorageDependent {
     private List<DiskImage> _sourceImages = null;
 
     public RemoveSnapshotCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     private void initializeObjectState() {

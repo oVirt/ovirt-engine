@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -12,11 +13,15 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
  * BLL command to refresh gluster volume details
  */
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isWait = true)
 public class RefreshGlusterVolumeDetailsCommand extends GlusterVolumeCommandBase<GlusterVolumeParameters> {
 
     public RefreshGlusterVolumeDetailsCommand(GlusterVolumeParameters params) {
         super(params);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution).withWait(true);
     }
 
     @Override

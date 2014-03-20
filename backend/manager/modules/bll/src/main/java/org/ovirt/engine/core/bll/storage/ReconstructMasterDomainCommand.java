@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -53,6 +54,11 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         _newMasterStorageDomainId = parameters.getNewMasterDomainId();
         canChooseInactiveDomainAsMaster = parameters.isCanChooseInactiveDomainAsMaster();
         canChooseCurrentMasterAsNewMaster = parameters.isCanChooseCurrentMasterAsNewMaster();
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties;
     }
 
     private boolean checkIsDomainLocked(StoragePoolIsoMap domainMap) {

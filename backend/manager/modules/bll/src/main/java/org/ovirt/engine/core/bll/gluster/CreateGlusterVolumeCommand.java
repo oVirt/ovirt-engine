@@ -5,11 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
@@ -37,7 +38,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
  * BLL command to create a new Gluster Volume
  */
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isWait = true)
 public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGlusterVolumeParameters> {
 
     private GlusterVolumeEntity volume;
@@ -49,6 +49,11 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         if (volume != null) {
             setVdsGroupId(volume.getClusterId());
         }
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution).withWait(true);
     }
 
     @Override

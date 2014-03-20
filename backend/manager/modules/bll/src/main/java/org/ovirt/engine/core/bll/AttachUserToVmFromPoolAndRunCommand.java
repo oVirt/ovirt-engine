@@ -12,6 +12,8 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -35,7 +37,6 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 
-@LockIdNameAttribute
 public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters> extends
 VmPoolUserCommandBase<T> implements QuotaVdsDependent {
     private Guid vmToAttach = null;
@@ -46,6 +47,11 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
 
     public AttachUserToVmFromPoolAndRunCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     /**

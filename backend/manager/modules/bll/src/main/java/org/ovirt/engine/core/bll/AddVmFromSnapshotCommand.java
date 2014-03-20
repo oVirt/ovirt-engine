@@ -5,6 +5,8 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -32,7 +34,6 @@ import java.util.Map;
  * This class adds a cloned VM from a snapshot (Deep disk copy).
  */
 @DisableInPrepareMode
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> extends AddVmAndCloneImageCommand<T> {
 
@@ -50,6 +51,11 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     public AddVmFromSnapshotCommand(T params) {
         super(params);
         sourceSnapshotId = params.getSourceSnapshotId();
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override

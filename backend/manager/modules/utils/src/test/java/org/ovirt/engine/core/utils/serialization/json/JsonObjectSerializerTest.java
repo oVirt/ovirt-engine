@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
@@ -24,14 +27,22 @@ public class JsonObjectSerializerTest {
     @Test
     public void serializeNetwork() {
         Network net = new Network();
-        JsonObjectSerializer serialezer = new JsonObjectSerializer();
-        Assert.assertTrue(serialezer.serialize(net).length() > 0);
+        JsonObjectSerializer serializer = new JsonObjectSerializer();
+        Assert.assertTrue(serializer.serialize(net).length() > 0);
     }
 
     @Test
     public void serializeVdsNetworkInterface() {
         VdsNetworkInterface nic = new VdsNetworkInterface();
-        JsonObjectSerializer serialezer = new JsonObjectSerializer();
-        Assert.assertTrue(serialezer.serialize(nic).length() > 0);
+        JsonObjectSerializer serializer = new JsonObjectSerializer();
+        Assert.assertTrue(serializer.serialize(nic).length() > 0);
+    }
+
+    @Test
+    public void serializeVdsActionParameters() {
+        VdcActionParametersBase params = new VdcActionParametersBase();
+        params.setLockProperties(LockProperties.create(Scope.None).withWait(true));
+        JsonObjectSerializer serializer = new JsonObjectSerializer();
+        Assert.assertTrue(serializer.serialize(params).length() > 0);
     }
 }

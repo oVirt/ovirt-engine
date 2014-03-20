@@ -29,6 +29,8 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -76,8 +78,6 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
-
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         implements QuotaVdsDependent {
@@ -128,6 +128,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     }
 
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
+    }
 
     protected Guid getPredefinedVdsIdToRunOn() {
         return getVm().getDedicatedVmForVds();
@@ -397,8 +401,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters = buildCreateSnapshotParameters();
 
             VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
-                            createAllSnapshotsFromVmParameters,
-                            createContextForStatelessSnapshotCreation());
+                    createAllSnapshotsFromVmParameters,
+                    createContextForStatelessSnapshotCreation());
 
             // setting lock to null in order not to release lock twice
             setLock(null);

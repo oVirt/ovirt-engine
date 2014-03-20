@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.ImagesHandler;
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.MoveOrCopyDiskCommand;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -17,6 +16,8 @@ import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -27,7 +28,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends MoveOrCopyDiskCommand<T> implements TaskHandlerCommand<LiveMigrateDiskParameters> {
 
     public LiveMigrateDiskCommand(T parameters) {
@@ -64,6 +64,11 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         getParameters().setDiskAlias(getDiskAlias());
         getParameters().setImageGroupID(getImageGroupId());
         getParameters().setCommandType(getActionType());
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Command);
     }
 
     /* Overridden CommandBase Methods */

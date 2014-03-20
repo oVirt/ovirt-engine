@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -22,13 +24,17 @@ import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
-@LockIdNameAttribute
 public class UploadStreamCommand<T extends UploadStreamParameters> extends BaseImagesCommand<T> {
     Guid cachedSpmId;
 
     public UploadStreamCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setStoragePoolId(getParameters().getStoragePoolId());
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override

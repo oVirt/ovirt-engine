@@ -9,6 +9,8 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -18,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 /**
  * @see RestartVdsCommand on why this command is requiring a lock
  */
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters> extends RestartVdsCommand<T> {
     /**
@@ -28,6 +29,11 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
 
     public VdsNotRespondingTreatmentCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     /**

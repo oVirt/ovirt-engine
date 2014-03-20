@@ -12,6 +12,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
@@ -42,7 +44,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  * This class updates VM to the latest template version for stateless vms that has newer template version
  */
 @InternalCommandAttribute
-@LockIdNameAttribute
 public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends VmCommand<T> {
 
     private static final Log log = LogFactory.getLog(UpdateVmVersionCommand.class);
@@ -63,6 +64,11 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         if (parameters.getVm() != null) {
             setVmTemplateId(parameters.getVm().getVmtGuid());
         }
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override

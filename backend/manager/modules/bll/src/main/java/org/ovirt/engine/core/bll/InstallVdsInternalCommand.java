@@ -9,6 +9,8 @@ import org.ovirt.engine.core.bll.network.NetworkConfigurator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -22,7 +24,6 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends VdsCommand<T> {
 
@@ -37,6 +38,10 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         super(parameters, commandContext);
     }
 
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
+    }
 
     @Override
     protected boolean canDoAction() {

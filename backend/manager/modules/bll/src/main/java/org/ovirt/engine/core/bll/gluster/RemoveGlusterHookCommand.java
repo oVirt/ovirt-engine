@@ -7,9 +7,10 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -25,7 +26,6 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
  * BLL command to remove gluster hook from all servers in the cluster.
  */
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isWait = true)
 public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHookManageParameters> {
 
     protected List<String> errors = new ArrayList<String>();
@@ -33,6 +33,11 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
 
     public RemoveGlusterHookCommand(GlusterHookManageParameters params) {
         super(params);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution).withWait(true);
     }
 
     @Override

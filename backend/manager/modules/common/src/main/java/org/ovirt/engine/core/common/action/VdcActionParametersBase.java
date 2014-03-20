@@ -63,6 +63,8 @@ public class VdcActionParametersBase implements Serializable {
     private Guid jobId;
     private Guid stepId;
 
+    private LockProperties lockProperties;
+
     public VdcActionParametersBase() {
         shouldbelogged = true;
         transctionOption = TransactionScopeOption.Required;
@@ -78,6 +80,14 @@ public class VdcActionParametersBase implements Serializable {
     public VdcActionParametersBase(String engineSessionId) {
         this();
         sessionid = engineSessionId;
+    }
+
+    public void setLockProperties(LockProperties lockProperties) {
+        this.lockProperties = lockProperties;
+    }
+
+    public LockProperties getLockProperties() {
+        return lockProperties;
     }
 
     public Guid getCommandId() {

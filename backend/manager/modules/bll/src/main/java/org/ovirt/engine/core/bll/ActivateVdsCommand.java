@@ -7,6 +7,8 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
@@ -24,7 +26,6 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
@@ -43,6 +44,11 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     protected ActivateVdsCommand(Guid commandId) {
         super(commandId);
         haMaintenanceFailed = false;
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override

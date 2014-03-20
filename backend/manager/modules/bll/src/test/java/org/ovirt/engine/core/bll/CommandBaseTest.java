@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -122,6 +123,7 @@ public class CommandBaseTest {
     public void testExecuteNoTaskHandlers() {
         VdcActionParametersBase parameterMock = mock(VdcActionParametersBase.class);
         when(parameterMock.getTransactionScopeOption()).thenReturn(TransactionScopeOption.Required);
+        when(parameterMock.getLockProperties()).thenReturn(LockProperties.create(LockProperties.Scope.None));
         CommandBase<VdcActionParametersBase> command = spy(new CommandBaseDummy(parameterMock));
         command.insertAsyncTaskPlaceHolders();
         command.executeAction();

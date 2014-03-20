@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.FenceVdsBaseCommand;
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -41,7 +42,6 @@ import org.ovirt.engine.core.utils.linq.Predicate;
  *
  * @see org.ovirt.engine.core.bll.RestartVdsCommand
  */
-@LockIdNameAttribute
 public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends StorageHandlingCommandBase<T> {
     private final VDS _problematicVds;
 
@@ -62,6 +62,11 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
 
     public FenceVdsManualyCommand(T parameters) {
         this(parameters, null);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     public Guid getProblematicVdsId() {
@@ -188,17 +193,17 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                     for (VDS vds : getAllRunningVdssInPool()) {
                         try {
                             SpmStatusResult statusResult = (SpmStatusResult) runVdsCommand(VDSCommandType.SpmStatus,
-                                            new SpmStatusVDSCommandParameters(vds.getId(), getStoragePool().getId()))
+                                    new SpmStatusVDSCommandParameters(vds.getId(), getStoragePool().getId()))
                                     .getReturnValue();
                             log.infoFormat("Trying to fence spm {0} via vds {1}",
                                     _problematicVds.getName(),
                                     vds.getName());
                             if (runVdsCommand(
-                                            VDSCommandType.FenceSpmStorage,
-                                            new FenceSpmStorageVDSCommandParameters(vds.getId(),
-                                                    getStoragePool().getId(),
-                                                    statusResult.getSpmId(),
-                                                    statusResult.getSpmLVER()))
+                                    VDSCommandType.FenceSpmStorage,
+                                    new FenceSpmStorageVDSCommandParameters(vds.getId(),
+                                            getStoragePool().getId(),
+                                            statusResult.getSpmId(),
+                                            statusResult.getSpmLVER()))
                                     .getSucceeded()) {
                                 resetIrs();
                                 result = true;

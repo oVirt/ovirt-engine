@@ -20,6 +20,8 @@ import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -59,7 +61,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplateCommand<T> {
 
@@ -79,6 +80,11 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         super(parameters);
         setVmId(parameters.getContainerId());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override

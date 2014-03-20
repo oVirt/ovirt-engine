@@ -9,6 +9,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -33,7 +35,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute
 public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<T> {
 
     private AuditLogType errorType = AuditLogType.USER_FAILED_REMOVE_VDS;
@@ -47,6 +48,10 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         super(parameters, commandContext);
     }
 
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
+    }
 
     @Override
     protected void executeCommand() {

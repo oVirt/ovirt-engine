@@ -8,11 +8,12 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -48,7 +49,6 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
 
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
@@ -66,6 +66,11 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             _newMaster = getStorageDomainDAO().get(_newMasterStorageDomainId);
         }
         return _newMaster;
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     protected void setNewMaster(StorageDomain value) {

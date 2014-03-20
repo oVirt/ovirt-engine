@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RecoveryStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -39,6 +40,11 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
 
     public RecoveryStoragePoolCommand(RecoveryStoragePoolParameters parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties;
     }
 
     @Override

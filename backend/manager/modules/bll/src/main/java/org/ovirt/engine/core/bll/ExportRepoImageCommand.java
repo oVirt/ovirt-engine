@@ -8,6 +8,8 @@ import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -35,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-@LockIdNameAttribute
 public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends CommandBase<T> {
 
     private DiskImage diskImage;
@@ -45,6 +46,11 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
     public ExportRepoImageCommand(T parameters) {
         super(parameters);
         getParameters().setCommandType(getActionType());
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     protected ProviderProxyFactory getProviderProxyFactory() {

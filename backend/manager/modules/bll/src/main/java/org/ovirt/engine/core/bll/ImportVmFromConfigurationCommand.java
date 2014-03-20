@@ -12,6 +12,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -26,7 +28,6 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
-@LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> extends ImportVmCommand<T> {
 
@@ -55,6 +56,11 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         }
         setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), getVm().getImages());
         return super.canDoAction();
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override

@@ -3,10 +3,11 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
@@ -21,13 +22,17 @@ import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
  * BLL command to Remove Bricks from Gluster volume
  */
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isWait = true)
 public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<GlusterVolumeRemoveBricksParameters> {
     private static final long serialVersionUID = 1465299601226267507L;
     private final List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
 
     public GlusterVolumeRemoveBricksCommand(GlusterVolumeRemoveBricksParameters params) {
         super(params);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution).withWait(true);
     }
 
     @Override

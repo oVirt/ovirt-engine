@@ -30,6 +30,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -95,7 +97,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTemplateCommand<T>
         implements QuotaStorageDependent, TaskHandlerCommand<T> {
 
@@ -109,6 +110,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
     public ImportVmCommand(T parameters) {
         this(parameters, null);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Command);
     }
 
     @Override

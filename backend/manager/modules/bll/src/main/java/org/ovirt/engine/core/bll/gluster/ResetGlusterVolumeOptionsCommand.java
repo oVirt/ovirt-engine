@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
@@ -15,13 +16,17 @@ import org.ovirt.engine.core.common.vdscommands.gluster.ResetGlusterVolumeOption
  * BLL Command to Reset Gluster Volume Options
  */
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isWait = true)
 public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<ResetGlusterVolumeOptionsParameters> {
 
     private boolean isResetAllOptions;
 
     public ResetGlusterVolumeOptionsCommand(ResetGlusterVolumeOptionsParameters params) {
         super(params);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution).withWait(true);
     }
 
     @Override
