@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,8 +23,23 @@ import time
 import platform
 import optparse
 import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
+import glob
 
+
+from otopi import common
+from otopi import constants as otopicons
+
+
+if sys.version_info[0] >= 3:
+    import builtins
+    setattr(builtins, 'unicode', str)
+else:
+    import ConfigParser
+    sys.modules['configparser'] = ConfigParser
+    import __builtin__
+    sys.modules['builtins'] = __builtin__
+
+import configparser
 
 sys.path.append(os.path.dirname(
     os.path.dirname(os.path.realpath(sys.argv[0]))
@@ -32,6 +47,65 @@ sys.path.append(os.path.dirname(
 
 
 from ovirt_engine_setup import constants as osetupcons
+
+
+_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
+
+
+def tolist(s):
+    return [e.strip() for e in s.split(',')]
+
+
+def get_setup_packages():
+    setup_packages = []
+    engine_setup_packages = [osetupcons.Const.ENGINE_PACKAGE_SETUP_NAME]
+
+    engine_setup_config = configparser.ConfigParser()
+    engine_setup_config.optionxform = str
+    configs = []
+    configFile = osetupcons.FileLocations.OVIRT_OVIRT_SETUP_CONFIG_FILE
+    configDir = '%s.d' % configFile
+    if os.path.exists(configFile):
+        configs.append(configFile)
+    configs += sorted(
+        glob.glob(
+            os.path.join(configDir, '*.conf')
+        )
+    )
+    engine_setup_config.read(configs)
+
+    def get_packages(section, key):
+        return tolist(
+            common.parseTypedValue(
+                engine_setup_config.get(section, key)
+            )
+        )
+
+    for section in (
+        otopicons.Const.CONFIG_SECTION_DEFAULT,
+        otopicons.Const.CONFIG_SECTION_INIT,
+        otopicons.Const.CONFIG_SECTION_OVERRIDE,
+        otopicons.Const.CONFIG_SECTION_ENFORCE
+    ):
+        if engine_setup_config.has_section(section):
+            if engine_setup_config.has_option(
+                section,
+                osetupcons.RPMDistroEnv.ENGINE_SETUP_PACKAGES
+            ):
+                engine_setup_packages = get_packages(
+                    section,
+                    osetupcons.RPMDistroEnv.ENGINE_SETUP_PACKAGES
+                )
+            if engine_setup_config.has_option(
+                section,
+                osetupcons.RPMDistroEnv.PACKAGES_SETUP
+            ):
+                setup_packages = get_packages(
+                    section,
+                    osetupcons.RPMDistroEnv.PACKAGES_SETUP
+                )
+    setup_packages.extend(engine_setup_packages)
+    return setup_packages
 
 
 def main():
@@ -46,6 +120,7 @@ def main():
         help=_('quiet mode'),
     )
     (options, args) = parser.parse_args()
+    setup_packages = get_setup_packages()
 
     try:
         if platform.linux_distribution(
@@ -110,7 +185,7 @@ def main():
         )
         with myum.transaction():
             myum.update(
-                packages=(osetupcons.Const.ENGINE_PACKAGE_SETUP_NAME,)
+                packages=setup_packages,
             )
             if myum.buildTransaction():
                 exit = 0
