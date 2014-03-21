@@ -1332,4 +1332,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     public void setDisablePowerManagementPolicy(boolean disablePowerManagementPolicy) {
         mVdsStatic.setDisablePowerManagementPolicy(disablePowerManagementPolicy);
     }
+
+    public KdumpStatus getKdumpStatus() {
+        return mVdsDynamic.getKdumpStatus();
+    }
+
+    public void setKdumpStatus(KdumpStatus kdumpStatus) {
+        mVdsDynamic.setKdumpStatus(kdumpStatus);
+    }
 }

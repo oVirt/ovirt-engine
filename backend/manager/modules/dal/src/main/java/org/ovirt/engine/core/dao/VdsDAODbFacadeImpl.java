@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -346,6 +347,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setHighlyAvailableIsActive(rs.getBoolean("ha_active"));
             entity.setHighlyAvailableGlobalMaintenance(rs.getBoolean("ha_global_maintenance"));
             entity.setHighlyAvailableLocalMaintenance(rs.getBoolean("ha_local_maintenance"));
+            entity.setKdumpStatus(KdumpStatus.valueOfNumber(rs.getInt("kdump_status")));
             entity.calculateFreeVirtualMemory();
             entity.setBootTime((Long) rs.getObject("boot_time"));
             return entity;

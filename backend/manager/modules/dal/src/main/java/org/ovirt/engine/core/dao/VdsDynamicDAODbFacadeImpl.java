@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -97,6 +98,7 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             entity.setHardwareFamily(rs.getString("hw_family"));
             entity.setHBAs(new JsonObjectDeserializer().deserialize(rs.getString("hbas"), HashMap.class));
             entity.setPowerManagementControlledByPolicy(rs.getBoolean("controlled_by_pm_policy"));
+            entity.setKdumpStatus(KdumpStatus.valueOfNumber(rs.getInt("kdump_status")));
 
             return entity;
         }
@@ -252,7 +254,8 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                 .addValue("hw_uuid", vds.getHardwareUUID())
                 .addValue("hw_family", vds.getHardwareFamily())
                 .addValue("hbas", new JsonObjectSerializer().serialize(vds.getHBAs()))
-                .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines());
+                .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines())
+                .addValue("kdump_status", vds.getKdumpStatus().getAsNumber());
 
         return parameterSource;
     }

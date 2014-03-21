@@ -85,6 +85,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private String iScsiInitiatorName;
 
+    private KdumpStatus kdumpStatus;
+
     private VdsTransparentHugePagesState transparentHugePagesState;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
@@ -179,6 +181,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         vms_cores_count = 0;
         guest_overhead = 0;
         powerManagementControlledByPolicy = false;
+        kdumpStatus = KdumpStatus.UNKNOWN;
     }
 
     public Integer getcpu_cores() {
@@ -585,6 +588,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.powerManagementControlledByPolicy = powerManagementControlledByPolicy;
     }
 
+    public KdumpStatus getKdumpStatus() {
+        return kdumpStatus;
+    }
+
+    public void setKdumpStatus(KdumpStatus kdumpStatus) {
+        this.kdumpStatus = kdumpStatus;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -638,6 +649,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + ((hwFamily == null) ? 0 : hwFamily.hashCode());
         result = prime * result + ((HBAs == null) ? 0 : HBAs.hashCode());
         result = prime * result + (powerManagementControlledByPolicy ? 0 : 1);
+        result = prime * result + ((kdumpStatus == null) ? 0 : kdumpStatus.hashCode());
 
         return result;
     }
@@ -703,7 +715,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && ObjectUtils.objectsEqual(hwFamily, other.hwFamily)
                 && ObjectUtils.objectsEqual(HBAs, other.HBAs)
                 && ObjectUtils.objectsEqual(supportedEmulatedMachines, other.supportedEmulatedMachines))
-                && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy;
+                && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
+                && kdumpStatus == other.kdumpStatus;
     }
 
 }
