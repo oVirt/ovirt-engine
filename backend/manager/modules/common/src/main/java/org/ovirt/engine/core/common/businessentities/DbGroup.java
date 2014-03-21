@@ -38,6 +38,7 @@ public class DbGroup extends IVdcQueryable {
 
     public DbGroup(DirectoryGroup directoryGroup) {
         externalId = directoryGroup.getId();
+        setId(new Guid(directoryGroup.getId().getBytes(), true));
         domain = directoryGroup.getDirectoryName();
         name = directoryGroup.getName();
     }

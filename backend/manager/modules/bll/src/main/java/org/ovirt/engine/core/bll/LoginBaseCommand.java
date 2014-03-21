@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.log.Log;
@@ -232,7 +231,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         dbUser = getDbUserDAO().getByExternalId(directory.getName(), directoryUser.getId());
         if (dbUser == null) {
             dbUser = new DbUser(directoryUser);
-            dbUser.setId(Guid.newGuid());
             String groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
             dbUser.setGroupIds(groupIds);
             getDbUserDAO().save(dbUser);

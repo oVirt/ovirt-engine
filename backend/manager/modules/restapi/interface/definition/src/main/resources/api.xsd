@@ -1666,7 +1666,6 @@
       <xs:extension base="BaseResource">
         <xs:sequence>
           <xs:element ref="domain" minOccurs="0"/>
-          <xs:element name="external_id" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="department" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="logged_in" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="last_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
@@ -1736,7 +1735,6 @@
       <xs:extension base="BaseResource">
         <xs:sequence>
           <xs:element ref="domain" minOccurs="0"/>
-          <xs:element name="external_id" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <!-- used only to represent the initial role assignments for a
                new group, therafter modification of role assignments are
                only supported via the rel="roles" sub-collection -->

@@ -219,7 +219,6 @@ public class BackendUsersResourceTest
     @Override
     protected void verifyModel(User model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
-        assertEquals(EXTERNAL_IDS[index].toHex(), model.getExternalId());
         assertEquals(NAMES[index] + "@" + DOMAIN, model.getUserName());
         assertNotNull(model.getDomain());
         assertEquals(new Guid(DOMAIN.getBytes(), true).toString(), model.getDomain().getId());

@@ -216,24 +216,6 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
                 return null;
             }
         }
-
-        // In older versions of the engine the internal id and external id were the same, thus we need to try again
-        // using the internal id as if it were an external id:
-        if (directory != null && id != null) {
-            externalId = ExternalId.fromHex(id.toString());
-            DirectoryIdParameters parameters = new DirectoryIdParameters();
-            parameters.setDirectory(directory);
-            parameters.setId(externalId);
-            VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddUser, parameters);
-            if (result.getCanDoAction()) {
-                id = (Guid) result.getActionReturnValue();
-                if (id != null) {
-                    return getDbUserDAO().get(id);
-                }
-                return null;
-            }
-        }
-
         // There is no such user in the directory:
         return null;
     }
@@ -253,24 +235,6 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
                 return null;
             }
         }
-
-        // In older versions of the engine the internal id and external id were the same, thus we need to try again
-        // using the internal id as if it were an external id:
-        if (directory != null && id != null) {
-            externalId = ExternalId.fromHex(id.toString());
-            DirectoryIdParameters parameters = new DirectoryIdParameters();
-            parameters.setDirectory(directory);
-            parameters.setId(externalId);
-            VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddGroup, parameters);
-            if (result.getCanDoAction()) {
-                id = (Guid) result.getActionReturnValue();
-                if (id != null) {
-                    return getAdGroupDAO().get(id);
-                }
-                return null;
-            }
-        }
-
         // There is no such group in the directory:
         return null;
     }
