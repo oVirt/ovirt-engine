@@ -69,6 +69,12 @@
     <engine.port.http>8080</engine.port.http>
     <!-- GWT CSS obfuscation style. production should be 'obf', use 'pretty' in development for easier css debugging -->
     <gwt.cssResourceStyle>obf</gwt.cssResourceStyle>
+    <!-- Options for Super Dev Mode reflected into frontend module's META-INF/gwt-super-dev.properties file -->
+    <gwt.superDev.enabled>false</gwt.superDev.enabled>
+    <gwt.superDev.host>localhost</gwt.superDev.host>
+    <gwt.superDev.port>9876</gwt.superDev.port>
+    <gwt.superDev.connectTimeout>5000</gwt.superDev.connectTimeout>
+    <gwt.superDev.readTimeout>5000</gwt.superDev.readTimeout>
   </properties>
   <dependencyManagement>
     <dependencies>

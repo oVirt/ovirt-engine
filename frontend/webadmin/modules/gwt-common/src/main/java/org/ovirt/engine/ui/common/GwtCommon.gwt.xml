@@ -54,4 +54,9 @@
     <!-- Exclude non-GWT classes from GIN class loading -->
     <extend-configuration-property name="gin.classloading.exceptedPackages" value="org.ovirt.engine.ui.gwtextension" />
 
+    <!-- Use xsiframe linker that combines cross-site friendliness of xs linker
+         with iframe sandboxing of std linker. Note that in GWT 2.7 and better,
+         this is the default linker. -->
+    <add-linker name="xsiframe" />
+
 </module>

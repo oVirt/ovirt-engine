@@ -176,12 +176,23 @@ BUILD_JAVA_OPTS_GWT []
     still apply, unless overridden).
 
 DEV_BUILD_GWT_DRAFT [0]
-    Build draft GWT application without optimizations, this is
+    Build draft GWT applications without optimizations, this is
     useful when profiling compiled application in web browser.
 
     Following changes are applied for draft builds:
     - prevent code and CSS obfuscation
     - reduce the level of code optimizations
+
+DEV_BUILD_GWT_SUPER_DEV_MODE [0]
+    Allows debugging GWT applications via Super Dev Mode.
+
+    First, build Engine with DEV_BUILD_GWT_SUPER_DEV_MODE=1.
+    Then, start GWT code server as following:
+    $ make gwt-debug DEBUG_MODULE=<module> DEV_BUILD_GWT_SUPER_DEV_MODE=1
+
+    In browser, open http://127.0.0.1:9876/ and bookmark "Dev Mode On".
+    Visit GWT application URL (without gwt.codesvr), click "Dev Mode On",
+    then click "Compile" to reflect any UI code changes in browser.
 
 DEV_EXTRA_BUILD_FLAGS
     Any maven build flags requires for building.
@@ -306,6 +317,8 @@ Debug port is 8000, detailed instructions for GWT debugging are at [1].
 GWT debug URLs, provided components running on same machine:
     WebAdmin    http://127.0.0.1:8080/ovirt-engine/webadmin/WebAdmin.html?gwt.codesvr=127.0.0.1:9997
     UserPortal  http://127.0.0.1:8080/ovirt-engine/userportal/UserPortal.html?gwt.codesvr=127.0.0.1:9997
+
+Note that gwt.codesvr parameter does not apply when using Super Dev Mode.
 
 [1] http://wiki.ovirt.org/DebugFrontend
 

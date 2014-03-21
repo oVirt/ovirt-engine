@@ -31,6 +31,7 @@ BUILD_JAVA_OPTS_MAVEN?=
 BUILD_JAVA_OPTS_GWT?=
 DEV_REBUILD=1
 DEV_BUILD_GWT_DRAFT=0
+DEV_BUILD_GWT_SUPER_DEV_MODE=0
 DEV_EXTRA_BUILD_FLAGS=
 DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS=
 PATTERNFLY_DIR=/usr/share/patternfly1/resources
@@ -91,6 +92,14 @@ DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) -P gwtdraft
 endif
 DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) $(DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS)
 DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) $(DEV_EXTRA_BUILD_FLAGS)
+
+GWT_DEBUG_PROFILES:=gwtdev
+GWT_DEBUG_TARGET:=gwt:debug
+ifneq ($(DEV_BUILD_GWT_SUPER_DEV_MODE),0)
+DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) -D gwt.superDev.enabled=true
+GWT_DEBUG_PROFILES:=$(GWT_DEBUG_PROFILES),gwtsuperdev
+GWT_DEBUG_TARGET:=process-classes gwt:run-codeserver
+endif
 
 BUILD_FLAGS:=
 ifneq ($(BUILD_GWT),0)
@@ -460,8 +469,9 @@ gwt-debug:
 		$(DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS) \
 		$(DEV_EXTRA_BUILD_FLAGS) \
 		-Dgwt.noserver=true \
-		-Pgwtdev,gwt-admin,gwt-user \
-		gwt:debug
+		-P $(GWT_DEBUG_PROFILES) \
+		-P gwt-admin,gwt-user \
+			$(GWT_DEBUG_TARGET)
 
 all-dev:
 	[ "$(DEV_REBUILD)" != 0 ] && rm -f "$(BUILD_FILE)" || :

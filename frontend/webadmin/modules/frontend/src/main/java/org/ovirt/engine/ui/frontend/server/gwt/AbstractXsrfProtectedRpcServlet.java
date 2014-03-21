@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.ui.frontend.communication.XsrfRpcRequestBuilder;
-import com.google.gwt.rpc.server.RpcServlet;
 import com.google.gwt.user.client.rpc.RpcToken;
 import com.google.gwt.user.client.rpc.XsrfToken;
 import com.google.gwt.user.server.Util;
@@ -13,7 +12,7 @@ import com.google.gwt.user.server.rpc.NoXsrfProtect;
 import com.google.gwt.user.server.rpc.RPCRequest;
 import com.google.gwt.user.server.rpc.XsrfProtect;
 
-public abstract class AbstractXsrfProtectedRpcServlet extends RpcServlet {
+public abstract class AbstractXsrfProtectedRpcServlet extends RpcRemoteOracleServlet {
 
     /**
      * Serial version UID for serialization.
@@ -39,7 +38,6 @@ public abstract class AbstractXsrfProtectedRpcServlet extends RpcServlet {
         super(delegate);
     }
 
-    @SuppressWarnings("unchecked")
     private XsrfToken extractTokenFromRequest() {
         List<String> header =
                 Collections.list(getThreadLocalRequest().getHeaders(XsrfRpcRequestBuilder.XSRF_TOKEN_HEADER));
