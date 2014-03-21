@@ -4,6 +4,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.communication.StorageCallback;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 
 import com.google.gwt.core.client.Scheduler;
@@ -71,6 +73,8 @@ public class RestApiSessionManager {
     private final String restApiBaseUrl;
 
     private String sessionTimeout;
+
+    private String restApiSessionId;
 
     @Inject
     public RestApiSessionManager(EventBus eventBus, ClientStorage clientStorage) {
@@ -159,14 +163,39 @@ public class RestApiSessionManager {
      * Attempts to reuse existing REST API session that was previously {@linkplain #acquireSession acquired}.
      */
     public void reuseSession() {
-        String sessionId = getSessionId();
-
-        if (sessionId != null) {
-            RestApiSessionAcquiredEvent.fire(eventBus, sessionId);
-            scheduleKeepAliveHeartbeat();
+        //If reuseSession is called right after setSessionId, then getSessionId() without the callback will not
+        //be null. If it is null then reuseSession was called from an automatic login (as restApiSessionId is null
+        //can we can utilize the async call to retrieve it from the backend.
+        if (getSessionId() != null) {
+            processSessionId(getSessionId());
         } else {
-            RestApiSessionManager.logger.severe("Engine REST API session ID is not available"); //$NON-NLS-1$
+            getSessionId(new StorageCallback() {
+
+                @Override
+                public void onSuccess(String result) {
+                    if (result != null) {
+                        restApiSessionId = result;
+                        processSessionId(result);
+                    } else {
+                        processSessionIdException();
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    processSessionIdException();
+                }
+
+                private void processSessionIdException() {
+                    RestApiSessionManager.logger.severe("Engine REST API session ID is not available"); //$NON-NLS-1$
+                }
+            });
         }
+    }
+
+    private void processSessionId(String sessionId) {
+        RestApiSessionAcquiredEvent.fire(eventBus, sessionId);
+        scheduleKeepAliveHeartbeat();
     }
 
     /**
@@ -177,15 +206,20 @@ public class RestApiSessionManager {
     }
 
     String getSessionId() {
-        return clientStorage.getLocalItem(SESSION_ID_KEY);
+        return restApiSessionId;
+    }
+
+    void getSessionId(final StorageCallback callback) {
+        Frontend.getInstance().retrieveFromHttpSession(SESSION_ID_KEY, callback);
     }
 
     void setSessionId(String sessionId) {
-        clientStorage.setLocalItem(SESSION_ID_KEY, sessionId);
+        Frontend.getInstance().storeInHttpSession(SESSION_ID_KEY, sessionId);
+        restApiSessionId = sessionId;
     }
 
     void clearSessionId() {
-        clientStorage.removeLocalItem(SESSION_ID_KEY);
+        setSessionId(null);
     }
 
 }

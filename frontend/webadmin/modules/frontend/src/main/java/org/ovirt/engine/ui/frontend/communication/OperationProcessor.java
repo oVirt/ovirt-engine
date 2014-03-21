@@ -267,4 +267,32 @@ public class OperationProcessor {
         communicationProvider.logout(userObject, callback);
     }
 
+    /**
+     * Default store where the caller doesn't care about the result.
+     * @param key The key
+     * @param value The value to store.
+     */
+    public void storeInHttpSession(final String key, final String value) {
+        storeInHttpSession(key, value, new StorageCallback() {
+
+            @Override
+            public void onSuccess(String result) {
+                // Do nothing
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                //Do nothing
+            }
+
+        });
+    }
+
+    public void storeInHttpSession(final String key, final String value, final StorageCallback callback) {
+        communicationProvider.storeInHttpSession(key, value, callback);
+    }
+
+    public void retrieveFromHttpSession(final String key, final StorageCallback callback) {
+        communicationProvider.retrieveFromHttpSession(key, callback);
+    }
 }

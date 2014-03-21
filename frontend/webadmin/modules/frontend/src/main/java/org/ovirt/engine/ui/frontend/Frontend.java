@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
+import org.ovirt.engine.ui.frontend.communication.StorageCallback;
 import org.ovirt.engine.ui.frontend.communication.UserCallback;
 import org.ovirt.engine.ui.frontend.communication.VdcOperation;
 import org.ovirt.engine.ui.frontend.communication.VdcOperationCallback;
@@ -632,7 +633,7 @@ public class Frontend implements HasHandlers {
 
     /**
      * A convenience method that calls {@link #runMultipleActions(VdcActionType, List, List, Object)} with
-     * running callbacks even on empty run
+     * running callbacks even on empty run.
      *
      * @param actionType The action to be repeated.
      * @param parameters The parameters of each action.
@@ -875,6 +876,14 @@ public class Frontend implements HasHandlers {
         } else {
             getOperationManager().setLoggedIn(false);
         }
+    }
+
+    public void storeInHttpSession(final String key, final String value) {
+        getOperationManager().storeInHttpSession(key, value);
+    }
+
+    public void retrieveFromHttpSession(final String key, final StorageCallback callback) {
+        getOperationManager().retrieveFromHttpSession(key, callback);
     }
 
     // TODO: Externalize to a better location, should support translation via

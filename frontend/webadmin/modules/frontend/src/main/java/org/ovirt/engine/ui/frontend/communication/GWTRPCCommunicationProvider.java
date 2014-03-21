@@ -379,4 +379,33 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
         });
     }
 
+    @Override
+    public void storeInHttpSession(final String key, final String value, final StorageCallback callback) {
+        getService().storeInHttpSession(key, value, new AsyncCallback<Void>() {
+            @Override
+            public void onSuccess(final Void result) {
+                callback.onSuccess(null);
+            }
+
+            @Override
+            public void onFailure(final Throwable caught) {
+                callback.onFailure(caught);
+            }
+        });
+    }
+
+    @Override
+    public void retrieveFromHttpSession(final String key, final StorageCallback callback) {
+        getService().retrieveFromHttpSession(key, new AsyncCallback<String>() {
+            @Override
+            public void onSuccess(final String result) {
+                callback.onSuccess(result);
+            }
+
+            @Override
+            public void onFailure(final Throwable caught) {
+                callback.onFailure(caught);
+            }
+        });
+    }
 }
