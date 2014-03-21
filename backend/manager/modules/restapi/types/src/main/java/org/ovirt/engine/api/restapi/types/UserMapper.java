@@ -18,7 +18,6 @@ public class UserMapper {
     @Mapping(from = DbUser.class, to = User.class)
     public static User map(DbUser entity, User template) {
         User model = template != null ? template : new User();
-        model.setExternalId(entity.getExternalId().toHex());
         model.setName(entity.getFirstName());
         model.setUserName(entity.getLoginName() + "@" + entity.getDomain());
         model.setId(entity.getId().toString());
@@ -46,7 +45,7 @@ public class UserMapper {
         User model = template != null ? template : new User();
         model.setName(entity.getFirstName());
         model.setUserName(entity.getName() + "@" + entity.getDirectory().getName());
-        model.setId(entity.getId().toHex());
+        model.setId(new Guid(entity.getId().getBytes(), true).toString());
         model.setLastName(entity.getLastName());
         model.setEmail(entity.getEmail());
         model.setDepartment(entity.getDepartment());
@@ -76,16 +75,11 @@ public class UserMapper {
             String id = model.getId();
             try {
                 entity.setId(GuidUtils.asGuid(id));
+                entity.setExternalId(ExternalId.fromHex(entity.getId().toString()));
             }
             catch (MalformedIdException exception) {
                 // The identifier won't be a UUID if the user comes from /domains/{domain:id}/users.
             }
-            if (!model.isSetExternalId()) {
-                entity.setExternalId(ExternalId.fromHex(id));
-            }
-        }
-        if (model.isSetExternalId()) {
-            entity.setExternalId(ExternalId.fromHex(model.getExternalId()));
         }
         if (model.isSetDomain()) {
             Domain domain = model.getDomain();

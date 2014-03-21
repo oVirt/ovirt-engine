@@ -84,7 +84,6 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
         }
         else {
             dbUser = new DbUser(directoryUser);
-            dbUser.setId(Guid.newGuid());
             dao.save(dbUser);
         }
         return dbUser;

@@ -15,7 +15,6 @@ public class GroupMapper {
     @Mapping(from = DbGroup.class, to = Group.class)
     public static Group map(DbGroup entity, Group template) {
         Group model = template != null ? template : new Group();
-        model.setExternalId(entity.getExternalId().toHex());
         model.setName(entity.getName());
         model.setId(entity.getId().toString());
         if (!StringUtils.isEmpty(entity.getDomain())) {
@@ -49,16 +48,11 @@ public class GroupMapper {
             String id = model.getId();
             try {
                 entity.setId(GuidUtils.asGuid(id));
+                entity.setExternalId(ExternalId.fromHex(entity.getId().toString()));
             }
             catch (MalformedIdException exception) {
                 // The identifier won't be a UUID if the group comes from /domains/{domain:id}/groups.
             }
-            if (!model.isSetExternalId()) {
-                entity.setExternalId(ExternalId.fromHex(id));
-            }
-        }
-        if (model.isSetExternalId()) {
-            entity.setExternalId(ExternalId.fromHex(model.getExternalId()));
         }
         if (model.isSetDomain()) {
             Domain domain = model.getDomain();

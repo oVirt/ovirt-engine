@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.ExternalId;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbUserDAO;
+import org.ovirt.engine.core.compat.Guid;
 
 public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase<T> {
     // We save a reference to the directory user to avoid looking it up once when checking the conditions and another
@@ -92,7 +92,6 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
         DbUser dbUser = dao.getByExternalId(directoryUser.getDirectory().getName(), directoryUser.getId());
         if (dbUser == null) {
             dbUser = new DbUser(directoryUser);
-            dbUser.setId(Guid.newGuid());
             String groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
             dbUser.setGroupIds(groupIds);
             dao.save(dbUser);

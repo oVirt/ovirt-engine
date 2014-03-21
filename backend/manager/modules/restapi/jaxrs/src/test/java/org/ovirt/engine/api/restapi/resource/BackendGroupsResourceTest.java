@@ -378,7 +378,6 @@ public class BackendGroupsResourceTest
     @Override
     protected void verifyModel(Group model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
-        assertEquals(EXTERNAL_IDS[index].toHex(), model.getExternalId());
         assertEquals(GROUP_NAMES[index], model.getName());
         assertNotNull(model.getDomain());
         assertEquals(new Guid(DOMAIN.getBytes(), true).toString(), model.getDomain().getId());

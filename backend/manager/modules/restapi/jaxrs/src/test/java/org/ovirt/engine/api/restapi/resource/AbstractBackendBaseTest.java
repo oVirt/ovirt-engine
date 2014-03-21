@@ -65,10 +65,9 @@ public abstract class AbstractBackendBaseTest extends Assert {
      * External identifiers used by directory users and groups.
      */
     protected static final ExternalId[] EXTERNAL_IDS = {
-        new ExternalId(0),
-        new ExternalId(1),
-        new ExternalId(2),
-        new ExternalId(3),
+            ExternalId.fromHex(GUIDS[0].toString()),
+            ExternalId.fromHex(GUIDS[1].toString()),
+            ExternalId.fromHex(GUIDS[2].toString()),
     };
 
     /**
