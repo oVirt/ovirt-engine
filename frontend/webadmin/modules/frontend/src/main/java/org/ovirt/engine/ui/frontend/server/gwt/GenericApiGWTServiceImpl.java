@@ -33,6 +33,8 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
 
     private static final Logger log = Logger.getLogger(GenericApiGWTServiceImpl.class);
 
+    private static final String UI_PREFIX = "UI_"; //$NON-NLS-1$
+
     private BackendLocal backend;
 
     @EJB(beanInterface = BackendLocal.class,
@@ -190,6 +192,27 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
         log.debug("IP [" + request.getRemoteAddr() + "], Session ID [" + session.getId() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         return session;
+    }
+
+    @Override
+    public void storeInHttpSession(String key, String value) {
+        HttpServletRequest request = this.getThreadLocalRequest();
+        HttpSession session = request.getSession();
+        session.setAttribute(UI_PREFIX + key, value);
+    }
+
+    @Override
+    public String retrieveFromHttpSession(String key) {
+        HttpServletRequest request = this.getThreadLocalRequest();
+        HttpSession session = request.getSession();
+        Object value = session.getAttribute(UI_PREFIX + key);
+        String result = null;
+        if (value instanceof String) {
+            result = (String)value;
+        } else {
+            log.error("Retrieving non string value from session"); //$NON-NLS-1$
+        }
+        return result;
     }
 
     @Override

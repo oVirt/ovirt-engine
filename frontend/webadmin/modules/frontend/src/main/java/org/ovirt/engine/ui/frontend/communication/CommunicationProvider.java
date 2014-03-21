@@ -31,4 +31,19 @@ public interface CommunicationProvider {
      */
     void logout(Object userObject, UserCallback<?> callback);
 
+    /**
+     * Store a {@code String} key value pair in the {@code HttpSession} on the server side. As a result these keys
+     * will not be persisted across engine server restarts.
+     * @param key The key.
+     * @param value The value.
+     * @param callback The callback to call once the value has been stored.
+     */
+    void storeInHttpSession(String key, String value, StorageCallback callback);
+
+    /**
+     * Retrieve the value associated with the key from the {@code HttpSession} on the server side.
+     * @param key The key
+     * @param the callback to call with the result.
+     */
+    void retrieveFromHttpSession(String key, StorageCallback callback);
 }

@@ -45,4 +45,7 @@ public interface GenericApiGWTService extends RpcService {
 
     public VdcReturnValueBase Login(String userName, String password, String profileName, VdcActionType loginType);
 
+    public void storeInHttpSession(String key, String value);
+
+    public String retrieveFromHttpSession(String key);
 }
