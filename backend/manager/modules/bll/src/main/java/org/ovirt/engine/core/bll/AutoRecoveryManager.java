@@ -26,7 +26,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
-import org.ovirt.engine.core.vdsbroker.VdsUpdateRunTimeInfo;
+import org.ovirt.engine.core.vdsbroker.NetworkMonitoringHelper;
 
 /**
  * Runs scheduled autorecovery jobs.
@@ -85,7 +85,7 @@ public class AutoRecoveryManager {
                             }
 
                             Pair<List<String>, List<String>> problematicNics =
-                                    VdsUpdateRunTimeInfo.determineProblematicNics(nics, getDbFacade().getNetworkDao()
+                                    NetworkMonitoringHelper.determineProblematicNics(nics, getDbFacade().getNetworkDao()
                                     .getAllForCluster(vds.getVdsGroupId()));
                             if (problematicNics.getFirst().isEmpty()) {
                                 filtered.add(vds);
