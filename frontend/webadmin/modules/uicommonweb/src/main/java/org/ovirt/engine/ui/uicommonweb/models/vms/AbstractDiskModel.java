@@ -676,6 +676,10 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void updatePlugChangeability() {
+        if (getVm() == null) { // No point in updating plug to VM if there's no VM
+            return;
+        }
+
         DiskInterface diskInterface = (DiskInterface) getDiskInterface().getSelectedItem();
         boolean isVmRunning = getVm() != null && getVm().getStatus() != VMStatus.Down;
 
