@@ -1834,7 +1834,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot delete VM, VM not exists in export domain")
     String ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN();
 
-    @DefaultStringValue("The Action ${action} is not supported for this Cluster or Data Center compatibility version")
+    @DefaultStringValue("The Action ${action} ${type} is not supported for this Cluster or Data Center compatibility version")
     String ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL();
 
     @DefaultStringValue("Cannot ${action} ${type}. Max number of cpu per socket exceeded")
