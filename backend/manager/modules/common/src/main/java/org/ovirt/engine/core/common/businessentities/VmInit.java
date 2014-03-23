@@ -19,6 +19,7 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
     private List<VmInitNetwork> networks;
 
     private String winKey;
+    private String userName;
     private String rootPassword;
     private boolean passwordAlreadyStored;
     private String customScript;
@@ -27,6 +28,7 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
     private String uiLanguage;
     private String systemLocale;
     private String userLocale;
+
 
     public VmInit() {
     }
@@ -161,5 +163,13 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
 
     public void setUserLocale(String userLocale) {
         this.userLocale = userLocale;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

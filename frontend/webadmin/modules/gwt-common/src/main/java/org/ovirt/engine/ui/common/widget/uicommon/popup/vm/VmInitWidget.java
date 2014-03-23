@@ -131,6 +131,11 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     StringEntityModelTextBoxEditor userLocaleEditor;
 
     @UiField
+    @Path(value = "userName.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor userNameEditor;
+
+    @UiField
     @Path(value = "hostname.entity")
     @WithElementId
     StringEntityModelTextBoxEditor hostnameEditor;
@@ -352,6 +357,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         uiLanguageEditor.setLabel(constants.uiLanguageLabel());
         systemLocaleEditor.setLabel(constants.systemLocaleLabel());
         userLocaleEditor.setLabel(constants.userLocaleLabel());
+        userNameEditor.setLabel(constants.cloudInitUserNameLabel());
         authorizedKeysEditor.setLabel(constants.cloudInitAuthorizedKeysLabel());
         passwordSetEditor.setLabel(constants.vmInitPasswordSetLabel());
         regenerateKeysEnabledEditor.setLabel(constants.cloudInitRegenerateKeysLabel());
@@ -424,6 +430,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         uiLanguageEditor.addStyleName(customizableStyle.primaryOption());
         systemLocaleEditor.addStyleName(customizableStyle.primaryOption());
         userLocaleEditor.addStyleName(customizableStyle.primaryOption());
+        userNameEditor.addStyleName(customizableStyle.primaryOption());
         hostnameEditor.addStyleName(customizableStyle.primaryOption());
         windowsHostnameEditor.addStyleName(customizableStyle.primaryOption());
         domainEditor.addStyleName(customizableStyle.primaryOption());

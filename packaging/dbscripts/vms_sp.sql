@@ -1220,7 +1220,8 @@ Create or replace FUNCTION UpdateVmInit(
     v_input_locale VARCHAR(256),
     v_ui_language VARCHAR(256),
     v_system_locale VARCHAR(256),
-    v_user_locale VARCHAR(256))
+    v_user_locale VARCHAR(256),
+    v_user_name VARCHAR(256))
 
 RETURNS VOID
 
@@ -1231,7 +1232,7 @@ BEGIN
           time_zone=v_time_zone, dns_servers=v_dns_servers, dns_search_domains=v_dns_search_domains,
           networks=v_networks, password=v_password, winkey=v_winkey, custom_script=v_custom_script,
           input_locale=v_input_locale, ui_language=v_ui_language, system_locale=v_system_locale,
-          user_locale=v_user_locale
+          user_locale=v_user_locale, user_name=v_user_name
       WHERE vm_id = v_vm_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -1264,16 +1265,17 @@ Create or replace FUNCTION InsertVmInit(
     v_input_locale VARCHAR(256),
     v_ui_language VARCHAR(256),
     v_system_locale VARCHAR(256),
-    v_user_locale VARCHAR(256))
+    v_user_locale VARCHAR(256),
+    v_user_name VARCHAR(256))
 RETURNS VOID
    AS $procedure$
 BEGIN
 INSERT INTO vm_init(vm_id, host_name, domain, authorized_keys, regenerate_keys, time_zone, dns_servers, dns_search_domains,
                     networks, password, winkey, custom_script, input_locale, ui_language,
-                    system_locale, user_locale)
+                    system_locale, user_locale, user_name)
        VALUES(v_vm_id, v_host_name, v_domain, v_authorized_keys, v_regenerate_keys, v_time_zone, v_dns_servers, v_dns_search_domains,
                     v_networks, v_password, v_winkey, v_custom_script, v_input_locale, v_ui_language,
-                    v_system_locale, v_user_locale);
+                    v_system_locale, v_user_locale, v_user_name);
 
 END; $procedure$
 LANGUAGE plpgsql;

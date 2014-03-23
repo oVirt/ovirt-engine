@@ -78,6 +78,7 @@
             <d:AdvancedParametersExpander ui:field="authenticationExpander"/>
 
             <g:FlowPanel ui:field="authenticationExpanderContent">
+                <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor" />
                 <ge:EntityModelCheckBoxEditor ui:field="passwordSetEditor" />
                 <ge:StringEntityModelPasswordBoxEditor ui:field="rootPasswordEditor" />
                 <ge:StringEntityModelPasswordBoxEditor ui:field="rootPasswordVerificationEditor" />

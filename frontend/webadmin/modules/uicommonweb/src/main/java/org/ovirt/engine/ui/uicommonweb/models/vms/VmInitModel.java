@@ -120,6 +120,14 @@ public class VmInitModel extends Model {
         privateDomain = value;
     }
 
+    private EntityModel<String> privateUserName;
+    public EntityModel<String> getUserName() {
+        return privateUserName;
+    }
+    private void setUserName(EntityModel<String> value) {
+        privateUserName = value;
+    }
+
     private EntityModel<String> privateCustomScript;
     public EntityModel<String> getCustomScript() {
         return privateCustomScript;
@@ -388,6 +396,7 @@ public class VmInitModel extends Model {
         setRegenerateKeysEnabled(new EntityModel<Boolean>());
         setTimeZoneEnabled(new EntityModel<Boolean>());
         setTimeZoneList(new ListModel<Map.Entry<String, String>>());
+        setUserName(new EntityModel<String>());
         setRootPassword(new EntityModel<String>());
         setRootPasswordVerification(new EntityModel<String>());
         setPasswordSet(new EntityModel<Boolean>());
@@ -447,6 +456,7 @@ public class VmInitModel extends Model {
         getUserLocale().setEntity("");
         getHostname().setEntity("");
         getDomain().setEntity("");
+        getUserName().setEntity("");
         getRootPassword().setEntity("");
         getRootPasswordVerification().setEntity("");
         getAuthorizedKeys().setEntity("");
@@ -503,6 +513,10 @@ public class VmInitModel extends Model {
                     getTimeZoneEnabled().setEntity(true);
                     selectTimeZone(getTimeZoneList(), timezones, tz);
                 }
+            }
+
+            if (!StringHelper.isNullOrEmpty(vmInit.getUserName())) {
+                getUserName().setEntity(vmInit.getUserName());
             }
 
             if (!StringHelper.isNullOrEmpty(vmInit.getRootPassword())) {
@@ -757,6 +771,8 @@ public class VmInitModel extends Model {
             vmInit.setSystemLocale((String)getSystemLocale().getEntity());
             vmInit.setUserLocale((String)getUserLocale().getEntity());
         }
+
+        vmInit.setUserName((String) getUserName().getEntity());
 
         if (getRootPasswordEnabled()) {
             vmInit.setRootPassword(getRootPassword().getEntity());

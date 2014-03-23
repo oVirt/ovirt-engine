@@ -2564,6 +2564,7 @@
         <xs:element name="ui_language" type="xs:string" minOccurs="0" maxOccurs="1"/>
         <xs:element name="system_locale" type="xs:string" minOccurs="0" maxOccurs="1"/>
         <xs:element name="user_locale" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="user_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
       </xs:sequence>
   </xs:complexType>
 

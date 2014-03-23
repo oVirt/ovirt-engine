@@ -169,6 +169,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("User Locale")
     String userLocaleLabel();
 
+    @DefaultStringValue("User Name")
+    String cloudInitUserNameLabel();
+
     @DefaultStringValue("VM Hostname")
     String cloudInitHostnameLabel();
 

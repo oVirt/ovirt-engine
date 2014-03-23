@@ -56,6 +56,7 @@ public class CloudInitHandler {
                 storeNetwork();
                 storeTimeZone();
                 storeRootPassword();
+                storeUserName();
             } catch (IllegalArgumentException ex) {
                 throw new IllegalArgumentException("Malformed input", ex);
             }
@@ -183,6 +184,12 @@ public class CloudInitHandler {
         }
     }
 
+    private void storeUserName() {
+        if (!StringUtils.isEmpty(vmInit.getUserName())) {
+            userData.put("user", vmInit.getUserName());
+        }
+    }
+
     private void storeExecutionParameters() {
         // Store defaults in meta-data and user-data that apply regardless
         // of parameters passed in from the user.
@@ -200,8 +207,6 @@ public class CloudInitHandler {
         metaData.put("launch_index", "0");
         metaData.put("availability_zone", "nova");
 
-        // Don't create ec2-user
-        userData.put("user", "root");
         userData.put("disable_root", 0);
 
         // Redirect log output from cloud-init execution from terminal

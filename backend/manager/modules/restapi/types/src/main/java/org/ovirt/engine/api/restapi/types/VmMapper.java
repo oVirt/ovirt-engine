@@ -1058,6 +1058,10 @@ public class VmMapper {
         if (model.isSetUserLocale()) {
             entity.setUserLocale(model.getUserLocale());
         }
+
+        if (model.isSetUserName()) {
+            entity.setUserName(model.getUserName());
+        }
         return entity;
     }
 
@@ -1113,6 +1117,9 @@ public class VmMapper {
         }
         if (entity.getUserLocale() != null) {
             model.setUserLocale(entity.getUserLocale());
+        }
+        if (entity.getUserName() != null) {
+            model.setUserName(entity.getUserName());
         }
         return model;
     }
@@ -1252,10 +1259,7 @@ public class VmMapper {
 
         if (model.isSetUsers()) {
             for (User user : model.getUsers().getUsers()) {
-                // currently only root password supported in backend
-                if ("root".equals(user.getUserName())) {
-                    entity.setRootPassword(user.getPassword());
-                }
+                entity.setRootPassword(user.getPassword());
             }
         }
 
