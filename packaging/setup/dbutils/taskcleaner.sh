@@ -35,7 +35,7 @@ usage() {
     printf "\t-t TASK_ID    - Removes a task by its Task ID.\n"
     printf "\t-c COMMAND_ID - Removes all tasks related to the given Command Id.\n"
     printf "\t-z            - Removes/Displays a Zombie task.\n"
-    printf "\t-R            - Removes all Zombie tasks.\n"
+    printf "\t-R            - Removes all tasks (use with -z to clear only zombie tasks).\n"
     printf "\t-C            - Clear related compensation entries.\n"
     printf "\t-J            - Clear related Job Steps.\n"
     printf "\t-A            - Clear all Job Steps and compensation entries.\n"
