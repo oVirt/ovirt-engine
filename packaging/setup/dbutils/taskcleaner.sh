@@ -39,7 +39,7 @@ Usage: $0 [options]
     -t TASK_ID    - Removes a task by its Task ID.
     -c COMMAND_ID - Removes all tasks related to the given Command Id.
     -z            - Removes/Displays a Zombie task.
-    -R            - Removes all Zombie tasks.
+    -R            - Removes all tasks (use with -z to clear only zombie tasks).
     -C            - Clear related compensation entries.
     -J            - Clear related Job Steps.
     -A            - Clear all Job Steps and compensation entries.
