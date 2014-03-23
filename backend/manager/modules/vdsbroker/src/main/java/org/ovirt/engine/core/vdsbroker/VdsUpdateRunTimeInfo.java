@@ -952,7 +952,7 @@ public class VdsUpdateRunTimeInfo {
 
     private void logDeviceInformation(Guid vmId, Map device) {
         String message = "Received a {0} Device without an address when processing VM {1} devices, skipping device";
-        String deviceType = getDeviceType(device);
+        String deviceType = (String) device.get(VdsProperties.Device);
 
         if (shouldLogDeviceDetails(deviceType)) {
             Map<String, Object> deviceInfo = device;
@@ -1078,16 +1078,6 @@ public class VdsUpdateRunTimeInfo {
     private static Guid getDeviceId(Map device) {
         String deviceId = (String) device.get(VdsProperties.DeviceId);
         return deviceId == null ? null : new Guid(deviceId);
-    }
-
-    /**
-     * gets the device type from the structure returned by VDSM
-     *
-     * @param device
-     * @return
-     */
-    private static String getDeviceType(Map device) {
-        return (String) device.get(VdsProperties.Device);
     }
 
     // if not statistics check if status changed return a list of those
@@ -1259,13 +1249,6 @@ public class VdsUpdateRunTimeInfo {
                     && balloonInfo.getBalloonTargetMemory().intValue() != balloonInfo.getBalloonMaxMemory().intValue(); // ballooning was not requested/enabled on this VM
         }
         return false;
-    }
-
-    private Long toMegaByte(Long kilobytes) {
-        if (kilobytes != null && kilobytes > 0) {
-            return kilobytes / TO_MEGA_BYTES;
-        }
-        return 0L;
     }
 
     protected static boolean isNewWatchdogEvent(VmDynamic vmDynamic, VM vmTo) {
