@@ -133,26 +133,29 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
     private void createKerberosLdapAAAConfigurations() {
 
-        for (String domain : Config.<String> getValue(ConfigValues.DomainName).split("[,]", -1)) {
-            Properties authConfig = new Properties();
-            authConfig.put(ExtensionsManager.CLASS,
-                    "org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapAuthenticator");
-            authConfig.put(ExtensionsManager.PROVIDES, "org.ovirt.engine.authentication");
-            authConfig.put(ExtensionsManager.ENABLED, "true");
-            authConfig.put(ExtensionsManager.MODULE, "org.ovirt.engine.extensions.builtin");
-            authConfig.put(ExtensionsManager.NAME, String.format("builtin-authn-%1$s", domain));
-            authConfig.put("ovirt.engine.aaa.authn.profile.name", domain);
-            authConfig.put("ovirt.engine.aaa.authn.authz.plugin", domain);
-            ExtensionsManager.getInstance().load(authConfig);
+        for (String domain : Config.<String> getValue(ConfigValues.DomainName).split("[,]", 0)) {
+            domain = domain.trim();
+            if (!domain.isEmpty()) {
+                Properties authConfig = new Properties();
+                authConfig.put(ExtensionsManager.CLASS,
+                        "org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapAuthenticator");
+                authConfig.put(ExtensionsManager.PROVIDES, "org.ovirt.engine.authentication");
+                authConfig.put(ExtensionsManager.ENABLED, "true");
+                authConfig.put(ExtensionsManager.MODULE, "org.ovirt.engine.extensions.builtin");
+                authConfig.put(ExtensionsManager.NAME, String.format("builtin-authn-%1$s", domain));
+                authConfig.put("ovirt.engine.aaa.authn.profile.name", domain);
+                authConfig.put("ovirt.engine.aaa.authn.authz.plugin", domain);
+                ExtensionsManager.getInstance().load(authConfig);
 
-            Properties dirConfig = new Properties();
-            dirConfig.put(ExtensionsManager.CLASS,
-                    "org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapDirectory");
-            dirConfig.put(ExtensionsManager.PROVIDES, "org.ovirt.engine.authorization");
-            dirConfig.put(ExtensionsManager.ENABLED, "true");
-            dirConfig.put(ExtensionsManager.MODULE, "org.ovirt.engine.extensions.builtin");
-            dirConfig.put(ExtensionsManager.NAME, domain);
-            ExtensionsManager.getInstance().load(dirConfig);
+                Properties dirConfig = new Properties();
+                dirConfig.put(ExtensionsManager.CLASS,
+                        "org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapDirectory");
+                dirConfig.put(ExtensionsManager.PROVIDES, "org.ovirt.engine.authorization");
+                dirConfig.put(ExtensionsManager.ENABLED, "true");
+                dirConfig.put(ExtensionsManager.MODULE, "org.ovirt.engine.extensions.builtin");
+                dirConfig.put(ExtensionsManager.NAME, domain);
+                ExtensionsManager.getInstance().load(dirConfig);
+            }
         }
     }
 
