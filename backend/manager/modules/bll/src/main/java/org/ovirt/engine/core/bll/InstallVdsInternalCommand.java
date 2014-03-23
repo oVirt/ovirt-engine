@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -18,15 +21,11 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 
-import java.util.Collections;
-import java.util.Map;
-
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends VdsCommand<T> {
 
     private static Log log = LogFactory.getLog(InstallVdsInternalCommand.class);
-    protected String _failureMessage = null;
 
     public InstallVdsInternalCommand(T parameters) {
         super(parameters);
