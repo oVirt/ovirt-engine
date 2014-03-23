@@ -158,8 +158,10 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
         // it within the loop unless some other ovf store was updated successfully (we use it as best effort backup so
         // we'll
         // possibly have some ovf data on storage)
-        if (lastOvfStoreForUpdate.getFirst().getLastUpdated() == null) {
+        if (lastOvfStoreForUpdate.getFirst().getLastUpdated() != null) {
             domainOvfStoresInfoForUpdate.removeLast();
+        } else {
+            lastOvfStoreForUpdate = null;
         }
 
         boolean shouldUpdateLastOvfStore = false;
