@@ -47,7 +47,15 @@ class Java(base.Base):
         stdout = stdout.decode('utf-8', 'replace').splitlines()
         stderr = stderr.decode('utf-8', 'replace').splitlines()
         if p.returncode != 0:
-            raise RuntimeError(_('Cannot get JAVA_HOME (%s)') % stderr)
+            raise RuntimeError(
+                _(
+                    'Cannot get JAVA_HOME{error} make sure supported '
+                    'JRE is installed'
+                ).format(
+                    error='(%s)' % stderr if stderr else '',
+                )
+            )
+
         javaHome = stdout[0]
         self.logger.debug('JAVA_HOME: %s', javaHome)
         return javaHome
