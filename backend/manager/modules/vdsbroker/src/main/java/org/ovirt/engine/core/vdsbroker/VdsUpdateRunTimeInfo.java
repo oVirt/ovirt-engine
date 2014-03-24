@@ -297,15 +297,21 @@ public class VdsUpdateRunTimeInfo {
      * @param stat
      */
     private void checkVdsNetworkThreshold(VdsStatistics stat) {
-
         Integer maxUsedPercentageThreshold = Config.getValue(ConfigValues.LogMaxNetworkUsedThresholdInPercentage);
-        if (stat.getusage_network_percent() != null
-                && stat.getusage_network_percent() > maxUsedPercentageThreshold) {
-            AuditLogableBase logable = new AuditLogableBase(stat.getId());
-            logable.addCustomValue("HostName", _vds.getName());
-            logable.addCustomValue("UsedNetwork", stat.getusage_network_percent().toString());
-            logable.addCustomValue("Threshold", maxUsedPercentageThreshold.toString());
-            auditLog(logable, AuditLogType.VDS_HIGH_NETWORK_USE);
+        for (VdsNetworkInterface iface : _vds.getInterfaces()) {
+            Double transmitRate = iface.getStatistics().getTransmitRate();
+            Double receiveRate = iface.getStatistics().getReceiveRate();
+            if ((transmitRate != null && iface.getStatistics().getTransmitRate().intValue() > maxUsedPercentageThreshold)
+                    || (receiveRate != null && iface.getStatistics().getReceiveRate().intValue() > maxUsedPercentageThreshold)) {
+                AuditLogableBase logable = new AuditLogableBase(_vds.getId());
+                logable.setCustomId(iface.getName());
+                logable.addCustomValue("HostName", _vds.getName());
+                logable.addCustomValue("InterfaceName", iface.getName());
+                logable.addCustomValue("Threshold", maxUsedPercentageThreshold.toString());
+                logable.addCustomValue("TransmitRate", String.valueOf(transmitRate.intValue()));
+                logable.addCustomValue("ReceiveRate", String.valueOf(receiveRate.intValue()));
+                auditLog(logable, AuditLogType.HOST_INTERFACE_HIGH_NETWORK_USE);
+            }
         }
     }
 

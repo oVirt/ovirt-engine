@@ -798,7 +798,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___VDS_HIGH_MEM_USE();
 
-    String AuditLogType___VDS_HIGH_NETWORK_USE();
+    String AuditLogType___HOST_INTERFACE_HIGH_NETWORK_USE();
 
     String AuditLogType___VDS_HIGH_CPU_USE();
 
