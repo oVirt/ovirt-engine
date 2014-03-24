@@ -41,6 +41,7 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
         NetworkProviderProxy proxy = ProviderProxyFactory.getInstance().create(getProvider());
         getNetwork().getProvidedBy().setExternalId(proxy.add(getNetwork()));
         getNetwork().setVlanId(null);
+        getNetwork().setLabel(null);
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
