@@ -34,7 +34,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public RunVmParams(Guid vmId) {
         super(vmId);
-        diskPath = "";
         kvmEnable = true;
         acpiEnable = true;
     }

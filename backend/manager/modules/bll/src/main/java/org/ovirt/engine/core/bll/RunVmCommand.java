@@ -351,7 +351,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * Note that in (2) we assume that the CD is bootable
      */
     private String chooseCd() {
-        if (!StringUtils.isEmpty(getParameters().getDiskPath())) {
+        if (getParameters().getDiskPath() != null) {
             return getParameters().getDiskPath();
         }
 

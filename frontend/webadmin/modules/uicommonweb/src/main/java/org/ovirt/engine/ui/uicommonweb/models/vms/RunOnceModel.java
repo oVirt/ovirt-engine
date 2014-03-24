@@ -518,6 +518,15 @@ public abstract class RunOnceModel extends Model
         }
     }
 
+    public void setIsoImagePath(String isoPath) {
+        if ("".equals(isoPath)) { //$NON-NLS-1$
+            getAttachIso().setEntity(false);
+        } else {
+            getAttachIso().setEntity(true);
+            getIsoImage().setSelectedItem(isoPath);
+        }
+    }
+
     private ArrayList<String> privateCustomPropertiesKeysList;
 
     public ArrayList<String> getCustomPropertiesKeysList()
@@ -624,7 +633,7 @@ public abstract class RunOnceModel extends Model
         setTitle(ConstantsManager.getInstance().getConstants().runVirtualMachinesTitle());
         setHelpTag(HelpTag.run_virtual_machine);
         setHashName("run_virtual_machine"); //$NON-NLS-1$
-        getAttachIso().setEntity(false);
+        setIsoImagePath(vm.getIsoPath()); // needs to be called before iso list is updated
         getAttachFloppy().setEntity(false);
         getRunAsStateless().setEntity(vm.isStateless());
         getRunAndPause().setEntity(vm.isRunAndPause());
@@ -854,12 +863,17 @@ public abstract class RunOnceModel extends Model
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         List<String> images = (List<String>) returnValue;
+                        final String lastSelectedIso = getIsoImage().getSelectedItem();
 
                         getIsoImage().setItems(images);
 
-                        if (getIsoImage().getIsChangable()
-                                && getIsoImage().getSelectedItem() == null) {
-                            getIsoImage().setSelectedItem(Linq.firstOrDefault(images));
+                        if (getIsoImage().getIsChangable()) {
+                            // try to preselect last image
+                            if (lastSelectedIso != null && images.contains(lastSelectedIso)) {
+                                getIsoImage().setSelectedItem(lastSelectedIso);
+                            } else {
+                                getIsoImage().setSelectedItem(Linq.firstOrDefault(images));
+                            }
                         }
                     }
                 }),
