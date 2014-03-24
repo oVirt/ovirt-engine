@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -390,7 +391,7 @@ public class BackendHostResourceTest
                                                           "StorageServerConnection.password" },
                                            new Object[] { GUIDS[0],
                                                           ISCSI_SERVER_ADDRESS,
-                                                          "0", //TODO: right now hard-coded, but this should change when VDSM and Backend support portal
+                                                          StorageServerConnections.DEFAULT_TPGT, //TODO: right now hard-coded, but this should change when VDSM and Backend support portal
                                                           ISCSI_IQN,
                                                           ISCSI_PORT_STRING,
                                                           ISCSI_STORAGE_TYPE,

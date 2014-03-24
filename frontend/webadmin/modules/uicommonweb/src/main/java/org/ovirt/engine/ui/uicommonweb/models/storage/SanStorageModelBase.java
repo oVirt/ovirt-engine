@@ -375,7 +375,6 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         for (int i = 0; i < targetsToConnect.size(); i++) {
             SanTargetModel model = targetsToConnect.get(i);
             StorageServerConnections connection = new StorageServerConnections();
-            connection.setportal("0"); //$NON-NLS-1$
             connection.setstorage_type(StorageType.ISCSI);
             connection.setuser_name((Boolean) getUseUserAuth().getEntity() ? (String) getUserName().getEntity() : ""); //$NON-NLS-1$
             connection.setpassword((Boolean) getUseUserAuth().getEntity() ? (String) getPassword().getEntity() : ""); //$NON-NLS-1$
@@ -431,7 +430,6 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         StorageServerConnections tempVar = new StorageServerConnections();
         tempVar.setconnection(((String) getAddress().getEntity()).trim());
         tempVar.setport(((String) getPort().getEntity()).trim());
-        tempVar.setportal("0"); //$NON-NLS-1$
         tempVar.setstorage_type(StorageType.ISCSI);
         tempVar.setuser_name((Boolean) getUseUserAuth().getEntity() ? (String) getUserName().getEntity() : ""); //$NON-NLS-1$
         tempVar.setpassword((Boolean) getUseUserAuth().getEntity() ? (String) getPassword().getEntity() : ""); //$NON-NLS-1$

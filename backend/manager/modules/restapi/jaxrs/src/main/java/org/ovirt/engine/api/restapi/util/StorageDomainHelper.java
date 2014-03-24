@@ -14,6 +14,6 @@ public class StorageDomainHelper {
                     storageType,
                     userName,
                     port==null ? null : Integer.toString(port),
-                    "0");//TODO: when VSDM and Backend will support this, we will need to externalize portal to the user
+                    StorageServerConnections.DEFAULT_TPGT);
     }
 }
