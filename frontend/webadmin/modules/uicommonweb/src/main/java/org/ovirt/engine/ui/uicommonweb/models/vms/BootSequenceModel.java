@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
 @SuppressWarnings("unused")
-public class BootSequenceModel extends ListModel
+public class BootSequenceModel extends ListModel<EntityModel<BootSequence>>
 {
 
     private UICommand privateMoveItemUpCommand;
@@ -36,12 +36,12 @@ public class BootSequenceModel extends ListModel
     }
 
     @Override
-    public ObservableCollection<EntityModel> getItems()
+    public ObservableCollection<EntityModel<BootSequence>> getItems()
     {
-        return (ObservableCollection<EntityModel>) (super.getItems());
+        return (ObservableCollection<EntityModel<BootSequence>>) (super.getItems());
     }
 
-    public void setItems(ObservableCollection<EntityModel> value)
+    public void setItems(ObservableCollection<EntityModel<BootSequence>> value)
     {
         super.setItems(value);
     }
@@ -64,7 +64,7 @@ public class BootSequenceModel extends ListModel
     private EntityModel getBootSequenceOption(BootSequence bootSequenceOption) {
         for (EntityModel a : getItems())
         {
-            if ((BootSequence) a.getEntity() == bootSequenceOption)
+            if (a.getEntity() == bootSequenceOption)
             {
                 return a;
             }
@@ -121,16 +121,16 @@ public class BootSequenceModel extends ListModel
 
     private void initializeItems()
     {
-        ObservableCollection<EntityModel> items = new ObservableCollection<EntityModel>();
-        EntityModel tempVar = new EntityModel();
+        ObservableCollection<EntityModel<BootSequence>> items = new ObservableCollection<EntityModel<BootSequence>>();
+        EntityModel<BootSequence> tempVar = new EntityModel<BootSequence>();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().hardDiskTitle());
         tempVar.setEntity(BootSequence.C);
         items.add(tempVar);
-        EntityModel tempVar2 = new EntityModel();
+        EntityModel<BootSequence> tempVar2 = new EntityModel<BootSequence>();
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cdromTitle());
         tempVar2.setEntity(BootSequence.D);
         items.add(tempVar2);
-        EntityModel tempVar3 = new EntityModel();
+        EntityModel<BootSequence> tempVar3 = new EntityModel<BootSequence>();
         tempVar3.setTitle(ConstantsManager.getInstance().getConstants().networkPXETitle());
         tempVar3.setEntity(BootSequence.N);
         items.add(tempVar3);

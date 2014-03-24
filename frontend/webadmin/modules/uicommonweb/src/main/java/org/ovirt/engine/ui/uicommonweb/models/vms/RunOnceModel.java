@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -54,226 +55,226 @@ public abstract class RunOnceModel extends Model
     protected final UICommand runOnceCommand;
     protected final UICommand cancelCommand;
 
-    private EntityModel privateAttachFloppy;
+    private EntityModel<Boolean> privateAttachFloppy;
 
-    public EntityModel getAttachFloppy()
+    public EntityModel<Boolean> getAttachFloppy()
     {
         return privateAttachFloppy;
     }
 
-    private void setAttachFloppy(EntityModel value)
+    private void setAttachFloppy(EntityModel<Boolean> value)
     {
         privateAttachFloppy = value;
     }
 
-    private ListModel privateFloppyImage;
+    private ListModel<String> privateFloppyImage;
 
-    public ListModel getFloppyImage()
+    public ListModel<String> getFloppyImage()
     {
         return privateFloppyImage;
     }
 
-    private void setFloppyImage(ListModel value)
+    private void setFloppyImage(ListModel<String> value)
     {
         privateFloppyImage = value;
     }
 
-    private EntityModel privateAttachIso;
+    private EntityModel<Boolean> privateAttachIso;
 
-    public EntityModel getAttachIso()
+    public EntityModel<Boolean> getAttachIso()
     {
         return privateAttachIso;
     }
 
-    private void setAttachIso(EntityModel value)
+    private void setAttachIso(EntityModel<Boolean> value)
     {
         privateAttachIso = value;
     }
 
-    private ListModel privateIsoImage;
+    private ListModel<String> privateIsoImage;
 
-    public ListModel getIsoImage()
+    public ListModel<String> getIsoImage()
     {
         return privateIsoImage;
     }
 
-    private void setIsoImage(ListModel value)
+    private void setIsoImage(ListModel<String> value)
     {
         privateIsoImage = value;
     }
 
-    private ListModel privateDisplayProtocol;
+    private ListModel<EntityModel<DisplayType>> privateDisplayProtocol;
 
-    public ListModel getDisplayProtocol()
+    public ListModel<EntityModel<DisplayType>> getDisplayProtocol()
     {
         return privateDisplayProtocol;
     }
 
-    private void setDisplayProtocol(ListModel value)
+    private void setDisplayProtocol(ListModel<EntityModel<DisplayType>> value)
     {
         privateDisplayProtocol = value;
     }
 
-    private EntityModel privateInitrd_path;
+    private EntityModel<String> privateInitrd_path;
 
-    public EntityModel getInitrd_path()
+    public EntityModel<String> getInitrd_path()
     {
         return privateInitrd_path;
     }
 
-    private void setInitrd_path(EntityModel value)
+    private void setInitrd_path(EntityModel<String> value)
     {
         privateInitrd_path = value;
     }
 
-    private EntityModel privateKernel_path;
+    private EntityModel<String> privateKernel_path;
 
-    public EntityModel getKernel_path()
+    public EntityModel<String> getKernel_path()
     {
         return privateKernel_path;
     }
 
-    private void setKernel_path(EntityModel value)
+    private void setKernel_path(EntityModel<String> value)
     {
         privateKernel_path = value;
     }
 
     // Linux Boot Options tab
 
-    private EntityModel privateKernel_parameters;
+    private EntityModel<String> privateKernel_parameters;
 
-    public EntityModel getKernel_parameters()
+    public EntityModel<String> getKernel_parameters()
     {
         return privateKernel_parameters;
     }
 
-    private void setKernel_parameters(EntityModel value)
+    private void setKernel_parameters(EntityModel<String> value)
     {
         privateKernel_parameters = value;
     }
 
     // Initial Boot tab - Sysprep
 
-    private ListModel privateSysPrepDomainName;
+    private ListModel<String> privateSysPrepDomainName;
 
-    public ListModel getSysPrepDomainName()
+    public ListModel<String> getSysPrepDomainName()
     {
         return privateSysPrepDomainName;
     }
 
-    private void setSysPrepDomainName(ListModel value)
+    private void setSysPrepDomainName(ListModel<String> value)
     {
         privateSysPrepDomainName = value;
     }
 
-    private EntityModel privateSysPrepSelectedDomainName;
+    private EntityModel<String> privateSysPrepSelectedDomainName;
 
-    public EntityModel getSysPrepSelectedDomainName()
+    public EntityModel<String> getSysPrepSelectedDomainName()
     {
         return privateSysPrepSelectedDomainName;
     }
 
-    private void setSysPrepSelectedDomainName(EntityModel value)
+    private void setSysPrepSelectedDomainName(EntityModel<String> value)
     {
         privateSysPrepSelectedDomainName = value;
     }
 
-    private EntityModel privateSysPrepUserName;
+    private EntityModel<String> privateSysPrepUserName;
 
-    public EntityModel getSysPrepUserName()
+    public EntityModel<String> getSysPrepUserName()
     {
         return privateSysPrepUserName;
     }
 
-    private void setSysPrepUserName(EntityModel value)
+    private void setSysPrepUserName(EntityModel<String> value)
     {
         privateSysPrepUserName = value;
     }
 
-    private EntityModel privateSysPrepPassword;
+    private EntityModel<String> privateSysPrepPassword;
 
-    public EntityModel getSysPrepPassword()
+    public EntityModel<String> getSysPrepPassword()
     {
         return privateSysPrepPassword;
     }
 
-    private void setSysPrepPassword(EntityModel value)
+    private void setSysPrepPassword(EntityModel<String> value)
     {
         privateSysPrepPassword = value;
     }
 
-    private EntityModel privateUseAlternateCredentials;
+    private EntityModel<Boolean> privateUseAlternateCredentials;
 
-    public EntityModel getUseAlternateCredentials()
+    public EntityModel<Boolean> getUseAlternateCredentials()
     {
         return privateUseAlternateCredentials;
     }
 
-    private void setUseAlternateCredentials(EntityModel value)
+    private void setUseAlternateCredentials(EntityModel<Boolean> value)
     {
         privateUseAlternateCredentials = value;
     }
 
-    private EntityModel privateIsSysprepEnabled;
+    private EntityModel<Boolean> privateIsSysprepEnabled;
 
-    public EntityModel getIsSysprepEnabled()
+    public EntityModel<Boolean> getIsSysprepEnabled()
     {
         return privateIsSysprepEnabled;
     }
 
-    private void setIsSysprepEnabled(EntityModel value)
+    private void setIsSysprepEnabled(EntityModel<Boolean> value)
     {
         privateIsSysprepEnabled = value;
     }
 
-    private EntityModel privateIsSysprepPossible;
+    private EntityModel<Boolean> privateIsSysprepPossible;
 
-    public EntityModel getIsSysprepPossible()
+    public EntityModel<Boolean> getIsSysprepPossible()
     {
         return privateIsSysprepPossible;
     }
 
-    private void setIsSysprepPossible(EntityModel value)
+    private void setIsSysprepPossible(EntityModel<Boolean> value)
     {
         privateIsSysprepPossible = value;
     }
 
     // Initialization
 
-    private EntityModel privateIsVmFirstRun;
+    private EntityModel<Boolean> privateIsVmFirstRun;
 
-    public EntityModel getIsVmFirstRun()
+    public EntityModel<Boolean> getIsVmFirstRun()
     {
         return privateIsVmFirstRun;
     }
 
-    private void setIsVmFirstRun(EntityModel value)
+    private void setIsVmFirstRun(EntityModel<Boolean> value)
     {
         privateIsVmFirstRun = value;
     }
 
-    private EntityModel privateIsLinuxOptionsAvailable;
+    private EntityModel<Boolean> privateIsLinuxOptionsAvailable;
 
-    public EntityModel getIsLinuxOptionsAvailable()
+    public EntityModel<Boolean> getIsLinuxOptionsAvailable()
     {
         return privateIsLinuxOptionsAvailable;
     }
 
-    private void setIsLinuxOptionsAvailable(EntityModel value)
+    private void setIsLinuxOptionsAvailable(EntityModel<Boolean> value)
     {
         privateIsLinuxOptionsAvailable = value;
     }
 
     // Initial Boot tab - Cloud-Init
 
-    private EntityModel privateIsCloudInitEnabled;
+    private EntityModel<Boolean> privateIsCloudInitEnabled;
 
-    public EntityModel getIsCloudInitEnabled()
+    public EntityModel<Boolean> getIsCloudInitEnabled()
     {
         return privateIsCloudInitEnabled;
     }
 
-    private void setIsCloudInitEnabled(EntityModel value)
+    private void setIsCloudInitEnabled(EntityModel<Boolean> value)
     {
         privateIsCloudInitEnabled = value;
     }
@@ -290,14 +291,14 @@ public abstract class RunOnceModel extends Model
         privateVmInitModel = value;
     }
 
-    private EntityModel privateIsCloudInitPossible;
+    private EntityModel<Boolean> privateIsCloudInitPossible;
 
-    public EntityModel getIsCloudInitPossible()
+    public EntityModel<Boolean> getIsCloudInitPossible()
     {
         return privateIsCloudInitPossible;
     }
 
-    private void setIsCloudInitPossible(EntityModel value)
+    private void setIsCloudInitPossible(EntityModel<Boolean> value)
     {
         privateIsCloudInitPossible = value;
     }
@@ -314,38 +315,38 @@ public abstract class RunOnceModel extends Model
         this.customPropertySheet = customPropertySheet;
     }
 
-    private EntityModel privateRunAndPause;
+    private EntityModel<Boolean> privateRunAndPause;
 
-    public EntityModel getRunAndPause()
+    public EntityModel<Boolean> getRunAndPause()
     {
         return privateRunAndPause;
     }
 
-    public void setRunAndPause(EntityModel value)
+    public void setRunAndPause(EntityModel<Boolean> value)
     {
         privateRunAndPause = value;
     }
 
-    private EntityModel privateRunAsStateless;
+    private EntityModel<Boolean> privateRunAsStateless;
 
-    public EntityModel getRunAsStateless()
+    public EntityModel<Boolean> getRunAsStateless()
     {
         return privateRunAsStateless;
     }
 
-    public void setRunAsStateless(EntityModel value)
+    public void setRunAsStateless(EntityModel<Boolean> value)
     {
         privateRunAsStateless = value;
     }
 
-    private EntityModel privateDisplayConsole_Vnc_IsSelected;
+    private EntityModel<Boolean> privateDisplayConsole_Vnc_IsSelected;
 
-    public EntityModel getDisplayConsole_Vnc_IsSelected()
+    public EntityModel<Boolean> getDisplayConsole_Vnc_IsSelected()
     {
         return privateDisplayConsole_Vnc_IsSelected;
     }
 
-    public void setDisplayConsole_Vnc_IsSelected(EntityModel value)
+    public void setDisplayConsole_Vnc_IsSelected(EntityModel<Boolean> value)
     {
         privateDisplayConsole_Vnc_IsSelected = value;
     }
@@ -362,14 +363,14 @@ public abstract class RunOnceModel extends Model
 
     // Display Protocol tab
 
-    private EntityModel privateDisplayConsole_Spice_IsSelected;
+    private EntityModel<Boolean> privateDisplayConsole_Spice_IsSelected;
 
-    public EntityModel getDisplayConsole_Spice_IsSelected()
+    public EntityModel<Boolean> getDisplayConsole_Spice_IsSelected()
     {
         return privateDisplayConsole_Spice_IsSelected;
     }
 
-    public void setDisplayConsole_Spice_IsSelected(EntityModel value)
+    public void setDisplayConsole_Spice_IsSelected(EntityModel<Boolean> value)
     {
         privateDisplayConsole_Spice_IsSelected = value;
     }
@@ -460,23 +461,23 @@ public abstract class RunOnceModel extends Model
 
     // Host tab
 
-    private ListModel defaultHost;
+    private ListModel<VDS> defaultHost;
 
-    public ListModel getDefaultHost() {
+    public ListModel<VDS> getDefaultHost() {
         return defaultHost;
     }
 
-    private void setDefaultHost(ListModel value) {
+    private void setDefaultHost(ListModel<VDS> value) {
         this.defaultHost = value;
     }
 
-    private EntityModel isAutoAssign;
+    private EntityModel<Boolean> isAutoAssign;
 
-    public EntityModel getIsAutoAssign() {
+    public EntityModel<Boolean> getIsAutoAssign() {
         return isAutoAssign;
     }
 
-    public void setIsAutoAssign(EntityModel value) {
+    public void setIsAutoAssign(EntityModel<Boolean> value) {
         this.isAutoAssign = value;
     }
 
@@ -489,11 +490,11 @@ public abstract class RunOnceModel extends Model
     public InitializationType getInitializationType()
     {
         if (getAttachFloppy().getEntity() != null
-                && (Boolean) getAttachFloppy().getEntity()
+                && getAttachFloppy().getEntity()
                 && "[sysprep]".equals(getFloppyImage().getSelectedItem())) { //$NON-NLS-1$
             return InitializationType.Sysprep;
         } else if (getIsCloudInitEnabled().getEntity() != null
-                && (Boolean) getIsCloudInitEnabled().getEntity()) {
+                && getIsCloudInitEnabled().getEntity()) {
             return InitializationType.CloudInit;
         } else {
             return InitializationType.None;
@@ -501,17 +502,17 @@ public abstract class RunOnceModel extends Model
     }
 
     public String getFloppyImagePath() {
-        if ((Boolean) getAttachFloppy().getEntity()) {
+        if (getAttachFloppy().getEntity()) {
             return getInitializationType() == InitializationType.Sysprep
-                    ? "" : (String) getFloppyImage().getSelectedItem(); //$NON-NLS-1$
+                    ? "" : getFloppyImage().getSelectedItem(); //$NON-NLS-1$
         } else {
             return ""; //$NON-NLS-1$
         }
     }
 
     public String getIsoImagePath() {
-        if ((Boolean) getAttachIso().getEntity()) {
-            return (String) getIsoImage().getSelectedItem();
+        if (getAttachIso().getEntity()) {
+            return getIsoImage().getSelectedItem();
         } else {
             return ""; //$NON-NLS-1$
         }
@@ -536,54 +537,54 @@ public abstract class RunOnceModel extends Model
         this.commandTarget = commandTarget;
 
         // Boot Options tab
-        setAttachFloppy(new EntityModel());
+        setAttachFloppy(new EntityModel<Boolean>());
         getAttachFloppy().getEntityChangedEvent().addListener(this);
-        setFloppyImage(new ListModel());
+        setFloppyImage(new ListModel<String>());
         getFloppyImage().getSelectedItemChangedEvent().addListener(this);
-        setAttachIso(new EntityModel());
+        setAttachIso(new EntityModel<Boolean>());
         getAttachIso().getEntityChangedEvent().addListener(this);
-        setIsoImage(new ListModel());
+        setIsoImage(new ListModel<String>());
         getIsoImage().getSelectedItemChangedEvent().addListener(this);
-        setDisplayProtocol(new ListModel());
+        setDisplayProtocol(new ListModel<EntityModel<DisplayType>>());
         setBootSequence(new BootSequenceModel());
 
         // Linux Boot Options tab
-        setKernel_parameters(new EntityModel());
-        setKernel_path(new EntityModel());
-        setInitrd_path(new EntityModel());
+        setKernel_parameters(new EntityModel<String>());
+        setKernel_path(new EntityModel<String>());
+        setInitrd_path(new EntityModel<String>());
 
         // Initial Boot tab - Sysprep
-        setIsCloudInitEnabled(new EntityModel(false));
+        setIsCloudInitEnabled(new EntityModel<Boolean>(false));
 
-        setSysPrepDomainName(new ListModel());
-        setSysPrepSelectedDomainName(new EntityModel());
+        setSysPrepDomainName(new ListModel<String>());
+        setSysPrepSelectedDomainName(new EntityModel<String>());
 
-        setSysPrepUserName(new EntityModel().setIsChangable(false));
-        setSysPrepPassword(new EntityModel().setIsChangable(false));
+        setSysPrepUserName(new EntityModel<String>().setIsChangable(false));
+        setSysPrepPassword(new EntityModel<String>().setIsChangable(false));
 
-        setIsSysprepEnabled(new EntityModel(false));
-        setIsSysprepPossible(new EntityModel());
+        setIsSysprepEnabled(new EntityModel<Boolean>(false));
+        setIsSysprepPossible(new EntityModel<Boolean>());
 
-        setIsVmFirstRun(new EntityModel(false));
+        setIsVmFirstRun(new EntityModel<Boolean>(false));
         getIsVmFirstRun().getEntityChangedEvent().addListener(this);
-        setUseAlternateCredentials(new EntityModel(false));
+        setUseAlternateCredentials(new EntityModel<Boolean>(false));
         getUseAlternateCredentials().getEntityChangedEvent().addListener(this);
 
         // Initial Boot tab - Cloud-Init
-        setIsCloudInitPossible(new EntityModel());
+        setIsCloudInitPossible(new EntityModel<Boolean>());
 
         setVmInit(new VmInitModel());
 
         // Custom Properties tab
         setCustomPropertySheet(new KeyValueModel());
 
-        setRunAndPause(new EntityModel(false));
-        setRunAsStateless(new EntityModel(false));
+        setRunAndPause(new EntityModel<Boolean>(false));
+        setRunAsStateless(new EntityModel<Boolean>(false));
 
         // Display Protocol tab
-        setDisplayConsole_Spice_IsSelected(new EntityModel());
+        setDisplayConsole_Spice_IsSelected(new EntityModel<Boolean>());
         getDisplayConsole_Spice_IsSelected().getEntityChangedEvent().addListener(this);
-        setDisplayConsole_Vnc_IsSelected(new EntityModel());
+        setDisplayConsole_Vnc_IsSelected(new EntityModel<Boolean>());
         getDisplayConsole_Vnc_IsSelected().getEntityChangedEvent().addListener(this);
 
         setVncKeyboardLayout(new ListModel<String>());
@@ -599,7 +600,7 @@ public abstract class RunOnceModel extends Model
         getIsAutoAssign().getEntityChangedEvent().addListener(this);
 
         // availability/visibility
-        setIsLinuxOptionsAvailable(new EntityModel(false));
+        setIsLinuxOptionsAvailable(new EntityModel<Boolean>(false));
 
         setIsHostTabVisible(true);
 
@@ -655,10 +656,10 @@ public abstract class RunOnceModel extends Model
         setIsBootFromHardDiskAllowedForVm();
 
         // Display protocols.
-        EntityModel vncProtocol = new EntityModel(DisplayType.vnc)
+        EntityModel<DisplayType> vncProtocol = new EntityModel<DisplayType>(DisplayType.vnc)
            .setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
 
-        EntityModel qxlProtocol = new EntityModel(DisplayType.qxl)
+        EntityModel<DisplayType> qxlProtocol = new EntityModel<DisplayType>(DisplayType.qxl)
            .setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
 
         getDisplayProtocol().setItems(Arrays.asList(vncProtocol, qxlProtocol));
@@ -688,51 +689,51 @@ public abstract class RunOnceModel extends Model
         params.setDiskPath(getIsoImagePath());
         params.setFloppyPath(getFloppyImagePath());
         params.setKvmEnable(getHwAcceleration());
-        params.setRunAndPause((Boolean) getRunAndPause().getEntity());
+        params.setRunAndPause(getRunAndPause().getEntity());
         params.setAcpiEnable(true);
-        params.setRunAsStateless((Boolean) getRunAsStateless().getEntity());
+        params.setRunAsStateless(getRunAsStateless().getEntity());
         params.setInitializationType(getInitializationType());
         params.setCustomProperties(getCustomPropertySheet().serialize());
 
         // kernel params
         if (getKernel_path().getEntity() != null)
         {
-            params.setKernelUrl((String) getKernel_path().getEntity());
+            params.setKernelUrl(getKernel_path().getEntity());
         }
         if (getKernel_parameters().getEntity() != null)
         {
-            params.setKernelParams((String) getKernel_parameters().getEntity());
+            params.setKernelParams(getKernel_parameters().getEntity());
         }
         if (getInitrd_path().getEntity() != null)
         {
-            params.setInitrdUrl((String) getInitrd_path().getEntity());
+            params.setInitrdUrl(getInitrd_path().getEntity());
         }
 
         // Sysprep params
         if (getSysPrepUserName().getEntity() != null)
         {
-            params.setSysPrepUserName((String) getSysPrepUserName().getEntity());
+            params.setSysPrepUserName(getSysPrepUserName().getEntity());
         }
         if (getSysPrepPassword().getEntity() != null)
         {
-            params.setSysPrepPassword((String) getSysPrepPassword().getEntity());
+            params.setSysPrepPassword(getSysPrepPassword().getEntity());
         }
 
-        if (getIsCloudInitEnabled() != null && (Boolean) getIsCloudInitEnabled().getEntity()) {
+        if (getIsCloudInitEnabled() != null && getIsCloudInitEnabled().getEntity()) {
             params.setVmInit(getVmInit().buildCloudInitParameters(this));
         }
 
         EntityModel displayProtocolSelectedItem = (EntityModel) getDisplayProtocol().getSelectedItem();
-        params.setUseVnc((DisplayType) displayProtocolSelectedItem.getEntity() == DisplayType.vnc);
-        if ((Boolean) getDisplayConsole_Vnc_IsSelected().getEntity()
-                || (Boolean) getDisplayConsole_Spice_IsSelected().getEntity())
+        params.setUseVnc(displayProtocolSelectedItem.getEntity() == DisplayType.vnc);
+        if (getDisplayConsole_Vnc_IsSelected().getEntity()
+                || getDisplayConsole_Spice_IsSelected().getEntity())
         {
-            params.setUseVnc((Boolean) getDisplayConsole_Vnc_IsSelected().getEntity());
+            params.setUseVnc(getDisplayConsole_Vnc_IsSelected().getEntity());
         }
 
         params.setVncKeyboardLayout(getVncKeyboardLayout().getSelectedItem());
 
-        String selectedDomain = (String) getSysPrepSelectedDomainName().getEntity();
+        String selectedDomain = getSysPrepSelectedDomainName().getEntity();
         if (!StringHelper.isNullOrEmpty(selectedDomain)) {
              params.setSysPrepDomainName(selectedDomain);
         }
@@ -746,7 +747,7 @@ public abstract class RunOnceModel extends Model
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        VM selectedVM = (VM) vm;
+                        VM selectedVM = vm;
                         List<String> images = (List<String>) returnValue;
 
                         if (AsyncDataProvider.isWindowsOsType(selectedVM.getVmOsId())) {
@@ -775,7 +776,7 @@ public abstract class RunOnceModel extends Model
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        ArrayList<Disk> vmDisks = (ArrayList<Disk>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        ArrayList<Disk> vmDisks = ((VdcQueryReturnValue) returnValue).getReturnValue();
 
                         if (vmDisks.isEmpty()) {
                             getRunAsStateless().setIsChangable(false);
@@ -814,7 +815,7 @@ public abstract class RunOnceModel extends Model
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         Collection<VmNetworkInterface> nics =
-                                (Collection<VmNetworkInterface>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                ((VdcQueryReturnValue) returnValue).getReturnValue();
                         Collection<VmNetworkInterface> pluggedNics =
                                 Linq.where(nics, new Linq.IPredicate<VmNetworkInterface>() {
 
@@ -823,7 +824,7 @@ public abstract class RunOnceModel extends Model
                                         return vnic.isPlugged();
                                     }
                                 });
-                        boolean hasPluggedNics = !((List<VmNetworkInterface>) pluggedNics).isEmpty();
+                        boolean hasPluggedNics = !pluggedNics.isEmpty();
 
                         if (!hasPluggedNics) {
                             BootSequenceModel bootSequenceModel = getBootSequence();
@@ -872,7 +873,7 @@ public abstract class RunOnceModel extends Model
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         List<String> domains = (List<String>) returnValue;
-                        String oldDomain = (String) getSysPrepDomainName().getSelectedItem();
+                        String oldDomain = getSysPrepDomainName().getSelectedItem();
                         if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) { //$NON-NLS-1$
                             domains.add(0, oldDomain);
                         }
@@ -923,12 +924,12 @@ public abstract class RunOnceModel extends Model
             {
                 useAlternateCredentials_EntityChanged();
             }
-            else if (sender == getDisplayConsole_Vnc_IsSelected() && (Boolean) ((EntityModel) sender).getEntity())
+            else if (sender == getDisplayConsole_Vnc_IsSelected() && ((EntityModel<Boolean>) sender).getEntity())
             {
                 getDisplayConsole_Spice_IsSelected().setEntity(false);
                 getVncKeyboardLayout().setIsChangable(true);
             }
-            else if (sender == getDisplayConsole_Spice_IsSelected() && (Boolean) ((EntityModel) sender).getEntity())
+            else if (sender == getDisplayConsole_Spice_IsSelected() && ((EntityModel<Boolean>) sender).getEntity())
             {
                 getDisplayConsole_Vnc_IsSelected().setEntity(false);
                 getVncKeyboardLayout().setIsChangable(false);
@@ -942,23 +943,23 @@ public abstract class RunOnceModel extends Model
 
     private void attachIso_EntityChanged()
     {
-        getIsoImage().setIsChangable((Boolean) getAttachIso().getEntity());
-        getBootSequence().getCdromOption().setIsChangable((Boolean) getAttachIso().getEntity());
+        getIsoImage().setIsChangable(getAttachIso().getEntity());
+        getBootSequence().getCdromOption().setIsChangable(getAttachIso().getEntity());
         updateInitialRunFields();
     }
 
     private void attachFloppy_EntityChanged()
     {
-        getFloppyImage().setIsChangable((Boolean) getAttachFloppy().getEntity());
+        getFloppyImage().setIsChangable(getAttachFloppy().getEntity());
         updateInitialRunFields();
     }
 
     private void useAlternateCredentials_EntityChanged()
     {
-        boolean useAlternateCredentials = (Boolean) getUseAlternateCredentials().getEntity();
+        boolean useAlternateCredentials = getUseAlternateCredentials().getEntity();
 
-        getSysPrepUserName().setIsChangable((Boolean) getUseAlternateCredentials().getEntity());
-        getSysPrepPassword().setIsChangable((Boolean) getUseAlternateCredentials().getEntity());
+        getSysPrepUserName().setIsChangable(getUseAlternateCredentials().getEntity());
+        getSysPrepPassword().setIsChangable(getUseAlternateCredentials().getEntity());
 
         getSysPrepUserName().setEntity(useAlternateCredentials ? "" : null); //$NON-NLS-1$
         getSysPrepPassword().setEntity(useAlternateCredentials ? "" : null); //$NON-NLS-1$
@@ -980,7 +981,7 @@ public abstract class RunOnceModel extends Model
     }
 
     private void isAutoAssign_EntityChanged(Object sender, EventArgs args) {
-        if ((Boolean) getIsAutoAssign().getEntity() == false) {
+        if (getIsAutoAssign().getEntity() == false) {
             getDefaultHost().setIsChangable(true);
         }
     }
@@ -1000,12 +1001,12 @@ public abstract class RunOnceModel extends Model
 
     public boolean validate() {
         getIsoImage().setIsValid(true);
-        if ((Boolean) getAttachIso().getEntity()) {
+        if (getAttachIso().getEntity()) {
             getIsoImage().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
         getFloppyImage().setIsValid(true);
-        if ((Boolean) getAttachFloppy().getEntity()) {
+        if (getAttachFloppy().getEntity()) {
             getFloppyImage().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
@@ -1017,17 +1018,17 @@ public abstract class RunOnceModel extends Model
             getKernel_parameters().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
 
             // initrd path and kernel params require kernel path to be filled
-            if (StringHelper.isNullOrEmpty((String) getKernel_path().getEntity())) {
+            if (StringHelper.isNullOrEmpty(getKernel_path().getEntity())) {
                 final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-                if (!StringHelper.isNullOrEmpty((String) getInitrd_path().getEntity())) {
+                if (!StringHelper.isNullOrEmpty(getInitrd_path().getEntity())) {
                     getInitrd_path().getInvalidityReasons().add(constants.initrdPathInvalid());
                     getInitrd_path().setIsValid(false);
                     getKernel_path().getInvalidityReasons().add(constants.initrdPathInvalid());
                     getKernel_path().setIsValid(false);
                 }
 
-                if (!StringHelper.isNullOrEmpty((String) getKernel_parameters().getEntity())) {
+                if (!StringHelper.isNullOrEmpty(getKernel_parameters().getEntity())) {
                     getKernel_parameters().getInvalidityReasons().add(constants.kernelParamsInvalid());
                     getKernel_parameters().setIsValid(false);
                     getKernel_path().getInvalidityReasons().add(constants.kernelParamsInvalid());
@@ -1036,7 +1037,7 @@ public abstract class RunOnceModel extends Model
             }
         }
 
-        if (getIsAutoAssign().getEntity() != null && (Boolean) getIsAutoAssign().getEntity() == false) {
+        if (getIsAutoAssign().getEntity() != null && getIsAutoAssign().getEntity() == false) {
             getDefaultHost().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
         else {

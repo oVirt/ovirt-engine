@@ -63,11 +63,11 @@ public class WebadminRunOnceModel extends RunOnceModel {
     protected RunVmOnceParams createRunVmOnceParams() {
         RunVmOnceParams params = super.createRunVmOnceParams();
 
-        if ((Boolean) getIsAutoAssign().getEntity()) {
+        if (getIsAutoAssign().getEntity()) {
             params.setDestinationVdsId(null);
         } else {
             // set destination host if specified
-            VDS defaultHost = (VDS) getDefaultHost().getSelectedItem();
+            VDS defaultHost = getDefaultHost().getSelectedItem();
             params.setDestinationVdsId(defaultHost != null ? defaultHost.getId() : null);
         }
 

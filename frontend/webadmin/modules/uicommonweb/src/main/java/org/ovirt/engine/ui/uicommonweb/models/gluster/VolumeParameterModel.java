@@ -14,17 +14,17 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 public class VolumeParameterModel extends EntityModel {
 
     private static final String NULL_CONST = "(null)"; //$NON-NLS-1$
-    private ListModel keyList;
-    private EntityModel selectedKey;
-    private EntityModel value;
-    private EntityModel description;
+    private ListModel<GlusterVolumeOptionInfo> keyList;
+    private EntityModel<String> selectedKey;
+    private EntityModel<String> value;
+    private EntityModel<String> description;
     private Boolean isNew;
 
     public VolumeParameterModel() {
-        setKeyList(new ListModel());
-        setSelectedKey(new EntityModel());
-        setValue(new EntityModel());
-        setDescription(new EntityModel());
+        setKeyList(new ListModel<GlusterVolumeOptionInfo>());
+        setSelectedKey(new EntityModel<String>());
+        setValue(new EntityModel<String>());
+        setDescription(new EntityModel<String>());
 
         setIsNew(true);
 
@@ -45,37 +45,37 @@ public class VolumeParameterModel extends EntityModel {
         });
     }
 
-    public ListModel getKeyList() {
+    public ListModel<GlusterVolumeOptionInfo> getKeyList() {
         return keyList;
     }
 
-    public void setKeyList(ListModel keyList) {
+    public void setKeyList(ListModel<GlusterVolumeOptionInfo> keyList) {
         this.keyList = keyList;
     }
 
-    public EntityModel getSelectedKey()
+    public EntityModel<String> getSelectedKey()
     {
         return selectedKey;
     }
 
-    public void setSelectedKey(EntityModel value)
+    public void setSelectedKey(EntityModel<String> value)
     {
         this.selectedKey = value;
     }
 
-    public EntityModel getValue() {
+    public EntityModel<String> getValue() {
         return value;
     }
 
-    public void setValue(EntityModel value) {
+    public void setValue(EntityModel<String> value) {
         this.value = value;
     }
 
-    public EntityModel getDescription() {
+    public EntityModel<String> getDescription() {
         return description;
     }
 
-    public void setDescription(EntityModel description) {
+    public void setDescription(EntityModel<String> description) {
         this.description = description;
     }
 
@@ -90,12 +90,12 @@ public class VolumeParameterModel extends EntityModel {
     private void keyItemChanged() {
         if (getIsNew() && getKeyList().getSelectedItem() != null)
         {
-            getSelectedKey().setEntity(((GlusterVolumeOptionInfo) getKeyList().getSelectedItem()).getKey());
+            getSelectedKey().setEntity(getKeyList().getSelectedItem().getKey());
         }
     }
 
     private void selectedKeyChanged() {
-        String key = (String) getSelectedKey().getEntity();
+        String key = getSelectedKey().getEntity();
         List<GlusterVolumeOptionInfo> options = (List<GlusterVolumeOptionInfo>) getKeyList().getItems();
         GlusterVolumeOptionInfo selectedOption = null;
         for (GlusterVolumeOptionInfo option : options)

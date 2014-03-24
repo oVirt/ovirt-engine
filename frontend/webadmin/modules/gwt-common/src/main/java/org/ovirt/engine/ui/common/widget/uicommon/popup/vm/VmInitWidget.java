@@ -25,11 +25,11 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.ComboBox;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInitModel;
@@ -109,22 +109,22 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @UiField
     @Path(value = "windowsHostname.entity")
     @WithElementId
-    EntityModelTextBoxEditor windowsHostnameEditor;
+    StringEntityModelTextBoxEditor windowsHostnameEditor;
 
     @UiField
     @Path(value = "hostname.entity")
     @WithElementId
-    EntityModelTextBoxEditor hostnameEditor;
+    StringEntityModelTextBoxEditor hostnameEditor;
 
     @UiField
     @Path(value = "domain.entity")
     @WithElementId
-    EntityModelTextBoxEditor domainEditor;
+    StringEntityModelTextBoxEditor domainEditor;
 
     @UiField
     @Path(value = "authorizedKeys.entity")
     @WithElementId
-    EntityModelTextAreaEditor authorizedKeysEditor;
+    StringEntityModelTextAreaEditor authorizedKeysEditor;
 
     @UiField
     @Path(value = "passwordSet.entity")
@@ -134,7 +134,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @UiField
     @Path(value = "customScript.entity")
     @WithElementId
-    EntityModelTextAreaEditor customScriptEditor;
+    StringEntityModelTextAreaEditor customScriptEditor;
 
     @UiField(provided = true)
     public InfoIcon customScriptInfoIcon;
@@ -166,12 +166,12 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @UiField
     @Path(value = "rootPassword.entity")
     @WithElementId
-    EntityModelPasswordBoxEditor rootPasswordEditor;
+    StringEntityModelPasswordBoxEditor rootPasswordEditor;
 
     @UiField
     @Path(value = "rootPasswordVerification.entity")
     @WithElementId
-    EntityModelPasswordBoxEditor rootPasswordVerificationEditor;
+    StringEntityModelPasswordBoxEditor rootPasswordVerificationEditor;
 
 
     @UiField
@@ -189,15 +189,15 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
     @Path(value = "networkSelectedName.entity")
     @WithElementId
-    EntityModelTextBoxEditor networkNameEditor;
+    StringEntityModelTextBoxEditor networkNameEditor;
 
     @Path(value = "networkList.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> networkListEditor;
+    ListModelListBoxEditor<String> networkListEditor;
 
     @UiField(provided = true)
     @WithElementId
-    ComboBox networkComboBox;
+    ComboBox<String> networkComboBox;
 
     @UiField
     @Ignore
@@ -245,17 +245,17 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @UiField
     @Path(value = "networkIpAddress.entity")
     @WithElementId
-    EntityModelTextBoxEditor networkIpAddressEditor;
+    StringEntityModelTextBoxEditor networkIpAddressEditor;
 
     @UiField
     @Path(value = "networkNetmask.entity")
     @WithElementId
-    EntityModelTextBoxEditor networkNetmaskEditor;
+    StringEntityModelTextBoxEditor networkNetmaskEditor;
 
     @UiField
     @Path(value = "networkGateway.entity")
     @WithElementId
-    EntityModelTextBoxEditor networkGatewayEditor;
+    StringEntityModelTextBoxEditor networkGatewayEditor;
 
     @UiField
     @Path(value = "networkStartOnBoot.entity")
@@ -265,12 +265,12 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @UiField
     @Path(value = "dnsServers.entity")
     @WithElementId
-    EntityModelTextBoxEditor dnsServers;
+    StringEntityModelTextBoxEditor dnsServers;
 
     @UiField
     @Path(value = "dnsSearchDomains.entity")
     @WithElementId
-    EntityModelTextBoxEditor dnsSearchDomains;
+    StringEntityModelTextBoxEditor dnsSearchDomains;
 
     public VmInitWidget(BasicStyle style) {
         style.ensureInjected();
@@ -319,9 +319,9 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     }
 
     void initComboBoxEditors() {
-        networkListEditor = new ListModelListBoxEditor<Object>();
-        networkNameEditor = new EntityModelTextBoxEditor();
-        networkComboBox = new ComboBox(networkListEditor, networkNameEditor);
+        networkListEditor = new ListModelListBoxEditor<String>();
+        networkNameEditor = new StringEntityModelTextBoxEditor();
+        networkComboBox = new ComboBox<String>(networkListEditor, networkNameEditor);
 
     }
 
@@ -474,7 +474,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 setNetworkStaticDetailsStyle(model.getNetworkDhcp().getEntity() == null
-                        || !(Boolean) model.getNetworkDhcp().getEntity());
+                        || !model.getNetworkDhcp().getEntity());
             }
         });
 
@@ -495,36 +495,36 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
     void initializeEnabledCBBehavior(final VmInitModel model) {
         if (model.getRegenerateKeysEnabled().getEntity() != null) {
-            regenerateKeysEnabledEditor.setEnabled((Boolean) model.getRegenerateKeysEnabled().getEntity());
+            regenerateKeysEnabledEditor.setEnabled(model.getRegenerateKeysEnabled().getEntity());
         }
 
         if (model.getTimeZoneEnabled().getEntity() != null) {
-            timeZoneEnabledEditor.setEnabled((Boolean) model.getTimeZoneEnabled().getEntity());
+            timeZoneEnabledEditor.setEnabled(model.getTimeZoneEnabled().getEntity());
         }
         model.getWindowsSysprepTimeZoneEnabled().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                windowsSysprepTimeZoneEditor.setEnabled((Boolean) model.getWindowsSysprepTimeZoneEnabled().getEntity());
+                windowsSysprepTimeZoneEditor.setEnabled(model.getWindowsSysprepTimeZoneEnabled().getEntity());
             }
         });
 
         if (model.getWindowsSysprepTimeZoneEnabled().getEntity() != null) {
-            windowsSysprepTimeZoneEditor.setEnabled((Boolean) model.getWindowsSysprepTimeZoneEnabled().getEntity());
+            windowsSysprepTimeZoneEditor.setEnabled(model.getWindowsSysprepTimeZoneEnabled().getEntity());
         }
         model.getTimeZoneEnabled().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                timeZoneEditor.setEnabled((Boolean) model.getTimeZoneEnabled().getEntity());
+                timeZoneEditor.setEnabled(model.getTimeZoneEnabled().getEntity());
             }
         });
 
         if (model.getNetworkEnabled().getEntity() != null) {
-            networkEnabledEditor.setEnabled((Boolean) model.getNetworkEnabled().getEntity());
+            networkEnabledEditor.setEnabled(model.getNetworkEnabled().getEntity());
         }
         model.getNetworkEnabled().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean enabled = (Boolean) model.getNetworkEnabled().getEntity();
+                boolean enabled = model.getNetworkEnabled().getEntity();
                 networkAddButton.setEnabled(enabled);
                 setLabelEnabled(networkAddLabel, enabled);
                 // See note above re: parameter to this method call

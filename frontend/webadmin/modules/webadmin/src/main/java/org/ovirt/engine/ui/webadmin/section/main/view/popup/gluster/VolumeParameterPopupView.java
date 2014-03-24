@@ -6,9 +6,9 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.ComboBox;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -44,23 +44,23 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
 
     @UiField(provided = true)
     @WithElementId("keyComboBox")
-    ComboBox keyComboBox;
+    ComboBox<GlusterVolumeOptionInfo> keyComboBox;
 
     @Path(value = "keyList.selectedItem")
     @WithElementId("keyListBox")
-    ListModelListBoxEditor<Object> keyListBoxEditor;
+    ListModelListBoxEditor<GlusterVolumeOptionInfo> keyListBoxEditor;
 
     @Path(value = "selectedKey.entity")
     @WithElementId("keyTextBox")
-    EntityModelTextBoxEditor keyTextBoxEditor;
+    StringEntityModelTextBoxEditor keyTextBoxEditor;
 
     @UiField
     @Path(value = "description.entity")
-    EntityModelTextAreaLabelEditor descriptionEditor;
+    StringEntityModelTextAreaLabelEditor descriptionEditor;
 
     @UiField
     @Path(value = "value.entity")
-    EntityModelTextBoxEditor valueEditor;
+    StringEntityModelTextBoxEditor valueEditor;
 
     @UiField
     @Ignore
@@ -85,19 +85,18 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
     }
 
     void initComboBox() {
-        keyListBoxEditor = new ListModelListBoxEditor<Object>(new StringRenderer<Object>() {
+        keyListBoxEditor = new ListModelListBoxEditor<GlusterVolumeOptionInfo>(new StringRenderer<GlusterVolumeOptionInfo>() {
             @Override
-            public String render(Object object) {
-                GlusterVolumeOptionInfo optionInfo = (GlusterVolumeOptionInfo) object;
+            public String render(GlusterVolumeOptionInfo optionInfo) {
                 if (optionInfo != null) {
                     return optionInfo.getKey();
                 }
                 return null;
             }
         });
-        keyTextBoxEditor = new EntityModelTextBoxEditor();
+        keyTextBoxEditor = new StringEntityModelTextBoxEditor();
 
-        keyComboBox = new ComboBox(keyListBoxEditor, keyTextBoxEditor);
+        keyComboBox = new ComboBox<GlusterVolumeOptionInfo>(keyListBoxEditor, keyTextBoxEditor);
     }
 
     @Override

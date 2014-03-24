@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" 
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
 	xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm"
 	xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value">
@@ -152,12 +153,12 @@
 			<g:VerticalPanel addStyleNames="{style.bootOptionsPanel}">
 				<g:VerticalPanel addStyleNames="{style.attachImagePanel}">
 					<g:HorizontalPanel>
-						<e:EntityModelCheckBoxEditor ui:field="attachFloppyEditor" addStyleNames="{style.attachImageCheckbox}" />
+						<ge:EntityModelCheckBoxEditor ui:field="attachFloppyEditor" addStyleNames="{style.attachImageCheckbox}" />
 						<e:ListModelListBoxEditor ui:field="floppyImageEditor" addStyleNames="{style.attachImageSelectbox}" />
 					</g:HorizontalPanel>
 
 					<g:HorizontalPanel>
-						<e:EntityModelCheckBoxEditor ui:field="attachIsoEditor" addStyleNames="{style.attachImageCheckbox}" />
+						<ge:EntityModelCheckBoxEditor ui:field="attachIsoEditor" addStyleNames="{style.attachImageCheckbox}" />
 						<e:ListModelListBoxEditor ui:field="isoImageEditor" addStyleNames="{style.attachImageSelectbox}" />
 						<g:PushButton ui:field="refreshButton" addStyleNames="{style.refreshButton}">
 							<g:upFace image='{resources.refreshButtonImage}' />
@@ -179,30 +180,30 @@
 					</g:VerticalPanel>
 				</g:AbsolutePanel>
 
-				<e:EntityModelCheckBoxEditor ui:field="runAsStatelessEditor" />
-				<e:EntityModelCheckBoxEditor ui:field="runAndPauseEditor" />
+				<ge:EntityModelCheckBoxEditor ui:field="runAsStatelessEditor" />
+				<ge:EntityModelCheckBoxEditor ui:field="runAndPauseEditor" />
 			</g:VerticalPanel>
 		</g:DisclosurePanel>
 
 		<g:DisclosurePanel ui:field="linuxBootOptionsPanel" label="{constants.runOncePopupLinuxBootOptionsLabel}" addStyleNames="{style.panelStyle}">
 			<g:VerticalPanel addStyleNames="{style.linuxBootOptionsPanel}">
-				<e:EntityModelTextBoxEditor ui:field="kernelPathEditor" addStyleNames="{style.linuxBootOption}" />
-				<e:EntityModelTextBoxEditor ui:field="initrdPathEditor" addStyleNames="{style.linuxBootOption}" />
-				<e:EntityModelTextBoxEditor ui:field="kernelParamsEditor" addStyleNames="{style.linuxBootOption}" />
+				<ge:StringEntityModelTextBoxEditor ui:field="kernelPathEditor" addStyleNames="{style.linuxBootOption}" />
+				<ge:StringEntityModelTextBoxEditor ui:field="initrdPathEditor" addStyleNames="{style.linuxBootOption}" />
+				<ge:StringEntityModelTextBoxEditor ui:field="kernelParamsEditor" addStyleNames="{style.linuxBootOption}" />
 			</g:VerticalPanel>
 		</g:DisclosurePanel>
 
         <g:DisclosurePanel ui:field="initialRunPanel" label="{constants.runOncePopupInitialRunLabel}" addStyleNames="{style.panelStyle}">
 			<g:FlowPanel>
-                <e:EntityModelCheckBoxEditor ui:field="cloudInitEnabledEditor" labelStyleName="{style.cloudInitLabel}"/>
+                <ge:EntityModelCheckBoxEditor ui:field="cloudInitEnabledEditor" labelStyleName="{style.cloudInitLabel}"/>
                 <g:Label ui:field="sysprepToEnableLabel" addStyleNames="{style.sysprepOption}" />
 
 				<vm:RunOnceVmInitWidget ui:field="vmInitWidget"/>
                 <g:VerticalPanel ui:field="runOnceSpecificSysprepOptions">
                     <w:ComboBox ui:field="sysPrepDomainNameComboBox" />
-                    <e:EntityModelCheckBoxEditor ui:field="useAlternateCredentialsEditor" addStyleNames="{style.sysprepOption}" />
-                    <e:EntityModelTextBoxEditor ui:field="sysPrepUserNameEditor" addStyleNames="{style.sysprepOption}" />
-                    <e:EntityModelTextBoxEditor ui:field="sysPrepPasswordEditor" addStyleNames="{style.sysprepOption}" />
+                    <ge:EntityModelCheckBoxEditor ui:field="useAlternateCredentialsEditor" addStyleNames="{style.sysprepOption}" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="sysPrepUserNameEditor" addStyleNames="{style.sysprepOption}" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="sysPrepPasswordEditor" addStyleNames="{style.sysprepOption}" />
                 </g:VerticalPanel>
 
 			</g:FlowPanel>
@@ -212,7 +213,7 @@
             <g:FlowPanel>
                 <g:Label addStyleNames="{style.sectionLabel}" text="{constants.runOnVmPopup}" />
                 <g:VerticalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
-                    <e:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor" addStyleNames="{style.radioButton}" />
+                    <ge:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor" addStyleNames="{style.radioButton}" />
                     <g:HorizontalPanel verticalAlignment='ALIGN_MIDDLE'>
                         <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost}" />
                         <g:Label text="{constants.specificVmPopup}" />
@@ -224,9 +225,9 @@
 
 		<g:DisclosurePanel ui:field="displayProtocolPanel" label="{constants.runOncePopupDisplayProtocolLabel}" addStyleNames="{style.panelStyle}">
 			<g:VerticalPanel>
-				<e:EntityModelRadioButtonEditor ui:field="displayConsoleVncEditor" />
+				<ge:EntityModelRadioButtonEditor ui:field="displayConsoleVncEditor" />
 				<e:ListModelListBoxEditor ui:field="vncKeyboardLayoutEditor" />
-				<e:EntityModelRadioButtonEditor ui:field="displayConsoleSpiceEditor" />
+				<ge:EntityModelRadioButtonEditor ui:field="displayConsoleSpiceEditor" />
 			</g:VerticalPanel>
 		</g:DisclosurePanel>
 

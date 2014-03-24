@@ -3,6 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
              xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
              xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
@@ -57,36 +58,36 @@
 
 	<g:FlowPanel addStyleNames="{style.verticalPanel}" ui:field="mainPanel">
         <g:FlowPanel ui:field="syspreptOptionsContent">
-            <e:EntityModelTextBoxEditor ui:field="windowsHostnameEditor" />
-            <e:EntityModelCheckBoxEditor ui:field="windowsSyspreptimeZoneEnabledEditor" />
+            <ge:StringEntityModelTextBoxEditor ui:field="windowsHostnameEditor" />
+            <ge:EntityModelCheckBoxEditor ui:field="windowsSyspreptimeZoneEnabledEditor" />
             <e:ListModelListBoxEditor ui:field="windowsSysprepTimeZoneEditor" />
         </g:FlowPanel>
 
         <g:FlowPanel ui:field="cloudInitOptionsContent">
             <g:FlowPanel>
-                <e:EntityModelTextBoxEditor ui:field="domainEditor" />
-                <e:EntityModelTextBoxEditor ui:field="hostnameEditor" />
-                <e:EntityModelCheckBoxEditor ui:field="timeZoneEnabledEditor" />
+                <ge:StringEntityModelTextBoxEditor ui:field="domainEditor" />
+                <ge:StringEntityModelTextBoxEditor ui:field="hostnameEditor" />
+                <ge:EntityModelCheckBoxEditor ui:field="timeZoneEnabledEditor" />
                 <e:ListModelListBoxEditor ui:field="timeZoneEditor" />
             </g:FlowPanel>
 
             <d:AdvancedParametersExpander ui:field="authenticationExpander"/>
 
             <g:FlowPanel ui:field="authenticationExpanderContent">
-                <e:EntityModelCheckBoxEditor ui:field="passwordSetEditor" />
-                <e:EntityModelPasswordBoxEditor ui:field="rootPasswordEditor" />
-                <e:EntityModelPasswordBoxEditor ui:field="rootPasswordVerificationEditor" />
-                <e:EntityModelTextAreaEditor ui:field="authorizedKeysEditor" />
-                <e:EntityModelCheckBoxEditor ui:field="regenerateKeysEnabledEditor" />
+                <ge:EntityModelCheckBoxEditor ui:field="passwordSetEditor" />
+                <ge:StringEntityModelPasswordBoxEditor ui:field="rootPasswordEditor" />
+                <ge:StringEntityModelPasswordBoxEditor ui:field="rootPasswordVerificationEditor" />
+                <ge:StringEntityModelTextAreaEditor ui:field="authorizedKeysEditor" />
+                <ge:EntityModelCheckBoxEditor ui:field="regenerateKeysEnabledEditor" />
             </g:FlowPanel>
 
             <d:AdvancedParametersExpander ui:field="networkExpander"/>
             <g:FlowPanel ui:field="networkExpanderContent" >
-                <e:EntityModelTextBoxEditor ui:field="dnsServers" />
-                <e:EntityModelTextBoxEditor ui:field="dnsSearchDomains" />
+                <ge:StringEntityModelTextBoxEditor ui:field="dnsServers" />
+                <ge:StringEntityModelTextBoxEditor ui:field="dnsSearchDomains" />
 
                 <g:FlowPanel>
-                    <e:EntityModelCheckBoxEditor ui:field="networkEnabledEditor" addStyleNames="{style.optionCheckbox}" />
+                    <ge:EntityModelCheckBoxEditor ui:field="networkEnabledEditor" addStyleNames="{style.optionCheckbox}" />
                     <w:ComboBox ui:field="networkComboBox" addStyleNames="{style.primaryOptionComboBox}" />
                 </g:FlowPanel>
                 <g:FlowPanel addStyleNames="{style.horizontalPanel} {style.comboBoxControlMargin}">
@@ -103,18 +104,18 @@
                     <g:Label ui:field="networkRemoveLabel" />
                 </g:FlowPanel>
                 <g:FlowPanel ui:field="networkOptions" addStyleNames="{style.nestedOption}">
-                    <e:EntityModelCheckBoxEditor ui:field="networkDhcpEditor" />
-                    <e:EntityModelTextBoxEditor ui:field="networkIpAddressEditor" />
-                    <e:EntityModelTextBoxEditor ui:field="networkNetmaskEditor" />
-                    <e:EntityModelTextBoxEditor ui:field="networkGatewayEditor" />
-                    <e:EntityModelCheckBoxEditor ui:field="networkStartOnBootEditor" />
+                    <ge:EntityModelCheckBoxEditor ui:field="networkDhcpEditor" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="networkIpAddressEditor" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="networkNetmaskEditor" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="networkGatewayEditor" />
+                    <ge:EntityModelCheckBoxEditor ui:field="networkStartOnBootEditor" />
                 </g:FlowPanel>
             </g:FlowPanel>
 
             <d:AdvancedParametersExpander ui:field="customScriptExpander" addStyleNames="{style.verticalPanel}"/>
             <g:FlowPanel ui:field="customScriptExpanderContent" >
                 <d:InfoIcon ui:field="customScriptInfoIcon" addStyleNames="{style.customScriptInfoIconStyle}" />
-                <e:EntityModelTextAreaEditor ui:field="customScriptEditor"
+                <ge:StringEntityModelTextAreaEditor ui:field="customScriptEditor"
                                              labelStyleName="{style.displayNone}" />
             </g:FlowPanel>
 

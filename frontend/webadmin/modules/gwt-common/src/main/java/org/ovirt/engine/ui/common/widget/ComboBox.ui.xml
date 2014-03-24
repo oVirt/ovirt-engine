@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.ComboBox.WidgetStyle">
 		.listBoxEditor {
@@ -41,7 +42,7 @@
 
 	<g:AbsolutePanel>
 		<e:ListModelListBoxEditor ui:field="listBoxEditor" addStyleNames="{style.listBoxEditor}" />
-		<e:EntityModelTextBoxEditor ui:field="textBoxEditor" addStyleNames="{style.textBoxEditor}" />
+		<ge:EntityModelTextBoxEditor ui:field="textBoxEditor" addStyleNames="{style.textBoxEditor}" />
 	</g:AbsolutePanel>
 
 </ui:UiBinder>

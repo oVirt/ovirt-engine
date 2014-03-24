@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget;
 
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 
 import com.google.gwt.core.client.GWT;
@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * Combines {@link ListModelListBoxEditor} and {@link EntityModelTextBoxEditor} into a single widget.
  */
-public class ComboBox extends Composite {
+public class ComboBox<T> extends Composite {
 
     interface WidgetUiBinder extends UiBinder<Widget, ComboBox> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -24,12 +24,12 @@ public class ComboBox extends Composite {
     WidgetStyle style;
 
     @UiField(provided = true)
-    ListModelListBoxEditor<Object> listBoxEditor;
+    ListModelListBoxEditor<T> listBoxEditor;
 
     @UiField(provided = true)
     EntityModelTextBoxEditor textBoxEditor;
 
-    public ComboBox(ListModelListBoxEditor<Object> listBoxEditor, EntityModelTextBoxEditor textBoxEditor) {
+    public ComboBox(ListModelListBoxEditor<T> listBoxEditor, EntityModelTextBoxEditor textBoxEditor) {
         this.listBoxEditor = listBoxEditor;
         this.textBoxEditor = textBoxEditor;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));

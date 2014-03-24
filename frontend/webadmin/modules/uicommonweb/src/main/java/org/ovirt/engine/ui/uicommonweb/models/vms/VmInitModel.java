@@ -37,153 +37,153 @@ public class VmInitModel extends Model {
     private boolean isWindowsOS = false;
     public boolean getHostnameEnabled() {
         if (isWindowsOS) {
-            return !StringHelper.isNullOrEmpty((String) getWindowsHostname().getEntity());
+            return !StringHelper.isNullOrEmpty(getWindowsHostname().getEntity());
         } else {
-            return !StringHelper.isNullOrEmpty((String) getHostname().getEntity());
+            return !StringHelper.isNullOrEmpty(getHostname().getEntity());
         }
     }
 
-    private ListModel windowsSysprepTimeZone;
+    private ListModel<Map.Entry<String, String>> windowsSysprepTimeZone;
 
-    public ListModel getWindowsSysprepTimeZone() {
+    public ListModel<Map.Entry<String, String>> getWindowsSysprepTimeZone() {
         return windowsSysprepTimeZone;
     }
 
-    public void setWindowsSysprepTimeZone(ListModel windowsSysprepTimeZone) {
+    public void setWindowsSysprepTimeZone(ListModel<Map.Entry<String, String>> windowsSysprepTimeZone) {
         this.windowsSysprepTimeZone = windowsSysprepTimeZone;
     }
 
-    private EntityModel windowsSysprepTimeZoneEnabled;
+    private EntityModel<Boolean> windowsSysprepTimeZoneEnabled;
 
-    public EntityModel getWindowsSysprepTimeZoneEnabled() {
+    public EntityModel<Boolean> getWindowsSysprepTimeZoneEnabled() {
         return windowsSysprepTimeZoneEnabled;
     }
 
-    public void setWindowsSysprepTimeZoneEnabled(EntityModel windowsSysprepTimeZoneEnabled) {
+    public void setWindowsSysprepTimeZoneEnabled(EntityModel<Boolean> windowsSysprepTimeZoneEnabled) {
         this.windowsSysprepTimeZoneEnabled = windowsSysprepTimeZoneEnabled;
     }
 
-    private EntityModel privateWindowsHostname;
-    public EntityModel getWindowsHostname() {
+    private EntityModel<String> privateWindowsHostname;
+    public EntityModel<String> getWindowsHostname() {
         return privateWindowsHostname;
     }
-    private void setWindowsHostname(EntityModel value) {
+    private void setWindowsHostname(EntityModel<String> value) {
         privateWindowsHostname = value;
     }
 
-    private EntityModel privateHostname;
-    public EntityModel getHostname() {
+    private EntityModel<String> privateHostname;
+    public EntityModel<String> getHostname() {
         return privateHostname;
     }
-    private void setHostname(EntityModel value) {
+    private void setHostname(EntityModel<String> value) {
         privateHostname = value;
     }
 
-    private EntityModel privateDomain;
-    public EntityModel getDomain() {
+    private EntityModel<String> privateDomain;
+    public EntityModel<String> getDomain() {
         return privateDomain;
     }
-    private void setDomain(EntityModel value) {
+    private void setDomain(EntityModel<String> value) {
         privateDomain = value;
     }
 
-    private EntityModel privateCustomScript;
-    public EntityModel getCustomScript() {
+    private EntityModel<String> privateCustomScript;
+    public EntityModel<String> getCustomScript() {
         return privateCustomScript;
     }
-    private void setCustomScript(EntityModel value) {
+    private void setCustomScript(EntityModel<String> value) {
         privateCustomScript = value;
     }
 
     public boolean getAuthorizedKeysEnabled() {
-        return !StringHelper.isNullOrEmpty((String) getRootPassword().getEntity());
+        return !StringHelper.isNullOrEmpty(getRootPassword().getEntity());
     }
 
-    private EntityModel privateAuthorizedKeys;
-    public EntityModel getAuthorizedKeys() {
+    private EntityModel<String> privateAuthorizedKeys;
+    public EntityModel<String> getAuthorizedKeys() {
         return privateAuthorizedKeys;
     }
-    private void setAuthorizedKeys(EntityModel value) {
+    private void setAuthorizedKeys(EntityModel<String> value) {
         privateAuthorizedKeys = value;
     }
 
 
-    private EntityModel privateRegenerateKeysEnabled;
-    public EntityModel getRegenerateKeysEnabled() {
+    private EntityModel<Boolean> privateRegenerateKeysEnabled;
+    public EntityModel<Boolean> getRegenerateKeysEnabled() {
         return privateRegenerateKeysEnabled;
     }
-    private void setRegenerateKeysEnabled(EntityModel value) {
+    private void setRegenerateKeysEnabled(EntityModel<Boolean> value) {
         privateRegenerateKeysEnabled = value;
     }
 
 
-    private EntityModel privateTimeZoneEnabled;
-    public EntityModel getTimeZoneEnabled() {
+    private EntityModel<Boolean> privateTimeZoneEnabled;
+    public EntityModel<Boolean> getTimeZoneEnabled() {
         return privateTimeZoneEnabled;
     }
-    private void setTimeZoneEnabled(EntityModel value) {
+    private void setTimeZoneEnabled(EntityModel<Boolean> value) {
         privateTimeZoneEnabled = value;
     }
 
-    private ListModel privateTimeZoneList;
-    public ListModel getTimeZoneList() {
+    private ListModel<Map.Entry<String, String>>  privateTimeZoneList;
+    public ListModel<Map.Entry<String, String>>  getTimeZoneList() {
         return privateTimeZoneList;
     }
-    private void setTimeZoneList(ListModel value) {
+    private void setTimeZoneList(ListModel<Map.Entry<String, String>>  value) {
         privateTimeZoneList = value;
     }
 
     public boolean getRootPasswordEnabled() {
-        return !StringHelper.isNullOrEmpty((String) getRootPassword().getEntity());
+        return !StringHelper.isNullOrEmpty(getRootPassword().getEntity());
     }
 
-    private EntityModel privateRootPassword;
-    public EntityModel getRootPassword() {
+    private EntityModel<String> privateRootPassword;
+    public EntityModel<String> getRootPassword() {
         return privateRootPassword;
     }
-    private void setRootPassword(EntityModel value) {
+    private void setRootPassword(EntityModel<String> value) {
         privateRootPassword = value;
     }
 
-    private EntityModel privatePasswordSet;
-    public EntityModel getPasswordSet() {
+    private EntityModel<Boolean> privatePasswordSet;
+    public EntityModel<Boolean> getPasswordSet() {
         return privatePasswordSet;
     }
 
-    private void setPasswordSet(EntityModel value) {
+    private void setPasswordSet(EntityModel<Boolean> value) {
         privatePasswordSet = value;
     }
 
-    private EntityModel privateRootPasswordVerification;
-    public EntityModel getRootPasswordVerification() {
+    private EntityModel<String> privateRootPasswordVerification;
+    public EntityModel<String> getRootPasswordVerification() {
         return privateRootPasswordVerification;
     }
-    private void setRootPasswordVerification(EntityModel value) {
+    private void setRootPasswordVerification(EntityModel<String> value) {
         privateRootPasswordVerification = value;
     }
 
 
-    private EntityModel privateNetworkEnabled;
-    public EntityModel getNetworkEnabled() {
+    private EntityModel<Boolean> privateNetworkEnabled;
+    public EntityModel<Boolean> getNetworkEnabled() {
         return privateNetworkEnabled;
     }
-    private void setNetworkEnabled(EntityModel value) {
+    private void setNetworkEnabled(EntityModel<Boolean> value) {
         privateNetworkEnabled = value;
     }
 
-    private EntityModel privateNetworkSelectedName;
-    public EntityModel getNetworkSelectedName() {
+    private EntityModel<String> privateNetworkSelectedName;
+    public EntityModel<String> getNetworkSelectedName() {
         return privateNetworkSelectedName;
     }
-    private void setNetworkSelectedName(EntityModel value) {
+    private void setNetworkSelectedName(EntityModel<String> value) {
         privateNetworkSelectedName = value;
     }
 
-    private ListModel privateNetworkList;
-    public ListModel getNetworkList() {
+    private ListModel<String> privateNetworkList;
+    public ListModel<String> getNetworkList() {
         return privateNetworkList;
     }
-    private void setNetworkList(ListModel value) {
+    private void setNetworkList(ListModel<String> value) {
         privateNetworkList = value;
     }
 
@@ -203,72 +203,72 @@ public class VmInitModel extends Model {
         removeNetworkCommand = value;
     }
 
-    private EntityModel privateNetworkDhcp;
-    public EntityModel getNetworkDhcp() {
+    private EntityModel<Boolean> privateNetworkDhcp;
+    public EntityModel<Boolean> getNetworkDhcp() {
         return privateNetworkDhcp;
     }
-    private void setNetworkDhcp(EntityModel value) {
+    private void setNetworkDhcp(EntityModel<Boolean> value) {
         privateNetworkDhcp = value;
     }
 
-    private EntityModel privateNetworkIpAddress;
-    public EntityModel getNetworkIpAddress() {
+    private EntityModel<String> privateNetworkIpAddress;
+    public EntityModel<String> getNetworkIpAddress() {
         return privateNetworkIpAddress;
     }
-    private void setNetworkIpAddress(EntityModel value) {
+    private void setNetworkIpAddress(EntityModel<String> value) {
         privateNetworkIpAddress = value;
     }
 
-    private EntityModel privateNetworkNetmask;
-    public EntityModel getNetworkNetmask() {
+    private EntityModel<String> privateNetworkNetmask;
+    public EntityModel<String> getNetworkNetmask() {
         return privateNetworkNetmask;
     }
-    private void setNetworkNetmask(EntityModel value) {
+    private void setNetworkNetmask(EntityModel<String> value) {
         privateNetworkNetmask = value;
     }
 
-    private EntityModel privateNetworkGateway;
-    public EntityModel getNetworkGateway() {
+    private EntityModel<String> privateNetworkGateway;
+    public EntityModel<String> getNetworkGateway() {
         return privateNetworkGateway;
     }
-    private void setNetworkGateway(EntityModel value) {
+    private void setNetworkGateway(EntityModel<String> value) {
         privateNetworkGateway = value;
     }
 
-    private EntityModel privateNetworkStartOnBoot;
-    public EntityModel getNetworkStartOnBoot() {
+    private EntityModel<Boolean> privateNetworkStartOnBoot;
+    public EntityModel<Boolean> getNetworkStartOnBoot() {
         return privateNetworkStartOnBoot;
     }
-    private void setNetworkStartOnBoot(EntityModel value) {
+    private void setNetworkStartOnBoot(EntityModel<Boolean> value) {
         privateNetworkStartOnBoot = value;
     }
 
-    private EntityModel privateDnsServers;
-    public EntityModel getDnsServers() {
+    private EntityModel<String> privateDnsServers;
+    public EntityModel<String> getDnsServers() {
         return privateDnsServers;
     }
-    public void setDnsServers(EntityModel dnsServers) {
+    public void setDnsServers(EntityModel<String> dnsServers) {
         privateDnsServers = dnsServers;
     }
 
-    private EntityModel privateDnsSearchDomains;
-    public EntityModel getDnsSearchDomains() {
+    private EntityModel<String> privateDnsSearchDomains;
+    public EntityModel<String> getDnsSearchDomains() {
         return privateDnsSearchDomains;
     }
-    public void setDnsSearchDomains(EntityModel dnsSearchDomains) {
+    public void setDnsSearchDomains(EntityModel<String> dnsSearchDomains) {
         privateDnsSearchDomains = dnsSearchDomains;
     }
 
 
-    private EntityModel privateAttachmentEnabled;
-    public EntityModel getAttachmentEnabled() {
+    private EntityModel<Boolean> privateAttachmentEnabled;
+    public EntityModel<Boolean> getAttachmentEnabled() {
         return privateAttachmentEnabled;
     }
-    private void setAttachmentEnabled(EntityModel value) {
+    private void setAttachmentEnabled(EntityModel<Boolean> value) {
         privateAttachmentEnabled = value;
     }
 
-    private EntityModel privateAttachmentSelectedPath;
+    private EntityModel<? extends Object> privateAttachmentSelectedPath;
     public EntityModel getAttachmentSelectedPath() {
         return privateAttachmentSelectedPath;
     }
@@ -276,7 +276,7 @@ public class VmInitModel extends Model {
         privateAttachmentSelectedPath = value;
     }
 
-    private ListModel privateAttachmentList;
+    private ListModel<? extends Object> privateAttachmentList;
     public ListModel getAttachmentList() {
 
         return privateAttachmentList;
@@ -309,7 +309,7 @@ public class VmInitModel extends Model {
         privateAttachmentType = value;
     }
 
-    private EntityModel privateAttachmentContent;
+    private EntityModel<? extends Object> privateAttachmentContent;
     public EntityModel getAttachmentContent() {
         return privateAttachmentContent;
     }
@@ -340,33 +340,33 @@ public class VmInitModel extends Model {
 
     public VmInitModel() {
 
-        setWindowsSysprepTimeZone(new ListModel());
-        setWindowsSysprepTimeZoneEnabled(new EntityModel());
-        setWindowsHostname(new EntityModel());
+        setWindowsSysprepTimeZone(new ListModel<Map.Entry<String, String>>());
+        setWindowsSysprepTimeZoneEnabled(new EntityModel<Boolean>());
+        setWindowsHostname(new EntityModel<String>());
 
-        setHostname(new EntityModel());
-        setDomain(new EntityModel());
-        setAuthorizedKeys(new EntityModel());
-        setCustomScript(new EntityModel());
-        setRegenerateKeysEnabled(new EntityModel());
-        setTimeZoneEnabled(new EntityModel());
-        setTimeZoneList(new ListModel());
-        setRootPassword(new EntityModel());
-        setRootPasswordVerification(new EntityModel());
-        setPasswordSet(new EntityModel());
+        setHostname(new EntityModel<String>());
+        setDomain(new EntityModel<String>());
+        setAuthorizedKeys(new EntityModel<String>());
+        setCustomScript(new EntityModel<String>());
+        setRegenerateKeysEnabled(new EntityModel<Boolean>());
+        setTimeZoneEnabled(new EntityModel<Boolean>());
+        setTimeZoneList(new ListModel<Map.Entry<String, String>>());
+        setRootPassword(new EntityModel<String>());
+        setRootPasswordVerification(new EntityModel<String>());
+        setPasswordSet(new EntityModel<Boolean>());
         getPasswordSet().getEntityChangedEvent().addListener(this);
 
-        setNetworkEnabled(new EntityModel());
-        setNetworkSelectedName(new EntityModel());
-        setNetworkList(new ListModel());
-        setNetworkDhcp(new EntityModel());
-        setNetworkIpAddress(new EntityModel());
-        setNetworkNetmask(new EntityModel());
-        setNetworkGateway(new EntityModel());
-        setNetworkStartOnBoot(new EntityModel());
+        setNetworkEnabled(new EntityModel<Boolean>());
+        setNetworkSelectedName(new EntityModel<String>());
+        setNetworkList(new ListModel<String>());
+        setNetworkDhcp(new EntityModel<Boolean>());
+        setNetworkIpAddress(new EntityModel<String>());
+        setNetworkNetmask(new EntityModel<String>());
+        setNetworkGateway(new EntityModel<String>());
+        setNetworkStartOnBoot(new EntityModel<Boolean>());
 
-        setDnsServers(new EntityModel());
-        setDnsSearchDomains(new EntityModel());
+        setDnsServers(new EntityModel<String>());
+        setDnsSearchDomains(new EntityModel<String>());
 
         setAddNetworkCommand(new UICommand("addNetwork", this)); //$NON-NLS-1$
         setRemoveNetworkCommand(new UICommand("removeNetwork", this)); //$NON-NLS-1$
@@ -380,7 +380,7 @@ public class VmInitModel extends Model {
         getNetworkList().getSelectedItemChangedEvent().addListener(this);
         getNetworkSelectedName().getEntityChangedEvent().addListener(this);
 
-        setAttachmentEnabled(new EntityModel());
+        setAttachmentEnabled(new EntityModel<Boolean>());
         setAttachmentSelectedPath(new EntityModel());
         setAttachmentList(new ListModel());
         setAttachmentType(new ListModel());
@@ -523,7 +523,7 @@ public class VmInitModel extends Model {
     }
 
 
-    private void selectTimeZone(ListModel specificTimeZoneModel, Map<String, String> timezones, final String tz) {
+    private void selectTimeZone(ListModel<Map.Entry<String, String>> specificTimeZoneModel, Map<String, String> timezones, final String tz) {
         specificTimeZoneModel.setSelectedItem(Linq.firstOrDefault(timezones.entrySet(),
                 new IPredicate<Map.Entry<String, String>>() {
                     @Override
@@ -548,7 +548,7 @@ public class VmInitModel extends Model {
         getAuthorizedKeys().setIsValid(true);
 
         getTimeZoneList().setIsValid(true);
-        if ((Boolean) getTimeZoneEnabled().getEntity()) {
+        if (getTimeZoneEnabled().getEntity()) {
             getTimeZoneList().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
@@ -579,7 +579,7 @@ public class VmInitModel extends Model {
         boolean dnsIsValid = true;
         getDnsServers().setIsValid(true);
         getDnsSearchDomains().setIsValid(true);
-        if ((Boolean) getNetworkEnabled().getEntity()) {
+        if (getNetworkEnabled().getEntity()) {
             saveNetworkFields();
 
             for (Map.Entry<String, VmInitNetwork> entry : networkMap.entrySet()) {
@@ -604,7 +604,7 @@ public class VmInitModel extends Model {
 
             if (!networkMap.isEmpty()) {
                 if (getDnsServers().getEntity() != null) {
-                    for (String server : tokenizeString((String) getDnsServers().getEntity())) {
+                    for (String server : tokenizeString(getDnsServers().getEntity())) {
                         if (!validateHidden(getDnsServers(), server, dnsServerListMessage,
                                 new IValidation[] { new IpAddressValidation() })) {
                             dnsIsValid = false;
@@ -613,7 +613,7 @@ public class VmInitModel extends Model {
                     }
                 }
                 if (getDnsSearchDomains().getEntity() != null) {
-                    for (String domain : tokenizeString((String) getDnsSearchDomains().getEntity())) {
+                    for (String domain : tokenizeString(getDnsSearchDomains().getEntity())) {
                         if (!validateHidden(getDnsSearchDomains(), domain, null,
                                 new IValidation[] { new HostnameValidation() })) {
                             dnsIsValid = false;
@@ -635,8 +635,8 @@ public class VmInitModel extends Model {
     }
 
     /* Validate a shared display element, without having to display each shared value */
-    private boolean validateHidden(EntityModel entity, final Object value, final String message, final IValidation[] validations) {
-        EntityModel tmp = new EntityModel(value);
+    private boolean validateHidden(EntityModel<String> entity, final String value, final String message, final IValidation[] validations) {
+        EntityModel<String> tmp = new EntityModel<String>(value);
         tmp.setIsValid(true);
         tmp.validateEntity(validations);
         if (!tmp.getIsValid()) {
@@ -663,9 +663,9 @@ public class VmInitModel extends Model {
     }
 
     public VmInit buildCloudInitParameters(RunOnceModel model) {
-        if ((Boolean) model.getIsSysprepEnabled().getEntity() ||
-                (Boolean) model.getIsCloudInitEnabled().getEntity()) {
-            return buildModelSpecificParameters(model.getIsWindowsOS(), (String) model.getSysPrepSelectedDomainName().getEntity());
+        if (model.getIsSysprepEnabled().getEntity() ||
+                model.getIsCloudInitEnabled().getEntity()) {
+            return buildModelSpecificParameters(model.getIsWindowsOS(), model.getSysPrepSelectedDomainName().getEntity());
         } else {
             return null;
         }
@@ -673,18 +673,18 @@ public class VmInitModel extends Model {
 
     private VmInit buildModelSpecificParameters(boolean isWindows, String domainFromModel) {
         VmInit vmInit = buildCloudInitParameters();
-        if (isWindows && (Boolean) getWindowsSysprepTimeZoneEnabled().getEntity()) {
-            Map.Entry<String, String> entry = (Map.Entry<String, String>) getWindowsSysprepTimeZone().getSelectedItem();
+        if (isWindows && getWindowsSysprepTimeZoneEnabled().getEntity()) {
+            Map.Entry<String, String> entry = getWindowsSysprepTimeZone().getSelectedItem();
             vmInit.setTimeZone(entry.getKey());
-        } else if (!isWindows && (Boolean) getTimeZoneEnabled().getEntity()) {
-            Map.Entry<String, String> entry = (Map.Entry<String, String>) getTimeZoneList().getSelectedItem();
+        } else if (!isWindows && getTimeZoneEnabled().getEntity()) {
+            Map.Entry<String, String> entry = getTimeZoneList().getSelectedItem();
             vmInit.setTimeZone(entry.getKey());
         }
 
         if (isWindows) {
             vmInit.setDomain(domainFromModel);
         } else {
-            vmInit.setDomain((String) getDomain().getEntity());
+            vmInit.setDomain(getDomain().getEntity());
         }
 
         return vmInit;
@@ -694,18 +694,18 @@ public class VmInitModel extends Model {
         VmInit vmInit = new VmInit();
 
         if (getHostnameEnabled()) {
-            vmInit.setHostname(isWindowsOS ? (String) getWindowsHostname().getEntity() :
-                (String) getHostname().getEntity());
+            vmInit.setHostname(isWindowsOS ? getWindowsHostname().getEntity() :
+                                       getHostname().getEntity());
         }
 
         if (getRootPasswordEnabled()) {
-            vmInit.setRootPassword((String) getRootPassword().getEntity());
+            vmInit.setRootPassword(getRootPassword().getEntity());
         }
-        vmInit.setAuthorizedKeys((String) getAuthorizedKeys().getEntity());
-        if ((Boolean) getRegenerateKeysEnabled().getEntity()) {
+        vmInit.setAuthorizedKeys(getAuthorizedKeys().getEntity());
+        if (getRegenerateKeysEnabled().getEntity()) {
             vmInit.setRegenerateKeys(Boolean.TRUE);
         }
-        if ((Boolean) getNetworkEnabled().getEntity()) {
+        if (getNetworkEnabled().getEntity()) {
             saveNetworkFields();
             if (!networkMap.isEmpty()) {
                 for (Map.Entry<String, VmInitNetwork> entry : networkMap.entrySet()) {
@@ -718,13 +718,13 @@ public class VmInitModel extends Model {
                     params.setStartOnBoot(networkStartOnBoot.contains(entry.getKey()));
                     params.setName(entry.getKey());
                 }
-                vmInit.setNetworks(new ArrayList(networkMap.values()));
+                vmInit.setNetworks(new ArrayList<VmInitNetwork>(networkMap.values()));
             }
         }
-        vmInit.setDnsServers((String) getDnsServers().getEntity());
-        vmInit.setDnsSearch((String) getDnsSearchDomains().getEntity());
-        vmInit.setCustomScript((String) getCustomScript().getEntity());
-        vmInit.setPasswordAlreadyStored((Boolean) getPasswordSet().getEntity());
+        vmInit.setDnsServers(getDnsServers().getEntity());
+        vmInit.setDnsSearch(getDnsSearchDomains().getEntity());
+        vmInit.setCustomScript(getCustomScript().getEntity());
+        vmInit.setPasswordAlreadyStored(getPasswordSet().getEntity());
 
         return vmInit;
     }
@@ -757,7 +757,7 @@ public class VmInitModel extends Model {
     }
 
     private void passwordSetChanged() {
-        Boolean passwordChangable = !(Boolean) getPasswordSet().getEntity();
+        Boolean passwordChangable = !getPasswordSet().getEntity();
         getRootPassword().setIsChangable(passwordChangable);
         getRootPasswordVerification().setIsChangable(passwordChangable);
     }
@@ -788,12 +788,12 @@ public class VmInitModel extends Model {
 
         updateNetworkDisplay();
         // lastSelectedNetworkName can be used throughout update process to see prior name
-        lastSelectedNetworkName = (String) getNetworkList().getSelectedItem();
+        lastSelectedNetworkName = getNetworkList().getSelectedItem();
     }
 
     private void networkSelectedName_SelectionChanged() {
-        String oldName = (String) getNetworkList().getSelectedItem();
-        String newName = (String) getNetworkSelectedName().getEntity();
+        String oldName = getNetworkList().getSelectedItem();
+        String newName = getNetworkSelectedName().getEntity();
 
         if (oldName != null && newName != null && !newName.trim().equals(oldName)) {
             VmInitNetwork obj = networkMap.get(oldName);
@@ -818,7 +818,7 @@ public class VmInitModel extends Model {
     }
 
     private void removeNetwork() {
-        networkMap.remove((String) getNetworkList().getSelectedItem());
+        networkMap.remove(getNetworkList().getSelectedItem());
         getNetworkList().setItems(new ArrayList<String>(networkMap.keySet()));
         getNetworkList().setSelectedItem(Linq.firstOrDefault(networkMap.keySet()));
     }
@@ -828,12 +828,12 @@ public class VmInitModel extends Model {
         if (lastSelectedNetworkName != null) {
             VmInitNetwork obj = networkMap.get(lastSelectedNetworkName);
             if (obj != null) {
-                obj.setBootProtocol((getNetworkDhcp().getEntity() != null && (Boolean) getNetworkDhcp().getEntity())
+                obj.setBootProtocol((getNetworkDhcp().getEntity() != null && getNetworkDhcp().getEntity())
                                     ? NetworkBootProtocol.DHCP : NetworkBootProtocol.NONE);
-                obj.setIp((String) getNetworkIpAddress().getEntity());
-                obj.setNetmask((String) getNetworkNetmask().getEntity());
-                obj.setGateway((String) getNetworkGateway().getEntity());
-                if (getNetworkStartOnBoot().getEntity() != null && (Boolean) getNetworkStartOnBoot().getEntity()) {
+                obj.setIp(getNetworkIpAddress().getEntity());
+                obj.setNetmask(getNetworkNetmask().getEntity());
+                obj.setGateway(getNetworkGateway().getEntity());
+                if (getNetworkStartOnBoot().getEntity() != null && getNetworkStartOnBoot().getEntity()) {
                     networkStartOnBoot.add(lastSelectedNetworkName);
                 } else {
                     networkStartOnBoot.remove(lastSelectedNetworkName);
@@ -847,7 +847,7 @@ public class VmInitModel extends Model {
         String networkName = null;
         VmInitNetwork obj = null;
         if (getNetworkList().getSelectedItem() != null) {
-            networkName = (String) getNetworkList().getSelectedItem();
+            networkName = getNetworkList().getSelectedItem();
             obj = networkMap.get(networkName);
         }
         getNetworkDhcp().setEntity(obj == null ? null : obj.getBootProtocol() == NetworkBootProtocol.DHCP);

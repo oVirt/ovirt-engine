@@ -8,11 +8,11 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.ComboBox;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.VncKeyMapRenderer;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
@@ -117,7 +117,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @UiField
     @Path(value = "floppyImage.selectedItem")
     @WithElementId("floppyImage")
-    ListModelListBoxEditor<Object> floppyImageEditor;
+    ListModelListBoxEditor<String> floppyImageEditor;
 
     @UiField
     @Ignore
@@ -126,7 +126,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @UiField
     @Path(value = "isoImage.selectedItem")
     @WithElementId("isoImage")
-    ListModelListBoxEditor<Object> isoImageEditor;
+    ListModelListBoxEditor<String> isoImageEditor;
 
     @UiField(provided = true)
     @Path(value = "attachFloppy.entity")
@@ -151,21 +151,21 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @UiField
     @Path(value = "kernel_path.entity")
     @WithElementId("kernelPath")
-    EntityModelTextBoxEditor kernelPathEditor;
+    StringEntityModelTextBoxEditor kernelPathEditor;
 
     @UiField
     @Path(value = "initrd_path.entity")
     @WithElementId("initrdPath")
-    EntityModelTextBoxEditor initrdPathEditor;
+    StringEntityModelTextBoxEditor initrdPathEditor;
 
     @UiField
     @Path(value = "kernel_parameters.entity")
     @WithElementId("kernelParameters")
-    EntityModelTextBoxEditor kernelParamsEditor;
+    StringEntityModelTextBoxEditor kernelParamsEditor;
 
     @UiField(provided = true)
     @WithElementId("sysPrepDomainNameComboBox")
-    ComboBox sysPrepDomainNameComboBox;
+    ComboBox<String> sysPrepDomainNameComboBox;
 
     @UiField
     @Ignore
@@ -173,11 +173,11 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     @Path(value = "sysPrepDomainName.selectedItem")
     @WithElementId("sysPrepDomainNameListBox")
-    ListModelListBoxEditor<Object> sysPrepDomainNameListBoxEditor;
+    ListModelListBoxEditor<String> sysPrepDomainNameListBoxEditor;
 
     @Path(value = "sysPrepSelectedDomainName.entity")
     @WithElementId("sysPrepDomainNameTextBox")
-    EntityModelTextBoxEditor sysPrepDomainNameTextBoxEditor;
+    StringEntityModelTextBoxEditor sysPrepDomainNameTextBoxEditor;
 
     @UiField(provided = true)
     @Path(value = "useAlternateCredentials.entity")
@@ -187,12 +187,12 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @UiField
     @Path(value = "sysPrepUserName.entity")
     @WithElementId("sysPrepUserName")
-    EntityModelTextBoxEditor sysPrepUserNameEditor;
+    StringEntityModelTextBoxEditor sysPrepUserNameEditor;
 
     @UiField
     @Path(value = "sysPrepPassword.entity")
     @WithElementId("sysPrepPassword")
-    EntityModelTextBoxEditor sysPrepPasswordEditor;
+    StringEntityModelTextBoxEditor sysPrepPasswordEditor;
 
     @UiField(provided = true)
     @Path(value = "displayConsole_Vnc_IsSelected.entity")
@@ -240,7 +240,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @UiField(provided = true)
     @Path(value = "defaultHost.selectedItem")
     @WithElementId("defaultHost")
-    public ListModelListBoxEditor<Object> defaultHostEditor;
+    public ListModelListBoxEditor<VDS> defaultHostEditor;
 
     @UiField
     @Ignore
@@ -333,8 +333,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     }
 
     void initComboBox() {
-        sysPrepDomainNameListBoxEditor = new ListModelListBoxEditor<Object>();
-        sysPrepDomainNameTextBoxEditor = new EntityModelTextBoxEditor();
+        sysPrepDomainNameListBoxEditor = new ListModelListBoxEditor<String>();
+        sysPrepDomainNameTextBoxEditor = new StringEntityModelTextBoxEditor();
 
         sysPrepDomainNameListBoxEditor.asListBox().addDomHandler(new FocusHandler() {
             @Override
@@ -350,12 +350,12 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
             }
         }, ChangeEvent.getType());
 
-        sysPrepDomainNameComboBox = new ComboBox(sysPrepDomainNameListBoxEditor, sysPrepDomainNameTextBoxEditor);
+        sysPrepDomainNameComboBox = new ComboBox<String>(sysPrepDomainNameListBoxEditor, sysPrepDomainNameTextBoxEditor);
 
-        defaultHostEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        defaultHostEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((VDS) object).getName();
+            public String renderNullSafe(VDS vds) {
+                return vds.getName();
             }
         });
     }
@@ -436,7 +436,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
                 .addListener(new IEventListener() {
                     @Override
                     public void eventRaised(Event ev, Object sender, EventArgs args) {
-                        boolean isAutoAssign = (Boolean) object.getIsAutoAssign().getEntity();
+                        boolean isAutoAssign = object.getIsAutoAssign().getEntity();
                         defaultHostEditor.setEnabled(!isAutoAssign);
                         // only this is not bind tloudInitSubo the model, so needs to
                         // listen to the change explicitly
@@ -487,8 +487,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     }
 
     private void updateSysprepVisibility(RunOnceModel model) {
-        boolean selected = (Boolean) model.getIsSysprepEnabled().getEntity();
-        boolean possible = (Boolean) model.getIsSysprepPossible().getEntity();
+        boolean selected = model.getIsSysprepEnabled().getEntity();
+        boolean possible = model.getIsSysprepPossible().getEntity();
 
         vmInitWidget.setSyspepContentVisible(selected && possible);
         runOnceSpecificSysprepOptions.setVisible(selected && possible);
@@ -498,17 +498,17 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     private void updateInitialRunTabVisibility(RunOnceModel model) {
         boolean cloudInitPossible = model.getIsCloudInitPossible().getEntity() != null ?
-                (Boolean) model.getIsCloudInitPossible().getEntity() : false;
+                model.getIsCloudInitPossible().getEntity() : false;
 
         boolean sysprepPossible = model.getIsSysprepPossible().getEntity() != null ?
-                (Boolean) model.getIsSysprepPossible().getEntity() : false;
+                model.getIsSysprepPossible().getEntity() : false;
 
         initialRunPanel.setVisible(sysprepPossible || cloudInitPossible);
     }
 
     private void updateCloudInitVisibility(RunOnceModel model) {
-        boolean selected = (Boolean) model.getIsCloudInitEnabled().getEntity();
-        boolean possible = (Boolean) model.getIsCloudInitPossible().getEntity();
+        boolean selected = model.getIsCloudInitEnabled().getEntity();
+        boolean possible = model.getIsCloudInitPossible().getEntity();
 
         vmInitWidget.setCloudInitContentVisible(selected && possible);
     }
