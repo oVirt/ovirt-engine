@@ -106,7 +106,7 @@
     </init-param>
     <init-param>
         <param-name>localeDocsMissingURI</param-name>
-        <param-value>docsmissing</param-value>
+        <param-value>/docsmissing</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
