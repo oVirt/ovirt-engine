@@ -8,9 +8,7 @@ import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
-import org.ovirt.engine.core.common.businessentities.SELinuxMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -960,8 +958,8 @@ public class HostGeneralModel extends EntityModel
         setAutomaticLargePage(vds.getTransparentHugePagesState());
         setBootTime(vds.getBootTime());
 
-        setKdumpStatus(EnumTranslator.create(KdumpStatus.class).get(vds.getKdumpStatus()));
-        setSelinuxEnforceMode(EnumTranslator.create(SELinuxMode.class).get(vds.getSELinuxEnforceMode()));
+        setKdumpStatus(EnumTranslator.getInstance().get(vds.getKdumpStatus()));
+        setSelinuxEnforceMode(EnumTranslator.getInstance().get(vds.getSELinuxEnforceMode()));
 
         setLiveSnapshotSupport(vds.getLiveSnapshotSupport());
 

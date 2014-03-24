@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -98,7 +97,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     }
 
     private void translateVolumeType(GlusterVolumeEntity volumeEntity) {
-        Translator translator = EnumTranslator.create(GlusterVolumeType.class);
+        Translator translator = EnumTranslator.getInstance();
         if (translator.containsKey(volumeEntity.getVolumeType())) {
             getDetailModel().setVolumeTypeSilently(translator.get(volumeEntity.getVolumeType()));
         }

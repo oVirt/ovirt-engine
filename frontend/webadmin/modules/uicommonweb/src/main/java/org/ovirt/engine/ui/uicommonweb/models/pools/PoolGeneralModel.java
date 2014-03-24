@@ -2,9 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.pools;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.OriginType;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -443,13 +440,9 @@ public class PoolGeneralModel extends EntityModel
                     poolGeneralModel.setDefinedMemory(getvm().getVmMemSizeMb() + " MB"); //$NON-NLS-1$
                     poolGeneralModel.setMinAllocatedMemory(getvm().getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 
-                    Translator translator = EnumTranslator.create(DisplayType.class);
+                    Translator translator = EnumTranslator.getInstance();
                     poolGeneralModel.setDefaultDisplayType(translator.get(getvm().getDefaultDisplayType()));
-
-                    translator = EnumTranslator.create(OriginType.class);
                     poolGeneralModel.setOrigin(translator.get(getvm().getOrigin()));
-
-                    translator = EnumTranslator.create(UsbPolicy.class);
                     poolGeneralModel.setUsbPolicy(translator.get(getvm().getUsbPolicy()));
 
                     setHasDomain(AsyncDataProvider.isWindowsOsType(getvm().getVmOsId()));
@@ -471,8 +464,7 @@ public class PoolGeneralModel extends EntityModel
                             public void onSuccess(Object model1, Object ReturnValue1)
                             {
                                 PoolGeneralModel poolGeneralModel1 = (PoolGeneralModel) model1;
-                                ArrayList<VDS> hosts =
-                                        (ArrayList<VDS>) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
+                                ArrayList<VDS> hosts = ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
                                 for (VDS host : hosts)
                                 {
                                     if (host.getId().equals(poolGeneralModel1.getvm().getDedicatedVmForVds()))

@@ -44,7 +44,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     public void runActionExecutionFailed(VdcActionType action, VdcFault fault) {
         if (isRaiseErrorModalPanel(action, fault)) {
             errorPopupManager.show(messages.uiCommonRunActionExecutionFailed(
-                    EnumTranslator.createAndTranslate(action), fault.getMessage()));
+                    EnumTranslator.getInstance().get(action), fault.getMessage()));
         }
     }
 

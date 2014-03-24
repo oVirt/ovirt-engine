@@ -14,7 +14,7 @@ public class EnumRenderer<E extends Enum<E>> extends AbstractRenderer<E> {
 
     @Override
     public String render(E object) {
-        return EnumTranslator.createAndTranslate(object);
+        return EnumTranslator.getInstance().get(object);
     }
 
 }

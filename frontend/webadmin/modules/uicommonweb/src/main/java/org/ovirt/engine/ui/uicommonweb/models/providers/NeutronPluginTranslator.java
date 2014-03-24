@@ -20,7 +20,7 @@ public class NeutronPluginTranslator {
         displayStrings = new ArrayList<String>();
         for (OpenstackNetworkPluginType plugin : OpenstackNetworkPluginType.values()) {
             if (plugin != OpenstackNetworkPluginType.LINUX_BRIDGE) {
-                String displayString = EnumTranslator.createAndTranslate(plugin);
+                String displayString = EnumTranslator.getInstance().get(plugin);
                 pluginForDisplay.put(displayString.toLowerCase(), plugin);
                 displayStrings.add(displayString);
             }
@@ -42,7 +42,7 @@ public class NeutronPluginTranslator {
 
     public static String getDisplayStringForPluginName(String pluginName) {
         try {
-            return EnumTranslator.createAndTranslate(OpenstackNetworkPluginType.valueOf(pluginName));
+            return EnumTranslator.getInstance().get(OpenstackNetworkPluginType.valueOf(pluginName));
         }
         catch (Exception e) {
             return pluginName == null ? "" : pluginName; //$NON-NLS-1$

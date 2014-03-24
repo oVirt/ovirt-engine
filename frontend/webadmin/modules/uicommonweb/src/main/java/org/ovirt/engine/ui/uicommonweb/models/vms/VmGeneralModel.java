@@ -2,10 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
@@ -564,10 +561,9 @@ public class VmGeneralModel extends EntityModel
 
         setOS(AsyncDataProvider.getOsName(vm.getVmOsId()));
 
-        Translator translator = EnumTranslator.create(DisplayType.class);
+        Translator translator = EnumTranslator.getInstance();
         setDefaultDisplayType(translator.get(vm.getDefaultDisplayType()));
 
-        translator = EnumTranslator.create(OriginType.class);
         setOrigin(translator.get(vm.getOrigin()));
 
         setIsHighlyAvailable(vm.isAutoStartup());
@@ -576,7 +572,6 @@ public class VmGeneralModel extends EntityModel
 
         setMonitorCount(vm.getNumOfMonitors());
 
-        translator = EnumTranslator.create(UsbPolicy.class);
         setUsbPolicy(translator.get(vm.getUsbPolicy()));
 
         setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
@@ -606,7 +601,6 @@ public class VmGeneralModel extends EntityModel
         setHasAlert(vm.getVmPauseStatus() != VmPauseStatus.NONE && vm.getVmPauseStatus() != VmPauseStatus.NOERR);
         if (getHasAlert())
         {
-            translator = EnumTranslator.create(VmPauseStatus.class);
             setAlert(translator.get(vm.getVmPauseStatus()));
         }
         else

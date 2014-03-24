@@ -36,7 +36,7 @@ public abstract class ImageResourceColumn<T> extends SortableColumn<T, ImageReso
     }
 
     public void setEnumTitle(Enum<?> enumObj) {
-        setTitle(EnumTranslator.createAndTranslate(enumObj));
+        setTitle(EnumTranslator.getInstance().get(enumObj));
     }
 
     public String getDefaultTitle() {

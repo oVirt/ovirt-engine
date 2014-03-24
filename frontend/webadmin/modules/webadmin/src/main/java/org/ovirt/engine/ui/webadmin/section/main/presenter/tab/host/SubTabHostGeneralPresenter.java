@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 
-import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
@@ -17,7 +16,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.Translator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
@@ -135,8 +133,7 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
             addTextAndLinkAlert(view, messages.hostHasNoPowerManagementAlert(), model.getEditHostCommand());
         }
         if (model.getNonOperationalReasonEntity() != null) {
-            Translator translator = EnumTranslator.create(NonOperationalReason.class);
-            addTextAlert(view, translator.get(model.getNonOperationalReasonEntity()));
+            addTextAlert(view, EnumTranslator.getInstance().get(model.getNonOperationalReasonEntity()));
         }
     }
 

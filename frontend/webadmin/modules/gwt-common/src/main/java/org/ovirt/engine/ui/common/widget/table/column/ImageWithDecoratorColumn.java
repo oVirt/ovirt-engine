@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
-import com.google.gwt.user.cellview.client.Column;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
+
+import com.google.gwt.user.cellview.client.Column;
 
 public abstract class ImageWithDecoratorColumn<T> extends Column<T, ImageWithDecorator> {
 
@@ -19,7 +20,7 @@ public abstract class ImageWithDecoratorColumn<T> extends Column<T, ImageWithDec
     }
 
     public void setEnumTitle(Enum<?> enumObj) {
-        setTitle(EnumTranslator.createAndTranslate(enumObj));
+        setTitle(EnumTranslator.getInstance().get(enumObj));
     }
 
 }

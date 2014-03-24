@@ -111,8 +111,7 @@ public class UserEventNotifierListModel extends SearchableListModel
         Map<EventNotificationEntity, HashSet<AuditLogType>> availableEvents =
                 AsyncDataProvider.getAvailableNotificationEvents();
 
-        Translator eventNotificationEntityTranslator = EnumTranslator.create(EventNotificationEntity.class);
-        Translator auditLogTypeTranslator = EnumTranslator.create(AuditLogType.class);
+        Translator translator = EnumTranslator.getInstance();
 
         ArrayList<SelectionTreeNodeModel> list = new ArrayList<SelectionTreeNodeModel>();
 
@@ -123,8 +122,7 @@ public class UserEventNotifierListModel extends SearchableListModel
         {
             SelectionTreeNodeModel stnm = new SelectionTreeNodeModel();
             stnm.setTitle(eventType.toString());
-            stnm.setDescription(eventNotificationEntityTranslator.containsKey(eventType) ? eventNotificationEntityTranslator.get(eventType)
-                    : eventType.toString());
+            stnm.setDescription(translator.get(eventType));
             list.add(stnm);
 
             for (AuditLogType logtype : availableEvents.get(eventType))
@@ -133,7 +131,7 @@ public class UserEventNotifierListModel extends SearchableListModel
 
                 String description;
                 try {
-                    description = auditLogTypeTranslator.get(logtype);
+                    description = translator.get(logtype);
                 } catch (MissingResourceException e) {
                     description = logtype.toString();
                 }

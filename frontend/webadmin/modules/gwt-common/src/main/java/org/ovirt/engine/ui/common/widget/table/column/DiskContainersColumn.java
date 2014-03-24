@@ -20,7 +20,7 @@ public class DiskContainersColumn extends Column<Disk, String> implements Column
             return ""; //$NON-NLS-1$
         }
 
-        String entityType = EnumTranslator.createAndTranslate(object.getVmEntityType());
+        String entityType = EnumTranslator.getInstance().get(object.getVmEntityType());
 
         if (object.getNumberOfVms() == 1) {
             String entityName = object.getVmNames().get(0);

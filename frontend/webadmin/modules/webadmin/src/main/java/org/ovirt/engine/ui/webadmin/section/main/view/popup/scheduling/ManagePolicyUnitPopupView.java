@@ -93,7 +93,7 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
         policyUnitTable.addColumn(new TextColumnWithTooltip<PolicyUnit>() {
             @Override
             public String getValue(PolicyUnit object) {
-                return EnumTranslator.createAndTranslate(object.getPolicyUnitType());
+                return EnumTranslator.getInstance().get(object.getPolicyUnitType());
             }
         }, constants.policyUnitType(), "100px"); //$NON-NLS-1$
 

@@ -1301,14 +1301,13 @@ public final class Linq
 
         @Override
         public int compare(ProviderType type1, ProviderType type2) {
-            return LexoNumericComparator.comp(EnumTranslator.createAndTranslate(type1),
-                    EnumTranslator.createAndTranslate(type2));
+            final EnumTranslator enumTranslator = EnumTranslator.getInstance();
+            return LexoNumericComparator.comp(enumTranslator.get(type1), enumTranslator.get(type2));
         }
     }
 
     /**
      * pre-defined cluster policies should be ordered first, then order lexicographically
-     * @param list - cluster policy list
      */
     public final static class ClusterPolicyComparator implements Comparator<ClusterPolicy>, Serializable {
         final LexoNumericComparator lexoNumeric = new LexoNumericComparator();

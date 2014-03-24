@@ -1578,7 +1578,7 @@ public class UnitVmModel extends Model {
         getWatchdogAction().getEntityChangedEvent().addListener(this);
         ArrayList<String> watchDogActions = new ArrayList<String>();
         for (VmWatchdogAction action : VmWatchdogAction.values()) {
-            watchDogActions.add(EnumTranslator.createAndTranslate(action));
+            watchDogActions.add(EnumTranslator.getInstance().get(action));
         }
         getWatchdogAction().setItems(watchDogActions);
 
@@ -2240,7 +2240,7 @@ public class UnitVmModel extends Model {
     public void updateWatchdogItems(Set<VmWatchdogType> vmWatchdogTypes) {
         List<String> watchDogModels = new ArrayList<String>();
         for (VmWatchdogType vmWatchdogType : vmWatchdogTypes) {
-            watchDogModels.add(EnumTranslator.createAndTranslate(vmWatchdogType));
+            watchDogModels.add(EnumTranslator.getInstance().get(vmWatchdogType));
         }
 
         watchDogModels.add(0, null);

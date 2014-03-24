@@ -4,12 +4,9 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.uicompat.Translator;
 
 @SuppressWarnings("unused")
-public class RoleNode
-{
-    private static Translator actionGroupTranslator = EnumTranslator.create(ActionGroup.class);
+public class RoleNode {
 
     public RoleNode(String name, RoleNode[] leafs)
     {
@@ -38,7 +35,7 @@ public class RoleNode
     {
         this.setName(actionGroup.toString());
         this.setTooltip(tooltip);
-        this.setDesc(RoleNode.actionGroupTranslator.get(actionGroup));
+        this.setDesc(EnumTranslator.getInstance().get(actionGroup));
     }
 
     public RoleNode(String name, String desc)

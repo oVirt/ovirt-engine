@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -358,10 +355,9 @@ public class TemplateGeneralModel extends EntityModel {
 
         setOS(AsyncDataProvider.getOsName(template.getOsId()));
 
-        Translator translator = EnumTranslator.create(DisplayType.class);
+        Translator translator = EnumTranslator.getInstance();
         setDefaultDisplayType(translator.get(template.getDefaultDisplayType()));
 
-        translator = EnumTranslator.create(OriginType.class);
         setOrigin(translator.get(template.getOrigin()));
 
         setHasDomain(AsyncDataProvider.isWindowsOsType(template.getOsId()));
@@ -373,7 +369,6 @@ public class TemplateGeneralModel extends EntityModel {
         setTimeZone(template.getTimeZone());
 
         setHasUsbPolicy(true);
-        translator = EnumTranslator.create(UsbPolicy.class);
         setUsbPolicy(translator.get(template.getUsbPolicy()));
 
         setIsStateless(template.isStateless());
