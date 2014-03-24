@@ -295,6 +295,7 @@ public class ManageDomainsArguments {
             }
         }
 
+        convertDomain();
         convertProvider();
         validateProvider();
 
@@ -331,6 +332,18 @@ public class ManageDomainsArguments {
                 providerStr = LdapProviderType.openLdap.name();
             }
             argMap.put(ARG_PROVIDER, providerStr);
+        }
+    }
+
+    /**
+     * Converts string domain value to lower case
+     */
+    private void convertDomain() {
+        if (contains(ARG_DOMAIN)) {
+            String domainStr = get(ARG_DOMAIN);
+            if (domainStr != null) {
+                argMap.put(ARG_DOMAIN, domainStr.toLowerCase());
+            }
         }
     }
 
