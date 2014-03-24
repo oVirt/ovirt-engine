@@ -42,17 +42,22 @@ public abstract class TimeoutBase {
     }
 
     /**
-     * Checks if timeout is used and if it is, checks the timeout. If no timeout set, then it will set this object as timeout.
+     * Checks if timeout is used and if it is, checks the timeout. If no timeout set, then it will set this object as
+     * timeout.
+     *
      * @return should the action be logged again
      */
     public boolean getLegal() {
         if (getUseTimout()) {
             String keyForCheck = getkeyForCheck();
-            if (CacheManager.getTimeoutBaseCache().putIfAbsent(keyForCheck,
-                    keyForCheck,
-                    getEndTime(),
-                    TimeUnit.MILLISECONDS) == null) {
-                return true;
+            synchronized (keyForCheck.intern()) {
+                if (!CacheManager.getTimeoutBaseCache().containsKey(keyForCheck)) {
+                    CacheManager.getTimeoutBaseCache().put(keyForCheck,
+                            keyForCheck,
+                            getEndTime(),
+                            TimeUnit.MILLISECONDS);
+                    return true;
+                }
             }
             return false;
         }
