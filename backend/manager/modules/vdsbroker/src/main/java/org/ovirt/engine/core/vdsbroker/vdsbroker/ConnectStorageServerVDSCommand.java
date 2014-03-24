@@ -73,12 +73,12 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
         DefaultValueMap con = new DefaultValueMap();
         con.put("id", connection.getid(), Guid.Empty.toString());
         con.put("connection", connection.getconnection(), "");
-        con.put("portal", connection.getportal(), "");
+        con.put("tpgt", connection.getportal(), "");
         con.put("port", connection.getport(), "");
         con.put("iqn", connection.getiqn(), "");
         con.put("user", connection.getuser_name(), "");
         con.put("password", connection.getpassword(), "");
-        con.putIfNotEmpty("initiatorName", connection.getIface());
+        con.putIfNotEmpty("ifaceName", connection.getIface());
 
         // storage_pool can be null when discovering iscsi send targets or when connecting
         // through vds which has no storage pool
