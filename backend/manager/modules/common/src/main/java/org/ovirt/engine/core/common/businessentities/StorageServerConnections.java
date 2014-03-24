@@ -7,6 +7,8 @@ import javax.validation.constraints.Min;
 public class StorageServerConnections implements Serializable {
     private static final long serialVersionUID = 5444293590307760809L;
 
+    public static final String DEFAULT_TPGT = "1";
+
     public StorageServerConnections() {
         storageType = StorageType.UNKNOWN;
     }
@@ -91,7 +93,7 @@ public class StorageServerConnections implements Serializable {
         this.port = value;
     }
 
-    private String portal;
+    private String portal = DEFAULT_TPGT;
 
     public String getportal() {
         return this.portal;
