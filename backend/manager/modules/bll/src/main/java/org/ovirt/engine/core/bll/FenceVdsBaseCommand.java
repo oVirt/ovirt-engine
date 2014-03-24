@@ -14,8 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
-import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
@@ -468,7 +466,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     protected void restartVdsVms() {
-        ArrayList<VdcActionParametersBase> runVmParamsList = new ArrayList<VdcActionParametersBase>();
+        List<Guid> autoStartVmIdsToRerun = new ArrayList<>();
         // restart all running vms of a failed vds.
         for (VM vm : mVmList) {
             destroyVmOnDestination(vm);
@@ -489,11 +487,11 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
             // Handle highly available VMs
             if (vm.isAutoStartup()) {
-                runVmParamsList.add(new RunVmParams(vm.getId()));
+                autoStartVmIdsToRerun.add(vm.getId());
             }
         }
-        if (runVmParamsList.size() > 0) {
-            Backend.getInstance().runInternalMultipleActions(VdcActionType.RunVm, runVmParamsList);
+        if (!autoStartVmIdsToRerun.isEmpty()) {
+            AutoStartVmsRunner.getInstance().addVmsToRun(autoStartVmIdsToRerun);
         }
         setVm(null);
         setVmId(Guid.Empty);
