@@ -58,12 +58,13 @@ public class DocsServlet extends FileServlet {
                     && !file.getAbsolutePath().equals(replaceLocaleWithOtherLocale(originalFile.getAbsolutePath(),
                             locale, locale))) {
                 //We determined that we are going to redirect the user to the English version URI.
-                String redirect = request.getServletPath() + replaceLocaleWithUSLocale(request.getPathInfo(), locale);
+                String redirect = getServletContext().getContextPath() + request.getServletPath()
+                        + replaceLocaleWithUSLocale(request.getPathInfo(), locale);
                 if (!languagePageShown) {
                     setLangPageShown(response, true);
                     request.setAttribute(LocaleFilter.LOCALE, locale);
                     request.setAttribute(ENGLISH_HREF, redirect);
-                    final ServletContext forwardContext = getServletContext().getContext(localeDocsMissing);
+                    final ServletContext forwardContext = getServletContext();
                     if (forwardContext != null) {
                         final RequestDispatcher dispatcher = forwardContext.getRequestDispatcher(localeDocsMissing);
                         if (dispatcher != null) {
@@ -107,7 +108,7 @@ public class DocsServlet extends FileServlet {
     private void setLangPageShown(HttpServletResponse response, boolean value) {
         Cookie cookie = new Cookie(LANG_PAGE_SHOWN, Boolean.toString(value));
         // Scope this cookie to the (root) application context URL
-        cookie.setPath("/" + getServletContext().getContextPath());
+        cookie.setPath(getServletContext().getContextPath());
         // Don't set max age, i.e. let this be a session cookie
         response.addCookie(cookie);
     }
