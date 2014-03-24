@@ -65,6 +65,10 @@
             <ge:StringEntityModelTextBoxEditor ui:field="uiLanguageEditor" />
             <ge:StringEntityModelTextBoxEditor ui:field="systemLocaleEditor" />
             <ge:StringEntityModelTextBoxEditor ui:field="userLocaleEditor" />
+            <d:AdvancedParametersExpander ui:field="sysprepScriptExpander" addStyleNames="{style.verticalPanel}"/>
+            <g:FlowPanel ui:field="sysprepScriptExpanderContent" >
+                <ge:StringEntityModelTextAreaEditor ui:field="sysprepScriptEditor" labelStyleName="{style.displayNone}" />
+            </g:FlowPanel>
         </g:FlowPanel>
 
         <g:FlowPanel ui:field="cloudInitOptionsContent">

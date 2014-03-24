@@ -131,6 +131,11 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     StringEntityModelTextBoxEditor userLocaleEditor;
 
     @UiField
+    @Path(value = "sysprepScript.entity")
+    @WithElementId
+    StringEntityModelTextAreaEditor sysprepScriptEditor;
+
+    @UiField
     @Path(value = "userName.entity")
     @WithElementId
     StringEntityModelTextBoxEditor userNameEditor;
@@ -248,6 +253,14 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
     @UiField
     @Ignore
+    AdvancedParametersExpander sysprepScriptExpander;
+
+    @UiField
+    @Ignore
+    FlowPanel sysprepScriptExpanderContent;
+
+    @UiField
+    @Ignore
     Label networkLabelSepAddRemove;
 
     @UiField
@@ -322,6 +335,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         authenticationExpander.initWithContent(authenticationExpanderContent.getElement());
         networkExpander.initWithContent(networkExpanderContent.getElement());
         customScriptExpander.initWithContent(customScriptExpanderContent.getElement());
+        sysprepScriptExpander.initWithContent(sysprepScriptExpanderContent.getElement());
     }
 
     void initCheckBoxEditors() {
@@ -355,6 +369,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         windowsHostnameEditor.setLabel(constants.cloudInitHostnameLabel());
         inputLocaleEditor.setLabel(constants.inputLocaleLabel());
         uiLanguageEditor.setLabel(constants.uiLanguageLabel());
+        sysprepScriptEditor.setTitle(constants.sysprepLabel());
         systemLocaleEditor.setLabel(constants.systemLocaleLabel());
         userLocaleEditor.setLabel(constants.userLocaleLabel());
         userNameEditor.setLabel(constants.cloudInitUserNameLabel());
@@ -415,6 +430,9 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
         customScriptExpander.setTitleWhenExpended(constants.customScriptLabel());
         customScriptExpander.setTitleWhenCollapsed(constants.customScriptLabel());
+
+        sysprepScriptExpander.setTitleWhenExpended(constants.sysprepLabel());
+        sysprepScriptExpander.setTitleWhenCollapsed(constants.sysprepLabel());
     }
 
     void addStyles() {
@@ -428,6 +446,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         windowsSysprepTimeZoneEditor.addStyleName(customizableStyle.primaryOption());
         inputLocaleEditor.addStyleName(customizableStyle.primaryOption());
         uiLanguageEditor.addStyleName(customizableStyle.primaryOption());
+        sysprepScriptEditor.setContentWidgetStyleName(customizableStyle.customScript());
         systemLocaleEditor.addStyleName(customizableStyle.primaryOption());
         userLocaleEditor.addStyleName(customizableStyle.primaryOption());
         userNameEditor.addStyleName(customizableStyle.primaryOption());
@@ -448,6 +467,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
         authenticationExpanderContent.addStyleName(customizableStyle.expanderContent());
         customScriptExpanderContent.addStyleName(customizableStyle.expanderContent());
+        sysprepScriptExpanderContent.addStyleName(customizableStyle.expanderContent());
     }
 
     /* Controls style for network options based on network selection */

@@ -62,7 +62,11 @@ public final class SysprepHandler {
 
     public static String getSysPrep(VM vm, SysPrepParams sysPrepParams) {
         String sysPrepContent = "";
-        sysPrepContent = LoadFile(osRepository.getSysprepPath(vm.getVmOsId(), null));
+        if (vm.getVmInit() != null && !StringUtils.isEmpty(vm.getVmInit().getCustomScript())) {
+            sysPrepContent = vm.getVmInit().getCustomScript();
+        } else {
+            sysPrepContent = LoadFile(osRepository.getSysprepPath(vm.getVmOsId(), null));
+        }
         sysPrepContent = replace(sysPrepContent, "$ProductKey$", osRepository.getProductKey(vm.getVmOsId(), null));
 
         String domain = (vm.getVmInit() != null && vm.getVmInit().getDomain() != null) ?
@@ -88,16 +92,16 @@ public final class SysprepHandler {
             String userLocale = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
 
             if (vm.getVmInit() != null) {
-                if (vm.getVmInit().getInputLocale() != null) {
+                if (!StringUtils.isEmpty(vm.getVmInit().getInputLocale())) {
                     inputLocale = vm.getVmInit().getInputLocale();
                 }
-                if (vm.getVmInit().getUiLanguage() != null) {
+                if (!StringUtils.isEmpty(vm.getVmInit().getUiLanguage())) {
                     uiLanguage = vm.getVmInit().getUiLanguage();
                 }
-                if (vm.getVmInit().getSystemLocale() != null) {
+                if (!StringUtils.isEmpty(vm.getVmInit().getSystemLocale())) {
                     systemLocale = vm.getVmInit().getSystemLocale();
                 }
-                if (vm.getVmInit().getUserLocale() != null) {
+                if (!StringUtils.isEmpty(vm.getVmInit().getUserLocale())) {
                     userLocale = vm.getVmInit().getUserLocale();
                 }
             }

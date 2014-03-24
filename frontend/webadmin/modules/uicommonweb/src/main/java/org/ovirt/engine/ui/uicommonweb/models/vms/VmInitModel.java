@@ -136,6 +136,14 @@ public class VmInitModel extends Model {
         privateCustomScript = value;
     }
 
+    private EntityModel<String> privateSysprepScript;
+    public EntityModel<String> getSysprepScript() {
+        return privateSysprepScript;
+    }
+    private void setSysprepScript(EntityModel<String> value) {
+        privateSysprepScript = value;
+    }
+
     public boolean getAuthorizedKeysEnabled() {
         return !StringHelper.isNullOrEmpty(getRootPassword().getEntity());
     }
@@ -388,6 +396,7 @@ public class VmInitModel extends Model {
         setUiLanguage(new EntityModel<String>());
         setSystemLocale(new EntityModel<String>());
         setUserLocale(new EntityModel<String>());
+        setSysprepScript(new EntityModel<String>());
 
         setHostname(new EntityModel<String>());
         setDomain(new EntityModel<String>());
@@ -454,6 +463,7 @@ public class VmInitModel extends Model {
         getUiLanguage().setEntity("");
         getSystemLocale().setEntity("");
         getUserLocale().setEntity("");
+        getSysprepScript().setEntity("");
         getHostname().setEntity("");
         getDomain().setEntity("");
         getUserName().setEntity("");
@@ -534,7 +544,11 @@ public class VmInitModel extends Model {
             }
 
             if (!StringHelper.isNullOrEmpty(vmInit.getCustomScript())) {
-                getCustomScript().setEntity(vmInit.getCustomScript());
+                if (isWindowsOS) {
+                    getSysprepScript().setEntity(vmInit.getCustomScript());
+                } else {
+                    getCustomScript().setEntity(vmInit.getCustomScript());
+                }
             }
 
             initNetworks(vmInit);
@@ -770,6 +784,9 @@ public class VmInitModel extends Model {
             vmInit.setUiLanguage((String)getUiLanguage().getEntity());
             vmInit.setSystemLocale((String)getSystemLocale().getEntity());
             vmInit.setUserLocale((String)getUserLocale().getEntity());
+            vmInit.setCustomScript((String) getSysprepScript().getEntity());
+        } else {
+            vmInit.setCustomScript((String) getCustomScript().getEntity());
         }
 
         vmInit.setUserName((String) getUserName().getEntity());
