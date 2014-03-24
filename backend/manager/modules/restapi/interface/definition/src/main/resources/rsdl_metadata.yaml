@@ -315,7 +315,7 @@ actions:
           action.vm.display.type: 'xs:string', action.vm.stateless: 'xs:boolean', action.vm.os.cmdline: 'xs:string',
           action.vm.domain.user.username: 'xs:string', action.pause: 'xs:boolean',
           action.vm.os.boot--COLLECTION: {boot.dev: 'xs:string'},action.vm.domain.user.password: 'xs:string',
-          action.vm.initialization.cloud_init.hostname: 'xs:string',
+          action.vm.initialization.cloud_init.host.address: 'xs:string',
           action.vm.initialization.cloud_init.network_configuration.nics.nic--COLLECTION: {nic.name: 'xs:string',
           nic.boot_protocol: 'xs:string',
           nic.network.address.ip: 'xs:string',
