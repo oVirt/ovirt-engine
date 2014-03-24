@@ -998,7 +998,7 @@ public class ManageDomains {
 
     public void deleteDomain() throws ManageDomainsResult {
 
-        String domainName = args.get(ARG_DOMAIN).toLowerCase();
+        String domainName = args.get(ARG_DOMAIN);
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
         DomainsConfigurationEntry domainNameEntry =
                 new DomainsConfigurationEntry(currentDomains, DOMAIN_SEPERATOR, null);
