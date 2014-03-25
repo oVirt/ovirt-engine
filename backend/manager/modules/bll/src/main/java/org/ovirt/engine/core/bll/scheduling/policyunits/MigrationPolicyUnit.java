@@ -6,6 +6,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 
 public class MigrationPolicyUnit extends PolicyUnitImpl {
@@ -15,7 +16,7 @@ public class MigrationPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, List<String> messages) {
+    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
         if (vm.getRunOnVds() != null) {
             for (VDS host : hosts) {
                 if (host.getId().equals(vm.getRunOnVds())) {

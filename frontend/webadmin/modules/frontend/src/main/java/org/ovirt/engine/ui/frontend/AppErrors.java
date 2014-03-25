@@ -3117,6 +3117,30 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. There is no host that satisfies current scheduling constraints. See below for details:")
     String SCHEDULING_ALL_HOSTS_FILTERED_OUT();
 
+    @DefaultStringValue("The host ${hostName} did not satisfy ${filterType} filter ${filterName} because ${detailMessage}.")
+    String SCHEDULING_HOST_FILTERED_REASON_WITH_DETAIL();
+
+    @DefaultStringValue("$detailMessage network(s) ${networkNames} are missing")
+    String VAR__DETAIL__NETWORK_MISSING();
+
+    @DefaultStringValue("$detailMessage its CPU level ${hostCPULevel} is lower than the VM requires ${vmCPULevel}")
+    String VAR__DETAIL__LOW_CPU_LEVEL();
+
+    @DefaultStringValue("$detailMessage it did not match positive affinity rules ${affinityRules}")
+    String VAR__DETAIL__AFFINITY_FAILED_POSITIVE();
+
+    @DefaultStringValue("$detailMessage it matched negative affinity rules ${affinityRules}")
+    String VAR__DETAIL__AFFINITY_FAILED_NEGATIVE();
+
+    @DefaultStringValue("$detailMessage its swap value was illegal")
+    String VAR__DETAIL__SWAP_VALUE_ILLEGAL();
+
+    @DefaultStringValue("$detailMessage it has insufficient free memory to run the VM")
+    String VAR__DETAIL__NOT_ENOUGH_MEMORY();
+
+    @DefaultStringValue("There are no hosts to use. Check that the cluster contains at least one host in Up state.")
+    String SCHEDULING_NO_HOSTS();
+
     @DefaultStringValue("Cannot perform ${action}. Another power management action is already in progress.")
     String POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS();
 

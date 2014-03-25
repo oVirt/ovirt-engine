@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
+import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -184,12 +185,14 @@ public class SchedulingManager {
     private static class SchedulingResult {
         Map<Guid, Pair<VdcBllMessages, String>> filteredOutReasons;
         Map<Guid, String> hostNames;
+        PerHostMessages details;
         String message;
         Guid vdsSelected = null;
 
         public SchedulingResult() {
-            filteredOutReasons = new HashMap<Guid, Pair<VdcBllMessages, String>>();
+            filteredOutReasons = new HashMap<>();
             hostNames = new HashMap<>();
+            details = new PerHostMessages();
         }
 
         public Guid getVdsSelected() {
@@ -201,7 +204,7 @@ public class SchedulingManager {
         }
 
         public void addReason(Guid id, String hostName, VdcBllMessages filterType, String filterName) {
-            filteredOutReasons.put(id, new Pair<VdcBllMessages, String>(filterType, filterName));
+            filteredOutReasons.put(id, new Pair<>(filterType, filterName));
             hostNames.put(id, hostName);
         }
 
@@ -216,10 +219,22 @@ public class SchedulingManager {
                 lines.add(line.getValue().getFirst().name());
                 lines.add(String.format("$%1$s %2$s", "hostName", hostNames.get(line.getKey())));
                 lines.add(String.format("$%1$s %2$s", "filterName", line.getValue().getSecond()));
-                lines.add(VdcBllMessages.SCHEDULING_HOST_FILTERED_REASON.name());
+
+                final List<String> detailMessages = details.getMessages(line.getKey());
+                if (detailMessages == null || detailMessages.isEmpty()) {
+                    lines.add(VdcBllMessages.SCHEDULING_HOST_FILTERED_REASON.name());
+                }
+                else {
+                    lines.addAll(detailMessages);
+                    lines.add(VdcBllMessages.SCHEDULING_HOST_FILTERED_REASON_WITH_DETAIL.name());
+                }
             }
 
             return lines;
+        }
+
+        private PerHostMessages getDetails() {
+            return details;
         }
 
         public String getMessage() {
@@ -452,8 +467,15 @@ public class SchedulingManager {
             }
         }
 
+        /* Short circuit filters if there are no hosts at all */
+        if (hostList == null || hostList.isEmpty()) {
+            messages.add(VdcBllMessages.SCHEDULING_NO_HOSTS.name());
+            messages.addAll(result.getReasonMessages());
+            return hostList;
+        }
+
         hostList =
-                runInternalFilters(internalFilters, hostList, vm, parameters, filterPositionMap, messages,
+                runInternalFilters(internalFilters, hostList, vm, parameters, filterPositionMap,
                         memoryChecker, correlationId, result);
 
         if (shouldRunExternalFilters
@@ -472,12 +494,12 @@ public class SchedulingManager {
     }
 
     private List<VDS> runInternalFilters(ArrayList<PolicyUnitImpl> filters,
-            List<VDS> hostList,
-            VM vm,
-            Map<String, String> parameters,
-            Map<Guid, Integer> filterPositionMap,
-            List<String> messages, VdsFreeMemoryChecker memoryChecker,
-            String correlationId, SchedulingResult result) {
+                                         List<VDS> hostList,
+                                         VM vm,
+                                         Map<String, String> parameters,
+                                         Map<Guid, Integer> filterPositionMap,
+                                         VdsFreeMemoryChecker memoryChecker,
+                                         String correlationId, SchedulingResult result) {
         if (filters != null) {
             for (PolicyUnitImpl filterPolicyUnit : filters) {
                 if (hostList == null || hostList.isEmpty()) {
@@ -485,7 +507,7 @@ public class SchedulingManager {
                 }
                 filterPolicyUnit.setMemoryChecker(memoryChecker);
                 List<VDS> currentHostList = new ArrayList<VDS>(hostList);
-                hostList = filterPolicyUnit.filter(hostList, vm, parameters, messages);
+                hostList = filterPolicyUnit.filter(hostList, vm, parameters, result.getDetails());
                 logFilterActions(currentHostList,
                         toIdSet(hostList),
                         VdcBllMessages.VAR__FILTERTYPE__INTERNAL,
@@ -508,11 +530,11 @@ public class SchedulingManager {
     }
 
     private void logFilterActions(List<VDS> oldList,
-            Set<Guid> newSet,
-            VdcBllMessages actionName,
-            String filterName,
-            SchedulingResult result,
-            String correlationId) {
+                                  Set<Guid> newSet,
+                                  VdcBllMessages actionName,
+                                  String filterName,
+                                  SchedulingResult result,
+                                  String correlationId) {
         for (VDS host: oldList) {
             if (!newSet.contains(host.getId())) {
                 String reason =
@@ -521,11 +543,11 @@ public class SchedulingManager {
                                 host.getId().toString(),
                                 actionName.name(),
                                 filterName);
+                result.addReason(host.getId(), host.getName(), actionName, filterName);
                 if (!StringUtils.isEmpty(correlationId)) {
                     reason = String.format("%s (correlation id: %s)", reason, correlationId);
                 }
                 log.info(reason);
-                result.addReason(host.getId(), host.getName(), actionName, filterName);
             }
         }
     }

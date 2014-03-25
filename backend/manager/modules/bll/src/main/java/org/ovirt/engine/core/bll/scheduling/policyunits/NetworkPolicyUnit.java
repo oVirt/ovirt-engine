@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -32,7 +33,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, List<String> messages) {
+    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
         if (hosts == null || hosts.isEmpty()) {
             return null;
         }
@@ -47,6 +48,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
         Map<Guid, VdsNetworkInterface> hostDisplayNics = getDisplayNics(displayNetwork);
 
         for (VDS host : hosts) {
+            List<String> missingIfs = new ArrayList<>();
             ValidationResult result =
                     validateRequiredNetworksAvailable(host,
                             vm,
@@ -54,15 +56,14 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                             displayNetwork,
                             networksByName,
                             hostNics.get(host.getId()),
-                            hostDisplayNics.get(host.getId()));
+                            hostDisplayNics.get(host.getId()),
+                            missingIfs);
 
             if (!result.isValid()) {
-                messages.add(result.getMessage().name());
-                if (result.getVariableReplacements() != null) {
-                    messages.addAll(result.getVariableReplacements());
-                }
-
                 toRemoveHostList.add(host);
+                String nics = StringUtils.join(missingIfs, ", ");
+                messages.addMessage(host.getId(), String.format("$networkNames %1$s", nics));
+                messages.addMessage(host.getId(), VdcBllMessages.VAR__DETAIL__NETWORK_MISSING.name());
             }
         }
         hosts.removeAll(toRemoveHostList);
@@ -106,7 +107,8 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
             Network displayNetwork,
             Map<String, Network> networksByName,
             List<String> hostNetworks,
-            VdsNetworkInterface displayNic) {
+            VdsNetworkInterface displayNic,
+            List<String> missingNetworks) {
 
         boolean onlyRequiredNetworks =
                 Config.<Boolean> getValue(ConfigValues.OnlyRequiredNetworksMandatoryForVdsSelection);
@@ -125,6 +127,9 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                 }
             }
             if (!found) {
+                if (missingNetworks != null) {
+                    missingNetworks.add(vmIf.getNetworkName());
+                }
                 StringBuilder sbBuilder = new StringBuilder();
                 sbBuilder.append(Entities.vmInterfacesByNetworkName(vmNICs).keySet());
                 log.debugFormat("host {0} is missing networks required by VM nics {1}",

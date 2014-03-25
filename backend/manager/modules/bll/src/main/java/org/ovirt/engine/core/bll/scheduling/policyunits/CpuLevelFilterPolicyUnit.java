@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 
 import java.util.ArrayList;
@@ -19,7 +20,8 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, List<String> messages) {
+    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters,
+                            PerHostMessages messages) {
         boolean filteredOutHosts = false;
         if (StringUtils.isNotEmpty(vm.getCpuName())) {
             List<VDS> hostsToRunOn = new ArrayList<VDS>();
@@ -39,13 +41,11 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
                                 host.getName(),
                                 hostCpuName,
                                 vm.getCpuName());
-                        filteredOutHosts = true;
+                        messages.addMessage(host.getId(), String.format("$hostCPULevel %1$s", hostCpuName));
+                        messages.addMessage(host.getId(), String.format("$vmCPULevel %1$s", vm.getCpuName()));
+                        messages.addMessage(host.getId(), VdcBllMessages.VAR__DETAIL__LOW_CPU_LEVEL.toString());
                     }
                 }
-            }
-
-            if (filteredOutHosts) {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPU_LEVEL.toString());
             }
 
             return hostsToRunOn;

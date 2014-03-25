@@ -4,6 +4,7 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class HostedEngineHAClusterFilterPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, List<String> messages) {
+    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
 
         // The filter is relevant only for Hosted Engine VM
         if (vm.isHostedEngine()) {
@@ -31,11 +32,8 @@ public class HostedEngineHAClusterFilterPolicyUnit extends PolicyUnitImpl {
                             haScore);
                 } else {
                     log.debugFormat("Host {0} was filtered out as it doesn't have a positive score (the score is {1})", host.getName(), haScore);
+                    messages.addMessage(host.getId(), VdcBllMessages.ACTION_TYPE_FAILED_NO_HA_VDS.name());
                 }
-            }
-
-            if (hostsToRunOn.isEmpty()) {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_NO_HA_VDS.name());
             }
 
             return hostsToRunOn;

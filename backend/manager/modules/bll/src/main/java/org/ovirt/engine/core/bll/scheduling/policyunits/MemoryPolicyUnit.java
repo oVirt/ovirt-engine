@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 
 public class MemoryPolicyUnit extends PolicyUnitImpl {
@@ -20,7 +21,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, List<String> messages) {
+    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
         List<VDS> list = new ArrayList<>();
         // If Vm in Paused mode - no additional memory allocation needed
         if (vm.getStatus() == VMStatus.Paused) {
@@ -29,12 +30,12 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
         for (VDS vds : hosts) {
             if (!isVMSwapValueLegal(vds)) {
                 log.debugFormat("host '{0}' swap value is illegal", vds.getName());
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_SWAP.toString());
+                messages.addMessage(vds.getId(), VdcBllMessages.VAR__DETAIL__SWAP_VALUE_ILLEGAL.toString());
                 continue;
             }
             if (!memoryChecker.evaluate(vds, vm)) {
                 log.debugFormat("host '{0}' has insufficient memory to run the VM", vds.getName());
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_MEMORY.toString());
+                messages.addMessage(vds.getId(), VdcBllMessages.VAR__DETAIL__NOT_ENOUGH_MEMORY.toString());
                 continue;
             }
             list.add(vds);

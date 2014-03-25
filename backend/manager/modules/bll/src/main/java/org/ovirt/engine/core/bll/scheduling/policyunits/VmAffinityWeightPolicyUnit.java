@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -24,7 +25,7 @@ public class VmAffinityWeightPolicyUnit extends PolicyUnitImpl {
                 VmAffinityFilterPolicyUnit.getAcceptableHosts(false,
                         hosts,
                         vm,
-                        new ArrayList<String>());
+                        new PerHostMessages());
         Map<Guid, VDS> acceptableHostsMap = new HashMap<Guid, VDS>();
         if (acceptableHostsList != null) {
             for (VDS acceptableHost : acceptableHostsList) {
