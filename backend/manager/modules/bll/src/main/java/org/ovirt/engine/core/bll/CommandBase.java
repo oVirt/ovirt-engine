@@ -114,7 +114,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private VdcReturnValueBase _returnValue;
     private CommandActionState _actionState = CommandActionState.EXECUTE;
     private VdcActionType actionType;
-    private final List<Class<?>> validationGroups = new ArrayList<Class<?>>();
+    private final List<Class<?>> validationGroups = new ArrayList<>();
     private final Guid commandId;
     private boolean quotaChanged = false;
     private String _description = "";
@@ -141,7 +141,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private CommandStatus commandStatus = CommandStatus.NOT_STARTED;
 
     public void addChildCommandInfo(Guid id, VdcActionType vdcActionType, VdcActionParametersBase parameters) {
-        childCommandInfoMap.put(id, new Pair<VdcActionType, VdcActionParametersBase>(vdcActionType, parameters));
+        childCommandInfoMap.put(id, new Pair<>(vdcActionType, parameters));
     }
 
     protected List<VdcReturnValueBase> executeChildCommands() {
@@ -203,8 +203,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected CommandBase(Guid commandId) {
         this.context = new CommandContext(new EngineContext());
@@ -275,7 +273,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *
      * @param transactionScopeOption
      *            The transaction scope.
-     * @param forceCompensation
      * @return The compensation context to use.
      */
     private CompensationContext createCompensationContext(TransactionScopeOption transactionScopeOption,
@@ -330,7 +327,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         getReturnValue().setDescription((tempVar != null) ? tempVar : getReturnValue().getDescription());
         setActionMessageParameters();
         Step validatingStep=null;
-        boolean actionAllowed = false;
+        boolean actionAllowed;
         boolean isExternal = this.getParameters().getJobId() != null || this.getParameters().getStepId() != null;
         if (!isExternal) {
             validatingStep = ExecutionHandler.addStep(getExecutionContext(), StepEnum.VALIDATING, null);
@@ -871,8 +868,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     /**
      * Checks if the current user is authorized to run the given action on the given object.
      *
-     * @param action
-     *            the action to check
+     * @param userId
+     *            user id to check
      * @param object
      *            the object to check
      * @param type
@@ -1099,8 +1096,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     /**
      * Factory to determine the type of the ReturnValue field
-     *
-     * @return
      */
     protected VdcReturnValueBase createReturnValue() {
         return new VdcReturnValueBase();
@@ -1138,7 +1133,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * Calculates the proper parameters for the task
      * @param parentCommandType parent command type for which the task is created
      * @param parameters parameter of the creating command
-     * @return
      */
     protected VdcActionParametersBase getParametersForTask(VdcActionType parentCommandType,
             VdcActionParametersBase parameters) {
@@ -1402,9 +1396,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     /**
      * calls execute action the child command.
-     * @param command
-     * @param parameters
-     * @return
      */
     protected VdcReturnValueBase runCommand(CommandBase<?> command) {
         VdcReturnValueBase returnValue = command.executeAction();
@@ -1499,6 +1490,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                     saveTaskAndPutInMap(taskKey, task);
                     return null;
                 }
+
             });
             addToReturnValueTaskPlaceHolderIdList(taskId);
         } catch (RuntimeException ex) {
@@ -1543,14 +1535,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * Use this method in order to create task in the CommandCoordinatorUtil in a safe way. If you use this method within a
      * certain command, make sure that the command implemented the ConcreteCreateTask method.
      *
+     * @param taskId
+     *            id of task to create
      * @param asyncTaskCreationInfo
      *            info to send to CommandCoordinatorUtil when creating the task.
      * @param parentCommand
      *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
-     * @param entityType
-     *            type of entities that are associated with the task
-     * @param entityIds
-     *            Ids of entities to be associated with task
+     * @param entitiesMap
+     *            maps ID of entity to its type.
      * @return Guid of the created task.
      */
     protected Guid createTask(Guid taskId,
@@ -1561,15 +1553,15 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-     * Same as {@link #createTask(AsyncTaskCreationInfo, VdcActionType, VdcObjectType, Guid...)}
+     * Same as {@link #createTask(Guid, AsyncTaskCreationInfo, VdcActionType, VdcObjectType, Guid...)}
      * but without suspending the current transaction.
      *
-     * Note: it is better to use {@link #createTask(AsyncTaskCreationInfo, VdcActionType, VdcObjectType, Guid...)}
+     * Note: it is better to use {@link #createTask(Guid, AsyncTaskCreationInfo, VdcActionType, VdcObjectType, Guid...)}
      * since it suspend the current transaction, thus the changes are being updated in the
      * DB right away. call this method only you have a good reason for it and
      * the current transaction is short.
      *
-     * @see {@link #createTask(AsyncTaskCreationInfo, VdcActionType, VdcObjectType, Guid...)}
+     * @see {@link #createTask(Guid, AsyncTaskCreationInfo, VdcActionType, VdcObjectType, Guid...)}
      */
     protected Guid createTaskInCurrentTransaction(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
@@ -1583,18 +1575,15 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * Use this method in order to create task in the CommandCoordinatorUtil in a safe way. If you use this method within a
      * certain command, make sure that the command implemented the ConcreteCreateTask method.
      *
+     * @param taskId
+     *            if of task to create
      * @param asyncTaskCreationInfo
      *            info to send to CommandCoordinatorUtil when creating the task.
      * @param parentCommand
      *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
-     * @param entityType
-     *            type of entities that are associated with the task
-     * @param entityIds
-     *            Ids of entities to be associated with task
      * @return Guid of the created task.
      */
-    protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
+    protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
         return createTask(taskId,
                 asyncTaskCreationInfo,
                 parentCommand,
@@ -1606,16 +1595,22 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
-            VdcObjectType vdcObjectType, Guid... entityIds) {
+            VdcObjectType vdcObjectType,
+            Guid... entityIds) {
+
         return createTask(taskId,
                 asyncTaskCreationInfo,
                 parentCommand,
                 createEntitiesMapForSingleEntityType(vdcObjectType, entityIds));
     }
 
-    protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo,
+    protected Guid createTask(Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
-            String description, VdcObjectType entityType, Guid... entityIds) {
+            String description,
+            VdcObjectType entityType,
+            Guid... entityIds) {
+
         return createTask(taskId,
                 asyncTaskCreationInfo,
                 parentCommand,
@@ -1662,7 +1657,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private Map<Guid, VdcObjectType> createEntitiesMapForSingleEntityType(VdcObjectType entityType, Guid... entityIds) {
-        Map<Guid, VdcObjectType> entitiesMap = new HashMap<Guid, VdcObjectType>();
+        Map<Guid, VdcObjectType> entitiesMap = new HashMap<>();
         for (Guid entityId : entityIds) {
             entitiesMap.put(entityId, entityType);
         }
@@ -1807,7 +1802,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     /**
      * The following method should be called after restart of engine during initialization of asynchronous task
-     * @return
      */
     public final boolean acquireLockAsyncTask() {
         LockProperties lockProperties = getLockProperties();
@@ -1852,7 +1846,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * "ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM" and "$VmName MyVm"
      */
     protected List<String> extractVariableDeclarations(Iterable<String> appendedCanDoMsgs) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         Iterator<String> iter = appendedCanDoMsgs.iterator();
         while(iter.hasNext()) {
             result.addAll(Arrays.asList(iter.next().split("(?=\\$)")));
@@ -1914,7 +1908,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     /**
      * The following method should return a map which is represent exclusive lock
-     * @return
      */
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return null;
@@ -1922,7 +1915,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     /**
      * The following method should return a map which is represent shared lock
-     * @return
      */
     protected Map<String, Pair<String, String>> getSharedLocks() {
         return null;
@@ -2092,7 +2084,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @param parentStep parent step to add the new sub step on
      * @param newStep step to add
      * @param description  description of step to be added
-     * @return
      */
     protected Step addSubStep(StepEnum parentStep, StepEnum newStep, String description) {
         return ExecutionHandler.addSubStep(getExecutionContext(),
@@ -2106,8 +2097,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * Adds a sub step on the current execution context by providing parent and new step information and map that will be resolved to create a text message that describes the new step
      * @param parentStep parent step to add the new sub step on
      * @param newStep step to add
-     * @param map of values that will be used to compose the description of the step
-     * @return
+     * @param valuesMap map of values that will be used to compose the description of the step
      */
     protected Step addSubStep(StepEnum parentStep, StepEnum newStep, Map<String, String> valuesMap) {
         return addSubStep(parentStep, newStep, ExecutionMessageDirector.resolveStepMessage(newStep, valuesMap));
