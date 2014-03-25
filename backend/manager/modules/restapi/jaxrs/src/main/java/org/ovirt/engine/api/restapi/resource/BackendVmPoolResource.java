@@ -23,10 +23,10 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -113,7 +113,10 @@ public class BackendVmPoolResource
                 vm.setVmtGuid(new Guid(incoming.getTemplate().getId()));
             } else {
                 final VM existing = currentVmCount > 0
-                              ? getEntity(VM.class, SearchType.VM, "Vms: pool=" + incoming.getName())
+                                ? getEntity(VM.class,
+                                        VdcQueryType.GetVmDataByPoolName,
+                                        new NameQueryParameters(incoming.getName()),
+                                        "Vms: pool=" + incoming.getName())
                               : null;
                 if (existing != null) {
                     vm.setVmtGuid(existing.getVmtGuid());
