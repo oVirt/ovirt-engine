@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.config.ConfigUtil;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
-import org.ovirt.engine.core.utils.collections.DomainsPasswordMap;
 import org.ovirt.engine.core.utils.FileUtil;
+import org.ovirt.engine.core.utils.collections.DomainsPasswordMap;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -90,6 +90,7 @@ public final class SysprepHandler {
             String uiLanguage = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
             String systemLocale = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
             String userLocale = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
+            String activeDirectoryOU = "";
 
             if (vm.getVmInit() != null) {
                 if (!StringUtils.isEmpty(vm.getVmInit().getInputLocale())) {
@@ -104,6 +105,9 @@ public final class SysprepHandler {
                 if (!StringUtils.isEmpty(vm.getVmInit().getUserLocale())) {
                     userLocale = vm.getVmInit().getUserLocale();
                 }
+                if (!StringUtils.isEmpty(vm.getVmInit().getActiveDirectoryOU())) {
+                    activeDirectoryOU = vm.getVmInit().getActiveDirectoryOU();
+                }
             }
 
             sysPrepContent = replace(sysPrepContent, "$SetupUiLanguageUiLanguage$", inputLocale);
@@ -111,6 +115,7 @@ public final class SysprepHandler {
             sysPrepContent = replace(sysPrepContent, "$UiLanguage$", uiLanguage);
             sysPrepContent = replace(sysPrepContent, "$SystemLocale$", systemLocale);
             sysPrepContent = replace(sysPrepContent, "$UserLocale$", userLocale);
+            sysPrepContent = replace(sysPrepContent, "$MachineObjectOU$", activeDirectoryOU);
         }
 
         return sysPrepContent;

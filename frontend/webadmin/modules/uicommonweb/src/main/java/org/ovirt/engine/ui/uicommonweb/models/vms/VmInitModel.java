@@ -116,6 +116,7 @@ public class VmInitModel extends Model {
     public EntityModel<String> getDomain() {
         return privateDomain;
     }
+
     private void setDomain(EntityModel<String> value) {
         privateDomain = value;
     }
@@ -126,6 +127,15 @@ public class VmInitModel extends Model {
     }
     private void setUserName(EntityModel<String> value) {
         privateUserName = value;
+    }
+
+    private EntityModel<String> privateActiveDirectoryOU;
+    public EntityModel<String> getActiveDirectoryOU() {
+        return privateActiveDirectoryOU;
+    }
+
+    private void setActiveDirectoryOU(EntityModel<String> value) {
+        privateActiveDirectoryOU = value;
     }
 
     private EntityModel<String> privateCustomScript;
@@ -397,6 +407,7 @@ public class VmInitModel extends Model {
         setSystemLocale(new EntityModel<String>());
         setUserLocale(new EntityModel<String>());
         setSysprepScript(new EntityModel<String>());
+        setActiveDirectoryOU(new EntityModel());
 
         setHostname(new EntityModel<String>());
         setDomain(new EntityModel<String>());
@@ -472,6 +483,7 @@ public class VmInitModel extends Model {
         getAuthorizedKeys().setEntity("");
         getRegenerateKeysEnabled().setEntity(false);
         getCustomScript().setEntity("");
+        getActiveDirectoryOU().setEntity("");
 
         Map<String, String> timezones = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList();
         getTimeZoneList().setItems(timezones.entrySet());
@@ -549,6 +561,10 @@ public class VmInitModel extends Model {
                 } else {
                     getCustomScript().setEntity(vmInit.getCustomScript());
                 }
+            }
+
+            if (!StringHelper.isNullOrEmpty(vmInit.getActiveDirectoryOU())) {
+                getActiveDirectoryOU().setEntity(vmInit.getActiveDirectoryOU());
             }
 
             initNetworks(vmInit);
@@ -785,6 +801,7 @@ public class VmInitModel extends Model {
             vmInit.setSystemLocale((String)getSystemLocale().getEntity());
             vmInit.setUserLocale((String)getUserLocale().getEntity());
             vmInit.setCustomScript((String) getSysprepScript().getEntity());
+            vmInit.setActiveDirectoryOU((String) getActiveDirectoryOU().getEntity());
         } else {
             vmInit.setCustomScript((String) getCustomScript().getEntity());
         }

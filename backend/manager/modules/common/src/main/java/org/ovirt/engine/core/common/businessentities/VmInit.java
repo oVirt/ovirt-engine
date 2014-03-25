@@ -13,6 +13,7 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
     private String timeZone;
     private String authorizedKeys;
     private Boolean regenerateKeys;
+    private String activeDirectoryOU;
 
     private String dnsServers;
     private String dnsSearch;
@@ -171,5 +172,13 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getActiveDirectoryOU() {
+        return activeDirectoryOU;
+    }
+
+    public void setActiveDirectoryOU(String activeDirectoryOU) {
+        this.activeDirectoryOU = activeDirectoryOU;
     }
 }

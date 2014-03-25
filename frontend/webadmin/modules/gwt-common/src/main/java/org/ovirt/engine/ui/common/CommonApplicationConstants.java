@@ -172,6 +172,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Sysprep")
     String sysprepLabel();
 
+    @DefaultStringValue("Active Directory OU")
+    String activeDirectoryOU();
+
+    @DefaultStringValue("This field will map to MachineObjectOU within Sysprep")
+    String activeDirectoryOUToolTip();
+
     @DefaultStringValue("User Name")
     String cloudInitUserNameLabel();
 

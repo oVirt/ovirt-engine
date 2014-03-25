@@ -52,6 +52,7 @@
                     <Username>$DomainAdmin$</Username>
                 </Credentials>
                 <JoinDomain>$JoinDomain$</JoinDomain>
+                <MachineObjectOU>$MachineObjectOU$<MachineObjectOU>
             </Identification>
         </component>
     </settings>

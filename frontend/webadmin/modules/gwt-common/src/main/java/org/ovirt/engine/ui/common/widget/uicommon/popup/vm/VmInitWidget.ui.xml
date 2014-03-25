@@ -65,6 +65,7 @@
             <ge:StringEntityModelTextBoxEditor ui:field="uiLanguageEditor" />
             <ge:StringEntityModelTextBoxEditor ui:field="systemLocaleEditor" />
             <ge:StringEntityModelTextBoxEditor ui:field="userLocaleEditor" />
+            <ge:StringEntityModelTextBoxEditor ui:field="activeDirectoryOUEditor" />
             <d:AdvancedParametersExpander ui:field="sysprepScriptExpander" addStyleNames="{style.verticalPanel}"/>
             <g:FlowPanel ui:field="sysprepScriptExpanderContent" >
                 <ge:StringEntityModelTextAreaEditor ui:field="sysprepScriptEditor" labelStyleName="{style.displayNone}" />

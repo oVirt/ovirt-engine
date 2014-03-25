@@ -1062,6 +1062,10 @@ public class VmMapper {
         if (model.isSetUserName()) {
             entity.setUserName(model.getUserName());
         }
+
+        if (model.isSetActiveDirectoryOu()) {
+            entity.setUserName(model.getActiveDirectoryOu());
+        }
         return entity;
     }
 
@@ -1120,6 +1124,9 @@ public class VmMapper {
         }
         if (entity.getUserName() != null) {
             model.setUserName(entity.getUserName());
+        }
+        if (entity.getActiveDirectoryOU() != null) {
+            model.setActiveDirectoryOu(entity.getActiveDirectoryOU());
         }
         return model;
     }

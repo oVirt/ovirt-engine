@@ -136,6 +136,11 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     StringEntityModelTextAreaEditor sysprepScriptEditor;
 
     @UiField
+    @Path(value = "activeDirectoryOU.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor activeDirectoryOUEditor;
+
+    @UiField
     @Path(value = "userName.entity")
     @WithElementId
     StringEntityModelTextBoxEditor userNameEditor;
@@ -370,6 +375,8 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         inputLocaleEditor.setLabel(constants.inputLocaleLabel());
         uiLanguageEditor.setLabel(constants.uiLanguageLabel());
         sysprepScriptEditor.setTitle(constants.sysprepLabel());
+        activeDirectoryOUEditor.setLabel(constants.activeDirectoryOU());
+        activeDirectoryOUEditor.setTitle(constants.activeDirectoryOUToolTip());
         systemLocaleEditor.setLabel(constants.systemLocaleLabel());
         userLocaleEditor.setLabel(constants.userLocaleLabel());
         userNameEditor.setLabel(constants.cloudInitUserNameLabel());
@@ -447,6 +454,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         inputLocaleEditor.addStyleName(customizableStyle.primaryOption());
         uiLanguageEditor.addStyleName(customizableStyle.primaryOption());
         sysprepScriptEditor.setContentWidgetStyleName(customizableStyle.customScript());
+        activeDirectoryOUEditor.addStyleName(customizableStyle.primaryOption());
         systemLocaleEditor.addStyleName(customizableStyle.primaryOption());
         userLocaleEditor.addStyleName(customizableStyle.primaryOption());
         userNameEditor.addStyleName(customizableStyle.primaryOption());

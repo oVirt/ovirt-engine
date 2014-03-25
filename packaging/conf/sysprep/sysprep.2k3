@@ -35,6 +35,7 @@
     JoinDomain=$JoinDomain$
     DomainAdmin=$DomainAdmin$
     DomainAdminPassword=$DomainAdminPassword$
+    MachineObjectOU=$MachineObjectOU$
 
 [Networking]
     InstallDefaultComponents=Yes

@@ -6160,6 +6160,7 @@
         <column>system_locale</column>
         <column>user_locale</column>
         <column>user_name</column>
+        <column>ad_au</column>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
             <value>users.mydomain.com</value>
@@ -6178,6 +6179,7 @@
             <value>en_US</value>
             <value>en_US</value>
             <value>ec2</value>
+            <value></value>
         </row>
     </table>
 </dataset>
