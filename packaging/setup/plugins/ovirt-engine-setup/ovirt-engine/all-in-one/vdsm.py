@@ -22,10 +22,7 @@ VDSM configuration plugin.
 
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
-import contextlib
-import urllib2
 import time
-import re
 import distutils.version
 
 
@@ -47,7 +44,6 @@ class Plugin(plugin.PluginBase):
     ENGINE_DELAY = 3
     VDSM_RETRIES = 600
     VDSM_DELAY = 1
-    DB_UP_RE = re.compile('.*DB Up.*')
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -100,30 +96,43 @@ class Plugin(plugin.PluginBase):
         return isUp
 
     def _waitEngineUp(self):
-        self.logger.debug('Waiting for Engine health status')
-        health_url = 'http://{fqdn}:{port}/OvirtEngineWeb/HealthStatus'.format(
-            fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
-            port=self.environment[osetupcons.ConfigEnv.PUBLIC_HTTP_PORT],
-        )
+        self.logger.debug('Waiting Engine API response')
+
         tries = self.ENGINE_RETRIES
         isUp = False
+        sdk = None
         while not isUp and tries > 0:
             tries -= 1
             try:
-                with contextlib.closing(urllib2.urlopen(health_url)) as urlObj:
-                    content = urlObj.read()
-                    if content:
-                        if self.DB_UP_RE.match(content) is None:
-                            raise RuntimeError(
-                                _('Engine status: {status}').format(
-                                    status=content
-                                )
-                            )
-                        isUp = True
-            except urllib2.URLError:
+                # Now we are using the SDK to authenticate vs the API
+                # to check if the engine is up.
+                # Maybe in the future we can just rely on a
+                # not authenticated health API URL
+                sdk = self._ovirtsdk_api.API(
+                    url='https://localhost:{port}/ovirt-engine/api'.format(
+                        port=self.environment[
+                            osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT
+                        ],
+                    ),
+                    username='{user}@{domain}'.format(
+                        user=osetupcons.Const.USER_ADMIN,
+                        domain=osetupcons.Const.DOMAIN_INTERNAL,
+                    ),
+                    password=self.environment[
+                        osetupcons.ConfigEnv.ADMIN_PASSWORD
+                    ],
+                    insecure=True,
+                )
+                isUp = True
+            except self._ovirtsdk_api.RequestError:
+                self.logger.debug(
+                    'Cannot connect to engine',
+                    exc_info=True,
+                )
                 time.sleep(self.ENGINE_DELAY)
         if not isUp:
             raise RuntimeError(_('Engine unreachable'))
+        return sdk
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -177,20 +186,8 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _closeup(self):
-        self._waitEngineUp()
         self.logger.debug('Connecting to the Engine')
-        engine_api = self._ovirtsdk_api.API(
-            url='https://{fqdn}:{port}/ovirt-engine/api'.format(
-                fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
-                port=self.environment[osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT],
-            ),
-            username='{user}@{domain}'.format(
-                user=osetupcons.Const.USER_ADMIN,
-                domain=osetupcons.Const.DOMAIN_INTERNAL,
-            ),
-            password=self.environment[osetupcons.ConfigEnv.ADMIN_PASSWORD],
-            ca_file=osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
-        )
+        engine_api = self._waitEngineUp()
 
         SupportedClusterLevels = self.environment[
             osetupcons.DBEnv.STATEMENT
