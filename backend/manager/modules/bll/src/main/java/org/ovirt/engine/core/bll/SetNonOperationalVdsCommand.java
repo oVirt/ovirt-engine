@@ -121,7 +121,7 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
         case KVM_NOT_RUNNING:
             return AuditLogType.VDS_RUN_IN_NO_KVM_MODE;
         case VERSION_INCOMPATIBLE_WITH_CLUSTER:
-            return AuditLogType.VDS_VERSION_NOT_SUPPORTED_FOR_CLUSTER;
+            return AuditLogType.VDS_VERSION_INCOMPATIBLE_WITH_ENGINE_VERSION;
         case CLUSTER_VERSION_INCOMPATIBLE_WITH_CLUSTER:
             return AuditLogType.VDS_CLUSTER_VERSION_NOT_SUPPORTED;
         case VM_NETWORK_IS_BRIDGELESS:

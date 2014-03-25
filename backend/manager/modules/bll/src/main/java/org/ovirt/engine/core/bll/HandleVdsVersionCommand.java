@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -58,14 +57,11 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
             isEngineSupportedByVdsm = vds.getSupportedENGINESVersionsSet().contains(partialVdcVersion);
         }
 
-        // If vdsm doesn't support the engine's version (engine's version is not included
-        // vdsm supprtedEngineVersions list) we move on and check if engine
-        // and cluster supports the specific vdsm version. which is sufficient
-        if (!isEngineSupportedByVdsm &&
-            !Config.<HashSet<Version>> getValue(ConfigValues.SupportedVDSMVersions).contains(vdsmVersion)) {
+        // Check if vdsm supports the current engine, and that it supports the cluster version
+        if (!isEngineSupportedByVdsm) {
             reportNonOperationReason(NonOperationalReason.VERSION_INCOMPATIBLE_WITH_CLUSTER,
-                                     Config.<HashSet<Version>> getValue(ConfigValues.SupportedVDSMVersions).toString(),
-                                     vdsmVersion.toString());
+                    partialVdcVersion.toString(),
+                    vdsmVersion.toString());
         }
         else if (!VersionSupport.checkClusterVersionSupported(cluster.getcompatibility_version(), vds)) {
             reportNonOperationReason(NonOperationalReason.CLUSTER_VERSION_INCOMPATIBLE_WITH_CLUSTER,
@@ -75,7 +71,7 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         setSucceeded(true);
     }
 
-    private void reportNonOperationReason(NonOperationalReason reason, String compatibleVersions,
+    protected void reportNonOperationReason(NonOperationalReason reason, String compatibleVersions,
                                           String vdsSupportedVersions) {
         Map<String, String> customLogValues = new HashMap<>();
         customLogValues.put("CompatibilityVersion", compatibleVersions);

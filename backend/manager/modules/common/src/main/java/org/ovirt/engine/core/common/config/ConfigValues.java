@@ -590,11 +590,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("SELECT * FROM ( {1}) as T1 {2}")
     PostgresSearchTemplate,    // used by behaviour DBSearchTemplate
-    @Reloadable
-    @TypeConverterAttribute(HashSet.class)
-    @DefaultValueAttribute("4.4,4.5")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedVersionArray)
-    SupportedVDSMVersions,
     @TypeConverterAttribute(HashSet.class)
     @DefaultValueAttribute("2.2,3.0")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedVersionArray)

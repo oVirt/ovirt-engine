@@ -500,7 +500,6 @@ select fn_db_add_config_value('SupportedStorageFormats','0,2,3','3.1');
 select fn_db_add_config_value('SupportedStorageFormats','0,2,3','3.2');
 select fn_db_add_config_value('SupportedStorageFormats','0,2,3','3.3');
 select fn_db_add_config_value('SupportedStorageFormats','0,2,3','3.4');
-select fn_db_add_config_value('SupportedVDSMVersions','4.9,4.10,4.11,4.12,4.13,4.14','general');
 select fn_db_add_config_value('SupportForceCreateVG','false','3.0');
 select fn_db_add_config_value('SupportForceExtendVG','false','3.0');
 select fn_db_add_config_value('SupportForceExtendVG','false','3.1');
@@ -787,7 +786,6 @@ select fn_db_update_config_value('ClusterEmulatedMachines','rhel6.4.0,pc-1.0,pse
 select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spice", "linux" : "xorg-x11-drv-qxl" }','general');
 select fn_db_update_config_value('SupportedClusterLevels','3.0,3.1,3.2,3.3,3.4','general');
 select fn_db_update_config_value('SupportedStorageFormats','0,2,3','3.1,3.2,3.3,3.4');
-select fn_db_update_config_value('SupportedVDSMVersions','4.9,4.10,4.11,4.12,4.13,4.14','general');
 select fn_db_update_config_value('VdcVersion','3.4.0.0','general');
 select fn_db_update_config_value('ProductRPMVersion','3.4.0.0','general');
 select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.0');
@@ -959,6 +957,8 @@ select fn_db_delete_config_value('DocsURL','general');
 select fn_db_delete_config_value('VirtIoScsiUnsupportedOsList','general');
 select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.0');
 select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.1');
+select fn_db_delete_config_value('SupportedVDSMVersions', 'general');
+
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
