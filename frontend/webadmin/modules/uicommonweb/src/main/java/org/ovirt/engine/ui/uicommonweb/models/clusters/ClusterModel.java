@@ -2,7 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -1362,6 +1364,7 @@ public class ClusterModel extends EntityModel
         ServerCpu oldSelectedCpu = clusterModel.getCPU().getSelectedItem();
 
         clusterModel.getCPU().setItems(cpus);
+        initSupportedArchitectures(clusterModel);
 
         clusterModel.getCPU().setSelectedItem(oldSelectedCpu != null ?
                 Linq.firstOrDefault(cpus, new Linq.ServerCpuPredicate(oldSelectedCpu.getCpuName())) : null);
@@ -1372,9 +1375,7 @@ public class ClusterModel extends EntityModel
         }
 
         if (clusterModel.getIsEdit()) {
-            if (canChangeArchitecture) {
-                getArchitecture().setItems(new ArrayList<ArchitectureType>(Arrays.asList(ArchitectureType.values())));
-            } else {
+            if (!canChangeArchitecture) {
                 getArchitecture().setItems(new ArrayList<ArchitectureType>(Arrays.asList(clusterModel.getEntity()
                         .getArchitecture())));
             }
@@ -1388,10 +1389,18 @@ public class ClusterModel extends EntityModel
                 getArchitecture().setSelectedItem(getEntity().getArchitecture());
             }
         } else {
-            getArchitecture().setItems(new ArrayList<ArchitectureType>(Arrays.asList(ArchitectureType.values())));
             getArchitecture().setSelectedItem(ArchitectureType.undefined);
         }
 
+    }
+
+    private void initSupportedArchitectures(ClusterModel clusterModel) {
+        Collection<ArchitectureType> archsWithSupportingCpus = new HashSet<ArchitectureType>();
+        archsWithSupportingCpus.add(ArchitectureType.undefined);
+        for (ServerCpu cpu: clusterModel.getCPU().getItems()) {
+            archsWithSupportingCpus.add(cpu.getArchitecture());
+        }
+        clusterModel.getArchitecture().setItems(archsWithSupportingCpus);
     }
 
     private void initCPU()
