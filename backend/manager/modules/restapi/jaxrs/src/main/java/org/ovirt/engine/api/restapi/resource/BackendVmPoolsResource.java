@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -110,7 +111,10 @@ public class BackendVmPoolsResource
                          new IdQueryParameters(asGuid(model.getId())),
                          model.getId());
         }
-        return getEntity(VM.class, SearchType.VM, "Vms: pool=" + model.getName());
+        return getEntity(VM.class,
+                VdcQueryType.GetVmDataByPoolName,
+                new NameQueryParameters(model.getName()),
+                "Vms: pool=" + model.getName());
     }
 
     protected VM mapToVM(VmPool model, VmTemplate template) {
@@ -136,8 +140,9 @@ public class BackendVmPoolsResource
 
     protected String getClusterId(VmPool pool) {
         return getEntity(VDSGroup.class,
-                         SearchType.Cluster,
-                         "Cluster: name=" + pool.getCluster().getName()).getId().toString();
+                VdcQueryType.GetVdsGroupByName,
+                new NameQueryParameters(pool.getCluster().getName()),
+                "Cluster: name=" + pool.getCluster().getName()).getId().toString();
     }
 
     protected boolean namedTemplate(VmPool pool) {
@@ -152,8 +157,9 @@ public class BackendVmPoolsResource
                              pool.getTemplate().getId());
         } else {
             return getEntity(VmTemplate.class,
-                             SearchType.VmTemplate,
-                             "Template: name=" + pool.getTemplate().getName());
+                    VdcQueryType.GetVmTemplate,
+                    new GetVmTemplateParameters(pool.getTemplate().getName()),
+                    "Template: name=" + pool.getTemplate().getName());
         }
     }
 

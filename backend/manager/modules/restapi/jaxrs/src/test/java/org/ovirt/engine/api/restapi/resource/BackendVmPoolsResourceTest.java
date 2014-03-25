@@ -118,6 +118,47 @@ public class BackendVmPoolsResourceTest extends
     }
 
     @Test
+    public void addWithName() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+
+        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+                GetVmTemplateParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[1] },
+                getTemplateEntity());
+
+        setUpGetConsoleExpectations(new int[] { 1 });
+
+        setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[1] },
+                new ArrayList<>());
+
+        setUpCreationExpectations(VdcActionType.AddVmPoolWithVms,
+                VmPoolParametersBase.class,
+                new String[] { "StorageDomainId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true,
+                GUIDS[0],
+                VdcQueryType.GetVmPoolById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                getEntity(0));
+
+        VmPool pool = getModel(0);
+        pool.setId(null);
+        pool.getTemplate().setId(null);
+        pool.getTemplate().setName(NAMES[1]);
+        Response response = collection.add(pool);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VmPool);
+        verifyModelTemplate((VmPool) response.getEntity());
+    }
+
+    @Test
     @Override
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
