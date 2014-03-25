@@ -1,11 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
-
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+
+import java.util.List;
 
 public class GetVmTemplatesByStoragePoolIdQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
@@ -15,8 +14,7 @@ public class GetVmTemplatesByStoragePoolIdQuery<P extends IdQueryParameters>
 
     @Override
     protected void executeQueryCommand() {
-        StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(getParameters().getId());
-        List<VmTemplate> templateList = DbFacade.getInstance().getVmTemplateDao().getAllForStorageDomain(pool.getId());
+        List<VmTemplate> templateList = DbFacade.getInstance().getVmTemplateDao().getAllForStoragePool(getParameters().getId());
             // Load VmInit and disks
         for (VmTemplate template : templateList) {
             VmHandler.updateVmInitFromDB(template, true);

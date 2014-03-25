@@ -114,6 +114,14 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
     }
 
     @Override
+    public List<VmTemplate> getAllForStoragePool(Guid id) {
+        return getCallsHandler().executeReadList("GetVmTemplatesByStoragePoolId",
+                VMTemplateRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("storage_pool_id", id));
+    }
+
+    @Override
     public List<VmTemplate> getAllTemplatesRelatedToQuotaId(Guid quotaId) {
         return getCallsHandler().executeReadList("GetAllVmTemplatesRelatedToQuotaId",
                 VMTemplateRowMapper.instance,

@@ -409,6 +409,19 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetVmTemplatesByStoragePoolId(v_storage_pool_id UUID) RETURNS SETOF vm_templates_view STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT DISTINCT vm_templates.*
+      FROM vm_templates_view vm_templates
+      where vm_templates.storage_pool_id = v_storage_pool_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
 Create or replace FUNCTION GetVmTemplatesByImageId(v_image_guid UUID) RETURNS SETOF vm_templates_with_plug_info STABLE
    AS $procedure$
 BEGIN
