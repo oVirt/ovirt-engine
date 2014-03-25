@@ -10,8 +10,12 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class OvfManager {
+
+    private Log log = LogFactory.getLog(OvfManager.class);
 
     public String ExportVm(VM vm, ArrayList<DiskImage> images, Version version) {
         OvfWriter ovf = new OvfVmWriter(vm, images, version);
@@ -32,17 +36,14 @@ public class OvfManager {
             ArrayList<DiskImage> images,
             ArrayList<VmNetworkInterface> interfaces)
             throws OvfReaderException {
-        XmlDocument document = new XmlDocument();
-        document.LoadXml(ovfstring);
-
 
         OvfReader ovf = null;
         try {
-            ovf = new OvfVmReader(document, vm, images, interfaces);
+            ovf = new OvfVmReader(new XmlDocument(ovfstring), vm, images, interfaces);
             BuildOvf(ovf);
         } catch (Exception ex) {
-            String name = (ovf == null) ? OvfVmReader.EmptyName : ovf.getName();
-            throw new OvfReaderException("Error parsing OVF:\r\n\r\n" + ovfstring, ex, name);
+            logOvfLoadError(ex.getMessage(), ovfstring);
+            throw new OvfReaderException( ex, ovf != null ? ovf.getName() : null);
         }
         Guid id = vm.getStaticData().getId();
         for (VmNetworkInterface iface : interfaces) {
@@ -53,20 +54,23 @@ public class OvfManager {
     public void ImportTemplate(String ovfstring, VmTemplate vmTemplate,
             ArrayList<DiskImage> images, ArrayList<VmNetworkInterface> interfaces)
             throws OvfReaderException {
-        XmlDocument document = new XmlDocument();
-        document.LoadXml(ovfstring);
 
         OvfReader ovf = null;
         try {
-            ovf = new OvfTemplateReader(document, vmTemplate, images, interfaces);
+            ovf = new OvfTemplateReader(new XmlDocument(ovfstring), vmTemplate, images, interfaces);
             BuildOvf(ovf);
         } catch (Exception ex) {
-            String name = (ovf == null) ? OvfVmReader.EmptyName : ovf.getName();
-            throw new OvfReaderException("Error parsing OVF:\r\n\r\n" + ovfstring, ex, name);
+            logOvfLoadError(ex.getMessage(), ovfstring);
+            throw new OvfReaderException(ex, ovf != null ? ovf.getName() : null);
         }
     }
 
-    public boolean IsOvfTemplate(String ovfstring) {
+    private void logOvfLoadError(String message, String ovfstring) {
+        log.errorFormat("Error parsing OVF due to {0}", message);
+        log.debugFormat("Error parsing OVF {0}\n", ovfstring);
+    }
+
+    public boolean IsOvfTemplate(String ovfstring) throws OvfReaderException {
         return new OvfParser(ovfstring).IsTemplate();
     }
 

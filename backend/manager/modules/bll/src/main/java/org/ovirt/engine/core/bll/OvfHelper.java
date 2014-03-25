@@ -107,7 +107,7 @@ public class OvfHelper {
         return DbFacade.getInstance();
     }
 
-    public boolean isOvfTemplate(String ovfstring) {
+    public boolean isOvfTemplate(String ovfstring) throws OvfReaderException {
         return ovfManager.IsOvfTemplate(ovfstring);
     }
 }

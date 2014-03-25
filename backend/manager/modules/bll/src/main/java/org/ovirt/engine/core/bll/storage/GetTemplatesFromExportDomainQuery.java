@@ -42,17 +42,18 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
                     templates.put(template, diskImages);
                 }
             } catch (OvfReaderException ex) {
-                AuditLogableBase logable = new AuditLogableBase();
-                logable.addCustomValue("Template", ex.getName());
-                AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_TEMPLATE);
-            } catch (RuntimeException ex) {
-                AuditLogableBase logable = new AuditLogableBase();
-                logable.addCustomValue("Template", "[Unknown name]");
-                AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_TEMPLATE);
+                auditLogOvfLoadError(ex.getName());
             }
-
         }
 
         return templates;
     }
+
+    private void auditLogOvfLoadError(String machineName) {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.addCustomValue("Template", machineName);
+        AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_TEMPLATE);
+
+    }
+
 }

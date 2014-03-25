@@ -85,8 +85,12 @@ public class InstallerMessages {
 
     private boolean _internalPostOldXmlFormat(String message) {
         boolean error = false;
-        XmlDocument doc = new XmlDocument();
-        doc.LoadXml(message);
+        XmlDocument doc = null;
+        try {
+            doc = new XmlDocument(message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         XmlNode node = doc.childNodes[0];
         if (node != null) {
             StringBuilder sb = new StringBuilder();

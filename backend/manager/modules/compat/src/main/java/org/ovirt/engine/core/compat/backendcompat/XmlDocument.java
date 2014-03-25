@@ -21,25 +21,28 @@ public class XmlDocument {
 
     private Document doc;
 
-    public void LoadXml(String ovfstring) {
-        try {
-            // load doc
-            DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
-            fact.setNamespaceAware(true);
-            DocumentBuilder builder = fact.newDocumentBuilder();
-            doc = builder.parse(new InputSource(new StringReader(ovfstring)));
+    public XmlDocument() {
+    }
 
-            // initialize all the child nodes
-            NodeList list = doc.getElementsByTagName("*");
-            childNodes = new XmlNode[list.getLength()];
-            for (int i = 0; i < list.getLength(); i++) {
-                childNodes[i] = new XmlNode(list.item(i));
-            }
+    public XmlDocument(String xml) throws Exception {
+        LoadXml(xml);
+    }
 
-            outerXml = ovfstring;
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e.getCause());
+    private void LoadXml(String ovfstring) throws Exception {
+        // load doc
+        DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
+        fact.setNamespaceAware(true);
+        DocumentBuilder builder = fact.newDocumentBuilder();
+        doc = builder.parse(new InputSource(new StringReader(ovfstring)));
+
+        // initialize all the child nodes
+        NodeList list = doc.getElementsByTagName("*");
+        childNodes = new XmlNode[list.getLength()];
+        for (int i = 0; i < list.getLength(); i++) {
+            childNodes[i] = new XmlNode(list.item(i));
         }
+
+        outerXml = ovfstring;
     }
 
     public XmlNode SelectSingleNode(String string) {

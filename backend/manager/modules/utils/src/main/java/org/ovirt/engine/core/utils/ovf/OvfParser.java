@@ -23,10 +23,13 @@ public class OvfParser {
     protected XmlDocument _document;
     protected XmlNamespaceManager _xmlNS;
 
-    public OvfParser(String ovfstring) {
-        _document = new XmlDocument();
-        _document.LoadXml(ovfstring);
-
+    public OvfParser(String ovfstring) throws OvfReaderException {
+        try {
+            _document = new XmlDocument(ovfstring);
+        } catch (Exception e) {
+            log.errorFormat("Failed Parsing OVF due to {0} ", e.getMessage());
+            throw new OvfReaderException(e);
+        }
         _xmlNS = new XmlNamespaceManager();
     }
 
