@@ -67,9 +67,13 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             // Make sure that the StopVdsCommand that runs by the RestartVds
             // don't write over our job, and disrupt marking the job status correctly
             ExecutionContext ec = (ExecutionContext) ObjectUtils.clone(this.getExecutionContext());
-            ec.setJob(this.getExecutionContext().getJob());
-            super.executeCommand();
-            this.setExecutionContext(ec);
+            if (ec != null) {
+                ec.setJob(this.getExecutionContext().getJob());
+                super.executeCommand();
+                this.setExecutionContext(ec);
+            } else {
+                super.executeCommand();
+            }
         } else {
             setCommandShouldBeLogged(false);
             log.infoFormat("Host {0}({1}) not fenced since it's status is ok, or it doesn't exist anymore.",
