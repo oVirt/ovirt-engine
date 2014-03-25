@@ -45,8 +45,8 @@ import org.ovirt.engine.core.common.businessentities.ConfigurationType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -56,8 +56,9 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdsQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -399,9 +400,12 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(new int[]{0, 0});
         setUpGetCertuficateExpectations(2, 0);
         setUpHttpHeaderExpectations("Expect", "201-created");
-        setUpGetEntityExpectations("Cluster: name=" + NAMES[1],
-                                   SearchType.Cluster,
-                                   setUpVDSGroup(GUIDS[1]));
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[1] },
+                setUpVDSGroup(GUIDS[1]));
+
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
@@ -792,8 +796,10 @@ public class BackendVmsResourceTest
         model.getInitialization().getConfiguration().setType("ovf");
         model.setCluster(new Cluster());
         model.getCluster().setName(NAMES[1]);
-        setUpGetEntityExpectations("Cluster: name=" + NAMES[1],
-                SearchType.Cluster,
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[1] },
                 setUpVDSGroup(GUIDS[1]));
         setUpGetEntityExpectations(VdcQueryType.GetVmFromConfiguration,
                 GetVmFromConfigurationQueryParameters.class,
@@ -880,9 +886,11 @@ public class BackendVmsResourceTest
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
         setUpGetCertuficateExpectations(1, 2);
-        setUpGetEntityExpectations("Hosts: name=" + NAMES[1],
-                SearchType.VDS,
-                getHost());
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsStaticByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[1] },
+                getStaticHost());
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -916,10 +924,10 @@ public class BackendVmsResourceTest
         verifyModel((VM) response.getEntity(), 2);
     }
 
-    private VDS getHost() {
-        VDS vds = new VDS();
-        vds.setId(GUIDS[2]);
-        return vds;
+    private VdsStatic getStaticHost() {
+        VdsStatic vdsStatic = new VdsStatic();
+        vdsStatic.setId(GUIDS[2]);
+        return vdsStatic;
     }
 
     @Test
@@ -983,9 +991,11 @@ public class BackendVmsResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
-        setUpGetEntityExpectations("Cluster: name=" + NAMES[2],
-                                   SearchType.Cluster,
-                                   setUpVDSGroup(GUIDS[2]));
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[2] },
+                setUpVDSGroup(GUIDS[2]));
 
         setUpCreationExpectations(VdcActionType.AddVm,
                                   VmManagementParametersBase.class,

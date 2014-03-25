@@ -554,7 +554,7 @@ Create or replace FUNCTION GetVdsStaticByHostName(v_host_name VARCHAR(255)) RETU
 BEGIN
 RETURN QUERY SELECT vds_static.*
    FROM vds_static
-   WHERE host_name = v_host_name;
+   WHERE vds_name = v_host_name;
 
    RETURN;
 END; $procedure$

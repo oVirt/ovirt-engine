@@ -44,6 +44,9 @@ public enum VdcQueryType implements Serializable {
     GetServerSSHPublicKey,
     GetServerSSHKeyFingerprint,
 
+    // VdsStatic Queries
+    GetVdsStaticByName,
+
     // Vds Networks
     GetVdsInterfacesByVdsId(VdcQueryAuthType.User),
     GetVdsFreeBondsByVdsId,

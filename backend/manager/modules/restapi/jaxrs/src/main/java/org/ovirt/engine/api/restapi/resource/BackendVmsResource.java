@@ -45,8 +45,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -56,8 +56,8 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -262,7 +262,10 @@ public class BackendVmsResource extends
     }
 
     private String getHostId(String hostName) {
-        return getEntity(VDS.class, SearchType.VDS, "Hosts: name=" + hostName).getId().toString();
+        return getEntity(VdsStatic.class,
+                VdcQueryType.GetVdsStaticByName,
+                new NameQueryParameters(hostName),
+                "Hosts: name=" + hostName).getId().toString();
     }
 
     private Response cloneVmFromSnapshot(VmStatic staticVm,
@@ -520,9 +523,7 @@ public class BackendVmsResource extends
     }
 
     private VmTemplate getTemplateByName(VM vm) {
-        return isFiltered() ? lookupTemplateByName(vm.getTemplate().getName()) : getEntity(
-                VmTemplate.class, SearchType.VmTemplate,
-                "Template: name=" + vm.getTemplate().getName());
+        return lookupTemplateByName(vm.getTemplate().getName());
     }
 
     public VmTemplate lookupTemplateByName(String name) {
@@ -542,8 +543,9 @@ public class BackendVmsResource extends
     }
 
     protected Guid getClusterId(VM vm) {
-        return isFiltered() ? lookupClusterByName(vm.getCluster().getName()).getId() : getEntity(
-                VDSGroup.class, SearchType.Cluster,
+        return isFiltered() ? lookupClusterByName(vm.getCluster().getName()).getId() : getEntity(VDSGroup.class,
+                VdcQueryType.GetVdsGroupByName,
+                new NameQueryParameters(vm.getCluster().getName()),
                 "Cluster: name=" + vm.getCluster().getName()).getId();
     }
 

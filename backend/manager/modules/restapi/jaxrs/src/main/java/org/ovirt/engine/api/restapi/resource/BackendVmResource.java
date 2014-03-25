@@ -30,7 +30,6 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
-import org.ovirt.engine.api.resource.VmSessionsResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
@@ -38,6 +37,7 @@ import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.api.resource.VmResource;
+import org.ovirt.engine.api.resource.VmSessionsResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.VmMapper;
@@ -62,13 +62,13 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -139,15 +139,18 @@ public class BackendVmResource extends
     }
 
     private String getHostId(String hostName) {
-        return getEntity(VDS.class, SearchType.VDS, "Hosts: name=" + hostName).getId().toString();
+        return getEntity(VdsStatic.class,
+                VdcQueryType.GetVdsStaticByName,
+                new NameQueryParameters(hostName),
+                "Hosts: name=" + hostName).getId().toString();
     }
 
     protected Guid lookupClusterId(VM vm) {
         return vm.getCluster().isSetId() ? asGuid(vm.getCluster().getId())
-                                           :
-                                           getEntity(VDSGroup.class,
-                                                     SearchType.Cluster,
-                                                     "Cluster: name=" + vm.getCluster().getName()).getId();
+                : getEntity(VDSGroup.class,
+                        VdcQueryType.GetVdsGroupByName,
+                                                       new NameQueryParameters(vm.getCluster().getName()),
+                        "Cluster: name=" + vm.getCluster().getName()).getId();
     }
 
     @Override

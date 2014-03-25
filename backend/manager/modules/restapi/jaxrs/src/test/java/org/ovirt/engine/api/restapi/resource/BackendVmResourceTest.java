@@ -32,6 +32,7 @@ import org.ovirt.engine.api.model.Floppy;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.Payloads;
+import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Ticket;
@@ -59,13 +60,12 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
-import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -287,9 +287,11 @@ public class BackendVmResourceTest
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
-        setUpGetEntityExpectations("Hosts: name=" + NAMES[1],
-                SearchType.VDS,
-                getHost());
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsStaticByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[1] },
+                getStaticHost());
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
                                            new String[] {},
@@ -304,10 +306,10 @@ public class BackendVmResourceTest
         verifyModel(resource.update(model), 0);
     }
 
-    private VDS getHost() {
-        VDS vds = new VDS();
-        vds.setId(GUIDS[2]);
-        return vds;
+    private VdsStatic getStaticHost() {
+        VdsStatic vdsStatic = new VdsStatic();
+        vdsStatic.setId(GUIDS[2]);
+        return vdsStatic;
     }
 
     @Test
