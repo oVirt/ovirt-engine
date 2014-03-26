@@ -285,7 +285,11 @@ public class ResourceManager {
      * @param status
      */
     public void InternalSetVmStatus(VM vm, final VMStatus status) {
-        InternalSetVmStatus(vm, status, VmExitStatus.Normal, StringUtils.EMPTY);
+        InternalSetVmStatus(vm, status, VmExitStatus.Normal);
+    }
+
+    public void InternalSetVmStatus(VM vm, final VMStatus status, VmExitStatus exitStatus) {
+        InternalSetVmStatus(vm, status, exitStatus, StringUtils.EMPTY);
     }
 
     public void InternalSetVmStatus(VM vm, final VMStatus status, final VmExitStatus exitStaus, final String exitMessage) {

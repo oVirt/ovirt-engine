@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -475,7 +476,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.SetVmStatus,
-                            new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down));
+                            new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down, VmExitStatus.Error));
             // Write that this VM was shut down by host reboot or manual fence
             if (returnValue != null && returnValue.getSucceeded()) {
                 LogSettingVmToDown(getVds().getId(), vm.getId());
