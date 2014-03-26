@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent;
 import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
 import org.ovirt.engine.ui.common.utils.DynamicMessages;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
+import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
@@ -40,7 +41,11 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
         void setConsoleProtocol(String protocol);
 
+        void setConsoleConnectLinkEnabled(boolean enabled);
+
         void setEditConsoleEnabled(boolean enabled);
+
+        HasClickHandlers getConsoleConnectAnchor();
 
         HasClickHandlers getEditButton();
 
@@ -53,6 +58,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
     private final ApplicationMessages messages;
     private final DynamicMessages dynamicMessages;
+    private final ErrorPopupManager errorPopupManager;
     private final Map<ConsoleProtocol, String> consoleTypeToName = new HashMap<ConsoleProtocol, String>();
 
     @Inject
@@ -61,10 +67,12 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
             final UserPortalBasicListProvider modelProvider,
             final ApplicationMessages messages,
             final DynamicMessages dynamicMessages,
+            final ErrorPopupManager errorPopupManager,
             final CommonApplicationConstants constants) {
         super(eventBus, view);
         this.messages = messages;
         this.dynamicMessages = dynamicMessages;
+        this.errorPopupManager = errorPopupManager;
 
         initConsoleTypeToNameMap(constants);
 
@@ -72,6 +80,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
         listenOnDiskModelChangeEvent(modelProvider);
 
+        listenOnConsoleConnectAnchor(modelProvider);
         listenOnEditButton(modelProvider);
         listenOnConsoleClientResourcesAnchor();
 
@@ -86,6 +95,22 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
             }
 
         });
+    }
+
+    private void listenOnConsoleConnectAnchor(final UserPortalBasicListProvider modelProvider) {
+        registerHandler(getView().getConsoleConnectAnchor().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                try {
+                    VmConsoles vmConsoles = modelProvider.getModel().getSelectedItem().getVmConsoles();
+                    if (vmConsoles.canConnectToConsole()) {
+                        vmConsoles.connect();
+                    }
+                } catch (VmConsoles.ConsoleConnectException e) {
+                    errorPopupManager.show(e.getLocalizedErrorMessage());
+                }
+            }
+        }));
     }
 
     private void listenOnConsoleClientResourcesAnchor() {
@@ -172,6 +197,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     private void setupConsole(final UserPortalBasicListProvider modelProvider) {
         UserPortalItemModel item = modelProvider.getModel().getSelectedItem();
 
+        getView().setConsoleConnectLinkEnabled(canConnectToConsole(item));
         getView().setEditConsoleEnabled(isEditConsoleEnabled(item));
 
         if (!item.getVmConsoles().canConnectToConsole()) {
@@ -179,6 +205,14 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
         } else {
             getView().setConsoleProtocol(determineProtocolMessage(item.getVmConsoles()));
         }
+    }
+
+    private boolean canConnectToConsole(UserPortalItemModel item) {
+        if (item == null) {
+            return false;
+        }
+
+        return item.getVmConsoles().canConnectToConsole();
     }
 
     private String determineProtocolMessage(VmConsoles vmConsoles) {

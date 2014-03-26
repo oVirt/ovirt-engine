@@ -94,6 +94,11 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     @UiField
     @Ignore
     @WithElementId
+    Anchor consoleConnectAnchor;
+
+    @UiField
+    @Ignore
+    @WithElementId
     Anchor editProtocolLink;
 
     @UiField(provided = true)
@@ -151,6 +156,15 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     }
 
     @Override
+    public void setConsoleConnectLinkEnabled(boolean enabled) {
+        if (enabled) {
+            consoleConnectAnchor.setStyleName(style.basicInfoDetailsLink());
+        } else {
+            consoleConnectAnchor.setStyleName(style.basicInfoDetailsLinkDisabled());
+        }
+    }
+
+    @Override
     public void setEditConsoleEnabled(boolean enabled) {
         if (enabled) {
             editProtocolLink.setStyleName(style.basicInfoDetailsLink());
@@ -173,6 +187,10 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     @Override
     public HasClickHandlers getConsoleClientResourcesAnchor() {
         return consoleClientResourcesUrl;
+    }
+
+    public HasClickHandlers getConsoleConnectAnchor() {
+        return consoleConnectAnchor;
     }
 
     @Override

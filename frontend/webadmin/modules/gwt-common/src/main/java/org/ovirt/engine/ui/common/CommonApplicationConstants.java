@@ -1717,4 +1717,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Provide custom serial number policy")
     String overrideSerialNumberPolicy();
+
+    @DefaultStringValue("Connect")
+    String connect();
 }

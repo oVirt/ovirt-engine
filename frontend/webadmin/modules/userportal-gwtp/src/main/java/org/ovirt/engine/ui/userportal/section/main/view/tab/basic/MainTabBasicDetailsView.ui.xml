@@ -159,6 +159,7 @@
         }
 
         .consoleLabel, .clientResourcesLink {
+            float: left;
             font-family: Arial, sans-serif;
             color: #3A5F7C;
             text-align: left;
@@ -172,6 +173,7 @@
         }
 
         .clientResourcesLink {
+            clear: left;
             font-size: 15px;
         }
 	</ui:style>
@@ -234,12 +236,13 @@
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.detailsRow}">
 							<g:Image resource='{resources.basicConsoleIcon}' addStyleNames="{style.rowIcon}" />
-                                <g:FlowPanel addStyleNames="{style.leftConsolePanel}">
-                                    <g:Label text="{constants.consoleBasicDetails} : " addStyleNames="{style.consoleLabel}" />
-                                    <g:Anchor ui:field="consoleClientResourcesUrl"  styleName="{style.clientResourcesLink}"/>
-                                </g:FlowPanel>
-                                <g:Anchor ui:field="editProtocolLink" text="({constants.editBasicDetails})" addStyleNames="{style.basicInfoDetailsLinkDisabled}"/>
-                                <g:Label ui:field="protocolMessage" />
+                            <g:FlowPanel addStyleNames="{style.leftConsolePanel}">
+                                <g:Label text="{constants.consoleBasicDetails} : " addStyleNames="{style.consoleLabel}" />
+                                <g:Anchor ui:field="consoleConnectAnchor" text="{constants.connect}" addStyleNames="{style.consoleLabel}" />
+                                <g:Anchor ui:field="consoleClientResourcesUrl"  styleName="{style.clientResourcesLink}"/>
+                            </g:FlowPanel>
+                            <g:Anchor ui:field="editProtocolLink" text="({constants.editBasicDetails})" addStyleNames="{style.basicInfoDetailsLinkDisabled}"/>
+                            <g:Label ui:field="protocolMessage" />
 						</g:FlowPanel>
 					</g:FlowPanel>
 				</g:layer>
