@@ -244,7 +244,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     @Override
     public void onDoubleClick(DoubleClickEvent event) {
         try {
-            if (!model.isPool()) {
+            if (model.getVmConsoles().canConnectToConsole()) {
                 model.getVmConsoles().connect();
             }
         } catch (VmConsoles.ConsoleConnectException e) {
