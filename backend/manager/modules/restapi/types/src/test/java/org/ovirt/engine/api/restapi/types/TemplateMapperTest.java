@@ -61,6 +61,7 @@ public class TemplateMapperTest
         assertEquals(model.getCpu().getTopology().getSockets(),
                 transform.getCpu().getTopology().getSockets());
         assertNotNull(transform.isSetOs());
+        assertEquals(model.getBios().getBootMenu().isEnabled(), transform.getBios().getBootMenu().isEnabled());
         assertTrue(transform.getOs().isSetBoot());
         assertEquals(model.getOs().getBoot().size(), transform.getOs().getBoot().size());
         for (int i = 0; i < model.getOs().getBoot().size(); i++) {

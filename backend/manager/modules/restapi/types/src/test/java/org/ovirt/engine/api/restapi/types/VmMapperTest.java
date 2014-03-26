@@ -120,6 +120,7 @@ public class VmMapperTest extends
                 transform.getCpu().getTopology().getCores()) < model.getCpu().getTopology().getSockets());
         assertEquals(model.getCpu().getTopology().getSockets(),
                 transform.getCpu().getTopology().getSockets());
+        assertEquals(model.getBios().getBootMenu().isEnabled(), transform.getBios().getBootMenu().isEnabled());
         assertNotNull(transform.getOs());
         assertTrue(transform.getOs().isSetBoot());
         assertEquals(model.getOs().getBoot().size(), transform.getOs().getBoot().size());

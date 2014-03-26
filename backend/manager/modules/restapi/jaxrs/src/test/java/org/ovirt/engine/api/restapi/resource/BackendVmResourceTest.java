@@ -18,8 +18,10 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Bios;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
+import org.ovirt.engine.api.model.BootMenu;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.model.Cluster;
@@ -479,6 +481,22 @@ public class BackendVmResourceTest
         action.getVm().setOs(new OperatingSystem());
         action.getVm().getOs().getBoot().add(new Boot());
         action.getVm().getOs().getBoot().get(0).setDev(BootDevice.NETWORK.value());
+
+        verifyActionResponse(resource.start(action));
+    }
+
+    @Test
+    public void testStartWithBootMenu() throws Exception {
+        setUpWindowsGetEntityExpectations(1, false);
+        setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
+                                           RunVmOnceParams.class,
+                                           new String[] { "VmId", "BootMenuEnabled" },
+                                           new Object[] { GUIDS[0], true }));
+        Action action = new Action();
+        action.setVm(new VM());
+        action.getVm().setBios(new Bios());
+        action.getVm().getBios().setBootMenu(new BootMenu());
+        action.getVm().getBios().getBootMenu().setEnabled(true);
 
         verifyActionResponse(resource.start(action));
     }

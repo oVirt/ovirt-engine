@@ -94,6 +94,7 @@ actions:
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
           vm.serial_number.policy: xs:string
           vm.serial_number.value: xs:string
+          vm.bios.boot_menu.enabled: xs:boolean
         description: update the virtual machine in the system for the given virtual machine id with the values specified in the request
     urlparams: {}
     headers:
@@ -173,6 +174,7 @@ actions:
           vm.use_latest_template_version: xs:boolean
           vm.serial_number.policy: xs:string
           vm.serial_number.value: xs:string
+          vm.bios.boot_menu.enabled: xs:boolean
         description: add a virtual machine to the system from scratch
       # the following signature is for clone VM from a Snapshot - requires the Snapshot ID
       - mandatoryArguments: {vm.name: 'xs:string', vm.template.id|name: 'xs:string', vm.cluster.id|name: 'xs:string',
@@ -220,6 +222,7 @@ actions:
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
           vm.serial_number.policy: xs:string
           vm.serial_number.value: xs:string
+          vm.bios.boot_menu.enabled: xs:boolean
         description: add a virtual machine to the system by cloning from a snapshot
       # the following signature is for adding VM from a configuration - requires the configuration type and the configuration data
       - mandatoryArguments: {vm.initialization.configuration.type: 'xs:string', vm.initialization.configuration.data: 'xs:string'}
@@ -269,6 +272,7 @@ actions:
                 vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
                 vm.serial_number.policy: xs:string
                 vm.serial_number.value: xs:string
+                vm.bios.boot_menu.enabled: xs:boolean
         description: add a virtual machine to the system from a configuration - requires the configuration type and the configuration data
     urlparams: {}
     headers:
@@ -3432,6 +3436,7 @@ actions:
           template.version.version_name: xs:string
           template.serial_number.policy: xs:string
           template.serial_number.value: xs:string
+          template.bios.boot_menu.enabled: xs:boolean
         description: update the specified template in the system
     urlparams: {}
     headers:
@@ -3487,6 +3492,7 @@ actions:
           template.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
           template.serial_number.policy: xs:string
           template.serial_number.value: xs:string
+          template.bios.boot_menu.enabled: xs:boolean
         description: add a new template to the system
     urlparams: {}
     headers:

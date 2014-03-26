@@ -11,8 +11,10 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.AuthorizedKey;
+import org.ovirt.engine.api.model.Bios;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
+import org.ovirt.engine.api.model.BootMenu;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.CloudInit;
@@ -201,6 +203,11 @@ public class VmMapper {
                 staticVm.setKernelParams(vm.getOs().getCmdline());
             }
         }
+        if (vm.isSetBios()) {
+            if (vm.getBios().isSetBootMenu()) {
+                staticVm.setBootMenuEnabled(vm.getBios().getBootMenu().isEnabled());
+            }
+        }
         if (vm.isSetType()) {
             VmType vmType = VmType.fromValue(vm.getType());
             if (vmType != null) {
@@ -381,6 +388,9 @@ public class VmMapper {
         if (entity.getStopReason() != null) {
             model.setStopReason(entity.getStopReason());
         }
+        model.setBios(new Bios());
+        model.getBios().setBootMenu(new BootMenu());
+        model.getBios().getBootMenu().setEnabled(entity.isBootMenuEnabled());
         if (entity.getBootSequence() != null ||
             entity.getKernelUrl() != null ||
             entity.getInitrdUrl() != null ||
@@ -581,6 +591,11 @@ public class VmMapper {
         }
         if (vm.isSetCustomProperties()) {
             params.setCustomProperties(CustomPropertiesParser.parse(vm.getCustomProperties().getCustomProperty()));
+        }
+        if (vm.isSetBios()) {
+            if (vm.getBios().isSetBootMenu()) {
+                params.setBootMenuEnabled(vm.getBios().getBootMenu().isEnabled());
+            }
         }
         if (vm.isSetOs()) {
             if (vm.getOs().isSetBoot() && vm.getOs().getBoot().size() > 0) {

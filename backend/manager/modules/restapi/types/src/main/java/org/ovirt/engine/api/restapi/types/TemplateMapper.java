@@ -3,7 +3,9 @@ package org.ovirt.engine.api.restapi.types;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Architecture;
+import org.ovirt.engine.api.model.Bios;
 import org.ovirt.engine.api.model.Boot;
+import org.ovirt.engine.api.model.BootMenu;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuTopology;
@@ -97,6 +99,11 @@ public class TemplateMapper {
 
             if (archType != null) {
                 entity.setClusterArch(CPUMapper.map(archType, null));
+            }
+        }
+        if (model.isSetBios()) {
+            if (model.getBios().isSetBootMenu()) {
+                entity.setBootMenuEnabled(model.getBios().getBootMenu().isEnabled());
             }
         }
         if (model.isSetCpuShares()) {
@@ -347,6 +354,9 @@ public class TemplateMapper {
             os.setCmdline(entity.getKernelParams());
             model.setOs(os);
         }
+        model.setBios(new Bios());
+        model.getBios().setBootMenu(new BootMenu());
+        model.getBios().getBootMenu().setEnabled(entity.isBootMenuEnabled());
         if (entity.getVdsGroupId() != null) {
             Cluster cluster = new Cluster();
             cluster.setId(entity.getVdsGroupId().toString());
