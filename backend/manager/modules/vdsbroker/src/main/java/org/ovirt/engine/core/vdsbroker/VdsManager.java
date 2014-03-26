@@ -473,8 +473,8 @@ public class VdsManager {
      * This scheduled method allows this vds to recover from
      * Error status.
      */
-    @OnTimerMethodAnnotation("onVdsDuringFailureTimer")
-    public void onVdsDuringFailureTimer() {
+    @OnTimerMethodAnnotation("recoverFromError")
+    public void recoverFromError() {
         VDS vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
 
         /**
@@ -483,7 +483,7 @@ public class VdsManager {
         if (vds.getStatus() == VDSStatus.Error) {
             setStatus(VDSStatus.Up, vds);
             DbFacade.getInstance().getVdsDynamicDao().updateStatus(getVdsId(), VDSStatus.Up);
-            log.infoFormat("onVdsDuringFailureTimer of Host {0} entered after {1} attempts to run a VM",
+            log.infoFormat("recoverFromError of Host {0} entered after {1} attempts to run a VM",
                     vds.getName(),
                     mFailedToRunVmAttempts);
             mFailedToRunVmAttempts.set(0);
@@ -506,7 +506,7 @@ public class VdsManager {
                     new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.Error));
 
             SchedulerUtil sched = SchedulerUtilQuartzImpl.getInstance();
-            sched.scheduleAOneTimeJob(this, "onVdsDuringFailureTimer", new Class[0],
+            sched.scheduleAOneTimeJob(this, "recoverFromError", new Class[0],
                     new Object[0], VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES,
                     TimeUnit.MINUTES);
             AuditLogableBase logable = new AuditLogableBase(vds.getId());
