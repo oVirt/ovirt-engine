@@ -605,20 +605,16 @@ class Const(object):
     UPGRADE_YUM_GROUP_NAME = 'ovirt-engine-3.4'
 
     @classproperty
-    def RPM_LOCK_LIST(self):
-        return tuple([
-            '{name}%s'.format(
-                name=self.ENGINE_PACKAGE_NAME,
-            ) % package for package in (
-                '',
-                '-backend',
-                '-dbscripts',
-                '-restapi',
-                '-tools',
-                '-userportal',
-                '-webadmin-portal',
-            )
-        ])
+    def RPM_LOCK_LIST_SUFFIXES(self):
+        return (
+            '',
+            '-backend',
+            '-dbscripts',
+            '-restapi',
+            '-tools',
+            '-userportal',
+            '-webadmin-portal',
+        )
 
     FILE_GROUP_SECTION_PREFIX = 'file_group_'
 
