@@ -79,7 +79,7 @@ Create or replace FUNCTION GetAllFromVm_pools() RETURNS SETOF GetAllFromVm_pools
 BEGIN
       -- BEGIN TRAN
 BEGIN
-         CREATE GLOBAL TEMPORARY TABLE tt_VM_POOL_GROUP
+         CREATE TEMPORARY TABLE tt_VM_POOL_GROUP
          (
             vm_pool_id UUID,
             assigned_vm_count INTEGER
@@ -96,7 +96,7 @@ BEGIN
       left join vm_pool_map on vm_pools_view.vm_pool_id = vm_pool_map.vm_pool_id
       group by vm_pools_view.vm_pool_id,vm_pool_map.vm_pool_id;
       BEGIN
-         CREATE GLOBAL TEMPORARY TABLE tt_VM_POOL_RUNNING
+         CREATE TEMPORARY TABLE tt_VM_POOL_RUNNING
          (
             vm_pool_id UUID,
             vm_running_count INTEGER
@@ -113,7 +113,7 @@ BEGIN
       where vm_dynamic.status > 0
       group by vm_pools_view.vm_pool_id;
       BEGIN
-         CREATE GLOBAL TEMPORARY TABLE tt_VM_POOL_PRERESULT
+         CREATE TEMPORARY TABLE tt_VM_POOL_PRERESULT
          (
             vm_pool_id UUID,
             assigned_vm_count INTEGER,
@@ -132,7 +132,7 @@ BEGIN
       set vm_running_count = 0
       where vm_running_count is NULL;
       BEGIN
-         CREATE GLOBAL TEMPORARY TABLE tt_VM_POOL_RESULT
+         CREATE TEMPORARY TABLE tt_VM_POOL_RESULT
          (
             vm_pool_id UUID,
             assigned_vm_count INTEGER,

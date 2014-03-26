@@ -421,7 +421,7 @@ BEGIN
       end if;
     else
       BEGIN
-         CREATE GLOBAL TEMPORARY TABLE tt_TEMP22
+         CREATE TEMPORARY TABLE tt_TEMP22
          (
             status INTEGER,
             count INTEGER

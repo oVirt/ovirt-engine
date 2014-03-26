@@ -644,7 +644,7 @@ BEGIN
 
    BEGIN
       -- Creating a temporary table which will give all the images and the disks which resids on only the specified storage domain. (copied template disks on multiple storage domains will not be part of this table)
-      CREATE GLOBAL TEMPORARY TABLE STORAGE_DOMAIN_MAP_TABLE AS select image_guid as image_id,disk_id
+      CREATE TEMPORARY TABLE STORAGE_DOMAIN_MAP_TABLE AS select image_guid as image_id,disk_id
          from images_storage_domain_view where storage_id = v_storage_domain_id
          except select image_guid as image_id, disk_id from images_storage_domain_view where storage_id != v_storage_domain_id;
       exception when others then
@@ -656,7 +656,7 @@ BEGIN
 
    BEGIN
       -- Templates with any images residing on only the specified storage domain
-      CREATE GLOBAL TEMPORARY TABLE TEMPLATES_IDS_TEMPORARY_TABLE AS select vm_device.vm_id as vm_guid
+      CREATE TEMPORARY TABLE TEMPLATES_IDS_TEMPORARY_TABLE AS select vm_device.vm_id as vm_guid
          from images_storage_domain_view
          JOIN vm_device ON vm_device.device_id = images_storage_domain_view.disk_id
          JOIN STORAGE_DOMAIN_MAP_TABLE ON STORAGE_DOMAIN_MAP_TABLE.image_id = images_storage_domain_view.image_guid
@@ -678,7 +678,7 @@ BEGIN
 
    BEGIN
      -- Vms which resides on the storage domain
-     CREATE GLOBAL TEMPORARY TABLE VM_IDS_TEMPORARY_TABLE AS select vm_id,vm_images_view.entity_type as entity_type from vm_images_view
+     CREATE TEMPORARY TABLE VM_IDS_TEMPORARY_TABLE AS select vm_id,vm_images_view.entity_type as entity_type from vm_images_view
             JOIN vm_device ON vm_device.device_id = vm_images_view.disk_id
             WHERE v_storage_domain_id in (SELECT * FROM fnsplitteruuid(storage_id));
      exception when others then
