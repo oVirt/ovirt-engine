@@ -100,7 +100,6 @@ public class VdsManager {
 
     private int VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES = Config
             .<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes);
-    private String duringFailureJobId;
     private boolean privateInitialized;
 
     public boolean getInitialized() {
@@ -172,10 +171,6 @@ public class VdsManager {
 
     public void schedulJobs() {
         SchedulerUtil sched = SchedulerUtilQuartzImpl.getInstance();
-        duringFailureJobId = sched.scheduleAFixedDelayJob(this, "onVdsDuringFailureTimer", new Class[0],
-                    new Object[0], VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES, VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES,
-                    TimeUnit.MINUTES);
-        sched.pauseJob(duringFailureJobId);
         // start with refresh statistics
         _refreshIteration = _numberRefreshesBeforeSave - 1;
 
@@ -480,24 +475,18 @@ public class VdsManager {
      */
     @OnTimerMethodAnnotation("onVdsDuringFailureTimer")
     public void onVdsDuringFailureTimer() {
-        synchronized (getLockObj()) {
-            VDS vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
-            /**
-             * Disable timer if vds returns from suspicious mode
-             */
-            if (mFailedToRunVmAttempts.decrementAndGet() == 0) {
-                SchedulerUtilQuartzImpl.getInstance().pauseJob(duringFailureJobId);
-            }
-            /**
-             * Move vds to Up status from error
-             */
-            if (mFailedToRunVmAttempts.get() < Config.<Integer> getValue(ConfigValues.NumberOfFailedRunsOnVds)
-                    && vds.getStatus() == VDSStatus.Error) {
-                setStatus(VDSStatus.Up, vds);
-                DbFacade.getInstance().getVdsDynamicDao().updateStatus(getVdsId(), VDSStatus.Up);
-            }
-            log.infoFormat("onVdsDuringFailureTimer of Host {0} entered after {1} attempts to run a VM", vds.getName(),
+        VDS vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
+
+        /**
+         * Move vds to Up status from error
+         */
+        if (vds.getStatus() == VDSStatus.Error) {
+            setStatus(VDSStatus.Up, vds);
+            DbFacade.getInstance().getVdsDynamicDao().updateStatus(getVdsId(), VDSStatus.Up);
+            log.infoFormat("onVdsDuringFailureTimer of Host {0} entered after {1} attempts to run a VM",
+                    vds.getName(),
                     mFailedToRunVmAttempts);
+            mFailedToRunVmAttempts.set(0);
         }
     }
 
@@ -516,7 +505,10 @@ public class VdsManager {
             ResourceManager.getInstance().runVdsCommand(VDSCommandType.SetVdsStatus,
                     new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.Error));
 
-            SchedulerUtilQuartzImpl.getInstance().resumeJob(duringFailureJobId);
+            SchedulerUtil sched = SchedulerUtilQuartzImpl.getInstance();
+            sched.scheduleAOneTimeJob(this, "onVdsDuringFailureTimer", new Class[0],
+                    new Object[0], VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES,
+                    TimeUnit.MINUTES);
             AuditLogableBase logable = new AuditLogableBase(vds.getId());
             logable.addCustomValue("Time", Config.<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes)
                     .toString());
