@@ -28,6 +28,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
 
     private static final int BUFFER_SIZE = 10 * 1024;
     private static final int THREAD_JOIN_TIMEOUT = 20 * 1000;
+    private static final String ARTIFICIAL_EOF = "component='RHEV_INSTALL'";
 
     private static final Log log = LogFactory.getLog(OVirtNodeUpgrade.class);
 
@@ -52,12 +53,29 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
         boolean error = false;
         try {
             String line;
+            boolean eof = false;
             while (
+                !eof &&
                 _incoming != null &&
                 (line = _incoming.readLine()) != null
             ) {
                 log.infoFormat("update from host {0}: {1}", _vds.getHostName(), line);
                 error = _messages.postOldXmlFormat(line) || error;
+
+                /*
+                 * apply artificial end-of-file
+                 *
+                 * there is no way in java to use non blocking
+                 * InputStream.
+                 *
+                 * there is no way to interrupt the blocking.
+                 *
+                 * and we cannot terminate thread as the connection
+                 * pool will get messy.
+                 *
+                 * so we should detect eof based on data.
+                 */
+                eof = line.contains(ARTIFICIAL_EOF);
             }
 
             if (error) {
