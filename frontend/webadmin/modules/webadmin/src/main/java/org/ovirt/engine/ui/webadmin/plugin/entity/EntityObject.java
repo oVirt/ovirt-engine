@@ -100,6 +100,7 @@ public final class EntityObject extends JsMutableObjectWithProperties {
         // GlusterVolume
         else if (businessEntity instanceof GlusterVolumeEntity) {
             obj.setValueAsString("name", ((GlusterVolumeEntity) businessEntity).getName()); //$NON-NLS-1$
+            obj.setValueAsString("clusterId", ((GlusterVolumeEntity) businessEntity).getClusterId().toString());//$NON-NLS-1$
         }
 
         // Provider
