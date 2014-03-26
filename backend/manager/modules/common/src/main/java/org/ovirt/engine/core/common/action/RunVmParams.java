@@ -28,6 +28,7 @@ public class RunVmParams extends VmOperationParameterBase {
     private VmPayload payload;
     private boolean balloonEnabled;
     private int cpuShares;
+    private Boolean bootMenuEnabled;
 
     public RunVmParams() {
     }
@@ -187,5 +188,18 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public void setCpuShares(int cpuShares) {
         this.cpuShares = cpuShares;
+    }
+
+    // for REST-API test compat
+    public Boolean getBootMenuEnabled() {
+        return bootMenuEnabled;
+    }
+
+    public Boolean isBootMenuEnabled() {
+        return bootMenuEnabled;
+    }
+
+    public void setBootMenuEnabled(Boolean bootMenuEnabled) {
+        this.bootMenuEnabled = bootMenuEnabled;
     }
 }

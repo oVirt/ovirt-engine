@@ -217,6 +217,7 @@ public final class Cloner
         vm.setUseLatestVersion(instance.isUseLatestVersion());
         vm.setSerialNumberPolicy(instance.getSerialNumberPolicy());
         vm.setCustomSerialNumber(instance.getCustomSerialNumber());
+        vm.setBootMenuEnabled(instance.isBootMenuEnabled());
 
         return vm;
     }
@@ -435,6 +436,7 @@ public final class Cloner
         obj.setTemplateVersionName(instance.getTemplateVersionName());
         obj.setSerialNumberPolicy(instance.getSerialNumberPolicy());
         obj.setCustomSerialNumber(instance.getCustomSerialNumber());
+        obj.setBootMenuEnabled(instance.isBootMenuEnabled());
 
         return obj;
     }
@@ -474,6 +476,7 @@ public final class Cloner
         obj.setUseLatestVersion(instance.isUseLatestVersion());
         obj.setSerialNumberPolicy(instance.getSerialNumberPolicy());
         obj.setCustomSerialNumber(instance.getCustomSerialNumber());
+        obj.setBootMenuEnabled(instance.isBootMenuEnabled());
 
         return obj;
     }

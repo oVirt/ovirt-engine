@@ -119,7 +119,8 @@ public enum ConfigurationValues {
     IsMemorySnapshotSupported(ConfigAuthType.User),
     IsSuspendSupported(ConfigAuthType.User),
     SerialNumberPolicySupported(ConfigAuthType.User),
-    IscsiMultipathingSupported;
+    IscsiMultipathingSupported,
+    BootMenuSupported(ConfigAuthType.User);
 
     public static enum ConfigAuthType {
         Admin,

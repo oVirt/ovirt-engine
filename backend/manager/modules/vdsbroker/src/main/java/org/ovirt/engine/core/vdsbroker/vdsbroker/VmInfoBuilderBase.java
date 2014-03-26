@@ -95,6 +95,7 @@ public abstract class VmInfoBuilderBase {
                 .toLowerCase());
         createInfo.put(VdsProperties.acpiEnable, vm.getAcpiEnable().toString()
                 .toLowerCase());
+        createInfo.put(VdsProperties.BOOT_MENU_ENABLE, Boolean.toString(vm.isBootMenuEnabled()));
 
         createInfo.put(VdsProperties.Custom,
                 VmPropertiesUtils.getInstance().getVMProperties(vm.getVdsGroupCompatibilityVersion(),

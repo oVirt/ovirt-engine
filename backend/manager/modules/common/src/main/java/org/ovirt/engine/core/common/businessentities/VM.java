@@ -1719,4 +1719,12 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
     public void setCustomSerialNumber(String customSerialNumber) {
         vmStatic.setCustomSerialNumber(customSerialNumber);
     }
+
+    public boolean isBootMenuEnabled() {
+        return vmStatic.isBootMenuEnabled();
+    }
+
+    public void setBootMenuEnabled(boolean enabled) {
+        vmStatic.setBootMenuEnabled(enabled);
+    }
 }

@@ -621,6 +621,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         getVm().setKvmEnable(getParameters().getKvmEnable());
         getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
         getVm().setAcpiEnable(getParameters().getAcpiEnable());
+        getVm().setBootMenuEnabled(getParameters().getBootMenuEnabled() == null ? getVm().isBootMenuEnabled() : getParameters().isBootMenuEnabled());
 
         // Clear the first user:
         getVm().setConsoleUserId(null);

@@ -317,4 +317,13 @@ public class FeatureSupported {
     public static boolean mixedDomainTypesOnDataCenter(Version version) {
         return supportedInConfig(ConfigValues.MixedDomainTypesInDataCenter, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if get boot menu is supported for the given version.
+     */
+    public static boolean bootMenu(Version version) {
+        return supportedInConfig(ConfigValues.BootMenuSupported, version);
+    }
 }

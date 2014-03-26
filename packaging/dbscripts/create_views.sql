@@ -417,7 +417,8 @@ vm_templates.vm_guid as vmt_guid,
        vm_templates.vmt_guid as base_template_id,
        vm_templates.template_version_name as template_version_name,
        vm_templates.serial_number_policy as serial_number_policy,
-       vm_templates.custom_serial_number as custom_serial_number
+       vm_templates.custom_serial_number as custom_serial_number,
+       vm_templates.is_boot_menu_enabled as is_boot_menu_enabled
 FROM       vm_static AS vm_templates  INNER JOIN
 vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id
 left outer JOIN
@@ -453,7 +454,8 @@ AS
                     vm_templates.entity_type, vds_groups.architecture,
                     vm_templates.template_version_number as template_version_number, vm_templates.vmt_guid as base_template_id,
                     vm_templates.template_version_name as template_version_name,
-                    vm_templates.serial_number_policy as serial_number_policy, vm_templates.custom_serial_number as custom_serial_number
+                    vm_templates.serial_number_policy as serial_number_policy, vm_templates.custom_serial_number as custom_serial_number,
+                    vm_templates.is_boot_menu_enabled as is_boot_menu_enabled
 FROM                  vm_static AS vm_templates INNER JOIN
 	                  vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN
                       storage_pool ON storage_pool.id = vds_groups.storage_pool_id INNER JOIN
@@ -479,7 +481,8 @@ SELECT                vm_templates_1.vm_guid AS vmt_guid, vm_templates_1.vm_name
                       vm_templates_1.template_version_number as template_version_number, vm_templates_1.vmt_guid as base_template_id,
                       vm_templates_1.template_version_name as template_version_name,
                       vm_templates_1.serial_number_policy as serial_number_policy,
-                      vm_templates_1.custom_serial_number as custom_serial_number
+                      vm_templates_1.custom_serial_number as custom_serial_number,
+                      vm_templates_1.is_boot_menu_enabled as is_boot_menu_enabled
 FROM                  vm_static AS vm_templates_1 INNER JOIN
                       vds_groups AS vds_groups_1 ON vm_templates_1.vds_group_id = vds_groups_1.vds_group_id LEFT OUTER JOIN
                       storage_pool AS storage_pool_1 ON storage_pool_1.id = vds_groups_1.storage_pool_id INNER JOIN
@@ -622,7 +625,8 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_dynamic.last_watchdog_event as last_watchdog_event, vm_dynamic.last_watchdog_action as last_watchdog_action, vm_dynamic.is_run_once as is_run_once, vm_dynamic.vm_fqdn as vm_fqdn, vm_dynamic.cpu_name as cpu_name, vm_dynamic.current_cd as current_cd, vm_dynamic.reason as reason, vm_dynamic.exit_reason as exit_reason,
                       vm_static.instance_type_id as instance_type_id, vm_static.image_type_id as image_type_id, vds_groups.architecture as architecture, vm_static.original_template_id as original_template_id, vm_static.original_template_name as original_template_name, vm_dynamic.last_stop_time as last_stop_time,
                       vm_static.migration_downtime as migration_downtime, vm_static.template_version_number as template_version_number,
-                      vm_static.serial_number_policy as serial_number_policy, vm_static.custom_serial_number as custom_serial_number
+                      vm_static.serial_number_policy as serial_number_policy, vm_static.custom_serial_number as custom_serial_number,
+                      vm_static.is_boot_menu_enabled as is_boot_menu_enabled
 FROM         vm_static INNER JOIN
 vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid INNER JOIN
 vm_static AS vm_templates ON vm_static.vmt_guid = vm_templates.vm_guid INNER JOIN
@@ -664,7 +668,8 @@ SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.cpu_shares, vms
             vms.instance_type_id as instance_type_id, vms.image_type_id as image_type_id, vms.architecture as architecture, vms.original_template_id as original_template_id, vms.original_template_name as original_template_name,
             vms.migration_downtime as migration_downtime, vms.template_version_number as template_version_number,
             vms.current_cd as current_cd, vms.reason as reason,
-            vms.serial_number_policy as serial_number_policy, vms.custom_serial_number as custom_serial_number, vms.exit_reason as exit_reason
+            vms.serial_number_policy as serial_number_policy, vms.custom_serial_number as custom_serial_number, vms.exit_reason as exit_reason,
+            vms.is_boot_menu_enabled as is_boot_menu_enabled
 FROM        vms LEFT OUTER JOIN
             tags_vm_map_view ON vms.vm_guid = tags_vm_map_view.vm_id LEFT OUTER JOIN
             vm_device ON vm_device.vm_id = vms.vm_guid LEFT OUTER JOIN

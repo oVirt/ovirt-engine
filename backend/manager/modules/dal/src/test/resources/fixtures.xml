@@ -1555,6 +1555,7 @@
         <column>template_version_name</column>
         <column>serial_number_policy</column>
         <column>custom_serial_number</column>
+        <column>is_boot_menu_enabled</column>
 
         <!-- Templates -->
         <row>
@@ -1611,6 +1612,7 @@
             <null />
             <value>0</value>
             <null />
+            <value>false</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -1666,6 +1668,7 @@
             <value>ver 1</value>
             <null />
             <value>Serial number: 123456</value>
+            <value>true</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
@@ -1721,6 +1724,7 @@
             <null />
             <value>2</value>
             <value>RHVSN: 09123</value>
+            <value>true</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
@@ -1776,6 +1780,7 @@
             <null />
             <value>1</value>
             <null />
+            <value>false</value>
         </row>
          <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
@@ -1831,6 +1836,7 @@
             <null />
             <value>1</value>
             <null />
+            <value>false</value>
         </row>
          <row>
             <value>99408929-82cf-4dc7-a532-9d998063fa95</value>
@@ -1886,6 +1892,7 @@
             <null />
             <null />
             <null />
+            <value>true</value>
         </row>
          <row>
             <value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
@@ -1941,6 +1948,7 @@
             <null />
             <null />
             <null />
+            <value>false</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b83</value>
@@ -1996,6 +2004,7 @@
             <value>verver</value>
             <null />
             <null />
+            <value>true</value>
         </row>
 
         <!-- VMS -->
@@ -2053,6 +2062,7 @@
             <null />
             <value>2</value>
             <null />
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -2108,6 +2118,7 @@
             <null />
             <null />
             <value>VSN 1234</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
@@ -2163,6 +2174,7 @@
             <null />
             <value>2</value>
             <value>My very specific serial number</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -2218,6 +2230,7 @@
             <null />
             <null />
             <value>Custom serial number</value>
+            <value>false</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -2273,6 +2286,7 @@
             <null />
             <value>1</value>
             <null />
+            <value>false</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -2328,6 +2342,7 @@
             <null />
             <null />
             <null />
+            <value>false</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5001</value>
@@ -2383,6 +2398,7 @@
             <null />
             <null />
             <null />
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
@@ -2438,6 +2454,7 @@
             <null />
             <null />
             <null />
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
@@ -2493,6 +2510,7 @@
             <null />
             <value>0</value>
             <null />
+            <value>false</value>
         </row>
     </table>
 

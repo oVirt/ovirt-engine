@@ -240,6 +240,11 @@ select fn_db_add_config_value('OvfStoreOnAnyDomain','false','3.1');
 select fn_db_add_config_value('OvfStoreOnAnyDomain','false','3.2');
 select fn_db_add_config_value('OvfStoreOnAnyDomain','false','3.3');
 select fn_db_add_config_value('OvfStoreOnAnyDomain','false','3.4');
+select fn_db_add_config_value('BootMenuSupported','false','3.0');
+select fn_db_add_config_value('BootMenuSupported','false','3.1');
+select fn_db_add_config_value('BootMenuSupported','false','3.2');
+select fn_db_add_config_value('BootMenuSupported','false','3.3');
+select fn_db_add_config_value('BootMenuSupported','false','3.4');
 
 select fn_db_add_config_value('IscsiMultipathingSupported','false','3.0');
 select fn_db_add_config_value('IscsiMultipathingSupported','false','3.1');

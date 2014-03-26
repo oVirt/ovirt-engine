@@ -65,4 +65,5 @@ public class OvfProperties {
     final static String TEMPLATE_VERSION_NAME = "TemplateVersionName";
     final static String SERIAL_NUMBER_POLICY = "SerialNumberPolicy";
     final static String CUSTOM_SERIAL_NUMBER = "CustomSerialNumber";
+    final static String IS_BOOT_MENU_ENABLED = "IsBootMenuEnabled";
 }

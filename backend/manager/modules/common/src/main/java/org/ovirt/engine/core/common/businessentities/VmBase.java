@@ -302,6 +302,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @Size(max = BusinessEntitiesDefinitions.VM_SERIAL_NUMBER_SIZE)
     private String customSerialNumber;
 
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    private boolean bootMenuEnabled;
+
     public VmBase(VmBase vmBase) {
         this(vmBase.getName(),
                 vmBase.getId(),
@@ -346,7 +351,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.getMigrationDowntime(),
                 vmBase.getVmInit(),
                 vmBase.getSerialNumberPolicy(),
-                vmBase.getCustomSerialNumber());
+                vmBase.getCustomSerialNumber(),
+                vmBase.isBootMenuEnabled());
     }
 
     public VmBase(
@@ -393,7 +399,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             Integer migrationDowntime,
             VmInit vmInit,
             SerialNumberPolicy serialNumberPolicy,
-            String customSerialNumber) {
+            String customSerialNumber,
+            boolean bootMenuEnabled) {
         this();
         this.name = name;
         this.id = id;
@@ -439,6 +446,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.vmInit = vmInit;
         this.serialNumberPolicy = serialNumberPolicy;
         this.customSerialNumber = customSerialNumber;
+        this.bootMenuEnabled = bootMenuEnabled;
     }
 
     public long getDbGeneration() {
@@ -776,6 +784,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((migrationDowntime == null) ? 0 : migrationDowntime.hashCode());
         result = prime * result + ((serialNumberPolicy == null) ? 0 : serialNumberPolicy.hashCode());
         result = prime * result + ((customSerialNumber == null) ? 0 : customSerialNumber.hashCode());
+        result = prime * result + (bootMenuEnabled ? 1231 : 1237);
         return result;
     }
 
@@ -827,7 +836,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && cpuShares == other.cpuShares
                 && ObjectUtils.objectsEqual(migrationDowntime, other.migrationDowntime))
                 && serialNumberPolicy == other.serialNumberPolicy
-                && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber);
+                && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber)
+                && bootMenuEnabled == other.bootMenuEnabled;
     }
 
     public Guid getQuotaId() {
@@ -981,5 +991,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public void setCustomSerialNumber(String customSerialNumber) {
         this.customSerialNumber = customSerialNumber;
+    }
+
+    public boolean isBootMenuEnabled() {
+        return bootMenuEnabled;
+    }
+
+    public void setBootMenuEnabled(boolean bootMenuEnabled) {
+        this.bootMenuEnabled = bootMenuEnabled;
     }
 }

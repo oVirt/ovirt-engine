@@ -353,6 +353,10 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteRaw(vmBase.getCustomSerialNumber());
             _writer.WriteEndElement();
         }
+
+        _writer.WriteStartElement(OvfProperties.IS_BOOT_MENU_ENABLED);
+        _writer.WriteRaw(String.valueOf(vmBase.isBootMenuEnabled()));
+        _writer.WriteEndElement();
     }
 
     protected abstract void writeAppList();

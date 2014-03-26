@@ -76,7 +76,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             String kernelParams, Guid quotaId, Guid dedicatedVmForVds, MigrationSupport migrationSupport,
             boolean allowConsoleReconnect, String isoPath, Integer migrationDowntime,
             Guid baseTemplateId, String templateVersionName,
-            SerialNumberPolicy serialNumberPolicy, String customSerialNumber) {
+            SerialNumberPolicy serialNumberPolicy, String customSerialNumber,
+            boolean bootMenuEnabled) {
         super(name,
                 vmtGuid,
                 vdsGroupId,
@@ -120,7 +121,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 migrationDowntime,
                 null,
                 serialNumberPolicy,
-                customSerialNumber);
+                customSerialNumber,
+                bootMenuEnabled);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
         diskImageMap = new HashMap<Guid, DiskImage>();
@@ -184,6 +186,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         setOrigin(template.getOrigin());
         setSerialNumberPolicy(template.getSerialNumberPolicy());
         setCustomSerialNumber(template.getCustomSerialNumber());
+        setBootMenuEnabled(template.isBootMenuEnabled());
     }
 
     public ArchitectureType getClusterArch() {

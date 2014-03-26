@@ -535,6 +535,11 @@ public abstract class OvfReader implements IOvfBuilder {
             vmBase.setPriority(Integer.parseInt(node.innerText));
         }
 
+        node = content.SelectSingleNode(OvfProperties.IS_BOOT_MENU_ENABLED);
+        if (node != null) {
+            vmBase.setBootMenuEnabled(Boolean.parseBoolean(node.innerText));
+        }
+
         readGeneralData(content);
 
         readVmInit(content);
