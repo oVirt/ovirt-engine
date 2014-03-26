@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -24,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
@@ -627,6 +629,22 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
+    private String kdumpStatus;
+
+    public String getKdumpStatus()
+    {
+        return kdumpStatus;
+    }
+
+    public void setKdumpStatus(String value)
+    {
+        if (kdumpStatus != value)
+        {
+            kdumpStatus = value;
+            onPropertyChanged(new PropertyChangedEventArgs("KdumpStatus")); //$NON-NLS-1$
+        }
+    }
+
     private String hostedEngineHa;
 
     public String getHostedEngineHa()
@@ -1003,6 +1021,8 @@ public class HostGeneralModel extends EntityModel
         setMemoryPageSharing(vds.getKsmState());
         setAutomaticLargePage(vds.getTransparentHugePagesState());
         setBootTime(vds.getBootTime());
+
+        setKdumpStatus(EnumTranslator.create(KdumpStatus.class).get(vds.getKdumpStatus()));
 
         if (!vds.getHighlyAvailableIsConfigured()) {
             setHostedEngineHaIsConfigured(false);

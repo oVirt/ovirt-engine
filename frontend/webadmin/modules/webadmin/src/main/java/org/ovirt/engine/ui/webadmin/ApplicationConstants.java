@@ -1452,6 +1452,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Boot Time")
     String bootTimeHostGeneral();
 
+    @DefaultStringValue("Kdump Status")
+    String kdumpStatus();
+
     // Storage
     @DefaultStringValue("Domain Name")
     String domainNameStorage();

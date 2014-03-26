@@ -923,4 +923,9 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String LdapRefStatus___Active();
 
+    String KdumpStatus___UNKNOWN();
+
+    String KdumpStatus___DISABLED();
+
+    String KdumpStatus___ENABLED();
 }

@@ -70,7 +70,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     TextBoxLabel spmPriority = new TextBoxLabel();
     TextBoxLabel hostedEngineHa = new TextBoxLabel();
     FullDateTimeLabel bootTime = new FullDateTimeLabel();
-
+    TextBoxLabel kdumpStatus = new TextBoxLabel();
     MemorySizeTextBoxLabel<Integer> physicalMemory;
     MemorySizeTextBoxLabel<Integer> usedMemory;
     MemorySizeTextBoxLabel<Integer> freeMemory;
@@ -164,6 +164,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formBuilder.addFormItem(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 2, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.kdumpStatus(), kdumpStatus, 2).withAutoPlacement());
     }
 
     void initMemorySizeLabels() {
