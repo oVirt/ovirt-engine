@@ -16,6 +16,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.XsrfToken;
+import com.google.gwt.user.client.rpc.XsrfTokenServiceAsync;
 import com.google.inject.Inject;
 
 /**
@@ -25,25 +27,71 @@ import com.google.inject.Inject;
 public class GWTRPCCommunicationProvider implements CommunicationProvider {
 
     /**
+     * Callback interface when retrieving the GWT RPC service. We need the callback in order to retrieve the
+     * XSRF token if it is not available yet.
+     */
+    private interface ServiceCallback {
+        /**
+         * The callback method with the service.
+         * @param service The GWT RPC service that contains the appropriate token.
+         */
+        void serviceFound(GenericApiGWTServiceAsync service);
+        /**
+         * The failure callback in case we are unable to retrieve the approriate token.
+         * @param exception The exception thrown.
+         */
+        void onFailure(Throwable exception);
+    }
+
+    /**
      * GWT RPC service.
      */
     private final GenericApiGWTServiceAsync service;
 
     /**
-     * Get the GWT RPC service.
-     * @return instance of the GWT RPC service.
+     * GWT XSRF service.
      */
-    private GenericApiGWTServiceAsync getService() {
-        return service;
+    private final XsrfTokenServiceAsync xsrfService;
+
+    /**
+     * The XSRF request builder.
+     */
+    private final XsrfRpcRequestBuilder xsrfRequestBuilder;
+
+    /**
+     * Get the GWT RPC service.
+     * @param callback The callback to use when determining the service.
+     */
+    private void getService(final ServiceCallback callback) {
+        if (xsrfRequestBuilder.getXsrfToken() != null) {
+            callback.serviceFound(service);
+        } else {
+            xsrfService.getNewXsrfToken(new AsyncCallback<XsrfToken>() {
+                @Override
+                public void onSuccess(XsrfToken token) {
+                    xsrfRequestBuilder.setXsrfToken(token);
+                    callback.serviceFound(service);
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    callback.onFailure(caught);
+                }
+            });
+        }
     }
 
     /**
      * Constructor.
      * @param asyncService GWT RPC service.
+     * @param xsrfTokenService The GWT XSRF token service, used to retrieve a new XSRF token.
      */
     @Inject
-    public GWTRPCCommunicationProvider(final GenericApiGWTServiceAsync asyncService) {
+    public GWTRPCCommunicationProvider(final GenericApiGWTServiceAsync asyncService,
+            final XsrfTokenServiceAsync xsrfTokenService, XsrfRpcRequestBuilder xsrfRequestBuilder) {
         this.service = asyncService;
+        this.xsrfService = xsrfTokenService;
+        this.xsrfRequestBuilder = xsrfRequestBuilder;
     }
 
     /**
@@ -70,16 +118,26 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
      * @param operation The operation to run.
      */
     private void runPublicQuery(final VdcOperation<?, ?> operation) {
-        getService().RunPublicQuery((VdcQueryType) operation.getOperation(),
-                (VdcQueryParametersBase) operation.getParameter(), new AsyncCallback<VdcQueryReturnValue>() {
+        getService(new ServiceCallback() {
             @Override
-            public void onFailure(final Throwable exception) {
-                operation.getCallback().onFailure(operation, exception);
+            public void serviceFound(GenericApiGWTServiceAsync service) {
+                service.RunPublicQuery((VdcQueryType) operation.getOperation(),
+                        (VdcQueryParametersBase) operation.getParameter(), new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onFailure(final Throwable exception) {
+                        operation.getCallback().onFailure(operation, exception);
+                    }
+
+                    @Override
+                    public void onSuccess(final VdcQueryReturnValue result) {
+                        operation.getCallback().onSuccess(operation, result);
+                    }
+                });
             }
 
             @Override
-            public void onSuccess(final VdcQueryReturnValue result) {
-                operation.getCallback().onSuccess(operation, result);
+            public void onFailure(Throwable exception) {
+                operation.getCallback().onFailure(operation, exception);
             }
         });
     }
@@ -89,16 +147,26 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
      * @param operation The operation to run.
      */
     private void runQuery(final VdcOperation<?, ?> operation) {
-        getService().RunQuery((VdcQueryType) operation.getOperation(),
-                (VdcQueryParametersBase) operation.getParameter(), new AsyncCallback<VdcQueryReturnValue>() {
+        getService(new ServiceCallback() {
             @Override
-            public void onFailure(final Throwable exception) {
-                operation.getCallback().onFailure(operation, exception);
+            public void serviceFound(GenericApiGWTServiceAsync service) {
+                service.RunQuery((VdcQueryType) operation.getOperation(),
+                        (VdcQueryParametersBase) operation.getParameter(), new AsyncCallback<VdcQueryReturnValue>() {
+                    @Override
+                    public void onFailure(final Throwable exception) {
+                        operation.getCallback().onFailure(operation, exception);
+                    }
+
+                    @Override
+                    public void onSuccess(final VdcQueryReturnValue result) {
+                        operation.getCallback().onSuccess(operation, result);
+                    }
+                });
             }
 
             @Override
-            public void onSuccess(final VdcQueryReturnValue result) {
-                operation.getCallback().onSuccess(operation, result);
+            public void onFailure(Throwable exception) {
+                operation.getCallback().onFailure(operation, exception);
             }
         });
     }
@@ -108,16 +176,26 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
      * @param operation The operation to run.
      */
     private void runAction(final VdcOperation<?, ?> operation) {
-        getService().RunAction((VdcActionType) operation.getOperation(),
-                (VdcActionParametersBase) operation.getParameter(), new AsyncCallback<VdcReturnValueBase>() {
+        getService(new ServiceCallback() {
             @Override
-            public void onFailure(final Throwable exception) {
-                operation.getCallback().onFailure(operation, exception);
+            public void serviceFound(GenericApiGWTServiceAsync service) {
+                service.RunAction((VdcActionType) operation.getOperation(),
+                        (VdcActionParametersBase) operation.getParameter(), new AsyncCallback<VdcReturnValueBase>() {
+                    @Override
+                    public void onFailure(final Throwable exception) {
+                        operation.getCallback().onFailure(operation, exception);
+                    }
+
+                    @Override
+                    public void onSuccess(final VdcReturnValueBase result) {
+                        operation.getCallback().onSuccess(operation, result);
+                    }
+                });
             }
 
             @Override
-            public void onSuccess(final VdcReturnValueBase result) {
-                operation.getCallback().onSuccess(operation, result);
+            public void onFailure(Throwable exception) {
+                operation.getCallback().onFailure(operation, exception);
             }
         });
     }
@@ -161,8 +239,8 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
     private void transmitMultipleQueries(final List<VdcOperation<?, ?>> queriesList) {
         if (queriesList.size() > 1 || (queriesList.size() == 1
                 && queriesList.get(0).getCallback() instanceof VdcOperationCallbackList)) {
-            List<VdcQueryType> queryTypes = new ArrayList<VdcQueryType>();
-            List<VdcQueryParametersBase> parameters = new ArrayList<VdcQueryParametersBase>();
+            final List<VdcQueryType> queryTypes = new ArrayList<VdcQueryType>();
+            final List<VdcQueryParametersBase> parameters = new ArrayList<VdcQueryParametersBase>();
 
             for (VdcOperation<?, ?> operation: new ArrayList<VdcOperation<?, ?>>(queriesList)) {
                 if (operation.isPublic()) {
@@ -174,38 +252,62 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                 }
             }
 
-            getService().RunMultipleQueries((ArrayList<VdcQueryType>) queryTypes,
-                    (ArrayList<VdcQueryParametersBase>) parameters,
-                    new AsyncCallback<ArrayList<VdcQueryReturnValue>>() {
+            getService(new ServiceCallback() {
                 @Override
-                public void onFailure(final Throwable exception) {
-                    Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap = getCallbackMap(queriesList);
-                    for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
-                        if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
-                            ((VdcOperationCallbackList) callbackEntry.getKey()).onFailure(callbackEntry.getValue(), exception);
-                        } else {
-                            ((VdcOperationCallback) callbackEntry.getKey()).onFailure(callbackEntry.getValue().get(0), exception);
+                public void serviceFound(GenericApiGWTServiceAsync service) {
+                    service.RunMultipleQueries((ArrayList<VdcQueryType>) queryTypes,
+                            (ArrayList<VdcQueryParametersBase>) parameters,
+                            new AsyncCallback<ArrayList<VdcQueryReturnValue>>() {
+                        @Override
+                        public void onFailure(final Throwable exception) {
+                            handleMultipleQueriesFailure(queriesList, exception);
                         }
-                    }
+
+                        @Override
+                        public void onSuccess(final ArrayList<VdcQueryReturnValue> result) {
+                            Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
+                                    getCallbackMap(queriesList);
+                            for (Map.Entry<VdcOperationCallback<?, ?>,
+                                    List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
+                                List<VdcQueryReturnValue> queryResult = (List<VdcQueryReturnValue>) getOperationResult(
+                                        callbackEntry.getValue(), queriesList, result);
+                                if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
+                                    ((VdcOperationCallbackList) callbackEntry.getKey())
+                                        .onSuccess(callbackEntry.getValue(), queryResult);
+                                } else {
+                                    ((VdcOperationCallback) callbackEntry.getKey())
+                                        .onSuccess(callbackEntry.getValue().get(0), queryResult.get(0));
+                                }
+                            }
+                        }
+                    });
+
                 }
 
                 @Override
-                public void onSuccess(final ArrayList<VdcQueryReturnValue> result) {
-                    Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap = getCallbackMap(queriesList);
-                    for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
-                        List<VdcQueryReturnValue> queryResult = (List<VdcQueryReturnValue>) getOperationResult(
-                                callbackEntry.getValue(), queriesList, result);
-                        if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
-                            ((VdcOperationCallbackList) callbackEntry.getKey()).onSuccess(callbackEntry.getValue(), queryResult);
-                        } else {
-                            ((VdcOperationCallback) callbackEntry.getKey()).onSuccess(callbackEntry.getValue().get(0),
-                                    queryResult.get(0));
-                        }
-                    }
+                public void onFailure(Throwable exception) {
+                    handleMultipleQueriesFailure(queriesList, exception);
                 }
             });
         } else if (queriesList.size() == 1) {
             transmitOperation(queriesList.get(0));
+        }
+    }
+
+    /**
+     * Multiple queries failure handler.
+     * @param queriesList The queries list.
+     * @param exception The exception causing the failure.
+     */
+    private void handleMultipleQueriesFailure(final List<VdcOperation<?, ?>> queriesList,
+            final Throwable exception) {
+        Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap = getCallbackMap(queriesList);
+        for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
+            if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
+                ((VdcOperationCallbackList) callbackEntry.getKey()).onFailure(callbackEntry.getValue(), exception);
+            } else {
+                ((VdcOperationCallback) callbackEntry.getKey()).onFailure(callbackEntry.getValue().get(0), exception);
+            }
         }
     }
 
@@ -256,43 +358,60 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
     }
 
     private void runMultipleActions(final VdcActionType actionType, final List<VdcOperation<?, ?>> operations,
-            List<VdcActionParametersBase> parameters, final List<VdcOperation<?, ?>> allActionOperations,
+            final List<VdcActionParametersBase> parameters, final List<VdcOperation<?, ?>> allActionOperations,
             final boolean waitForResults) {
-        getService().RunMultipleActions(actionType, (ArrayList<VdcActionParametersBase>) parameters,
-                false, waitForResults, new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
-
+        getService(new ServiceCallback() {
             @Override
-            public void onFailure(final Throwable exception) {
-                Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
-                        getCallbackMap(operations);
-                for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
-                    if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
-                        ((VdcOperationCallbackList) callbackEntry.getKey()).onFailure(callbackEntry.getValue(), exception);
-                    } else {
-                        ((VdcOperationCallback) callbackEntry.getKey()).onFailure(callbackEntry.getValue().get(0),
-                                exception);
+            public void serviceFound(GenericApiGWTServiceAsync service) {
+                service.RunMultipleActions(actionType, (ArrayList<VdcActionParametersBase>) parameters,
+                        false, waitForResults, new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
+
+                    @Override
+                    public void onFailure(final Throwable exception) {
+                        handleRunMultipleActionFailure(operations, exception);
                     }
-                }
+
+                    @Override
+                    public void onSuccess(final ArrayList<VdcReturnValueBase> result) {
+                        Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
+                                getCallbackMap(operations);
+                        for (Map.Entry<VdcOperationCallback<?, ?>,
+                                List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
+                            List<VdcReturnValueBase> actionResult = (List<VdcReturnValueBase>)
+                                    getOperationResult(callbackEntry.getValue(), allActionOperations, result);
+                            if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
+                                ((VdcOperationCallbackList) callbackEntry.getKey())
+                                    .onSuccess(callbackEntry.getValue(), actionResult);
+                            } else {
+                                ((VdcOperationCallback) callbackEntry.getKey())
+                                    .onSuccess(callbackEntry.getValue().get(0), actionResult.get(0));
+                            }
+                        }
+                    }
+                });
             }
 
             @Override
-            public void onSuccess(final ArrayList<VdcReturnValueBase> result) {
-                Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
-                        getCallbackMap(operations);
-                for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
-                    List<VdcReturnValueBase> actionResult = (List<VdcReturnValueBase>)
-                            getOperationResult(callbackEntry.getValue(), allActionOperations, result);
-                    if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
-                        ((VdcOperationCallbackList) callbackEntry.getKey()).onSuccess(callbackEntry.getValue(),
-                                actionResult);
-                    } else {
-                        ((VdcOperationCallback) callbackEntry.getKey()).onSuccess(callbackEntry.getValue().get(0),
-                                actionResult.get(0));
-                    }
-                }
+            public void onFailure(Throwable exception) {
+                handleRunMultipleActionFailure(operations, exception);
             }
         });
     }
+
+    private void handleRunMultipleActionFailure(final List<VdcOperation<?, ?>> operations,
+            final Throwable exception) {
+        Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
+                getCallbackMap(operations);
+        for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
+            if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
+                ((VdcOperationCallbackList) callbackEntry.getKey()).onFailure(callbackEntry.getValue(), exception);
+            } else {
+                ((VdcOperationCallback) callbackEntry.getKey()).onFailure(callbackEntry.getValue().get(0),
+                        exception);
+            }
+        }
+    }
+
     /**
      * Map operations by callback, so we can properly call a single callback for all related operations.
      * @param operationList The list of operations to determine the map for.
@@ -344,17 +463,30 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
      */
     @Override
     public void login(final VdcOperation<VdcActionType, LoginUserParameters> loginOperation) {
-        getService().Login(loginOperation.getParameter().getLoginName(), loginOperation.getParameter().getPassword(),
-                loginOperation.getParameter().getProfileName(), loginOperation.getOperation(),
-                new AsyncCallback<VdcReturnValueBase>() {
+        getService(new ServiceCallback() {
             @Override
-            public void onSuccess(final VdcReturnValueBase result) {
-                loginOperation.getCallback().onSuccess(loginOperation, result);
+            public void serviceFound(GenericApiGWTServiceAsync service) {
+                service.Login(loginOperation.getParameter().getLoginName(), loginOperation.getParameter().getPassword(),
+                        loginOperation.getParameter().getProfileName(), loginOperation.getOperation(),
+                        new AsyncCallback<VdcReturnValueBase>() {
+                    @Override
+                    public void onSuccess(final VdcReturnValueBase result) {
+                        //Remove the rpc token when logging in. Due to session fixation protection we need a new
+                        //token based on the new session.
+                        xsrfRequestBuilder.setXsrfToken(null);
+                        loginOperation.getCallback().onSuccess(loginOperation, result);
+                    }
+
+                    @Override
+                    public void onFailure(final Throwable caught) {
+                        loginOperation.getCallback().onFailure(loginOperation, caught);
+                    }
+                });
             }
 
             @Override
-            public void onFailure(final Throwable caught) {
-                loginOperation.getCallback().onFailure(loginOperation, caught);
+            public void onFailure(Throwable exception) {
+                loginOperation.getCallback().onFailure(loginOperation, exception);
             }
         });
     }
@@ -366,45 +498,86 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
      */
     @Override
     public void logout(final Object userObject, final UserCallback callback) {
-        getService().logOff((DbUser) userObject, new AsyncCallback<VdcReturnValueBase>() {
+        getService(new ServiceCallback() {
+
             @Override
-            public void onSuccess(final VdcReturnValueBase result) {
-                callback.onSuccess(result);
+            public void serviceFound(GenericApiGWTServiceAsync foundService) {
+                foundService.logOff((DbUser) userObject, new AsyncCallback<VdcReturnValueBase>() {
+                    @Override
+                    public void onSuccess(final VdcReturnValueBase result) {
+                        //Remove the rpc token when logging out.
+                        xsrfRequestBuilder.setXsrfToken(null);
+                        callback.onSuccess(result);
+                    }
+
+                    @Override
+                    public void onFailure(final Throwable caught) {
+                        xsrfRequestBuilder.setXsrfToken(null);
+                        callback.onFailure(caught);
+                    }
+                });
+
             }
 
             @Override
-            public void onFailure(final Throwable caught) {
-                callback.onFailure(caught);
+            public void onFailure(Throwable exception) {
+                callback.onFailure(exception);
             }
         });
     }
 
     @Override
     public void storeInHttpSession(final String key, final String value, final StorageCallback callback) {
-        getService().storeInHttpSession(key, value, new AsyncCallback<Void>() {
+        getService(new ServiceCallback() {
+
             @Override
-            public void onSuccess(final Void result) {
-                callback.onSuccess(null);
+            public void serviceFound(GenericApiGWTServiceAsync service) {
+                service.storeInHttpSession(key, value, new AsyncCallback<Void>() {
+                    @Override
+                    public void onSuccess(final Void result) {
+                        callback.onSuccess(null);
+                    }
+
+                    @Override
+                    public void onFailure(final Throwable caught) {
+                        callback.onFailure(caught);
+                    }
+                });
             }
 
             @Override
-            public void onFailure(final Throwable caught) {
+            public void onFailure(Throwable caught) {
+                xsrfRequestBuilder.setXsrfToken(null);
                 callback.onFailure(caught);
             }
+
         });
     }
 
     @Override
     public void retrieveFromHttpSession(final String key, final StorageCallback callback) {
-        getService().retrieveFromHttpSession(key, new AsyncCallback<String>() {
+        getService(new ServiceCallback() {
+
             @Override
-            public void onSuccess(final String result) {
-                callback.onSuccess(result);
+            public void serviceFound(GenericApiGWTServiceAsync service) {
+                service.retrieveFromHttpSession(key, new AsyncCallback<String>() {
+                    @Override
+                    public void onSuccess(final String result) {
+                        callback.onSuccess(result);
+                    }
+
+                    @Override
+                    public void onFailure(final Throwable caught) {
+                        callback.onFailure(caught);
+                    }
+                });
+
             }
 
             @Override
-            public void onFailure(final Throwable caught) {
-                callback.onFailure(caught);
+            public void onFailure(Throwable exception) {
+                xsrfRequestBuilder.setXsrfToken(null);
+                callback.onFailure(exception);
             }
         });
     }

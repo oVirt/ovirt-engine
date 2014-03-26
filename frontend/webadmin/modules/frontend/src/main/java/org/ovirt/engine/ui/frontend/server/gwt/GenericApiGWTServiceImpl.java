@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javax.ejb.EJB;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -21,10 +20,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
 
-import com.google.gwt.rpc.server.RpcServlet;
 import com.google.gwt.user.client.rpc.SerializationException;
 
-public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGWTService {
+public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements GenericApiGWTService {
 
     private static final long serialVersionUID = 7395780289048030855L;
 
@@ -45,11 +43,6 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
 
     public BackendLocal getBackend() {
         return backend;
-    }
-
-    @Override
-    public void init() throws ServletException {
-        log.debug("Initializing servlet!"); //$NON-NLS-1$
     }
 
     @Override

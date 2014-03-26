@@ -2,10 +2,9 @@ package org.ovirt.engine.ui.frontend.communication;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +26,16 @@ import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.rpc.XsrfToken;
+import com.google.gwt.user.client.rpc.XsrfTokenServiceAsync;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GWTRPCCommunicationProviderTest {
 
+    @Mock
     GenericApiGWTServiceAsync mockService;
+    @Mock
+    XsrfTokenServiceAsync mockXsrfService;
     @Mock
     VdcOperationCallback mockOperationCallbackSingle1;
     @Mock
@@ -43,6 +46,8 @@ public class GWTRPCCommunicationProviderTest {
     VdcOperationCallbackList mockOperationCallbackList2;
     @Mock
     EventBus mockEventBus;
+
+    XsrfRpcRequestBuilder mockXsrfRpcRequestBuilder;
 
     @Captor
     ArgumentCaptor<AsyncCallback<VdcReturnValueBase>> actionCallback;
@@ -60,8 +65,9 @@ public class GWTRPCCommunicationProviderTest {
 
     @Before
     public void setUp() throws Exception {
-        mockService = mock(GenericApiGWTServiceAsync.class, withSettings().extraInterfaces(ServiceDefTarget.class));
-        testProvider = new GWTRPCCommunicationProvider(mockService);
+        mockXsrfRpcRequestBuilder = new XsrfRpcRequestBuilder();
+        testProvider = new GWTRPCCommunicationProvider(mockService, mockXsrfService, mockXsrfRpcRequestBuilder);
+        mockXsrfRpcRequestBuilder.setXsrfToken(new XsrfToken("Something")); //$NON-NLS-1$
     }
 
     @Test
@@ -520,6 +526,21 @@ public class GWTRPCCommunicationProviderTest {
         testQueryResult = new VdcQueryReturnValue();
         queryCallback.getValue().onSuccess(testQueryResult);
         verify(mockOperationCallbackSingle2).onSuccess(testOperation2, testQueryResult);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testMissingXsrfToken() {
+        //Remove token so there should be a request for it.
+        mockXsrfRpcRequestBuilder.setXsrfToken(null);
+        VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
+        final List<VdcOperation<VdcQueryType, VdcQueryParametersBase>> operationList =
+                new ArrayList<VdcOperation<VdcQueryType, VdcQueryParametersBase>>();
+        final VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation =
+                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testParameters, null);
+        operationList.add(testOperation);
+        testProvider.transmitOperation(testOperation);
+        verify(mockXsrfService).getNewXsrfToken((AsyncCallback<XsrfToken>) any());
     }
 
     // ********************************************************************************************************

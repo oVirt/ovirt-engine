@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.frontend.communication.CommunicationProvider;
 import org.ovirt.engine.ui.frontend.communication.GWTRPCCommunicationProvider;
 import org.ovirt.engine.ui.frontend.communication.OperationProcessor;
 import org.ovirt.engine.ui.frontend.communication.VdcOperationManager;
+import org.ovirt.engine.ui.frontend.communication.XsrfRpcRequestBuilder;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -44,6 +45,8 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.rpc.StatusCodeException;
+import com.google.gwt.user.client.rpc.XsrfToken;
+import com.google.gwt.user.client.rpc.XsrfTokenServiceAsync;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FrontendTest {
@@ -62,6 +65,8 @@ public class FrontendTest {
 
     GenericApiGWTServiceAsync mockService;
 
+    @Mock
+    XsrfTokenServiceAsync mockXsrfService;
     @Mock
     ErrorTranslator mockVdsmErrorsTranslator;
     @Mock
@@ -97,7 +102,10 @@ public class FrontendTest {
     public void setUp() throws Exception {
         mockService = mock(GenericApiGWTServiceAsync.class, withSettings().extraInterfaces(ServiceDefTarget.class));
         fakeScheduler = new FakeGWTScheduler();
-        CommunicationProvider communicationsProvider = new GWTRPCCommunicationProvider(mockService);
+        XsrfRpcRequestBuilder mockXsrfRpcRequestBuilder = new XsrfRpcRequestBuilder();
+        CommunicationProvider communicationsProvider = new GWTRPCCommunicationProvider(mockService, mockXsrfService,
+                mockXsrfRpcRequestBuilder);
+        mockXsrfRpcRequestBuilder.setXsrfToken(new XsrfToken("Something")); //$NON-NLS-1$
         OperationProcessor operationProcessor = new OperationProcessor(communicationsProvider);
         operationProcessor.setScheduler(fakeScheduler);
         VdcOperationManager operationsManager = new VdcOperationManager(operationProcessor);

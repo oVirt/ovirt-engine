@@ -3,6 +3,11 @@
 
     <display-name>Frontend Web Fragment for GWT UI Projects</display-name>
 
+    <context-param>
+        <param-name>gwt.xsrf.session_cookie_name</param-name>
+        <param-value>JSESSIONID</param-value>
+    </context-param>
+
     <filter>
         <filter-name>GwtCachingFilter</filter-name>
         <filter-class>org.ovirt.engine.ui.frontend.server.gwt.GwtCachingFilter</filter-class>
@@ -86,6 +91,10 @@
         <servlet-class>org.ovirt.engine.core.branding.BrandingCascadingResourceServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>XsrfTokenServiceServlet</servlet-name>
+        <servlet-class>com.google.gwt.user.server.rpc.XsrfTokenServiceServlet</servlet-class>
+    </servlet>
     <!-- PageNotFound Servlet -->
     <servlet>
         <servlet-name>PageNotFoundForwardServlet</servlet-name>

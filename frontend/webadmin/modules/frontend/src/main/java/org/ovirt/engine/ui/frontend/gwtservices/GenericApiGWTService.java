@@ -10,11 +10,11 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
-import com.google.gwt.rpc.client.RpcService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.google.gwt.user.server.rpc.NoXsrfProtect;
 
 @RemoteServiceRelativePath("GenericApiGWTService")
-public interface GenericApiGWTService extends RpcService {
+public interface GenericApiGWTService extends XsrfProtectedRpcService {
 
     public VdcQueryReturnValue RunQuery(VdcQueryType search,
             VdcQueryParametersBase searchParameters);
@@ -22,6 +22,7 @@ public interface GenericApiGWTService extends RpcService {
     public VdcReturnValueBase RunAction(VdcActionType actionType,
             VdcActionParametersBase params);
 
+    @NoXsrfProtect
     public VdcQueryReturnValue RunPublicQuery(VdcQueryType queryType,
             VdcQueryParametersBase params);
 
@@ -41,8 +42,10 @@ public interface GenericApiGWTService extends RpcService {
 
     public DbUser getLoggedInUser();
 
+    @NoXsrfProtect
     public VdcReturnValueBase logOff(DbUser userToLogoff);
 
+    @NoXsrfProtect
     public VdcReturnValueBase Login(String userName, String password, String profileName, VdcActionType loginType);
 
     public void storeInHttpSession(String key, String value);

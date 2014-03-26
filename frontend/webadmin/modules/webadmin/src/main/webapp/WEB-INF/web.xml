@@ -75,6 +75,11 @@
 		<url-pattern>/GenericApiGWTService</url-pattern>
 	</servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>XsrfTokenServiceServlet</servlet-name>
+        <url-pattern>/xsrf</url-pattern>
+    </servlet-mapping>
+
 	<servlet-mapping>
 		<servlet-name>PluginResourceServlet</servlet-name>
 		<url-pattern>/plugin/*</url-pattern>

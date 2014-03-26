@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.frontend.communication.GWTRPCCommunicationProvider;
 import org.ovirt.engine.ui.frontend.communication.OperationProcessor;
 import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
 import org.ovirt.engine.ui.frontend.communication.VdcOperationManager;
+import org.ovirt.engine.ui.frontend.communication.XsrfRpcRequestBuilder;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
@@ -34,8 +35,9 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.gwt.user.client.rpc.RpcRequestBuilder;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.rpc.XsrfTokenService;
+import com.google.gwt.user.client.rpc.XsrfTokenServiceAsync;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.RootPresenter;
@@ -104,11 +106,18 @@ public abstract class BaseSystemModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public GenericApiGWTServiceAsync getGenericApiGWTService(final EventBus eventBus) {
+    public GenericApiGWTServiceAsync getGenericApiGWTService(final XsrfRpcRequestBuilder requestBuilder) {
         // no need to use GenericApiGWTServiceAsync.Util as this is GIN-managed singleton anyway
         GenericApiGWTServiceAsync service = GWT.create(GenericApiGWTService.class);
         // cast to ServiceDefTarget and set RPC request builder as needed
-        ((ServiceDefTarget) service).setRpcRequestBuilder(new RpcRequestBuilder() {
+        ((ServiceDefTarget) service).setRpcRequestBuilder(requestBuilder);
+        return service;
+    }
+
+    @Provides
+    @Singleton
+    public XsrfRpcRequestBuilder getXsrfRequestBuilder(final EventBus eventBus) {
+        return new XsrfRpcRequestBuilder() {
             @Override
             protected void doSetCallback(RequestBuilder rb, final RequestCallback callback) {
                 rb.setCallback(new RequestCallback() {
@@ -129,7 +138,14 @@ public abstract class BaseSystemModule extends AbstractGinModule {
                     }
                 });
             }
-        });
+        };
+    }
+
+    @Provides
+    @Singleton
+    public XsrfTokenServiceAsync getXsrfTokenService() {
+        XsrfTokenServiceAsync service = GWT.create(XsrfTokenService.class);
+        ((ServiceDefTarget) service).setServiceEntryPoint(GWT.getModuleBaseURL() + XsrfRpcRequestBuilder.XSRF_PATH);
         return service;
     }
 }
