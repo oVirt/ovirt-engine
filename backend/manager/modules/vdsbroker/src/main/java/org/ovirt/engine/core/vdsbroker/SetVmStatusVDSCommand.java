@@ -36,10 +36,10 @@ public class SetVmStatusVDSCommand<P extends SetVmStatusVDSCommandParameters> ex
             ResourceManager.getInstance().RemoveAsyncRunningVm(parameters.getVmId());
             VmStatistics vmStatistics = DbFacade.getInstance().getVmStatisticsDao().get(parameters.getVmId());
             VM vm = new VM(null, vmDynamic, vmStatistics);
-            ResourceManager.getInstance().InternalSetVmStatus(vm, status);
+            ResourceManager.getInstance().InternalSetVmStatus(vm, status, parameters.getExitStatus());
             DbFacade.getInstance().getVmStatisticsDao().update(vm.getStatisticsData());
             List<VmNetworkInterface> interfaces = vm.getInterfaces();
-            if (interfaces != null && interfaces.size() > 0) {
+            if (interfaces != null && !interfaces.isEmpty()) {
                 for (VmNetworkInterface ifc : interfaces) {
                     VmNetworkStatistics stats = ifc.getStatistics();
                     DbFacade.getInstance().getVmNetworkStatisticsDao().update(stats);
