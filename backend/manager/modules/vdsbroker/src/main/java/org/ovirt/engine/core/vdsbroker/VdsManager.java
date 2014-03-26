@@ -475,11 +475,8 @@ public class VdsManager {
     }
 
     /**
-     * This function called when vds have failed vm attempts one in predefined time. Its increments failure attempts to
-     * one
-     *
-     * @param obj
-     * @param arg
+     * This scheduled method allows this vds to recover from
+     * Error status.
      */
     @OnTimerMethodAnnotation("onVdsDuringFailureTimer")
     public void onVdsDuringFailureTimer() {
@@ -504,10 +501,18 @@ public class VdsManager {
         }
     }
 
+    /**
+     * This callback method notifies this vds that an attempt to run a vm on it
+     * failed. above a certain threshold such hosts are marked as
+     * VDSStatus.Error.
+     *
+     * @param vds
+     */
     public void failedToRunVm(VDS vds) {
         if (mFailedToRunVmAttempts.get() < Config.<Integer> getValue(ConfigValues.NumberOfFailedRunsOnVds)
                 && mFailedToRunVmAttempts.incrementAndGet() >= Config
                         .<Integer> getValue(ConfigValues.NumberOfFailedRunsOnVds)) {
+            //Only one thread at a time can enter here
             ResourceManager.getInstance().runVdsCommand(VDSCommandType.SetVdsStatus,
                     new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.Error));
 
