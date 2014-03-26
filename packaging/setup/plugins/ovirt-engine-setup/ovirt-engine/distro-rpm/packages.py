@@ -58,10 +58,24 @@ class Plugin(plugin.PluginBase):
 
         self.environment[
             osetupcons.RPMDistroEnv.VERSION_LOCK_FILTER
-        ].append(osetupcons.Const.ENGINE_PACKAGE_NAME)
+        ].extend(
+            tolist(
+                self.environment[osetupcons.RPMDistroEnv.ENGINE_PACKAGES]
+            )
+        )
         self.environment[
             osetupcons.RPMDistroEnv.VERSION_LOCK_APPLY
-        ].extend(osetupcons.Const.RPM_LOCK_LIST)
+        ].extend(
+            [
+                '%s%s' % (prefix, suffix)
+                for prefix in tolist(
+                    self.environment[
+                        osetupcons.RPMDistroEnv.ENGINE_PACKAGES
+                    ]
+                )
+                for suffix in osetupcons.Const.RPM_LOCK_LIST_SUFFIXES
+            ]
+        )
         self.environment[
             osetupcons.RPMDistroEnv.PACKAGES_UPGRADE_LIST
         ].append(
