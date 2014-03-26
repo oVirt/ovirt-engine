@@ -6,13 +6,11 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.VmsComparer;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
@@ -46,16 +44,16 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
     protected void executeCommand() {
         List<VM> vms = getVmDAO().getAllRunningForVds(getVdsId());
         Collections.sort(vms, Collections.reverseOrder(new VmsComparer()));
-        ArrayList<VdcActionParametersBase> runVmParamsList = new ArrayList<VdcActionParametersBase>();
+        List<Guid> autoStartVmIdsToRerun = new ArrayList<>();
         for (VM vm : vms) {
             if (vm.isAutoStartup()) {
-                runVmParamsList.add(new RunVmParams(vm.getId()));
+                autoStartVmIdsToRerun.add(vm.getId());
             }
             VDSReturnValue returnValue = Backend
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.SetVmStatus,
-                            new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down));
+                            new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down, VmExitStatus.Error));
             // Write that this VM was shut down by host reboot or manual fence
             if (returnValue != null && returnValue.getSucceeded()) {
                 LogSettingVmToDown(getVds().getId(), vm.getId());
@@ -69,8 +67,8 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.UpdateVdsVMsCleared,
                         new UpdateVdsVMsClearedVDSCommandParameters(getVdsId()));
-        if (runVmParamsList.size() > 0) {
-            Backend.getInstance().runInternalMultipleActions(VdcActionType.RunVm, runVmParamsList);
+        if (!autoStartVmIdsToRerun.isEmpty()) {
+            AutoStartVmsRunner.getInstance().addVmsToRun(autoStartVmIdsToRerun);
         }
         setSucceeded(true);
     }
