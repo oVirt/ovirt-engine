@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -285,7 +286,7 @@ public class AdElementListModel extends SearchableListModel
                     }
                 }
                 adElementListModel.setgroups(new ArrayList<EntityModel>());
-                for (IVdcQueryable item : (ArrayList<IVdcQueryable>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
+                for (IVdcQueryable item : (Collection<IVdcQueryable>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
                 {
                     DirectoryGroup a = (DirectoryGroup) item;
                     if (!excludeUsers.contains(a.getId()))
