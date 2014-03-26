@@ -483,7 +483,7 @@ public class VdsManager {
         if (vds.getStatus() == VDSStatus.Error) {
             setStatus(VDSStatus.Up, vds);
             DbFacade.getInstance().getVdsDynamicDao().updateStatus(getVdsId(), VDSStatus.Up);
-            log.infoFormat("recoverFromError of Host {0} entered after {1} attempts to run a VM",
+            log.infoFormat("Settings host {0} to up after {1} failed attempts to run a VM",
                     vds.getName(),
                     mFailedToRunVmAttempts);
             mFailedToRunVmAttempts.set(0);
