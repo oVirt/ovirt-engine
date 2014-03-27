@@ -6,12 +6,15 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 
 public class LdapSearchUserByQueryCommand extends LdapSearchGroupsByQueryCommand {
+    private boolean populateGroups;
+
     protected LdapQueryData getLdapQueryData() {
         return ((LdapSearchByQueryParameters) getParameters()).getLdapQueryData();
     }
 
     public LdapSearchUserByQueryCommand(LdapSearchByQueryParameters parameters) {
         super(parameters);
+        populateGroups = parameters.isPopulateGroups();
     }
 
     @Override
@@ -22,7 +25,8 @@ public class LdapSearchUserByQueryCommand extends LdapSearchGroupsByQueryCommand
         final List<LdapUser> usersList = (List<LdapUser>) directorySearcher.findAll(getLdapQueryData());
         for (final LdapUser searchResult : usersList) {
             {
-                LdapUser user = populateUserData(searchResult, getLdapQueryData().getDomain(), false);
+                LdapUser user =
+                        populateUserData(searchResult, getLdapQueryData().getDomain(), populateGroups);
                 userList.add(user);
             }
         }

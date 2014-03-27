@@ -9,7 +9,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
- * This command Responcible to bring large amount of data from Active Directory with smallest amount of Active directory
+ * This command Responsible to bring large amount of data from Active Directory with smallest amount of Active directory
  * Queries. First - all users retrieved from AD. All groups of all users gathered together. All parent groups of all
  * groups retrieved by single query. Maximum number of AD queries equal to AD tree depth + 1(for users query).
  */
@@ -19,8 +19,12 @@ public class LdapGetAdUserByUserIdListCommand extends LdapBrokerCommandBase {
         return ((LdapSearchByIdListParameters) getParameters()).getIds();
     }
 
+    private boolean populateGroups;
+
     public LdapGetAdUserByUserIdListCommand(LdapSearchByIdListParameters parameters) {
         super(parameters);
+        populateGroups = parameters.isPopulateGroups();
+
     }
 
     @Override
@@ -39,7 +43,7 @@ public class LdapGetAdUserByUserIdListCommand extends LdapBrokerCommandBase {
             ArrayList<LdapUser> tempUsers = (ArrayList<LdapUser>) LdapFactory
                     .getInstance(getDomain())
                     .runAdAction(AdActionType.SearchUserByQuery,
-                            new LdapSearchByQueryParameters(getParameters().getSessionId(), getDomain(), queryData))
+                            new LdapSearchByQueryParameters(getParameters().getSessionId(), getDomain(), queryData, populateGroups))
                     .getReturnValue();
             if (tempUsers != null) {
                 results.addAll(tempUsers);

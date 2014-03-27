@@ -79,7 +79,7 @@ public class KerberosLdapDirectory extends Directory {
         // Find the users using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.GetAdUserByUserIdList,
-                new LdapSearchByUserIdListParameters(getName(), ids, false)
+                new LdapSearchByUserIdListParameters(getName(), ids, true)
         );
         @SuppressWarnings("unchecked")
         List<LdapUser> ldapUsers = (List<LdapUser>) ldapResult.getReturnValue();

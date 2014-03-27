@@ -6,10 +6,12 @@ import org.ovirt.engine.core.common.utils.ExternalId;
 
 public class LdapSearchByIdListParameters extends LdapBrokerBaseParameters {
     private List<ExternalId> ids;
+    private boolean populateGroups;
 
-    public LdapSearchByIdListParameters(String domain, List<ExternalId> ids) {
+    public LdapSearchByIdListParameters(String domain, List<ExternalId> ids, boolean populateGroups) {
         super(domain);
         this.ids = ids;
+        this.populateGroups = populateGroups;
     }
 
     public List<ExternalId> getIds() {
@@ -18,5 +20,13 @@ public class LdapSearchByIdListParameters extends LdapBrokerBaseParameters {
 
     public void setIds(List<ExternalId> ids) {
         this.ids = ids;
+    }
+
+    public boolean isPopulateGroups() {
+        return populateGroups;
+    }
+
+    public void setPopulateGroups(boolean value) {
+        this.populateGroups = value;
     }
 }
