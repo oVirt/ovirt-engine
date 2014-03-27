@@ -1747,4 +1747,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Connect")
     String connect();
+
+    @DefaultStringValue("Enable boot menu")
+    String bootMenuEnabled();
 }

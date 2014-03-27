@@ -344,6 +344,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         initPriority(this.vm.getPriority());
 
         BuilderExecutor.build(vm.getStaticData(), getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
+
+        getModel().getBootMenuEnabled().setEntity(vm.isBootMenuEnabled());
     }
 
     @Override

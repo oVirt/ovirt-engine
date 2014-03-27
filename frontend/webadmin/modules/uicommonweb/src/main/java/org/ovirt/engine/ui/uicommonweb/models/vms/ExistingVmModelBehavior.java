@@ -294,6 +294,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         }
 
         BuilderExecutor.build(vm.getStaticData(), getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
+
+        getModel().getBootMenuEnabled().setEntity(vm.isBootMenuEnabled());
     }
 
     private int calculateHostCpus() {

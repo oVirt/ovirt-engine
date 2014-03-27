@@ -3700,6 +3700,10 @@ public final class AsyncDataProvider {
         return (Boolean) getConfigValuePreConverted(ConfigurationValues.SerialNumberPolicySupported, version);
     }
 
+    public static boolean isBootMenuSupported(String version) {
+        return (Boolean) getConfigValuePreConverted(ConfigurationValues.BootMenuSupported, version);
+    }
+
     public static List<IStorageModel> getDataStorageModels() {
         ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
 

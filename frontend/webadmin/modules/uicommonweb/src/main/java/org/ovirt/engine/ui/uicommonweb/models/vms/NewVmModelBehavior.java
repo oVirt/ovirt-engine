@@ -184,6 +184,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
 
             BuilderExecutor.build(template, getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
+
+            getModel().getBootMenuEnabled().setEntity(template.isBootMenuEnabled());
         }
     }
 

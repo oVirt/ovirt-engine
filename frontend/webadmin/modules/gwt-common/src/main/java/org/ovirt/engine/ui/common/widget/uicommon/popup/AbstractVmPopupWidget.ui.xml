@@ -634,6 +634,7 @@
 	                                <g:upFace image='{resources.refreshButtonImage}' />
                                 </g:PushButton>
 							</g:HorizontalPanel>
+              <ge:EntityModelCheckBoxEditor ui:field="bootMenuEnabledEditor" label="{constants.bootMenuEnabled}" addStyleNames="{style.checkbox}" />
 						</g:FlowPanel>
 						<g:FlowPanel ui:field="linuxBootOptionsPanel" addStyleNames="{style.sectionPanel}" visible="false">
 							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.linuxBootOptionsVmPopup}" />

@@ -355,4 +355,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Network should be assigned to ''{0}'' via label ''{1}''. However, for some reason it isn''t.")
     String labeledNetworkNotAttached(String nicName, String labelName);
+
+    @DefaultMessage("VM Boot menu is not supported in Cluster version {0}")
+    String bootMenuNotSupported(String clusterVersion);
 }

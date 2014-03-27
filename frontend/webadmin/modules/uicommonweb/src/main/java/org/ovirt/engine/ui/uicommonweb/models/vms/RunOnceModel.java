@@ -315,6 +315,16 @@ public abstract class RunOnceModel extends Model
         this.customPropertySheet = customPropertySheet;
     }
 
+    private EntityModel<Boolean> bootMenuEnabled;
+
+    public EntityModel<Boolean> getBootMenuEnabled() {
+        return bootMenuEnabled;
+    }
+
+    public void setBootMenuEnabled(EntityModel<Boolean> bootMenuEnabled) {
+        this.bootMenuEnabled = bootMenuEnabled;
+    }
+
     private EntityModel<Boolean> privateRunAndPause;
 
     public EntityModel<Boolean> getRunAndPause()
@@ -587,6 +597,8 @@ public abstract class RunOnceModel extends Model
         // Custom Properties tab
         setCustomPropertySheet(new KeyValueModel());
 
+        setBootMenuEnabled(new EntityModel<Boolean>(false));
+        getBootMenuEnabled().setIsAvailable(AsyncDataProvider.isBootMenuSupported(vm.getVdsGroupCompatibilityVersion().toString()));
         setRunAndPause(new EntityModel<Boolean>(false));
         setRunAsStateless(new EntityModel<Boolean>(false));
 
@@ -602,10 +614,10 @@ public abstract class RunOnceModel extends Model
         getVncKeyboardLayout().setSelectedItem(vm.getDefaultVncKeyboardLayout());
 
         // Host tab
-        setDefaultHost(new ListModel());
+        setDefaultHost(new ListModel<VDS>());
         getDefaultHost().getSelectedItemChangedEvent().addListener(this);
 
-        setIsAutoAssign(new EntityModel());
+        setIsAutoAssign(new EntityModel<Boolean>());
         getIsAutoAssign().getEntityChangedEvent().addListener(this);
 
         // availability/visibility
@@ -635,6 +647,7 @@ public abstract class RunOnceModel extends Model
         setHashName("run_virtual_machine"); //$NON-NLS-1$
         setIsoImagePath(vm.getIsoPath()); // needs to be called before iso list is updated
         getAttachFloppy().setEntity(false);
+        getBootMenuEnabled().setEntity(vm.isBootMenuEnabled());
         getRunAsStateless().setEntity(vm.isStateless());
         getRunAndPause().setEntity(vm.isRunAndPause());
         setHwAcceleration(true);
@@ -698,6 +711,7 @@ public abstract class RunOnceModel extends Model
         params.setDiskPath(getIsoImagePath());
         params.setFloppyPath(getFloppyImagePath());
         params.setKvmEnable(getHwAcceleration());
+        params.setBootMenuEnabled(getBootMenuEnabled().getEntity());
         params.setRunAndPause(getRunAndPause().getEntity());
         params.setAcpiEnable(true);
         params.setRunAsStateless(getRunAsStateless().getEntity());
@@ -733,7 +747,7 @@ public abstract class RunOnceModel extends Model
             params.setVmInit(getVmInit().buildCloudInitParameters(this));
         }
 
-        EntityModel displayProtocolSelectedItem = (EntityModel) getDisplayProtocol().getSelectedItem();
+        EntityModel<? extends DisplayType> displayProtocolSelectedItem = (EntityModel<? extends DisplayType>) getDisplayProtocol().getSelectedItem();
         params.setUseVnc(displayProtocolSelectedItem.getEntity() == DisplayType.vnc);
         if (getDisplayConsole_Vnc_IsSelected().getEntity()
                 || getDisplayConsole_Spice_IsSelected().getEntity())

@@ -35,5 +35,6 @@ public class CoreUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<U
         vm.setDefaultDisplayType(model.getDisplayProtocol().getSelectedItem().getEntity());
         vm.setSerialNumberPolicy(model.getSerialNumberPolicy().getSelectedSerialNumberPolicy());
         vm.setCustomSerialNumber(model.getSerialNumberPolicy().getCustomSerialNumber().getEntity());
+        vm.setBootMenuEnabled(model.getBootMenuEnabled().getEntity());
     }
 }

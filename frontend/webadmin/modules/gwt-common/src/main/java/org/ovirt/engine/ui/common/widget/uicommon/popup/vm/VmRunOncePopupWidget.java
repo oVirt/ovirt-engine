@@ -139,6 +139,11 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     EntityModelCheckBoxEditor attachIsoEditor;
 
     @UiField(provided = true)
+    @Path("bootMenuEnabled.entity")
+    @WithElementId("bootMenuEnabled")
+    EntityModelCheckBoxEditor bootMenuEnabledEditor;
+
+    @UiField(provided = true)
     @Path(value = "runAsStateless.entity")
     @WithElementId("runAsStateless")
     EntityModelCheckBoxEditor runAsStatelessEditor;
@@ -314,6 +319,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     void initCheckBoxEditors() {
         attachFloppyEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         attachIsoEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        bootMenuEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         runAsStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         runAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         useAlternateCredentialsEditor = new EntityModelCheckBoxEditor(Align.RIGHT);

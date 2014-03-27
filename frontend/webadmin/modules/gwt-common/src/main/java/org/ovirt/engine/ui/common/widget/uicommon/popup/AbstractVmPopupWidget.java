@@ -632,6 +632,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("cdAttached")
     public EntityModelCheckBoxEditor cdAttachedEditor;
 
+    @UiField(provided = true)
+    @Path("bootMenuEnabled.entity")
+    @WithElementId("bootMenuEnabled")
+    public EntityModelCheckBoxEditor bootMenuEnabledEditor;
+
     @UiField
     protected FlowPanel linuxBootOptionsPanel;
 
@@ -713,6 +718,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isSmartcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isConsoleDeviceEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer(), true);
         cdAttachedEditor = new EntityModelCheckBoxEditor(Align.LEFT, new ModeSwitchingVisibilityRenderer());
+        bootMenuEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         allowConsoleReconnectEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSoundcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         ssoMethodNone = new EntityModelRadioButtonEditor("ssoMethod", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
@@ -1599,6 +1605,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         secondBootDeviceEditor.setTabIndex(nextTabIndex++);
         cdAttachedEditor.setTabIndex(nextTabIndex++);
         cdImageEditor.setTabIndex(nextTabIndex++);
+        bootMenuEnabledEditor.setTabIndex(nextTabIndex++);
         kernel_pathEditor.setTabIndex(nextTabIndex++);
         initrd_pathEditor.setTabIndex(nextTabIndex++);
         kernel_parametersEditor.setTabIndex(nextTabIndex++);

@@ -1242,6 +1242,16 @@ public class UnitVmModel extends Model {
         this.serialNumberPolicy = value;
     }
 
+    private EntityModel<Boolean> bootMenuEnabled;
+
+    public EntityModel<Boolean> getBootMenuEnabled() {
+        return bootMenuEnabled;
+    }
+
+    public void setBootMenuEnabled(EntityModel<Boolean> bootMenuEnabled) {
+        this.bootMenuEnabled = bootMenuEnabled;
+    }
+
     public UnitVmModel(VmModelBehaviorBase behavior) {
         Frontend.getInstance().getQueryStartedEvent().addListener(this);
         Frontend.getInstance().getQueryCompleteEvent().addListener(this);
@@ -1327,9 +1337,10 @@ public class UnitVmModel extends Model {
         setCustomPropertySheet(new NotChangableForVmInPoolKeyValueModel());
         setDisplayProtocol(new NotChangableForVmInPoolListModel<EntityModel<DisplayType>>());
         setSecondBootDevice(new NotChangableForVmInPoolListModel<EntityModel<BootSequence>>());
+        setBootMenuEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setPriority(new NotChangableForVmInPoolListModel<EntityModel<Integer>>());
-        setVmInitEnabled(new EntityModel(false));
-        setCloudInitEnabled(new EntityModel());
+        setVmInitEnabled(new EntityModel<Boolean>(false));
+        setCloudInitEnabled(new EntityModel<Boolean>());
         setSysprepEnabled(new EntityModel<Boolean>());
         getVmInitEnabled().getEntityChangedEvent().addListener(this);
         setVmInitModel(new VmInitModel());
@@ -1867,13 +1878,26 @@ public class UnitVmModel extends Model {
         DataCenterWithCluster dataCenterWithCluster = getDataCenterWithClustersList().getSelectedItem();
         if (dataCenterWithCluster != null && dataCenterWithCluster.getDataCenter() != null) {
             getDisksAllocationModel().setQuotaEnforcementType(dataCenterWithCluster.getDataCenter()
-                    .getQuotaEnforcementType());
+                                                                      .getQuotaEnforcementType());
         }
 
         updateMigrationOptions();
         handleQxlClusterLevel();
 
         updateWatchdogModels();
+        updateBootMenu();
+    }
+
+    private void updateBootMenu() {
+        if (getSelectedCluster() != null) {
+            Version version = getSelectedCluster().getcompatibility_version();
+            final boolean supported = AsyncDataProvider.isBootMenuSupported(version.toString());
+            if (!supported) {
+                getBootMenuEnabled().setEntity(false);
+                getBootMenuEnabled().setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().bootMenuNotSupported(version.toString(2)));
+            }
+            getBootMenuEnabled().setIsChangable(supported);
+        }
     }
 
     private void handleQxlClusterLevel() {

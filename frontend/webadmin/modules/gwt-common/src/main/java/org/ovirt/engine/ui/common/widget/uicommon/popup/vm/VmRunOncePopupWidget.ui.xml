@@ -180,6 +180,7 @@
 					</g:VerticalPanel>
 				</g:AbsolutePanel>
 
+        <ge:EntityModelCheckBoxEditor ui:field="bootMenuEnabledEditor" label="{constants.bootMenuEnabled}" />
 				<ge:EntityModelCheckBoxEditor ui:field="runAsStatelessEditor" />
 				<ge:EntityModelCheckBoxEditor ui:field="runAndPauseEditor" />
 			</g:VerticalPanel>

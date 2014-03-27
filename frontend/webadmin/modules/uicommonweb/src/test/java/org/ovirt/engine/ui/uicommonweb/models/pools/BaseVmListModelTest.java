@@ -113,6 +113,7 @@ public class BaseVmListModelTest {
         when(model.getIsAutoAssign().getEntity()).thenReturn(false);
         when(model.getMigrationMode().getSelectedItem()).thenReturn(MIGRATION_SUPPORT);
         when(model.getSelectedMigrationDowntime()).thenReturn(MIGRATION_DOWNTIME);
+        when(model.getBootMenuEnabled().getEntity()).thenReturn(true);
     }
 
     protected void setUpOrigVm(VM origVm) {
@@ -132,6 +133,7 @@ public class BaseVmListModelTest {
         assertEquals(TIMEZONE, vm.getTimeZone());
         assertEquals(CLUSTER_ID, vm.getVdsGroupId());
         assertEquals(BOOT_SEQUENCE, vm.getDefaultBootSequence());
+        assertTrue(vm.isBootMenuEnabled());
         assertEquals(ISO_NAME, vm.getIsoPath());
         assertEquals(MEM_SIZE, vm.getMemSizeMb());
         assertEquals(MIN_MEM, vm.getMinAllocatedMem());

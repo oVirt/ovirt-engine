@@ -199,6 +199,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             getModel().getVmInitEnabled().setEntity(vmBase.getVmInit() != null);
 
             BuilderExecutor.build(vmBase, getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
+
+            getModel().getBootMenuEnabled().setEntity(vmBase.isBootMenuEnabled());
         }
     }
 
