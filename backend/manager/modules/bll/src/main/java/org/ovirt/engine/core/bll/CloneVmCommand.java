@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -242,4 +243,9 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         return super.canDoAction();
     }
 
+    @Override
+    protected void updateOriginalTemplate(VmStatic vmStatic) {
+        vmStatic.setOriginalTemplateGuid(getVm().getOriginalTemplateGuid());
+        vmStatic.setOriginalTemplateName(getVm().getOriginalTemplateName());
+    }
 }
