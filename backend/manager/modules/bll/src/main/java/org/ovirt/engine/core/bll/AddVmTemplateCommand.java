@@ -214,7 +214,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
 
         // set template id as base for new templates
-        if (getParameters().getBaseTemplateId() == null) {
+        if (!isTemplateVersion()) {
             getParameters().setBaseTemplateId(getVmTemplateId());
             if (StringUtils.isEmpty(getParameters().getTemplateVersionName())) {
                 getParameters().setTemplateVersionName(BASE_TEMPLATE_VERSION_NAME);
@@ -359,7 +359,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         }
 
-        if (getParameters().getBaseTemplateId() != null) {
+        if (isTemplateVersion()) {
             VmTemplate userSelectedBaseTemplate = getVmTemplateDAO().get(getParameters().getBaseTemplateId());
             if (userSelectedBaseTemplate == null) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
@@ -373,6 +373,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
                 getParameters().getMasterVm().getCpuPerSocket(), getVdsGroup()
                 .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
+    }
+
+    private boolean isTemplateVersion() {
+        return getParameters().getBaseTemplateId() != null;
     }
 
     private boolean imagesRelatedChecks() {
@@ -601,7 +605,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         endUnlockOps();
 
         // in case of new version of a template, update vms marked to use latest
-        if (getParameters().getBaseTemplateId() != null) {
+        if (isTemplateVersion()) {
             String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "onTimerHandleVdsRecovering", new Class[0],
                     new Object[0], 0, TimeUnit.SECONDS);
             updateVmsJobIdMap.put(getParameters().getBaseTemplateId(), jobId);
@@ -776,7 +780,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
-        if (getParameters().getBaseTemplateId() != null) {
+        if (isTemplateVersion()) {
             return Collections.singletonMap(getParameters().getBaseTemplateId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
