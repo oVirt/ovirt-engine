@@ -42,11 +42,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
- * This class holds main logic for cloning a vm from snapshot
- *
- * @param <T>
+ * This class adds a cloned VM from a snapshot (Deep disk copy).
  */
-
 @DisableInPrepareMode
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)

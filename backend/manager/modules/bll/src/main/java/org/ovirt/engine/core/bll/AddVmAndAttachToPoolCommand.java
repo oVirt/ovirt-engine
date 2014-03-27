@@ -13,6 +13,10 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.utils.Pair;
 
+/**
+ * This class adds a thinly provisioned VM based on disks list or over a template.
+ * The VM is created as a member of a VM pool.
+ */
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameters> extends AddVmCommand<T> {

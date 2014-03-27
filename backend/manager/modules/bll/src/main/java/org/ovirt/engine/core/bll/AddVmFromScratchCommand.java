@@ -24,6 +24,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
+/**
+ * This class adds a thinly provisioned VM based on disks list.
+ */
 @DisableInPrepareMode
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute

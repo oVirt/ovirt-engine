@@ -31,8 +31,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 /**
  * This abstract class holds helper methods for concrete command classes that require to add a VM and clone an image in
  * the process
- *
- * @param <T>
  */
 public abstract class AddVmAndCloneImageCommand<T extends VmManagementParametersBase> extends AddVmCommand<T> {
 
