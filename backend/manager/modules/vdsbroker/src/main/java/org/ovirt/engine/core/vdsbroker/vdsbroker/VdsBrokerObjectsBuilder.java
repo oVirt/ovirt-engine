@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -412,6 +413,7 @@ public class VdsBrokerObjectsBuilder {
         }
         vds.setHBAs(hbas);
         vds.setBootTime(AssignLongValue(xmlRpcStruct, VdsProperties.bootTime));
+        vds.setKdumpStatus(KdumpStatus.valueOfNumber(AssignIntValue(xmlRpcStruct, VdsProperties.KDUMP_STATUS)));
     }
 
     public static void checkTimeDrift(VDS vds, Map<String, Object> xmlRpcStruct) {
