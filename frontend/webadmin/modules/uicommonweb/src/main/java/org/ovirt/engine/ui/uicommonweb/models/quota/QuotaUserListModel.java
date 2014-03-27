@@ -264,6 +264,7 @@ public class QuotaUserListModel extends SearchableListModel {
             {
                 DbGroup group = new DbGroup();
                 group.setId(user.getId());
+                group.setExternalId(user.getExternalId());
                 group.setName(user.getFirstName());
                 group.setDomain(user.getDomain());
                 permissionParams.setGroup(group);
