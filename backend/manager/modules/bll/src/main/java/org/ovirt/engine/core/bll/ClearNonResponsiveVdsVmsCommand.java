@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
+@NonTransactiveCommandAttribute
 public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
     /**
@@ -43,7 +43,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
 
     @Override
     protected void executeCommand() {
-        List<VM> vms = DbFacade.getInstance().getVmDao().getAllRunningForVds(getVdsId());
+        List<VM> vms = getVmDAO().getAllRunningForVds(getVdsId());
         Collections.sort(vms, Collections.reverseOrder(new VmsComparer()));
         java.util.ArrayList<VdcActionParametersBase> runVmParamsList =
                 new java.util.ArrayList<VdcActionParametersBase>();
@@ -77,20 +77,19 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = true;
         if (getVds() == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
-            returnValue = false;
+            return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
 
-        } else if (hasVMs() && getVds().getStatus() != VDSStatus.NonResponsive && getVds().getStatus() != VDSStatus.Reboot) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_CLEAR_VMS_WRONG_STATUS);
-            returnValue = false;
         }
-        return returnValue;
+
+        if (hasVMs() && getVds().getStatus() != VDSStatus.NonResponsive && getVds().getStatus() != VDSStatus.Reboot) {
+            return failCanDoAction(VdcBllMessages.VDS_CANNOT_CLEAR_VMS_WRONG_STATUS);
+        }
+
+        return true;
     }
 
     private boolean hasVMs() {
-        List<VM> vms = DbFacade.getInstance().getVmDao().getAllRunningForVds(getVdsId());
-        return (vms.size() > 0);
+        return !getVmDAO().getAllRunningForVds(getVdsId()).isEmpty();
     }
 }
