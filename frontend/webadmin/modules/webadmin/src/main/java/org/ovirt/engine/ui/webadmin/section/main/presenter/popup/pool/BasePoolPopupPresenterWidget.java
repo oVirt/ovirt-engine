@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.popup.AbstractVmBasedPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -16,8 +17,8 @@ public abstract class BasePoolPopupPresenterWidget<V extends AbstractVmBasedPopu
 
     private CommonApplicationMessages messages;
 
-    public BasePoolPopupPresenterWidget(EventBus eventBus, V view, CommonApplicationMessages messages) {
-        super(eventBus, view);
+    public BasePoolPopupPresenterWidget(EventBus eventBus, V view, CommonApplicationMessages messages, ClientStorage clientStorage) {
+        super(eventBus, view, clientStorage);
 
         this.messages = messages;
     }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.popup;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -16,17 +17,24 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
         void setSpiceProxyOverrideExplanation(String explanation);
     }
 
+    private ClientStorage clientStorage;
+
     @Inject
-    public AbstractVmBasedPopupPresenterWidget(EventBus eventBus, V view) {
+    public AbstractVmBasedPopupPresenterWidget(EventBus eventBus, V view, ClientStorage clientStorage) {
         super(eventBus, view);
+
+        this.clientStorage = clientStorage;
     }
 
     @Override
     public void init(UnitVmModel model) {
         super.init(model);
 
-        initListeners(model);
+        initAdvancedModeFromLocalStorage(model);
+
         swithAccordingToMode(model);
+
+        initListeners(model);
     }
 
     private void initListeners(final UnitVmModel model) {
@@ -34,6 +42,7 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
 
             @Override
             public void eventRaised(org.ovirt.engine.ui.uicompat.Event ev, Object sender, EventArgs args) {
+                storeAdvancedModeToLocalStorage(model);
                 swithAccordingToMode(model);
             }
 
@@ -41,7 +50,24 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
     }
 
     private void swithAccordingToMode(final UnitVmModel model) {
-        getView().switchMode((Boolean) model.getAdvancedMode().getEntity());
+        getView().switchMode(model.getAdvancedMode().getEntity());
+    }
+
+    private void storeAdvancedModeToLocalStorage(UnitVmModel model) {
+        if (model.getIsAdvancedModeLocalStorageKey() == null) {
+            return;
+        }
+
+        clientStorage.setLocalItem(model.getIsAdvancedModeLocalStorageKey(), Boolean.toString(model.getAdvancedMode().getEntity()));
+    }
+
+    private void initAdvancedModeFromLocalStorage(UnitVmModel model) {
+        if (model.getIsAdvancedModeLocalStorageKey() == null) {
+            return;
+        }
+
+        boolean isAdvancedMode = Boolean.parseBoolean(clientStorage.getLocalItem(model.getIsAdvancedModeLocalStorageKey()));
+        model.getAdvancedMode().setEntity(isAdvancedMode);
     }
 
 }

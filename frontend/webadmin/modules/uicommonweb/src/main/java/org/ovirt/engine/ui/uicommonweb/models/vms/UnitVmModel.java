@@ -71,6 +71,20 @@ public class UnitVmModel extends Model {
 
     private boolean privateIsNew;
 
+    /**
+     * All dialogs which want to have the previous advanced/basic mode remembered in local storage need to have
+     * a key to local storage set.
+     */
+    private String isAdvancedModeLocalStorageKey;
+
+    public String getIsAdvancedModeLocalStorageKey() {
+        return isAdvancedModeLocalStorageKey;
+    }
+
+    public void setIsAdvancedModeLocalStorageKey(String isAdvancedModeLocalStorageKey) {
+        this.isAdvancedModeLocalStorageKey = isAdvancedModeLocalStorageKey;
+    }
+
     private EntityModel<String> spiceProxy;
 
     public EntityModel<String> getSpiceProxy() {

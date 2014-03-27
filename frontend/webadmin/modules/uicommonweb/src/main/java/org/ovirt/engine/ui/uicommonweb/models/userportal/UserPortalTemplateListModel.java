@@ -56,6 +56,10 @@ public class UserPortalTemplateListModel extends TemplateListModel
         }
     }
 
+    protected String getEditTemplateAdvancedModelKey() {
+        return "up_template_dialog"; //$NON-NLS-1$
+    }
+
     @Override
     protected void addCustomModelsDetailModelList(ObservableCollection<EntityModel> list) {
         list.add(2, new UserPortalTemplateDiskListModel());

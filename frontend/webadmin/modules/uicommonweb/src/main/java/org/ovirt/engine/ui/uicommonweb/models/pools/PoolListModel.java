@@ -215,6 +215,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         PoolModel model = new PoolModel(new NewPoolModelBehavior());
         model.setIsNew(true);
         model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
+        model.setIsAdvancedModeLocalStorageKey("wa_pool_dialog");  //$NON-NLS-1$
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newPoolTitle());
         model.setHelpTag(HelpTag.new_pool);
@@ -305,6 +306,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         PoolModel model = new PoolModel(behavior);
                         model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
                         model.startProgress("");
+                        model.setIsAdvancedModeLocalStorageKey("wa_pool_dialog");  //$NON-NLS-1$
                         setWindow(model);
 
                         VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();

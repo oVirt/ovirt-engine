@@ -709,6 +709,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setIsNew(true);
         model.getVmType().setSelectedItem(VmType.Server);
         model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
+        model.setIsAdvancedModeLocalStorageKey("wa_vm_dialog");  //$NON-NLS-1$
 
         setWindow(model);
 
@@ -781,6 +782,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         UnitVmModel model = new UnitVmModel(new ExistingVmModelBehavior(vm));
         model.getVmType().setSelectedItem(vm.getVmType());
         model.setVmAttachedToPool(vm.getVmPoolId() != null);
+        model.setIsAdvancedModeLocalStorageKey("wa_vm_dialog");  //$NON-NLS-1$
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance()
                 .getConstants().editVmTitle());
@@ -1285,6 +1287,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
 
         UnitVmModel model = new UnitVmModel(new NewTemplateVmModelBehavior(vm));
+
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newTemplateTitle());
         model.setHelpTag(HelpTag.new_template);

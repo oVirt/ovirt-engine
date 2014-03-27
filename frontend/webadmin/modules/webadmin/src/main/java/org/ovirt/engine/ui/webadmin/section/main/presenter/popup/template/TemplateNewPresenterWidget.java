@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template;
 
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.popup.AbstractVmBasedPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
@@ -11,7 +12,7 @@ public class TemplateNewPresenterWidget extends AbstractVmBasedPopupPresenterWid
     }
 
     @Inject
-    public TemplateNewPresenterWidget(EventBus eventBus, ViewDef view) {
-        super(eventBus, view);
+    public TemplateNewPresenterWidget(EventBus eventBus, ViewDef view, ClientStorage clientStorage) {
+        super(eventBus, view, clientStorage);
     }
 }

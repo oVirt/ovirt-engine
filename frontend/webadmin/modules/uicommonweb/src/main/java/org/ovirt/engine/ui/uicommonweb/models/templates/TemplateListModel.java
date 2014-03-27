@@ -445,6 +445,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
     private void vmInitLoaded(VmTemplate template) {
         UnitVmModel model = new UnitVmModel(createBehavior(template));
+        model.setIsAdvancedModeLocalStorageKey(getEditTemplateAdvancedModelKey());
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editTemplateTitle());
         model.setHelpTag(HelpTag.edit_template);
@@ -468,6 +469,10 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         command.setIsCancel(true);
         model.getCommands().add(command);
+    }
+
+    protected String getEditTemplateAdvancedModelKey() {
+        return "wa_template_dialog"; //$NON-NLS-1$
     }
 
     protected TemplateVmModelBehavior createBehavior(VmTemplate template) {

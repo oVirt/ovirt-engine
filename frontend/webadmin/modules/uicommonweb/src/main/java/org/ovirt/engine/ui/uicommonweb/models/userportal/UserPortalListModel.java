@@ -720,7 +720,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         model.setHashName("new_vm"); //$NON-NLS-1$
         model.setIsNew(true);
         model.setCustomPropertiesKeysList(CustomPropertiesKeysList);
-
+        model.setIsAdvancedModeLocalStorageKey("up_vm_dialog");  //$NON-NLS-1$
         setWindow(model);
 
         model.initialize(null);
@@ -776,6 +776,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         model.setHashName("edit_vm"); //$NON-NLS-1$
         model.getVmType().setSelectedItem(vm.getVmType());
         model.setCustomPropertiesKeysList(CustomPropertiesKeysList);
+        model.setIsAdvancedModeLocalStorageKey("up_vm_dialog");  //$NON-NLS-1$
 
         setWindow(model);
 
