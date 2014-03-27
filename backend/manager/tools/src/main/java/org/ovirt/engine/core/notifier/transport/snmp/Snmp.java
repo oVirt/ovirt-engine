@@ -117,6 +117,39 @@ public class Snmp extends Transport {
         v2pdu.add(new VariableBinding(
                 new OID(trapOID).append(3),
                 new OctetString(event.getLogTime().toString())));
+        v2pdu.add(new VariableBinding(
+                new OID(trapOID).append(4),
+                new OctetString(event.getLogTypeName())));
+        if (!StringUtils.isEmpty(event.getUserName())) {
+            v2pdu.add(new VariableBinding(
+                    new OID(trapOID).append(5),
+                    new OctetString(event.getUserName())));
+        }
+        if (!StringUtils.isEmpty(event.getVmName())) {
+            v2pdu.add(new VariableBinding(
+                    new OID(trapOID).append(6),
+                    new OctetString(event.getVmName())));
+        }
+        if (!StringUtils.isEmpty(event.getVdsName())) {
+            v2pdu.add(new VariableBinding(
+                    new OID(trapOID).append(7),
+                    new OctetString(event.getVdsName())));
+        }
+        if (!StringUtils.isEmpty(event.getVmTemplateName())) {
+            v2pdu.add(new VariableBinding(
+                    new OID(trapOID).append(8),
+                    new OctetString(event.getVmTemplateName())));
+        }
+        if (!StringUtils.isEmpty(event.getStoragePoolName())) {
+            v2pdu.add(new VariableBinding(
+                    new OID(trapOID).append(9),
+                    new OctetString(event.getStoragePoolName())));
+        }
+        if (!StringUtils.isEmpty(event.getStorageDomainName())) {
+            v2pdu.add(new VariableBinding(
+                    new OID(trapOID).append(10),
+                    new OctetString(event.getStorageDomainName())));
+        }
         CommunityTarget target = new CommunityTarget();
         target.setCommunity(profile.community);
         target.setVersion(SnmpConstants.version2c);
