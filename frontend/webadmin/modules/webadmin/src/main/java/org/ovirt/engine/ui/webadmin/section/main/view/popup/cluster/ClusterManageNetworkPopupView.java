@@ -13,8 +13,6 @@ import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlWithSafeHtmlToolti
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkManageModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -35,7 +33,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.inject.Inject;
 
-public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<ClusterNetworkManageModel> implements ClusterManageNetworkPopupPresenterWidget.ViewDef {
+public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<ClusterNetworkManageModel>
+        implements ClusterManageNetworkPopupPresenterWidget.ViewDef {
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ClusterManageNetworkPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -50,9 +49,13 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     private final SafeHtml emptyImage;
 
     @Inject
-    public ClusterManageNetworkPopupView(EventBus eventBus,
-            ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
+    public ClusterManageNetworkPopupView(
+            EventBus eventBus,
+            ApplicationResources resources,
+            ApplicationConstants constants,
+            ApplicationTemplates templates) {
         super(eventBus, resources);
+
         this.constants = constants;
         this.templates = templates;
         this.networks = new EntityModelCellTable<ClusterNetworkManageModel>(SelectionMode.NONE, true);
@@ -61,10 +64,9 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
     }
 
-    @SuppressWarnings("unchecked")
-    Iterable<EntityModel> getNetworksTableItems() {
-        ListModel tableModel = networks.asEditor().flush();
-        return tableModel != null ? tableModel.getItems() : new ArrayList<EntityModel>();
+    Iterable<ClusterNetworkModel> getNetworksTableItems() {
+        ClusterNetworkManageModel tableModel = networks.asEditor().flush();
+        return tableModel != null ? tableModel.getItems() : new ArrayList<ClusterNetworkModel>();
     }
 
     void refreshNetworksTable() {
@@ -75,209 +77,34 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         networks.enableColumnResizing();
         boolean multipleSelectionAllowed = networks.asEditor().flush().isMultiCluster();
 
-        CheckboxHeader assignAllHeader = new CheckboxHeader(templates.textForCheckBoxHeader(constants.assignAll())) {
-            @Override
-            protected void selectionChanged(Boolean value) {
-                for (EntityModel model : getNetworksTableItems()) {
-                    ClusterNetworkModel clusterNetworkManageModel = (ClusterNetworkModel) model;
-                    if (canEditAssign(clusterNetworkManageModel)) {
-                        changeIsAttached(clusterNetworkManageModel, value);
-                    }
-                }
-                refreshNetworksTable();
-            }
+        networks.addColumn(new NetworkNameTextColumnWithTooltip(), constants.nameNetwork(), "85px"); //$NON-NLS-1$
 
-            @Override
-            public Boolean getValue() {
-                for (EntityModel model : getNetworksTableItems()) {
-                    ClusterNetworkModel clusterNetworkManageModel = (ClusterNetworkModel) model;
-                    if (canEditAssign(clusterNetworkManageModel)) {
-                        if (!clusterNetworkManageModel.isAttached()) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
+        networks.addColumn(
+                new AttachedIndicatorCheckboxColumn(new AttachedIndicatorFieldUpdater()),
+                new AttachedIndicatorCheckboxHeader(templates.textForCheckBoxHeader(constants.assignAll())), "90px"); //$NON-NLS-1$
 
-            @Override
-            public boolean isEnabled() {
-                for (EntityModel model : getNetworksTableItems()) {
-                    ClusterNetworkModel clusterNetworkManageModel = (ClusterNetworkModel) model;
-                    if (clusterNetworkManageModel.getIsChangable()) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
+        networks.addColumn(
+                new RequiredIndicatorCheckboxColumn(new RequiredIndicatorFieldUpdater()),
+                new RequiredAllCheckboxHeader(templates.textForCheckBoxHeader(constants.requiredAll())), "110px"); //$NON-NLS-1$
 
-        networks.addColumn(new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel model) {
-                return ((ClusterNetworkModel) model).getDisplayedName();
-            }
-        }, constants.nameNetwork(), "85px"); //$NON-NLS-1$
+        networks.addColumn(
+                new VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn(constants),
+                constants.vmNetwork(), "80px"); //$NON-NLS-1$
 
-        networks.addColumn(new CheckboxColumn<EntityModel>(new FieldUpdater<EntityModel, Boolean>() {
-            @Override
-            public void update(int index, EntityModel model, Boolean value) {
-                ClusterNetworkModel clusterNetworkManageModel = (ClusterNetworkModel) model;
-                changeIsAttached(clusterNetworkManageModel, value);
-                refreshNetworksTable();
-            }
-        }) {
-            @Override
-            public Boolean getValue(EntityModel model) {
-                return ((ClusterNetworkModel) model).isAttached();
-            }
+        networks.addColumn(
+                new DisplayNetworkIndicatorCheckboxColumn(multipleSelectionAllowed,
+                        new DisplayNetworkIndicatorFieldUpdater()),
+                constants.displayNetwork(), "100px"); //$NON-NLS-1$
 
-            @Override
-            protected boolean canEdit(EntityModel model) {
-                return ClusterManageNetworkPopupView.this.canEditAssign(model);
-            }
-
-            @Override
-            public void render(Context context, EntityModel object, SafeHtmlBuilder sb) {
-                super.render(context, object, sb);
-                sb.append(templates.textForCheckBox(constants.assign()));
-            }
-
-        }, assignAllHeader, "90px"); //$NON-NLS-1$
-
-        CheckboxHeader requiredAllHeader = new CheckboxHeader(
-                templates.textForCheckBoxHeader(constants.requiredAll())) {
-            @Override
-            protected void selectionChanged(Boolean value) {
-                for (EntityModel model : getNetworksTableItems()) {
-                    ClusterNetworkModel clusterNetworkManageModel = (ClusterNetworkModel) model;
-                    if (canEditRequired(clusterNetworkManageModel)) {
-                        clusterNetworkManageModel.setRequired(value);
-                    }
-                    refreshNetworksTable();
-                }
-            }
-
-            @Override
-            public Boolean getValue() {
-                for (EntityModel model : getNetworksTableItems()) {
-                    ClusterNetworkModel clusterNetworkManageModel = (ClusterNetworkModel) model;
-                    if (canEditRequired(clusterNetworkManageModel)) {
-                        if (!clusterNetworkManageModel.isRequired()) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
-
-            @Override
-            public boolean isEnabled() {
-                for (EntityModel model : getNetworksTableItems()) {
-                    ClusterNetworkModel clusterNetworkManageModel = (ClusterNetworkModel) model;
-                    if (clusterNetworkManageModel.getIsChangable()) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
-
-        networks.addColumn(new CheckboxColumn<EntityModel>(new FieldUpdater<EntityModel, Boolean>() {
-            @Override
-            public void update(int index, EntityModel model, Boolean value) {
-                ((ClusterNetworkModel) model).setRequired(value);
-                refreshNetworksTable();
-            }
-        }) {
-            @Override
-            public Boolean getValue(EntityModel model) {
-                return ((ClusterNetworkModel) model).isRequired();
-            }
-
-            @Override
-            protected boolean canEdit(EntityModel model) {
-                return canEditRequired(model);
-            }
-
-            @Override
-            public void render(Context context, EntityModel object, SafeHtmlBuilder sb) {
-                super.render(context, object, sb);
-                sb.append(templates.textForCheckBox(constants.required()));
-            }
-        }, requiredAllHeader, "110px"); //$NON-NLS-1$
-
-        SafeHtmlWithSafeHtmlTooltipColumn<ClusterNetworkModel> vmColumn =
-                new SafeHtmlWithSafeHtmlTooltipColumn<ClusterNetworkModel>() {
-                    @Override
-                    public SafeHtml getValue(ClusterNetworkModel model) {
-                        return NetworkRoleColumnHelper.getValue(Collections.singletonList(model.isVmNetwork() ? vmImage
-                                : emptyImage));
-                    }
-
-                    @Override
-                    public SafeHtml getTooltip(ClusterNetworkModel model) {
-                        return NetworkRoleColumnHelper.getTooltip(model.isVmNetwork() ? Collections.singletonMap(vmImage,
-                                constants.vmItemInfo())
-                                : Collections.<SafeHtml, String> emptyMap());
-                    }
-                };
-
-        networks.addColumn(vmColumn, constants.vmNetwork(), "80px"); //$NON-NLS-1$
-
-        networks.addColumn(new CheckboxColumn<EntityModel>(multipleSelectionAllowed,
-                new FieldUpdater<EntityModel, Boolean>() {
-                    @Override
-                    public void update(int index, EntityModel model, Boolean value) {
-                        ClusterNetworkModel clusterNetworkManageModel = (ClusterNetworkModel) model;
-
-                        networks.asEditor().flush().setDisplayNetwork(clusterNetworkManageModel, value);
-                        refreshNetworksTable();
-                    }
-                }) {
-            @Override
-            public Boolean getValue(EntityModel model) {
-                return ((ClusterNetworkModel) model).isDisplayNetwork();
-            }
-
-            @Override
-            protected boolean canEdit(EntityModel model) {
-                ClusterNetworkModel clusterNetworkModel = (ClusterNetworkModel) model;
-                return clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal();
-            }
-        }, constants.displayNetwork(), "100px"); //$NON-NLS-1$
-
-        networks.addColumn(new CheckboxColumn<EntityModel>(multipleSelectionAllowed,
-                new FieldUpdater<EntityModel, Boolean>() {
-                    @Override
-                    public void update(int index, EntityModel model, Boolean value) {
-                        ClusterNetworkModel clusterNetworkManageModel = (ClusterNetworkModel) model;
-
-                        networks.asEditor().flush().setMigrationNetwork(clusterNetworkManageModel, value);
-                        refreshNetworksTable();
-                    }
-                }) {
-            @Override
-            public Boolean getValue(EntityModel model) {
-                return ((ClusterNetworkModel) model).isMigrationNetwork();
-            }
-
-            @Override
-            protected boolean canEdit(EntityModel model) {
-                ClusterNetworkModel clusterNetworkModel = ((ClusterNetworkModel) model);
-                Boolean migrationNetworkEnabled =
-                        (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MigrationNetworkEnabled,
-                                clusterNetworkModel.getCluster().getcompatibility_version().toString());
-                return migrationNetworkEnabled && clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal();
-            }
-        },
-                constants.migrationNetwork(),
-                "105px"); //$NON-NLS-1$
+        networks.addColumn(
+                new MigrationNetworkIndicatorCheckboxColumn(multipleSelectionAllowed,
+                        new MigrationNetworkIndicatorFieldUpdater()),
+                constants.migrationNetwork(), "105px"); //$NON-NLS-1$
     }
 
     @Override
-    public void edit(ClusterNetworkManageModel model) {
-        networks.asEditor().edit(model);
+    public void edit(ClusterNetworkManageModel clusterNetworkManageModel) {
+        networks.asEditor().edit(clusterNetworkManageModel);
         initEntityModelCellTable(constants, templates);
     }
 
@@ -286,24 +113,242 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         return networks.asEditor().flush();
     }
 
-    private void changeIsAttached(ClusterNetworkModel clusterNetworkManageModel, Boolean value) {
-        clusterNetworkManageModel.setAttached(value);
-        if (!value && clusterNetworkManageModel.isDisplayNetwork()) {
-            clusterNetworkManageModel.setDisplayNetwork(false);
+    private void changeIsAttached(ClusterNetworkModel clusterNetworkModel, Boolean value) {
+        clusterNetworkModel.setAttached(value);
+        if (!value && clusterNetworkModel.isDisplayNetwork()) {
+            clusterNetworkModel.setDisplayNetwork(false);
         }
-        if (!value && clusterNetworkManageModel.isRequired()) {
-            clusterNetworkManageModel.setRequired(false);
+        if (!value && clusterNetworkModel.isRequired()) {
+            clusterNetworkModel.setRequired(false);
         }
     }
 
-    private boolean canEditAssign(EntityModel model) {
-        return !((ClusterNetworkModel) model).isManagement();
+    private boolean canEditAssign(ClusterNetworkModel clusterNetworkModel) {
+        return !clusterNetworkModel.isManagement();
     }
 
-    private boolean canEditRequired(EntityModel model) {
-        ClusterNetworkModel clusterNetworkModel = (ClusterNetworkModel) model;
+    private boolean canEditRequired(ClusterNetworkModel clusterNetworkModel) {
         return clusterNetworkModel.isAttached() && !clusterNetworkModel.isManagement()
                 && !clusterNetworkModel.isExternal();
     }
 
+    private final class NetworkNameTextColumnWithTooltip extends TextColumnWithTooltip<ClusterNetworkModel> {
+        @Override
+        public String getValue(ClusterNetworkModel clusterNetworkModel) {
+            return clusterNetworkModel.getDisplayedName();
+        }
+    }
+
+    private final class VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn
+            extends SafeHtmlWithSafeHtmlTooltipColumn<ClusterNetworkModel> {
+        private final ApplicationConstants constants;
+
+        private VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn(ApplicationConstants constants) {
+            this.constants = constants;
+        }
+
+        @Override
+        public SafeHtml getValue(ClusterNetworkModel clusterNetworkModel) {
+            return NetworkRoleColumnHelper.getValue(Collections.singletonList(clusterNetworkModel.isVmNetwork() ?
+                    vmImage : emptyImage));
+        }
+
+        @Override
+        public SafeHtml getTooltip(ClusterNetworkModel clusterNetworkModel) {
+            return NetworkRoleColumnHelper.getTooltip(clusterNetworkModel.isVmNetwork() ?
+                    Collections.singletonMap(vmImage, constants.vmItemInfo())
+                    : Collections.<SafeHtml, String> emptyMap());
+        }
+    }
+
+    private final class RequiredIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
+
+        private RequiredIndicatorCheckboxColumn(RequiredIndicatorFieldUpdater requiredIndicatorFieldUpdater) {
+            super(requiredIndicatorFieldUpdater);
+        }
+
+        @Override
+        public Boolean getValue(ClusterNetworkModel clusterNetworkModel) {
+            return clusterNetworkModel.isRequired();
+        }
+
+        @Override
+        protected boolean canEdit(ClusterNetworkModel clusterNetworkModel) {
+            return canEditRequired(clusterNetworkModel);
+        }
+
+        @Override
+        public void render(Context context, ClusterNetworkModel object, SafeHtmlBuilder sb) {
+            super.render(context, object, sb);
+            sb.append(templates.textForCheckBox(constants.required()));
+        }
+    }
+
+    private final class RequiredIndicatorFieldUpdater implements FieldUpdater<ClusterNetworkModel, Boolean> {
+        @Override
+        public void update(int index, ClusterNetworkModel clusterNetworkModel, Boolean value) {
+            clusterNetworkModel.setRequired(value);
+            refreshNetworksTable();
+        }
+    }
+
+    private final class RequiredAllCheckboxHeader extends CheckboxHeader {
+        private RequiredAllCheckboxHeader(SafeHtml title) {
+            super(title);
+        }
+
+        @Override
+        protected void selectionChanged(Boolean value) {
+            for (ClusterNetworkModel clusterNetworkModel : getNetworksTableItems()) {
+                if (canEditRequired(clusterNetworkModel)) {
+                    clusterNetworkModel.setRequired(value);
+                }
+                refreshNetworksTable();
+            }
+        }
+
+        @Override
+        public Boolean getValue() {
+            for (ClusterNetworkModel clusterNetworkModel : getNetworksTableItems()) {
+                if (canEditRequired(clusterNetworkModel)) {
+                    if (!clusterNetworkModel.isRequired()) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public boolean isEnabled() {
+            for (ClusterNetworkModel clusterNetworkModel : getNetworksTableItems()) {
+                if (clusterNetworkModel.getIsChangable()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    private final class AttachedIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
+        private AttachedIndicatorCheckboxColumn(AttachedIndicatorFieldUpdater attachedIndicatorFieldUpdater) {
+            super(attachedIndicatorFieldUpdater);
+        }
+
+        @Override
+        public Boolean getValue(ClusterNetworkModel clusterNetworkModel) {
+            return clusterNetworkModel.isAttached();
+        }
+
+        @Override
+        protected boolean canEdit(ClusterNetworkModel clusterNetworkModel) {
+            return canEditAssign(clusterNetworkModel);
+        }
+
+        @Override
+        public void render(Context context, ClusterNetworkModel object, SafeHtmlBuilder sb) {
+            super.render(context, object, sb);
+            sb.append(templates.textForCheckBox(constants.assign()));
+        }
+    }
+
+    private final class AttachedIndicatorFieldUpdater implements FieldUpdater<ClusterNetworkModel, Boolean> {
+        @Override
+        public void update(int index, ClusterNetworkModel clusterNetworkModel, Boolean value) {
+            changeIsAttached(clusterNetworkModel, value);
+            refreshNetworksTable();
+        }
+    }
+
+    private final class AttachedIndicatorCheckboxHeader extends CheckboxHeader {
+        private AttachedIndicatorCheckboxHeader(SafeHtml title) {
+            super(title);
+        }
+
+        @Override
+        protected void selectionChanged(Boolean value) {
+            for (ClusterNetworkModel clusterNetworkModel : getNetworksTableItems()) {
+                if (canEditAssign(clusterNetworkModel)) {
+                    changeIsAttached(clusterNetworkModel, value);
+                }
+            }
+            refreshNetworksTable();
+        }
+
+        @Override
+        public Boolean getValue() {
+            for (ClusterNetworkModel clusterNetworkModel : getNetworksTableItems()) {
+                if (canEditAssign(clusterNetworkModel)) {
+                    if (!clusterNetworkModel.isAttached()) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public boolean isEnabled() {
+            for (ClusterNetworkModel clusterNetworkModel : getNetworksTableItems()) {
+                if (clusterNetworkModel.getIsChangable()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    private final class MigrationNetworkIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
+        private MigrationNetworkIndicatorCheckboxColumn(boolean multipleSelectionAllowed,
+                MigrationNetworkIndicatorFieldUpdater migrationNetworkIndicatorFieldUpdater) {
+            super(multipleSelectionAllowed, migrationNetworkIndicatorFieldUpdater);
+        }
+
+        @Override
+        public Boolean getValue(ClusterNetworkModel clusterNetworkModel) {
+            return clusterNetworkModel.isMigrationNetwork();
+        }
+
+        @Override
+        protected boolean canEdit(ClusterNetworkModel clusterNetworkModel) {
+            Boolean migrationNetworkEnabled =
+                    (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MigrationNetworkEnabled,
+                            clusterNetworkModel.getCluster().getcompatibility_version().toString());
+            return migrationNetworkEnabled && clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal();
+        }
+    }
+
+    private final class MigrationNetworkIndicatorFieldUpdater implements FieldUpdater<ClusterNetworkModel, Boolean> {
+        @Override
+        public void update(int index, ClusterNetworkModel clusterNetworkModel, Boolean value) {
+
+            networks.asEditor().flush().setMigrationNetwork(clusterNetworkModel, value);
+            refreshNetworksTable();
+        }
+    }
+
+    private final class DisplayNetworkIndicatorFieldUpdater implements FieldUpdater<ClusterNetworkModel, Boolean> {
+        @Override
+        public void update(int index, ClusterNetworkModel clusterNetworkModel, Boolean value) {
+            networks.asEditor().flush().setDisplayNetwork(clusterNetworkModel, value);
+            refreshNetworksTable();
+        }
+    }
+
+    private final class DisplayNetworkIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
+        private DisplayNetworkIndicatorCheckboxColumn(boolean multipleSelectionAllowed,
+                DisplayNetworkIndicatorFieldUpdater displayNetworkIndicatorFieldUpdater) {
+            super(multipleSelectionAllowed, displayNetworkIndicatorFieldUpdater);
+        }
+
+        @Override
+        public Boolean getValue(ClusterNetworkModel clusterNetworkModel) {
+            return clusterNetworkModel.isDisplayNetwork();
+        }
+
+        @Override
+        protected boolean canEdit(ClusterNetworkModel clusterNetworkModel) {
+            return clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal();
+        }
+    }
 }

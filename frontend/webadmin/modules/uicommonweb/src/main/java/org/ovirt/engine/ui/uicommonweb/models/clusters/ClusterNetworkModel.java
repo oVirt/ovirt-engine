@@ -7,9 +7,10 @@ import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 
-public class ClusterNetworkModel extends EntityModel {
+public class ClusterNetworkModel extends EntityModel<Network> {
 
     private final NetworkCluster originalNetworkCluster;
+
     private boolean management;
     private boolean attached = true;
     private VDSGroup cluster = null;
@@ -29,15 +30,9 @@ public class ClusterNetworkModel extends EntityModel {
         }
     }
 
-    @Override
-    public Network getEntity() {
-        return (Network) super.getEntity();
-    }
-
     public String getDisplayedName(){
         return getNetworkName();
     }
-
 
     public String getNetworkName() {
         return getEntity().getName();
