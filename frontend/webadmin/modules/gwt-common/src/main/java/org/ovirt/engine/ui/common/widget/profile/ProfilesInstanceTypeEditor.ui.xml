@@ -27,9 +27,7 @@
 
 	<g:FlowPanel addStyleNames="{style.mainPanel}" >
 		<g:Label ui:field="headerLabel" addStyleNames="{style.headerLabel}" />
-		<g:ScrollPanel height="190px">
-			<g:FlowPanel ui:field="contentPanel" />
-		</g:ScrollPanel>
+		<g:FlowPanel ui:field="contentPanel" />
 	</g:FlowPanel>
 
 </ui:UiBinder>
