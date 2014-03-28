@@ -183,7 +183,7 @@ public class DbUserCacheManager {
         // Compare the attributes of the database user with those of the directory, copy those that changed and update
         // the flag that indicates that the database needs to be updated:
         if (!StringUtils.equals(dbUser.getFirstName(), directoryUser.getName())) {
-            dbUser.setFirstName(directoryUser.getName());
+            dbUser.setFirstName(directoryUser.getFirstName());
             update = true;
         }
         if (!StringUtils.equals(dbUser.getLastName(), directoryUser.getLastName())) {
