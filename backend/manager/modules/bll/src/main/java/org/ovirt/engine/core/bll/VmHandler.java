@@ -390,13 +390,11 @@ public class VmHandler {
     }
 
     /**
-     * Filters the vm image disks/disk devices according to the given parameters
-     * note: all the given parameters are relevant for image disks, luns will be filtered.
+     * Filters the vm image disks/disk devices.<BR/>
+     * note: luns will be filtered, only active image disks will be return.
      */
-    public static void filterImageDisksForVM(VM vm, boolean allowOnlyNotShareableDisks,
-                                             boolean allowOnlySnapableDisks, boolean allowOnlyActiveDisks) {
-        List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskMap().values(),
-                allowOnlyNotShareableDisks, allowOnlySnapableDisks, allowOnlyActiveDisks);
+    public static void filterImageDisksForVM(VM vm) {
+        List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskMap().values(), false, false, true);
         Collection<? extends Disk> vmDisksToRemove = CollectionUtils.subtract(vm.getDiskMap().values(), filteredDisks);
         vm.clearDisks();
         updateDisksForVm(vm, filteredDisks);

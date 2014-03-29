@@ -81,7 +81,7 @@ public class VmHandlerTest {
         disks.add(snapshotDisk1);
         disks.add(snapshotDisk2);
         populateVmWithDisks(disks, vm);
-        VmHandler.filterImageDisksForVM(vm, false, false, true);
+        VmHandler.filterImageDisksForVM(vm);
         assertTrue(vm.getDiskList().isEmpty());
         assertTrue(vm.getManagedVmDeviceMap().isEmpty());
     }
@@ -94,7 +94,7 @@ public class VmHandlerTest {
         VM vm = new VM();
         vm.setId(Guid.newGuid());
         populateVmWithDisks(Arrays.asList(snapshotDisk, regularDisk, lunDisk), vm);
-        VmHandler.filterImageDisksForVM(vm, false, false, true);
+        VmHandler.filterImageDisksForVM(vm);
         assertFalse(vm.getDiskList().contains(snapshotDisk));
         assertTrue(vm.getDiskList().contains(regularDisk));
         assertTrue(vm.getManagedVmDeviceMap().containsKey(regularDisk.getId()));

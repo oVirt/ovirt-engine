@@ -173,7 +173,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     protected List<DiskImage> getVmDisksFromDB() {
         VmHandler.updateDisksFromDb(getVm());
-        VmHandler.filterImageDisksForVM(getVm(), false, false, true);
+        VmHandler.filterImageDisksForVM(getVm());
         return getVm().getDiskList();
     }
 
