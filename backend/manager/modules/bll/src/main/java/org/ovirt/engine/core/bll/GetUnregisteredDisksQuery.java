@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
@@ -23,9 +24,15 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
 
     @Override
     protected void executeQueryCommand() {
+        VDSBrokerFrontend vdsBroker = getVdsBroker();
+        if (getDbFacade().getStorageDomainDao().getForStoragePool(getStorageDomainId(), getStoragePoolId()) == null) {
+            getQueryReturnValue().setExceptionString(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST_IN_DATA_CENTER.toString());
+            getQueryReturnValue().setSucceeded(false);
+            return;
+        }
+
         // first, run getImagesList query into vdsm to get all of the images on the storage domain - then store in
         // imagesList
-        VDSBrokerFrontend vdsBroker = getVdsBroker();
         VDSReturnValue imagesListResult = vdsBroker.RunVdsCommand(VDSCommandType.GetImagesList,
                 new GetImagesListVDSCommandParameters(getStorageDomainId(), getStoragePoolId()));
         @SuppressWarnings("unchecked")

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
@@ -22,6 +23,12 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
         Guid storagePoolId = getParameters().getStoragePoolId();
         Guid storageDomainId = getParameters().getStorageDomainId();
         Guid diskId = getParameters().getDiskId();
+        if (getDbFacade().getStorageDomainDao().getForStoragePool(storageDomainId, storagePoolId) == null) {
+            getQueryReturnValue().setExceptionString(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST_IN_DATA_CENTER.toString());
+            getQueryReturnValue().setSucceeded(false);
+            return;
+        }
+
         // Now get the list of volumes for each new image.
         StoragePoolDomainAndGroupIdBaseVDSCommandParameters getVolumesParameters = new StoragePoolDomainAndGroupIdBaseVDSCommandParameters(
                 storagePoolId, storageDomainId, diskId);

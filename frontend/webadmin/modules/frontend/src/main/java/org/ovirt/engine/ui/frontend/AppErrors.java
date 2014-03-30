@@ -1255,6 +1255,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Storage Domain doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST();
 
+    @DefaultStringValue("Storage Domain doesn't exist in Data Center.")
+    String ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST_IN_DATA_CENTER();
+
     @DefaultStringValue("Cannot ${action} ${type}. Cannot change Storage Domain type.")
     String ACTION_TYPE_FAILED_CANNOT_CHANGE_STORAGE_DOMAIN_TYPE();
 
