@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter> extends
@@ -74,13 +75,16 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     @Override
     protected boolean canDoAction() {
         boolean result = true;
+        // set version to latest supported version if not given
+        if (getStoragePool().getcompatibility_version().isNotValid()) {
+            getStoragePool().setcompatibility_version(Version.getLast());
+        }
         if (result && !(isStoragePoolUnique(getStoragePool().getName()))) {
             result = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         } else if (!checkStoragePoolNameLengthValid()) {
             result = false;
-        } else if (!VersionSupport.checkVersionSupported(getStoragePool().getcompatibility_version()
-                )) {
+        } else if (!VersionSupport.checkVersionSupported(getStoragePool().getcompatibility_version())) {
             addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
             result = false;
         }
