@@ -85,6 +85,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private static final String BASE_TEMPLATE_VERSION_NAME = "base version";
     private static Map<Guid, String> updateVmsJobIdMap = new ConcurrentHashMap<Guid, String>();
 
+    private VmTemplate cachedBaseTemplate;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -220,6 +222,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 getParameters().setTemplateVersionName(BASE_TEMPLATE_VERSION_NAME);
             }
         } else {
+            // template version name should be the same as the base template name
+            setVmTemplateName(getBaseTemplate().getName());
             String jobId = updateVmsJobIdMap.remove(getParameters().getBaseTemplateId());
             if (jobId != null) {
                 log.infoFormat("Cancelling current running update for vms for base template id {0}", getParameters().getBaseTemplateId());
@@ -316,7 +320,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        if (isVmTemlateWithSameNameExist(getVmTemplateName())) {
+        if (!isTemplateVersion() && isVmTemlateWithSameNameExist(getVmTemplateName())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             return false;
         }
@@ -360,7 +364,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         if (isTemplateVersion()) {
-            VmTemplate userSelectedBaseTemplate = getVmTemplateDAO().get(getParameters().getBaseTemplateId());
+            VmTemplate userSelectedBaseTemplate = getBaseTemplate();
             if (userSelectedBaseTemplate == null) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
             } else if (!userSelectedBaseTemplate.isBaseTemplate()) {
@@ -373,6 +377,13 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
                 getParameters().getMasterVm().getCpuPerSocket(), getVdsGroup()
                 .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
+    }
+
+    private VmTemplate getBaseTemplate() {
+        if (cachedBaseTemplate == null) {
+            cachedBaseTemplate = getVmTemplateDAO().get(getParameters().getBaseTemplateId());
+        }
+        return cachedBaseTemplate;
     }
 
     private boolean isTemplateVersion() {

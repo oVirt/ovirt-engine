@@ -361,6 +361,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Failed updating the properties of the VM template.")
     String VMT_CANNOT_UPDATE_ILLEGAL_FIELD();
 
+    @DefaultStringValue("Cannot update the name of Sub-Templates, Only the Version name can be updated.")
+    String VMT_CANNOT_UPDATE_VERSION_NAME();
+
     @DefaultStringValue("Cannot remove Directory Group. Detach Directory Group from VM first.")
     String DIRECTORY_GROUP_CANNOT_REMOVE_DIRECTORY_GROUP_ATTACHED_TO_VM();
 

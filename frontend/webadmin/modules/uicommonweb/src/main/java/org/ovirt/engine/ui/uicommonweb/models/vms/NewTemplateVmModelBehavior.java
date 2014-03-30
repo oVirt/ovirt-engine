@@ -452,5 +452,24 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
     @Override
     protected void baseTemplateSelectedItemChanged() {
+        if (getModel().getBaseTemplate().getSelectedItem() != null && getModel().getIsSubTemplate().getEntity()) {
+            // template.name for version should be the same as the base template name
+            getModel().getName().setEntity(getModel().getBaseTemplate().getSelectedItem().getName());
+        }
+    }
+
+    @Override
+    protected void isSubTemplateEntityChanged() {
+        getModel().getName().setIsChangable(!getModel().getIsSubTemplate().getEntity());
+        if (!getModel().getIsSubTemplate().getEntity()) {
+            getModel().getName().setEntity(""); //$NON-NLS-1$
+        } else {
+            // by default select the template of the vm
+            getModel().getBaseTemplate().setEntity(getModel().getTemplate().getEntity());
+
+            // copy any entered name to be the template-version name
+            getModel().getTemplateVersionName().setEntity(getModel().getName().getEntity());
+            getModel().getName().setEntity(getModel().getBaseTemplate().getSelectedItem().getName());
+        }
     }
 }

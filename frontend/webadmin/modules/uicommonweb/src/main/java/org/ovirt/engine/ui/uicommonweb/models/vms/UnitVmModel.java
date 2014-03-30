@@ -1302,6 +1302,7 @@ public class UnitVmModel extends Model {
         setSpiceProxy(new EntityModel<String>());
 
         setIsSubTemplate(new NotChangableForVmInPoolEntityModel<Boolean>(false));
+        getIsSubTemplate().getEntityChangedEvent().addListener(this);
         setTemplateVersionName(new NotChangableForVmInPoolEntityModel<String>());
         setBaseTemplate(new NotChangableForVmInPoolListModel<VmTemplate>());
         getBaseTemplate().getSelectedItemChangedEvent().addListener(this);
@@ -1632,6 +1633,9 @@ public class UnitVmModel extends Model {
                 behavior.updateMigrationAvailability();
             } else if (sender == getOverrideMigrationDowntime()) {
                 overrideMigrationDowntimeChanged();
+            }
+            else if (sender == getIsSubTemplate()) {
+                behavior.isSubTemplateEntityChanged();
             }
 
         }

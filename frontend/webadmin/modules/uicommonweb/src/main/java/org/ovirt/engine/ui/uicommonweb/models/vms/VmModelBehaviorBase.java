@@ -188,6 +188,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
+    protected void isSubTemplateEntityChanged() {
+    }
+
     public boolean validate()
     {
         return true;

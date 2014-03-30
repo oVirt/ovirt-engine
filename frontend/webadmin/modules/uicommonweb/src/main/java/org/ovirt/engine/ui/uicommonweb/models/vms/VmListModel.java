@@ -1330,6 +1330,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             model.setIsValid(false);
         }
+        else  if (model.getIsSubTemplate().getEntity()) {
+            postNameUniqueCheck();
+        }
         else
         {
             String name = model.getName().getEntity();
