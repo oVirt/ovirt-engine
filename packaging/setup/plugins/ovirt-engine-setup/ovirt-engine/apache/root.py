@@ -115,9 +115,9 @@ class Plugin(plugin.PluginBase):
                 ],
             )
 
-            self._enabled = self.environment[
-                osetupcons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION
-            ]
+        self._enabled = self.environment[
+            osetupcons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION
+        ]
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
