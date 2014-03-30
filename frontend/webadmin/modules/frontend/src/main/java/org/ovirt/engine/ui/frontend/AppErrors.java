@@ -1393,6 +1393,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot remove Data Center which contains active/locked Storage Domains.\n-Please deactivate all domains and wait for tasks to finish before removing the Data Center.")
     String ERROR_CANNOT_REMOVE_POOL_WITH_ACTIVE_DOMAINS();
 
+    @DefaultStringValue("Storage Domain doesn't exist.")
+    String STORAGE_DOMAIN_DOES_NOT_EXIST();
+
     @DefaultStringValue("Cannot change Data Center association when editing a Cluster.")
     String VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL();
 

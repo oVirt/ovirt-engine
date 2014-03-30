@@ -20,6 +20,7 @@ import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.StorageDomainDAO;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetUnregisteredDisksQueryTest
@@ -60,6 +62,11 @@ public class GetUnregisteredDisksQueryTest
 
     @Test
     public void testGetUnregisteredDisks() {
+        DbFacade dbFacadeMock = getDbFacadeMockInstance();
+        StorageDomainDAO storageDomainDAOMock = mock(StorageDomainDAO.class);
+        when(dbFacadeMock.getStorageDomainDao()).thenReturn(storageDomainDAOMock);
+        StorageDomain storageDomain = new StorageDomain();
+        when(storageDomainDAOMock.get(storageDomainId)).thenReturn(storageDomain);
 
         // Execute query
         getQuery().executeQueryCommand();
@@ -111,8 +118,11 @@ public class GetUnregisteredDisksQueryTest
 
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
         DiskImageDAO diskImageDAOMock = mock(DiskImageDAO.class);
+        StorageDomainDAO storageDomainDAOMock = mock(StorageDomainDAO.class);
         when(diskImageDAOMock.getAllSnapshotsForStorageDomain(eq(storageDomainId))).thenReturn(existingDiskImages);
         when(dbFacadeMock.getDiskImageDao()).thenReturn(diskImageDAOMock);
+        StorageDomain storageDomain = new StorageDomain();
+        when(storageDomainDAOMock.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
 
         // Return the mocked backend when getBackend() is called on the query
         doReturn(backendMock).when(getQuery()).getBackend();
