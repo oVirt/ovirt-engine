@@ -550,17 +550,22 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         String name = model.getName().getEntity();
 
-        AsyncDataProvider.isTemplateNameUnique(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
+        if (((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate().isBaseTemplate()) {
 
-                        TemplateListModel templateListModel = (TemplateListModel) target;
-                        boolean isNameUnique = (Boolean) returnValue;
-                        templateListModel.postNameUniqueCheck(isNameUnique);
+            AsyncDataProvider.isTemplateNameUnique(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object target, Object returnValue) {
 
-                    }
-                }), name);
+                            TemplateListModel templateListModel = (TemplateListModel) target;
+                            boolean isNameUnique = (Boolean) returnValue;
+                            templateListModel.postNameUniqueCheck(isNameUnique);
+
+                        }
+                    }), name);
+        } else {
+            postNameUniqueCheck(true);
+        }
     }
 
     public void postNameUniqueCheck(boolean isNameUnique)

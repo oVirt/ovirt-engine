@@ -554,6 +554,9 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         {
             model.setIsValid(false);
         }
+        else if (model.getIsSubTemplate().getEntity()) {
+            postNameUniqueCheck(this);
+        }
         else
         {
             model.startProgress(null);

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup;
 
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
@@ -64,6 +65,21 @@ public class ImportTemplatePopupView extends ImportVmPopupView implements Import
             }
         };
         table.addColumn(nameColumn, constants.nameTemplate(), "150px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<Object> versionNameColumn = new TextColumnWithTooltip<Object>() {
+            @Override
+            public String getValue(Object object) {
+                VmTemplate template = ((ImportTemplateData) object).getTemplate();
+                if (template.isBaseTemplate()) {
+                    return ""; //$NON-NLS-1$
+                }
+
+                return StringFormat.format("%s (%s)", //$NON-NLS-1$
+                        template.getTemplateVersionName() != null ? template.getTemplateVersionName() : "", //$NON-NLS-1$
+                        template.getTemplateVersionNumber());
+            }
+        };
+        table.addColumn(versionNameColumn, constants.versionTemplate(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Object> originColumn = new EnumColumn<Object, OriginType>() {
             @Override

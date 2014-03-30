@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -42,6 +43,20 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
                     }
                 };
         getTable().addColumn(nameColumn, constants.nameTemplate(), "160px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<VmTemplate> versionNameColumn = new TextColumnWithTooltip<VmTemplate>() {
+            @Override
+            public String getValue(VmTemplate object) {
+                if (object.isBaseTemplate()) {
+                    return ""; //$NON-NLS-1$
+                }
+
+                return StringFormat.format("%s (%s)", //$NON-NLS-1$
+                        object.getTemplateVersionName() != null ? object.getTemplateVersionName() : "", //$NON-NLS-1$
+                        object.getTemplateVersionNumber());
+            }
+        };
+        table.addColumn(versionNameColumn, constants.versionTemplate(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> originColumn =
                 new TextColumnWithTooltip<VmTemplate>() {

@@ -37,7 +37,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getStorageDomain().setIsChangable(false);
         getModel().getIsSoundcardEnabled().setIsChangable(true);
         getModel().getVmType().setIsChangable(true);
-        getModel().getTemplateVersionName().setIsChangable(!template.getId().equals(template.getBaseTemplateId()));
+        getModel().getTemplateVersionName().setIsChangable(!template.isBaseTemplate());
+        getModel().getName().setIsChangable(template.isBaseTemplate());
 
         if (template.getStoragePoolId() != null && !template.getStoragePoolId().equals(Guid.Empty))
         {

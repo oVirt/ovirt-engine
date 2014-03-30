@@ -222,7 +222,7 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_migration_support integer,
  v_dedicated_vm_for_vds uuid,
  v_tunnel_migration BOOLEAN,
- v_vnc_keyboard_layout	VARCHAR(16),
+ v_vnc_keyboard_layout VARCHAR(16),
  v_min_allocated_mem INTEGER,
  v_is_run_and_pause BOOLEAN,
  v_created_by_user_id UUID,
@@ -256,6 +256,11 @@ BEGIN
       template_version_name = v_template_version_name
       WHERE vm_guid = v_vmt_guid
       AND   entity_type = v_template_type;
+
+      -- update template versions to new name
+      update vm_static
+        set vm_name = v_name
+      where vm_guid <> v_vmt_guid and vmt_guid = v_vmt_guid and entity_type = v_template_type;
 END; $procedure$
 LANGUAGE plpgsql;
 

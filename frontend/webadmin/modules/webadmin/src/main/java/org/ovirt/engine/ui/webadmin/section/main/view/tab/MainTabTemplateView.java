@@ -53,9 +53,9 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                     return ""; //$NON-NLS-1$
                 }
 
-                return StringFormat.format("%s (%s)",  //$NON-NLS-1$
-                        getMainModel().resolveBaseTemplateNameForTemplate(object.getId()),
-                        object.getTemplateVersionName() != null ? object.getTemplateVersionName() : " "); //$NON-NLS-1$
+                return StringFormat.format("%s (%s)", //$NON-NLS-1$
+                        object.getTemplateVersionName() != null ? object.getTemplateVersionName() : "", //$NON-NLS-1$
+                        object.getTemplateVersionNumber());
             }
         };
         getTable().addColumn(versionNameColumn, constants.versionTemplate(), "150px"); //$NON-NLS-1$

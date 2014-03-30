@@ -67,18 +67,21 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IS_LOCKED);
         }
 
-        if (!StringUtils.equals(mOldTemplate.getName(), getVmTemplate().getName())
-                && isVmTemlateWithSameNameExist(getVmTemplateName())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
-        } else {
-            if (getVdsGroup() == null) {
-                addCanDoActionMessage(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);
-            } else if (isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
-                    .getCanDoActionMessages()) && checkDomain()) {
-                returnValue = VmTemplateHandler.isUpdateValid(mOldTemplate, getVmTemplate());
-                if (!returnValue) {
-                    addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
-                }
+        if (!StringUtils.equals(mOldTemplate.getName(), getVmTemplate().getName())) {
+            if (!getVmTemplate().isBaseTemplate()) {
+                // template version should always have the name of the base template
+                return failCanDoAction(VdcBllMessages.VMT_CANNOT_UPDATE_VERSION_NAME);
+            } else if (isVmTemlateWithSameNameExist(getVmTemplateName())) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+            }
+        }
+        if (getVdsGroup() == null) {
+            addCanDoActionMessage(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);
+        } else if (isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
+                .getCanDoActionMessages()) && checkDomain()) {
+            returnValue = VmTemplateHandler.isUpdateValid(mOldTemplate, getVmTemplate());
+            if (!returnValue) {
+                addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
             }
         }
 

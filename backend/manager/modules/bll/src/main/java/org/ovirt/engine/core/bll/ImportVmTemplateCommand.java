@@ -169,7 +169,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 getReturnValue().getCanDoActionMessages().add(
                         String.format("$TemplateName %1$s", duplicateTemplate.getName()));
                 retVal = false;
-            } else if (isVmTemplateWithSameNameExist()) {
+            } else if (getVmTemplate().isBaseTemplate() && isVmTemplateWithSameNameExist()) {
                 addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
                 retVal = false;
             }
