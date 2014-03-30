@@ -8,12 +8,12 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.InstallModel;
@@ -56,15 +56,15 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
 
     @UiField
     @Path(value = "userPassword.entity")
-    EntityModelPasswordBoxEditor passwordEditor;
+    StringEntityModelPasswordBoxEditor passwordEditor;
 
     @UiField
     @Path(value = "hostVersion.entity")
-    EntityModelLabelEditor hostVersionEditor;
+    StringEntityModelLabelEditor hostVersionEditor;
 
     @UiField(provided = true)
     @Path(value = "OVirtISO.selectedItem")
-    ListModelListBoxEditor<Object> isoEditor;
+    ListModelListBoxEditor<RpmVersion> isoEditor;
 
     @UiField
     @Path(value = "overrideIpTables.entity")
@@ -91,12 +91,12 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @UiField
     @Path(value = "userName.entity")
     @WithElementId("userName")
-    EntityModelTextBoxEditor userNameEditor;
+    StringEntityModelTextBoxEditor userNameEditor;
 
     @UiField(provided = true)
     @Path(value = "publicKey.entity")
     @WithElementId("publicKey")
-    EntityModelTextAreaLabelEditor publicKeyEditor;
+    StringEntityModelTextAreaLabelEditor publicKeyEditor;
 
     @UiField
     @Ignore
@@ -127,20 +127,17 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     }
 
     void initListBoxEditors() {
-        isoEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        isoEditor = new ListModelListBoxEditor<RpmVersion>(new NullSafeRenderer<RpmVersion>() {
             @Override
-            public String renderNullSafe(Object object) {
-
+            public String renderNullSafe(RpmVersion version) {
                 // Format string to contain major.minor version only.
-                RpmVersion version = (RpmVersion) object;
-
                 return version.getRpmName();
             }
         });
 
         rbPassword = new RadioButton("1"); //$NON-NLS-1$
         rbPublicKey = new RadioButton("1"); //$NON-NLS-1$
-        publicKeyEditor = new EntityModelTextAreaLabelEditor();
+        publicKeyEditor = new StringEntityModelTextAreaLabelEditor();
     }
 
     void localize(ApplicationConstants constants) {

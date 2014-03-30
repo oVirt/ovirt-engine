@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -18,67 +19,67 @@ public class InstallModel extends Model {
 
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-    private EntityModel privateUserPassword;
+    private EntityModel<String> privateUserPassword;
     private VDS vds;
 
-    public EntityModel getUserPassword() {
+    public EntityModel<String> getUserPassword() {
         return privateUserPassword;
     }
 
-    private void setUserPassword(EntityModel value) {
+    private void setUserPassword(EntityModel<String> value) {
         privateUserPassword = value;
     }
 
-    private ListModel privateOVirtISO;
+    private ListModel<RpmVersion> privateOVirtISO;
 
-    public ListModel getOVirtISO() {
+    public ListModel<RpmVersion> getOVirtISO() {
         return privateOVirtISO;
     }
 
-    private void setOVirtISO(ListModel value) {
+    private void setOVirtISO(ListModel<RpmVersion> value) {
         privateOVirtISO = value;
     }
 
-    private EntityModel privateOverrideIpTables;
+    private EntityModel<Boolean> privateOverrideIpTables;
 
-    public EntityModel getOverrideIpTables() {
+    public EntityModel<Boolean> getOverrideIpTables() {
         return privateOverrideIpTables;
     }
 
-    private void setOverrideIpTables(EntityModel value) {
+    private void setOverrideIpTables(EntityModel<Boolean> value) {
         privateOverrideIpTables = value;
     }
 
-    private EntityModel hostVersion;
+    private EntityModel<String> hostVersion;
 
-    public EntityModel getHostVersion() {
+    public EntityModel<String> getHostVersion() {
         return hostVersion;
     }
 
-    public void setHostVersion(EntityModel value) {
+    public void setHostVersion(EntityModel<String> value) {
         hostVersion = value;
     }
 
-    private EntityModel privateUserName;
+    private EntityModel<String> privateUserName;
 
-    public EntityModel getUserName()
+    public EntityModel<String> getUserName()
     {
         return privateUserName;
     }
 
-    private void setUserName(EntityModel value)
+    private void setUserName(EntityModel<String> value)
     {
         privateUserName = value;
     }
 
-    private EntityModel privatePublicKey;
+    private EntityModel<String> privatePublicKey;
 
-    public EntityModel getPublicKey()
+    public EntityModel<String> getPublicKey()
     {
         return privatePublicKey;
     }
 
-    private void setPublicKey(EntityModel value)
+    private void setPublicKey(EntityModel<String> value)
     {
         privatePublicKey = value;
     }
@@ -121,17 +122,17 @@ public class InstallModel extends Model {
 
 
     public InstallModel() {
-        setUserPassword(new EntityModel());
-        setOVirtISO(new ListModel());
-        setHostVersion(new EntityModel());
+        setUserPassword(new EntityModel<String>());
+        setOVirtISO(new ListModel<RpmVersion>());
+        setHostVersion(new EntityModel<String>());
 
-        setOverrideIpTables(new EntityModel());
+        setOverrideIpTables(new EntityModel<Boolean>());
         getOverrideIpTables().setEntity(false);
-        setUserName(new EntityModel());
+        setUserName(new EntityModel<String>());
         getUserName().setEntity(HostModel.RootUserName);
         // TODO: remove setIsChangable when configured ssh username is enabled
         getUserName().setIsChangable(false);
-        setPublicKey(new EntityModel());
+        setPublicKey(new EntityModel<String>());
         getPublicKey().setEntity(constants.empty());
         fetchPublicKey();
 
@@ -165,7 +166,7 @@ public class InstallModel extends Model {
                 String pk = (String) result;
                 if (pk != null && pk.length() > 0)
                 {
-                    getPublicKey().setEntity(result);
+                    getPublicKey().setEntity(pk);
                 }
             }
         };

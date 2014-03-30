@@ -665,7 +665,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     public void onAddStorage()
     {
         StorageModel model = (StorageModel) getWindow();
-        String storageName = (String) model.getName().getEntity();
+        String storageName = model.getName().getEntity();
 
         AsyncDataProvider.isStorageDomainNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -674,7 +674,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
-                        String name = (String) storageModel.getName().getEntity();
+                        String name = storageModel.getName().getEntity();
                         String tempVar = storageModel.getOriginalName();
                         String originalName = (tempVar != null) ? tempVar : ""; //$NON-NLS-1$
                         boolean isNameUnique = (Boolean) returnValue;
@@ -749,7 +749,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     {
         this.context = context;
         StorageModel model = (StorageModel) getWindow();
-        VDS host = (VDS) model.getHost().getSelectedItem();
+        VDS host = model.getHost().getSelectedItem();
         boolean isNew = model.getStorage() == null;
         storageModel = model.getSelectedItem();
         LocalStorageModel localModel = (LocalStorageModel) storageModel;
@@ -758,7 +758,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         storageDomain = new StorageDomainStatic();
         storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
         storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
-        storageDomain.setStorageName((String) model.getName().getEntity());
+        storageDomain.setStorageName(model.getName().getEntity());
 
         AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -793,7 +793,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     {
         StorageModel model = (StorageModel) getWindow();
         LocalStorageModel localModel = (LocalStorageModel) model.getSelectedItem();
-        VDS host = (VDS) model.getHost().getSelectedItem();
+        VDS host = model.getHost().getSelectedItem();
         hostId = host.getId();
 
         // Create storage connection.
@@ -899,13 +899,13 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         boolean isNew = model.getStorage() == null;
         storageModel = model.getSelectedItem();
         NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
-        path = (String) nfsModel.getPath().getEntity();
+        path = nfsModel.getPath().getEntity();
 
         storageDomain = new StorageDomainStatic();
         storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
         storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
-        storageDomain.setStorageName((String) model.getName().getEntity());
-        storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
+        storageDomain.setStorageName(model.getName().getEntity());
+        storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
 
         AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -940,7 +940,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     {
         StorageModel model = (StorageModel) getWindow();
         NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
-        VDS host = (VDS) model.getHost().getSelectedItem();
+        VDS host = model.getHost().getSelectedItem();
         hostId = host.getId();
 
         // Create storage connection.
@@ -990,7 +990,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
 
                 // Attach storage to data center as neccessary.
-                StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
+                StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
                 {
                     dataCenterGuideModel.attachStorageToDataCenter(dataCenterGuideModel.storageId,
@@ -1040,8 +1040,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         storageDomain = new StorageDomainStatic();
         storageDomain.setStorageType(sanModel.getType());
         storageDomain.setStorageDomainType(sanModel.getRole());
-        storageDomain.setStorageFormat((StorageFormatType) sanModel.getContainer().getFormat().getSelectedItem());
-        storageDomain.setStorageName((String) model.getName().getEntity());
+        storageDomain.setStorageFormat(sanModel.getContainer().getFormat().getSelectedItem());
+        storageDomain.setStorageName(model.getName().getEntity());
 
         AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -1102,7 +1102,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
-        VDS host = (VDS) model.getHost().getSelectedItem();
+        VDS host = model.getHost().getSelectedItem();
         boolean force = sanModel.isForce();
 
         ArrayList<String> lunIds = new ArrayList<String>();
@@ -1122,7 +1122,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                         StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
-                        StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
+                        StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
                         if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
                         {
                             VdcReturnValueBase returnValue = result.getReturnValue();
@@ -1566,7 +1566,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             return;
         }
 
-        if (!((Boolean) model.getIsPm().getEntity()))
+        if (!model.getIsPm().getEntity())
         {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
@@ -1603,42 +1603,42 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         // Save changes.
         VDS host = new VDS();
-        host.setVdsName((String) model.getName().getEntity());
-        host.setHostName((String) model.getHost().getEntity());
-        host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
-        host.setSshPort(Integer.parseInt(model.getAuthSshPort().getEntity().toString()));
-        host.setSshUsername(model.getUserName().getEntity().toString());
-        host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity().toString());
-        host.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
+        host.setVdsName(model.getName().getEntity());
+        host.setHostName(model.getHost().getEntity());
+        host.setPort(model.getPort().getEntity());
+        host.setSshPort(model.getAuthSshPort().getEntity());
+        host.setSshUsername(model.getUserName().getEntity());
+        host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity());
+        host.setVdsGroupId(model.getCluster().getSelectedItem().getId());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
 
         // Save primary PM parameters.
-        host.setManagementIp((String) model.getManagementIp().getEntity());
-        host.setPmUser((String) model.getPmUserName().getEntity());
-        host.setPmPassword((String) model.getPmPassword().getEntity());
-        host.setPmType((String) model.getPmType().getSelectedItem());
+        host.setManagementIp(model.getManagementIp().getEntity());
+        host.setPmUser(model.getPmUserName().getEntity());
+        host.setPmPassword(model.getPmPassword().getEntity());
+        host.setPmType(model.getPmType().getSelectedItem());
         host.setPmOptionsMap(model.getPmOptionsMap());
 
         // Save secondary PM parameters.
-        host.setPmSecondaryIp((String) model.getPmSecondaryIp().getEntity());
-        host.setPmSecondaryUser((String) model.getPmSecondaryUserName().getEntity());
-        host.setPmSecondaryPassword((String) model.getPmSecondaryPassword().getEntity());
-        host.setPmSecondaryType((String) model.getPmSecondaryType().getSelectedItem());
+        host.setPmSecondaryIp(model.getPmSecondaryIp().getEntity());
+        host.setPmSecondaryUser(model.getPmSecondaryUserName().getEntity());
+        host.setPmSecondaryPassword(model.getPmSecondaryPassword().getEntity());
+        host.setPmSecondaryType(model.getPmSecondaryType().getSelectedItem());
         host.setPmSecondaryOptionsMap(model.getPmSecondaryOptionsMap());
 
         // Save other PM parameters.
-        host.setpm_enabled((Boolean) model.getIsPm().getEntity());
-        host.setPmSecondaryConcurrent((Boolean) model.getPmSecondaryConcurrent().getEntity());
+        host.setpm_enabled(model.getIsPm().getEntity());
+        host.setPmSecondaryConcurrent(model.getPmSecondaryConcurrent().getEntity());
         host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
 
         AddVdsActionParameters addVdsParams = new AddVdsActionParameters();
         addVdsParams.setVdsId(host.getId());
         addVdsParams.setvds(host);
         if (model.getUserPassword().getEntity() != null) {
-            addVdsParams.setPassword((String) model.getUserPassword().getEntity());
+            addVdsParams.setPassword(model.getUserPassword().getEntity());
         }
-        addVdsParams.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
-        addVdsParams.setRebootAfterInstallation(((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService());
+        addVdsParams.setOverrideFirewall(model.getOverrideIpTables().getEntity());
+        addVdsParams.setRebootAfterInstallation(model.getCluster().getSelectedItem().supportsVirtService());
         model.startProgress(null);
 
         Frontend.getInstance().runAction(VdcActionType.AddVds, addVdsParams,

@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.PasswordTextInputCell;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -51,7 +51,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
     @UiField(provided = true)
     @Ignore
     @WithElementId
-    EntityModelCellTable<ListModel> hostsTable;
+    EntityModelCellTable<ListModel<EntityModel<HostDetailModel>>> hostsTable;
 
     @UiField(provided = true)
     @Path(value = "useCommonPassword.entity")
@@ -61,7 +61,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
     @UiField
     @Path(value = "commonPassword.entity")
     @WithElementId
-    EntityModelPasswordBoxEditor commonPasswordEditor;
+    StringEntityModelPasswordBoxEditor commonPasswordEditor;
 
     @UiField
     @WithElementId
@@ -87,7 +87,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
     }
 
     private void initEditors() {
-        hostsTable = new EntityModelCellTable<ListModel>(SelectionMode.SINGLE, true);
+        hostsTable = new EntityModelCellTable<ListModel<EntityModel<HostDetailModel>>>(SelectionMode.SINGLE, true);
         useCommonPasswordEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 

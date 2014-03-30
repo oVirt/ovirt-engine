@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.common.widget;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabel;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-public class EntityModelWidgetWithInfo extends Composite {
+public class EntityModelWidgetWithInfo<T> extends Composite {
 
     interface WidgetUiBinder extends UiBinder<Widget, EntityModelWidgetWithInfo> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -22,7 +22,7 @@ public class EntityModelWidgetWithInfo extends Composite {
     private static CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
 
     @UiField(provided = true)
-    EntityModelLabel label;
+    EntityModelLabel<T> label;
 
     @UiField(provided = true)
     InfoIcon infoIcon;
@@ -31,7 +31,7 @@ public class EntityModelWidgetWithInfo extends Composite {
     AbstractValidatedWidget contentWidget;
 
     @Inject
-    public EntityModelWidgetWithInfo(EntityModelLabel label, AbstractValidatedWidget contentWidget) {
+    public EntityModelWidgetWithInfo(EntityModelLabel<T> label, AbstractValidatedWidget contentWidget) {
 
         this.label = label;
         this.contentWidget = contentWidget;

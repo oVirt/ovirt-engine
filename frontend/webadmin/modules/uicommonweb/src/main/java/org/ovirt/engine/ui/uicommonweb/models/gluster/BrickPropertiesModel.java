@@ -1,31 +1,32 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 public class BrickPropertiesModel extends Model {
 
-    private EntityModel status;
-    private EntityModel port;
-    private EntityModel pid;
-    private EntityModel totalSize;
-    private EntityModel freeSize;
-    private EntityModel device;
-    private EntityModel blockSize;
-    private EntityModel mountOptions;
-    private EntityModel fileSystem;
+    private EntityModel<GlusterStatus> status;
+    private EntityModel<Integer> port;
+    private EntityModel<Integer> pid;
+    private EntityModel<Double> totalSize;
+    private EntityModel<Double> freeSize;
+    private EntityModel<String> device;
+    private EntityModel<Integer> blockSize;
+    private EntityModel<String> mountOptions;
+    private EntityModel<String> fileSystem;
 
     public BrickPropertiesModel() {
-        setStatus(new EntityModel());
-        setPort(new EntityModel());
-        setPid(new EntityModel());
-        setTotalSize(new EntityModel());
-        setFreeSize(new EntityModel());
-        setDevice(new EntityModel());
-        setBlockSize(new EntityModel());
-        setMountOptions(new EntityModel());
-        setFileSystem(new EntityModel());
+        setStatus(new EntityModel<GlusterStatus>());
+        setPort(new EntityModel<Integer>());
+        setPid(new EntityModel<Integer>());
+        setTotalSize(new EntityModel<Double>());
+        setFreeSize(new EntityModel<Double>());
+        setDevice(new EntityModel<String>());
+        setBlockSize(new EntityModel<Integer>());
+        setMountOptions(new EntityModel<String>());
+        setFileSystem(new EntityModel<String>());
     }
 
     public void setProperties(BrickProperties brickProperties) {
@@ -40,75 +41,75 @@ public class BrickPropertiesModel extends Model {
         getFileSystem().setEntity(brickProperties.getFsName());
     }
 
-    public EntityModel getStatus() {
+    public EntityModel<GlusterStatus> getStatus() {
         return status;
     }
 
-    public void setStatus(EntityModel status) {
+    public void setStatus(EntityModel<GlusterStatus> status) {
         this.status = status;
     }
 
-    public EntityModel getPort() {
+    public EntityModel<Integer> getPort() {
         return port;
     }
 
-    public void setPort(EntityModel port) {
+    public void setPort(EntityModel<Integer> port) {
         this.port = port;
     }
 
-    public EntityModel getPid() {
+    public EntityModel<Integer> getPid() {
         return pid;
     }
 
-    public void setPid(EntityModel pid) {
+    public void setPid(EntityModel<Integer> pid) {
         this.pid = pid;
     }
 
-    public EntityModel getTotalSize() {
+    public EntityModel<Double> getTotalSize() {
         return totalSize;
     }
 
-    public void setTotalSize(EntityModel totalSize) {
+    public void setTotalSize(EntityModel<Double> totalSize) {
         this.totalSize = totalSize;
     }
 
-    public EntityModel getFreeSize() {
+    public EntityModel<Double> getFreeSize() {
         return freeSize;
     }
 
-    public void setFreeSize(EntityModel freeSize) {
+    public void setFreeSize(EntityModel<Double> freeSize) {
         this.freeSize = freeSize;
     }
 
-    public EntityModel getDevice() {
+    public EntityModel<String> getDevice() {
         return device;
     }
 
-    public void setDevice(EntityModel device) {
+    public void setDevice(EntityModel<String> device) {
         this.device = device;
     }
 
-    public EntityModel getBlockSize() {
+    public EntityModel<Integer> getBlockSize() {
         return blockSize;
     }
 
-    public void setBlockSize(EntityModel blockSize) {
+    public void setBlockSize(EntityModel<Integer> blockSize) {
         this.blockSize = blockSize;
     }
 
-    public EntityModel getMountOptions() {
+    public EntityModel<String> getMountOptions() {
         return mountOptions;
     }
 
-    public void setMountOptions(EntityModel mountOptions) {
+    public void setMountOptions(EntityModel<String> mountOptions) {
         this.mountOptions = mountOptions;
     }
 
-    public EntityModel getFileSystem() {
+    public EntityModel<String> getFileSystem() {
         return fileSystem;
     }
 
-    public void setFileSystem(EntityModel fileSystem) {
+    public void setFileSystem(EntityModel<String> fileSystem) {
         this.fileSystem = fileSystem;
     }
 }

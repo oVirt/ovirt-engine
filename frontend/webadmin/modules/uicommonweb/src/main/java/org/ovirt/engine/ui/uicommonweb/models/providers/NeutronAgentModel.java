@@ -20,50 +20,50 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class NeutronAgentModel extends EntityModel {
 
-    private ListModel pluginType = new ListModel();
+    private ListModel<String> pluginType = new ListModel<String>();
 
-    private EntityModel pluginConfigurationAvailable = new EntityModel();
-    private EntityModel interfaceMappingsLabel = new EntityModel();
-    private EntityModel interfaceMappingsExplanation = new EntityModel();
-    private EntityModel interfaceMappings = new EntityModel();
-    private EntityModel qpidHost = new EntityModel();
-    private EntityModel qpidPort = new EntityModel();
-    private EntityModel qpidUsername = new EntityModel();
-    private EntityModel qpidPassword = new EntityModel();
+    private EntityModel<Boolean> pluginConfigurationAvailable = new EntityModel<Boolean>();
+    private EntityModel<String> interfaceMappingsLabel = new EntityModel<String>();
+    private EntityModel<String> interfaceMappingsExplanation = new EntityModel<String>();
+    private EntityModel<String> interfaceMappings = new EntityModel<String>();
+    private EntityModel<String> qpidHost = new EntityModel<String>();
+    private EntityModel<String> qpidPort = new EntityModel<String>();
+    private EntityModel<String> qpidUsername = new EntityModel<String>();
+    private EntityModel<String> qpidPassword = new EntityModel<String>();
 
-    public ListModel getPluginType() {
+    public ListModel<String> getPluginType() {
         return pluginType;
     }
 
-    public EntityModel isPluginConfigurationAvailable() {
+    public EntityModel<Boolean> isPluginConfigurationAvailable() {
         return pluginConfigurationAvailable;
     }
 
-    public EntityModel getInterfaceMappingsLabel() {
+    public EntityModel<String> getInterfaceMappingsLabel() {
         return interfaceMappingsLabel;
     }
 
-    public EntityModel getInterfaceMappingsExplanation() {
+    public EntityModel<String> getInterfaceMappingsExplanation() {
         return interfaceMappingsExplanation;
     }
 
-    public EntityModel getInterfaceMappings() {
+    public EntityModel<String> getInterfaceMappings() {
         return interfaceMappings;
     }
 
-    public EntityModel getQpidHost() {
+    public EntityModel<String> getQpidHost() {
         return qpidHost;
     }
 
-    public EntityModel getQpidPort() {
+    public EntityModel<String> getQpidPort() {
         return qpidPort;
     }
 
-    public EntityModel getQpidUsername() {
+    public EntityModel<String> getQpidUsername() {
         return qpidUsername;
     }
 
-    public EntityModel getQpidPassword() {
+    public EntityModel<String> getQpidPassword() {
         return qpidPassword;
     }
 
@@ -71,7 +71,7 @@ public class NeutronAgentModel extends EntityModel {
         getPluginType().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String displayString = (String) getPluginType().getSelectedItem();
+                String displayString = getPluginType().getSelectedItem();
                 isPluginConfigurationAvailable().setEntity(!NeutronPluginTranslator.isDisplayStringCustom(displayString));
                 if (!NeutronPluginTranslator.isDisplayStringCustom(displayString)) {
                     switch(NeutronPluginTranslator.getPluginTypeForDisplayString(displayString)) {
@@ -103,7 +103,7 @@ public class NeutronAgentModel extends EntityModel {
                     boolean value = getIsAvailable();
                     getPluginType().setIsAvailable(value);
                     isPluginConfigurationAvailable().setEntity(value
-                            && !NeutronPluginTranslator.isDisplayStringCustom((String) getPluginType().getSelectedItem()));
+                            && !NeutronPluginTranslator.isDisplayStringCustom(getPluginType().getSelectedItem()));
                 }
             }
         });
@@ -159,9 +159,9 @@ public class NeutronAgentModel extends EntityModel {
             provider.setAdditionalProperties(properties);
         }
         properties.setPluginType(NeutronPluginTranslator.
-                getPluginNameForDisplayString((String) getPluginType().getSelectedItem()));
+                getPluginNameForDisplayString(getPluginType().getSelectedItem()));
 
-        if (!(Boolean) isPluginConfigurationAvailable().getEntity()) {
+        if (!isPluginConfigurationAvailable().getEntity()) {
             properties.setAgentConfiguration(null);
         } else {
             AgentConfiguration agentConfiguration = properties.getAgentConfiguration();
@@ -169,18 +169,18 @@ public class NeutronAgentModel extends EntityModel {
                 agentConfiguration = new AgentConfiguration();
                 properties.setAgentConfiguration(agentConfiguration);
             }
-            agentConfiguration.setNetworkMappings((String) getInterfaceMappings().getEntity());
+            agentConfiguration.setNetworkMappings(getInterfaceMappings().getEntity());
 
             QpidConfiguration qpidConfiguration = agentConfiguration.getQpidConfiguration();
             if (qpidConfiguration == null) {
                 qpidConfiguration = new QpidConfiguration();
                 agentConfiguration.setQpidConfiguration(qpidConfiguration);
             }
-            qpidConfiguration.setAddress((String) getQpidHost().getEntity());
-            String port = (String) getQpidPort().getEntity();
+            qpidConfiguration.setAddress(getQpidHost().getEntity());
+            String port = getQpidPort().getEntity();
             qpidConfiguration.setPort(port == null ? null : Integer.valueOf(port));
-            qpidConfiguration.setUsername((String) getQpidUsername().getEntity());
-            qpidConfiguration.setPassword((String) getQpidPassword().getEntity());
+            qpidConfiguration.setUsername(getQpidUsername().getEntity());
+            qpidConfiguration.setPassword(getQpidPassword().getEntity());
         }
     }
 

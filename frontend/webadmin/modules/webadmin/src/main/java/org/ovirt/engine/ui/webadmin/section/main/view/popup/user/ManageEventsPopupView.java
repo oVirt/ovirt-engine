@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.EventNotificationModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -59,7 +59,7 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
     @UiField
     @Path(value = "email.entity")
     @WithElementId("email")
-    EntityModelTextBoxEditor emailEditor;
+    StringEntityModelTextBoxEditor emailEditor;
 
     @UiField
     @Ignore

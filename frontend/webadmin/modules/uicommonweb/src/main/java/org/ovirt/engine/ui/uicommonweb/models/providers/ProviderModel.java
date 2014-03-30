@@ -50,56 +50,56 @@ public class ProviderModel extends Model {
     private final VdcActionType action;
     protected final Provider provider;
 
-    private EntityModel name = new EntityModel();
-    private EntityModel description = new EntityModel();
-    private EntityModel url = new EntityModel();
-    private EntityModel requiresAuthentication = new EntityModel();
-    private EntityModel username = new EntityModel();
-    private EntityModel password = new EntityModel();
-    private EntityModel tenantName = new EntityModel();
-    private ListModel type;
+    private EntityModel<String> name = new EntityModel<String>();
+    private EntityModel<String> description = new EntityModel<String>();
+    private EntityModel<String> url = new EntityModel<String>();
+    private EntityModel<Boolean> requiresAuthentication = new EntityModel<Boolean>();
+    private EntityModel<String> username = new EntityModel<String>();
+    private EntityModel<String> password = new EntityModel<String>();
+    private EntityModel<String> tenantName = new EntityModel<String>();
+    private ListModel<ProviderType> type;
     private UICommand testCommand;
-    private EntityModel testResult = new EntityModel();
+    private EntityModel<String> testResult = new EntityModel<String>();
 
     private NeutronAgentModel neutronAgentModel = new NeutronAgentModel();
 
-    public EntityModel getName() {
+    public EntityModel<String> getName() {
         return name;
     }
 
-    public ListModel getType() {
+    public ListModel<ProviderType> getType() {
         return type;
     }
 
-    private void setType(ListModel value) {
+    private void setType(ListModel<ProviderType> value) {
         type = value;
     }
 
-    public ListModel getPluginType() {
+    public ListModel<String> getPluginType() {
         return getNeutronAgentModel().getPluginType();
     }
 
-    public EntityModel getDescription() {
+    public EntityModel<String> getDescription() {
         return description;
     }
 
-    public EntityModel getUrl() {
+    public EntityModel<String> getUrl() {
         return url;
     }
 
-    public EntityModel getRequiresAuthentication() {
+    public EntityModel<Boolean> getRequiresAuthentication() {
         return requiresAuthentication;
     }
 
-    public EntityModel getUsername() {
+    public EntityModel<String> getUsername() {
         return username;
     }
 
-    public EntityModel getPassword() {
+    public EntityModel<String> getPassword() {
         return password;
     }
 
-    public EntityModel getTenantName() {
+    public EntityModel<String> getTenantName() {
         return tenantName;
     }
 
@@ -111,7 +111,7 @@ public class ProviderModel extends Model {
         testCommand = value;
     }
 
-    public EntityModel getTestResult() {
+    public EntityModel<String> getTestResult() {
         return testResult;
     }
 
@@ -120,20 +120,20 @@ public class ProviderModel extends Model {
     }
 
     protected boolean isTypeOpenStackNetwork() {
-        return (ProviderType) getType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK;
+        return getType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK;
     }
 
     private boolean isTypeOpenStackImage() {
-        return (ProviderType) getType().getSelectedItem() == ProviderType.OPENSTACK_IMAGE;
+        return getType().getSelectedItem() == ProviderType.OPENSTACK_IMAGE;
     }
 
     private boolean isTypeTenantAware() {
-        ProviderType type = (ProviderType) getType().getSelectedItem();
+        ProviderType type = getType().getSelectedItem();
         return type == ProviderType.OPENSTACK_NETWORK || type == ProviderType.OPENSTACK_IMAGE;
     }
 
     private boolean isTypeRequiresAuthentication() {
-        ProviderType type = (ProviderType) getType().getSelectedItem();
+        ProviderType type = getType().getSelectedItem();
         return type == ProviderType.FOREMAN;
     }
 
@@ -160,23 +160,23 @@ public class ProviderModel extends Model {
         getRequiresAuthentication().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean authenticationRequired = (Boolean) requiresAuthentication.getEntity();
+                boolean authenticationRequired = requiresAuthentication.getEntity();
                 getUsername().setIsChangable(authenticationRequired);
                 getPassword().setIsChangable(authenticationRequired);
                 getTenantName().setIsChangable(authenticationRequired);
             }
         });
-        setType(new ListModel() {
+        setType(new ListModel<ProviderType>() {
             @Override
-            protected void onSelectedItemChanging(Object newValue, Object oldValue) {
+            protected void onSelectedItemChanging(ProviderType newValue, ProviderType oldValue) {
                 super.onSelectedItemChanging(newValue, oldValue);
-                String url = (String) getUrl().getEntity();
+                String url = getUrl().getEntity();
                 if (url == null) {
                     url = ""; //$NON-NLS-1$
                 }
                 url = url.trim();
-                if (url.equals("") || url.equalsIgnoreCase(getDefaultUrl((ProviderType) oldValue))) { //$NON-NLS-1$
-                    getUrl().setEntity(getDefaultUrl((ProviderType) newValue));
+                if (url.equals("") || url.equalsIgnoreCase(getDefaultUrl(oldValue))) { //$NON-NLS-1$
+                    getUrl().setEntity(getDefaultUrl(newValue));
                 }
             }
         });
@@ -236,10 +236,10 @@ public class ProviderModel extends Model {
     }
 
     private void flush() {
-        provider.setName((String) name.getEntity());
-        provider.setType((ProviderType) type.getSelectedItem());
-        provider.setDescription((String) description.getEntity());
-        provider.setUrl((String) url.getEntity());
+        provider.setName(name.getEntity());
+        provider.setType(type.getSelectedItem());
+        provider.setDescription(description.getEntity());
+        provider.setUrl(url.getEntity());
 
         if (isTypeOpenStackNetwork()) {
             getNeutronAgentModel().flush(provider);
@@ -247,18 +247,18 @@ public class ProviderModel extends Model {
             provider.setAdditionalProperties(new OpenStackImageProviderProperties());
         }
 
-        boolean authenticationRequired = (Boolean) requiresAuthentication.getEntity();
+        boolean authenticationRequired = requiresAuthentication.getEntity();
         provider.setRequiringAuthentication(authenticationRequired);
         if (authenticationRequired) {
-            provider.setUsername((String) getUsername().getEntity());
-            provider.setPassword((String) getPassword().getEntity());
+            provider.setUsername(getUsername().getEntity());
+            provider.setPassword(getPassword().getEntity());
             if (getTenantName().getIsAvailable()) {
                 TenantProviderProperties properties = (TenantProviderProperties) provider.getAdditionalProperties();
                 if (properties == null) {
                     properties = new TenantProviderProperties();
                     provider.setAdditionalProperties(properties);
                 }
-                properties.setTenantName((String) getTenantName().getEntity());
+                properties.setTenantName(getTenantName().getEntity());
             }
         } else {
             provider.setUsername(null);

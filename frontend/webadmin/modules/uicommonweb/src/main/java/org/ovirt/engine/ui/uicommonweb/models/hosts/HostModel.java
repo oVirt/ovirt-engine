@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VdsOperationActionParameters.Authenti
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -114,26 +115,26 @@ public abstract class HostModel extends Model
         privateOriginalName = value;
     }
 
-    private EntityModel privateName;
+    private EntityModel<String> privateName;
 
-    public EntityModel getName()
+    public EntityModel<String> getName()
     {
         return privateName;
     }
 
-    private void setName(EntityModel value)
+    private void setName(EntityModel<String> value)
     {
         privateName = value;
     }
 
-    private EntityModel privateUserName;
+    private EntityModel<String> privateUserName;
 
-    public EntityModel getUserName()
+    public EntityModel<String> getUserName()
     {
         return privateUserName;
     }
 
-    private void setUserName(EntityModel value)
+    private void setUserName(EntityModel<String> value)
     {
         privateUserName = value;
     }
@@ -162,134 +163,134 @@ public abstract class HostModel extends Model
         privatePasswordSection = value;
     }
 
-    private EntityModel privateFetchSshFingerprint;
+    private EntityModel<String> privateFetchSshFingerprint;
 
-    public EntityModel getFetchSshFingerprint()
+    public EntityModel<String> getFetchSshFingerprint()
     {
         return privateFetchSshFingerprint;
     }
 
-    private void setFetchSshFingerprint(EntityModel value)
+    private void setFetchSshFingerprint(EntityModel<String> value)
     {
         privateFetchSshFingerprint = value;
     }
 
-    private EntityModel privateAuthSshPort;
+    private EntityModel<Integer> privateAuthSshPort;
 
-    public EntityModel getAuthSshPort()
+    public EntityModel<Integer> getAuthSshPort()
     {
         return privateAuthSshPort;
     }
 
-    private void setAuthSshPort(EntityModel value)
+    private void setAuthSshPort(EntityModel<Integer> value)
     {
         privateAuthSshPort = value;
     }
 
-    private EntityModel privateUserPassword;
+    private EntityModel<String> privateUserPassword;
 
-    public EntityModel getUserPassword()
+    public EntityModel<String> getUserPassword()
     {
         return privateUserPassword;
     }
 
-    private void setUserPassword(EntityModel value)
+    private void setUserPassword(EntityModel<String> value)
     {
         privateUserPassword = value;
     }
 
-    private EntityModel privatePublicKey;
+    private EntityModel<String> privatePublicKey;
 
-    public EntityModel getPublicKey()
+    public EntityModel<String> getPublicKey()
     {
         return privatePublicKey;
     }
 
-    private void setPublicKey(EntityModel value)
+    private void setPublicKey(EntityModel<String> value)
     {
         privatePublicKey = value;
     }
 
-    private EntityModel privateProviderSearchFilterLabel;
+    private EntityModel<String> privateProviderSearchFilterLabel;
 
-    public EntityModel getProviderSearchFilterLabel()
+    public EntityModel<String> getProviderSearchFilterLabel()
     {
         return privateProviderSearchFilterLabel;
     }
 
-    private void setProviderSearchFilterLabel(EntityModel value)
+    private void setProviderSearchFilterLabel(EntityModel<String> value)
     {
         privateProviderSearchFilterLabel = value;
     }
 
-    private EntityModel privateProviderSearchFilter;
+    private EntityModel<String> privateProviderSearchFilter;
 
-    public EntityModel getProviderSearchFilter()
+    public EntityModel<String> getProviderSearchFilter()
     {
         return privateProviderSearchFilter;
     }
 
-    private void setProviderSearchFilter(EntityModel value)
+    private void setProviderSearchFilter(EntityModel<String> value)
     {
         privateProviderSearchFilter = value;
     }
 
-    private EntityModel privateHost;
+    private EntityModel<String> privateHost;
 
-    public EntityModel getHost()
+    public EntityModel<String> getHost()
     {
         return privateHost;
     }
 
-    private void setHost(EntityModel value)
+    private void setHost(EntityModel<String> value)
     {
         privateHost = value;
     }
 
-    private EntityModel privateManagementIp;
+    private EntityModel<String> privateManagementIp;
 
-    public EntityModel getManagementIp()
+    public EntityModel<String> getManagementIp()
     {
         return privateManagementIp;
     }
 
-    private void setManagementIp(EntityModel value)
+    private void setManagementIp(EntityModel<String> value)
     {
         privateManagementIp = value;
     }
 
-    private ListModel privateDataCenter;
+    private ListModel<StoragePool> privateDataCenter;
 
-    public ListModel getDataCenter()
+    public ListModel<StoragePool> getDataCenter()
     {
         return privateDataCenter;
     }
 
-    private void setDataCenter(ListModel value)
+    private void setDataCenter(ListModel<StoragePool> value)
     {
         privateDataCenter = value;
     }
 
-    private ListModel privateCluster;
+    private ListModel<VDSGroup> privateCluster;
 
-    public ListModel getCluster()
+    public ListModel<VDSGroup> getCluster()
     {
         return privateCluster;
     }
 
-    private void setCluster(ListModel value)
+    private void setCluster(ListModel<VDSGroup> value)
     {
         privateCluster = value;
     }
 
-    private EntityModel privatePort;
+    private EntityModel<Integer> privatePort;
 
-    public EntityModel getPort()
+    public EntityModel<Integer> getPort()
     {
         return privatePort;
     }
 
-    private void setPort(EntityModel value)
+    private void setPort(EntityModel<Integer> value)
     {
         privatePort = value;
     }
@@ -304,213 +305,213 @@ public abstract class HostModel extends Model
         return hostAuthenticationMethod;
     }
 
-    private EntityModel privateFetchResult;
+    private EntityModel<String> privateFetchResult;
 
-    public EntityModel getFetchResult()
+    public EntityModel<String> getFetchResult()
     {
         return privateFetchResult;
     }
 
-    private void setFetchResult(EntityModel value)
+    private void setFetchResult(EntityModel<String> value)
     {
         privateFetchResult = value;
     }
 
-    private EntityModel privateOverrideIpTables;
+    private EntityModel<Boolean> privateOverrideIpTables;
 
-    public EntityModel getOverrideIpTables()
+    public EntityModel<Boolean> getOverrideIpTables()
     {
         return privateOverrideIpTables;
     }
 
-    private void setOverrideIpTables(EntityModel value)
+    private void setOverrideIpTables(EntityModel<Boolean> value)
     {
         privateOverrideIpTables = value;
     }
 
-    private EntityModel privateIsPm;
+    private EntityModel<Boolean> privateIsPm;
 
-    public EntityModel getIsPm()
+    public EntityModel<Boolean> getIsPm()
     {
         return privateIsPm;
     }
 
-    private void setIsPm(EntityModel value)
+    private void setIsPm(EntityModel<Boolean> value)
     {
         privateIsPm = value;
     }
 
-    private EntityModel privatePmUserName;
+    private EntityModel<String> privatePmUserName;
 
-    public EntityModel getPmUserName()
+    public EntityModel<String> getPmUserName()
     {
         return privatePmUserName;
     }
 
-    private void setPmUserName(EntityModel value)
+    private void setPmUserName(EntityModel<String> value)
     {
         privatePmUserName = value;
     }
 
-    private EntityModel privatePmPassword;
+    private EntityModel<String> privatePmPassword;
 
-    public EntityModel getPmPassword()
+    public EntityModel<String> getPmPassword()
     {
         return privatePmPassword;
     }
 
-    private void setPmPassword(EntityModel value)
+    private void setPmPassword(EntityModel<String> value)
     {
         privatePmPassword = value;
     }
 
-    private EntityModel consoleAddress;
+    private EntityModel<String> consoleAddress;
 
-    public void setConsoleAddress(EntityModel consoleAddress) {
+    public void setConsoleAddress(EntityModel<String> consoleAddress) {
         this.consoleAddress = consoleAddress;
     }
 
-    public EntityModel getConsoleAddress() {
+    public EntityModel<String> getConsoleAddress() {
         return consoleAddress;
     }
 
-    private EntityModel consoleAddressEnabled;
+    private EntityModel<Boolean> consoleAddressEnabled;
 
-    public EntityModel getConsoleAddressEnabled() {
+    public EntityModel<Boolean> getConsoleAddressEnabled() {
         return consoleAddressEnabled;
     }
 
-    public void setConsoleAddressEnabled(EntityModel consoleAddressEnabled) {
+    public void setConsoleAddressEnabled(EntityModel<Boolean> consoleAddressEnabled) {
         this.consoleAddressEnabled = consoleAddressEnabled;
     }
 
-    private ListModel privatePmType;
+    private ListModel<String> privatePmType;
 
-    public ListModel getPmType()
+    public ListModel<String> getPmType()
     {
         return privatePmType;
     }
 
-    private void setPmType(ListModel value)
+    private void setPmType(ListModel<String> value)
     {
         privatePmType = value;
     }
 
-    private EntityModel privatePmSecure;
+    private EntityModel<Boolean> privatePmSecure;
 
-    public EntityModel getPmSecure()
+    public EntityModel<Boolean> getPmSecure()
     {
         return privatePmSecure;
     }
 
-    private void setPmSecure(EntityModel value)
+    private void setPmSecure(EntityModel<Boolean> value)
     {
         privatePmSecure = value;
     }
 
-    private EntityModel privatePmPort;
+    private EntityModel<String> privatePmPort;
 
-    public EntityModel getPmPort()
+    public EntityModel<String> getPmPort()
     {
         return privatePmPort;
     }
 
-    private void setPmPort(EntityModel value)
+    private void setPmPort(EntityModel<String> value)
     {
         privatePmPort = value;
     }
 
-    private EntityModel privatePmSlot;
+    private EntityModel<String> privatePmSlot;
 
-    public EntityModel getPmSlot()
+    public EntityModel<String> getPmSlot()
     {
         return privatePmSlot;
     }
 
-    private void setPmSlot(EntityModel value)
+    private void setPmSlot(EntityModel<String> value)
     {
         privatePmSlot = value;
     }
 
-    private EntityModel privatePmOptions;
+    private EntityModel<String> privatePmOptions;
 
-    public EntityModel getPmOptions()
+    public EntityModel<String> getPmOptions()
     {
         return privatePmOptions;
     }
 
-    private void setPmOptions(EntityModel value)
+    private void setPmOptions(EntityModel<String> value)
     {
         privatePmOptions = value;
     }
 
-    private EntityModel pmSecondaryIp;
+    private EntityModel<String> pmSecondaryIp;
 
-    public EntityModel getPmSecondaryIp() {
+    public EntityModel<String> getPmSecondaryIp() {
         return pmSecondaryIp;
     }
 
-    private void setPmSecondaryIp(EntityModel value) {
+    private void setPmSecondaryIp(EntityModel<String> value) {
         pmSecondaryIp = value;
     }
 
-    private EntityModel pmSecondaryPort;
+    private EntityModel<String> pmSecondaryPort;
 
-    public EntityModel getPmSecondaryPort() {
+    public EntityModel<String> getPmSecondaryPort() {
         return pmSecondaryPort;
     }
 
-    private void setPmSecondaryPort(EntityModel value) {
+    private void setPmSecondaryPort(EntityModel<String> value) {
         pmSecondaryPort = value;
     }
 
-    private EntityModel pmSecondaryUserName;
+    private EntityModel<String> pmSecondaryUserName;
 
-    public EntityModel getPmSecondaryUserName() {
+    public EntityModel<String> getPmSecondaryUserName() {
         return pmSecondaryUserName;
     }
 
-    private void setPmSecondaryUserName(EntityModel value) {
+    private void setPmSecondaryUserName(EntityModel<String> value) {
         pmSecondaryUserName = value;
     }
 
-    private EntityModel pmSecondaryPassword;
+    private EntityModel<String> pmSecondaryPassword;
 
-    public EntityModel getPmSecondaryPassword() {
+    public EntityModel<String> getPmSecondaryPassword() {
         return pmSecondaryPassword;
     }
 
-    private void setPmSecondaryPassword(EntityModel value) {
+    private void setPmSecondaryPassword(EntityModel<String> value) {
         pmSecondaryPassword = value;
     }
 
-    private ListModel pmSecondaryType;
+    private ListModel<String> pmSecondaryType;
 
-    public ListModel getPmSecondaryType() {
+    public ListModel<String> getPmSecondaryType() {
         return pmSecondaryType;
     }
 
-    private void setPmSecondaryType(ListModel value) {
+    private void setPmSecondaryType(ListModel<String> value) {
         pmSecondaryType = value;
     }
 
-    private EntityModel pmSecondaryOptions;
+    private EntityModel<String> pmSecondaryOptions;
 
-    public EntityModel getPmSecondaryOptions() {
+    public EntityModel<String> getPmSecondaryOptions() {
         return pmSecondaryOptions;
     }
 
-    private void setPmSecondaryOptions(EntityModel value) {
+    private void setPmSecondaryOptions(EntityModel<String> value) {
         pmSecondaryOptions = value;
     }
 
-    private EntityModel pmSecondarySecure;
+    private EntityModel<Boolean> pmSecondarySecure;
 
-    public EntityModel getPmSecondarySecure() {
+    public EntityModel<Boolean> getPmSecondarySecure() {
         return pmSecondarySecure;
     }
 
-    private void setPmSecondarySecure(EntityModel value) {
+    private void setPmSecondarySecure(EntityModel<Boolean> value) {
         pmSecondarySecure = value;
     }
 
@@ -532,34 +533,34 @@ public abstract class HostModel extends Model
         setPmOptionsMapInternal(value, getPmSecondaryPort(), getPmSecondarySlot(), getPmSecondarySecure(), getPmSecondaryOptions());
     }
 
-    private EntityModel pmSecondarySlot;
+    private EntityModel<String> pmSecondarySlot;
 
-    public EntityModel getPmSecondarySlot() {
+    public EntityModel<String> getPmSecondarySlot() {
         return pmSecondarySlot;
     }
 
-    private void setPmSecondarySlot(EntityModel value) {
+    private void setPmSecondarySlot(EntityModel<String> value) {
         pmSecondarySlot = value;
     }
 
 
-    private EntityModel pmSecondaryConcurrent;
+    private EntityModel<Boolean> pmSecondaryConcurrent;
 
-    public EntityModel getPmSecondaryConcurrent() {
+    public EntityModel<Boolean> getPmSecondaryConcurrent() {
         return pmSecondaryConcurrent;
     }
 
-    private void setPmSecondaryConcurrent(EntityModel value) {
+    private void setPmSecondaryConcurrent(EntityModel<Boolean> value) {
         pmSecondaryConcurrent = value;
     }
 
-    private ListModel pmVariants;
+    private ListModel<String> pmVariants;
 
-    public ListModel getPmVariants() {
+    public ListModel<String> getPmVariants() {
         return pmVariants;
     }
 
-    private void setPmVariants(ListModel value) {
+    private void setPmVariants(ListModel<String> value) {
         pmVariants = value;
     }
 
@@ -657,7 +658,7 @@ public abstract class HostModel extends Model
 
     public String getPmProxyPreferences() {
         // Return null if power management is not enabled.
-        if (!(Boolean) getIsPm().getEntity()) {
+        if (!getIsPm().getEntity()) {
             return null;
         }
 
@@ -691,13 +692,13 @@ public abstract class HostModel extends Model
         getPmProxyPreferencesList().setItems(list);
     }
 
-    private ListModel pmProxyPreferencesList;
+    private ListModel<String> pmProxyPreferencesList;
 
-    public ListModel getPmProxyPreferencesList() {
+    public ListModel<String> getPmProxyPreferencesList() {
         return pmProxyPreferencesList;
     }
 
-    private void setPmProxyPreferencesList(ListModel value) {
+    private void setPmProxyPreferencesList(ListModel<String> value) {
         pmProxyPreferencesList = value;
     }
 
@@ -743,66 +744,66 @@ public abstract class HostModel extends Model
 
     public int getSpmPriorityValue() {
 
-        EntityModel selectedItem = (EntityModel) getSpmPriority().getSelectedItem();
+        EntityModel<Integer> selectedItem = getSpmPriority().getSelectedItem();
         if (selectedItem != null) {
-            return (Integer) selectedItem.getEntity();
+            return selectedItem.getEntity();
         }
 
         return 0;
     }
 
-    private ListModel spmPriority;
+    private ListModel<EntityModel<Integer>> spmPriority;
 
-    public ListModel getSpmPriority() {
+    public ListModel<EntityModel<Integer>> getSpmPriority() {
         return spmPriority;
     }
 
-    private void setSpmPriority(ListModel value) {
+    private void setSpmPriority(ListModel<EntityModel<Integer>> value) {
         spmPriority = value;
     }
 
-    private ListModel privateExternalHostName;
+    private ListModel<VDS> privateExternalHostName;
 
-    public ListModel getExternalHostName()
+    public ListModel<VDS> getExternalHostName()
     {
         return privateExternalHostName;
     }
 
-    protected void setExternalHostName(ListModel value)
+    protected void setExternalHostName(ListModel<VDS> value)
     {
         privateExternalHostName = value;
     }
 
-    private EntityModel privateComment;
+    private EntityModel<String> privateComment;
 
-    public EntityModel getComment()
+    public EntityModel<String> getComment()
     {
         return privateComment;
     }
 
-    protected void setComment(EntityModel value)
+    protected void setComment(EntityModel<String> value)
     {
         privateComment = value;
     }
 
-    private EntityModel externalHostProviderEnabled;
+    private EntityModel<Boolean> externalHostProviderEnabled;
 
-    public EntityModel getExternalHostProviderEnabled() {
+    public EntityModel<Boolean> getExternalHostProviderEnabled() {
         return externalHostProviderEnabled;
     }
 
-    public void setExternalHostProviderEnabled(EntityModel externalHostProviderEnabled) {
+    public void setExternalHostProviderEnabled(EntityModel<Boolean> externalHostProviderEnabled) {
         this.externalHostProviderEnabled = externalHostProviderEnabled;
     }
 
-    private ListModel privateProviders;
+    private ListModel<Provider> privateProviders;
 
-    public ListModel getProviders()
+    public ListModel<Provider> getProviders()
     {
         return privateProviders;
     }
 
-    protected void setProviders(ListModel value)
+    protected void setProviders(ListModel<Provider> value)
     {
         privateProviders = value;
     }
@@ -817,11 +818,11 @@ public abstract class HostModel extends Model
         networkProviderModel = value;
     }
 
-    public ListModel getNetworkProviders() {
+    public ListModel<Provider<org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties>> getNetworkProviders() {
         return getNetworkProviderModel().getNetworkProviders();
     }
 
-    public EntityModel getInterfaceMappings() {
+    public EntityModel<String> getInterfaceMappings() {
         return getNetworkProviderModel().getInterfaceMappings();
     }
 
@@ -883,31 +884,31 @@ public abstract class HostModel extends Model
             }
         }));
 
-        setName(new EntityModel());
-        setComment(new EntityModel());
-        setHost(new EntityModel());
+        setName(new EntityModel<String>());
+        setComment(new EntityModel<String>());
+        setHost(new EntityModel<String>());
         setPkSection(new EntityModel());
         setPasswordSection(new EntityModel());
-        setAuthSshPort(new EntityModel());
-        getAuthSshPort().setEntity(constants.defaultHostSSHPort());
-        setUserName(new EntityModel());
+        setAuthSshPort(new EntityModel<Integer>());
+        getAuthSshPort().setEntity(Integer.parseInt(constants.defaultHostSSHPort()));
+        setUserName(new EntityModel<String>());
         getUserName().setEntity(RootUserName);
         // TODO: remove setIsChangable when configured ssh username is enabled
         getUserName().setIsChangable(false);
-        setFetchSshFingerprint(new EntityModel());
+        setFetchSshFingerprint(new EntityModel<String>());
         getFetchSshFingerprint().setEntity(constants.empty());
-        setUserPassword(new EntityModel());
+        setUserPassword(new EntityModel<String>());
         getUserPassword().setEntity(constants.empty());
-        setPublicKey(new EntityModel());
+        setPublicKey(new EntityModel<String>());
         getPublicKey().setEntity(constants.empty());
-        setDataCenter(new ListModel());
+        setDataCenter(new ListModel<StoragePool>());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
         getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
-        setCluster(new ListModel());
+        setCluster(new ListModel<VDSGroup>());
         getCluster().getSelectedItemChangedEvent().addListener(this);
-        setPort(new EntityModel());
-        setFetchResult(new EntityModel());
-        setOverrideIpTables(new EntityModel());
+        setPort(new EntityModel<Integer>());
+        setFetchResult(new EntityModel<String>());
+        setOverrideIpTables(new EntityModel<Boolean>());
         getOverrideIpTables().setEntity(false);
 
         IEventListener pmListener = new IEventListener() {
@@ -917,61 +918,61 @@ public abstract class HostModel extends Model
             }
         };
 
-        setExternalHostName(new ListModel());
+        setExternalHostName(new ListModel<VDS>());
         getExternalHostName().setIsAvailable(false);
-        setExternalHostProviderEnabled(new EntityModel());
+        setExternalHostProviderEnabled(new EntityModel<Boolean>());
         getExternalHostProviderEnabled().setIsAvailable(false);
         setProviders(new ListModel());
         getProviders().setIsAvailable(false);
-        setProviderSearchFilter(new EntityModel());
+        setProviderSearchFilter(new EntityModel<String>());
         getProviderSearchFilter().setIsAvailable(false);
-        setProviderSearchFilterLabel(new EntityModel());
+        setProviderSearchFilterLabel(new EntityModel<String>());
         getProviderSearchFilterLabel().setIsAvailable(false);
         getUpdateHostsCommand().setIsExecutionAllowed(false);
         // Initialize primary PM fields.
-        setManagementIp(new EntityModel());
-        setPmUserName(new EntityModel());
-        setPmPassword(new EntityModel());
-        setPmType(new ListModel());
+        setManagementIp(new EntityModel<String>());
+        setPmUserName(new EntityModel<String>());
+        setPmPassword(new EntityModel<String>());
+        setPmType(new ListModel<String>());
         getPmType().getSelectedItemChangedEvent().addListener(pmListener);
-        setPmPort(new EntityModel());
+        setPmPort(new EntityModel<String>());
         getPmPort().setIsAvailable(false);
-        setPmSlot(new EntityModel());
+        setPmSlot(new EntityModel<String>());
         getPmSlot().setIsAvailable(false);
-        setPmOptions(new EntityModel());
-        setPmSecure(new EntityModel());
+        setPmOptions(new EntityModel<String>());
+        setPmSecure(new EntityModel<Boolean>());
         getPmSecure().setIsAvailable(false);
         getPmSecure().setEntity(false);
 
         // Initialize secondary PM fields.
-        setPmSecondaryIp(new EntityModel());
-        setPmSecondaryUserName(new EntityModel());
-        setPmSecondaryPassword(new EntityModel());
-        setPmSecondaryType(new ListModel());
+        setPmSecondaryIp(new EntityModel<String>());
+        setPmSecondaryUserName(new EntityModel<String>());
+        setPmSecondaryPassword(new EntityModel<String>());
+        setPmSecondaryType(new ListModel<String>());
         getPmSecondaryType().getSelectedItemChangedEvent().addListener(pmListener);
-        setPmSecondaryPort(new EntityModel());
+        setPmSecondaryPort(new EntityModel<String>());
         getPmSecondaryPort().setIsAvailable(false);
-        setPmSecondarySlot(new EntityModel());
+        setPmSecondarySlot(new EntityModel<String>());
         getPmSecondarySlot().setIsAvailable(false);
-        setPmSecondaryOptions(new EntityModel());
-        setPmSecondarySecure(new EntityModel());
+        setPmSecondaryOptions(new EntityModel<String>());
+        setPmSecondarySecure(new EntityModel<Boolean>());
         getPmSecondarySecure().setIsAvailable(false);
         getPmSecondarySecure().setEntity(false);
 
         // Initialize other PM fields.
-        setPmSecondaryConcurrent(new EntityModel());
+        setPmSecondaryConcurrent(new EntityModel<Boolean>());
         getPmSecondaryConcurrent().setEntity(false);
-        setDisableAutomaticPowerManagement(new EntityModel());
+        setDisableAutomaticPowerManagement(new EntityModel<Boolean>());
         getDisableAutomaticPowerManagement().setEntity(false);
 
-        setPmVariants(new ListModel());
+        setPmVariants(new ListModel<String>());
         List<String> pmVariants = new ArrayList<String>();
         pmVariants.add(ConstantsManager.getInstance().getConstants().primaryPmVariant());
         pmVariants.add(ConstantsManager.getInstance().getConstants().secondaryPmVariant());
         getPmVariants().setItems(pmVariants);
         getPmVariants().setSelectedItem(pmVariants.get(0));
 
-        setPmProxyPreferencesList(new ListModel());
+        setPmProxyPreferencesList(new ListModel<String>());
         getPmProxyPreferencesList().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -979,13 +980,13 @@ public abstract class HostModel extends Model
             }
         });
 
-        setConsoleAddress(new EntityModel());
+        setConsoleAddress(new EntityModel<String>());
         getConsoleAddress().setEntity(null);
-        setConsoleAddressEnabled(new EntityModel());
+        setConsoleAddressEnabled(new EntityModel<Boolean>());
         getConsoleAddressEnabled().setEntity(false);
         getConsoleAddressEnabled().getEntityChangedEvent().addListener(this);
 
-        setIsPm(new EntityModel());
+        setIsPm(new EntityModel<Boolean>());
         getIsPm().getEntityChangedEvent().addListener(pmListener);
         getIsPm().setEntity(false);
 
@@ -993,7 +994,7 @@ public abstract class HostModel extends Model
         setIsPowerManagementTabValid(true);
         setIsGeneralTabValid(getIsPowerManagementTabValid());
 
-        setSpmPriority(new ListModel());
+        setSpmPriority(new ListModel<EntityModel<Integer>>());
 
         initSpmPriorities();
         fetchPublicKey();
@@ -1006,8 +1007,8 @@ public abstract class HostModel extends Model
             return;
         }
 
-        List list = new ArrayList(getPmProxyPreferencesList().getItems());
-        Object selectedItem = getPmProxyPreferencesList().getSelectedItem();
+        List<String> list = new ArrayList<String>(getPmProxyPreferencesList().getItems());
+        String selectedItem = getPmProxyPreferencesList().getSelectedItem();
         int selectedItemIndex = list.indexOf(selectedItem);
 
         // Check whether the selected item is first in the list.
@@ -1025,8 +1026,8 @@ public abstract class HostModel extends Model
             return;
         }
 
-        List list = new ArrayList(getPmProxyPreferencesList().getItems());
-        Object selectedItem = getPmProxyPreferencesList().getSelectedItem();
+        List<String> list = new ArrayList<String>(getPmProxyPreferencesList().getItems());
+        String selectedItem = getPmProxyPreferencesList().getSelectedItem();
         int selectedItemIndex = list.indexOf(selectedItem);
 
         // Check whether the selected item is first in the list.
@@ -1049,7 +1050,7 @@ public abstract class HostModel extends Model
                 String pk = (String) result;
                 if (pk != null && pk.length() > 0)
                 {
-                    getPublicKey().setEntity(result);
+                    getPublicKey().setEntity(pk);
                 }
             }
         };
@@ -1070,7 +1071,7 @@ public abstract class HostModel extends Model
                 String fingerprint = (String) result;
                 if (fingerprint != null && fingerprint.length() > 0)
                 {
-                    getFetchSshFingerprint().setEntity(result);
+                    getFetchSshFingerprint().setEntity(fingerprint);
                     getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().successLoadingFingerprint());
                 }
                 else
@@ -1090,7 +1091,7 @@ public abstract class HostModel extends Model
         }
         else {
             getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().loadingFingerprint());
-            AsyncDataProvider.getHostFingerprint(aQuery, getHost().getEntity().toString());
+            AsyncDataProvider.getHostFingerprint(aQuery, getHost().getEntity());
         }
     }
 
@@ -1133,23 +1134,23 @@ public abstract class HostModel extends Model
 
     private void updateSpmPriority(Integer value) {
 
-        List<EntityModel> items = new ArrayList<EntityModel>();
+        List<EntityModel<Integer>> items = new ArrayList<EntityModel<Integer>>();
 
         if (value == null) {
             value = defaultSpmPriority;
         }
 
         int neverValue = -1;
-        EntityModel neverItem = new EntityModel(constants.neverTitle(), neverValue);
+        EntityModel<Integer> neverItem = new EntityModel<Integer>(constants.neverTitle(), neverValue);
         items.add(neverItem);
         int lowValue = defaultSpmPriority / 2;
-        items.add(new EntityModel(constants.lowTitle(), lowValue));
-        items.add(new EntityModel(constants.normalTitle(), defaultSpmPriority));
+        items.add(new EntityModel<Integer>(constants.lowTitle(), lowValue));
+        items.add(new EntityModel<Integer>(constants.normalTitle(), defaultSpmPriority));
         int highValue = defaultSpmPriority + (maxSpmPriority - defaultSpmPriority) / 2;
-        items.add(new EntityModel(constants.highTitle(), highValue));
+        items.add(new EntityModel<Integer>(constants.highTitle(), highValue));
 
         // Determine whether to set custom SPM priority, and where.
-        EntityModel selectedItem = null;
+        EntityModel<Integer> selectedItem = null;
 
         int[] values = new int[] { neverValue, lowValue, defaultSpmPriority, highValue, maxSpmPriority + 1 };
         Integer prevValue = null;
@@ -1162,7 +1163,7 @@ public abstract class HostModel extends Model
                 selectedItem = items.get(i);
                 break;
             } else if (prevValue != null && value > prevValue && value < currentValue) {
-                EntityModel customItem = new EntityModel("Custom (" + value + ")", value);//$NON-NLS-1$ //$NON-NLS-2$
+                EntityModel<Integer> customItem = new EntityModel<Integer>("Custom (" + value + ")", value);//$NON-NLS-1$ //$NON-NLS-2$
 
                 items.add(i, customItem);
                 selectedItem = customItem;
@@ -1199,13 +1200,13 @@ public abstract class HostModel extends Model
     }
 
     private void consoleAddressChanged() {
-        boolean enabled = (Boolean) getConsoleAddressEnabled().getEntity();
+        boolean enabled = getConsoleAddressEnabled().getEntity();
         getConsoleAddress().setIsChangable(enabled);
     }
 
     private void dataCenter_SelectedItemChanged()
     {
-        StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
+        StoragePool dataCenter = getDataCenter().getSelectedItem();
         if (dataCenter != null)
         {
             AsyncQuery _asyncQuery = new AsyncQuery();
@@ -1216,7 +1217,7 @@ public abstract class HostModel extends Model
                 {
                     HostModel hostModel = (HostModel) model;
                     ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;
-                    StoragePool selectedDataCenter = (StoragePool) getDataCenter().getSelectedItem();
+                    StoragePool selectedDataCenter = getDataCenter().getSelectedItem();
 
                     // Update selected cluster only if the returned cluster list is indeed the selected datacenter's
                     // clusters
@@ -1269,7 +1270,7 @@ public abstract class HostModel extends Model
     }
 
     private void updateClusterList(HostModel hostModel, List<VDSGroup> clusters) {
-        VDSGroup oldCluster = (VDSGroup) hostModel.getCluster().getSelectedItem();
+        VDSGroup oldCluster = hostModel.getCluster().getSelectedItem();
 
         hostModel.getCluster().setItems(clusters);
 
@@ -1292,7 +1293,7 @@ public abstract class HostModel extends Model
 
     private void cluster_SelectedItemChanged()
     {
-        VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
+        VDSGroup cluster = getCluster().getSelectedItem();
         if (cluster != null)
         {
             AsyncDataProvider.getPmTypeList(new AsyncQuery(this, new INewAsyncCallback() {
@@ -1307,9 +1308,9 @@ public abstract class HostModel extends Model
         }
     }
 
-    private void updatePmTypeList(List<String> pmTypes, ListModel model) {
+    private void updatePmTypeList(List<String> pmTypes, ListModel<String> model) {
 
-        String pmType = (String) model.getSelectedItem();
+        String pmType = model.getSelectedItem();
 
         model.setItems(pmTypes);
 
@@ -1318,7 +1319,7 @@ public abstract class HostModel extends Model
         }
     }
 
-    private void setPmOptionsMapInternal(Map<String, String> value, EntityModel port, EntityModel slot, EntityModel secure, EntityModel options) {
+    private void setPmOptionsMapInternal(Map<String, String> value, EntityModel<String> port, EntityModel<String> slot, EntityModel<Boolean> secure, EntityModel<String> options) {
 
         StringBuilder pmOptions = new StringBuilder();
 
@@ -1350,17 +1351,17 @@ public abstract class HostModel extends Model
         }
     }
 
-    private HashMap<String, String> getPmOptionsMapInternal(EntityModel port, EntityModel slot, EntityModel secure, EntityModel options) {
+    private HashMap<String, String> getPmOptionsMapInternal(EntityModel<String> port, EntityModel<String> slot, EntityModel<Boolean> secure, EntityModel<String> options) {
 
         HashMap<String, String> dict = new HashMap<String, String>();
 
-        if ((Boolean) getIsPm().getEntity()) {
+        if (getIsPm().getEntity()) {
             // Add well known pm options.
             if (port.getIsAvailable() && port.getEntity() != null) {
-                dict.put(PmPortKey, (String) port.getEntity());
+                dict.put(PmPortKey, port.getEntity());
             }
             if (slot.getIsAvailable() && slot.getEntity() != null) {
-                dict.put(PmSlotKey, (String) slot.getEntity());
+                dict.put(PmSlotKey, slot.getEntity());
             }
             if (secure.getIsAvailable()) {
                 dict.put(PmSecureKey, secure.getEntity().toString());
@@ -1368,7 +1369,7 @@ public abstract class HostModel extends Model
 
             // Add unknown pm options.
             // Assume Validate method was called before this getter.
-            String pmOptions = (String) options.getEntity();
+            String pmOptions = options.getEntity();
             if (!StringHelper.isNullOrEmpty(pmOptions)) {
                 for (String pair : pmOptions.split("[,]", -1)) //$NON-NLS-1$
                 {
@@ -1387,7 +1388,7 @@ public abstract class HostModel extends Model
 
     private void updatePmModels()
     {
-        boolean isPm = (Boolean) getIsPm().getEntity();
+        boolean isPm = getIsPm().getEntity();
         final String ciscoUcsValue = "cisco_ucs"; //$NON-NLS-1$
 
         // Update primary PM fields.
@@ -1401,8 +1402,8 @@ public abstract class HostModel extends Model
         getPmType().setIsValid(true);
         getPmPort().setIsChangable(isPm);
         getPmPort().setIsValid(true);
-        getPmProxyPreferencesList().setIsChangable((Boolean) getIsPm().getEntity());
-        Object proxySelectedItem = getPmProxyPreferencesList().getSelectedItem();
+        getPmProxyPreferencesList().setIsChangable(getIsPm().getEntity());
+        String proxySelectedItem = getPmProxyPreferencesList().getSelectedItem();
         getTestCommand().setIsExecutionAllowed(isPm);
         getProxyUpCommand().setIsExecutionAllowed(isPm && proxySelectedItem != null);
         getProxyDownCommand().setIsExecutionAllowed(isPm && proxySelectedItem != null);
@@ -1410,12 +1411,12 @@ public abstract class HostModel extends Model
         getPmOptions().setIsChangable(isPm);
         getPmOptions().setIsValid(true);
         getPmSecure().setIsChangable(isPm);
-        VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
+        VDSGroup cluster = getCluster().getSelectedItem();
         String version = AsyncDataProvider.getDefaultConfigurationVersion();
         if (cluster != null) {
             version = cluster.getcompatibility_version().toString();
         }
-        String pmType = (String) getPmType().getSelectedItem();
+        String pmType = getPmType().getSelectedItem();
         if (!StringHelper.isNullOrEmpty(pmType)) {
             AsyncDataProvider.getPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
@@ -1454,7 +1455,7 @@ public abstract class HostModel extends Model
         getDisableAutomaticPowerManagement().setIsValid(true);
         getDisableAutomaticPowerManagement().setIsChangable(isPm);
 
-        String pmSecondaryType = (String) getPmSecondaryType().getSelectedItem();
+        String pmSecondaryType = getPmSecondaryType().getSelectedItem();
         if (!StringHelper.isNullOrEmpty(pmSecondaryType)) {
             AsyncDataProvider.getPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
@@ -1485,7 +1486,7 @@ public abstract class HostModel extends Model
     private boolean isPmPrimarySelected() {
 
         List items = (List) getPmVariants().getItems();
-        Object selectedItem = getPmVariants().getSelectedItem();
+        String selectedItem = getPmVariants().getSelectedItem();
 
         return items.indexOf(selectedItem) == 0;
     }
@@ -1518,7 +1519,7 @@ public abstract class HostModel extends Model
         setMessage(ConstantsManager.getInstance().getConstants().testingInProgressItWillTakeFewSecondsPleaseWaitMsg());
         getTestCommand().setIsExecutionAllowed(false);
 
-        VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
+        VDSGroup cluster = getCluster().getSelectedItem();
 
         GetNewVdsFenceStatusParameters param = new GetNewVdsFenceStatusParameters();
         if (getHostId() != null)
@@ -1526,10 +1527,10 @@ public abstract class HostModel extends Model
             param.setVdsId(getHostId());
         }
         param.setOrder(isPrimary ? FenceAgentOrder.Primary : FenceAgentOrder.Secondary);
-        param.setManagementIp(isPrimary ? (String) getManagementIp().getEntity() : (String) getPmSecondaryIp().getEntity());
-        param.setPmType(isPrimary ? (String) getPmType().getSelectedItem() : (String) getPmSecondaryType().getSelectedItem());
-        param.setUser(isPrimary ? (String) getPmUserName().getEntity() : (String) getPmSecondaryUserName().getEntity());
-        param.setPassword(isPrimary ? (String) getPmPassword().getEntity() : (String) getPmSecondaryPassword().getEntity());
+        param.setManagementIp(isPrimary ? getManagementIp().getEntity() : getPmSecondaryIp().getEntity());
+        param.setPmType(isPrimary ? getPmType().getSelectedItem() : getPmSecondaryType().getSelectedItem());
+        param.setUser(isPrimary ? getPmUserName().getEntity() : getPmSecondaryUserName().getEntity());
+        param.setPassword(isPrimary ? getPmPassword().getEntity() : getPmSecondaryPassword().getEntity());
         param.setStoragePoolId(cluster.getStoragePoolId() != null ? cluster.getStoragePoolId() : Guid.Empty);
         param.setFencingOptions(getPmOptionsMap());
 
@@ -1542,7 +1543,7 @@ public abstract class HostModel extends Model
                     String message;
                     if (response != null && response.getReturnValue() != null) {
                         FenceStatusReturnValue fenceStatusReturnValue =
-                                (FenceStatusReturnValue) response.getReturnValue();
+                                response.getReturnValue();
                         message = fenceStatusReturnValue.toString();
                     } else {
                         message = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
@@ -1553,7 +1554,7 @@ public abstract class HostModel extends Model
 
                     if (response.getReturnValue() != null) {
                         FenceStatusReturnValue fenceStatusReturnValue =
-                                (FenceStatusReturnValue) response.getReturnValue();
+                                response.getReturnValue();
                         String message = fenceStatusReturnValue.toString();
                         setMessage(message);
                         getTestCommand().setIsExecutionAllowed(true);
@@ -1567,12 +1568,12 @@ public abstract class HostModel extends Model
 
     private void validatePmModels(boolean primary)
     {
-        EntityModel ip = primary ? getManagementIp() : getPmSecondaryIp();
-        EntityModel userName = primary ? getPmUserName() : getPmSecondaryUserName();
-        EntityModel password = primary ? getPmPassword() : getPmSecondaryPassword();
-        ListModel type = primary ? getPmType() : getPmSecondaryType();
-        EntityModel port = primary ? getPmPort() : getPmSecondaryPort();
-        EntityModel options = primary ? getPmOptions() : getPmSecondaryOptions();
+        EntityModel<String> ip = primary ? getManagementIp() : getPmSecondaryIp();
+        EntityModel<String> userName = primary ? getPmUserName() : getPmSecondaryUserName();
+        EntityModel<String> password = primary ? getPmPassword() : getPmSecondaryPassword();
+        ListModel<String> type = primary ? getPmType() : getPmSecondaryType();
+        EntityModel<String> port = primary ? getPmPort() : getPmSecondaryPort();
+        EntityModel<String> options = primary ? getPmOptions() : getPmSecondaryOptions();
 
         ip.validateEntity(new IValidation[] {new NotEmptyValidation(), new HostAddressValidation()});
         userName.validateEntity(new IValidation[] {new NotEmptyValidation()});
@@ -1595,7 +1596,7 @@ public abstract class HostModel extends Model
 
         getAuthSshPort().validateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
 
-        if ((Boolean) getConsoleAddressEnabled().getEntity()) {
+        if (getConsoleAddressEnabled().getEntity()) {
             getConsoleAddress().validateEntity(new IValidation[] {new NotEmptyValidation(), new HostAddressValidation()});
         } else {
             // the console address is ignored so can not be invalid
@@ -1605,7 +1606,7 @@ public abstract class HostModel extends Model
         getDataCenter().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getCluster().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
-        if ((Boolean) getIsPm().getEntity())
+        if (getIsPm().getEntity())
         {
             // If PM enabled primary fencing options must be specified, ensure that.
             validatePmModels(true);
@@ -1657,7 +1658,7 @@ public abstract class HostModel extends Model
                 && getNetworkProviderModel().getIsValid();
     }
 
-    private boolean isEntityModelEmpty(EntityModel model) {
+    private boolean isEntityModelEmpty(EntityModel<String> model) {
         return !(model.getEntity() != null && !model.getEntity().equals(""));
     }
 

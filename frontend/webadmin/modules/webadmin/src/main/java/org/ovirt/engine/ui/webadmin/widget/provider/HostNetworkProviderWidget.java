@@ -1,13 +1,15 @@
 package org.ovirt.engine.ui.webadmin.widget.provider;
 
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelSuggestBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
@@ -46,20 +48,20 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
 
     @UiField(provided = true)
     @WithElementId("networkProvider")
-    public EntityModelWidgetWithInfo networkProvider;
+    public EntityModelWidgetWithInfo<String> networkProvider;
 
     @Ignore
     @WithElementId("networkProviderLabel")
-    public EntityModelLabel networkProviderLabel;
+    public StringEntityModelLabel networkProviderLabel;
 
     @Path(value = "networkProviders.selectedItem")
     @WithElementId("networkProviderEditor")
-    public ListModelListBoxOnlyEditor<Object> networkProviderEditor;
+    public ListModelListBoxOnlyEditor<Provider<OpenstackNetworkProviderProperties>> networkProviderEditor;
 
     @UiField(provided = true)
     @Path(value = "networkProviderType.selectedItem")
     @WithElementId("networkProviderType")
-    public ListModelListBoxEditor<Object> networkProviderTypeEditor;
+    public ListModelListBoxEditor<ProviderType> networkProviderTypeEditor;
 
     @UiField
     @Path(value = "providerPluginType.selectedItem")
@@ -76,15 +78,15 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
     @Inject
     public HostNetworkProviderWidget() {
 
-        networkProviderLabel = new EntityModelLabel();
-        networkProviderEditor = new ListModelListBoxOnlyEditor<Object>(new NullSafeRenderer<Object>() {
+        networkProviderLabel = new StringEntityModelLabel();
+        networkProviderEditor = new ListModelListBoxOnlyEditor<Provider<OpenstackNetworkProviderProperties>>(new NullSafeRenderer<Provider<OpenstackNetworkProviderProperties>>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((Provider) object).getName();
+            public String renderNullSafe(Provider<OpenstackNetworkProviderProperties> provider) {
+                return provider.getName();
             }
         });
-        networkProvider = new EntityModelWidgetWithInfo(networkProviderLabel, networkProviderEditor);
-        networkProviderTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        networkProvider = new EntityModelWidgetWithInfo<String>(networkProviderLabel, networkProviderEditor);
+        networkProviderTypeEditor = new ListModelListBoxEditor<ProviderType>(new EnumRenderer<ProviderType>());
         neutronAgentWidget = new NeutronAgentWidget();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -104,12 +106,12 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
 
         final NeutronAgentModel neutronAgentModel = model.getNeutronAgentModel();
         neutronAgentWidget.edit(neutronAgentModel);
-        neutronAgentPanel.setVisible((Boolean) neutronAgentModel.isPluginConfigurationAvailable().getEntity());
+        neutronAgentPanel.setVisible(neutronAgentModel.isPluginConfigurationAvailable().getEntity());
         neutronAgentModel.isPluginConfigurationAvailable().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                neutronAgentPanel.setVisible((Boolean) neutronAgentModel.isPluginConfigurationAvailable().getEntity());
+                neutronAgentPanel.setVisible(neutronAgentModel.isPluginConfigurationAvailable().getEntity());
             }
         });
     }

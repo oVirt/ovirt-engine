@@ -2,6 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
@@ -89,7 +90,7 @@
 
 	<g:FlowPanel addStyleNames="{style.container}">
 		<g:HorizontalPanel ui:field="topPanel" addStyleNames="{style.obrand_topPanel}">
-			<e:EntityModelCheckBoxEditor ui:field="attachEditor" addStyleNames="{style.attachEditor}"/>
+			<ge:EntityModelCheckBoxEditor ui:field="attachEditor" addStyleNames="{style.attachEditor}"/>
 		</g:HorizontalPanel>
 		<g:HorizontalPanel ui:field="diskTypePanel" addStyleNames="{style.obrand_diskTypePanel}">
 			<g:RadioButton ui:field="internalDiskRadioButton" ui:name="disktype" ui:text="{constants.internalDisk}" addStyleNames="{style.diskTypeRadioButton}"/>
@@ -98,10 +99,10 @@
 		<g:VerticalPanel ui:field="createDiskPanel" addStyleNames="{style.mainPanel}">
 			<g:HorizontalPanel>
 				<g:VerticalPanel>
-					<e:EntityModelTextBoxEditor ui:field="sizeEditor" addStyleNames="{style.boxEditor}"/>
-          <e:EntityModelTextBoxEditor ui:field="sizeExtendEditor" addStyleNames="{style.boxEditor}"/>
-					<e:EntityModelTextBoxEditor ui:field="aliasEditor" addStyleNames="{style.boxEditor}"/>
-					<e:EntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.boxEditor}"/>
+					<ge:LongEntityModelTextBoxEditor ui:field="sizeEditor" addStyleNames="{style.boxEditor}"/>
+          <ge:StringEntityModelTextBoxEditor ui:field="sizeExtendEditor" addStyleNames="{style.boxEditor}"/>
+					<ge:StringEntityModelTextBoxEditor ui:field="aliasEditor" addStyleNames="{style.boxEditor}"/>
+					<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.boxEditor}"/>
                     <g:HorizontalPanel>
 					    <e:ListModelListBoxEditor ui:field="interfaceEditor" addStyleNames="{style.boxEditor}"/>
                         <d:InfoIcon ui:field="interfaceInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
@@ -114,12 +115,12 @@
 					<e:ListModelListBoxEditor ui:field="storageTypeEditor" addStyleNames="{style.boxEditor}"/>
 				</g:VerticalPanel>
 				<g:VerticalPanel>
-                    <e:EntityModelCheckBoxEditor ui:field="plugDiskToVmEditor" addStyleNames="{style.checkBoxEditor}"/>
-					<e:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" addStyleNames="{style.checkBoxEditor}"/>
-					<e:EntityModelCheckBoxEditor ui:field="isBootableEditor" addStyleNames="{style.checkBoxEditor}" />
-					<e:EntityModelCheckBoxEditor ui:field="isShareableEditor" addStyleNames="{style.checkBoxEditor}"/>
-					<e:EntityModelCheckBoxEditor ui:field="isSgIoUnfilteredEditor" addStyleNames="{style.checkBoxEditor}"/>
-                    <e:EntityModelCheckBoxEditor ui:field="isReadOnlyEditor" addStyleNames="{style.checkBoxEditor}"/>
+                    <ge:EntityModelCheckBoxEditor ui:field="plugDiskToVmEditor" addStyleNames="{style.checkBoxEditor}"/>
+					<ge:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" addStyleNames="{style.checkBoxEditor}"/>
+					<ge:EntityModelCheckBoxEditor ui:field="isBootableEditor" addStyleNames="{style.checkBoxEditor}" />
+					<ge:EntityModelCheckBoxEditor ui:field="isShareableEditor" addStyleNames="{style.checkBoxEditor}"/>
+					<ge:EntityModelCheckBoxEditor ui:field="isSgIoUnfilteredEditor" addStyleNames="{style.checkBoxEditor}"/>
+                    <ge:EntityModelCheckBoxEditor ui:field="isReadOnlyEditor" addStyleNames="{style.checkBoxEditor}"/>
 				</g:VerticalPanel>
 			</g:HorizontalPanel>
 			<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
@@ -127,7 +128,7 @@
 		</g:VerticalPanel>
 		<g:VerticalPanel ui:field="attachDiskPanel" addStyleNames="{style.mainPanel}" visible="false">
 			<w:ValidatedPanelWidget ui:field="innerAttachDiskPanel" addStyleNames="{style.attachDiskPanel}" />
-			<e:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" />
+			<ge:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" />
 		</g:VerticalPanel>
 	</g:FlowPanel>
 

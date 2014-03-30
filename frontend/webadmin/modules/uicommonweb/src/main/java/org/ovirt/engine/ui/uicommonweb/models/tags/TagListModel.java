@@ -432,7 +432,7 @@ public class TagListModel extends SearchableListModel
         model.setHelpTag(HelpTag.remove_tag);
         model.setHashName("remove_tag"); //$NON-NLS-1$
 
-        ArrayList<Object> items = new ArrayList<Object>();
+        ArrayList<String> items = new ArrayList<String>();
         items.add(getSelectedItem().getName().getEntity());
         model.setItems(items);
 
@@ -548,8 +548,8 @@ public class TagListModel extends SearchableListModel
                 new Tags();
         tempVar.settag_id(model.getIsNew() ? Guid.Empty : getSelectedItem().getId());
         tempVar.setparent_id(model.getIsNew() ? getSelectedItem().getId() : getSelectedItem().getParentId());
-        tempVar.settag_name((String) model.getName().getEntity());
-        tempVar.setdescription((String) model.getDescription().getEntity());
+        tempVar.settag_name(model.getName().getEntity());
+        tempVar.setdescription(model.getDescription().getEntity());
         Tags tag = tempVar;
 
         model.startProgress(null);

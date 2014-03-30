@@ -35,4 +35,10 @@ public class EntityModelTextAreaLabelEditor<T> extends AbstractValueBoxWithLabel
             }
         });
     }
+
+    public void setCustomStyle(final String customStyle) {
+        if (customStyle != null) {
+            getElement().getElementsByTagName("textarea").getItem(0).addClassName(customStyle); //$NON-NLS-1$
+        }
+    }
 }

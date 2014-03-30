@@ -8,26 +8,26 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class ConfirmationModel extends ListModel
 {
 
-    private EntityModel privateLatch;
+    private EntityModel<Boolean> privateLatch;
 
-    public EntityModel getLatch()
+    public EntityModel<Boolean> getLatch()
     {
         return privateLatch;
     }
 
-    public void setLatch(EntityModel value)
+    public void setLatch(EntityModel<Boolean> value)
     {
         privateLatch = value;
     }
 
-    private EntityModel force;
+    private EntityModel<Boolean> force;
 
-    public EntityModel getForce()
+    public EntityModel<Boolean> getForce()
     {
         return force;
     }
 
-    public void setForce(EntityModel value)
+    public void setForce(EntityModel<Boolean> value)
     {
         force = value;
     }
@@ -64,11 +64,11 @@ public class ConfirmationModel extends ListModel
 
     public ConfirmationModel()
     {
-        setLatch(new EntityModel());
+        setLatch(new EntityModel<Boolean>());
         getLatch().setEntity(false);
         getLatch().setIsAvailable(false);
 
-        setForce(new EntityModel());
+        setForce(new EntityModel<Boolean>());
         getForce().setEntity(false);
         getForce().setIsAvailable(false);
     }
@@ -76,7 +76,7 @@ public class ConfirmationModel extends ListModel
     public boolean validate()
     {
         getLatch().setIsValid(true);
-        if (getLatch().getIsAvailable() && !(Boolean) getLatch().getEntity())
+        if (getLatch().getIsAvailable() && !getLatch().getEntity())
         {
             getLatch().getInvalidityReasons().add(ConstantsManager.getInstance()
                     .getConstants()

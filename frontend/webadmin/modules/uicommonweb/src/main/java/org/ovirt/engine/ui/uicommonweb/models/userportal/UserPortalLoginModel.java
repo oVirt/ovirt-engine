@@ -45,38 +45,38 @@ public class UserPortalLoginModel extends LoginModel
         privateChangePasswordCommand = value;
     }
 
-    private EntityModel privateNewPassword;
+    private EntityModel<String> privateNewPassword;
 
-    public EntityModel getNewPassword()
+    public EntityModel<String> getNewPassword()
     {
         return privateNewPassword;
     }
 
-    private void setNewPassword(EntityModel value)
+    private void setNewPassword(EntityModel<String> value)
     {
         privateNewPassword = value;
     }
 
-    private EntityModel privateVerifyPassword;
+    private EntityModel<String> privateVerifyPassword;
 
-    public EntityModel getVerifyPassword()
+    public EntityModel<String> getVerifyPassword()
     {
         return privateVerifyPassword;
     }
 
-    private void setVerifyPassword(EntityModel value)
+    private void setVerifyPassword(EntityModel<String> value)
     {
         privateVerifyPassword = value;
     }
 
-    private EntityModel privateIsAutoConnect;
+    private EntityModel<Boolean> privateIsAutoConnect;
 
-    public EntityModel getIsAutoConnect()
+    public EntityModel<Boolean> getIsAutoConnect()
     {
         return privateIsAutoConnect;
     }
 
-    private void setIsAutoConnect(EntityModel value)
+    private void setIsAutoConnect(EntityModel<Boolean> value)
     {
         privateIsAutoConnect = value;
     }
@@ -111,14 +111,14 @@ public class UserPortalLoginModel extends LoginModel
         privateLoggedUser = value;
     }
 
-    private EntityModel privateIsENGINEUser;
+    private EntityModel<Boolean> privateIsENGINEUser;
 
-    public EntityModel getIsENGINEUser()
+    public EntityModel<Boolean> getIsENGINEUser()
     {
         return privateIsENGINEUser;
     }
 
-    public void setIsENGINEUser(EntityModel value)
+    public void setIsENGINEUser(EntityModel<Boolean> value)
     {
         privateIsENGINEUser = value;
     }
@@ -163,13 +163,13 @@ public class UserPortalLoginModel extends LoginModel
     {
         setChangePasswordCommand(new UICommand("ChangePassword", this)); //$NON-NLS-1$
 
-        setNewPassword(new EntityModel());
-        setVerifyPassword(new EntityModel());
+        setNewPassword(new EntityModel<String>());
+        setVerifyPassword(new EntityModel<String>());
 
-        EntityModel tempVar = new EntityModel();
+        EntityModel<Boolean> tempVar = new EntityModel<Boolean>();
         tempVar.setEntity(true);
         setIsENGINEUser(tempVar);
-        EntityModel tempVar2 = new EntityModel();
+        EntityModel<Boolean> tempVar2 = new EntityModel<Boolean>();
         tempVar2.setEntity(true);
         setIsAutoConnect(tempVar2);
     }
@@ -218,18 +218,17 @@ public class UserPortalLoginModel extends LoginModel
                 stopProgress();
             }
         };
-        Frontend.getInstance().loginAsync((String) getUserName().getEntity(), (String) getPassword().getEntity(),
-                (String) getDomain().getSelectedItem(), false, asyncQuery);
+        Frontend.getInstance().loginAsync(getUserName().getEntity(), getPassword().getEntity(),
+                                          getDomain().getSelectedItem(), false, asyncQuery);
     }
 
     private void changePassword()
     {
         // TODO: Invoke the async query and handle failure correctly
         Frontend.getInstance().runAction(VdcActionType.ChangeUserPassword,
-                        new ChangeUserPasswordParameters((String) getUserName().getEntity(),
-                                (String) getPassword().getEntity(),
-                                (String) getNewPassword().getEntity(),
-                                (String) getDomain().getSelectedItem()));
+                        new ChangeUserPasswordParameters(getUserName().getEntity(), getPassword().getEntity(),
+                                getNewPassword().getEntity(),
+                                getDomain().getSelectedItem()));
     }
 
     @Override
@@ -243,7 +242,7 @@ public class UserPortalLoginModel extends LoginModel
             getVerifyPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
 
             // Check that the verify password field matches new password.
-            if (!((String) getNewPassword().getEntity()).equals(getVerifyPassword().getEntity()))
+            if (!getNewPassword().getEntity().equals(getVerifyPassword().getEntity()))
             {
                 getVerifyPassword().setIsValid(false);
                 getVerifyPassword().getInvalidityReasons()
@@ -291,10 +290,9 @@ public class UserPortalLoginModel extends LoginModel
 
     // Get logged user's permissions and create a list of roles associated with the user (and proceed to Step3).
     // Use only as 'Step2' of 'UpdateIsENGINEUser'
-    public void getUserRoles(Object targetObject)
+    public void getUserRoles(UserPortalLoginModel loginModel)
     {
-        UserPortalLoginModel loginModel = (UserPortalLoginModel) targetObject;
-        AsyncDataProvider.getPermissionsByAdElementId(new AsyncQuery(targetObject,
+        AsyncDataProvider.getPermissionsByAdElementId(new AsyncQuery(loginModel,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -353,7 +351,7 @@ public class UserPortalLoginModel extends LoginModel
     // Create a list of ActionGroups associated with the user by retrieving each role's ActionGroups (and proceed to
     // Step4).
     // Use only as 'Step3' of 'UpdateIsENGINEUser'
-    public void updateUserActionGroups(Object targetObject, ArrayList<Guid> roleIdList)
+    public void updateUserActionGroups(UserPortalLoginModel targetObject, ArrayList<Guid> roleIdList)
     {
         ArrayList<VdcQueryParametersBase> queryParamsList =
                 new ArrayList<VdcQueryParametersBase>();
@@ -368,8 +366,7 @@ public class UserPortalLoginModel extends LoginModel
             public void executed(FrontendMultipleQueryAsyncResult result) {
                 for (int i = 0; i < result.getReturnValues().size(); i++) {
                     VdcQueryReturnValue retVal = result.getReturnValues().get(i);
-                    ArrayList<ActionGroup> roleActionGroupList =
-                            (ArrayList<ActionGroup>) retVal.getReturnValue();
+                    ArrayList<ActionGroup> roleActionGroupList = retVal.getReturnValue();
                     for (ActionGroup actionGroup : roleActionGroupList) {
                         if (!UserPortalLoginModel.this.getLoggedUserActionGroupList().contains(actionGroup)) {
                             UserPortalLoginModel.this.getLoggedUserActionGroupList().add(actionGroup);
@@ -388,9 +385,8 @@ public class UserPortalLoginModel extends LoginModel
     // the logged user is not 'ENGINEUser' - Update IsENGINEUser to false; Otherwise, true.
     // Raise 'LoggedIn' event after updating the flag.
     // Use only as 'Step4' of 'UpdateIsENGINEUser'
-    public void checkIsENGINEUser(Object targetObject)
+    public void checkIsENGINEUser(UserPortalLoginModel loginModel)
     {
-        UserPortalLoginModel loginModel = (UserPortalLoginModel) targetObject;
         loginModel.getIsENGINEUser().setEntity(null);
         boolean isENGINEUser = true;
 

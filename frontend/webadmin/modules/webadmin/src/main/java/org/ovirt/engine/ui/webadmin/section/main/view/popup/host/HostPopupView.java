@@ -21,13 +21,15 @@ import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -102,27 +104,27 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
     @WithElementId("dataCenter")
-    ListModelListBoxEditor<Object> dataCenterEditor;
+    ListModelListBoxEditor<StoragePool> dataCenterEditor;
 
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
     @WithElementId("cluster")
-    ListModelListBoxEditor<Object> clusterEditor;
+    ListModelListBoxEditor<VDSGroup> clusterEditor;
 
     @UiField
     @Path(value = "name.entity")
     @WithElementId("name")
-    EntityModelTextBoxEditor nameEditor;
+    StringEntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "userName.entity")
     @WithElementId("userName")
-    EntityModelTextBoxEditor userNameEditor;
+    StringEntityModelTextBoxEditor userNameEditor;
 
     @UiField
     @Path(value = "fetchSshFingerprint.entity")
     @WithElementId("fetchSshFingerprint")
-    EntityModelTextBoxEditor fetchSshFingerprint;
+    StringEntityModelTextBoxEditor fetchSshFingerprint;
 
     @UiField
     @Ignore
@@ -132,42 +134,42 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField
     @Path(value = "comment.entity")
     @WithElementId("comment")
-    EntityModelTextBoxEditor commentEditor;
+    StringEntityModelTextBoxEditor commentEditor;
 
     @UiField
     @Path(value = "providerSearchFilter.entity")
     @WithElementId("providerSearchFilter")
-    EntityModelTextBoxEditor providerSearchFilterEditor;
+    StringEntityModelTextBoxEditor providerSearchFilterEditor;
 
     @UiField(provided = true)
     @Path(value = "externalHostName.selectedItem")
     @WithElementId("externalHostName")
-    ListModelListBoxEditor<Object> externalHostNameEditor;
+    ListModelListBoxEditor<VDS> externalHostNameEditor;
 
     @UiField(provided = true)
     @Path(value = "providers.selectedItem")
     @WithElementId("providers")
-    ListModelListBoxEditor<Object> providersEditor;
+    ListModelListBoxEditor<Provider> providersEditor;
 
     @UiField
     @Path(value = "host.entity")
     @WithElementId("host")
-    EntityModelTextBoxEditor hostAddressEditor;
+    StringEntityModelTextBoxEditor hostAddressEditor;
 
     @UiField
     @Path(value = "authSshPort.entity")
     @WithElementId("authSshPort")
-    EntityModelTextBoxEditor authSshPortEditor;
+    IntegerEntityModelTextBoxEditor authSshPortEditor;
 
     @UiField
     @Path(value = "userPassword.entity")
     @WithElementId("userPassword")
-    EntityModelPasswordBoxEditor passwordEditor;
+    StringEntityModelPasswordBoxEditor passwordEditor;
 
     @UiField(provided = true)
     @Path(value = "publicKey.entity")
     @WithElementId("publicKey")
-    EntityModelTextAreaLabelEditor publicKeyEditor;
+    StringEntityModelTextAreaLabelEditor publicKeyEditor;
 
     @UiField
     @Path(value = "overrideIpTables.entity")
@@ -182,7 +184,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField(provided = true)
     @Path(value = "pmVariants.selectedItem")
     @WithElementId("pmVariants")
-    ListModelListBoxOnlyEditor<Object> pmVariantsEditor;
+    ListModelListBoxOnlyEditor<String> pmVariantsEditor;
 
     @UiField
     @Path(value = "pmSecondaryConcurrent.entity")
@@ -195,37 +197,37 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField
     @Path(value = "managementIp.entity")
     @WithElementId("managementIp")
-    EntityModelTextBoxEditor pmAddressEditor;
+    StringEntityModelTextBoxEditor pmAddressEditor;
 
     @UiField
     @Path(value = "pmUserName.entity")
     @WithElementId("pmUserName")
-    EntityModelTextBoxEditor pmUserNameEditor;
+    StringEntityModelTextBoxEditor pmUserNameEditor;
 
     @UiField
     @Path(value = "pmPassword.entity")
     @WithElementId("pmPassword")
-    EntityModelPasswordBoxEditor pmPasswordEditor;
+    StringEntityModelPasswordBoxEditor pmPasswordEditor;
 
     @UiField(provided = true)
     @Path(value = "pmType.selectedItem")
     @WithElementId("pmType")
-    ListModelListBoxEditor<Object> pmTypeEditor;
+    ListModelListBoxEditor<String> pmTypeEditor;
 
     @UiField
     @Path(value = "pmPort.entity")
     @WithElementId("pmPort")
-    EntityModelTextBoxEditor pmPortEditor;
+    StringEntityModelTextBoxEditor pmPortEditor;
 
     @UiField
     @Path(value = "pmSlot.entity")
     @WithElementId("pmSlot")
-    EntityModelTextBoxEditor pmSlotEditor;
+    StringEntityModelTextBoxEditor pmSlotEditor;
 
     @UiField
     @Path(value = "pmOptions.entity")
     @WithElementId("pmOptions")
-    EntityModelTextBoxEditor pmOptionsEditor;
+    StringEntityModelTextBoxEditor pmOptionsEditor;
 
     @UiField
     @Ignore
@@ -247,37 +249,37 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField
     @Path(value = "pmSecondaryIp.entity")
     @WithElementId("pmSecondaryIp")
-    EntityModelTextBoxEditor pmSecondaryAddressEditor;
+    StringEntityModelTextBoxEditor pmSecondaryAddressEditor;
 
     @UiField
     @Path(value = "pmSecondaryUserName.entity")
     @WithElementId("pmSecondaryUserName")
-    EntityModelTextBoxEditor pmSecondaryUserNameEditor;
+    StringEntityModelTextBoxEditor pmSecondaryUserNameEditor;
 
     @UiField
     @Path(value = "pmSecondaryPassword.entity")
     @WithElementId("pmSecondaryPassword")
-    EntityModelPasswordBoxEditor pmSecondaryPasswordEditor;
+    StringEntityModelPasswordBoxEditor pmSecondaryPasswordEditor;
 
     @UiField(provided = true)
     @Path(value = "pmSecondaryType.selectedItem")
     @WithElementId("pmSecondaryType")
-    ListModelListBoxEditor<Object> pmSecondaryTypeEditor;
+    ListModelListBoxEditor<String> pmSecondaryTypeEditor;
 
     @UiField
     @Path(value = "pmSecondaryPort.entity")
     @WithElementId("pmSecondaryPort")
-    EntityModelTextBoxEditor pmSecondaryPortEditor;
+    StringEntityModelTextBoxEditor pmSecondaryPortEditor;
 
     @UiField
     @Path(value = "pmSecondarySlot.entity")
     @WithElementId("pmSecondarySlot")
-    EntityModelTextBoxEditor pmSecondarySlotEditor;
+    StringEntityModelTextBoxEditor pmSecondarySlotEditor;
 
     @UiField
     @Path(value = "pmSecondaryOptions.entity")
     @WithElementId("pmSecondaryOptions")
-    EntityModelTextBoxEditor pmSecondaryOptionsEditor;
+    StringEntityModelTextBoxEditor pmSecondaryOptionsEditor;
 
     @UiField
     @Ignore
@@ -291,7 +293,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField
     @Path(value = "disableAutomaticPowerManagement.entity")
     @WithElementId("disableAutomaticPowerManagementEditor")
-    org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor disableAutomaticPowerManagementEditor;
+    EntityModelCheckBoxEditor disableAutomaticPowerManagementEditor;
 
     @UiField
     UiCommandButton testButton;
@@ -375,11 +377,11 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField
     @Path(value = "consoleAddress.entity")
     @WithElementId
-    EntityModelTextBoxEditor consoleAddress;
+    StringEntityModelTextBoxEditor consoleAddress;
 
     @UiField
     @Path(value = "providerSearchFilterLabel.entity")
-    EntityModelTextBoxEditor providerSearchFilterLabel;
+    StringEntityModelTextBoxEditor providerSearchFilterLabel;
 
     @UiField
     @Path(value = "consoleAddressEnabled.entity")
@@ -457,57 +459,42 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     }
 
     private void initEditors() {
-        publicKeyEditor = new EntityModelTextAreaLabelEditor();
+        publicKeyEditor = new StringEntityModelTextAreaLabelEditor();
 
         // List boxes
-        dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((StoragePool) object).getName();
+            public String renderNullSafe(StoragePool storagePool) {
+                return storagePool.getName();
             }
         });
 
-        clusterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        clusterEditor = new ListModelListBoxEditor<VDSGroup>(new NullSafeRenderer<VDSGroup>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((VDSGroup) object).getName();
+            public String renderNullSafe(VDSGroup vdsGroup) {
+                return vdsGroup.getName();
             }
         });
 
-        externalHostNameEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        externalHostNameEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((VDS) object).getName();
+            public String renderNullSafe(VDS vds) {
+                return vds.getName();
             }
         });
 
-        providersEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        providersEditor = new ListModelListBoxEditor<Provider>(new NullSafeRenderer<Provider>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((Provider) object).getName();
+            public String renderNullSafe(Provider provider) {
+                return provider.getName();
             }
         });
 
-        pmVariantsEditor = new ListModelListBoxOnlyEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            protected String renderNullSafe(Object object) {
-                return (String) object;
-            }
-        });
+        pmVariantsEditor = new ListModelListBoxOnlyEditor<String>(new StringRenderer<String>());
 
-        pmTypeEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            protected String renderNullSafe(Object object) {
-                return (String) object;
-            }
-        });
+        pmTypeEditor = new ListModelListBoxEditor<String>(new StringRenderer<String>());
 
-        pmSecondaryTypeEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            protected String renderNullSafe(Object object) {
-                return (String) object;
-            }
-        });
+        pmSecondaryTypeEditor = new ListModelListBoxEditor<String>(new StringRenderer<String>());
 
         // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -720,9 +707,9 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         proxyListBox.addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent event) {
-                List items = (List) object.getPmProxyPreferencesList().getItems();
+                List<String> items = (List<String>) object.getPmProxyPreferencesList().getItems();
 
-                Object selectedItem = proxyListBox.getSelectedIndex() >= 0
+                String selectedItem = proxyListBox.getSelectedIndex() >= 0
                         ? items.get(proxyListBox.getSelectedIndex())
                         : null;
 

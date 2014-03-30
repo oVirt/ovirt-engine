@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.webadmin.widget.provider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabel;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -45,7 +45,7 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
 
     @Path(value = "interfaceMappingsLabel.entity")
     @WithElementId("interfaceMappingsLabel")
-    EntityModelLabel mappingsLabel;
+    StringEntityModelLabel mappingsLabel;
 
     @Path(value = "interfaceMappings.entity")
     @WithElementId("interfaceMappings")
@@ -54,29 +54,29 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
     @UiField
     @Path(value = "qpidHost.entity")
     @WithElementId("qpidHost")
-    EntityModelTextBoxEditor qpidHost;
+    StringEntityModelTextBoxEditor qpidHost;
 
     @UiField
     @Path(value = "qpidPort.entity")
     @WithElementId("qpidPort")
-    EntityModelTextBoxEditor qpidPort;
+    StringEntityModelTextBoxEditor qpidPort;
 
     @UiField
     @Path(value = "qpidUsername.entity")
     @WithElementId("qpidUsername")
-    EntityModelTextBoxEditor qpidUsername;
+    StringEntityModelTextBoxEditor qpidUsername;
 
     @UiField
     @Path(value = "qpidPassword.entity")
     @WithElementId("qpidPassword")
-    EntityModelPasswordBoxEditor qpidPassword;
+    StringEntityModelPasswordBoxEditor qpidPassword;
 
     @Inject
     public NeutronAgentWidget() {
 
-        mappingsLabel = new EntityModelLabel();
+        mappingsLabel = new StringEntityModelLabel();
         interfaceMappings = new EntityModelTextBoxOnlyEditor();
-        mappings = new EntityModelWidgetWithInfo(mappingsLabel, interfaceMappings);
+        mappings = new EntityModelWidgetWithInfo<String>(mappingsLabel, interfaceMappings);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
@@ -91,12 +91,12 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
     @Override
     public void edit(final NeutronAgentModel model) {
         driver.edit(model);
-        mappings.setExplanation(templates.italicText((String) model.getInterfaceMappingsExplanation().getEntity()));
+        mappings.setExplanation(templates.italicText(model.getInterfaceMappingsExplanation().getEntity()));
         model.getInterfaceMappingsExplanation().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                mappings.setExplanation(templates.italicText((String) model.getInterfaceMappingsExplanation()
+                mappings.setExplanation(templates.italicText(model.getInterfaceMappingsExplanation()
                         .getEntity()));
             }
         });

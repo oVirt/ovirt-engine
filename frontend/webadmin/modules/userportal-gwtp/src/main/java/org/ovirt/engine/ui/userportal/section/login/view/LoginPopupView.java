@@ -9,10 +9,10 @@ import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.DialogBoxWithKeyHandlers;
 import org.ovirt.engine.ui.common.widget.dialog.SimplePopupPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -62,17 +62,17 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     @UiField(provided = true)
     @Path("userName.entity")
     @WithElementId("userName")
-    EntityModelTextBoxEditor userNameEditor;
+    StringEntityModelTextBoxEditor userNameEditor;
 
     @UiField
     @Path("password.entity")
     @WithElementId("password")
-    EntityModelPasswordBoxEditor passwordEditor;
+    StringEntityModelPasswordBoxEditor passwordEditor;
 
     @UiField
     @Path("domain.selectedItem")
     @WithElementId("domain")
-    ListModelListBoxEditor<Object> domainEditor;
+    ListModelListBoxEditor<String> domainEditor;
 
     @UiField
     @Ignore
@@ -130,7 +130,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         this.templates = templates;
 
         // We need this code because resetAndFocus is called when userNameEditor is Disabled
-        userNameEditor = new EntityModelTextBoxEditor() {
+        userNameEditor = new StringEntityModelTextBoxEditor() {
             @Override
             public void setEnabled(boolean enabled) {
                 super.setEnabled(enabled);

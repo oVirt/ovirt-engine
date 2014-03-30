@@ -38,7 +38,7 @@ public class LoginPopupPresenterWidget extends AbstractLoginPopupPresenterWidget
     }
 
     void saveConnectAutomatically(UserPortalLoginModel loginModel) {
-        Boolean isAutoconnect = (Boolean) loginModel.getIsAutoConnect().getEntity();
+        Boolean isAutoconnect = loginModel.getIsAutoConnect().getEntity();
         connectAutomaticallyProvider.storeConnectAutomatically(isAutoconnect);
     }
 

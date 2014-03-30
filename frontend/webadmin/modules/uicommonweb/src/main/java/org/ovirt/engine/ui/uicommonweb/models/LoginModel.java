@@ -63,38 +63,38 @@ public class LoginModel extends Model
         privateLoginCommand = value;
     }
 
-    private ListModel privateDomain;
+    private ListModel<String> privateDomain;
 
-    public ListModel getDomain()
+    public ListModel<String> getDomain()
     {
         return privateDomain;
     }
 
-    private void setDomain(ListModel value)
+    private void setDomain(ListModel<String> value)
     {
         privateDomain = value;
     }
 
-    private EntityModel privateUserName;
+    private EntityModel<String> privateUserName;
 
-    public EntityModel getUserName()
+    public EntityModel<String> getUserName()
     {
         return privateUserName;
     }
 
-    private void setUserName(EntityModel value)
+    private void setUserName(EntityModel<String> value)
     {
         privateUserName = value;
     }
 
-    private EntityModel privatePassword;
+    private EntityModel<String> privatePassword;
 
-    public EntityModel getPassword()
+    public EntityModel<String> getPassword()
     {
         return privatePassword;
     }
 
-    private void setPassword(EntityModel value)
+    private void setPassword(EntityModel<String> value)
     {
         privatePassword = value;
     }
@@ -147,12 +147,12 @@ public class LoginModel extends Model
         setLoginCommand(tempVar);
         getCommands().add(tempVar);
 
-        setDomain(new ListModel());
+        setDomain(new ListModel<String>());
         getDomain().setIsChangable(false);
-        setUserName(new EntityModel());
+        setUserName(new EntityModel<String>());
         getUserName().setIsChangable(false);
         getUserName().getEntityChangedEvent().addListener(this);
-        setPassword(new EntityModel());
+        setPassword(new EntityModel<String>());
         getPassword().setIsChangable(false);
 
         setIsConnecting(true);
@@ -214,7 +214,7 @@ public class LoginModel extends Model
     private boolean getDomainAvailability()
     {
         // Check whether the user name contains domain part.
-        boolean hasDomain = getUserNameParts((String) getUserName().getEntity())[1] != null;
+        boolean hasDomain = getUserNameParts(getUserName().getEntity())[1] != null;
 
         return !hasDomain;
     }
@@ -244,7 +244,7 @@ public class LoginModel extends Model
         startProgress(null);
         disableLoginScreen();
 
-        String fullUserName = (String) getUserName().getEntity();
+        String fullUserName = getUserName().getEntity();
         String[] parts = getUserNameParts(fullUserName);
         String domain = parts[1];
         AsyncQuery _asyncQuery = new AsyncQuery();
@@ -281,9 +281,8 @@ public class LoginModel extends Model
                 }
             }
         };
-        Frontend.getInstance().loginAsync(fullUserName,
-                (String) getPassword().getEntity(),
-                StringHelper.isNullOrEmpty(domain) ? (String) getDomain().getSelectedItem() : domain, true,
+        Frontend.getInstance().loginAsync(fullUserName, getPassword().getEntity(),
+                StringHelper.isNullOrEmpty(domain) ? getDomain().getSelectedItem() : domain, true,
                 _asyncQuery);
     }
 

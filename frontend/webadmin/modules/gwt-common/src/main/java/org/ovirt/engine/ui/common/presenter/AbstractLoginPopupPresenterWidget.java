@@ -116,7 +116,7 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
                     return;
                 }
 
-                for (String item : (Iterable<String>) loginModel.getDomain().getItems()) {
+                for (String item : loginModel.getDomain().getItems()) {
                     if (previouslySelectedItem.equals(item)) {
                         loginModel.getDomain().setSelectedItem(item);
                         break;
@@ -155,7 +155,7 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
     }
 
     void saveSelectedDomain(T loginModel) {
-        String selectedItem = (String) loginModel.getDomain().getSelectedItem();
+        String selectedItem = loginModel.getDomain().getSelectedItem();
         if (selectedItem == null || "".equals(selectedItem)) { //$NON-NLS-1$
             return;
         }

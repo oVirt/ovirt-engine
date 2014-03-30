@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClientInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -8,8 +9,11 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.DoubleEntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.parser.EntityModelParser;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
@@ -51,52 +55,52 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     @UiField
     @Path(value = "brick.entity")
     @WithElementId
-    EntityModelLabelEditor brickEditor;
+    StringEntityModelLabelEditor brickEditor;
 
     @UiField(provided = true)
     @Path(value = "brickProperties.status.entity")
     @WithElementId
-    EntityModelLabelEditor statusEditor;
+    EntityModelLabelEditor<GlusterStatus> statusEditor;
 
     @UiField
     @Path(value = "brickProperties.port.entity")
     @WithElementId
-    EntityModelLabelEditor portEditor;
+    IntegerEntityModelLabelEditor portEditor;
 
     @UiField
     @Path(value = "brickProperties.pid.entity")
     @WithElementId
-    EntityModelLabelEditor pidEditor;
+    IntegerEntityModelLabelEditor pidEditor;
 
     @UiField
     @Path(value = "brickProperties.totalSize.entity")
     @WithElementId
-    EntityModelLabelEditor totalSizeEditor;
+    DoubleEntityModelLabelEditor totalSizeEditor;
 
     @UiField
     @Path(value = "brickProperties.freeSize.entity")
     @WithElementId
-    EntityModelLabelEditor freeSizeEditor;
+    DoubleEntityModelLabelEditor freeSizeEditor;
 
     @UiField
     @Path(value = "brickProperties.device.entity")
     @WithElementId
-    EntityModelLabelEditor deviceEditor;
+    StringEntityModelLabelEditor deviceEditor;
 
     @UiField
     @Path(value = "brickProperties.blockSize.entity")
     @WithElementId
-    EntityModelLabelEditor blockSizeEditor;
+    IntegerEntityModelLabelEditor blockSizeEditor;
 
     @UiField
     @Path(value = "brickProperties.mountOptions.entity")
     @WithElementId
-    EntityModelTextAreaLabelEditor mountOptionsEditor;
+    StringEntityModelTextAreaLabelEditor mountOptionsEditor;
 
     @UiField
     @Path(value = "brickProperties.fileSystem.entity")
     @WithElementId
-    EntityModelLabelEditor fileSystemEditor;
+    StringEntityModelLabelEditor fileSystemEditor;
 
     @UiField
     @WithElementId
@@ -114,52 +118,52 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     @UiField
     @Path(value = "memoryStatistics.totalAllocated.entity")
     @WithElementId
-    EntityModelLabelEditor totalAllocatedEditor;
+    IntegerEntityModelLabelEditor totalAllocatedEditor;
 
     @UiField
     @Path(value = "memoryStatistics.freeBlocks.entity")
     @WithElementId
-    EntityModelLabelEditor freeBlocksEditor;
+    IntegerEntityModelLabelEditor freeBlocksEditor;
 
     @UiField
     @Path(value = "memoryStatistics.freeFastbin.entity")
     @WithElementId
-    EntityModelLabelEditor freeFastbinBlocksEditor;
+    IntegerEntityModelLabelEditor freeFastbinBlocksEditor;
 
     @UiField
     @Path(value = "memoryStatistics.mmappedBlocks.entity")
     @WithElementId
-    EntityModelLabelEditor mmappedBlocksEditor;
+    IntegerEntityModelLabelEditor mmappedBlocksEditor;
 
     @UiField
     @Path(value = "memoryStatistics.spaceAllocatedMmapped.entity")
     @WithElementId
-    EntityModelLabelEditor spaceAllocatedMmappedEditor;
+    IntegerEntityModelLabelEditor spaceAllocatedMmappedEditor;
 
     @UiField
     @Path(value = "memoryStatistics.maxTotalAllocated.entity")
     @WithElementId
-    EntityModelLabelEditor maxTotalAllocatedEditor;
+    IntegerEntityModelLabelEditor maxTotalAllocatedEditor;
 
     @UiField
     @Path(value = "memoryStatistics.spaceFreedFastbin.entity")
     @WithElementId
-    EntityModelLabelEditor spaceFreedFastbinEditor;
+    IntegerEntityModelLabelEditor spaceFreedFastbinEditor;
 
     @UiField
     @Path(value = "memoryStatistics.totalAllocatedSpace.entity")
     @WithElementId
-    EntityModelLabelEditor totalAllocatedSpaceEditor;
+    IntegerEntityModelLabelEditor totalAllocatedSpaceEditor;
 
     @UiField
     @Path(value = "memoryStatistics.totalFreeSpace.entity")
     @WithElementId
-    EntityModelLabelEditor totalFreeSpaceEditor;
+    IntegerEntityModelLabelEditor totalFreeSpaceEditor;
 
     @UiField
     @Path(value = "memoryStatistics.releasableFreeSpace.entity")
     @WithElementId
-    EntityModelLabelEditor releasableFreeSpaceEditor;
+    IntegerEntityModelLabelEditor releasableFreeSpaceEditor;
 
     @UiField
     @WithElementId

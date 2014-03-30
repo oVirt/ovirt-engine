@@ -227,17 +227,17 @@
                                     <e:ListModelListBoxEditor ui:field="dataCenterEditor"/>
                                     <e:ListModelListBoxEditor ui:field="clusterEditor"/>
                                     <g:HorizontalPanel width="100%">
-                                      <e:EntityModelCheckBoxEditor ui:field="externalHostProviderEnabledEditor"/>
+                                      <ge:EntityModelCheckBoxEditor ui:field="externalHostProviderEnabledEditor"/>
                                       <e:ListModelListBoxEditor ui:field="providersEditor"/>
                                     </g:HorizontalPanel>
                                     <g:FlowPanel ui:field="searchProviderPanel" width="100%">
                                         <g:FlowPanel addStyleNames="{style.filterIcon}">
-                                          <e:EntityModelTextBoxEditor ui:field="providerSearchFilterLabel"/>
+                                          <ge:StringEntityModelTextBoxEditor ui:field="providerSearchFilterLabel"/>
                                           <d:InfoIcon ui:field="providerSearchInfoIcon" addStyleNames="{style.filterIcon}"/>
                                         </g:FlowPanel>
                                         <g:FlowPanel addStyleNames="{style.searchPanel}">
                                            <g:HorizontalPanel verticalAlignment="middle">
-                                             <e:EntityModelTextBoxEditor ui:field="providerSearchFilterEditor"/>
+                                             <ge:StringEntityModelTextBoxEditor ui:field="providerSearchFilterEditor"/>
                                              <g:Image ui:field="updateHostsButton"/>
                                            </g:HorizontalPanel>
                                         </g:FlowPanel>
@@ -245,26 +245,26 @@
                                     <e:ListModelListBoxEditor ui:field="externalHostNameEditor"/>
                                 </g:FlowPanel>
                                 <g:FlowPanel>
-                                    <e:EntityModelTextBoxEditor ui:field="nameEditor"/>
-                                    <e:EntityModelTextBoxEditor ui:field="commentEditor"/>
-                                    <e:EntityModelTextBoxEditor ui:field="hostAddressEditor" />
-                                    <e:EntityModelTextBoxEditor ui:field="authSshPortEditor"/>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor"/>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="commentEditor"/>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="hostAddressEditor" />
+                                    <ge:IntegerEntityModelTextBoxEditor ui:field="authSshPortEditor"/>
                                     <g:VerticalPanel addStyleNames="{style.content}">
                                         <g:Label ui:field="authLabel" addStyleNames="{style.headerAuthLabel}"/>
-                                        <e:EntityModelTextBoxEditor ui:field="userNameEditor"/>
+                                        <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor"/>
                                         <g:HorizontalPanel ui:field="passwordSection" width="100%" verticalAlignment="middle">
                                             <g:RadioButton ui:field="rbPassword" />
-                                            <e:EntityModelPasswordBoxEditor ui:field="passwordEditor"/>
+                                            <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor"/>
                                         </g:HorizontalPanel>
                                         <g:HorizontalPanel ui:field="pkSection" width="100%" verticalAlignment="middle">
                                             <g:RadioButton ui:field="rbPublicKey" addStyleNames="{style.radioButton}" />
-                                            <e:EntityModelTextAreaLabelEditor ui:field="publicKeyEditor" />
+                                            <ge:StringEntityModelTextAreaLabelEditor ui:field="publicKeyEditor" />
                                         </g:HorizontalPanel>
                                         <d:AdvancedParametersExpander ui:field="expander"/>
                                         <g:FlowPanel ui:field="expanderContent">
-                                            <e:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor"/>
+                                            <ge:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor"/>
                                             <g:Label ui:field="fingerprintLabel" addStyleNames="{style.headerFp}" />
-                                            <e:EntityModelTextBoxEditor ui:field="fetchSshFingerprint"/>
+                                            <ge:StringEntityModelTextBoxEditor ui:field="fetchSshFingerprint"/>
                                             <g:SimplePanel ui:field="fetchPanel" addStyleNames="{style.fetchLink}, generalDialogComment" />
                                             <g:Label ui:field="fetchResult" addStyleNames="{style.fetchResultLabel}"/>
                                         </g:FlowPanel>
@@ -278,31 +278,31 @@
                     <t:DialogTab ui:field="powerManagementTab">
                         <t:content>
                             <g:FlowPanel>
-                                <e:EntityModelCheckBoxEditor ui:field="pmEnabledEditor"/>
+                                <ge:EntityModelCheckBoxEditor ui:field="pmEnabledEditor"/>
                                 <e:ListModelListBoxOnlyEditor ui:field="pmVariantsEditor"/>
-                                <e:EntityModelCheckBoxEditor ui:field="pmSecondaryConcurrentEditor"/>
+                                <ge:EntityModelCheckBoxEditor ui:field="pmSecondaryConcurrentEditor"/>
                                 <g:FlowPanel addStyleNames="{style.powerManagementTabInputDecorator}">
                                     <g:FlowPanel ui:field="pmPrimaryPanel">
-                                        <e:EntityModelTextBoxEditor ui:field="pmAddressEditor"/>
-                                        <e:EntityModelTextBoxEditor ui:field="pmUserNameEditor"/>
-                                        <e:EntityModelPasswordBoxEditor ui:field="pmPasswordEditor"/>
+                                        <ge:StringEntityModelTextBoxEditor ui:field="pmAddressEditor"/>
+                                        <ge:StringEntityModelTextBoxEditor ui:field="pmUserNameEditor"/>
+                                        <ge:StringEntityModelPasswordBoxEditor ui:field="pmPasswordEditor"/>
                                         <e:ListModelListBoxEditor ui:field="pmTypeEditor"/>
-                                        <e:EntityModelTextBoxEditor ui:field="pmPortEditor"/>
-                                        <e:EntityModelTextBoxEditor ui:field="pmSlotEditor"/>
-                                        <e:EntityModelTextBoxEditor ui:field="pmOptionsEditor"/>
+                                        <ge:StringEntityModelTextBoxEditor ui:field="pmPortEditor"/>
+                                        <ge:StringEntityModelTextBoxEditor ui:field="pmSlotEditor"/>
+                                        <ge:StringEntityModelTextBoxEditor ui:field="pmOptionsEditor"/>
                                         <g:Label ui:field="pmOptionsExplanationLabel" addStyleNames="{style.explanationLabel}"/>
-                                        <e:EntityModelCheckBoxEditor ui:field="pmSecureEditor"/>
+                                        <ge:EntityModelCheckBoxEditor ui:field="pmSecureEditor"/>
                                     </g:FlowPanel>
                                     <g:FlowPanel ui:field="pmSecondaryPanel">
-                                        <e:EntityModelTextBoxEditor ui:field="pmSecondaryAddressEditor"/>
-                                        <e:EntityModelTextBoxEditor ui:field="pmSecondaryUserNameEditor"/>
-                                        <e:EntityModelPasswordBoxEditor ui:field="pmSecondaryPasswordEditor"/>
+                                        <ge:StringEntityModelTextBoxEditor ui:field="pmSecondaryAddressEditor"/>
+                                        <ge:StringEntityModelTextBoxEditor ui:field="pmSecondaryUserNameEditor"/>
+                                        <ge:StringEntityModelPasswordBoxEditor ui:field="pmSecondaryPasswordEditor"/>
                                         <e:ListModelListBoxEditor ui:field="pmSecondaryTypeEditor"/>
-                                        <e:EntityModelTextBoxEditor ui:field="pmSecondaryPortEditor"/>
-                                        <e:EntityModelTextBoxEditor ui:field="pmSecondarySlotEditor"/>
-                                        <e:EntityModelTextBoxEditor ui:field="pmSecondaryOptionsEditor"/>
+                                        <ge:StringEntityModelTextBoxEditor ui:field="pmSecondaryPortEditor"/>
+                                        <ge:StringEntityModelTextBoxEditor ui:field="pmSecondarySlotEditor"/>
+                                        <ge:StringEntityModelTextBoxEditor ui:field="pmSecondaryOptionsEditor"/>
                                         <g:Label ui:field="pmSecondaryOptionsExplanationLabel" addStyleNames="{style.explanationLabel}"/>
-                                        <e:EntityModelCheckBoxEditor ui:field="pmSecondarySecureEditor"/>
+                                        <ge:EntityModelCheckBoxEditor ui:field="pmSecondarySecureEditor"/>
                                     </g:FlowPanel>
                                     <g:HTMLPanel addStyleNames="{style.testPanel}">
                                         <div style="display:table-cell; vertical-align: top">
@@ -343,10 +343,10 @@
                                         <g:Label ui:field="consoleAddressLabel" addStyleNames="{style.consoleAddressEnabledLabel}" />
                                         <d:InfoIcon ui:field="consoleAddressInfoIcon" addStyleNames="{style.consoleAddressHelpIcon}" />
                                     </g:FlowPanel>
-                                    <e:EntityModelCheckBoxOnlyEditor ui:field="consoleAddressEnabled" addStyleNames="{style.consoleAddressEnabledChecbox}" />
+                                    <ge:EntityModelCheckBoxOnlyEditor ui:field="consoleAddressEnabled" addStyleNames="{style.consoleAddressEnabledChecbox}" />
 	                            </g:FlowPanel>
 	                        <g:FlowPanel>
-                                    <e:EntityModelTextBoxEditor ui:field="consoleAddress"/>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="consoleAddress"/>
                                 </g:FlowPanel>
                             </g:FlowPanel>
                         </t:content>

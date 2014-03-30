@@ -3,6 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
 	xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider">
 
@@ -57,19 +58,19 @@
                         	<g:FlowPanel>
                         		<g:FlowPanel>
 										<g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
-											<e:EntityModelTextBoxEditor ui:field="nameEditor" />
-											<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+											<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
+											<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
 											<e:ListModelListBoxEditor ui:field="typeEditor" />
 										</g:FlowPanel>
 										<g:FlowPanel>
-											<e:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" />
-											<e:EntityModelTextBoxEditor ui:field="urlEditor" />
+											<ge:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" />
+											<ge:StringEntityModelTextBoxEditor ui:field="urlEditor" />
 										</g:FlowPanel>
 										<g:FlowPanel addStyleNames="{style.sectionStyle}">
-											<e:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" />
-											<e:EntityModelTextBoxEditor ui:field="usernameEditor" addStyleNames="{style.authField}" />
-											<e:EntityModelPasswordBoxEditor ui:field="passwordEditor" addStyleNames="{style.authField}" />
-											<e:EntityModelTextBoxEditor ui:field="tenantNameEditor" addStyleNames="{style.authField}" />
+											<ge:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" />
+											<ge:StringEntityModelTextBoxEditor ui:field="usernameEditor" addStyleNames="{style.authField}" />
+											<ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" addStyleNames="{style.authField}" />
+											<ge:StringEntityModelTextBoxEditor ui:field="tenantNameEditor" addStyleNames="{style.authField}" />
 										</g:FlowPanel>
 									</g:FlowPanel>
 									<g:FlowPanel>

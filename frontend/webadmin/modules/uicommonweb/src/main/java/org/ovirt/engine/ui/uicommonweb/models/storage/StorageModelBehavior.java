@@ -6,11 +6,11 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
@@ -58,7 +58,7 @@ public abstract class StorageModelBehavior extends Model
     public void filterUnSelectableModels()
     {
         // Filter UnSelectable models from AvailableStorageItems list
-        ArrayList<Object> filterredItems = new ArrayList<Object>();
+        ArrayList<IStorageModel> filterredItems = new ArrayList<IStorageModel>();
         ArrayList<IStorageModel> items = Linq.<IStorageModel> cast(getModel().getItems());
         for (IStorageModel model : items)
         {
@@ -81,7 +81,7 @@ public abstract class StorageModelBehavior extends Model
         {
             getModel().updatedStorageModels.clear();
 
-            getModel().getHost().setItems(new ArrayList<HostModel>());
+            getModel().getHost().setItems(new ArrayList<VDS>());
             getModel().getHost().setSelectedItem(null);
 
             filterUnSelectableModels();

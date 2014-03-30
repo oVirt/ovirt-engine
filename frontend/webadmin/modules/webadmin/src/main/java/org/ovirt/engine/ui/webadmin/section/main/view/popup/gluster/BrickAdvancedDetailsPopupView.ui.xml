@@ -3,6 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.BrickAdvancedDetailsPopupView.WidgetStyle">
@@ -43,16 +44,16 @@
 					<t:DialogTab ui:field="generalTab">
 						<t:content>
 							<g:FlowPanel>
-								<e:EntityModelLabelEditor ui:field="brickEditor" />
-								<e:EntityModelLabelEditor ui:field="statusEditor" />
-								<e:EntityModelLabelEditor ui:field="portEditor" />
-								<e:EntityModelLabelEditor ui:field="pidEditor" />
-								<e:EntityModelLabelEditor ui:field="totalSizeEditor" />
-								<e:EntityModelLabelEditor ui:field="freeSizeEditor" />
-								<e:EntityModelLabelEditor ui:field="deviceEditor" />
-								<e:EntityModelLabelEditor ui:field="blockSizeEditor" />
-								<e:EntityModelLabelEditor ui:field="fileSystemEditor" />
-								<e:EntityModelTextAreaLabelEditor addStyleNames="{style.content}" ui:field="mountOptionsEditor" />
+								<ge:StringEntityModelLabelEditor ui:field="brickEditor" />
+								<ge:EntityModelLabelEditor ui:field="statusEditor" />
+								<ge:IntegerEntityModelLabelEditor ui:field="portEditor" />
+								<ge:IntegerEntityModelLabelEditor ui:field="pidEditor" />
+								<ge:DoubleEntityModelLabelEditor ui:field="totalSizeEditor" />
+								<ge:DoubleEntityModelLabelEditor ui:field="freeSizeEditor" />
+								<ge:StringEntityModelLabelEditor ui:field="deviceEditor" />
+								<ge:IntegerEntityModelLabelEditor ui:field="blockSizeEditor" />
+								<ge:StringEntityModelLabelEditor ui:field="fileSystemEditor" />
+								<ge:StringEntityModelTextAreaLabelEditor addStyleNames="{style.content}" ui:field="mountOptionsEditor" />
 								<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
 							</g:FlowPanel>
 						</t:content>
@@ -73,16 +74,16 @@
 					<t:DialogTab ui:field="memoryStatsTab">
 						<t:content>
 							<g:FlowPanel>
-								<e:EntityModelLabelEditor ui:field="totalAllocatedEditor" />
-								<e:EntityModelLabelEditor ui:field="freeBlocksEditor" />
-								<e:EntityModelLabelEditor ui:field="freeFastbinBlocksEditor" />
-								<e:EntityModelLabelEditor ui:field="mmappedBlocksEditor" />
-								<e:EntityModelLabelEditor ui:field="spaceAllocatedMmappedEditor" />
-								<e:EntityModelLabelEditor ui:field="maxTotalAllocatedEditor" />
-								<e:EntityModelLabelEditor ui:field="spaceFreedFastbinEditor" />
-								<e:EntityModelLabelEditor ui:field="totalAllocatedSpaceEditor" />
-								<e:EntityModelLabelEditor ui:field="totalFreeSpaceEditor" />
-								<e:EntityModelLabelEditor ui:field="releasableFreeSpaceEditor" />
+								<ge:IntegerEntityModelLabelEditor ui:field="totalAllocatedEditor" />
+								<ge:IntegerEntityModelLabelEditor ui:field="freeBlocksEditor" />
+								<ge:IntegerEntityModelLabelEditor ui:field="freeFastbinBlocksEditor" />
+								<ge:IntegerEntityModelLabelEditor ui:field="mmappedBlocksEditor" />
+								<ge:IntegerEntityModelLabelEditor ui:field="spaceAllocatedMmappedEditor" />
+								<ge:IntegerEntityModelLabelEditor ui:field="maxTotalAllocatedEditor" />
+								<ge:IntegerEntityModelLabelEditor ui:field="spaceFreedFastbinEditor" />
+								<ge:IntegerEntityModelLabelEditor ui:field="totalAllocatedSpaceEditor" />
+								<ge:IntegerEntityModelLabelEditor ui:field="totalFreeSpaceEditor" />
+								<ge:IntegerEntityModelLabelEditor ui:field="releasableFreeSpaceEditor" />
 							</g:FlowPanel>
 						</t:content>
 					</t:DialogTab>

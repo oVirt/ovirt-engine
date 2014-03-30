@@ -82,16 +82,16 @@ public class NewDiskModel extends AbstractDiskModel
             }
         };
 
-        ArrayList<EntityModel> disksToAttach = (Boolean) getIsInternal().getEntity() ?
-                (ArrayList<EntityModel>) getInternalAttachableDisks().getSelectedItems() :
-                (ArrayList<EntityModel>) getExternalAttachableDisks().getSelectedItems();
+        ArrayList<EntityModel<DiskModel>> disksToAttach = getIsInternal().getEntity() ?
+                (ArrayList<EntityModel<DiskModel>>) getInternalAttachableDisks().getSelectedItems() :
+                (ArrayList<EntityModel<DiskModel>>) getExternalAttachableDisks().getSelectedItems();
 
         for (int i = 0; i < disksToAttach.size(); i++) {
-            DiskModel disk = (DiskModel) disksToAttach.get(i).getEntity();
+            DiskModel disk = disksToAttach.get(i).getEntity();
             // Disk is attached to VM as read only or not, null is applicable only for floating disks
             // but this is not a case here.
             AttachDettachVmDiskParameters parameters = new AttachDettachVmDiskParameters(
-                    getVm().getId(), disk.getDisk().getId(), (Boolean) getIsPlugged().getEntity(),
+                    getVm().getId(), disk.getDisk().getId(), getIsPlugged().getEntity(),
                     Boolean.TRUE.equals(disk.getDisk().getReadOnly()));
 
             actionTypes.add(VdcActionType.AttachDiskToVm);
@@ -138,7 +138,7 @@ public class NewDiskModel extends AbstractDiskModel
         }
         else {
             getIsWipeAfterDelete().setIsChangable(true);
-            getIsWipeAfterDelete().setEntity(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SANWipeAfterDelete));
+            getIsWipeAfterDelete().setEntity((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SANWipeAfterDelete));
         }
     }
 
@@ -163,33 +163,33 @@ public class NewDiskModel extends AbstractDiskModel
             return;
         }
 
-        if ((Boolean) getIsAttachDisk().getEntity()) {
+        if (getIsAttachDisk().getEntity()) {
             onAttachDisks();
             return;
         }
 
         super.onSave();
 
-        boolean isInternal = (Boolean) getIsInternal().getEntity();
+        boolean isInternal = getIsInternal().getEntity();
         if (isInternal) {
             DiskImage diskImage = (DiskImage) getDisk();
             diskImage.setSizeInGigabytes(Integer.parseInt(getSize().getEntity().toString()));
-            diskImage.setVolumeType((VolumeType) getVolumeType().getSelectedItem());
+            diskImage.setVolumeType(getVolumeType().getSelectedItem());
             diskImage.setvolumeFormat(getVolumeFormat());
         }
         else {
             LunDisk lunDisk = (LunDisk) getDisk();
             LUNs luns = (LUNs) getSanStorageModel().getAddedLuns().get(0).getEntity();
-            luns.setLunType((StorageType) getStorageType().getSelectedItem());
+            luns.setLunType(getStorageType().getSelectedItem());
             lunDisk.setLun(luns);
         }
 
         startProgress(null);
 
         AddDiskParameters parameters = new AddDiskParameters(getVmId(), getDisk());
-        parameters.setPlugDiskToVm((Boolean)getIsPlugged().getEntity());
-        if ((Boolean) getIsInternal().getEntity()) {
-            StorageDomain storageDomain = (StorageDomain) getStorageDomain().getSelectedItem();
+        parameters.setPlugDiskToVm(getIsPlugged().getEntity());
+        if (getIsInternal().getEntity()) {
+            StorageDomain storageDomain = getStorageDomain().getSelectedItem();
             parameters.setStorageDomainId(storageDomain.getId());
         }
 
@@ -210,7 +210,7 @@ public class NewDiskModel extends AbstractDiskModel
 
     @Override
     public boolean validate() {
-        if ((Boolean) getIsAttachDisk().getEntity()) {
+        if (getIsAttachDisk().getEntity()) {
             if (isSelectionsEmpty(getInternalAttachableDisks()) && isSelectionsEmpty(getExternalAttachableDisks())) {
                 getInvalidityReasons().add(CONSTANTS.noDisksSelected());
                 setIsValid(false);
@@ -220,7 +220,7 @@ public class NewDiskModel extends AbstractDiskModel
             return true;
         }
 
-        if (!(Boolean) getIsInternal().getEntity() && getSanStorageModel() != null) {
+        if (!getIsInternal().getEntity() && getSanStorageModel() != null) {
             getSanStorageModel().validate();
             if (!getSanStorageModel().getIsValid()) {
                 return false;
@@ -234,7 +234,7 @@ public class NewDiskModel extends AbstractDiskModel
         }
 
         StorageType storageType = getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
-                : ((StorageDomain) getStorageDomain().getSelectedItem()).getStorageType();
+                : getStorageDomain().getSelectedItem().getStorageType();
         IntegerValidation sizeValidation = new IntegerValidation();
         sizeValidation.setMinimum(1);
         if (storageType.isBlockDomain()) {

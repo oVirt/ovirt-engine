@@ -64,7 +64,7 @@ public class EditDiskModel extends AbstractDiskModel
             }, getHash()), storageDomainId);
         } else {
             LunDisk lunDisk = (LunDisk) getDisk();
-            getSize().setEntity(lunDisk.getLun().getDeviceSize());
+            getSize().setEntity((long) lunDisk.getLun().getDeviceSize());
             getIsInternal().setEntity(false);
             getSizeExtend().setIsAvailable(false);
         }

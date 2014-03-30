@@ -17,7 +17,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
     {
         super.updateItemsAvailability();
 
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = getModel().getDataCenter().getSelectedItem();
         if (dataCenter == null) {
             return;
         }
@@ -65,7 +65,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
     }
 
     public void postUpdateItemsAvailability(IStorageModel item, boolean isNoExportOrIsoStorageAttached) {
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = getModel().getDataCenter().getSelectedItem();
         Model model = (Model) item;
 
         boolean isItemSelectable = isItemSelectable(item, dataCenter, isNoExportOrIsoStorageAttached);

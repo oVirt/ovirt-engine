@@ -26,7 +26,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
     {
         super.updateItemsAvailability();
 
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = getModel().getDataCenter().getSelectedItem();
 
         for (IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems()))
         {
@@ -70,7 +70,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
     public void postUpdateItemsAvailability(IStorageModel item, boolean isNoStorageAttached)
     {
         Model model = (Model) item;
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = getModel().getDataCenter().getSelectedItem();
 
         boolean isItemSelectable = isItemSelectable(item, dataCenter, isNoStorageAttached);
         model.setIsSelectable(isItemSelectable);

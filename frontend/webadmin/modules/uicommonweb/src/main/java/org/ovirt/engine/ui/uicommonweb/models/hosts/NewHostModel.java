@@ -43,7 +43,7 @@ public class NewHostModel extends HostModel {
 
     private void hostName_SelectedItemChanged()
     {
-        VDS host = (VDS) getExternalHostName().getSelectedItem();
+        VDS host = getExternalHostName().getSelectedItem();
 
         if (host == null)
         {
@@ -53,14 +53,14 @@ public class NewHostModel extends HostModel {
     }
 
     private void providers_SelectedItemChanged() {
-        Provider provider = (Provider) getProviders().getSelectedItem();
+        Provider provider = getProviders().getSelectedItem();
         setEnableSearchHost(provider != null);
         getExternalHostName().setItems(null);
         getExternalHostName().setIsChangable(false);
     }
 
     private void updateHostList(String searchFilter) {
-        Provider provider = (Provider) getProviders().getSelectedItem();
+        Provider provider = getProviders().getSelectedItem();
         if (provider != null ) {
             AsyncQuery getHostsQuery = new AsyncQuery();
             getHostsQuery.asyncCallback = new INewAsyncCallback() {
@@ -68,7 +68,7 @@ public class NewHostModel extends HostModel {
                 public void onSuccess(Object model, Object result)
                 {
                     ArrayList<VDS> hosts = (ArrayList<VDS>) result;
-                    ListModel hostNameListModel = getExternalHostName();
+                    ListModel<VDS> hostNameListModel = getExternalHostName();
                     hosts.add(0, null);
                     hostNameListModel.setItems(hosts);
                     hostNameListModel.setIsChangable(true);
@@ -85,7 +85,7 @@ public class NewHostModel extends HostModel {
 
     private void UpdateExternalHostModels()
     {
-        boolean enabled = (Boolean) getExternalHostProviderEnabled().getEntity();
+        boolean enabled = getExternalHostProviderEnabled().getEntity();
         if (enabled && getProviders().getItems() == null) {
             AsyncQuery getProvidersQuery = new AsyncQuery();
             getProvidersQuery.asyncCallback = new INewAsyncCallback() {
@@ -93,7 +93,7 @@ public class NewHostModel extends HostModel {
                 public void onSuccess(Object model, Object result)
                 {
                     ArrayList<Provider> providers = (ArrayList<Provider>) result;
-                    ListModel providersListModel = getProviders();
+                    ListModel<Provider> providersListModel = getProviders();
                     providersListModel.setItems(providers);
                     providersListModel.setIsChangable(true);
                 }
@@ -141,7 +141,7 @@ public class NewHostModel extends HostModel {
 
     @Override
     protected void updateHosts() {
-        updateHostList((String) getProviderSearchFilter().getEntity());
+        updateHostList(getProviderSearchFilter().getEntity());
     }
 
     @Override

@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.GlusterHookContentModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -38,7 +38,7 @@ public class GlusterHookContentPopupView extends AbstractModelBoundPopupView<Glu
 
     @UiField
     @Path(value = "content.entity")
-    EntityModelTextAreaLabelEditor contentEditor;
+    StringEntityModelTextAreaLabelEditor contentEditor;
 
     @UiField
     @Ignore

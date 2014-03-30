@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 
+import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -8,12 +9,12 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.parser.EntityModelParser;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelEnumColumn;
@@ -33,6 +34,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
+
+import java.text.ParseException;
 
 public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopupView<GlusterHookResolveConflictsModel> implements GlusterHookResolveConflictsPopupPresenterWidget.ViewDef {
 
@@ -83,17 +86,17 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
     @UiField
     @Path(value = "contentModel.content.entity")
     @WithElementId
-    EntityModelTextAreaLabelEditor contentEditor;
+    StringEntityModelTextAreaLabelEditor contentEditor;
 
     @UiField
     @Path(value = "contentModel.md5Checksum.entity")
     @WithElementId
-    EntityModelLabelEditor checksumEditor;
+    StringEntityModelLabelEditor checksumEditor;
 
     @UiField(provided = true)
     @Path(value = "contentModel.status.entity")
     @WithElementId
-    EntityModelLabelEditor statusEditor;
+    EntityModelLabelEditor<GlusterHookStatus> statusEditor;
 
     @UiField
     @Ignore
@@ -111,7 +114,7 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
     @UiField(provided = true)
     @Path(value = "serverHooksList.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> useContentSourceEditor;
+    ListModelListBoxEditor<GlusterServerHook> useContentSourceEditor;
 
     @UiField
     @Ignore
@@ -180,13 +183,18 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
     private void initEditors() {
         contentSourcesTable = new EntityModelCellTable<ListModel>(false, true);
 
-        statusEditor = new EntityModelLabelEditor(new EnumRenderer(), new EntityModelParser());
+        statusEditor = new EntityModelLabelEditor<GlusterHookStatus>(new EnumRenderer<GlusterHookStatus>(), new Parser<GlusterHookStatus>() {
+            @Override
+            public GlusterHookStatus parse(CharSequence text) throws ParseException {
+                return GlusterHookStatus.valueOf(text.toString().toUpperCase());
+            }
+        });
 
         resolveContentConflict = new EntityModelCheckBoxEditor(Align.RIGHT);
-        useContentSourceEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        useContentSourceEditor = new ListModelListBoxEditor<GlusterServerHook>(new NullSafeRenderer<GlusterServerHook>() {
             @Override
-            protected String renderNullSafe(Object object) {
-                return ((GlusterServerHook) object).getServerName();
+            protected String renderNullSafe(GlusterServerHook hook) {
+                return hook.getServerName();
             }
         });
 

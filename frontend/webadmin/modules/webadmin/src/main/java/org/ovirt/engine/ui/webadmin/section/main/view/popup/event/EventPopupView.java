@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.event;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -39,15 +39,15 @@ public class EventPopupView extends AbstractModelBoundPopupView<EventModel> impl
 
     @UiField
     @Ignore
-    EntityModelLabelEditor eventIdLabel;
+    StringEntityModelLabelEditor eventIdLabel;
 
     @UiField
     @Ignore
-    EntityModelLabelEditor eventTimeLabel;
+    StringEntityModelLabelEditor eventTimeLabel;
 
     @UiField
     @Ignore
-    EntityModelTextAreaLabelEditor eventMessageTextArea;
+    StringEntityModelTextAreaLabelEditor eventMessageTextArea;
 
     @Inject
     public EventPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
@@ -78,7 +78,7 @@ public class EventPopupView extends AbstractModelBoundPopupView<EventModel> impl
         driver.edit(eventModel);
 
         AuditLog event = eventModel.getEvent();
-        eventIdLabel.asValueBox().setValue(event.getlog_typeValue());
+        eventIdLabel.asValueBox().setValue(String.valueOf(event.getlog_typeValue()));
         eventTimeLabel.asValueBox().setValue(new FullDateTimeRenderer().render(event.getlog_time()));
         eventMessageTextArea.asValueBox().setValue(event.getmessage());
     }

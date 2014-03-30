@@ -2,7 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.GlusterHookContentPopupView.WidgetStyle">
@@ -31,7 +31,7 @@
 	<d:SimpleDialogPanel width="800px" height="520px">
 		<d:content>
 			<g:VerticalPanel>
-				<e:EntityModelTextAreaLabelEditor  addStyleNames="{style.content}" ui:field="contentEditor"/>
+				<ge:StringEntityModelTextAreaLabelEditor  addStyleNames="{style.content}" ui:field="contentEditor"/>
 				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
 			</g:VerticalPanel>
 		</d:content>

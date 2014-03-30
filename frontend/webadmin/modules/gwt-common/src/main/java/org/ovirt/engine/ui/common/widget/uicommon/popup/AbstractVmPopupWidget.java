@@ -35,7 +35,6 @@ import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
@@ -47,6 +46,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxEditor
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
@@ -230,7 +230,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField(provided = true)
     @Ignore
-    public EntityModelWidgetWithInfo totalvCPUsEditorWithInfoIcon;
+    public EntityModelWidgetWithInfo<String> totalvCPUsEditorWithInfoIcon;
 
     @UiField
     @Ignore
@@ -455,7 +455,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField(provided = true)
     @Ignore
-    public EntityModelWidgetWithInfo spiceProxyEnabledCheckboxWithInfoIcon;
+    public EntityModelWidgetWithInfo<String> spiceProxyEnabledCheckboxWithInfoIcon;
 
     @Path(value = "spiceProxyEnabled.entity")
     @WithElementId
@@ -771,17 +771,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     protected void initSpiceProxy() {
-        EntityModelLabel label = new EntityModelLabel();
+        StringEntityModelLabel label = new StringEntityModelLabel();
         label.setText(constants.defineSpiceProxyEnable());
         spiceProxyOverrideEnabledEditor = new EntityModelCheckBoxOnlyEditor();
-        spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo(label, spiceProxyOverrideEnabledEditor);
+        spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo<String>(label, spiceProxyOverrideEnabledEditor);
     }
 
     private void initTotalVcpus() {
-        EntityModelLabel label = new EntityModelLabel();
+        StringEntityModelLabel label = new StringEntityModelLabel();
         label.setText(constants.numOfVCPUs());
         totalvCPUsEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
-        totalvCPUsEditorWithInfoIcon = new EntityModelWidgetWithInfo(label, totalvCPUsEditor);
+        totalvCPUsEditorWithInfoIcon = new EntityModelWidgetWithInfo<String>(label, totalvCPUsEditor);
         totalvCPUsEditorWithInfoIcon.setExplanation(applicationTemplates.italicText(messages.hotPlugUnplugCpuWarning()));
     }
 

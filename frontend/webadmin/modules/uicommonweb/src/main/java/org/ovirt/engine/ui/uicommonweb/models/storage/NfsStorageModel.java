@@ -82,53 +82,53 @@ public class NfsStorageModel extends Model implements IStorageModel {
         role = value;
     }
 
-    private EntityModel path;
+    private EntityModel<String> path;
 
-    public EntityModel getPath() {
+    public EntityModel<String> getPath() {
         return path;
     }
 
-    private void setPath(EntityModel value) {
+    private void setPath(EntityModel<String> value) {
         path = value;
     }
 
-    private EntityModel override;
+    private EntityModel<Boolean> override;
 
-    public EntityModel getOverride() {
+    public EntityModel<Boolean> getOverride() {
         return override;
     }
 
-    private void setOverride(EntityModel value) {
+    private void setOverride(EntityModel<Boolean> value) {
         override = value;
     }
 
-    private ListModel version;
+    private ListModel<EntityModel<NfsVersion>> version;
 
-    public ListModel getVersion() {
+    public ListModel<EntityModel<NfsVersion>> getVersion() {
         return version;
     }
 
-    private void setVersion(ListModel value) {
+    private void setVersion(ListModel<EntityModel<NfsVersion>> value) {
         version = value;
     }
 
-    private EntityModel retransmissions;
+    private EntityModel<Short> retransmissions;
 
-    public EntityModel getRetransmissions() {
+    public EntityModel<Short> getRetransmissions() {
         return retransmissions;
     }
 
-    private void setRetransmissions(EntityModel value) {
+    private void setRetransmissions(EntityModel<Short> value) {
         retransmissions = value;
     }
 
-    private EntityModel timeout;
+    private EntityModel<Short> timeout;
 
-    public EntityModel getTimeout() {
+    public EntityModel<Short> getTimeout() {
         return timeout;
     }
 
-    private void setTimeout(EntityModel value) {
+    private void setTimeout(EntityModel<Short> value) {
         timeout = value;
     }
 
@@ -144,25 +144,25 @@ public class NfsStorageModel extends Model implements IStorageModel {
 
         setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
 
-        setPath(new EntityModel());
+        setPath(new EntityModel<String>());
         getPath().getEntityChangedEvent().addListener(this);
 
         UIConstants constants = ConstantsManager.getInstance().getConstants();
 
         // Initialize version list.
-        setVersion(new ListModel());
+        setVersion(new ListModel<EntityModel<NfsVersion>>());
 
-        List<EntityModel> versionItems = new ArrayList<EntityModel>();
+        List<EntityModel<NfsVersion>> versionItems = new ArrayList<EntityModel<NfsVersion>>();
         // Items are shown in the UI in the order added; v3 is the default
-        versionItems.add(new EntityModel(constants.nfsVersion3(), NfsVersion.V3));
-        versionItems.add(new EntityModel(constants.nfsVersion4(), NfsVersion.V4));
-        versionItems.add(new EntityModel(constants.nfsVersionAutoNegotiate(), NfsVersion.AUTO));
+        versionItems.add(new EntityModel<NfsVersion>(constants.nfsVersion3(), NfsVersion.V3));
+        versionItems.add(new EntityModel<NfsVersion>(constants.nfsVersion4(), NfsVersion.V4));
+        versionItems.add(new EntityModel<NfsVersion>(constants.nfsVersionAutoNegotiate(), NfsVersion.AUTO));
         getVersion().setItems(versionItems);
 
-        setRetransmissions(new EntityModel());
-        setTimeout(new EntityModel());
+        setRetransmissions(new EntityModel<Short>());
+        setTimeout(new EntityModel<Short>());
 
-        setOverride(new EntityModel());
+        setOverride(new EntityModel<Boolean>());
         getOverride().getEntityChangedEvent().addListener(this);
         getOverride().setEntity(false);
 
@@ -221,7 +221,7 @@ public class NfsStorageModel extends Model implements IStorageModel {
             return;
         }
 
-        ListModel dataCenter = getContainer().getDataCenter();
+        ListModel<StoragePool> dataCenter = getContainer().getDataCenter();
         dataCenter.getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -239,7 +239,7 @@ public class NfsStorageModel extends Model implements IStorageModel {
     private void containerDataCenterChanged() {
 
         // Show advanced NFS options for <=3.1
-        StoragePool dataCenter = (StoragePool) getContainer().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = getContainer().getDataCenter().getSelectedItem();
         Version ver31 = new Version(3, 1);
 
         boolean available = dataCenter != null && (dataCenter.getcompatibility_version().compareTo(ver31) >= 0 || dataCenter.getId().equals(Guid.Empty));

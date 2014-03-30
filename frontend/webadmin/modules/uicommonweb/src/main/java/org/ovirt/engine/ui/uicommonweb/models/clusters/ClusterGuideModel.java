@@ -427,7 +427,7 @@ public class ClusterGuideModel extends GuideModel
             return;
         }
 
-        if (!((Boolean) model.getIsPm().getEntity())
+        if (!model.getIsPm().getEntity()
                 && ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly)
         {
             ConfirmationModel confirmModel = new ConfirmationModel();
@@ -470,42 +470,42 @@ public class ClusterGuideModel extends GuideModel
 
         // Save changes.
         VDS host = new VDS();
-        host.setVdsName((String) model.getName().getEntity());
-        host.setHostName((String) model.getHost().getEntity());
-        host.setPort((Integer) model.getPort().getEntity());
-        host.setSshPort(Integer.valueOf((String) model.getAuthSshPort().getEntity()));
-        host.setSshUsername(model.getUserName().getEntity().toString());
-        host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity().toString());
-        host.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
+        host.setVdsName(model.getName().getEntity());
+        host.setHostName(model.getHost().getEntity());
+        host.setPort(model.getPort().getEntity());
+        host.setSshPort(model.getAuthSshPort().getEntity());
+        host.setSshUsername(model.getUserName().getEntity());
+        host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity());
+        host.setVdsGroupId(model.getCluster().getSelectedItem().getId());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
 
         // Save primary PM parameters.
-        host.setManagementIp((String) model.getManagementIp().getEntity());
-        host.setPmUser((String) model.getPmUserName().getEntity());
-        host.setPmPassword((String) model.getPmPassword().getEntity());
-        host.setPmType((String) model.getPmType().getSelectedItem());
+        host.setManagementIp(model.getManagementIp().getEntity());
+        host.setPmUser(model.getPmUserName().getEntity());
+        host.setPmPassword(model.getPmPassword().getEntity());
+        host.setPmType(model.getPmType().getSelectedItem());
         host.setPmOptionsMap(model.getPmOptionsMap());
 
         // Save secondary PM parameters.
-        host.setPmSecondaryIp((String) model.getPmSecondaryIp().getEntity());
-        host.setPmSecondaryUser((String) model.getPmSecondaryUserName().getEntity());
-        host.setPmSecondaryPassword((String) model.getPmSecondaryPassword().getEntity());
-        host.setPmSecondaryType((String) model.getPmSecondaryType().getSelectedItem());
+        host.setPmSecondaryIp(model.getPmSecondaryIp().getEntity());
+        host.setPmSecondaryUser(model.getPmSecondaryUserName().getEntity());
+        host.setPmSecondaryPassword(model.getPmSecondaryPassword().getEntity());
+        host.setPmSecondaryType(model.getPmSecondaryType().getSelectedItem());
         host.setPmSecondaryOptionsMap(model.getPmSecondaryOptionsMap());
         // Save other PM parameters.
-        host.setpm_enabled((Boolean) model.getIsPm().getEntity());
-        host.setPmSecondaryConcurrent((Boolean) model.getPmSecondaryConcurrent().getEntity());
+        host.setpm_enabled(model.getIsPm().getEntity());
+        host.setPmSecondaryConcurrent(model.getPmSecondaryConcurrent().getEntity());
         host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
 
         AddVdsActionParameters vdsActionParams = new AddVdsActionParameters();
         vdsActionParams.setvds(host);
         vdsActionParams.setVdsId(host.getId());
         if (model.getUserPassword().getEntity() != null) {
-            vdsActionParams.setPassword((String) model.getUserPassword().getEntity());
+            vdsActionParams.setPassword(model.getUserPassword().getEntity());
         }
         vdsActionParams.setAuthMethod(model.getAuthenticationMethod());
-        vdsActionParams.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
-        vdsActionParams.setRebootAfterInstallation(((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService());
+        vdsActionParams.setOverrideFirewall(model.getOverrideIpTables().getEntity());
+        vdsActionParams.setRebootAfterInstallation(model.getCluster().getSelectedItem().supportsVirtService());
 
         model.startProgress(null);
 

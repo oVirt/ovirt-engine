@@ -18,25 +18,25 @@ public class GlusterHookResolveConflictsModel extends Model {
 
     private GlusterHookEntity hookEntity;
 
-    private ListModel hookSources;
+    private ListModel<EntityModel<GlusterServerHook>> hookSources;
 
     private GlusterHookContentModel contentModel;
 
-    private EntityModel resolveContentConflict;
+    private EntityModel<Boolean> resolveContentConflict;
 
-    private ListModel serverHooksList;
+    private ListModel<GlusterServerHook> serverHooksList;
 
-    private EntityModel resolveStatusConflict;
+    private EntityModel<Boolean> resolveStatusConflict;
 
-    private EntityModel resolveStatusConflictEnable;
+    private EntityModel<Boolean> resolveStatusConflictEnable;
 
-    private EntityModel resolveStatusConflictDisable;
+    private EntityModel<Boolean> resolveStatusConflictDisable;
 
-    private EntityModel resolveMissingConflict;
+    private EntityModel<Boolean> resolveMissingConflict;
 
-    private EntityModel resolveMissingConflictCopy;
+    private EntityModel<Boolean> resolveMissingConflictCopy;
 
-    private EntityModel resolveMissingConflictRemove;
+    private EntityModel<Boolean> resolveMissingConflictRemove;
 
     public GlusterHookEntity getGlusterHookEntity() {
         return hookEntity;
@@ -51,19 +51,19 @@ public class GlusterHookResolveConflictsModel extends Model {
         }
     }
 
-    public ListModel getHookSources() {
+    public ListModel<EntityModel<GlusterServerHook>> getHookSources() {
         return hookSources;
     }
 
-    public void setHookSources(ListModel hookSources) {
+    public void setHookSources(ListModel<EntityModel<GlusterServerHook>> hookSources) {
         this.hookSources = hookSources;
     }
 
-    public ListModel getServerHooksList() {
+    public ListModel<GlusterServerHook> getServerHooksList() {
         return serverHooksList;
     }
 
-    public void setServerHooksList(ListModel serverHooksList) {
+    public void setServerHooksList(ListModel<GlusterServerHook> serverHooksList) {
         this.serverHooksList = serverHooksList;
     }
 
@@ -75,76 +75,76 @@ public class GlusterHookResolveConflictsModel extends Model {
         this.contentModel = contentModel;
     }
 
-    public EntityModel getResolveContentConflict() {
+    public EntityModel<Boolean> getResolveContentConflict() {
         return resolveContentConflict;
     }
 
-    public void setResolveContentConflict(EntityModel resolveContentConflict) {
+    public void setResolveContentConflict(EntityModel<Boolean> resolveContentConflict) {
         this.resolveContentConflict = resolveContentConflict;
     }
 
-    public EntityModel getResolveStatusConflict() {
+    public EntityModel<Boolean> getResolveStatusConflict() {
         return resolveStatusConflict;
     }
 
-    public void setResolveStatusConflict(EntityModel resolveStatusConflict) {
+    public void setResolveStatusConflict(EntityModel<Boolean> resolveStatusConflict) {
         this.resolveStatusConflict = resolveStatusConflict;
     }
 
-    public EntityModel getResolveStatusConflictEnable() {
+    public EntityModel<Boolean> getResolveStatusConflictEnable() {
         return resolveStatusConflictEnable;
     }
 
-    public void setResolveStatusConflictEnable(EntityModel resolveStatusConflictEnable) {
+    public void setResolveStatusConflictEnable(EntityModel<Boolean> resolveStatusConflictEnable) {
         this.resolveStatusConflictEnable = resolveStatusConflictEnable;
     }
 
-    public EntityModel getResolveStatusConflictDisable() {
+    public EntityModel<Boolean> getResolveStatusConflictDisable() {
         return resolveStatusConflictDisable;
     }
 
-    public void setResolveStatusConflictDisable(EntityModel resolveStatusConflictDisable) {
+    public void setResolveStatusConflictDisable(EntityModel<Boolean> resolveStatusConflictDisable) {
         this.resolveStatusConflictDisable = resolveStatusConflictDisable;
     }
 
-    public EntityModel getResolveMissingConflict() {
+    public EntityModel<Boolean> getResolveMissingConflict() {
         return resolveMissingConflict;
     }
 
-    public void setResolveMissingConflict(EntityModel resolveMissingConflict) {
+    public void setResolveMissingConflict(EntityModel<Boolean> resolveMissingConflict) {
         this.resolveMissingConflict = resolveMissingConflict;
     }
 
-    public EntityModel getResolveMissingConflictCopy() {
+    public EntityModel<Boolean> getResolveMissingConflictCopy() {
         return resolveMissingConflictCopy;
     }
 
-    public void setResolveMissingConflictCopy(EntityModel resolveMissingConflictCopy) {
+    public void setResolveMissingConflictCopy(EntityModel<Boolean> resolveMissingConflictCopy) {
         this.resolveMissingConflictCopy = resolveMissingConflictCopy;
     }
 
-    public EntityModel getResolveMissingConflictRemove() {
+    public EntityModel<Boolean> getResolveMissingConflictRemove() {
         return resolveMissingConflictRemove;
     }
 
-    public void setResolveMissingConflictRemove(EntityModel resolveMissingConflictRemove) {
+    public void setResolveMissingConflictRemove(EntityModel<Boolean> resolveMissingConflictRemove) {
         this.resolveMissingConflictRemove = resolveMissingConflictRemove;
     }
 
     public GlusterHookResolveConflictsModel() {
-        setHookSources(new ListModel());
+        setHookSources(new ListModel<EntityModel<GlusterServerHook>>());
         setContentModel(new GlusterHookContentModel());
 
-        setResolveContentConflict(new EntityModel());
-        setServerHooksList(new ListModel());
+        setResolveContentConflict(new EntityModel<Boolean>());
+        setServerHooksList(new ListModel<GlusterServerHook>());
 
-        setResolveStatusConflict(new EntityModel());
-        setResolveStatusConflictEnable(new EntityModel());
-        setResolveStatusConflictDisable(new EntityModel());
+        setResolveStatusConflict(new EntityModel<Boolean>());
+        setResolveStatusConflictEnable(new EntityModel<Boolean>());
+        setResolveStatusConflictDisable(new EntityModel<Boolean>());
 
-        setResolveMissingConflict(new EntityModel());
-        setResolveMissingConflictCopy(new EntityModel());
-        setResolveMissingConflictRemove(new EntityModel());
+        setResolveMissingConflict(new EntityModel<Boolean>());
+        setResolveMissingConflictCopy(new EntityModel<Boolean>());
+        setResolveMissingConflictRemove(new EntityModel<Boolean>());
 
         getHookSources().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
@@ -160,7 +160,7 @@ public class GlusterHookResolveConflictsModel extends Model {
                     getServerHooksList().setIsChangable(false);
                 }
                 else {
-                    getServerHooksList().setIsChangable((Boolean) getResolveContentConflict().getEntity());
+                    getServerHooksList().setIsChangable(getResolveContentConflict().getEntity());
                 }
             }
         });
@@ -173,8 +173,8 @@ public class GlusterHookResolveConflictsModel extends Model {
                     getResolveStatusConflictDisable().setIsChangable(false);
                 }
                 else {
-                    getResolveStatusConflictEnable().setIsChangable((Boolean) getResolveStatusConflict().getEntity());
-                    getResolveStatusConflictDisable().setIsChangable((Boolean) getResolveStatusConflict().getEntity());
+                    getResolveStatusConflictEnable().setIsChangable(getResolveStatusConflict().getEntity());
+                    getResolveStatusConflictDisable().setIsChangable(getResolveStatusConflict().getEntity());
                 }
             }
         });
@@ -182,7 +182,7 @@ public class GlusterHookResolveConflictsModel extends Model {
         getResolveStatusConflictEnable().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) getResolveStatusConflictEnable().getEntity()) {
+                if (getResolveStatusConflictEnable().getEntity()) {
                     getResolveStatusConflictDisable().setEntity(Boolean.FALSE);
                 }
             }
@@ -191,7 +191,7 @@ public class GlusterHookResolveConflictsModel extends Model {
         getResolveStatusConflictDisable().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) getResolveStatusConflictDisable().getEntity()) {
+                if (getResolveStatusConflictDisable().getEntity()) {
                     getResolveStatusConflictEnable().setEntity(Boolean.FALSE);
                 }
             }
@@ -205,8 +205,8 @@ public class GlusterHookResolveConflictsModel extends Model {
                     getResolveMissingConflictRemove().setIsChangable(false);
                 }
                 else {
-                    getResolveMissingConflictCopy().setIsChangable((Boolean) getResolveMissingConflict().getEntity());
-                    getResolveMissingConflictRemove().setIsChangable((Boolean) getResolveMissingConflict().getEntity());
+                    getResolveMissingConflictCopy().setIsChangable(getResolveMissingConflict().getEntity());
+                    getResolveMissingConflictRemove().setIsChangable(getResolveMissingConflict().getEntity());
                 }
             }
         });
@@ -214,7 +214,7 @@ public class GlusterHookResolveConflictsModel extends Model {
         getResolveMissingConflictCopy().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) getResolveMissingConflictCopy().getEntity()) {
+                if (getResolveMissingConflictCopy().getEntity()) {
                     getResolveMissingConflictRemove().setEntity(Boolean.FALSE);
                 }
             }
@@ -223,11 +223,11 @@ public class GlusterHookResolveConflictsModel extends Model {
         getResolveMissingConflictRemove().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) getResolveMissingConflictRemove().getEntity()) {
+                if (getResolveMissingConflictRemove().getEntity()) {
                     getResolveMissingConflictCopy().setEntity(Boolean.FALSE);
                 }
 
-                updateConflictActionsAvailability((Boolean) getResolveMissingConflictRemove().getEntity());
+                updateConflictActionsAvailability(getResolveMissingConflictRemove().getEntity());
             }
         });
 
@@ -248,12 +248,12 @@ public class GlusterHookResolveConflictsModel extends Model {
     }
 
     private void onSelectedHookSourceChanged() {
-        EntityModel selectedItem = (EntityModel) getHookSources().getSelectedItem();
+        EntityModel<GlusterServerHook> selectedItem = getHookSources().getSelectedItem();
         if (selectedItem == null) {
             return;
         }
 
-        GlusterServerHook selectedServer = (GlusterServerHook) selectedItem.getEntity();
+        GlusterServerHook selectedServer = selectedItem.getEntity();
         getServerHooksList().setSelectedItem(selectedServer);
 
         if (selectedServer.getStatus() == GlusterHookStatus.MISSING) {
@@ -283,7 +283,7 @@ public class GlusterHookResolveConflictsModel extends Model {
     }
 
     public boolean isAnyResolveActionSelected() {
-        return (Boolean) getResolveContentConflict().getEntity() || (Boolean) getResolveStatusConflict().getEntity()
-                || (Boolean) getResolveMissingConflict().getEntity();
+        return getResolveContentConflict().getEntity() || getResolveStatusConflict().getEntity()
+                || getResolveMissingConflict().getEntity();
     }
 }

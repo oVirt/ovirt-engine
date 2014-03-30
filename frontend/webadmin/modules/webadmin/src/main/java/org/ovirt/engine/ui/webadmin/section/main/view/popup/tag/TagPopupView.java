@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.tag;
 
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -26,11 +26,11 @@ public class TagPopupView extends AbstractModelBoundPopupView<TagModel> implemen
 
     @UiField
     @Path(value = "name.entity")
-    EntityModelTextBoxEditor nameEditor;
+    StringEntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
-    EntityModelTextBoxEditor descriptionEditor;
+    StringEntityModelTextBoxEditor descriptionEditor;
 
     private final Driver driver = GWT.create(Driver.class);
 

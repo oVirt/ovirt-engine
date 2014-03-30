@@ -2,7 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
 
 	<ui:style>
 		.titleLabel {
@@ -51,7 +51,7 @@
 				<g:ScrollPanel height="385px" addStyleNames="{style.treePanel}">
 					<we:EntityModelCellTree ui:field="tree" />
 				</g:ScrollPanel>
-				<e:EntityModelTextBoxEditor ui:field="emailEditor" />
+				<ge:StringEntityModelTextBoxEditor ui:field="emailEditor" />
 				<g:Label ui:field="infoLabel" addStyleNames="{style.infoLabel}" />
 			</g:VerticalPanel>
 		</d:content>

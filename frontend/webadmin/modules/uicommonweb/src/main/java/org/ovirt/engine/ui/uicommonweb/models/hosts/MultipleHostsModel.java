@@ -14,10 +14,10 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class MultipleHostsModel extends Model {
 
-    ListModel hosts;
+    ListModel<EntityModel<HostDetailModel>> hosts;
 
-    EntityModel useCommonPassword;
-    EntityModel commonPassword;
+    EntityModel<Boolean> useCommonPassword;
+    EntityModel<String> commonPassword;
 
     ClusterModel clusterModel;
 
@@ -25,42 +25,42 @@ public class MultipleHostsModel extends Model {
 
     public MultipleHostsModel()
     {
-        setHosts(new ListModel());
-        setUseCommonPassword(new EntityModel());
-        setCommonPassword(new EntityModel());
+        setHosts(new ListModel<EntityModel<HostDetailModel>>());
+        setUseCommonPassword(new EntityModel<Boolean>());
+        setCommonPassword(new EntityModel<String>());
         setApplyPasswordCommand(new UICommand("ApplyPassword", this)); //$NON-NLS-1$
 
         getUseCommonPassword().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                getCommonPassword().setIsChangable((Boolean) getUseCommonPassword().getEntity());
-                getApplyPasswordCommand().setIsExecutionAllowed((Boolean) getUseCommonPassword().getEntity());
+                getCommonPassword().setIsChangable(getUseCommonPassword().getEntity());
+                getApplyPasswordCommand().setIsExecutionAllowed(getUseCommonPassword().getEntity());
             }
         });
         getUseCommonPassword().setEntity(false);
     }
 
-    public ListModel getHosts() {
+    public ListModel<EntityModel<HostDetailModel>> getHosts() {
         return hosts;
     }
 
-    public void setHosts(ListModel hosts) {
+    public void setHosts(ListModel<EntityModel<HostDetailModel>> hosts) {
         this.hosts = hosts;
     }
 
-    public EntityModel getUseCommonPassword() {
+    public EntityModel<Boolean> getUseCommonPassword() {
         return useCommonPassword;
     }
 
-    public void setUseCommonPassword(EntityModel useCommonPassword) {
+    public void setUseCommonPassword(EntityModel<Boolean> useCommonPassword) {
         this.useCommonPassword = useCommonPassword;
     }
 
-    public EntityModel getCommonPassword() {
+    public EntityModel<String> getCommonPassword() {
         return commonPassword;
     }
 
-    public void setCommonPassword(EntityModel commonPassword) {
+    public void setCommonPassword(EntityModel<String> commonPassword) {
         this.commonPassword = commonPassword;
     }
 
@@ -92,14 +92,14 @@ public class MultipleHostsModel extends Model {
     }
 
     private void applyPassword() {
-        String password = (String) getCommonPassword().getEntity();
-        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
+        String password = getCommonPassword().getEntity();
+        ArrayList<EntityModel<HostDetailModel>> items = new ArrayList<EntityModel<HostDetailModel>>();
         for (Object object : getHosts().getItems())
         {
             HostDetailModel host = (HostDetailModel) ((EntityModel) object).getEntity();
             host.setPassword(password);
 
-            EntityModel entityModel = new EntityModel();
+            EntityModel<HostDetailModel> entityModel = new EntityModel<HostDetailModel>();
             entityModel.setEntity(host);
             items.add(entityModel);
         }
@@ -109,10 +109,10 @@ public class MultipleHostsModel extends Model {
     public boolean validate() {
         boolean isValid = true;
         setMessage(null);
-        Iterable<EntityModel> items = getHosts().getItems();
-        for (EntityModel model : items)
+        Iterable<EntityModel<HostDetailModel>> items = getHosts().getItems();
+        for (EntityModel<HostDetailModel> model : items)
         {
-            HostDetailModel host = (HostDetailModel) model.getEntity();
+            HostDetailModel host = model.getEntity();
             if (host.getName().trim().length() == 0)
             {
                 setMessage(ConstantsManager.getInstance().getMessages().importClusterHostNameEmpty(host.getAddress()));

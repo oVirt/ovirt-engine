@@ -115,26 +115,26 @@ public class TagModel extends Model implements TreeNodeInfo {
         privateChildren = value;
     }
 
-    private EntityModel privateName;
+    private EntityModel<String> privateName;
 
-    public EntityModel getName()
+    public EntityModel<String> getName()
     {
         return privateName;
     }
 
-    public void setName(EntityModel value)
+    public void setName(EntityModel<String> value)
     {
         privateName = value;
     }
 
-    private EntityModel privateDescription;
+    private EntityModel<String> privateDescription;
 
-    public EntityModel getDescription()
+    public EntityModel<String> getDescription()
     {
         return privateDescription;
     }
 
-    public void setDescription(EntityModel value)
+    public void setDescription(EntityModel<String> value)
     {
         privateDescription = value;
     }
@@ -185,8 +185,8 @@ public class TagModel extends Model implements TreeNodeInfo {
     {
         setSelectionChangedEvent(new Event(selectionChangedEventDefinition));
 
-        setName(new EntityModel());
-        setDescription(new EntityModel());
+        setName(new EntityModel<String>());
+        setDescription(new EntityModel<String>());
     }
 
     public boolean validate()

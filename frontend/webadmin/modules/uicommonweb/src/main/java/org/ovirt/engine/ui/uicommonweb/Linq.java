@@ -743,14 +743,14 @@ public final class Linq
         return list;
     }
 
-    public static <T> ArrayList<EntityModel> toEntityModelList(ArrayList<T> list)
+    public static <T> ArrayList<EntityModel<T>> toEntityModelList(ArrayList<T> list)
     {
-        ArrayList<EntityModel> entityModelList = new ArrayList<EntityModel>();
+        ArrayList<EntityModel<T>> entityModelList = new ArrayList<EntityModel<T>>();
 
         if (list != null) {
-            for (Object item : list)
+            for (T item : list)
             {
-                EntityModel model = new EntityModel();
+                EntityModel<T> model = new EntityModel<T>();
                 model.setEntity(item);
                 entityModelList.add(model);
             }

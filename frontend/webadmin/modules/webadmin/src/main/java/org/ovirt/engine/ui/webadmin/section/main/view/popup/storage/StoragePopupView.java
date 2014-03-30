@@ -209,7 +209,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 datacenterAlertIcon.setVisible(storageModel.getDataCenterAlert().getIsAvailable());
-                datacenterAlertIcon.setTitle((String) storageModel.getDataCenterAlert().getEntity());
+                datacenterAlertIcon.setTitle(storageModel.getDataCenterAlert().getEntity());
             }
         });
     }

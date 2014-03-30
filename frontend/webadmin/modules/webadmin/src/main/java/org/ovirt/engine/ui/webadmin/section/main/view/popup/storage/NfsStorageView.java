@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -8,9 +9,11 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.ShortEntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
@@ -51,7 +54,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     @UiField
     @WithElementId
     @Path(value = "path.entity")
-    EntityModelTextBoxOnlyEditor pathEditor;
+    StringEntityModelTextBoxOnlyEditor pathEditor;
 
     @UiField
     @Ignore
@@ -81,11 +84,11 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     @UiField(provided = true)
     @WithElementId
     @Path(value = "version.selectedItem")
-    ListModelListBoxOnlyEditor<Object> versionEditor;
+    ListModelListBoxOnlyEditor<EntityModel<NfsVersion>> versionEditor;
 
     @UiField
     @Ignore
-    EntityModelTextBoxOnlyEditor versionReadOnlyEditor;
+    StringEntityModelTextBoxOnlyEditor versionReadOnlyEditor;
 
     @UiField
     @Ignore
@@ -94,7 +97,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     @UiField
     @WithElementId
     @Path(value = "retransmissions.entity")
-    EntityModelTextBoxOnlyEditor retransmissionsEditor;
+    ShortEntityModelTextBoxOnlyEditor retransmissionsEditor;
 
     @UiField
     @Ignore
@@ -103,7 +106,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     @UiField
     @WithElementId
     @Path(value = "timeout.entity")
-    EntityModelTextBoxOnlyEditor timeoutEditor;
+    ShortEntityModelTextBoxOnlyEditor timeoutEditor;
 
     @UiField
     @Ignore
@@ -142,11 +145,9 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
     void initEditors() {
 
-        versionEditor = new ListModelListBoxOnlyEditor<Object>(new AbstractRenderer<Object>() {
+        versionEditor = new ListModelListBoxOnlyEditor<EntityModel<NfsVersion>>(new AbstractRenderer<EntityModel<NfsVersion>>() {
             @Override
-            public String render(Object object) {
-
-                EntityModel model = (EntityModel) object;
+            public String render(EntityModel<NfsVersion> model) {
                 return model.getTitle();
             }
         });
@@ -213,13 +214,13 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     /*
      * Makes a provided editor look like label (enabled, read-only textbox).
      */
-    private void styleTextBoxEditor(EntityModelTextBoxOnlyEditor editor, boolean enabled) {
+    private <T> void styleTextBoxEditor(EntityModelTextBoxOnlyEditor<T> editor, boolean enabled) {
 
         if (!enabled) {
 
             editor.setEnabled(true);
 
-            ValueBox<Object> valueBox = editor.asValueBox();
+            ValueBox<T> valueBox = editor.asValueBox();
             valueBox.setReadOnly(true);
             valueBox.getElement().getStyle().setBorderWidth(0, Style.Unit.PX);
         }

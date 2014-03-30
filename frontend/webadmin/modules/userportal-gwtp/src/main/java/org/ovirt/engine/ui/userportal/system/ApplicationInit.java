@@ -70,7 +70,7 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
         loginModel.getIsENGINEUser().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                Boolean isEngineUser = (Boolean) loginModel.getIsENGINEUser().getEntity();
+                Boolean isEngineUser = loginModel.getIsENGINEUser().getEntity();
 
                 if (isEngineUser != null) {
                     userRole.setEngineUser(isEngineUser);

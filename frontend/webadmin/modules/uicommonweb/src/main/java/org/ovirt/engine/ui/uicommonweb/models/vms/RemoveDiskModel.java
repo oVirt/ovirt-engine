@@ -8,7 +8,7 @@ public class RemoveDiskModel extends ConfirmationModel
 {
     public RemoveDiskModel()
     {
-        setLatch(new EntityModel());
+        setLatch(new EntityModel<Boolean>());
         getLatch().setIsAvailable(true);
     }
 

@@ -453,7 +453,7 @@ public class ClusterGeneralModel extends EntityModel {
         UICommand command = new UICommand("OnSaveHosts", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         hostsModel.getCommands().add(command);
-        hostsModel.getHosts().setItems(new ArrayList<EntityModel>());
+        hostsModel.getHosts().setItems(new ArrayList<EntityModel<HostDetailModel>>());
 
         command = new UICommand("Cancel", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
@@ -476,13 +476,13 @@ public class ClusterGeneralModel extends EntityModel {
                 }
                 else
                 {
-                    ArrayList<EntityModel> list = new ArrayList<EntityModel>();
+                    ArrayList<EntityModel<HostDetailModel>> list = new ArrayList<EntityModel<HostDetailModel>>();
                     for (Map.Entry<String, String> host : hostMap.entrySet())
                     {
                         HostDetailModel hostModel = new HostDetailModel(host.getKey(), host.getValue());
                         hostModel.setName(host.getKey());
                         hostModel.setPassword("");//$NON-NLS-1$
-                        EntityModel entityModel = new EntityModel(hostModel);
+                        EntityModel<HostDetailModel> entityModel = new EntityModel<HostDetailModel>(hostModel);
                         list.add(entityModel);
                     }
                     hostsModel.getHosts().setItems(list);

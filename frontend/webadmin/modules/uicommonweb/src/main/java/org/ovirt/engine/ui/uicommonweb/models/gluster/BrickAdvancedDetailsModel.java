@@ -1,23 +1,25 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterClientInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 public class BrickAdvancedDetailsModel extends Model {
 
-    private EntityModel brick;
+    private EntityModel<String> brick;
     private BrickPropertiesModel brickProperties;
-    private ListModel clients;
+    private ListModel<EntityModel<GlusterClientInfo>> clients;
     private MemoryStatisticsModel memoryStatistics;
-    private ListModel memoryPools;
+    private ListModel<EntityModel<Mempool>> memoryPools;
 
     public BrickAdvancedDetailsModel() {
-        setBrick(new EntityModel());
+        setBrick(new EntityModel<String>());
         setBrickProperties(new BrickPropertiesModel());
-        setClients(new ListModel());
+        setClients(new ListModel<EntityModel<GlusterClientInfo>>());
         setMemoryStatistics(new MemoryStatisticsModel());
-        setMemoryPools(new ListModel());
+        setMemoryPools(new ListModel<EntityModel<Mempool>>());
     }
 
     public BrickPropertiesModel getBrickProperties() {
@@ -28,19 +30,19 @@ public class BrickAdvancedDetailsModel extends Model {
         this.brickProperties = brickProperties;
     }
 
-    public EntityModel getBrick() {
+    public EntityModel<String> getBrick() {
         return brick;
     }
 
-    public void setBrick(EntityModel brick) {
+    public void setBrick(EntityModel<String> brick) {
         this.brick = brick;
     }
 
-    public ListModel getClients() {
+    public ListModel<EntityModel<GlusterClientInfo>> getClients() {
         return clients;
     }
 
-    public void setClients(ListModel clients) {
+    public void setClients(ListModel<EntityModel<GlusterClientInfo>> clients) {
         this.clients = clients;
     }
 
@@ -52,11 +54,11 @@ public class BrickAdvancedDetailsModel extends Model {
         this.memoryStatistics = memoryStatistics;
     }
 
-    public ListModel getMemoryPools() {
+    public ListModel<EntityModel<Mempool>> getMemoryPools() {
         return memoryPools;
     }
 
-    public void setMemoryPools(ListModel memoryPools) {
+    public void setMemoryPools(ListModel<EntityModel<Mempool>> memoryPools) {
         this.memoryPools = memoryPools;
     }
 }

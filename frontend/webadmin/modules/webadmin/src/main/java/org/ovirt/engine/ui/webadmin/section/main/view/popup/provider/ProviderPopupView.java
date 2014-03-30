@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.provider;
 
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -8,11 +9,11 @@ import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelSuggestBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -50,22 +51,22 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @UiField
     @Path(value = "name.entity")
     @WithElementId
-    EntityModelTextBoxEditor nameEditor;
+    StringEntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
     @WithElementId
-    EntityModelTextBoxEditor descriptionEditor;
+    StringEntityModelTextBoxEditor descriptionEditor;
 
     @UiField(provided = true)
     @Path(value = "type.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> typeEditor;
+    ListModelListBoxEditor<ProviderType> typeEditor;
 
     @UiField
     @Path(value = "url.entity")
     @WithElementId
-    EntityModelTextBoxEditor urlEditor;
+    StringEntityModelTextBoxEditor urlEditor;
 
     @UiField
     UiCommandButton testButton;
@@ -85,17 +86,17 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @UiField
     @Path(value = "username.entity")
     @WithElementId
-    EntityModelTextBoxEditor usernameEditor;
+    StringEntityModelTextBoxEditor usernameEditor;
 
     @UiField
     @Path(value = "password.entity")
     @WithElementId
-    EntityModelPasswordBoxEditor passwordEditor;
+    StringEntityModelPasswordBoxEditor passwordEditor;
 
     @UiField
     @Path(value = "tenantName.entity")
     @WithElementId
-    EntityModelTextBoxEditor tenantNameEditor;
+    StringEntityModelTextBoxEditor tenantNameEditor;
 
     @UiField
     @Path(value = "pluginType.selectedItem")
@@ -127,7 +128,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
             ApplicationTemplates templates) {
         super(eventBus, resources);
 
-        typeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        typeEditor = new ListModelListBoxEditor<ProviderType>(new EnumRenderer());
         requiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         this.resources = resources;
@@ -159,7 +160,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
     @Override
     public void edit(ProviderModel model) {
-        setAgentTabVisibility((Boolean) model.getNeutronAgentModel().isPluginConfigurationAvailable().getEntity());
+        setAgentTabVisibility(model.getNeutronAgentModel().isPluginConfigurationAvailable().getEntity());
         driver.edit(model);
         neutronAgentWidget.edit(model.getNeutronAgentModel());
     }

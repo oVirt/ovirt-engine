@@ -51,14 +51,14 @@ public class EventNotificationModel extends Model
         privateIsNew = value;
     }
 
-    private EntityModel privateEmail;
+    private EntityModel<String> privateEmail;
 
-    public EntityModel getEmail()
+    public EntityModel<String> getEmail()
     {
         return privateEmail;
     }
 
-    private void setEmail(EntityModel value)
+    private void setEmail(EntityModel<String> value)
     {
         privateEmail = value;
     }
@@ -97,7 +97,7 @@ public class EventNotificationModel extends Model
         setExpandAllCommand(new UICommand("ExpandAll", this)); //$NON-NLS-1$
         setCollapseAllCommand(new UICommand("CollapseAll", this)); //$NON-NLS-1$
 
-        setEmail(new EntityModel());
+        setEmail(new EntityModel<String>());
     }
 
     public void expandAll()

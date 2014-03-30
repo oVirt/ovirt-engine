@@ -45,7 +45,7 @@ public class EntityModelTextBoxOnlyEditor<T> extends AbstractValidatedWidgetWith
         return editor;
     }
 
-    public EntityModelTextBox asValueBox() {
+    public EntityModelTextBox<T> asValueBox() {
         return getContentWidget();
     }
 }

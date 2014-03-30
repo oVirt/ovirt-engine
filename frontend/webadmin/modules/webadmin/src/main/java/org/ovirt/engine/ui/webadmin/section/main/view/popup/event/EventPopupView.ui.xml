@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
     <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.event.EventPopupView.Style">
         .eventMessage textarea {
@@ -21,9 +21,9 @@
     <d:SimpleDialogPanel width="450px" height="275px">
         <d:content>
             <g:FlowPanel>
-	            <e:EntityModelLabelEditor ui:field="eventIdLabel"/>
-	            <e:EntityModelLabelEditor ui:field="eventTimeLabel"/>
-	            <e:EntityModelTextAreaLabelEditor ui:field="eventMessageTextArea" addStyleNames="{style.eventMessage}"/>
+	            <ge:StringEntityModelLabelEditor ui:field="eventIdLabel"/>
+	            <ge:StringEntityModelLabelEditor ui:field="eventTimeLabel"/>
+	            <ge:StringEntityModelTextAreaLabelEditor ui:field="eventMessageTextArea" addStyleNames="{style.eventMessage}"/>
             </g:FlowPanel>
         </d:content>
     </d:SimpleDialogPanel>

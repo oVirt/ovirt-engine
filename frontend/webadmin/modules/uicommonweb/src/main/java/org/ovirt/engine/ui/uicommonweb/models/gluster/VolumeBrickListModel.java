@@ -1333,18 +1333,18 @@ public class VolumeBrickListModel extends SearchableListModel {
                     BrickDetails brickDetails = advDetails.getBrickDetails().get(0);
                     brickModel.getBrickProperties().setProperties(brickDetails.getBrickProperties());
 
-                    ArrayList<EntityModel> clients = new ArrayList<EntityModel>();
+                    ArrayList<EntityModel<GlusterClientInfo>> clients = new ArrayList<EntityModel<GlusterClientInfo>>();
                     for (GlusterClientInfo client : brickDetails.getClients()) {
-                        clients.add(new EntityModel(client));
+                        clients.add(new EntityModel<GlusterClientInfo>(client));
                     }
                     brickModel.getClients().setItems(clients);
 
                     brickModel.getMemoryStatistics().updateMemoryStatistics(brickDetails.getMemoryStatus()
                             .getMallInfo());
 
-                    ArrayList<EntityModel> memoryPools = new ArrayList<EntityModel>();
+                    ArrayList<EntityModel<Mempool>> memoryPools = new ArrayList<EntityModel<Mempool>>();
                     for (Mempool mempool : brickDetails.getMemoryStatus().getMemPools()) {
-                        memoryPools.add(new EntityModel(mempool));
+                        memoryPools.add(new EntityModel<Mempool>(mempool));
                     }
                     brickModel.getMemoryPools().setItems(memoryPools);
                 }

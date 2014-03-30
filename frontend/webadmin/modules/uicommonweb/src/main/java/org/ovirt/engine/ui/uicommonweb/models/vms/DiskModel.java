@@ -1,7 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -12,16 +16,16 @@ public class DiskModel extends Model
     private Disk disk;
     private VM vm;
 
-    private EntityModel size;
-    private EntityModel alias;
-    private EntityModel description;
-    private EntityModel sourceStorageDomainName;
+    private EntityModel<Long> size;
+    private EntityModel<String> alias;
+    private EntityModel<String> description;
+    private EntityModel<String> sourceStorageDomainName;
 
-    private ListModel volumeType;
-    private ListModel diskInterface;
-    private ListModel sourceStorageDomain;
-    private ListModel storageDomain;
-    private ListModel quota;
+    private ListModel<VolumeType> volumeType;
+    private ListModel<DiskInterface> diskInterface;
+    private ListModel<StorageDomain> sourceStorageDomain;
+    private ListModel<StorageDomain> storageDomain;
+    private ListModel<Quota> quota;
 
     private boolean pluggedToRunningVm;
 
@@ -41,27 +45,27 @@ public class DiskModel extends Model
         this.vm = vm;
     }
 
-    public EntityModel getSize() {
+    public EntityModel<Long> getSize() {
         return size;
     }
 
-    public void setSize(EntityModel size) {
+    public void setSize(EntityModel<Long> size) {
         this.size = size;
     }
 
-    public EntityModel getAlias() {
+    public EntityModel<String> getAlias() {
         return alias;
     }
 
-    public void setAlias(EntityModel alias) {
+    public void setAlias(EntityModel<String> alias) {
         this.alias = alias;
     }
 
-    public EntityModel getDescription() {
+    public EntityModel<String> getDescription() {
         return description;
     }
 
-    public void setDescription(EntityModel description) {
+    public void setDescription(EntityModel<String> description) {
         this.description = description;
     }
 
@@ -69,23 +73,23 @@ public class DiskModel extends Model
         return sourceStorageDomainName;
     }
 
-    public void setSourceStorageDomainName(EntityModel sourceStorageDomainName) {
+    public void setSourceStorageDomainName(EntityModel<String> sourceStorageDomainName) {
         this.sourceStorageDomainName = sourceStorageDomainName;
     }
 
-    public ListModel getVolumeType() {
+    public ListModel<VolumeType> getVolumeType() {
         return volumeType;
     }
 
-    public void setVolumeType(ListModel volumeType) {
+    public void setVolumeType(ListModel<VolumeType> volumeType) {
         this.volumeType = volumeType;
     }
 
-    public ListModel getDiskInterface() {
+    public ListModel<DiskInterface> getDiskInterface() {
         return diskInterface;
     }
 
-    public void setDiskInterface(ListModel diskInterface) {
+    public void setDiskInterface(ListModel<DiskInterface> diskInterface) {
         this.diskInterface = diskInterface;
     }
 
@@ -93,23 +97,23 @@ public class DiskModel extends Model
         return sourceStorageDomain;
     }
 
-    public void setSourceStorageDomain(ListModel sourceStorageDomain) {
+    public void setSourceStorageDomain(ListModel<StorageDomain> sourceStorageDomain) {
         this.sourceStorageDomain = sourceStorageDomain;
     }
 
-    public ListModel getStorageDomain() {
+    public ListModel<StorageDomain> getStorageDomain() {
         return storageDomain;
     }
 
-    public void setStorageDomain(ListModel storageDomain) {
+    public void setStorageDomain(ListModel<StorageDomain> storageDomain) {
         this.storageDomain = storageDomain;
     }
 
-    public ListModel getQuota() {
+    public ListModel<Quota> getQuota() {
         return quota;
     }
 
-    public void setQuota(ListModel quota) {
+    public void setQuota(ListModel<Quota> quota) {
         this.quota = quota;
     }
 
@@ -122,18 +126,18 @@ public class DiskModel extends Model
     }
 
     public DiskModel() {
-        setSize(new EntityModel());
-        setAlias(new EntityModel());
-        setDescription(new EntityModel());
-        setSourceStorageDomainName(new EntityModel());
-        setSourceStorageDomain(new ListModel());
-        setDiskInterface(new ListModel());
-        setStorageDomain(new ListModel());
+        setSize(new EntityModel<Long>());
+        setAlias(new EntityModel<String>());
+        setDescription(new EntityModel<String>());
+        setSourceStorageDomainName(new EntityModel<String>());
+        setSourceStorageDomain(new ListModel<StorageDomain>());
+        setDiskInterface(new ListModel<DiskInterface>());
+        setStorageDomain(new ListModel<StorageDomain>());
 
-        setQuota(new ListModel());
+        setQuota(new ListModel<Quota>());
         getQuota().setIsAvailable(false);
 
-        setVolumeType(new ListModel());
+        setVolumeType(new ListModel<VolumeType>());
         getVolumeType().setItems(AsyncDataProvider.getVolumeTypeList());
     }
 }

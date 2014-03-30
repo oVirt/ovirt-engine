@@ -23,9 +23,11 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -38,9 +40,10 @@ import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.ProgressPopupContent;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.LongEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
@@ -86,56 +89,56 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     @UiField
     @Path("size.entity")
     @WithElementId("size")
-    EntityModelTextBoxEditor sizeEditor;
+    LongEntityModelTextBoxEditor sizeEditor;
 
     @UiField
     @Path("sizeExtend.entity")
-    EntityModelTextBoxEditor sizeExtendEditor;
+    StringEntityModelTextBoxEditor sizeExtendEditor;
 
     @UiField
     @Path("alias.entity")
     @WithElementId("alias")
-    EntityModelTextBoxEditor aliasEditor;
+    StringEntityModelTextBoxEditor aliasEditor;
 
     @UiField
     @Path("description.entity")
     @WithElementId("description")
-    EntityModelTextBoxEditor descriptionEditor;
+    StringEntityModelTextBoxEditor descriptionEditor;
 
     @UiField(provided = true)
     @Path("diskInterface.selectedItem")
     @WithElementId("interface")
-    ListModelListBoxEditor<Object> interfaceEditor;
+    ListModelListBoxEditor<DiskInterface> interfaceEditor;
 
     @UiField(provided = true)
     @Path("volumeType.selectedItem")
     @WithElementId("volumeType")
-    ListModelListBoxEditor<Object> volumeTypeEditor;
+    ListModelListBoxEditor<VolumeType> volumeTypeEditor;
 
     @UiField(provided = true)
     @Path("dataCenter.selectedItem")
     @WithElementId("dataCenter")
-    ListModelListBoxEditor<Object> datacenterEditor;
+    ListModelListBoxEditor<StoragePool> datacenterEditor;
 
     @UiField(provided = true)
     @Path("storageDomain.selectedItem")
     @WithElementId("storageDomain")
-    ListModelListBoxEditor<Object> storageDomainEditor;
+    ListModelListBoxEditor<StorageDomain> storageDomainEditor;
 
     @UiField(provided = true)
     @Path("quota.selectedItem")
     @WithElementId("quota")
-    ListModelListBoxEditor<Object> quotaEditor;
+    ListModelListBoxEditor<Quota> quotaEditor;
 
     @UiField(provided = true)
     @Path(value = "host.selectedItem")
     @WithElementId("host")
-    ListModelListBoxEditor<Object> hostListEditor;
+    ListModelListBoxEditor<VDS> hostListEditor;
 
     @UiField(provided = true)
     @Path(value = "storageType.selectedItem")
     @WithElementId("storageType")
-    ListModelListBoxEditor<Object> storageTypeEditor;
+    ListModelListBoxEditor<StorageType> storageTypeEditor;
 
     @UiField(provided = true)
     @Path(value = "isPlugged.entity")
@@ -282,33 +285,33 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     private void initManualWidgets(CommonApplicationConstants constants,
                                    CommonApplicationResources resources,
                                    CommonApplicationTemplates templates) {
-        storageDomainEditor = new ListModelListBoxEditor<Object>(new StorageDomainFreeSpaceRenderer());
+        storageDomainEditor = new ListModelListBoxEditor<StorageDomain>(new StorageDomainFreeSpaceRenderer());
 
-        hostListEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
+        hostListEditor = new ListModelListBoxEditor<VDS>(new AbstractRenderer<VDS>() {
             @Override
-            public String render(Object object) {
-                return object == null ? "" : ((VDS) object).getName(); //$NON-NLS-1$
+            public String render(VDS vds) {
+                return vds == null ? "" : vds.getName(); //$NON-NLS-1$
             }
         });
 
-        quotaEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        quotaEditor = new ListModelListBoxEditor<Quota>(new NullSafeRenderer<Quota>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((Quota) object).getQuotaName();
+            public String renderNullSafe(Quota quota) {
+                return quota.getQuotaName();
             }
         });
 
-        interfaceEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        interfaceEditor = new ListModelListBoxEditor<DiskInterface>(new EnumRenderer());
 
-        datacenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        datacenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((StoragePool) object).getName();
+            public String renderNullSafe(StoragePool storagePool) {
+                return storagePool.getName();
             }
         });
 
-        volumeTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
-        storageTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        volumeTypeEditor = new ListModelListBoxEditor<VolumeType>(new EnumRenderer());
+        storageTypeEditor = new ListModelListBoxEditor<StorageType>(new EnumRenderer());
         plugDiskToVmEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         wipeAfterDeleteEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -701,7 +704,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     }
 
     private void revealDiskPanel(final AbstractDiskModel disk) {
-        boolean isAttachDisk = (Boolean) disk.getIsAttachDisk().getEntity();
+        boolean isAttachDisk = disk.getIsAttachDisk().getEntity();
         boolean isInternal = internalDiskRadioButton.getValue();
         boolean isInVm = disk.getVm() != null;
 
@@ -738,7 +741,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             return;
         }
 
-        StorageType storageType = (StorageType) diskModel.getStorageType().getSelectedItem();
+        StorageType storageType = diskModel.getStorageType().getSelectedItem();
 
         // Set view and model by storage type
         if (storageType == StorageType.ISCSI) {

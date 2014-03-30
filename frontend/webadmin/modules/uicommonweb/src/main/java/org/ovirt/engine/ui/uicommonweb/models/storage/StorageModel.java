@@ -46,23 +46,12 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-public class StorageModel extends ListModel implements ISupportSystemTreeContext
+public class StorageModel extends ListModel<IStorageModel> implements ISupportSystemTreeContext
 {
     public static final Guid UnassignedDataCenterId = Guid.Empty;
     private StorageModelBehavior behavior;
 
     private String localFSPath;
-
-    @Override
-    public IStorageModel getSelectedItem()
-    {
-        return (IStorageModel) super.getSelectedItem();
-    }
-
-    public void setSelectedItem(IStorageModel value)
-    {
-        super.setSelectedItem(value);
-    }
 
     /**
      * Gets or sets the storage being edited. Null if it's a new one.
@@ -92,92 +81,92 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         privateOriginalName = value;
     }
 
-    private EntityModel privateName;
+    private EntityModel<String> privateName;
 
-    public EntityModel getName()
+    public EntityModel<String> getName()
     {
         return privateName;
     }
 
-    private void setName(EntityModel value)
+    private void setName(EntityModel<String> value)
     {
         privateName = value;
     }
 
-    private EntityModel description;
+    private EntityModel<String> description;
 
-    public EntityModel getDescription() {
+    public EntityModel<String> getDescription() {
         return description;
     }
 
-    public void setDescription(EntityModel description) {
+    public void setDescription(EntityModel<String> description) {
         this.description = description;
     }
 
-    private EntityModel comment;
+    private EntityModel<String> comment;
 
-    public EntityModel getComment() {
+    public EntityModel<String> getComment() {
         return comment;
     }
 
-    public void setComment(EntityModel value) {
+    public void setComment(EntityModel<String> value) {
         comment = value;
     }
 
-    private ListModel privateDataCenter;
+    private ListModel<StoragePool> privateDataCenter;
 
-    public ListModel getDataCenter()
+    public ListModel<StoragePool> getDataCenter()
     {
         return privateDataCenter;
     }
 
-    private void setDataCenter(ListModel value)
+    private void setDataCenter(ListModel<StoragePool> value)
     {
         privateDataCenter = value;
     }
 
-    private EntityModel dataCenterAlert;
+    private EntityModel<String> dataCenterAlert;
 
-    public EntityModel getDataCenterAlert() {
+    public EntityModel<String> getDataCenterAlert() {
         return dataCenterAlert;
     }
 
-    public void setDataCenterAlert(EntityModel dataCenterAlert) {
+    public void setDataCenterAlert(EntityModel<String> dataCenterAlert) {
         this.dataCenterAlert = dataCenterAlert;
     }
 
-    private ListModel privateHost;
+    private ListModel<VDS> privateHost;
 
-    public ListModel getHost()
+    public ListModel<VDS> getHost()
     {
         return privateHost;
     }
 
-    public void setHost(ListModel value)
+    public void setHost(ListModel<VDS> value)
     {
         privateHost = value;
     }
 
-    private ListModel privateFormat;
+    private ListModel<StorageFormatType> privateFormat;
 
-    public ListModel getFormat()
+    public ListModel<StorageFormatType> getFormat()
     {
         return privateFormat;
     }
 
-    private void setFormat(ListModel value)
+    private void setFormat(ListModel<StorageFormatType> value)
     {
         privateFormat = value;
     }
 
-    private ListModel privateAvailableStorageItems;
+    private ListModel<IStorageModel> privateAvailableStorageItems;
 
-    public ListModel getAvailableStorageItems()
+    public ListModel<IStorageModel> getAvailableStorageItems()
     {
         return privateAvailableStorageItems;
     }
 
-    private void setAvailableStorageItems(ListModel value)
+    private void setAvailableStorageItems(ListModel<IStorageModel> value)
     {
         privateAvailableStorageItems = value;
     }
@@ -207,16 +196,16 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 VdcQueryType.GetAllVdsByStoragePool, VdcQueryType.DiscoverSendTargets, VdcQueryType.GetDeviceList,
                 VdcQueryType.GetExistingStorageDomainList, VdcQueryType.GetHostsForStorageOperation });
 
-        setName(new EntityModel());
-        setDescription(new EntityModel());
-        setComment(new EntityModel());
-        setDataCenterAlert(new EntityModel());
-        setDataCenter(new ListModel());
+        setName(new EntityModel<String>());
+        setDescription(new EntityModel<String>());
+        setComment(new EntityModel<String>());
+        setDataCenterAlert(new EntityModel<String>());
+        setDataCenter(new ListModel<StoragePool>());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
-        setHost(new ListModel());
+        setHost(new ListModel<VDS>());
         getHost().getSelectedItemChangedEvent().addListener(this);
-        setFormat(new ListModel());
-        setAvailableStorageItems(new ListModel());
+        setFormat(new ListModel<StorageFormatType>());
+        setAvailableStorageItems(new ListModel<IStorageModel>());
         getAvailableStorageItems().getSelectedItemChangedEvent().addListener(this);
 
         localFSPath = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
@@ -253,7 +242,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 if (getAvailableStorageItems().getSelectedItem() instanceof IStorageModel)
                 {
                     setSelectedItem(null);
-                    setSelectedItem((IStorageModel) getAvailableStorageItems().getSelectedItem());
+                    setSelectedItem(getAvailableStorageItems().getSelectedItem());
                 }
             }
         }
@@ -348,8 +337,8 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
     private void updateDataCenterAlert() {
         if (getDataCenter().getSelectedItem() != null
-                && !UnassignedDataCenterId.equals(((StoragePool) getDataCenter().getSelectedItem()).getId())
-                && ((StoragePool) getDataCenter().getSelectedItem()).getStatus() == StoragePoolStatus.Uninitialized) {
+                && !UnassignedDataCenterId.equals((getDataCenter().getSelectedItem()).getId())
+                && (getDataCenter().getSelectedItem()).getStatus() == StoragePoolStatus.Uninitialized) {
             getDataCenterAlert().setIsAvailable(true);
             getDataCenterAlert().setEntity(ConstantsManager.getInstance().getConstants().dataCenterUninitializedAlert());
         }
@@ -361,7 +350,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
     private void host_SelectedItemChanged()
     {
-        VDS host = (VDS) getHost().getSelectedItem();
+        VDS host = getHost().getSelectedItem();
         if (getSelectedItem() != null)
         {
             // When changing host clear items for san storage model.
@@ -379,7 +368,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             {
                 getSelectedItem().getUpdateCommand().execute();
 
-                VDSType vdsType = ((VDS) this.getHost().getSelectedItem()).getVdsType();
+                VDSType vdsType = this.getHost().getSelectedItem().getVdsType();
                 String prefix = vdsType.equals(VDSType.oVirtNode) ? localFSPath : ""; //$NON-NLS-1$
                 if (!StringHelper.isNullOrEmpty(prefix))
                 {
@@ -460,7 +449,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                                 dataCenters = storageModelBehavior.filterDataCenter(dataCenters);
                                 StorageModel.addEmptyDataCenterToList(dataCenters);
                                 StoragePool oldSelectedItem =
-                                        (StoragePool) storageModel.getDataCenter().getSelectedItem();
+                                        storageModel.getDataCenter().getSelectedItem();
                                 storageModel.getDataCenter().setItems(dataCenters);
                                 if (oldSelectedItem != null)
                                 {
@@ -530,7 +519,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             return;
         }
 
-        StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
+        StoragePool dataCenter = getDataCenter().getSelectedItem();
 
         boolean localFsOnly = getSelectedItem() instanceof LocalStorageModel;
         Guid dataCenterId = dataCenter == null ? null : dataCenter.getId();
@@ -564,7 +553,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             hosts = list;
         }
 
-        VDS oldSelectedItem = (VDS) getHost().getSelectedItem();
+        VDS oldSelectedItem = getHost().getSelectedItem();
         VDS selectedItem = null;
 
         // On Edit of active storage - only SPM is available. In edit of storage in maintenance,
@@ -601,7 +590,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
     void updateFormat()
     {
-        StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
+        StoragePool dataCenter = getDataCenter().getSelectedItem();
 
         StorageFormatType selectItem = StorageFormatType.V1;
 

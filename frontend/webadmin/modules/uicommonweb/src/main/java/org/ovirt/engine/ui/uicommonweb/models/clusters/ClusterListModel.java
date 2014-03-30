@@ -801,13 +801,13 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                     onGlusterHostsWithoutFingerprint(hostMap, clusterModel);
                     return;
                 }
-                ArrayList<EntityModel> list = new ArrayList<EntityModel>();
+                ArrayList<EntityModel<HostDetailModel>> list = new ArrayList<EntityModel<HostDetailModel>>();
                 for (Map.Entry<String, String> host : hostMap.entrySet())
                 {
                     HostDetailModel hostModel = new HostDetailModel(host.getKey(), host.getValue());
                     hostModel.setName(host.getKey());
                     hostModel.setPassword("");//$NON-NLS-1$
-                    EntityModel entityModel = new EntityModel(hostModel);
+                    EntityModel<HostDetailModel> entityModel = new EntityModel<HostDetailModel>(hostModel);
                     list.add(entityModel);
                 }
                 importClusterHosts(clusterModel, list);
@@ -838,7 +838,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.setMessage(ConstantsManager.getInstance().getMessages().unreachableGlusterHosts(problematicHosts));
     }
 
-    private void importClusterHosts(ClusterModel clusterModel, ArrayList<EntityModel> hostList)
+    private void importClusterHosts(ClusterModel clusterModel, ArrayList<EntityModel<HostDetailModel>> hostList)
     {
         setWindow(null);
         getAddMultipleHostsCommand().execute();

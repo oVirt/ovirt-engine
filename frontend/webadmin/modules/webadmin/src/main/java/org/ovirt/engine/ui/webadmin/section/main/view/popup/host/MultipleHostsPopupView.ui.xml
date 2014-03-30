@@ -4,6 +4,7 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
              xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
              xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 	<ui:style>
 		.tablePanel {
@@ -23,8 +24,8 @@
             <g:VerticalPanel spacing="5">
                 <g:Label></g:Label>
                 <g:HorizontalPanel verticalAlignment="middle">
-                    <e:EntityModelCheckBoxEditor ui:field="useCommonPasswordEditor" />
-                    <e:EntityModelPasswordBoxEditor ui:field="commonPasswordEditor"/>
+                    <ge:EntityModelCheckBoxEditor ui:field="useCommonPasswordEditor" />
+                    <ge:StringEntityModelPasswordBoxEditor ui:field="commonPasswordEditor"/>
                     <w:UiCommandButton ui:field="applyPasswordButton"/>
                 </g:HorizontalPanel>
                 <g:ScrollPanel addStyleNames="{style.tablePanel}">

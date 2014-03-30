@@ -1,43 +1,44 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 public class GlusterHookContentModel extends Model {
 
-    EntityModel content;
+    EntityModel<String> content;
 
-    EntityModel md5Checksum;
+    EntityModel<String> md5Checksum;
 
-    EntityModel status;
+    EntityModel<GlusterHookStatus> status;
 
-    public EntityModel getContent() {
+    public EntityModel<String> getContent() {
         return content;
     }
 
-    public void setContent(EntityModel content) {
+    public void setContent(EntityModel<String> content) {
         this.content = content;
     }
 
-    public EntityModel getMd5Checksum() {
+    public EntityModel<String> getMd5Checksum() {
         return md5Checksum;
     }
 
-    public void setMd5Checksum(EntityModel md5Checksum) {
+    public void setMd5Checksum(EntityModel<String> md5Checksum) {
         this.md5Checksum = md5Checksum;
     }
 
-    public EntityModel getStatus() {
+    public EntityModel<GlusterHookStatus> getStatus() {
         return status;
     }
 
-    public void setStatus(EntityModel status) {
+    public void setStatus(EntityModel<GlusterHookStatus> status) {
         this.status = status;
     }
 
     public GlusterHookContentModel() {
-        setContent(new EntityModel("")); //$NON-NLS-1$
-        setMd5Checksum(new EntityModel("")); //$NON-NLS-1$
-        setStatus(new EntityModel());
+        setContent(new EntityModel<String>("")); //$NON-NLS-1$
+        setMd5Checksum(new EntityModel<String>("")); //$NON-NLS-1$
+        setStatus(new EntityModel<GlusterHookStatus>());
     }
 }

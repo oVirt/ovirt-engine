@@ -58,22 +58,22 @@ public abstract class AbstractDiskModel extends DiskModel
 {
     protected static final UIConstants CONSTANTS = ConstantsManager.getInstance().getConstants();
 
-    private EntityModel isWipeAfterDelete;
-    private EntityModel isBootable;
-    private EntityModel isShareable;
-    private EntityModel isPlugged;
-    private EntityModel isReadOnly;
-    private EntityModel isAttachDisk;
-    private EntityModel isInternal;
-    private EntityModel isDirectLunDiskAvaialable;
-    private EntityModel isSgIoUnfiltered;
-    private EntityModel sizeExtend;
+    private EntityModel<Boolean> isWipeAfterDelete;
+    private EntityModel<Boolean> isBootable;
+    private EntityModel<Boolean> isShareable;
+    private EntityModel<Boolean> isPlugged;
+    private EntityModel<Boolean> isReadOnly;
+    private EntityModel<Boolean> isAttachDisk;
+    private EntityModel<Boolean> isInternal;
+    private EntityModel<Boolean> isDirectLunDiskAvaialable;
+    private EntityModel<Boolean> isSgIoUnfiltered;
+    private EntityModel<String> sizeExtend;
 
-    private ListModel storageType;
-    private ListModel host;
-    private ListModel dataCenter;
-    private ListModel internalAttachableDisks;
-    private ListModel externalAttachableDisks;
+    private ListModel<StorageType> storageType;
+    private ListModel<VDS> host;
+    private ListModel<StoragePool> dataCenter;
+    private ListModel<EntityModel<DiskModel>> internalAttachableDisks;
+    private ListModel<EntityModel<DiskModel>> externalAttachableDisks;
 
     private SanStorageModel sanStorageModel;
     private VolumeFormat volumeFormat;
@@ -85,115 +85,115 @@ public abstract class AbstractDiskModel extends DiskModel
     private UICommand cancelCommand;
     private int queryCounter;
 
-    public EntityModel getIsWipeAfterDelete() {
+    public EntityModel<Boolean> getIsWipeAfterDelete() {
         return isWipeAfterDelete;
     }
 
-    public void setIsWipeAfterDelete(EntityModel isWipeAfterDelete) {
+    public void setIsWipeAfterDelete(EntityModel<Boolean> isWipeAfterDelete) {
         this.isWipeAfterDelete = isWipeAfterDelete;
     }
 
-    public EntityModel getIsBootable() {
+    public EntityModel<Boolean> getIsBootable() {
         return isBootable;
     }
 
-    public void setIsBootable(EntityModel isBootable) {
+    public void setIsBootable(EntityModel<Boolean> isBootable) {
         this.isBootable = isBootable;
     }
 
-    public EntityModel getIsShareable() {
+    public EntityModel<Boolean> getIsShareable() {
         return isShareable;
     }
 
-    public void setIsShareable(EntityModel isShareable) {
+    public void setIsShareable(EntityModel<Boolean> isShareable) {
         this.isShareable = isShareable;
     }
 
-    public EntityModel getIsPlugged() {
+    public EntityModel<Boolean> getIsPlugged() {
         return isPlugged;
     }
 
-    public void setIsPlugged(EntityModel isPlugged) {
+    public void setIsPlugged(EntityModel<Boolean> isPlugged) {
         this.isPlugged = isPlugged;
     }
 
-    public EntityModel getIsReadOnly() {
+    public EntityModel<Boolean> getIsReadOnly() {
         return isReadOnly;
     }
 
-    public void setIsReadOnly(EntityModel isReadOnly) {
+    public void setIsReadOnly(EntityModel<Boolean> isReadOnly) {
         this.isReadOnly = isReadOnly;
     }
 
-    public EntityModel getIsAttachDisk() {
+    public EntityModel<Boolean> getIsAttachDisk() {
         return isAttachDisk;
     }
 
-    public void setIsAttachDisk(EntityModel isAttachDisk) {
+    public void setIsAttachDisk(EntityModel<Boolean> isAttachDisk) {
         this.isAttachDisk = isAttachDisk;
     }
 
-    public EntityModel getIsInternal() {
+    public EntityModel<Boolean> getIsInternal() {
         return isInternal;
     }
 
-    public void setIsInternal(EntityModel isInternal) {
+    public void setIsInternal(EntityModel<Boolean> isInternal) {
         this.isInternal = isInternal;
     }
 
-    public EntityModel getIsDirectLunDiskAvaialable() {
+    public EntityModel<Boolean> getIsDirectLunDiskAvaialable() {
         return isDirectLunDiskAvaialable;
     }
 
-    public void setIsDirectLunDiskAvaialable(EntityModel isDirectLunDiskAvaialable) {
+    public void setIsDirectLunDiskAvaialable(EntityModel<Boolean> isDirectLunDiskAvaialable) {
         this.isDirectLunDiskAvaialable = isDirectLunDiskAvaialable;
     }
 
-    public EntityModel getIsSgIoUnfiltered() {
+    public EntityModel<Boolean> getIsSgIoUnfiltered() {
         return isSgIoUnfiltered;
     }
 
-    public void setIsSgIoUnfiltered(EntityModel isSgIoUnfiltered) {
+    public void setIsSgIoUnfiltered(EntityModel<Boolean> isSgIoUnfiltered) {
         this.isSgIoUnfiltered = isSgIoUnfiltered;
     }
 
-    public ListModel getStorageType() {
+    public ListModel<StorageType> getStorageType() {
         return storageType;
     }
 
-    public void setStorageType(ListModel storageType) {
+    public void setStorageType(ListModel<StorageType> storageType) {
         this.storageType = storageType;
     }
 
-    public ListModel getHost() {
+    public ListModel<VDS> getHost() {
         return host;
     }
 
-    public void setHost(ListModel host) {
+    public void setHost(ListModel<VDS> host) {
         this.host = host;
     }
 
-    public ListModel getDataCenter() {
+    public ListModel<StoragePool> getDataCenter() {
         return dataCenter;
     }
 
-    public void setDataCenter(ListModel dataCenter) {
+    public void setDataCenter(ListModel<StoragePool> dataCenter) {
         this.dataCenter = dataCenter;
     }
 
-    public ListModel getInternalAttachableDisks() {
+    public ListModel<EntityModel<DiskModel>> getInternalAttachableDisks() {
         return internalAttachableDisks;
     }
 
-    public void setInternalAttachableDisks(ListModel internalAttachableDisks) {
+    public void setInternalAttachableDisks(ListModel<EntityModel<DiskModel>> internalAttachableDisks) {
         this.internalAttachableDisks = internalAttachableDisks;
     }
 
-    public ListModel getExternalAttachableDisks() {
+    public ListModel<EntityModel<DiskModel>> getExternalAttachableDisks() {
         return externalAttachableDisks;
     }
 
-    public void setExternalAttachableDisks(ListModel externalAttachableDisks) {
+    public void setExternalAttachableDisks(ListModel<EntityModel<DiskModel>> externalAttachableDisks) {
         this.externalAttachableDisks = externalAttachableDisks;
     }
 
@@ -221,11 +221,11 @@ public abstract class AbstractDiskModel extends DiskModel
         this.systemTreeSelectedItem = systemTreeSelectedItem;
     }
 
-    public EntityModel getSizeExtend() {
+    public EntityModel<String> getSizeExtend() {
         return sizeExtend;
     }
 
-    public void setSizeExtend(EntityModel sizeExtend) {
+    public void setSizeExtend(EntityModel<String> sizeExtend) {
         this.sizeExtend = sizeExtend;
     }
 
@@ -257,59 +257,59 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     public AbstractDiskModel() {
-        setSizeExtend(new EntityModel());
+        setSizeExtend(new EntityModel<String>());
         getSizeExtend().setEntity("0");  //$NON-NLS-1$
 
-        setIsAttachDisk(new EntityModel());
+        setIsAttachDisk(new EntityModel<Boolean>());
         getIsAttachDisk().setEntity(false);
         getIsAttachDisk().getEntityChangedEvent().addListener(this);
 
-        setIsInternal(new EntityModel());
+        setIsInternal(new EntityModel<Boolean>());
         getIsInternal().setEntity(true);
         getIsInternal().getEntityChangedEvent().addListener(this);
 
-        setIsWipeAfterDelete(new EntityModel());
+        setIsWipeAfterDelete(new EntityModel<Boolean>());
         getIsWipeAfterDelete().setEntity(false);
         getIsWipeAfterDelete().getEntityChangedEvent().addListener(this);
 
-        setIsBootable(new EntityModel());
+        setIsBootable(new EntityModel<Boolean>());
         getIsBootable().setEntity(false);
 
-        setIsShareable(new EntityModel());
+        setIsShareable(new EntityModel<Boolean>());
         getIsShareable().setEntity(false);
 
-        setIsPlugged(new EntityModel());
+        setIsPlugged(new EntityModel<Boolean>());
         getIsPlugged().setEntity(true);
         getIsPlugged().setIsAvailable(false);
 
-        setIsReadOnly(new EntityModel());
+        setIsReadOnly(new EntityModel<Boolean>());
         getIsReadOnly().setEntity(false);
 
-        setIsSgIoUnfiltered(new EntityModel());
+        setIsSgIoUnfiltered(new EntityModel<Boolean>());
         getIsSgIoUnfiltered().setIsAvailable(false);
 
-        setIsDirectLunDiskAvaialable(new EntityModel());
+        setIsDirectLunDiskAvaialable(new EntityModel<Boolean>());
         getIsDirectLunDiskAvaialable().setEntity(true);
 
-        setDataCenter(new ListModel());
+        setDataCenter(new ListModel<StoragePool>());
         getDataCenter().setIsAvailable(false);
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
 
         getStorageDomain().getSelectedItemChangedEvent().addListener(this);
 
-        setStorageType(new ListModel());
+        setStorageType(new ListModel<StorageType>());
         getStorageType().setIsAvailable(false);
         getStorageType().setItems(AsyncDataProvider.getStorageTypeList());
         getStorageType().getSelectedItemChangedEvent().addListener(this);
 
-        setHost(new ListModel());
+        setHost(new ListModel<VDS>());
         getHost().setIsAvailable(false);
 
         getVolumeType().getSelectedItemChangedEvent().addListener(this);
         getDiskInterface().getSelectedItemChangedEvent().addListener(this);
 
-        setInternalAttachableDisks(new ListModel());
-        setExternalAttachableDisks(new ListModel());
+        setInternalAttachableDisks(new ListModel<EntityModel<DiskModel>>());
+        setExternalAttachableDisks(new ListModel<EntityModel<DiskModel>>());
 
         setIsVirtioScsiEnabled(new EntityModel<Boolean>());
     }
@@ -435,7 +435,7 @@ public abstract class AbstractDiskModel extends DiskModel
                     diskModel.getDataCenter().setItems(dataCenters);
 
                     if (dataCenters.isEmpty()) {
-                        diskModel.setMessage((Boolean) getIsInternal().getEntity() ?
+                        diskModel.setMessage(getIsInternal().getEntity() ?
                                 CONSTANTS.noActiveStorageDomainsInDC() : CONSTANTS.relevantDCnotActive());
                     }
                 }
@@ -502,7 +502,7 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void updateDirectLunDiskEnabled(StoragePool datacenter) {
-        boolean isInternal = (Boolean) getIsInternal().getEntity();
+        boolean isInternal = getIsInternal().getEntity();
         if (isInternal) {
             return;
         }
@@ -565,13 +565,13 @@ public abstract class AbstractDiskModel extends DiskModel
 
     private void updateQuota(StoragePool datacenter) {
         if (datacenter.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)
-                || !(Boolean) getIsInternal().getEntity()) {
+                || !getIsInternal().getEntity()) {
             getQuota().setIsAvailable(false);
             return;
         }
 
         getQuota().setIsAvailable(true);
-        StorageDomain storageDomain = (StorageDomain) getStorageDomain().getSelectedItem();
+        StorageDomain storageDomain = getStorageDomain().getSelectedItem();
         if (storageDomain == null) {
             return;
         }
@@ -581,8 +581,7 @@ public abstract class AbstractDiskModel extends DiskModel
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object innerModel, Object innerReturnValue) {
-                        ArrayList<Quota> quotaList =
-                                (ArrayList<Quota>) ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
+                        ArrayList<Quota> quotaList = ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
                         if (quotaList != null && !quotaList.isEmpty()) {
                             getQuota().setItems(quotaList);
                         }
@@ -616,7 +615,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
     private void isInternal_EntityChanged() {
         boolean isInVm = getVm() != null;
-        boolean isInternal = (Boolean) getIsInternal().getEntity();
+        boolean isInternal = getIsInternal().getEntity();
 
         getSize().setIsAvailable(isInternal);
         getSizeExtend().setIsAvailable(isInternal && !getIsNew());
@@ -628,7 +627,7 @@ public abstract class AbstractDiskModel extends DiskModel
         getDataCenter().setIsAvailable(!isInVm);
 
         if (!isInternal) {
-            previousWipeAfterDeleteEntity = (Boolean) getIsWipeAfterDelete().getEntity();
+            previousWipeAfterDeleteEntity = getIsWipeAfterDelete().getEntity();
             previousIsQuotaAvailable = getQuota().getIsAvailable();
         }
 
@@ -644,16 +643,16 @@ public abstract class AbstractDiskModel extends DiskModel
             return;
         }
 
-        VolumeType volumeType = (VolumeType) getVolumeType().getSelectedItem();
-        StorageType storageType = ((StorageDomain) getStorageDomain().getSelectedItem()).getStorageType();
+        VolumeType volumeType = getVolumeType().getSelectedItem();
+        StorageType storageType = getStorageDomain().getSelectedItem().getStorageType();
 
         updateVolumeFormat(volumeType, storageType);
         updateShareable(volumeType, storageType);
     }
 
     private void DiskInterface_SelectedItemChanged() {
-        boolean isInternal = (Boolean) getIsInternal().getEntity();
-        DiskInterface diskInterface = (DiskInterface) getDiskInterface().getSelectedItem();
+        boolean isInternal = getIsInternal().getEntity();
+        DiskInterface diskInterface = getDiskInterface().getSelectedItem();
         getIsSgIoUnfiltered().setIsAvailable(!isInternal && DiskInterface.VirtIO_SCSI.equals(diskInterface));
 
         updateReadOnlyChangeability();
@@ -661,7 +660,7 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     protected void updateReadOnlyChangeability() {
-        DiskInterface diskInterface = (DiskInterface) getDiskInterface().getSelectedItem();
+        DiskInterface diskInterface = getDiskInterface().getSelectedItem();
 
         if (DiskInterface.IDE.equals(diskInterface)) {
             getIsReadOnly().setChangeProhibitionReason(CONSTANTS.cannotEnableIdeInterfaceForReadOnlyDisk());
@@ -677,7 +676,7 @@ public abstract class AbstractDiskModel extends DiskModel
             return;
         }
 
-        DiskInterface diskInterface = (DiskInterface) getDiskInterface().getSelectedItem();
+        DiskInterface diskInterface = getDiskInterface().getSelectedItem();
         boolean isVmRunning = getVm() != null && getVm().getStatus() != VMStatus.Down;
 
         if (DiskInterface.IDE.equals(diskInterface) && isVmRunning) {
@@ -692,14 +691,14 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void wipeAfterDelete_EntityChanged(EventArgs e) {
-        if (!getIsWipeAfterDelete().getIsChangable() && (Boolean) getIsWipeAfterDelete().getEntity())
+        if (!getIsWipeAfterDelete().getIsChangable() && getIsWipeAfterDelete().getEntity())
         {
             getIsWipeAfterDelete().setEntity(false);
         }
     }
 
     private void attachDisk_EntityChanged(EventArgs e) {
-        if ((Boolean) getIsAttachDisk().getEntity())
+        if (getIsAttachDisk().getEntity())
         {
             getIsPlugged().setIsAvailable(true);
             // Get internal attachable disks
@@ -733,8 +732,8 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void datacenter_SelectedItemChanged() {
-        StoragePool datacenter = (StoragePool) getDataCenter().getSelectedItem();
-        boolean isInternal = getIsInternal().getEntity() != null ? (Boolean) getIsInternal().getEntity() : false;
+        StoragePool datacenter = getDataCenter().getSelectedItem();
+        boolean isInternal = getIsInternal().getEntity() != null ? getIsInternal().getEntity() : false;
         boolean isInVm = getVm() != null;
 
         if (datacenter == null) {
@@ -754,12 +753,12 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void storageDomain_SelectedItemChanged() {
-        StorageDomain selectedStorage = (StorageDomain) getStorageDomain().getSelectedItem();
+        StorageDomain selectedStorage = getStorageDomain().getSelectedItem();
         if (selectedStorage != null) {
             updateVolumeType(selectedStorage.getStorageType());
             updateWipeAfterDelete(selectedStorage.getStorageType());
         }
-        updateQuota((StoragePool) getDataCenter().getSelectedItem());
+        updateQuota(getDataCenter().getSelectedItem());
     }
 
     public boolean validate() {
@@ -772,7 +771,7 @@ public abstract class AbstractDiskModel extends DiskModel
             getAlias().validateEntity(new IValidation[] { new I18NNameValidation() });
         }
 
-        StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
+        StoragePool dataCenter = getDataCenter().getSelectedItem();
         if (dataCenter != null && dataCenter.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
             getQuota().validateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
         }
@@ -782,7 +781,7 @@ public abstract class AbstractDiskModel extends DiskModel
             public ValidationResult validate(Object value) {
                 ValidationResult result = new ValidationResult();
 
-                if (getDiskInterface().getSelectedItem() == DiskInterface.IDE && (Boolean) getIsReadOnly().getEntity())
+                if (getDiskInterface().getSelectedItem() == DiskInterface.IDE && getIsReadOnly().getEntity())
                 {
                     result.setSuccess(false);
                     result.getReasons().add(ConstantsManager.getInstance().getConstants().cannotEnableIdeInterfaceForReadOnlyDisk());
@@ -840,14 +839,14 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     public void onSave() {
-        boolean isInternal = (Boolean) getIsInternal().getEntity();
+        boolean isInternal = getIsInternal().getEntity();
         if (isInternal) {
             DiskImage diskImage = getDiskImage();
             if (getQuota().getIsAvailable() && getQuota().getSelectedItem() != null) {
-                diskImage.setQuotaId(((Quota) getQuota().getSelectedItem()).getId());
+                diskImage.setQuotaId(getQuota().getSelectedItem().getId());
             }
 
-            long sizeToAddInGigabytes = Long.valueOf((String) getSizeExtend().getEntity());
+            long sizeToAddInGigabytes = Long.valueOf(getSizeExtend().getEntity());
             if (sizeToAddInGigabytes > 0) {
                 diskImage.setSizeInGigabytes(diskImage.getSizeInGigabytes() + sizeToAddInGigabytes);
             }
@@ -856,7 +855,7 @@ public abstract class AbstractDiskModel extends DiskModel
         }
         else {
             LunDisk lunDisk = getLunDisk();
-            DiskInterface diskInterface = (DiskInterface) getDiskInterface().getSelectedItem();
+            DiskInterface diskInterface = getDiskInterface().getSelectedItem();
             if (DiskInterface.VirtIO_SCSI.equals(diskInterface)) {
                 lunDisk.setSgio(Boolean.TRUE.equals(getIsSgIoUnfiltered().getEntity()) ?
                         ScsiGenericIO.UNFILTERED : ScsiGenericIO.FILTERED);
@@ -864,15 +863,15 @@ public abstract class AbstractDiskModel extends DiskModel
             setDisk(lunDisk);
         }
 
-        getDisk().setDiskAlias((String) getAlias().getEntity());
-        getDisk().setDiskDescription((String) getDescription().getEntity());
-        getDisk().setDiskInterface((DiskInterface) getDiskInterface().getSelectedItem());
-        getDisk().setWipeAfterDelete((Boolean) getIsWipeAfterDelete().getEntity());
-        getDisk().setBoot((Boolean) getIsBootable().getEntity());
-        getDisk().setShareable((Boolean) getIsShareable().getEntity());
-        getDisk().setPlugged((Boolean) getIsPlugged().getEntity());
+        getDisk().setDiskAlias(getAlias().getEntity());
+        getDisk().setDiskDescription(getDescription().getEntity());
+        getDisk().setDiskInterface(getDiskInterface().getSelectedItem());
+        getDisk().setWipeAfterDelete(getIsWipeAfterDelete().getEntity());
+        getDisk().setBoot(getIsBootable().getEntity());
+        getDisk().setShareable(getIsShareable().getEntity());
+        getDisk().setPlugged(getIsPlugged().getEntity());
         getDisk().setPropagateErrors(PropagateErrors.Off);
-        getDisk().setReadOnly(getIsReadOnly().getIsAvailable() ? (Boolean) getIsReadOnly().getEntity() : null);
+        getDisk().setReadOnly(getIsReadOnly().getIsAvailable() ? getIsReadOnly().getEntity() : null);
     }
 
     @Override

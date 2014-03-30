@@ -102,26 +102,26 @@ public class SnapshotModel extends EntityModel
         }
     }
 
-    private EntityModel privateDescription;
+    private EntityModel<String> privateDescription;
 
-    public EntityModel getDescription()
+    public EntityModel<String> getDescription()
     {
         return privateDescription;
     }
 
-    public void setDescription(EntityModel value)
+    public void setDescription(EntityModel<String> value)
     {
         privateDescription = value;
     }
 
-    private EntityModel memory;
+    private EntityModel<Boolean> memory;
 
-    public EntityModel getMemory()
+    public EntityModel<Boolean> getMemory()
     {
         return memory;
     }
 
-    public void setMemory(EntityModel value)
+    public void setMemory(EntityModel<Boolean> value)
     {
         memory = value;
     }
@@ -136,14 +136,14 @@ public class SnapshotModel extends EntityModel
         this.validateByVmSnapshots = validateByVmSnapshots;
     }
 
-    private ListModel snapshotDisks;
+    private ListModel<DiskImage> snapshotDisks;
 
-    public ListModel getSnapshotDisks()
+    public ListModel<DiskImage> getSnapshotDisks()
     {
         return snapshotDisks;
     }
 
-    public void setSnapshotDisks(ListModel value)
+    public void setSnapshotDisks(ListModel<DiskImage> value)
     {
         snapshotDisks = value;
     }
@@ -160,13 +160,13 @@ public class SnapshotModel extends EntityModel
 
     public SnapshotModel()
     {
-        setDescription(new EntityModel());
-        setMemory(new EntityModel(true));
+        setDescription(new EntityModel<String>());
+        setMemory(new EntityModel<Boolean>(true));
         setDisks(new ArrayList<DiskImage>());
         setNics(new ArrayList<VmNetworkInterface>());
         setApps(new ArrayList<String>());
 
-        setSnapshotDisks(new ListModel());
+        setSnapshotDisks(new ListModel<DiskImage>());
     }
 
     public static SnapshotModel createNewSnapshotModel(ICommandTarget cancelCommandTarget) {
@@ -250,7 +250,7 @@ public class SnapshotModel extends EntityModel
     }
 
     public void updateModelBySnapshot(Snapshot snapshot) {
-        setDisks(new ArrayList(snapshot.getDiskImages()));
+        setDisks(new ArrayList<DiskImage>(snapshot.getDiskImages()));
         getMemory().setEntity(snapshot.containsMemory());
     }
 
@@ -366,8 +366,8 @@ public class SnapshotModel extends EntityModel
         ArrayList<VdcActionParametersBase> params = new ArrayList<VdcActionParametersBase>();
         CreateAllSnapshotsFromVmParameters param =
                 new CreateAllSnapshotsFromVmParameters(vm.getId(),
-                        (String) getDescription().getEntity(),
-                        (Boolean) getMemory().getEntity(),
+                        getDescription().getEntity(),
+                        getMemory().getEntity(),
                         getSnapshotDisks().getSelectedItems());
         param.setQuotaId(vm.getQuotaId());
         params.add(param);

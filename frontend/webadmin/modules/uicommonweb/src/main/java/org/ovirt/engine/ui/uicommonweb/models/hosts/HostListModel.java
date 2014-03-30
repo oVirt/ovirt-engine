@@ -635,7 +635,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             public void eventRaised(Event ev, Object sender, EventArgs args) {
 
                 if (!clusterChanging) {
-                    updateOverrideIpTables = (Boolean) hostModel.getOverrideIpTables().getEntity();
+                    updateOverrideIpTables = hostModel.getOverrideIpTables().getEntity();
                 }
             }
         });
@@ -821,9 +821,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        if (!((Boolean) model.getIsPm().getEntity()))
+        if (!model.getIsPm().getEntity())
         {
-            if (((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService())
+            if (model.getCluster().getSelectedItem().supportsVirtService())
             {
                 ConfirmationModel confirmModel = new ConfirmationModel();
                 setConfirmWindow(confirmModel);
@@ -894,47 +894,47 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         VDS host = model.getIsNew() ? new VDS() : (VDS) Cloner.clone(getSelectedItem());
 
         // Save changes.
-        host.setVdsName((String) model.getName().getEntity());
-        host.setComment((String) model.getComment().getEntity());
-        host.setHostName((String) model.getHost().getEntity());
+        host.setVdsName(model.getName().getEntity());
+        host.setComment(model.getComment().getEntity());
+        host.setHostName(model.getHost().getEntity());
         host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
         host.setSshPort(Integer.parseInt(model.getAuthSshPort().getEntity().toString()));
         boolean sshUsernameSet = model.getUserName().getEntity() != null;
-        host.setSshUsername(sshUsernameSet ? model.getUserName().getEntity().toString() : null);
+        host.setSshUsername(sshUsernameSet ? model.getUserName().getEntity() : null);
         boolean sshFpSet = model.getFetchSshFingerprint().getEntity() != null;
-        host.setSshKeyFingerprint(!sshFpSet ? null : (String) model.getFetchSshFingerprint().getEntity());
+        host.setSshKeyFingerprint(!sshFpSet ? null : model.getFetchSshFingerprint().getEntity());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
-        boolean consoleAddressSet = (Boolean) model.getConsoleAddressEnabled().getEntity();
-        host.setConsoleAddress(!consoleAddressSet ? null : (String) model.getConsoleAddress().getEntity());
+        boolean consoleAddressSet = model.getConsoleAddressEnabled().getEntity();
+        host.setConsoleAddress(!consoleAddressSet ? null : model.getConsoleAddress().getEntity());
         Guid oldClusterId = host.getVdsGroupId();
-        Guid newClusterId = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
+        Guid newClusterId = model.getCluster().getSelectedItem().getId();
         host.setVdsGroupId(newClusterId);
         host.setVdsSpmPriority(model.getSpmPriorityValue());
         host.setPmProxyPreferences(model.getPmProxyPreferences());
 
         // Save primary PM parameters.
-        host.setManagementIp((String) model.getManagementIp().getEntity());
-        host.setPmUser((String) model.getPmUserName().getEntity());
-        host.setPmPassword((String) model.getPmPassword().getEntity());
-        host.setPmType((String) model.getPmType().getSelectedItem());
+        host.setManagementIp(model.getManagementIp().getEntity());
+        host.setPmUser(model.getPmUserName().getEntity());
+        host.setPmPassword(model.getPmPassword().getEntity());
+        host.setPmType(model.getPmType().getSelectedItem());
         host.setPmOptionsMap((model.getPmOptionsMap()));
 
         // Save secondary PM parameters.
-        host.setPmSecondaryIp((String) model.getPmSecondaryIp().getEntity());
-        host.setPmSecondaryUser((String) model.getPmSecondaryUserName().getEntity());
-        host.setPmSecondaryPassword((String) model.getPmSecondaryPassword().getEntity());
-        host.setPmSecondaryType((String) model.getPmSecondaryType().getSelectedItem());
+        host.setPmSecondaryIp(model.getPmSecondaryIp().getEntity());
+        host.setPmSecondaryUser(model.getPmSecondaryUserName().getEntity());
+        host.setPmSecondaryPassword(model.getPmSecondaryPassword().getEntity());
+        host.setPmSecondaryType(model.getPmSecondaryType().getSelectedItem());
         host.setPmSecondaryOptionsMap(model.getPmSecondaryOptionsMap());
 
         // Save other PM parameters.
-        host.setpm_enabled((Boolean) model.getIsPm().getEntity());
-        host.setPmSecondaryConcurrent((Boolean) model.getPmSecondaryConcurrent().getEntity());
+        host.setpm_enabled(model.getIsPm().getEntity());
+        host.setPmSecondaryConcurrent(model.getPmSecondaryConcurrent().getEntity());
         host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
 
         cancelConfirm();
         model.startProgress(null);
 
-        final boolean isVirt = ((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService();
+        final boolean isVirt = model.getCluster().getSelectedItem().supportsVirtService();
 
         if (model.getIsNew())
         {
@@ -942,16 +942,16 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             parameters.setVdsId(host.getId());
             parameters.setvds(host);
             if (model.getUserPassword().getEntity() != null) {
-                parameters.setPassword((String) model.getUserPassword().getEntity());
+                parameters.setPassword(model.getUserPassword().getEntity());
             }
-            parameters.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
+            parameters.setOverrideFirewall(model.getOverrideIpTables().getEntity());
             parameters.setRebootAfterInstallation(isVirt);
             parameters.setAuthMethod(model.getAuthenticationMethod());
 
-            Provider networkProvider = (Provider) model.getNetworkProviders().getSelectedItem();
+            Provider networkProvider = model.getNetworkProviders().getSelectedItem();
             if (networkProvider != null) {
                 parameters.setProviderId(networkProvider.getId());
-                parameters.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
+                parameters.setNetworkMappings(model.getInterfaceMappings().getEntity());
             }
 
             Frontend.getInstance().runAction(VdcActionType.AddVds, parameters,
@@ -1121,7 +1121,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        boolean force = (Boolean) model.getForce().getEntity();
+        boolean force = model.getForce().getEntity();
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
@@ -1325,11 +1325,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         UpdateVdsActionParameters param = new UpdateVdsActionParameters();
         param.setvds(host);
         param.setVdsId(host.getId());
-        param.setPassword((String) model.getUserPassword().getEntity());
+        param.setPassword(model.getUserPassword().getEntity());
         param.setIsReinstallOrUpgrade(true);
         param.setInstallVds(true);
         param.setoVirtIsoFile(null);
-        param.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
+        param.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         param.setAuthMethod(model.getAuthenticationMethod());
 
         Provider networkProvider = (Provider) model.getNetworkProviders().getSelectedItem();
@@ -1446,11 +1446,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         UpdateVdsActionParameters param = new UpdateVdsActionParameters();
         param.setvds(host);
         param.setVdsId(host.getId());
-        param.setPassword((String) model.getUserPassword().getEntity());
+        param.setPassword(model.getUserPassword().getEntity());
         param.setIsReinstallOrUpgrade(true);
         param.setInstallVds(true);
-        param.setoVirtIsoFile(isOVirt ? ((RpmVersion) model.getOVirtISO().getSelectedItem()).getRpmName() : null);
-        param.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
+        param.setoVirtIsoFile(isOVirt ? model.getOVirtISO().getSelectedItem().getRpmName() : null);
+        param.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         param.setAuthMethod(model.getAuthenticationMethod());
 
         Provider networkProvider = (Provider) model.getNetworkProviders().getSelectedItem();
@@ -1981,7 +1981,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                                 updateConfigureLocalStorageCommandAvailability1();
                             } else {
                                 ArrayList<Permissions> permissions =
-                                        (ArrayList<Permissions>) response.getReturnValue();
+                                        response.getReturnValue();
                                 for (Permissions permission : permissions) {
 
                                     if (permission.getObjectType() == VdcObjectType.System

@@ -417,7 +417,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 model.getRetransmissions().setEntity(connection.getNfsRetrans());
                 model.getTimeout().setEntity(connection.getNfsTimeo());
 
-                for (Object item : model.getVersion().getItems()) {
+                for (EntityModel<NfsVersion> item : model.getVersion().getItems()) {
                     EntityModel itemModel = (EntityModel) item;
                     boolean noNfsVersion = itemModel.getEntity() == null && connection.getNfsVersion() == null;
                     boolean foundNfsVersion = itemModel.getEntity() != null &&
@@ -670,7 +670,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     public void storageNameValidation()
     {
         StorageModel model = (StorageModel) getWindow();
-        String name = (String) model.getName().getEntity();
+        String name = model.getName().getEntity();
         model.getName().setIsValid(true);
 
         AsyncDataProvider.isStorageDomainNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
@@ -680,7 +680,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 StorageListModel storageListModel = (StorageListModel) target;
                 StorageModel storageModel = (StorageModel) storageListModel.getWindow();
 
-                String name1 = (String) storageModel.getName().getEntity();
+                String name1 = storageModel.getName().getEntity();
                 String tempVar = storageModel.getOriginalName();
                 String originalName = (tempVar != null) ? tempVar : ""; //$NON-NLS-1$
                 boolean isNameUnique = (Boolean) returnValue;
@@ -1193,9 +1193,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         storageDomain = isNew ? new StorageDomainStatic() : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
         storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
         storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
-        storageDomain.setStorageName((String) model.getName().getEntity());
-        storageDomain.setDescription((String) model.getDescription().getEntity());
-        storageDomain.setComment((String) model.getComment().getEntity());
+        storageDomain.setStorageName(model.getName().getEntity());
+        storageDomain.setDescription(model.getDescription().getEntity());
+        storageDomain.setComment(model.getComment().getEntity());
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
         if (isNew) {
@@ -1282,7 +1282,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 // Attach storage to data center as necessary.
                 StorageModel storageModel = (StorageModel) storageListModel.getWindow();
-                StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
+                StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                     storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId());
                 }
@@ -1323,7 +1323,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         storageDomain = isNew ? new StorageDomainStatic() : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
         storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
         storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
-        storageDomain.setStorageName((String) model.getName().getEntity());
+        storageDomain.setStorageName(model.getName().getEntity());
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
         if (isNew) {
@@ -1394,7 +1394,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 // Attach storage to data center as necessary.
                 StorageModel storageModel = (StorageModel) storageListModel.getWindow();
-                StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
+                StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                     storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId());
                 }
@@ -1441,9 +1441,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
 
-        storageDomain.setStorageName((String) model.getName().getEntity());
-        storageDomain.setDescription((String) model.getDescription().getEntity());
-        storageDomain.setComment((String) model.getComment().getEntity());
+        storageDomain.setStorageName(model.getName().getEntity());
+        storageDomain.setDescription(model.getDescription().getEntity());
+        storageDomain.setComment(model.getComment().getEntity());
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
         if (isNew)
@@ -1588,7 +1588,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 StorageModel storageModel = (StorageModel) storageListModel.getWindow();
 
                 // Attach storage to data center as necessary.
-                StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
+                StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
                 {
                     storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId());
@@ -1645,7 +1645,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                             return;
                         }
 
-                        StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
+                        StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
                         if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                             VdcReturnValueBase returnValue = result.getReturnValue();
                             Guid storageId = (Guid) returnValue.getActionReturnValue();
@@ -1677,9 +1677,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
 
-        storageDomain.setStorageName((String) model.getName().getEntity());
-        storageDomain.setDescription((String) model.getDescription().getEntity());
-        storageDomain.setComment((String) model.getComment().getEntity());
+        storageDomain.setStorageName(model.getName().getEntity());
+        storageDomain.setDescription(model.getDescription().getEntity());
+        storageDomain.setComment(model.getComment().getEntity());
 
         if (isNew)
         {
@@ -1825,9 +1825,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 .getFormat()
                 .getSelectedItem() : storageDomain.getStorageFormat());
 
-        storageDomain.setStorageName((String) model.getName().getEntity());
-        storageDomain.setDescription((String) model.getDescription().getEntity());
-        storageDomain.setComment((String) model.getComment().getEntity());
+        storageDomain.setStorageName(model.getName().getEntity());
+        storageDomain.setDescription(model.getDescription().getEntity());
+        storageDomain.setComment(model.getComment().getEntity());
 
         if (isNew)
         {
@@ -2033,7 +2033,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 if (success) {
 
                     StorageModel model = (StorageModel) storageListModel.getWindow();
-                    StoragePool dataCenter = (StoragePool) model.getDataCenter().getSelectedItem();
+                    StoragePool dataCenter = model.getDataCenter().getSelectedItem();
                     if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                         storageListModel.attachStorageToDataCenter(sdToAdd1.getId(), dataCenter.getId());
                         onFinish(storageListModel.context, true, storageListModel.storageModel, null);

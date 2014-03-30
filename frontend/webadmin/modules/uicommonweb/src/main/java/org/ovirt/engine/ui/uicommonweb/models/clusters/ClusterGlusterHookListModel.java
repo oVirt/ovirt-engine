@@ -271,18 +271,18 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
                 List<GlusterServerHook> serverHooks = ((GlusterHookEntity) returnValue).getServerHooks();
                 hookEntity.setServerHooks(serverHooks);
 
-                ArrayList<EntityModel> serverHookModels = new ArrayList<EntityModel>();
+                ArrayList<EntityModel<GlusterServerHook>> serverHookModels = new ArrayList<EntityModel<GlusterServerHook>>();
                 GlusterServerHook engineCopy = new GlusterServerHook();
                 engineCopy.setHookId(hookEntity.getId());
                 engineCopy.setServerName("Engine (Master)"); //$NON-NLS-1$
                 engineCopy.setStatus(hookEntity.getStatus());
                 engineCopy.setContentType(hookEntity.getContentType());
                 engineCopy.setChecksum(hookEntity.getChecksum());
-                EntityModel engineCopyModel = new EntityModel(engineCopy);
+                EntityModel<GlusterServerHook> engineCopyModel = new EntityModel<GlusterServerHook>(engineCopy);
                 serverHookModels.add(engineCopyModel);
 
                 for (GlusterServerHook serverHook : serverHooks) {
-                    serverHookModels.add(new EntityModel(serverHook));
+                    serverHookModels.add(new EntityModel<GlusterServerHook>(serverHook));
                 }
 
                 innerConflictsModel.getHookSources().setItems(serverHookModels);

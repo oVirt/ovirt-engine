@@ -2,7 +2,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.NfsStorageView.WidgetStyle">
 		.content {
@@ -53,7 +54,7 @@
                         <g:Label ui:field="pathLabel" addStyleNames="{style.label}"/>
                     </td>
                     <td>
-                        <e:EntityModelTextBoxOnlyEditor ui:field="pathEditor"/>
+                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="pathEditor"/>
                     </td>
                 </tr>
                 <tr>
@@ -75,7 +76,7 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <e:EntityModelCheckBoxEditor ui:field="overrideEditor" addStyleNames="{style.label}"/>
+                            <ge:EntityModelCheckBoxEditor ui:field="overrideEditor" addStyleNames="{style.label}"/>
                         </td>
                     </tr>
                     <tr>
@@ -84,7 +85,7 @@
                         </td>
                         <td>
                             <e:ListModelListBoxOnlyEditor ui:field="versionEditor"/>
-                            <e:EntityModelTextBoxOnlyEditor ui:field="versionReadOnlyEditor"/>
+                            <ge:StringEntityModelTextBoxOnlyEditor ui:field="versionReadOnlyEditor"/>
                         </td>
                     </tr>
                     <tr>
@@ -92,7 +93,7 @@
                             <g:Label ui:field="retransmissionsLabel" addStyleNames="{style.label}"/>
                         </td>
                         <td>
-                            <e:EntityModelTextBoxOnlyEditor ui:field="retransmissionsEditor"/>
+                            <ge:ShortEntityModelTextBoxOnlyEditor ui:field="retransmissionsEditor"/>
                         </td>
                     </tr>
                     <tr>
@@ -100,7 +101,7 @@
                             <g:Label ui:field="timeoutLabel" addStyleNames="{style.label}"/>
                         </td>
                         <td>
-                            <e:EntityModelTextBoxOnlyEditor ui:field="timeoutEditor"/>
+                            <ge:ShortEntityModelTextBoxOnlyEditor ui:field="timeoutEditor"/>
                         </td>
                     </tr>
                 </table>
