@@ -82,6 +82,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
             setSucceeded(returnValueBase.getSucceeded());
             setFenceSucceeded(getSucceeded());
         } else {
+            super.handleError();
             setSucceeded(false);
         }
         if (!getSucceeded()) {
