@@ -169,4 +169,11 @@ public class Version implements Comparable<Version>, Serializable {
         return this.revision;
     }
 
+    public boolean isNotValid() {
+        return (major == -1 && minor == -1 && revision == -1 && build == -1);
+    }
+
+    public static Version getLast() {
+        return ALL.get(ALL.size() - 1);
+    }
 }
