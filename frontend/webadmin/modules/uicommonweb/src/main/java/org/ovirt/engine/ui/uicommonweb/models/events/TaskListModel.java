@@ -137,7 +137,7 @@ public class TaskListModel extends SearchableListModel {
                     } else {
                         id = task.getId().toString();
                     }
-                    boolean hadDetails = detailedTaskMap.containsKey(id);
+                    boolean hadDetails = detailedTaskMap.containsKey(id) && detailedTaskMap.get(id) != null;
                     if (hadDetails
                             && task.getLastUpdateTime().getTime()
                                     - detailedTaskMap.get(id).getLastUpdateTime().getTime() < 100) {
