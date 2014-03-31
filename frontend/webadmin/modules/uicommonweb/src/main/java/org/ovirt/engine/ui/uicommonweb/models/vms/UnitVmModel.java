@@ -45,7 +45,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
-import org.ovirt.engine.ui.uicommonweb.validation.ByteSizeValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
@@ -73,6 +72,7 @@ public class UnitVmModel extends Model {
     private boolean privateIsNew;
 
     private EntityModel<String> spiceProxy;
+
     public EntityModel<String> getSpiceProxy() {
         return spiceProxy;
     }
@@ -327,6 +327,19 @@ public class UnitVmModel extends Model {
         {
             isGeneralTabValid = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
+        }
+    }
+
+    private boolean isSystemTabValid;
+
+    public boolean getIsSystemTabValid() {
+        return isSystemTabValid;
+    }
+
+    public void setIsSystemTabValid(boolean value) {
+        if (isSystemTabValid != value) {
+            isSystemTabValid = value;
+            onPropertyChanged(new PropertyChangedEventArgs("IsSystemTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -1178,42 +1191,6 @@ public class UnitVmModel extends Model {
     private void setBehavior(VmModelBehaviorBase value) {
     }
 
-    private int _minMemSize = 1;
-
-    public int get_MinMemSize()
-    {
-        return _minMemSize;
-    }
-
-    public void set_MinMemSize(int value)
-    {
-        _minMemSize = value;
-    }
-
-    private int _maxMemSize32 = 20480;
-
-    public int get_MaxMemSize32()
-    {
-        return _maxMemSize32;
-    }
-
-    public void set_MaxMemSize32(int value)
-    {
-        _maxMemSize32 = value;
-    }
-
-    private int _maxMemSize64 = 2097152;
-
-    public int get_MaxMemSize64()
-    {
-        return _maxMemSize64;
-    }
-
-    public void set_MaxMemSize64(int value)
-    {
-        _maxMemSize64 = value;
-    }
-
     private NotChangableForVmInPoolEntityModel<String> cpuPinning;
 
     public EntityModel<String> getCpuPinning() {
@@ -1534,8 +1511,6 @@ public class UnitVmModel extends Model {
         initFirstBootDevice();
         initNumOfMonitors();
         initAllowConsoleReconnect();
-        initMinimalVmMemSize();
-        initMaximalVmMemSize32OS();
         initMigrationMode();
         initVncKeyboardLayout();
 
@@ -1725,7 +1700,8 @@ public class UnitVmModel extends Model {
                                                                      }
 
                                                                  }
-                                                             }, getHash()));
+                                                             }, getHash()
+        ));
 
     }
 
@@ -1780,34 +1756,6 @@ public class UnitVmModel extends Model {
         getUsbPolicy().setSelectedItem(UsbPolicy.DISABLED);
     }
 
-    private void initMinimalVmMemSize()
-    {
-        AsyncDataProvider.getMinimalVmMemSize(new AsyncQuery(this,
-                                                             new INewAsyncCallback() {
-                                                                 @Override
-                                                                 public void onSuccess(Object target, Object returnValue) {
-
-                                                                     UnitVmModel vmModel = (UnitVmModel) target;
-                                                                     vmModel.set_MinMemSize((Integer) returnValue);
-
-                                                                 }
-                                                             }, getHash()));
-    }
-
-    private void initMaximalVmMemSize32OS()
-    {
-        AsyncDataProvider.getMaximalVmMemSize32OS(new AsyncQuery(this,
-                                                                 new INewAsyncCallback() {
-                                                                     @Override
-                                                                     public void onSuccess(Object target, Object returnValue) {
-
-                                                                         UnitVmModel vmModel = (UnitVmModel) target;
-                                                                         vmModel.set_MaxMemSize32((Integer) returnValue);
-
-                                                                     }
-                                                                 }, getHash()));
-    }
-
     private void updateMigrationOptions()
     {
         DataCenterWithCluster dataCenterWithCluster =
@@ -1820,36 +1768,12 @@ public class UnitVmModel extends Model {
 
         Boolean isMigrationSupported =
                 AsyncDataProvider.isMigrationSupported(cluster.getArchitecture(),
-                        cluster.getcompatibility_version());
+                                                       cluster.getcompatibility_version());
 
         if (isMigrationSupported) {
             getMigrationMode().setItems(Arrays.asList(MigrationSupport.values()));
         } else {
             getMigrationMode().setItems(Arrays.asList(MigrationSupport.PINNED_TO_HOST));
-        }
-    }
-
-    private void updateMaximalVmMemSize()
-    {
-        DataCenterWithCluster dataCenterWithCluster = getDataCenterWithClustersList().getSelectedItem();
-        if (dataCenterWithCluster == null) {
-            return;
-        }
-
-        VDSGroup cluster = dataCenterWithCluster.getCluster();
-
-        if (cluster != null)
-        {
-            AsyncDataProvider.getMaximalVmMemSize64OS(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-
-                            UnitVmModel vmModel = (UnitVmModel) target;
-                            vmModel.set_MaxMemSize64((Integer) returnValue);
-
-                        }
-                    }, getHash()), cluster.getcompatibility_version().toString());
         }
     }
 
@@ -1943,7 +1867,6 @@ public class UnitVmModel extends Model {
         }
 
         updateMigrationOptions();
-        updateMaximalVmMemSize();
         handleQxlClusterLevel();
 
         updateWatchdogModels();
@@ -2000,7 +1923,6 @@ public class UnitVmModel extends Model {
         updateWatchdogModels(osType);
 
         vmInitEnabledChanged();
-
     }
 
     private void updateWatchdogModels() {
@@ -2366,8 +2288,7 @@ public class UnitVmModel extends Model {
 
     public boolean validate() {
         getDataCenterWithClustersList().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-        getMemSize().validateEntity(new IValidation[] { new ByteSizeValidation() });
-        getMinAllocatedMemory().validateEntity(new IValidation[] { new ByteSizeValidation() });
+        setIsSystemTabValid(true);
         getOSType().validateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
         DataCenterWithCluster dataCenterWithCluster = getDataCenterWithClustersList().getSelectedItem();
@@ -2402,21 +2323,10 @@ public class UnitVmModel extends Model {
                             new SpecialAsciiI18NOrNoneValidation()
                     });
 
-            AsyncQuery asyncQuery = new AsyncQuery();
-            asyncQuery.setModel(this);
-            asyncQuery.asyncCallback = new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    validateMemorySize(getMemSize(), (Integer)((VdcQueryReturnValue)returnValue).getReturnValue(), _minMemSize);
-                    if (!(((UnitVmModel)model).getBehavior() instanceof TemplateVmModelBehavior)) {
-                        // Minimum 'Physical Memory Guaranteed' is 1MB
-                        validateMemorySize(getMinAllocatedMemory(), getMemSize().getEntity(), 1);
-                    }
-                }
-            };
-
-            if (getSelectedCluster() != null) {
-                AsyncDataProvider.getOsMaxRam(osType, getSelectedCluster().getcompatibility_version(), asyncQuery);
+            // Minimum 'Physical Memory Guaranteed' is 1MB
+            validateMemorySize(getMemSize(), Integer.MAX_VALUE, 1);
+            if (!(getBehavior() instanceof TemplateVmModelBehavior) && getMemSize().getIsValid()) {
+                validateMemorySize(getMinAllocatedMemory(), getMemSize().getEntity(), 1);
             }
 
             getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
@@ -2485,7 +2395,7 @@ public class UnitVmModel extends Model {
         boolean behaviorValid = behavior.validate();
         setIsGeneralTabValid(getName().getIsValid() && getDescription().getIsValid() && getComment().getIsValid()
                 && getDataCenterWithClustersList().getIsValid()
-                && getTemplate().getIsValid() && getMemSize().getIsValid()
+                && getTemplate().getIsValid()
                 && getMinAllocatedMemory().getIsValid());
 
         setIsFirstRunTabValid(getDomain().getIsValid() && getTimeZone().getIsValid());
@@ -2496,9 +2406,13 @@ public class UnitVmModel extends Model {
         setIsBootSequenceTabValid(getCdImage().getIsValid() && getKernel_path().getIsValid());
         setIsCustomPropertiesTabValid(customPropertySheetValid);
 
+        setIsSystemTabValid(getMemSize().getIsValid() &&
+                            getTotalCPUCores().getIsValid() &&
+                            getSerialNumberPolicy().getCustomSerialNumber().getIsValid());
+
         return getName().getIsValid() && getDescription().getIsValid() && getDataCenterWithClustersList().getIsValid()
                 && getDisksAllocationModel().getIsValid() && getTemplate().getIsValid() && getComment().getIsValid()
-                && getDefaultHost().getIsValid() && getMemSize().getIsValid() && getMinAllocatedMemory().getIsValid()
+                && getDefaultHost().getIsValid() && getMinAllocatedMemory().getIsValid()
                 && getNumOfMonitors().getIsValid() && getDomain().getIsValid() && getUsbPolicy().getIsValid()
                 && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid()
                 && getKernel_path().getIsValid()
@@ -2508,7 +2422,7 @@ public class UnitVmModel extends Model {
                 && behaviorValid
                 && customPropertySheetValid && getQuota().getIsValid()
                 && getMigrationDowntime().getIsValid()
-                && getSerialNumberPolicy().getCustomSerialNumber().getIsValid();
+                && getIsSystemTabValid();
 
     }
 
@@ -2539,11 +2453,11 @@ public class UnitVmModel extends Model {
 
     }
 
-    private void validateMemorySize(EntityModel model, int maxMemSize, int minMemSize)
+    private void validateMemorySize(EntityModel<Integer> model, int maxMemSize, int minMemSize)
     {
         boolean isValid = false;
 
-        int memSize = (Integer) model.getEntity();
+        int memSize = model.getEntity();
 
         if (memSize == 0)
         {

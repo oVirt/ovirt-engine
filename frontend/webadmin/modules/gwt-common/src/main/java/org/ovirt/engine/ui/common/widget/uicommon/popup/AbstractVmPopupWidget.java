@@ -1358,6 +1358,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                     } else {
                         generalTab.markAsInvalid(null);
                     }
+                } else if ("IsSystemTabValid".equals(propName)) {  //$NON-NLS-1$
+                    if (vm.getIsSystemTabValid()) {
+                        systemTab.markAsValid();
+                    } else {
+                        systemTab.markAsInvalid(null);
+                    }
                 } else if ("IsDisplayTabValid".equals(propName)) { //$NON-NLS-1$
                     if (vm.getIsDisplayTabValid()) {
                         consoleTab.markAsValid();
