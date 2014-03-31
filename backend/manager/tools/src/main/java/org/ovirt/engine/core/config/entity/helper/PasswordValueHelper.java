@@ -122,7 +122,7 @@ public class PasswordValueHelper implements ValueHelper {
             }
         }
         return new ValidationResult(false,
-                String.format("It appears you tried to change a password for %1$s in a wrong way."
+                String.format("It appears you tried to change a password for %1$s in a wrong way. "
                         +
                         "You should use interactive mode or provide a file cotaining the password. Run the utility with --help for more information.",
                         key.getKey()));
