@@ -28,6 +28,7 @@ public enum AuditLogType {
     VDS_MANUAL_FENCE_FAILED_CALL_FENCE_SPM(530),
     VDS_LOW_MEM(531, AuditLogTimeInterval.MINUTE.getValue() * 30),
     VDS_HIGH_MEM_USE(532, AuditLogTimeInterval.MINUTE.getValue() * 30),
+    @Deprecated
     VDS_HIGH_NETWORK_USE(533, AuditLogTimeInterval.MINUTE.getValue() * 30),
     VDS_HIGH_CPU_USE(534, AuditLogTimeInterval.MINUTE.getValue() * 30),
     VDS_HIGH_SWAP_USE(535, AuditLogTimeInterval.MINUTE.getValue() * 30),
@@ -83,6 +84,8 @@ public enum AuditLogType {
 
     HOST_REFRESHED_CAPABILITIES(606),
     HOST_REFRESH_CAPABILITIES_FAILED(607),
+
+    HOST_INTERFACE_HIGH_NETWORK_USE(608, AuditLogTimeInterval.MINUTE.getValue() * 30),
 
     // Disk alignment audit logs
     DISK_ALIGNMENT_SCAN_START(700),

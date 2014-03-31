@@ -312,6 +312,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.VDS_ACTIVATE_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.HOST_REFRESHED_CAPABILITIES, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.HOST_REFRESH_CAPABILITIES_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.HOST_INTERFACE_HIGH_NETWORK_USE, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.USER_UPDATE_VDS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_UPDATE_VDS, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_REMOVE_VDS, AuditLogSeverity.NORMAL);
