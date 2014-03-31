@@ -3,12 +3,16 @@ package org.ovirt.engine.core.bll.validator;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -180,6 +184,50 @@ public class DiskImagesValidator {
         }
 
         return ValidationResult.VALID;
+    }
+
+    /**
+     * Checks that each of the disks has at least one domain in valid status in the given map
+     * @param validDomainsForDisk Map containing valid domains for each disk
+     * @param storageDomains Map containing the storage domain objects
+     * @param message Validation message to use in case of error
+     * @param applicableStatuses Applicable domain statuses to use as replacement in the given message
+     * @return A {@link ValidationResult} with the validation information.
+     */
+    public ValidationResult diskImagesOnAnyApplicableDomains(Map<Guid, Set<Guid>> validDomainsForDisk,
+            Map<Guid, StorageDomain> storageDomains,
+            VdcBllMessages message,
+            Set<StorageDomainStatus> applicableStatuses) {
+
+        StringBuilder disksInfo = new StringBuilder();
+        for (DiskImage diskImage : diskImages) {
+            Set<Guid> applicableDomains = validDomainsForDisk.get(diskImage.getId());
+            if (!applicableDomains.isEmpty()) {
+                continue;
+            }
+
+            List<String> nonApplicableStorageInfo = new LinkedList<>();
+            for (Guid id : diskImage.getStorageIds()) {
+                StorageDomain domain = storageDomains.get(id);
+                nonApplicableStorageInfo.add(String.format("%s - %s", domain.getName(), domain.getStatus()
+                        .toString()));
+            }
+
+            disksInfo.append(String.format("%s (%s) %n",
+                    diskImage.getDiskAlias(),
+                    StringUtils.join(nonApplicableStorageInfo, " / ")));
+        }
+
+        ValidationResult result = ValidationResult.VALID;
+
+        if (disksInfo.length() > 0) {
+            result = new ValidationResult(message,
+                    String.format("$disksInfo %s",
+                            disksInfo.toString()),
+                            String.format("$applicableStatus %s", StringUtils.join(applicableStatuses, ",")));
+        }
+
+        return result;
     }
 
     private DbFacade getDbFacade() {

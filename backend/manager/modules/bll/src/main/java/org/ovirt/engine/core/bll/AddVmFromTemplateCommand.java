@@ -1,26 +1,36 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> extends AddVmCommand<T> {
+    private Map<Guid, Guid> diskInfoSourceMap;
+    private Map<Guid, Set<Guid>> validDisksDomains;
 
     public AddVmFromTemplateCommand(T parameters) {
         super(parameters);
@@ -100,8 +110,8 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         DiskImageBase diskInfo = getParameters().getDiskInfoDestinationMap().get(disk.getId());
         CreateCloneOfTemplateParameters params = new CreateCloneOfTemplateParameters(disk.getImageId(),
                 getParameters().getVmStaticData().getId(), diskInfo);
-        params.setStorageDomainId(disk.getStorageIds().get(0));
-        params.setDestStorageDomainId(diskInfoDestinationMap.get(disk.getId()).getStorageIds().get(0));
+        params.setStorageDomainId(diskInfoSourceMap.get(disk.getId()));
+        params.setDestStorageDomainId(retrieveDestinationDomainForDisk(disk.getId()));
         params.setDiskAlias(diskInfoDestinationMap.get(disk.getId()).getDiskAlias());
         params.setVmSnapshotId(getVmSnapshotId());
         params.setParentCommand(VdcActionType.AddVmFromTemplate);
@@ -142,6 +152,43 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
             actualSize += disk.getActualSize();
         }
         return (int) actualSize;
+    }
+
+    @Override
+    protected boolean verifySourceDomains() {
+        Map<Guid, StorageDomain> poolDomainsMap = Entities.businessEntitiesById(getPoolDomains());
+        EnumSet<StorageDomainStatus> validDomainStatuses = EnumSet.of(StorageDomainStatus.Active);
+        validDisksDomains =
+                ImagesHandler.findDomainsInApplicableStatusForDisks(getImagesToCheckDestinationStorageDomains(),
+                        poolDomainsMap,
+                        validDomainStatuses);
+        return validate(new DiskImagesValidator(getImagesToCheckDestinationStorageDomains()).diskImagesOnAnyApplicableDomains(
+                validDisksDomains, poolDomainsMap,
+                VdcBllMessages.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS, validDomainStatuses));
+
+    }
+
+    @Override
+    protected void chooseDisksSourceDomains() {
+        diskInfoSourceMap = new HashMap<>();
+        for (DiskImage disk : getImagesToCheckDestinationStorageDomains()) {
+            Guid diskId = disk.getId();
+            Set<Guid> validDomainsForDisk = validDisksDomains.get(diskId);
+            Guid destinationDomain = retrieveDestinationDomainForDisk(diskId);
+
+            // if the destination domain is one of the valid source domains, we can
+            // choose the same domain as the source domain for
+            // possibly faster operation, otherwise we'll choose random valid domain as the source.
+            if (validDomainsForDisk.contains(destinationDomain)) {
+                diskInfoSourceMap.put(diskId, destinationDomain);
+            } else {
+                diskInfoSourceMap.put(diskId, validDomainsForDisk.iterator().next());
+            }
+        }
+    }
+
+    private Guid retrieveDestinationDomainForDisk(Guid id) {
+        return diskInfoDestinationMap.get(id).getStorageIds().get(0);
     }
 
     @Override
