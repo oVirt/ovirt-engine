@@ -818,7 +818,7 @@ public class VmInitModel extends Model {
             VmInitNetwork obj = networkMap.get(lastSelectedNetworkName);
             if (obj != null) {
                 obj.setBootProtocol((getNetworkDhcp().getEntity() != null && (Boolean) getNetworkDhcp().getEntity())
-                                    ? NetworkBootProtocol.DHCP : NetworkBootProtocol.NONE);
+                                    ? NetworkBootProtocol.DHCP : NetworkBootProtocol.STATIC_IP);
                 obj.setIp((String) getNetworkIpAddress().getEntity());
                 obj.setNetmask((String) getNetworkNetmask().getEntity());
                 obj.setGateway((String) getNetworkGateway().getEntity());
