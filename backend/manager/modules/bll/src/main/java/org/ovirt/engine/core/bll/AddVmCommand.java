@@ -101,8 +101,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected Guid imageTypeId;
     protected ImageType imageType;
     private Guid vmInterfacesSourceId;
-    private VmTemplate vmDisksSource;
+    protected VmTemplate vmDisksSource;
     private Guid vmDevicesSourceId;
+    private List<StorageDomain> poolDomains;
 
     private Map<Guid, Guid> srcDiskIdToTargetDiskIdMapping = new HashMap<>();
     private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
@@ -424,9 +425,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
         }
 
-        if (!buildAndCheckDestStorageDomains()) {
+        if (verifySourceDomains() && buildAndCheckDestStorageDomains()) {
+            chooseDisksSourceDomains();
+        } else {
             return false;
         }
+
         // otherwise..
         storageToDisksMap =
                 ImagesHandler.buildStorageToDiskMap(getImagesToCheckDestinationStorageDomains(),
@@ -581,6 +585,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return retValue && validateIsImagesOnDomains();
     }
 
+    protected boolean verifySourceDomains() {
+        return true;
+    }
+
+    protected void chooseDisksSourceDomains() {}
+
     protected Collection<DiskImage> getImagesToCheckDestinationStorageDomains() {
         return vmDisksSource.getDiskTemplateMap().values();
     }
@@ -619,9 +629,16 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return true;
     }
 
+    protected List<StorageDomain> getPoolDomains() {
+        if (poolDomains == null) {
+            poolDomains = getStorageDomainDAO().getAllForStoragePool(vmDisksSource.getStoragePoolId());
+        }
+        return poolDomains;
+    }
+
     protected void fillImagesMapBasedOnTemplate() {
         ImagesHandler.fillImagesMapBasedOnTemplate(vmDisksSource,
-                getStorageDomainDAO().getAllForStoragePool(vmDisksSource.getStoragePoolId()),
+                getPoolDomains(),
                 diskInfoDestinationMap,
                 destStorages, false);
     }

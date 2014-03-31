@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -459,6 +460,24 @@ public final class ImagesHandler {
                 break;
         }
         return result;
+    }
+
+
+    public static Map<Guid, Set<Guid>> findDomainsInApplicableStatusForDisks(Iterable<DiskImage> diskImages,
+            Map<Guid, StorageDomain> storageDomains,
+            Set<StorageDomainStatus> applicableStatuses) {
+        Map<Guid, Set<Guid>> disksApplicableDomainsMap = new HashMap<>();
+        for (DiskImage diskImage : diskImages) {
+            Set<Guid> diskApplicableDomain = new HashSet<>();
+            for (Guid storageDomainID : diskImage.getStorageIds()) {
+                StorageDomain domain = storageDomains.get(storageDomainID);
+                if (applicableStatuses.contains(domain.getStatus())) {
+                    diskApplicableDomain.add(domain.getId());
+                }
+            }
+            disksApplicableDomainsMap.put(diskImage.getId(), diskApplicableDomain);
+        }
+        return disksApplicableDomainsMap;
     }
 
     /**

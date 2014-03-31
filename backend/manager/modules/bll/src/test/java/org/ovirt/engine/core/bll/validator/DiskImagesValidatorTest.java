@@ -18,7 +18,11 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.repla
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -30,6 +34,8 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -83,7 +89,9 @@ public class DiskImagesValidatorTest {
         disk.setDiskAlias(RandomUtils.instance().nextString(10));
         disk.setActive(true);
         disk.setImageStatus(ImageStatus.OK);
-
+        ArrayList<Guid> storageDomainIds = new ArrayList<>();
+        storageDomainIds.add(Guid.newGuid());
+        disk.setStorageIds(storageDomainIds);
         return disk;
     }
 
@@ -278,6 +286,61 @@ public class DiskImagesValidatorTest {
         assertThat(validator.diskImagesSnapshotsNotAttachedToOtherVms(false), isValid());
         verify(snapshotDao, never()).get(createdDevices.get(1).getSnapshotId());
         verify(snapshotDao, never()).get(createdDevices.get(0).getSnapshotId());
+    }
+
+    private Map<Guid, Set<Guid>> createDiskValidDomainsMap(DiskImage... diskImages) {
+        Map<Guid, Set<Guid>> toReturn = new HashMap<>();
+        for (DiskImage diskImage : diskImages) {
+            toReturn.put(diskImage.getId(), Collections.singleton(diskImage.getStorageIds().get(0)));
+        }
+
+        return toReturn;
+    }
+
+    private Map<Guid, StorageDomain> createStorageDomainsMap(DiskImage... diskImages) {
+        Map<Guid, StorageDomain> toReturn = new HashMap<>();
+        for (DiskImage diskImage : diskImages) {
+            Guid id = diskImage.getStorageIds().get(0);
+            StorageDomain domain = new StorageDomain();
+            domain.setId(id);
+            domain.setStatus(StorageDomainStatus.Active);
+            toReturn.put(id, domain);
+        }
+
+        return toReturn;
+    }
+
+    @Test
+    public void diskImagesOnAnyApplicableDomainsValidDomains() {
+        Map<Guid, Set<Guid>> validDomainsForDisk = createDiskValidDomainsMap(disk1, disk2);
+        Map<Guid, StorageDomain> storageDomainMap = createStorageDomainsMap(disk1, disk2);
+        assertThat(validator.diskImagesOnAnyApplicableDomains(validDomainsForDisk,
+                storageDomainMap,
+                VdcBllMessages.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS,
+                EnumSet.of(StorageDomainStatus.Active)), isValid());
+    }
+
+    @Test
+    public void diskImagesOnAnyApplicableDomainsNoValidDomainsForAllDisks() {
+        Map<Guid, Set<Guid>> validDomainsForDisk = new HashMap<>();
+        validDomainsForDisk.put(disk1.getId(), Collections.<Guid>emptySet());
+        validDomainsForDisk.put(disk2.getId(), Collections.<Guid>emptySet());
+        Map<Guid, StorageDomain> storageDomainMap = createStorageDomainsMap(disk1, disk2);
+        assertThat(validator.diskImagesOnAnyApplicableDomains(validDomainsForDisk,
+                storageDomainMap,
+                VdcBllMessages.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS,
+                EnumSet.of(StorageDomainStatus.Active)), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS));
+    }
+
+    @Test
+    public void diskImagesOnAnyApplicableDomainsNoValidDomainsForOneDisk() {
+        Map<Guid, Set<Guid>> validDomainsForDisk = createDiskValidDomainsMap(disk1);
+        validDomainsForDisk.put(disk2.getId(), Collections.<Guid>emptySet());
+        Map<Guid, StorageDomain> storageDomainMap = createStorageDomainsMap(disk1, disk2);
+        assertThat(validator.diskImagesOnAnyApplicableDomains(validDomainsForDisk,
+                storageDomainMap,
+                VdcBllMessages.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS,
+                EnumSet.of(StorageDomainStatus.Active)), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS));
     }
 
     private VmDevice createVmDeviceForDisk(DiskImage disk) {

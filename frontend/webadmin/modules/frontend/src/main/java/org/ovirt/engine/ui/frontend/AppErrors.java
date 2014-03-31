@@ -1804,6 +1804,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Template ${TemplateName} is being exported.")
     String ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_EXPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Can't find Domain(s) in ${applicableStatus} status for some of the Template disks.\n" +
+            "Please make sure that there is at least one Storage Domain in applicable status for each one of the disks :\n" +
+            "${disksInfo}")
+    String ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS();
+
     @DefaultStringValue("Cannot ${action} ${type}. VM ${VmName} is being imported.")
     String ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED();
 
