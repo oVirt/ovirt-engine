@@ -13,8 +13,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
+import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
@@ -55,7 +54,7 @@ public final class AsyncTaskManager {
     private static final Log log = LogFactory.getLog(AsyncTaskManager.class);
 
     /** Map which consist all tasks that currently are monitored **/
-    private ConcurrentMap<Guid, SPMAsyncTask> _tasks;
+    private ConcurrentMap<Guid, SPMTask> _tasks;
 
     /** Indication if _tasks has changed for logging process. **/
     private boolean logChangedMap = true;
@@ -94,7 +93,7 @@ public final class AsyncTaskManager {
 
     private AsyncTaskManager(CommandCoordinator coco) {
         this.coco = coco;
-        _tasks = new ConcurrentHashMap<Guid, SPMAsyncTask>();
+        _tasks = new ConcurrentHashMap<Guid, SPMTask>();
 
         SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
         scheduler.scheduleAFixedDelayJob(this, "_timer_Elapsed", new Class[]{},
@@ -174,7 +173,7 @@ public final class AsyncTaskManager {
      * @return - true for uncached object , and false when the object should be
      * cached.
      */
-    public synchronized boolean cachingOver(SPMAsyncTask task) {
+    public synchronized boolean cachingOver(SPMTask task) {
         // Get time in milliseconds that the task should be cached
         long SubtractMinutesAsMills = TimeUnit.MINUTES
                 .toMillis(_cacheTimeInMinutes);
@@ -190,7 +189,7 @@ public final class AsyncTaskManager {
     public synchronized boolean hasTasksByStoragePoolId(Guid storagePoolID) {
         boolean retVal = false;
         if (_tasks != null) {
-            for (SPMAsyncTask task : _tasks.values()) {
+            for (SPMTask task : _tasks.values()) {
                 if (task.getStoragePoolID().equals(storagePoolID)) {
                     retVal = true;
                     break;
@@ -202,7 +201,7 @@ public final class AsyncTaskManager {
 
     public synchronized boolean hasTasksForEntityIdAndAction(Guid id, VdcActionType type) {
         if (_tasks != null) {
-            for (SPMAsyncTask task : _tasks.values()) {
+            for (SPMTask task : _tasks.values()) {
                 if (isCurrentTaskLookedFor(id, task)
                         && type.equals(task.getParameters().getDbAsyncTask().getaction_type())) {
                     return true;
@@ -344,14 +343,14 @@ public final class AsyncTaskManager {
                     task.getTaskId(),
                     (task.getaction_type()));
         AsyncTaskCreationInfo creationInfo = new AsyncTaskCreationInfo(Guid.Empty, task.getTaskType(), task.getStoragePoolId());
-        SPMAsyncTask spmTask = AsyncTaskFactory.construct(coco, creationInfo, task);
+        SPMTask spmTask = coco.construct(creationInfo, task);
         AsyncTaskStatus failureStatus = new AsyncTaskStatus();
         failureStatus.setStatus(AsyncTaskStatusEnum.finished);
         failureStatus.setResult(AsyncTaskResultEnum.failure);
         failureStatus.setMessage(message);
         spmTask.setState(AsyncTaskState.Ended);
         spmTask.setLastTaskStatus(failureStatus);
-        spmTask.UpdateTask(failureStatus);
+        spmTask.updateTask(failureStatus);
     }
 
     private static VdcActionType getEndActionType(AsyncTasks dbAsyncTask) {
@@ -374,7 +373,7 @@ public final class AsyncTaskManager {
         }
     }
 
-    private boolean isCurrentTaskLookedFor(Guid id, SPMAsyncTask task) {
+    private boolean isCurrentTaskLookedFor(Guid id, SPMTask task) {
         return (task instanceof CommandAsyncTask) && id.equals(task.getParameters().getEntityInfo().getId())
                 && (task.getState() != AsyncTaskState.Cleared)
                 && (task.getState() != AsyncTaskState.ClearFailed);
@@ -383,7 +382,7 @@ public final class AsyncTaskManager {
     private void cleanZombieTasks() {
         long maxTime = DateTime.getNow()
                 .addMinutes((-1) * Config.<Integer>getValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes)).getTime();
-        for (SPMAsyncTask task : _tasks.values()) {
+        for (SPMTask task : _tasks.values()) {
 
             if (task.getParameters().getDbAsyncTask().getStartTime().getTime() < maxTime) {
                 AuditLogableBase logable = new AuditLogableBase();
@@ -416,7 +415,7 @@ public final class AsyncTaskManager {
 
     private int numberOfTasksToPoll() {
         int retValue = 0;
-        for (SPMAsyncTask task : _tasks.values()) {
+        for (SPMTask task : _tasks.values()) {
             if (task.getShouldPoll()) {
                 retValue++;
             }
@@ -426,7 +425,7 @@ public final class AsyncTaskManager {
     }
 
     private boolean thereAreTasksToPoll() {
-        for (SPMAsyncTask task : _tasks.values()) {
+        for (SPMTask task : _tasks.values()) {
             if (task.getShouldPoll()) {
                 return true;
             }
@@ -461,7 +460,7 @@ public final class AsyncTaskManager {
      */
     private void updateTaskStatuses(
                                     Map<Guid, Map<Guid, AsyncTaskStatus>> poolsAllTasksMap) {
-        for (SPMAsyncTask task : _tasks.values()) {
+        for (SPMTask task : _tasks.values()) {
             if (task.getShouldPoll()) {
                 Map<Guid, AsyncTaskStatus> asyncTasksForPoolMap = poolsAllTasksMap
                         .get(task.getStoragePoolID());
@@ -472,7 +471,7 @@ public final class AsyncTaskManager {
                             .get(task.getVdsmTaskId());
 
                     // task found in VDSM.
-                    task.UpdateTask(cachedAsyncTaskStatus);
+                    task.updateTask(cachedAsyncTaskStatus);
                 }
             }
         }
@@ -495,10 +494,7 @@ public final class AsyncTaskManager {
         // For each pool Id (SPM) ,add its tasks to the map.
         for (Guid storagePoolID : poolsOfActiveTasks) {
             try {
-                Map<Guid, AsyncTaskStatus> map =
-                        (Map<Guid, AsyncTaskStatus>) Backend.getInstance().getResourceManager().RunVdsCommand(
-                                VDSCommandType.SPMGetAllTasksStatuses,
-                                new IrsBaseVDSCommandParameters(storagePoolID)).getReturnValue();
+                Map<Guid, AsyncTaskStatus> map = coco.getAllTasksStatuses(storagePoolID);
                 if (map != null) {
                     poolsAsyncTaskMap.put(storagePoolID, map);
                 }
@@ -528,7 +524,7 @@ public final class AsyncTaskManager {
     private Set<Guid> getPoolIdsTasks() {
         Set<Guid> poolsOfActiveTasks = new HashSet<Guid>();
 
-        for (SPMAsyncTask task : _tasks.values()) {
+        for (SPMTask task : _tasks.values()) {
             if (task.getShouldPoll()) {
                 poolsOfActiveTasks.add(task.getStoragePoolID());
             }
@@ -545,8 +541,8 @@ public final class AsyncTaskManager {
     synchronized private void removeClearedAndOldTasks() {
         Set<Guid> poolsOfActiveTasks = new HashSet<Guid>();
         Set<Guid> poolsOfClearedAndOldTasks = new HashSet<Guid>();
-        ConcurrentMap<Guid, SPMAsyncTask> activeTaskMap = new ConcurrentHashMap<Guid, SPMAsyncTask>();
-        for (SPMAsyncTask task : _tasks.values()) {
+        ConcurrentMap<Guid, SPMTask> activeTaskMap = new ConcurrentHashMap<>();
+        for (SPMTask task : _tasks.values()) {
             if (!cachingOver(task)) {
                 activeTaskMap.put(task.getVdsmTaskId(), task);
                 poolsOfActiveTasks.add(task.getStoragePoolID());
@@ -566,11 +562,11 @@ public final class AsyncTaskManager {
         }
     }
 
-    public synchronized void lockAndAddTaskToManager(SPMAsyncTask task) {
+    public synchronized void lockAndAddTaskToManager(SPMTask task) {
         addTaskToManager(task);
     }
 
-    private void addTaskToManager(SPMAsyncTask task) {
+    private void addTaskToManager(SPMTask task) {
         if (task == null) {
             log.error("Cannot add a null task.");
         } else {
@@ -587,7 +583,7 @@ public final class AsyncTaskManager {
                 // quartz execution.
                 addTaskToMap(task.getVdsmTaskId(), task);
             } else {
-                SPMAsyncTask existingTask = _tasks.get(task.getVdsmTaskId());
+                SPMTask existingTask = _tasks.get(task.getVdsmTaskId());
                 if (existingTask.getParameters().getDbAsyncTask().getaction_type() == VdcActionType.Unknown
                         && task.getParameters().getDbAsyncTask().getaction_type() != VdcActionType.Unknown) {
                     log.infoFormat(
@@ -610,7 +606,7 @@ public final class AsyncTaskManager {
      * @param guid - Key of the map.
      * @param asyncTask - Value of the map.
      */
-    private void addTaskToMap(Guid guid, SPMAsyncTask asyncTask) {
+    private void addTaskToMap(Guid guid, SPMTask asyncTask) {
         _tasks.put(guid, asyncTask);
         logChangedMap = true;
     }
@@ -621,7 +617,7 @@ public final class AsyncTaskManager {
      *
      * @param asyncTaskMap - Map to copy to _tasks map.
      */
-    private void setNewMap(ConcurrentMap<Guid, SPMAsyncTask> asyncTaskMap) {
+    private void setNewMap(ConcurrentMap<Guid, SPMTask> asyncTaskMap) {
         // If not the same set _tasks to be as asyncTaskMap.
         _tasks = asyncTaskMap;
 
@@ -632,13 +628,13 @@ public final class AsyncTaskManager {
         log.infoFormat("Setting new tasks map. The map contains now {0} tasks", _tasks.size());
     }
 
-    public SPMAsyncTask createTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
-        return AsyncTaskFactory.construct(coco, taskType, taskParameters, false);
+    public SPMTask createTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
+        return coco.construct(taskType, taskParameters, false);
     }
 
     public synchronized void startPollingTask(Guid vdsmTaskId) {
         if (_tasks.containsKey(vdsmTaskId)) {
-            _tasks.get(vdsmTaskId).StartPollingTask();
+            _tasks.get(vdsmTaskId).startPollingTask();
         }
     }
 
@@ -677,9 +673,7 @@ public final class AsyncTaskManager {
     public void addStoragePoolExistingTasks(StoragePool sp) {
         List<AsyncTaskCreationInfo> currPoolTasks = null;
         try {
-            currPoolTasks = (ArrayList<AsyncTaskCreationInfo>) Backend.getInstance().getResourceManager()
-                    .RunVdsCommand(VDSCommandType.SPMGetAllTasksInfo, new IrsBaseVDSCommandParameters(sp.getId()))
-                    .getReturnValue();
+            currPoolTasks = coco.getAllTasksInfo(sp.getId());
         } catch (RuntimeException e) {
             log.error(
                     String.format(
@@ -690,16 +684,16 @@ public final class AsyncTaskManager {
 
         if (currPoolTasks != null && currPoolTasks.size() > 0) {
             synchronized (this) {
-                final List<SPMAsyncTask> newlyAddedTasks = new ArrayList<SPMAsyncTask>();
+                final List<SPMTask> newlyAddedTasks = new ArrayList<SPMTask>();
 
                 for (AsyncTaskCreationInfo creationInfo : currPoolTasks) {
                     creationInfo.setStoragePoolID(sp.getId());
                     if (!_tasks.containsKey(creationInfo.getVdsmTaskId())) {
                         try {
-                            SPMAsyncTask task;
+                            SPMTask task;
                             if (partiallyCompletedCommandTasks.containsKey(creationInfo.getVdsmTaskId())) {
                                 AsyncTasks asyncTaskInDb = partiallyCompletedCommandTasks.get(creationInfo.getVdsmTaskId());
-                                task = AsyncTaskFactory.construct(coco, creationInfo, asyncTaskInDb);
+                                task = coco.construct(creationInfo, asyncTaskInDb);
                                 if (task.getEntitiesMap() == null) {
                                     task.setEntitiesMap(new HashMap<Guid, VdcObjectType>());
                                 }
@@ -708,7 +702,7 @@ public final class AsyncTaskManager {
                                 // Will result in failure of the command
                                 task.setPartiallyCompletedCommandTask(true);
                             } else {
-                                task = AsyncTaskFactory.construct(coco, creationInfo);
+                                task = coco.construct(creationInfo);
                             }
                             addTaskToManager(task);
                             newlyAddedTasks.add(task);
@@ -723,14 +717,14 @@ public final class AsyncTaskManager {
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                     @Override
                     public Void runInTransaction() {
-                        for (SPMAsyncTask task : newlyAddedTasks) {
+                        for (SPMTask task : newlyAddedTasks) {
                             AsyncTaskUtils.addOrUpdateTaskInDB(task);
                         }
                         return null;
                     }
                 });
 
-                for (SPMAsyncTask task : newlyAddedTasks) {
+                for (SPMTask task : newlyAddedTasks) {
                     startPollingTask(task.getVdsmTaskId());
                 }
 
@@ -777,12 +771,12 @@ public final class AsyncTaskManager {
         if (_tasks.containsKey(vdsmTaskId)) {
             log.infoFormat("Attempting to cancel task '{0}'.", vdsmTaskId);
             _tasks.get(vdsmTaskId).stopTask();
-            _tasks.get(vdsmTaskId).ConcreteStartPollingTask();
+            _tasks.get(vdsmTaskId).concreteStartPollingTask();
         }
     }
 
     public synchronized boolean entityHasTasks(Guid id) {
-        for (SPMAsyncTask task : _tasks.values()) {
+        for (SPMTask task : _tasks.values()) {
             if (isCurrentTaskLookedFor(id, task)) {
                 return true;
             }

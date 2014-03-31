@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -14,7 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class TaskManagerUtil {
 
-    public static final CommandCoordinatorImpl coco = new CommandCoordinatorImpl();
+    public static final CommandCoordinator coco = new CommandCoordinatorImpl();
 
     public static void startPollingTask(Guid taskID) {
         getAsyncTaskManager().startPollingTask(taskID);

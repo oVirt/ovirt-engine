@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
+import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -24,8 +25,11 @@ import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
@@ -39,6 +43,13 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     CommandCoordinatorImpl() {
     }
 
+    public Step addTaskStep(ExecutionContext context, StepEnum stepName, String description) {
+        return ExecutionHandler.getInstance().addTaskStep(context, stepName, description);
+    }
+
+    public <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters) {
+        return CommandsFactory.createCommand(action, parameters);
+    }
     /**
      * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use
      * this method within a certain command, make sure that the command implemented the
@@ -93,7 +104,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
                 new AsyncTaskParameters(asyncTaskCreationInfo,
                         getAsyncTask(taskId, command, asyncTaskCreationInfo, parentCommand));
         p.setEntityInfo(command.getParameters().getEntityInfo());
-        return createTask(command.internalGetTaskType(), p);
+        return createTask(internalGetTaskType(command), p);
     }
 
     public SPMAsyncTask createTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
@@ -144,6 +155,22 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
                 asyncTaskCreationInfo.getTaskType());
     }
 
+    /**
+     * @return The type of task that should be created for this command.
+     * Commands that do not create async tasks should throw a
+     * {@link UnsupportedOperationException}
+     *
+     */
+    public AsyncTaskType internalGetTaskType(CommandBase command) {
+        if (command.hasTaskHandlers()) {
+            if (command.getParameters().getExecutionReason() == VdcActionParametersBase.CommandExecutionReason.REGULAR_FLOW) {
+                return command.getCurrentTaskHandler().getTaskType();
+            }
+            return command.getCurrentTaskHandler().getRevertTaskType();
+        }
+        return command.getAsyncTaskType();
+    }
+
     public void cancelTasks(final CommandBase command) {
         if (command.hasTasks()) {
             ThreadPoolUtil.execute(new Runnable() {
@@ -161,7 +188,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         }
     }
 
-    protected void revertTasks(CommandBase command) {
+    public void revertTasks(CommandBase command) {
         if (command.getParameters().getVdsmTaskIds() != null) {
             // list to send to the pollTasks method
             ArrayList<Guid> taskIdAsList = new ArrayList<Guid>();
@@ -180,6 +207,49 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
                 taskIdAsList.clear();
             }
         }
+    }
+
+    @Override
+    public ArrayList<AsyncTaskCreationInfo> getAllTasksInfo(Guid storagePoolID) {
+        return (ArrayList<AsyncTaskCreationInfo>) runVdsCommand(VDSCommandType.SPMGetAllTasksInfo,
+                new IrsBaseVDSCommandParameters(storagePoolID)).getReturnValue();
+    }
+
+    @Override
+    public Map<Guid, AsyncTaskStatus>  getAllTasksStatuses(Guid storagePoolID) {
+        return (Map<Guid, AsyncTaskStatus> ) runVdsCommand(VDSCommandType.SPMGetAllTasksStatuses,
+                new IrsBaseVDSCommandParameters(storagePoolID)).getReturnValue();
+    }
+
+    @Override
+    public void stopTask(Guid storagePoolID, Guid vdsmTaskID) {
+        runVdsCommand(VDSCommandType.SPMStopTask,
+                new SPMTaskGuidBaseVDSCommandParameters(storagePoolID, vdsmTaskID));
+    }
+
+    @Override
+    public VDSReturnValue clearTask(Guid storagePoolID, Guid vdsmTaskID) {
+        return runVdsCommand(VDSCommandType.SPMClearTask,
+                new SPMTaskGuidBaseVDSCommandParameters(storagePoolID, vdsmTaskID));
+    }
+
+    private VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) {
+        return Backend.getInstance().getResourceManager().RunVdsCommand(commandType, parameters);
+    }
+
+    @Override
+    public SPMTask construct(AsyncTaskCreationInfo creationInfo) {
+        return AsyncTaskFactory.construct(this, creationInfo);
+    }
+
+    @Override
+    public SPMTask construct(AsyncTaskCreationInfo creationInfo, AsyncTasks asyncTask) {
+        return AsyncTaskFactory.construct(this, creationInfo.getTaskType(), new AsyncTaskParameters(creationInfo, asyncTask), true);
+    }
+
+    @Override
+    public SPMTask construct(AsyncTaskType taskType, AsyncTaskParameters asyncTaskParams, boolean duringInit) {
+        return AsyncTaskFactory.construct(this, taskType, asyncTaskParams, duringInit);
     }
 
     public VdcReturnValueBase endAction(Guid stepId,

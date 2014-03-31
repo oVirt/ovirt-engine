@@ -69,7 +69,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
     }
 
     @Override
-    protected void ConcreteStartPollingTask() {
+    public void concreteStartPollingTask() {
         CommandMultiAsyncTasks entityInfo = GetCommandMultiAsyncTasks();
         entityInfo.StartPollingTask(getVdsmTaskId());
     }

@@ -4,9 +4,9 @@ import static org.ovirt.engine.core.common.config.ConfigValues.UknownTaskPrePoll
 
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
+import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -14,15 +14,13 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
-import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
-public class SPMAsyncTask {
+public class SPMAsyncTask implements SPMTask {
 
     protected final CommandCoordinator coco;
 
@@ -79,6 +77,7 @@ public class SPMAsyncTask {
 
     private AsyncTaskStatus _lastTaskStatus = new AsyncTaskStatus(AsyncTaskStatusEnum.init);
 
+    @Override
     public AsyncTaskStatus getLastTaskStatus() {
         return _lastTaskStatus;
     }
@@ -89,13 +88,15 @@ public class SPMAsyncTask {
      * @param taskStatus
      *            - task status to set.
      */
-    protected void setLastTaskStatus(AsyncTaskStatus taskStatus) {
+    @Override
+    public void setLastTaskStatus(AsyncTaskStatus taskStatus) {
         _lastTaskStatus = taskStatus;
     }
 
     /**
      * Update task last access date ,only for not active task.
      */
+    @Override
     public void setLastStatusAccessTime() {
         // Change access date to now , when task is not active.
         if (getState() == AsyncTaskState.Ended
@@ -109,21 +110,24 @@ public class SPMAsyncTask {
     // Indicates time in milliseconds when task status recently changed.
     protected long _lastAccessToStatusSinceEnd = System.currentTimeMillis();
 
+    @Override
     public long getLastAccessToStatusSinceEnd() {
         return _lastAccessToStatusSinceEnd;
     }
 
+    @Override
     public Guid getCommandId() {
         return getParameters().getDbAsyncTask().getRootCommandId();
     }
 
-    public void StartPollingTask() {
+    @Override
+    public void startPollingTask() {
         AsyncTaskState state = getState();
         if (state != AsyncTaskState.AttemptingEndAction
                 && state != AsyncTaskState.Cleared
                 && state != AsyncTaskState.ClearFailed) {
             log.infoFormat("BaseAsyncTask::startPollingTask: Starting to poll task '{0}'.", getVdsmTaskId());
-            ConcreteStartPollingTask();
+            concreteStartPollingTask();
         }
     }
 
@@ -151,7 +155,8 @@ public class SPMAsyncTask {
         return idlePeriodPassed;
     }
 
-    protected void ConcreteStartPollingTask() {
+    @Override
+    public void concreteStartPollingTask() {
         setState(AsyncTaskState.Polling);
     }
 
@@ -162,7 +167,7 @@ public class SPMAsyncTask {
      *            - Task status returned from VDSM.
      */
     @SuppressWarnings("incomplete-switch")
-    public void UpdateTask(AsyncTaskStatus returnTaskStatus) {
+    public void updateTask(AsyncTaskStatus returnTaskStatus) {
         try {
             switch (getState()) {
             case Polling:
@@ -391,10 +396,7 @@ public class SPMAsyncTask {
                         (getParameters().getDbAsyncTask().getaction_type()),
                         getParameters().getClass().getName());
 
-                Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.SPMStopTask,
-                                new SPMTaskGuidBaseVDSCommandParameters(getStoragePoolID(), getVdsmTaskId()));
+                coco.stopTask(getStoragePoolID(), getVdsmTaskId());
             } catch (RuntimeException e) {
                 log.error(
                         String.format("SPMAsyncTask::StopTask: Stopping task '%1$s' threw an exception.", getVdsmTaskId()),
@@ -427,11 +429,7 @@ public class SPMAsyncTask {
 
         try {
             log.infoFormat("SPMAsyncTask::ClearAsyncTask: Attempting to clear task '{0}'", getVdsmTaskId());
-            vdsReturnValue = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.SPMClearTask,
-                            new SPMTaskGuidBaseVDSCommandParameters(getStoragePoolID(), getVdsmTaskId()));
+            vdsReturnValue = coco.clearTask(getStoragePoolID(), getVdsmTaskId());
         }
 
         catch (RuntimeException e) {

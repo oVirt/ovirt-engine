@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.tasks.CommandAsyncTask;
-import org.ovirt.engine.core.bll.tasks.SPMAsyncTask;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskState;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -21,6 +20,7 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
@@ -160,7 +160,7 @@ public class BackwardCompatibilityTaskCreationTest {
 
         AsyncTaskCreationInfo info = nextAsyncTaskCreationInfo();
 
-        SPMAsyncTask spmAsyncTask = cmd.concreteCreateTask(Guid.Empty, info, cmd.getParameters().getParentCommand());
+        SPMTask spmAsyncTask = cmd.concreteCreateTask(Guid.Empty, info, cmd.getParameters().getParentCommand());
         assertEquals("wrong storage pool ID", info.getStoragePoolID(), spmAsyncTask.getStoragePoolID());
         assertEquals("wrong task ID", info.getVdsmTaskId(), spmAsyncTask.getVdsmTaskId());
         assertEquals("wrong task result", AsyncTaskResultEnum.success, spmAsyncTask.getLastTaskStatus().getResult());

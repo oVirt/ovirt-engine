@@ -37,9 +37,9 @@ import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
-import org.ovirt.engine.core.bll.tasks.SPMAsyncTask;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -1610,13 +1610,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-     * Create the {@link SPMAsyncTask} object to be run
+     * Create the {@link SPMATask} object to be run
      * @param taskId the id of the async task place holder in the database
      * @param asyncTaskCreationInfo Info on how to create the task
      * @param parentCommand The type of command issuing the task
-     * @return An {@link SPMAsyncTask} object representing the task to be run
+     * @return An {@link SPMTask} object representing the task to be run
      */
-    public SPMAsyncTask concreteCreateTask(
+    public SPMTask concreteCreateTask(
             Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
@@ -1645,7 +1645,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /** @return The type of task that should be created for this command. Commands that do not create async tasks should throw a {@link UnsupportedOperationException} */
-    public AsyncTaskType internalGetTaskType() {
+    private AsyncTaskType internalGetTaskType() {
         if (hasTaskHandlers()) {
             if (getParameters().getExecutionReason() == CommandExecutionReason.REGULAR_FLOW) {
                 return getCurrentTaskHandler().getTaskType();
@@ -1658,6 +1658,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     /** @return The type of task that should be created for this command. Commands that do not create async tasks should throw a {@link UnsupportedOperationException} */
     protected AsyncTaskType getTaskType() {
         throw new UnsupportedOperationException();
+    }
+
+    public AsyncTaskType getAsyncTaskType() {
+        return getTaskType();
     }
 
     protected void startPollingAsyncTasks(Collection<Guid> taskIds) {
@@ -2043,11 +2047,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return taskHandlers;
     }
 
-    protected boolean hasTaskHandlers() {
+    public boolean hasTaskHandlers() {
         return getTaskHandlers() != null;
     }
 
-    protected SPMAsyncTaskHandler getCurrentTaskHandler() {
+    public SPMAsyncTaskHandler getCurrentTaskHandler() {
         return getTaskHandlers().get(getExecutionIndex());
     }
 
