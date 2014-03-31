@@ -201,7 +201,7 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public Guid getVmIdRef() {
-        if (mVmId == null && getVm() != null) {
+        if (Guid.isNullOrEmpty(mVmId) && getVm() != null) {
             mVmId = getVm().getId();
         }
         return mVmId;
