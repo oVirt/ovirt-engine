@@ -1272,9 +1272,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     public void install()
     {
         final VDS host = (VDS) getSelectedItem();
-        if (host.getVdsType() == VDSType.oVirtNode) {
-            host.setSshUsername(HostModel.AdminUserName);
-        }
         InstallModel model = new InstallModel();
         model.setVds(host);
         setWindow(model);
@@ -1371,7 +1368,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     public void upgrade()
     {
         final VDS host = (VDS) getSelectedItem();
-        host.setSshUsername(HostModel.AdminUserName);
         InstallModel model = new InstallModel();
         model.setVds(host);
         setWindow(model);
