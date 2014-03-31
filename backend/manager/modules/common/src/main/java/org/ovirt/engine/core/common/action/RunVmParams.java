@@ -29,6 +29,8 @@ public class RunVmParams extends VmOperationParameterBase {
     private boolean balloonEnabled;
     private int cpuShares;
     private Boolean bootMenuEnabled;
+    private Boolean spiceFileTransferEnabled;
+    private Boolean spiceCopyPasteEnabled;
 
     public RunVmParams() {
     }
@@ -202,4 +204,17 @@ public class RunVmParams extends VmOperationParameterBase {
     public void setBootMenuEnabled(Boolean bootMenuEnabled) {
         this.bootMenuEnabled = bootMenuEnabled;
     }
+
+    public Boolean getSpiceFileTransferEnabled() { return spiceFileTransferEnabled; }
+
+    public Boolean isSpiceFileTransferEnabled() { return spiceFileTransferEnabled; }
+
+    public void setSpiceFileTransferEnabled(Boolean spiceFileTransferEnabled) { this.spiceFileTransferEnabled = spiceFileTransferEnabled; }
+
+    // for REST-API test compat
+    public Boolean getSpiceCopyPasteEnabled() { return spiceCopyPasteEnabled; }
+
+    public Boolean isSpiceCopyPasteEnabled() { return spiceCopyPasteEnabled; }
+
+    public void setSpiceCopyPasteEnabled(Boolean spiceCopyPasteEnabled) { this.spiceCopyPasteEnabled = spiceCopyPasteEnabled; }
 }

@@ -340,4 +340,21 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.VirtIoRngDeviceSupported, version);
     }
 
+    /**
+     * @param version
+     *          Compatibility version to check for.
+     * @return  <code>true</code> if SPICE file transfer toggle is supported for the given version.
+     */
+    public static boolean isSpiceFileTransferToggleSupported(Version version) {
+        return supportedInConfig(ConfigValues.SpiceFileTransferToggleSupported, version);
+    }
+
+    /**
+     * @param version
+     *          Compatibility version to check for.
+     * @return  <code>true</code> if SPICE copy-paste toggle is supported for the given version.
+     */
+    public static boolean isSpiceCopyPasteToggleSupported(Version version) {
+        return supportedInConfig(ConfigValues.SpiceCopyPasteToggleSupported, version);
+    }
 }

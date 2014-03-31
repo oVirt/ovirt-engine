@@ -540,6 +540,16 @@ public abstract class OvfReader implements IOvfBuilder {
             vmBase.setBootMenuEnabled(Boolean.parseBoolean(node.innerText));
         }
 
+        node = content.SelectSingleNode(OvfProperties.IS_SPICE_FILE_TRANSFER_ENABLED);
+        if (node != null) {
+            vmBase.setSpiceFileTransferEnabled(Boolean.parseBoolean(node.innerText));
+        }
+
+        node = content.SelectSingleNode(OvfProperties.IS_SPICE_COPY_PASTE_ENABLED);
+        if (node != null) {
+            vmBase.setSpiceCopyPasteEnabled(Boolean.parseBoolean(node.innerText));
+        }
+
         readGeneralData(content);
 
         readVmInit(content);

@@ -1735,5 +1735,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("RANDOM")
     ClusterRequiredRngSourcesDefault,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    SpiceFileTransferToggleSupported,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    SpiceCopyPasteToggleSupported,
+
     Invalid
 }

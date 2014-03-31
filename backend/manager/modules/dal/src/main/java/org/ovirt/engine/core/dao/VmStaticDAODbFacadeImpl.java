@@ -105,7 +105,9 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("is_boot_menu_enabled", vm.isBootMenuEnabled())
                 .addValue("numatune_mode",
                         vm.getNumaTuneMode() == null ? NumaTuneMode.PREFERRED.getValue() : vm.getNumaTuneMode()
-                                .getValue());
+                                .getValue())
+                .addValue("is_spice_file_transfer_enabled", vm.isSpiceFileTransferEnabled())
+                .addValue("is_spice_copy_paste_enabled", vm.isSpiceCopyPasteEnabled());
     }
 
     @Override

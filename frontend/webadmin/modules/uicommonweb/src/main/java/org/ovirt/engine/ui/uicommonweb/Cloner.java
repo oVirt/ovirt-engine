@@ -218,6 +218,8 @@ public final class Cloner
         vm.setSerialNumberPolicy(instance.getSerialNumberPolicy());
         vm.setCustomSerialNumber(instance.getCustomSerialNumber());
         vm.setBootMenuEnabled(instance.isBootMenuEnabled());
+        vm.setSpiceFileTransferEnabled(instance.isSpiceFileTransferEnabled());
+        vm.setSpiceCopyPasteEnabled(instance.isSpiceCopyPasteEnabled());
 
         return vm;
     }
@@ -439,6 +441,8 @@ public final class Cloner
         obj.setCustomSerialNumber(instance.getCustomSerialNumber());
         obj.setBootMenuEnabled(instance.isBootMenuEnabled());
         obj.setCreatedByUserId(instance.getCreatedByUserId());
+        obj.setSpiceFileTransferEnabled(instance.isSpiceFileTransferEnabled());
+        obj.setSpiceCopyPasteEnabled(instance.isSpiceCopyPasteEnabled());
 
         return obj;
     }
@@ -479,6 +483,8 @@ public final class Cloner
         obj.setSerialNumberPolicy(instance.getSerialNumberPolicy());
         obj.setCustomSerialNumber(instance.getCustomSerialNumber());
         obj.setBootMenuEnabled(instance.isBootMenuEnabled());
+        obj.setSpiceFileTransferEnabled(instance.isSpiceFileTransferEnabled());
+        obj.setSpiceCopyPasteEnabled(instance.isSpiceCopyPasteEnabled());
 
         return obj;
     }

@@ -1585,6 +1585,8 @@
         <column>custom_serial_number</column>
         <column>is_boot_menu_enabled</column>
         <column>numatune_mode</column>
+        <column>is_spice_file_transfer_enabled</column>
+        <column>is_spice_copy_paste_enabled</column>
 
         <!-- Templates -->
         <row>
@@ -1643,6 +1645,8 @@
             <null />
             <value>false</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -1700,6 +1704,8 @@
             <value>Serial number: 123456</value>
             <value>true</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
@@ -1757,6 +1763,8 @@
             <value>RHVSN: 09123</value>
             <value>true</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
@@ -1814,6 +1822,8 @@
             <null />
             <value>false</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
          <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
@@ -1871,6 +1881,8 @@
             <null />
             <value>false</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
          <row>
             <value>99408929-82cf-4dc7-a532-9d998063fa95</value>
@@ -1928,6 +1940,8 @@
             <null />
             <value>true</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
          <row>
             <value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
@@ -1985,6 +1999,8 @@
             <null />
             <value>false</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b83</value>
@@ -2042,6 +2058,8 @@
             <null />
             <value>true</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
 
         <!-- VMS -->
@@ -2101,6 +2119,8 @@
             <null />
             <value>true</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -2158,6 +2178,8 @@
             <value>VSN 1234</value>
             <value>true</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
@@ -2215,6 +2237,8 @@
             <value>My very specific serial number</value>
             <value>true</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -2272,6 +2296,8 @@
             <value>Custom serial number</value>
             <value>false</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -2329,6 +2355,8 @@
             <null />
             <value>false</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -2386,6 +2414,8 @@
             <null />
             <value>false</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5001</value>
@@ -2443,6 +2473,8 @@
             <null />
             <value>true</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
@@ -2500,6 +2532,8 @@
             <null />
             <value>true</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
@@ -2557,6 +2591,8 @@
             <null />
             <value>false</value>
             <value>preferred</value>
+            <value>true</value>
+            <value>true</value>
         </row>
     </table>
 
@@ -2902,7 +2938,7 @@
         <column>ha_active</column>
         <column>ha_global_maintenance</column>
         <column>ha_local_maintenance</column>
-	<column>boot_time</column>
+       <column>boot_time</column>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>100</value>
@@ -3027,6 +3063,7 @@
             <value>false</value>
             <value>false</value>
             <null />
+            <value>123456789</value>
         </row>
     </table>
 

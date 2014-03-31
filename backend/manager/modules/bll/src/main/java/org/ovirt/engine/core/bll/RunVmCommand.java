@@ -626,6 +626,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         getVm().setAcpiEnable(getParameters().getAcpiEnable());
         getVm().setBootMenuEnabled(getParameters().getBootMenuEnabled() == null ? getVm().isBootMenuEnabled() : getParameters().isBootMenuEnabled());
 
+        getVm().setSpiceFileTransferEnabled(getParameters().getSpiceFileTransferEnabled() == null ? getVm().isSpiceFileTransferEnabled() : getParameters().isSpiceFileTransferEnabled());
+        getVm().setSpiceCopyPasteEnabled(getParameters().getSpiceCopyPasteEnabled() == null ? getVm().isSpiceCopyPasteEnabled() : getParameters().isSpiceCopyPasteEnabled());
+
         // Clear the first user:
         getVm().setConsoleUserId(null);
 

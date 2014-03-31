@@ -1778,4 +1778,19 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         return vmStatic.getvNumaNodeList();
     }
 
+    public boolean isSpiceFileTransferEnabled() {
+        return vmStatic.isSpiceFileTransferEnabled();
+    }
+
+    public void setSpiceFileTransferEnabled(boolean enabled) {
+        vmStatic.setSpiceFileTransferEnabled(enabled);
+    }
+
+    public boolean isSpiceCopyPasteEnabled() {
+        return vmStatic.isSpiceCopyPasteEnabled();
+    }
+
+    public void setSpiceCopyPasteEnabled(boolean enabled) {
+        vmStatic.setSpiceCopyPasteEnabled(enabled);
+    }
 }

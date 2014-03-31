@@ -147,7 +147,15 @@ public abstract class VmInfoBuilderBase {
         }
         createInfo.put(VdsProperties.transparent_huge_pages,
                 vm.isTransparentHugePages() ? "true" : "false");
+
         addNumaSetting(compatibilityVersion);
+
+        if (vm.getDisplayType() == DisplayType.qxl) {
+            createInfo.put(VdsProperties.spiceFileTransferEnable,
+                Boolean.toString(vm.isSpiceFileTransferEnabled()));
+            createInfo.put(VdsProperties.spiceCopyPasteEnable,
+                Boolean.toString(vm.isSpiceCopyPasteEnabled()));
+        }
     }
 
     private void addCpuPinning(final String compatibilityVersion) {

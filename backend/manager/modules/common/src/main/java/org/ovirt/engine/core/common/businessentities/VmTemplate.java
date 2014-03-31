@@ -77,7 +77,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             boolean allowConsoleReconnect, String isoPath, Integer migrationDowntime,
             Guid baseTemplateId, String templateVersionName,
             SerialNumberPolicy serialNumberPolicy, String customSerialNumber,
-            boolean bootMenuEnabled) {
+            boolean bootMenuEnabled, boolean spiceFIleTransferEnabled, boolean spiceCopyPasteEnabled) {
         super(name,
                 vmtGuid,
                 vdsGroupId,
@@ -122,7 +122,9 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 null,
                 serialNumberPolicy,
                 customSerialNumber,
-                bootMenuEnabled);
+                bootMenuEnabled,
+                spiceFIleTransferEnabled,
+                spiceCopyPasteEnabled);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
         diskImageMap = new HashMap<Guid, DiskImage>();
@@ -187,6 +189,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         setSerialNumberPolicy(template.getSerialNumberPolicy());
         setCustomSerialNumber(template.getCustomSerialNumber());
         setBootMenuEnabled(template.isBootMenuEnabled());
+        setSpiceFileTransferEnabled(template.isSpiceFileTransferEnabled());
+        setSpiceCopyPasteEnabled(template.isSpiceCopyPasteEnabled());
     }
 
     public ArchitectureType getClusterArch() {

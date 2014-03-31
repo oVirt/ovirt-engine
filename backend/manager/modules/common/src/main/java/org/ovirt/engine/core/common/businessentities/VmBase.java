@@ -237,6 +237,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         defaultDisplayType = DisplayType.qxl;
         ssoMethod = SsoMethod.GUEST_AGENT;
         singleQxlPci = true;
+        spiceFileTransferEnabled = true;
+        spiceCopyPasteEnabled = true;
     }
 
     @EditableField
@@ -312,6 +314,16 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableOnTemplate
     private boolean bootMenuEnabled;
 
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    private boolean spiceFileTransferEnabled;
+
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    private boolean spiceCopyPasteEnabled;
+
     public VmBase(VmBase vmBase) {
         this(vmBase.getName(),
                 vmBase.getId(),
@@ -357,7 +369,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.getVmInit(),
                 vmBase.getSerialNumberPolicy(),
                 vmBase.getCustomSerialNumber(),
-                vmBase.isBootMenuEnabled());
+                vmBase.isBootMenuEnabled(),
+                vmBase.isSpiceFileTransferEnabled(),
+                vmBase.isSpiceCopyPasteEnabled());
     }
 
     public VmBase(
@@ -405,7 +419,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             VmInit vmInit,
             SerialNumberPolicy serialNumberPolicy,
             String customSerialNumber,
-            boolean bootMenuEnabled) {
+            boolean bootMenuEnabled,
+            boolean spiceFileTransferEnabled,
+            boolean spiceCopyPasteEnabled) {
         this();
         this.name = name;
         this.id = id;
@@ -452,6 +468,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.serialNumberPolicy = serialNumberPolicy;
         this.customSerialNumber = customSerialNumber;
         this.bootMenuEnabled = bootMenuEnabled;
+        this.spiceFileTransferEnabled = spiceFileTransferEnabled;
+        this.spiceCopyPasteEnabled = spiceCopyPasteEnabled;
     }
 
     public long getDbGeneration() {
@@ -790,6 +808,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((serialNumberPolicy == null) ? 0 : serialNumberPolicy.hashCode());
         result = prime * result + ((customSerialNumber == null) ? 0 : customSerialNumber.hashCode());
         result = prime * result + (bootMenuEnabled ? 1231 : 1237);
+        result = prime * result + (spiceFileTransferEnabled ? 1231 : 1237);
+        result = prime * result + (spiceCopyPasteEnabled ? 1231 : 1237);
         return result;
     }
 
@@ -842,7 +862,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && ObjectUtils.objectsEqual(migrationDowntime, other.migrationDowntime))
                 && serialNumberPolicy == other.serialNumberPolicy
                 && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber)
-                && bootMenuEnabled == other.bootMenuEnabled;
+                && bootMenuEnabled == other.bootMenuEnabled
+                && spiceFileTransferEnabled == other.spiceFileTransferEnabled
+                && spiceCopyPasteEnabled == other.spiceCopyPasteEnabled;
     }
 
     public Guid getQuotaId() {
@@ -1005,4 +1027,12 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     public void setBootMenuEnabled(boolean bootMenuEnabled) {
         this.bootMenuEnabled = bootMenuEnabled;
     }
+
+    public boolean isSpiceFileTransferEnabled() { return spiceFileTransferEnabled; }
+
+    public void setSpiceFileTransferEnabled(boolean spiceFileTransferEnabled) { this.spiceFileTransferEnabled = spiceFileTransferEnabled; }
+
+    public boolean isSpiceCopyPasteEnabled() { return spiceCopyPasteEnabled; }
+
+    public void setSpiceCopyPasteEnabled(boolean spiceCopyPasteEnabled) { this.spiceCopyPasteEnabled = spiceCopyPasteEnabled; }
 }

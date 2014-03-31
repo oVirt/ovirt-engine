@@ -538,7 +538,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getTemplateVersionName(),
                         getParameters().getMasterVm().getSerialNumberPolicy(),
                         getParameters().getMasterVm().getCustomSerialNumber(),
-                        getParameters().getMasterVm().isBootMenuEnabled()));
+                        getParameters().getMasterVm().isBootMenuEnabled(),
+                        getParameters().getMasterVm().isSpiceFileTransferEnabled(),
+                        getParameters().getMasterVm().isSpiceCopyPasteEnabled()));
         DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());

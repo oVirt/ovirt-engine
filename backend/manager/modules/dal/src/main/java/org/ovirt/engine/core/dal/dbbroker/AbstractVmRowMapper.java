@@ -53,6 +53,8 @@ public abstract class AbstractVmRowMapper<T extends VmBase> implements RowMapper
         entity.setSerialNumberPolicy(SerialNumberPolicy.forValue((Integer) rs.getObject("serial_number_policy")));
         entity.setCustomSerialNumber(rs.getString("custom_serial_number"));
         entity.setBootMenuEnabled(rs.getBoolean("is_boot_menu_enabled"));
+        entity.setSpiceFileTransferEnabled(rs.getBoolean("is_spice_file_transfer_enabled"));
+        entity.setSpiceCopyPasteEnabled(rs.getBoolean("is_spice_copy_paste_enabled"));
     }
 
 }

@@ -266,6 +266,8 @@ public final class VdsProperties {
     public static final String win2kHackEnable = "win2kHackEnable"; // Optional
     public static final String initFromFloppy = "initFromFloppy"; // Optional
     public static final String sysprepInf = "sysprepInf"; // for the binary sys
+    public static final String spiceFileTransferEnable = "fileTransferEnable";
+    public static final String spiceCopyPasteEnable = "copyPasteEnable";
                                                           // prep
     public static final String Boot = "boot"; // Optional
     public static final String BootOrder = "bootOrder";

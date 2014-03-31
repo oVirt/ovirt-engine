@@ -357,6 +357,14 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteStartElement(OvfProperties.IS_BOOT_MENU_ENABLED);
         _writer.WriteRaw(String.valueOf(vmBase.isBootMenuEnabled()));
         _writer.WriteEndElement();
+
+        _writer.WriteStartElement(OvfProperties.IS_SPICE_FILE_TRANSFER_ENABLED);
+        _writer.WriteRaw(String.valueOf(vmBase.isSpiceFileTransferEnabled()));
+        _writer.WriteEndElement();
+
+        _writer.WriteStartElement(OvfProperties.IS_SPICE_COPY_PASTE_ENABLED);
+        _writer.WriteRaw(String.valueOf(vmBase.isSpiceCopyPasteEnabled()));
+        _writer.WriteEndElement();
     }
 
     protected abstract void writeAppList();

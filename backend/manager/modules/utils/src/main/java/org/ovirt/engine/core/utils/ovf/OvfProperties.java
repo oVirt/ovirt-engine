@@ -66,4 +66,6 @@ public class OvfProperties {
     final static String SERIAL_NUMBER_POLICY = "SerialNumberPolicy";
     final static String CUSTOM_SERIAL_NUMBER = "CustomSerialNumber";
     final static String IS_BOOT_MENU_ENABLED = "IsBootMenuEnabled";
+    final static String IS_SPICE_FILE_TRANSFER_ENABLED = "IsSpiceFileTransferEnabled";
+    final static String IS_SPICE_COPY_PASTE_ENABLED = "IsSpiceCopyPasteEnabled";
 }

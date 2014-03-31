@@ -128,7 +128,9 @@ public enum ConfigurationValues {
     MixedDomainTypesInDataCenter,
     KeystoneAuthUrl,
     VirtIoRngDeviceSupported(ConfigAuthType.User),
-    ClusterRequiredRngSourcesDefault(ConfigAuthType.User);
+    ClusterRequiredRngSourcesDefault(ConfigAuthType.User),
+    SpiceFileTransferToggleSupported,
+    SpiceCopyPasteToggleSupported;
 
     public static enum ConfigAuthType {
         Admin,

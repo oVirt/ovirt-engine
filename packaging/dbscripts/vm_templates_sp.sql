@@ -56,7 +56,9 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_template_version_name VARCHAR(40),
  v_serial_number_policy SMALLINT,
  v_custom_serial_number VARCHAR(255),
- v_is_boot_menu_enabled BOOLEAN)
+ v_is_boot_menu_enabled BOOLEAN,
+ v_is_spice_file_transfer_enabled BOOLEAN,
+ v_is_spice_copy_paste_enabled BOOLEAN)
 
 RETURNS VOID
    AS $procedure$
@@ -126,7 +128,9 @@ INTO vm_static(
     template_version_name,
     serial_number_policy,
     custom_serial_number,
-    is_boot_menu_enabled)
+    is_boot_menu_enabled,
+    is_spice_file_transfer_enabled,
+    is_spice_copy_paste_enabled)
 VALUES(
     v_child_count,
     v_creation_date,
@@ -178,7 +182,9 @@ VALUES(
     v_template_version_name,
     v_serial_number_policy,
     v_custom_serial_number,
-    v_is_boot_menu_enabled);
+    v_is_boot_menu_enabled,
+    v_is_spice_file_transfer_enabled,
+    v_is_spice_copy_paste_enabled);
 -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
 DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vmt_guid;
 INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id)
@@ -240,7 +246,9 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_template_version_name VARCHAR(40),
  v_serial_number_policy SMALLINT,
  v_custom_serial_number VARCHAR(255),
- v_is_boot_menu_enabled BOOLEAN)
+ v_is_boot_menu_enabled BOOLEAN,
+ v_is_spice_file_transfer_enabled BOOLEAN,
+ v_is_spice_copy_paste_enabled BOOLEAN)
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -267,7 +275,8 @@ BEGIN
       migration_downtime = v_migration_downtime,
       template_version_name = v_template_version_name,
       serial_number_policy = v_serial_number_policy, custom_serial_number = v_custom_serial_number,
-      is_boot_menu_enabled = v_is_boot_menu_enabled
+      is_boot_menu_enabled = v_is_boot_menu_enabled,
+      is_spice_file_transfer_enabled = v_is_spice_file_transfer_enabled, is_spice_copy_paste_enabled = v_is_spice_copy_paste_enabled
       WHERE vm_guid = v_vmt_guid
       AND   entity_type = v_template_type;
 
