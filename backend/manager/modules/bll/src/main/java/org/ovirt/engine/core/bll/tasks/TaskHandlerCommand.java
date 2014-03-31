@@ -48,4 +48,6 @@ public interface TaskHandlerCommand<T extends VdcActionParametersBase> {
     void deleteAsyncTaskPlaceHolder(String taskKey);
 
     CompensationContext getCompensationContext();
+
+    void taskEndSuccessfully();
 }

@@ -110,6 +110,11 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         return super.getTaskIdList();
     }
 
+    @Override
+    public void taskEndSuccessfully() {
+        // Not implemented
+    }
+
     public Guid persistAsyncTaskPlaceHolder() {
         return super.persistAsyncTaskPlaceHolder(getActionType());
     }

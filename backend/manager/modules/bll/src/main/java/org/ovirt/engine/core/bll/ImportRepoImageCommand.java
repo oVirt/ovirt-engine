@@ -105,6 +105,11 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     }
 
     @Override
+    public void taskEndSuccessfully() {
+        // Not implemented
+    }
+
+    @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionSubjects = new ArrayList<>();
         // NOTE: there's no read-permission from a storage domain

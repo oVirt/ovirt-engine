@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.memory.MemoryImageRemoverOnDataDomain;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -13,7 +14,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotImplementedException;
 
 /**
  * Command for removing the given memory volumes.
@@ -75,6 +75,11 @@ public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters>
     @Override
     public ArrayList<Guid> getTaskIdList() {
         return super.getTaskIdList();
+    }
+
+    @Override
+    public void taskEndSuccessfully() {
+        // Not implemented
     }
 
     @Override

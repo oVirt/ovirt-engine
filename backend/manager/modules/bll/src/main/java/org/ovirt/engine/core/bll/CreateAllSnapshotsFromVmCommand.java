@@ -630,6 +630,11 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return super.getTaskIdList();
     }
 
+    @Override
+    public void taskEndSuccessfully() {
+        // Not implemented
+    }
+
     public Guid persistAsyncTaskPlaceHolder() {
         return super.persistAsyncTaskPlaceHolder(getActionType());
     }

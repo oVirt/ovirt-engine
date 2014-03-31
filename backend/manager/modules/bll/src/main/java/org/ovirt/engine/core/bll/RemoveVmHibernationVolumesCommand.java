@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.memory.HibernationVolumesRemover;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.RemoveVmHibernationVolumesParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotImplementedException;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
@@ -87,6 +87,11 @@ public class RemoveVmHibernationVolumesCommand<T extends RemoveVmHibernationVolu
     @Override
     public ArrayList<Guid> getTaskIdList() {
         return super.getTaskIdList();
+    }
+
+    @Override
+    public void taskEndSuccessfully() {
+        // Not implemented
     }
 
     @Override
