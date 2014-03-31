@@ -131,10 +131,14 @@ public class CloudInitHandler {
 
             for (VmInitNetwork iface: networks) {
                 output.append("iface " + iface.getName() + " inet "
-                        + iface.getBootProtocol().toString().toLowerCase() + "\n");
-                output.append("  address " + iface.getIp() + "\n");
-                output.append("  netmask " + iface.getNetmask() + "\n");
-                if (!StringUtils.isEmpty(iface.getGateway())) {
+                        + iface.getBootProtocol().getDisplayName() + "\n");
+                if (StringUtils.isNotEmpty(iface.getIp())) {
+                    output.append("  address " + iface.getIp() + "\n");
+                }
+                if (StringUtils.isNotEmpty(iface.getNetmask())) {
+                    output.append("  netmask " + iface.getNetmask() + "\n");
+                }
+                if (StringUtils.isNotEmpty(iface.getGateway())) {
                     output.append("  gateway " + iface.getGateway() + "\n");
                 }
 
