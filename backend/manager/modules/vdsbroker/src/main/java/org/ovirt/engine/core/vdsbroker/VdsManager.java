@@ -480,7 +480,7 @@ public class VdsManager {
         /**
          * Move vds to Up status from error
          */
-        if (vds.getStatus() == VDSStatus.Error) {
+        if (vds != null && vds.getStatus() == VDSStatus.Error) {
             setStatus(VDSStatus.Up, vds);
             DbFacade.getInstance().getVdsDynamicDao().updateStatus(getVdsId(), VDSStatus.Up);
             log.infoFormat("Settings host {0} to up after {1} failed attempts to run a VM",
