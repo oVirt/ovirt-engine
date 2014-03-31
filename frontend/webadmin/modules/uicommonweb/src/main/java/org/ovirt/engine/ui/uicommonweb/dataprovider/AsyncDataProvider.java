@@ -568,20 +568,6 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void getMinimalVmMemSize(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? ((Integer) source).intValue() : 1;
-            }
-        };
-        getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.VMMinMemorySizeInMB,
-                        getDefaultConfigurationVersion()),
-                aQuery);
-    }
-
     public static void getSpiceUsbAutoShare(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -638,35 +624,6 @@ public final class AsyncDataProvider {
         };
         getConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.WANDisableEffects,
-                        getDefaultConfigurationVersion()),
-                aQuery);
-    }
-
-    public static void getMaximalVmMemSize64OS(AsyncQuery aQuery, String version) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                // we should detect missing config values instead of putting in obsolete hardcoded values
-                return source != null ? ((Integer) source).intValue() : -1;
-            }
-        };
-        GetConfigurationValueParameters tempVar =
-                new GetConfigurationValueParameters(ConfigurationValues.VM64BitMaxMemorySizeInMB);
-        tempVar.setVersion(version);
-        getConfigFromCache(tempVar, aQuery);
-    }
-
-    public static void getMaximalVmMemSize32OS(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? ((Integer) source).intValue() : 20480;
-            }
-        };
-        getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.VM32BitMaxMemorySizeInMB,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
@@ -1160,24 +1117,6 @@ public final class AsyncDataProvider {
             setSnapshots(snapshots);
             setDisk(disk);
         }
-    }
-
-    public static void getMaxVmMemSize(AsyncQuery aQuery, boolean is64) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                if (source != null)
-                {
-                    return source;
-                }
-                return 262144;
-            }
-        };
-        getConfigFromCache(
-                new GetConfigurationValueParameters(is64 ? ConfigurationValues.VM64BitMaxMemorySizeInMB
-                        : ConfigurationValues.VM32BitMaxMemorySizeInMB, getDefaultConfigurationVersion()),
-                aQuery);
     }
 
     public static void getDomainList(AsyncQuery aQuery, boolean filterInternalDomain) {
