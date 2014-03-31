@@ -182,6 +182,10 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
             }), vm.getRunOnVds());
         }
 
+        getModel().getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
+
+        getModel().getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
+
         BuilderExecutor.build(vm.getStaticData(), getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
 
         getModel().getBootMenuEnabled().setEntity(vm.isBootMenuEnabled());

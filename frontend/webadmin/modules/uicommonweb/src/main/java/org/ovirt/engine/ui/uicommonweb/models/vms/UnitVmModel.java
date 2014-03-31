@@ -1351,6 +1351,26 @@ public class UnitVmModel extends Model {
         this.bootMenuEnabled = bootMenuEnabled;
     }
 
+    private NotChangableForVmInPoolEntityModel<Boolean> spiceFileTransferEnabled;
+
+    public EntityModel<Boolean> getSpiceFileTransferEnabled() {
+        return spiceFileTransferEnabled;
+    }
+
+    public void setSpiceFileTransferEnabled(NotChangableForVmInPoolEntityModel<Boolean> spiceFileTransferEnabled) {
+        this.spiceFileTransferEnabled = spiceFileTransferEnabled;
+    }
+
+    private NotChangableForVmInPoolEntityModel<Boolean> spiceCopyPasteEnabled;
+
+    public EntityModel<Boolean> getSpiceCopyPasteEnabled() {
+        return spiceCopyPasteEnabled;
+    }
+
+    public void setSpiceCopyPasteEnabled(NotChangableForVmInPoolEntityModel<Boolean> spiceCopyPasteEnabled) {
+        this.spiceCopyPasteEnabled = spiceCopyPasteEnabled;
+    }
+
     public UnitVmModel(VmModelBehaviorBase behavior) {
         Frontend.getInstance().getQueryStartedEvent().addListener(this);
         Frontend.getInstance().getQueryCompleteEvent().addListener(this);
@@ -1450,6 +1470,8 @@ public class UnitVmModel extends Model {
         setPriority(new NotChangableForVmInPoolListModel<EntityModel<Integer>>());
         setVmInitEnabled(new EntityModel<Boolean>(false));
         setCloudInitEnabled(new EntityModel<Boolean>());
+        setSpiceFileTransferEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
+        setSpiceCopyPasteEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setSysprepEnabled(new EntityModel<Boolean>());
         getVmInitEnabled().getEntityChangedEvent().addListener(this);
         setVmInitModel(new VmInitModel());
@@ -2062,6 +2084,29 @@ public class UnitVmModel extends Model {
         Version.v3_3.compareTo(getSelectedCluster().getcompatibility_version()) <= 0;
 
         getBehavior().enableSinglePCI(isLinux && isQxl && clusterSupportsSinglePci);
+
+        boolean spiceFileTransferToggle = isQxl && getSelectedCluster() != null
+                && AsyncDataProvider.isSpiceFileTransferToggleSupported(getSelectedCluster().getcompatibility_version().toString());
+        if (!spiceFileTransferToggle) {
+            handleQxlChangeProhibitionReason(getSpiceFileTransferEnabled(), getSelectedCluster().getcompatibility_version().toString(), isQxl);
+        }
+        getSpiceFileTransferEnabled().setIsChangable(spiceFileTransferToggle);
+
+        boolean spiceCopyPasteToggle = isQxl && getSelectedCluster() != null
+                && AsyncDataProvider.isSpiceCopyPasteToggleSupported(getSelectedCluster().getcompatibility_version().toString());
+        if (!spiceCopyPasteToggle) {
+            handleQxlChangeProhibitionReason(getSpiceCopyPasteEnabled(), getSelectedCluster().getcompatibility_version().toString(), isQxl);
+        }
+        getSpiceCopyPasteEnabled().setIsChangable(spiceCopyPasteToggle);
+    }
+
+    private void handleQxlChangeProhibitionReason(EntityModel<Boolean> checkbox, String version, boolean isQxl)
+    {
+        if (isQxl) {
+            checkbox.setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().optionNotSupportedClusterVersionTooOld(version));
+        } else {
+            checkbox.setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().optionRequiresSpiceEnabled());
+        }
     }
 
     private void template_SelectedItemChanged(Object sender, EventArgs args)

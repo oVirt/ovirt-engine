@@ -214,6 +214,16 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @WithElementId("displayConsoleSpice")
     EntityModelRadioButtonEditor displayConsoleSpiceEditor;
 
+    @UiField(provided = true)
+    @Path(value = "spiceFileTransferEnabled.entity")
+    @WithElementId("spiceFileTransferEnabled")
+    public EntityModelCheckBoxEditor spiceFileTransferEnabledEditor;
+
+    @UiField(provided = true)
+    @Path(value = "spiceCopyPasteEnabled.entity")
+    @WithElementId("spiceCopyPasteEnabled")
+    public EntityModelCheckBoxEditor spiceCopyPasteEnabledEditor;
+
     @UiField
     @WithElementId
     ButtonBase bootSequenceUpButton;
@@ -311,6 +321,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         vncKeyboardLayoutEditor.setLabel(constants.vncKeyboardLayoutVmPopup());
 
         displayConsoleSpiceEditor.setLabel(constants.runOncePopupDisplayConsoleSpiceLabel());
+        spiceFileTransferEnabledEditor.setLabel(constants.spiceFileTransferEnabled());
+        spiceCopyPasteEnabledEditor.setLabel(constants.spiceCopyPasteEnabled());
 
         // Host Tab
         isAutoAssignEditor.setLabel(constants.anyHostInClusterVmPopup());
@@ -323,6 +335,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         runAsStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         runAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         useAlternateCredentialsEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        spiceFileTransferEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        spiceCopyPasteEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void initListBoxEditors() {

@@ -30,5 +30,7 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         vm.setSerialNumberPolicy(model.getSerialNumberPolicy().getSelectedSerialNumberPolicy());
         vm.setCustomSerialNumber(model.getSerialNumberPolicy().getCustomSerialNumber().getEntity());
         vm.setBootMenuEnabled(model.getBootMenuEnabled().getEntity());
+        vm.setSpiceFileTransferEnabled(model.getSpiceFileTransferEnabled().getEntity());
+        vm.setSpiceCopyPasteEnabled(model.getSpiceCopyPasteEnabled().getEntity());
     }
 }

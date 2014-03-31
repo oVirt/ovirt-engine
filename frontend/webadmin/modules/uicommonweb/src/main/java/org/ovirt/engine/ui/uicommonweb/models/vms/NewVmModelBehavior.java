@@ -151,6 +151,10 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             getModel().getVmInitModel().init(template);
             getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
 
+            getModel().getSpiceFileTransferEnabled().setEntity(template.isSpiceFileTransferEnabled());
+
+            getModel().getSpiceCopyPasteEnabled().setEntity(template.isSpiceCopyPasteEnabled());
+
             BuilderExecutor.build(template, getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
 
             getModel().getBootMenuEnabled().setEntity(template.isBootMenuEnabled());

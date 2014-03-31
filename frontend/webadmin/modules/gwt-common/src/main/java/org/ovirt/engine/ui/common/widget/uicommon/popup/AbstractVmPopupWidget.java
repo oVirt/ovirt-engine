@@ -496,6 +496,16 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId
     public EntityModelCheckBoxOnlyEditor spiceProxyOverrideEnabledEditor;
 
+    @UiField(provided = true)
+    @Path("spiceFileTransferEnabled.entity")
+    @WithElementId("spiceFileTransferEnabled")
+    public EntityModelCheckBoxEditor spiceFileTransferEnabledEditor;
+
+    @UiField(provided = true)
+    @Path("spiceCopyPasteEnabled.entity")
+    @WithElementId("spiceCopyPasteEnabled")
+    public EntityModelCheckBoxEditor spiceCopyPasteEnabledEditor;
+
     // == Rng Tab ==
     @UiField
     protected DialogTab rngDeviceTab;
@@ -866,6 +876,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 (Resources) GWT.create(ButtonCellTableResources.class));
         disksAllocationView = new DisksAllocationView(constants);
         serialNumberPolicyEditor = new SerialNumberPolicyWidget(eventBus, applicationTemplates, messages, resources, new ModeSwitchingVisibilityRenderer());
+        spiceFileTransferEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        spiceCopyPasteEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
 
         initPoolSpecificWidgets(resources, messages);
         initTextBoxEditors();
@@ -1293,6 +1305,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         ssoMethodNone.setLabel(constants.none());
         ssoMethodGuestAgent.setLabel(constants.guestAgent());
         spiceProxyEditor.setLabel(constants.overriddenSpiceProxyAddress());
+        spiceFileTransferEnabledEditor.setLabel(constants.spiceFileTransferEnabled());
+        spiceCopyPasteEnabledEditor.setLabel(constants.spiceCopyPasteEnabled());
 
         // Host Tab
         hostTab.setLabel(constants.hostVmPopup());
@@ -1807,6 +1821,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isConsoleDeviceEnabledEditor.setTabIndex(nextTabIndex++);
         spiceProxyOverrideEnabledEditor.setTabIndex(nextTabIndex++);
         spiceProxyEditor.setTabIndex(nextTabIndex++);
+        spiceFileTransferEnabledEditor.setTabIndex(nextTabIndex++);
+        spiceCopyPasteEnabledEditor.setTabIndex(nextTabIndex++);
 
         // ==Host Tab==
         nextTabIndex = hostTab.setTabIndexes(nextTabIndex);
@@ -1871,7 +1887,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 update(numOfMonitorsEditor, simpleField()).
                 update(isSingleQxlEnabledEditor, simpleField()).
                 putOne(isSoundcardEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
-                putOne(isConsoleDeviceEnabledEditor, simpleField().visibleInAdvancedModeOnly());
+                putOne(isConsoleDeviceEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
+                putOne(spiceFileTransferEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
+                putOne(spiceCopyPasteEnabledEditor, simpleField().visibleInAdvancedModeOnly());
     }
 
     protected List<Widget> consoleTabWidgets() {

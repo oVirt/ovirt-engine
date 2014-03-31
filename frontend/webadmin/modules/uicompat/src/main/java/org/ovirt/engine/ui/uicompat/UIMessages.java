@@ -364,4 +364,10 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Disk {0} from Snapshot {1}")
     String diskSnapshotLabel(String diskAlias, String snapshotDescription);
+
+    @DefaultMessage("This option is not supported in Cluster version {0}")
+    String optionNotSupportedClusterVersionTooOld(String clusterVersion);
+
+    @DefaultMessage("This option requires SPICE display protocol to be used")
+    String optionRequiresSpiceEnabled();
 }

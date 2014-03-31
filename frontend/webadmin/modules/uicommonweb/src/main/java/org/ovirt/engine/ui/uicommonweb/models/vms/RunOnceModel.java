@@ -384,6 +384,26 @@ public abstract class RunOnceModel extends Model
         privateDisplayConsole_Spice_IsSelected = value;
     }
 
+    private EntityModel<Boolean> spiceFileTransferEnabled;
+
+    public EntityModel<Boolean> getSpiceFileTransferEnabled() {
+        return spiceFileTransferEnabled;
+    }
+
+    public void setSpiceFileTransferEnabled(EntityModel<Boolean> spiceFileTransferEnabled) {
+        this.spiceFileTransferEnabled = spiceFileTransferEnabled;
+    }
+
+    private EntityModel<Boolean> spiceCopyPasteEnabled;
+
+    public EntityModel<Boolean> getSpiceCopyPasteEnabled() {
+        return spiceCopyPasteEnabled;
+    }
+
+    public void setSpiceCopyPasteEnabled(EntityModel<Boolean> spiceCopyPasteEnabled) {
+        this.spiceCopyPasteEnabled = spiceCopyPasteEnabled;
+    }
+
     // Misc
 
     private boolean privateIsLinuxOS;
@@ -599,6 +619,18 @@ public abstract class RunOnceModel extends Model
         initVncKeyboardLayout();
         getVncKeyboardLayout().setSelectedItem(vm.getDefaultVncKeyboardLayout());
 
+        setSpiceFileTransferEnabled(new EntityModel<Boolean>());
+        getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
+        boolean spiceFileTransferToggle = AsyncDataProvider.isSpiceFileTransferToggleSupported(vm.getVdsGroupCompatibilityVersion().toString());
+        getSpiceFileTransferEnabled().setIsChangable(spiceFileTransferToggle);
+        getSpiceFileTransferEnabled().setIsAvailable(spiceFileTransferToggle);
+
+        setSpiceCopyPasteEnabled(new EntityModel<Boolean>());
+        getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
+        boolean spiceCopyPasteToggle = AsyncDataProvider.isSpiceCopyPasteToggleSupported(vm.getVdsGroupCompatibilityVersion().toString());
+        getSpiceCopyPasteEnabled().setIsChangable(spiceCopyPasteToggle);
+        getSpiceCopyPasteEnabled().setIsAvailable(spiceCopyPasteToggle);
+
         // Host tab
         setDefaultHost(new ListModel<VDS>());
         getDefaultHost().getSelectedItemChangedEvent().addListener(this);
@@ -679,6 +711,8 @@ public abstract class RunOnceModel extends Model
 
         getDisplayProtocol().setSelectedItem(vm.getDefaultDisplayType() == DisplayType.vnc ?
                 vncProtocol : qxlProtocol);
+        getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
+        getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
     }
 
     private void initVmInitEnabled(VmInit vmInit, boolean isInitialized) {
@@ -753,6 +787,10 @@ public abstract class RunOnceModel extends Model
         if (!StringHelper.isNullOrEmpty(selectedDomain)) {
              params.setSysPrepDomainName(selectedDomain);
         }
+
+        params.setSpiceFileTransferEnabled(getSpiceFileTransferEnabled().getEntity());
+
+        params.setSpiceCopyPasteEnabled(getSpiceCopyPasteEnabled().getEntity());
 
         return params;
     }
@@ -949,11 +987,15 @@ public abstract class RunOnceModel extends Model
             {
                 getDisplayConsole_Spice_IsSelected().setEntity(false);
                 getVncKeyboardLayout().setIsChangable(true);
+                getSpiceFileTransferEnabled().setIsChangable(false);
+                getSpiceCopyPasteEnabled().setIsChangable(false);
             }
             else if (sender == getDisplayConsole_Spice_IsSelected() && ((EntityModel<Boolean>) sender).getEntity())
             {
                 getDisplayConsole_Vnc_IsSelected().setEntity(false);
                 getVncKeyboardLayout().setIsChangable(false);
+                getSpiceFileTransferEnabled().setIsChangable(true);
+                getSpiceCopyPasteEnabled().setIsChangable(true);
             }
             else if (sender == getIsAutoAssign())
             {

@@ -343,6 +343,10 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
         initPriority(this.vm.getPriority());
 
+        getModel().getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
+
+        getModel().getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
+
         BuilderExecutor.build(vm.getStaticData(), getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
 
         getModel().getBootMenuEnabled().setEntity(vm.isBootMenuEnabled());

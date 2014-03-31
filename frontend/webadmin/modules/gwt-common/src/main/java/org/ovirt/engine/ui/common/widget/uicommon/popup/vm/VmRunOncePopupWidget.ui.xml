@@ -229,6 +229,8 @@
 				<ge:EntityModelRadioButtonEditor ui:field="displayConsoleVncEditor" />
 				<e:ListModelListBoxEditor ui:field="vncKeyboardLayoutEditor" />
 				<ge:EntityModelRadioButtonEditor ui:field="displayConsoleSpiceEditor" />
+                <ge:EntityModelCheckBoxEditor ui:field="spiceFileTransferEnabledEditor" />
+                <ge:EntityModelCheckBoxEditor ui:field="spiceCopyPasteEnabledEditor" />
 			</g:VerticalPanel>
 		</g:DisclosurePanel>
 

@@ -1853,4 +1853,10 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Enables/disables Random Number Generator device. If 'period' and 'bytes' are empty, libvirt default is used. If you specify 'period' you need to specify 'bytes' as well.")
     String rngDevExplanation();
+
+    @DefaultStringValue("Enable SPICE file transfer")
+    String spiceFileTransferEnabled();
+
+    @DefaultStringValue("Enable SPICE clipboard copy and paste")
+    String spiceCopyPasteEnabled();
 }

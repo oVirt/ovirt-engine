@@ -3767,6 +3767,14 @@ public final class AsyncDataProvider {
         return (Boolean) getConfigValuePreConverted(ConfigurationValues.BootMenuSupported, version);
     }
 
+    public static boolean isSpiceFileTransferToggleSupported(String version) {
+        return (Boolean) getConfigValuePreConverted(ConfigurationValues.SpiceFileTransferToggleSupported, version);
+    }
+
+    public static boolean isSpiceCopyPasteToggleSupported(String version) {
+        return (Boolean) getConfigValuePreConverted(ConfigurationValues.SpiceCopyPasteToggleSupported, version);
+    }
+
     public static List<IStorageModel> getDataStorageModels() {
         ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
 

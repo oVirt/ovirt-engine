@@ -119,6 +119,8 @@ public class BaseVmListModelTest {
         when(model.getMigrationMode().getSelectedItem()).thenReturn(MIGRATION_SUPPORT);
         when(model.getSelectedMigrationDowntime()).thenReturn(MIGRATION_DOWNTIME);
         when(model.getBootMenuEnabled().getEntity()).thenReturn(true);
+        when(model.getSpiceFileTransferEnabled().getEntity()).thenReturn(true);
+        when(model.getSpiceCopyPasteEnabled().getEntity()).thenReturn(true);
     }
 
     protected void setUpOrigVm(VM origVm) {
@@ -153,6 +155,8 @@ public class BaseVmListModelTest {
         assertTrue(vm.isDeleteProtected());
         assertEquals(VNC_KEYBOARD_LAYOUT, vm.getVncKeyboardLayout());
         assertEquals(DISPLAY_TYPE, vm.getDefaultDisplayType());
+        assertTrue(vm.isSpiceFileTransferEnabled());
+        assertTrue(vm.isSpiceCopyPasteEnabled());
     }
 
     /**

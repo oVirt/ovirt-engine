@@ -165,6 +165,10 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             getModel().getVmInitModel().init(vmBase);
             getModel().getVmInitEnabled().setEntity(vmBase.getVmInit() != null);
 
+            getModel().getSpiceFileTransferEnabled().setEntity(vmBase.isSpiceFileTransferEnabled());
+
+            getModel().getSpiceCopyPasteEnabled().setEntity(vmBase.isSpiceCopyPasteEnabled());
+
             BuilderExecutor.build(vmBase, getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
 
             getModel().getBootMenuEnabled().setEntity(vmBase.isBootMenuEnabled());
