@@ -268,6 +268,7 @@ public class BackendVmResource extends
 
     @Override
     public Response previewSnapshot(Action action) {
+        validateParameters(action, "snapshot.id");
         TryBackToAllSnapshotsOfVmParameters tryBackParams =
                 new TryBackToAllSnapshotsOfVmParameters(guid, asGuid(action.getSnapshot().getId()));
         Response response = doAction(VdcActionType.TryBackToAllSnapshotsOfVm,
