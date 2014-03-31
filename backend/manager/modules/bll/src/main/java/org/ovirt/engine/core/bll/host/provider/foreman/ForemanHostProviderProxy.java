@@ -48,7 +48,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     public ForemanHostProviderProxy(Provider hostProvider) {
         super(hostProvider);
         this.hostProvider = hostProvider;
-        initHttpClient(hostProvider.getUrl());
+        initHttpClient();
     }
 
     @Override
@@ -123,7 +123,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         }
     }
 
-    private void initHttpClient(String hostUrlString) {
+    private void initHttpClient() {
         try {
             URL hostUrl = getUrl();
             if (isSecured()) {
