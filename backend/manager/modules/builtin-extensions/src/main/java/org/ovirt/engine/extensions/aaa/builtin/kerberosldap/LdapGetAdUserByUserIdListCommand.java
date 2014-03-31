@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.common.utils.ExternalId;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  */
 public class LdapGetAdUserByUserIdListCommand extends LdapBrokerCommandBase {
 
-    private List<ExternalId> getUserIds() {
+    private List<Guid> getUserIds() {
         return ((LdapSearchByIdListParameters) getParameters()).getIds();
     }
 
@@ -60,7 +60,7 @@ public class LdapGetAdUserByUserIdListCommand extends LdapBrokerCommandBase {
     private List<LdapQueryData> GenerateUsersQuery() {
 
         UsersObjectIdQueryGenerator generator = new UsersObjectIdQueryGenerator();
-        for (ExternalId id : getUserIds()) {
+        for (Guid id : getUserIds()) {
             generator.add(id);
         }
         return generator.getLdapQueriesData(getDomain());

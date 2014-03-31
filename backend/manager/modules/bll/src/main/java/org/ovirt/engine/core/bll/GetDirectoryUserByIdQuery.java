@@ -4,7 +4,6 @@ import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
-import org.ovirt.engine.core.common.utils.ExternalId;
 
 public class GetDirectoryUserByIdQuery<P extends DirectoryIdQueryParameters> extends QueriesCommandBase<P> {
 
@@ -15,12 +14,12 @@ public class GetDirectoryUserByIdQuery<P extends DirectoryIdQueryParameters> ext
     @Override
     protected void executeQueryCommand() {
         String directoryName = getParameters().getDomain();
-        ExternalId id = getParameters().getId();
+        String id = getParameters().getId();
         Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
         if (directory == null) {
             getQueryReturnValue().setSucceeded(false);
         } else {
-            DirectoryUser user = directory.findUser(id);
+            DirectoryUser user = directory.findUserById(id);
             getQueryReturnValue().setReturnValue(user);
         }
     }

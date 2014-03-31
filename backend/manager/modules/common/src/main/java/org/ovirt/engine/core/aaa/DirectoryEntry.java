@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 public class DirectoryEntry extends IVdcQueryable {
@@ -17,7 +16,7 @@ public class DirectoryEntry extends IVdcQueryable {
     private String directoryName;
 
     // The values o the attributes:
-    private ExternalId id;
+    private String id;
     private String name;
     private DirectoryEntryStatus status;
 
@@ -26,7 +25,7 @@ public class DirectoryEntry extends IVdcQueryable {
      */
     private List<DirectoryGroup> groups;
 
-    public DirectoryEntry(String directoryName, ExternalId id, String name) {
+    public DirectoryEntry(String directoryName, String id, String name) {
         this.directoryName = directoryName;
         this.id = id;
         this.name = name;
@@ -34,11 +33,11 @@ public class DirectoryEntry extends IVdcQueryable {
         this.groups = new ArrayList<DirectoryGroup>(1);
     }
 
-    public ExternalId getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(ExternalId id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -1,6 +1,5 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DefaultLdapIdEncoder implements LdapIdEncoder {
@@ -15,9 +14,8 @@ public class DefaultLdapIdEncoder implements LdapIdEncoder {
     }
 
     @Override
-    public String encodedId(ExternalId id) {
-        Guid guid = new Guid(id.getBytes(), true);
-        return guid.toString();
+    public String encodedId(Guid id) {
+        return id.toString();
     }
 
 }

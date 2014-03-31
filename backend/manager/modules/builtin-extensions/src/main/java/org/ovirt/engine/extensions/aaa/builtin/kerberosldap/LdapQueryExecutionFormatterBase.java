@@ -1,6 +1,6 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-import org.ovirt.engine.core.common.utils.ExternalId;
+import org.ovirt.engine.core.compat.Guid;
 
 public abstract class LdapQueryExecutionFormatterBase implements LdapQueryFormatter<LdapQueryExecution> {
 
@@ -19,8 +19,8 @@ public abstract class LdapQueryExecutionFormatterBase implements LdapQueryFormat
         int index = 0;
 
         for (Object parameter : parameters) {
-            if (parameter instanceof ExternalId) {
-                retVal[index] = idEncoder.encodedId((ExternalId) parameter);
+            if (parameter instanceof Guid) {
+                retVal[index] = idEncoder.encodedId((Guid) parameter);
             }
             index++;
         }

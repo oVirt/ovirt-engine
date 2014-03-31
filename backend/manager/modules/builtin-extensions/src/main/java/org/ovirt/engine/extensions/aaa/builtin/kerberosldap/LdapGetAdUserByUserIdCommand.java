@@ -3,14 +3,10 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.common.utils.ExternalId;
-
-//
-// JTODO - this needs testing -- Livnat
-//
+import org.ovirt.engine.core.compat.Guid;
 
 public class LdapGetAdUserByUserIdCommand extends LdapWithConfiguredCredentialsCommandBase {
-    private ExternalId getUserId() {
+    private Guid getUserId() {
         return ((LdapSearchByIdParameters) getParameters()).getId();
     }
 

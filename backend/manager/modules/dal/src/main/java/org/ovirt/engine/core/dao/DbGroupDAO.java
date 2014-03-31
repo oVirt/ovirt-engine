@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DbGroup;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -28,7 +27,7 @@ public interface DbGroupDAO extends DAO, SearchDAO<DbGroup> {
      * @return a reference to the group or <code>null</code> if no such group
      *   can be found in the database
      */
-    DbGroup getByExternalId(String domain, ExternalId externalId);
+    DbGroup getByExternalId(String domain, String externalId);
 
     /**
      * Retrieves a group that matches either the internal or external identifiers given.
@@ -39,7 +38,7 @@ public interface DbGroupDAO extends DAO, SearchDAO<DbGroup> {
      * @return a reference to the group or <code>null</code> if no such group
      *   can be found in the database
      */
-    DbGroup getByIdOrExternalId(Guid id, String domain, ExternalId externalId);
+    DbGroup getByIdOrExternalId(Guid id, String domain, String externalId);
 
     /**
      * Retrieves the group with the specified name.

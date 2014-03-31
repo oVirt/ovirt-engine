@@ -4,7 +4,6 @@ import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -20,7 +19,7 @@ public class DbUser extends IVdcQueryable {
     /**
      * This is the identifier assigned by the external directory to this user.
      */
-    private ExternalId externalId;
+    private String externalId;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.USER_DOMAIN_SIZE)
     private String domain;
@@ -131,11 +130,11 @@ public class DbUser extends IVdcQueryable {
         this.id = id;
     }
 
-    public ExternalId getExternalId() {
+    public String getExternalId() {
         return externalId;
     }
 
-    public void setExternalId(ExternalId externalId) {
+    public void setExternalId(String externalId) {
         this.externalId = externalId;
     }
 

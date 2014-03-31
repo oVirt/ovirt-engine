@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -27,7 +26,7 @@ public class UserPortalAdElementListModel extends AdElementListModel {
     }
 
     @Override
-    protected void addUsersToModel(VdcQueryReturnValue returnValue, Set<ExternalId> excludeUsers) {
+    protected void addUsersToModel(VdcQueryReturnValue returnValue, Set<String> excludeUsers) {
         Iterable<DbUser> filteredUsers = Linq.where((ArrayList<DbUser>) returnValue.getReturnValue(),
                 new Linq.DbUserPredicate(getTargetDbUser()));
         for (DbUser dbUser : filteredUsers) {

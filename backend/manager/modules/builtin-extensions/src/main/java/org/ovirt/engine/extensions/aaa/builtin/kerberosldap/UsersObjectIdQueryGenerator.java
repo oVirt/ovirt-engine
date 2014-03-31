@@ -8,12 +8,12 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ExternalId;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * @author yzaslavs
  */
-public class UsersObjectIdQueryGenerator extends LdapQueryDataGeneratorBase<ExternalId> {
+public class UsersObjectIdQueryGenerator extends LdapQueryDataGeneratorBase<Guid> {
 
     public List<LdapQueryData> getLdapQueriesData(String domain) {
         int queryLimit = Config.<Integer> getValue(ConfigValues.MaxLDAPQueryPartsNumber);
@@ -23,7 +23,7 @@ public class UsersObjectIdQueryGenerator extends LdapQueryDataGeneratorBase<Exte
         ArrayList<Object> filterParameters = new ArrayList<Object>();
 
         int counter = 0;
-        for (ExternalId identifier : ldapIdentifiers) {
+        for (Guid identifier : ldapIdentifiers) {
 
             filterParameters.add(identifier);
             // Checking if more than queryLimit query clauses were added to the query

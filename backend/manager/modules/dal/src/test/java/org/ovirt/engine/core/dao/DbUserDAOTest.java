@@ -12,7 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DbUserDAOTest extends BaseDAOTestCase {
@@ -36,7 +35,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
 
         newUser = new DbUser();
 
-        newUser.setExternalId(new ExternalId(new byte[0]));
+        newUser.setExternalId("0");
         newUser.setId(Guid.newGuid());
         newUser.setFirstName("Bob");
         newUser.setLastName("Milqtoste");
@@ -72,8 +71,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidExternalId() {
-        ExternalId externalId = new ExternalId(0);
-        DbUser result = dao.getByExternalId("testportal.redhat.com", externalId);
+        DbUser result = dao.getByExternalId("testportal.redhat.com", "0");
         assertNull(result);
     }
 
@@ -82,11 +80,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByExternalId() {
-        ExternalId externalId = new ExternalId(
-            0x9b, 0xf7, 0xc6, 0x40, 0xb6, 0x20, 0x45, 0x6f,
-            0xa5, 0x50, 0x03, 0x48, 0xf3, 0x66, 0x54, 0x4a
-        );
-        DbUser result = dao.getByExternalId("testportal.redhat.com", externalId);
+        DbUser result = dao.getByExternalId("testportal.redhat.com", "a");
         assertNotNull(result);
     }
 
@@ -195,7 +189,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
     @Test
     public void testSaveUserWithTooManyGroups() {
         DbUser tooManyGroupsUser = new DbUser();
-        tooManyGroupsUser.setExternalId(new ExternalId(0));
+        tooManyGroupsUser.setExternalId("0");
         tooManyGroupsUser.setId(Guid.newGuid());
         tooManyGroupsUser.setFirstName("I");
         tooManyGroupsUser.setLastName("Have");

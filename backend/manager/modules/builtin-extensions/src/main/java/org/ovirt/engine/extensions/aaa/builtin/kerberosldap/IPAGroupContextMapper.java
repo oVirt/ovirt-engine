@@ -10,13 +10,11 @@ import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
-import org.ovirt.engine.core.common.utils.ExternalId;
-import org.springframework.ldap.core.ContextMapper;
-import org.springframework.ldap.core.DirContextAdapter;
-
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.springframework.ldap.core.ContextMapper;
+import org.springframework.ldap.core.DirContextAdapter;
 
 public class IPAGroupContextMapper implements ContextMapper {
 
@@ -54,7 +52,10 @@ public class IPAGroupContextMapper implements ContextMapper {
 
             String distinguishedName = searchResult.getNameInNamespace();
             distinguishedName = LdapBrokerUtils.hadleNameEscaping(distinguishedName);
-            GroupSearchResult groupSearchResult = new GroupSearchResult(new ExternalId(Guid.createGuidFromStringDefaultEmpty(objectGuid).toByteArray()), memberOf, distinguishedName);
+            GroupSearchResult groupSearchResult =
+                    new GroupSearchResult(Guid.createGuidFromStringDefaultEmpty(objectGuid).toString(),
+                            memberOf,
+                            distinguishedName);
             return groupSearchResult;
         } catch (Exception ex) {
             log.error("Failed populating group", ex);

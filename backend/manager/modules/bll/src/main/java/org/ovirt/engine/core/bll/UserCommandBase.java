@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDAO;
@@ -56,14 +55,14 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
     }
 
     @SuppressWarnings("deprecation")
-    public static DbUser initUser(String sessionId, String directoryName, ExternalId id) {
+    public static DbUser initUser(String sessionId, String directoryName, String id) {
         DbUser dbUser = DbFacade.getInstance().getDbUserDao().getByExternalId(directoryName, id);
         if (dbUser == null) {
             Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
             if (directory == null) {
                 throw new VdcBLLException(VdcBllErrors.USER_FAILED_POPULATE_DATA);
             }
-            DirectoryUser directoryUser = directory.findUser(id);
+            DirectoryUser directoryUser = directory.findUserById(id);
             if (directoryUser == null) {
                 throw new VdcBLLException(VdcBllErrors.USER_FAILED_POPULATE_DATA);
             }

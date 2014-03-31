@@ -2,10 +2,6 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 
-//
-// JTODO - this needs testing -- Livnat
-//
-
 public class LdapGetAdUserByUserNameCommand extends LdapBrokerCommandBase {
     private String getUserName() {
         return ((LdapSearchByUserNameParameters) getParameters()).getUserName();

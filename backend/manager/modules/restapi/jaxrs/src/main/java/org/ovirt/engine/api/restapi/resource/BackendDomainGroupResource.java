@@ -1,13 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.apache.commons.codec.binary.Hex;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.resource.DomainGroupResource;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -20,12 +18,10 @@ public class BackendDomainGroupResource
         implements DomainGroupResource {
 
     private BackendDomainGroupsResource parent;
-    private ExternalId id;
 
-    public BackendDomainGroupResource(ExternalId id, BackendDomainGroupsResource parent) {
-        super(Hex.encodeHexString(id.getBytes()), Group.class, DirectoryGroup.class);
+    public BackendDomainGroupResource(String id, BackendDomainGroupsResource parent) {
+        super(id, Group.class, DirectoryGroup.class);
         this.parent = parent;
-        this.id = id;
     }
 
     public BackendDomainGroupsResource getParent() {

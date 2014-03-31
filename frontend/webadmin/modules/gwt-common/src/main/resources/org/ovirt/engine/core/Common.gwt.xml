@@ -206,7 +206,6 @@
         <include name="common/osinfo/OsRepository.java"/>
         <include name="common/utils/SimpleDependecyInjector.java"/>
         <include name="common/utils/VersionStorageFormatUtil.java"/>
-        <include name="common/utils/ExternalId.java"/>
         <include name="common/utils/SizeConverter.java"/>
 
         <!-- Required by frontend -->

@@ -1,13 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.apache.commons.codec.binary.Hex;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.DomainUserResource;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -22,12 +20,10 @@ public class BackendDomainUserResource
         implements DomainUserResource {
 
     private BackendDomainUsersResource parent;
-    private ExternalId id;
 
-    public BackendDomainUserResource(ExternalId id, BackendDomainUsersResource parent) {
-        super(Hex.encodeHexString(id.getBytes()), User.class, DirectoryUser.class);
+    public BackendDomainUserResource(String id, BackendDomainUsersResource parent) {
+        super(id, User.class, DirectoryUser.class);
         this.parent = parent;
-        this.id = id;
     }
 
     public BackendDomainUsersResource getParent() {

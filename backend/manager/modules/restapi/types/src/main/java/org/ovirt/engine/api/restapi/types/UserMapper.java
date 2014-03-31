@@ -10,7 +10,6 @@ import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 public class UserMapper {
@@ -75,7 +74,7 @@ public class UserMapper {
             String id = model.getId();
             try {
                 entity.setId(GuidUtils.asGuid(id));
-                entity.setExternalId(ExternalId.fromHex(entity.getId().toString()));
+                entity.setExternalId(entity.getId().toString());
             }
             catch (MalformedIdException exception) {
                 // The identifier won't be a UUID if the user comes from /domains/{domain:id}/users.

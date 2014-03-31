@@ -3,13 +3,12 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 public class LdapGroup extends IVdcQueryable {
     private static final long serialVersionUID = 6717840754119287059L;
 
-    private ExternalId id;
+    private String id;
 
     private String name;
 
@@ -36,11 +35,11 @@ public class LdapGroup extends IVdcQueryable {
         memberOf = dbGroup.getMemberOf() != null ? new ArrayList<String>(dbGroup.getMemberOf()) : null;
     }
 
-    public ExternalId getid() {
+    public String getid() {
         return this.id;
     }
 
-    public void setid(ExternalId value) {
+    public void setid(String value) {
         this.id = value;
     }
 
@@ -60,13 +59,13 @@ public class LdapGroup extends IVdcQueryable {
         active = value;
     }
 
-    public LdapGroup(ExternalId id, String name, String domain) {
+    public LdapGroup(String id, String name, String domain) {
         this (id);
         this.name = name;
         this.domain = domain;
     }
 
-    public LdapGroup(ExternalId id, String name, String domain, String distinguishedName, List<String> memberOf) {
+    public LdapGroup(String id, String name, String domain, String distinguishedName, List<String> memberOf) {
         this(id, name, domain);
         this.distinguishedName = distinguishedName;
         this.setMemberOf(memberOf);
@@ -77,7 +76,7 @@ public class LdapGroup extends IVdcQueryable {
      *
      * @param id
      */
-    public LdapGroup(ExternalId id) {
+    public LdapGroup(String id) {
         this.id = id;
         active = false;
     }

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class LdapUser extends IVdcQueryable implements Serializable {
@@ -15,7 +14,7 @@ public class LdapUser extends IVdcQueryable implements Serializable {
     // TODO - DesktopDevice ?? (Miki)
 
     private static final long serialVersionUID = 6800096193162766377L;
-    private ExternalId mUserId;
+    private String mUserId;
     private String mUserName;
     private String mDomainControler;
     private String mName;
@@ -51,11 +50,11 @@ public class LdapUser extends IVdcQueryable implements Serializable {
         mUserName = value;
     }
 
-    public ExternalId getUserId() {
+    public String getUserId() {
         return mUserId;
     }
 
-    public void setUserId(ExternalId value) {
+    public void setUserId(String value) {
         mUserId = value;
     }
 

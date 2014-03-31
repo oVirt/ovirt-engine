@@ -2,13 +2,11 @@ package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 
-import org.ovirt.engine.core.common.utils.ExternalId;
-
 public class DirectoryIdParameters extends VdcActionParametersBase implements Serializable {
     private static final long serialVersionUID = 3601116892296829414L;
 
     private String directory;
-    private ExternalId id;
+    private String id;
 
     public void setDirectory(String directory) {
         this.directory = directory;
@@ -18,11 +16,11 @@ public class DirectoryIdParameters extends VdcActionParametersBase implements Se
         return directory;
     }
 
-    public void setId(ExternalId id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public ExternalId getId() {
+    public String getId() {
         return id;
     }
 }

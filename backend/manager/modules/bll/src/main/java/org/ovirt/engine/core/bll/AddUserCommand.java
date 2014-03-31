@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -44,7 +43,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
         }
 
         // Check that the identifier of the directory user has been provided:
-        ExternalId id = getParameters().getId();
+        String id = getParameters().getId();
         if (id == null) {
             log.errorFormat(
                 "Can't add user from directory \"{0}\" because the user identifier hasn't been provided.",
@@ -67,7 +66,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
 
         // Check that the user is available in the directory (and save the reference to avoid looking it up later when
         // actually adding the user to the database):
-        directoryUser = directory.findUser(id);
+        directoryUser = directory.findUserById(id);
         if (directoryUser == null) {
             log.errorFormat(
                 "Can't add user with id \"{0}\" because it doesn't exist in directory \"{1}\".",

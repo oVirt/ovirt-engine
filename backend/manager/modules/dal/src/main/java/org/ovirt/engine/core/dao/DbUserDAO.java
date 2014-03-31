@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -39,7 +38,7 @@ public interface DbUserDAO extends DAO, SearchDAO<DbUser> {
      * @return a reference to the user or <code>null</code> if no such user
      *   can be found in the database
      */
-    DbUser getByExternalId(String domain, ExternalId externalId);
+    DbUser getByExternalId(String domain, String externalId);
 
     /**
      * Retrieves a user that matches either the internal or external identifiers given.
@@ -50,7 +49,7 @@ public interface DbUserDAO extends DAO, SearchDAO<DbUser> {
      * @return a reference to the user or <code>null</code> if no such user
      *   can be found in the database
      */
-    DbUser getByIdOrExternalId(Guid id, String domain, ExternalId externalId);
+    DbUser getByIdOrExternalId(Guid id, String domain, String externalId);
 
     /**
      * Retrieves all users associated with the specified virtual machine.

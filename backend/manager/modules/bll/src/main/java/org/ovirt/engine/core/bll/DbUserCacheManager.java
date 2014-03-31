@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbGroupDAO;
@@ -32,7 +31,7 @@ public class DbUserCacheManager {
     private static final Log log = LogFactory.getLog(DbUserCacheManager.class);
     private static final DbUserCacheManager _instance = new DbUserCacheManager();
     private boolean initialized = false;
-    private final Map<ExternalId, DbGroup> groupsMap = new HashMap<>();
+    private final Map<String, DbGroup> groupsMap = new HashMap<>();
 
     public static DbUserCacheManager getInstance() {
         return _instance;
@@ -127,7 +126,7 @@ public class DbUserCacheManager {
      */
     private List<DbUser> refreshUsers(List<DbUser> dbUsers, Directory directory) {
         // Find all the users in the directory using a batch operation to improve performance:
-        List<ExternalId> ids = new ArrayList<>(dbUsers.size());
+        List<String> ids = new ArrayList<>(dbUsers.size());
         for (DbUser dbUser : dbUsers) {
             ids.add(dbUser.getExternalId());
         }
@@ -141,7 +140,7 @@ public class DbUserCacheManager {
 
         // Build a map of users indexed by directory id to simplify the next step where we want to find the directory
         // user corresponding to each database user:
-        Map<ExternalId, DirectoryUser> index = new HashMap<>();
+        Map<String, DirectoryUser> index = new HashMap<>();
         for (DirectoryUser directoryUser : directoryUsers) {
             index.put(directoryUser.getId(), directoryUser);
         }

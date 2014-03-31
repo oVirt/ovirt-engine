@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DbGroup;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -25,17 +24,17 @@ public class DbGroupDAODbFacadeImpl extends BaseDAODbFacade implements DbGroupDA
     }
 
     @Override
-    public DbGroup getByExternalId(String domain, ExternalId externalId) {
+    public DbGroup getByExternalId(String domain, String externalId) {
         return getCallsHandler().executeRead("GetGroupByExternalId",
                 DbGroupRowMapper.instance,
                 getCustomMapSqlParameterSource()
                        .addValue("domain", domain)
-                       .addValue("external_id", externalId.getBytes()));
+                        .addValue("external_id", externalId));
     }
 
 
     @Override
-    public DbGroup getByIdOrExternalId(Guid id, String domain, ExternalId externalId) {
+    public DbGroup getByIdOrExternalId(Guid id, String domain, String externalId) {
         // Check if there is a user with the given internal identifier:
         if (id != null) {
             DbGroup existing = get(id);
@@ -55,8 +54,7 @@ public class DbGroupDAODbFacadeImpl extends BaseDAODbFacade implements DbGroupDA
         // In older versions of the engine the internal and external identifiers were the same, so we also need to check
         // if the internal id is really an external id:
         if (domain != null && id != null) {
-            externalId = ExternalId.fromHex(id.toString());
-            DbGroup existing = getByExternalId(domain, externalId);
+            DbGroup existing = getByExternalId(domain, id.toString());
             if (existing != null) {
                 return existing;
             }
@@ -125,7 +123,7 @@ public class DbGroupDAODbFacadeImpl extends BaseDAODbFacade implements DbGroupDA
             entity.setActive(rs.getBoolean("active"));
             entity.setDomain(rs.getString("domain"));
             entity.setDistinguishedName(rs.getString("distinguishedname"));
-            entity.setExternalId(new ExternalId(rs.getBytes("external_id")));
+            entity.setExternalId(rs.getString("external_id"));
             return entity;
         }
     }

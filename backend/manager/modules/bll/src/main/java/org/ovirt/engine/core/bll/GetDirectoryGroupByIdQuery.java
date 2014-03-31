@@ -4,7 +4,6 @@ import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
-import org.ovirt.engine.core.common.utils.ExternalId;
 
 public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> extends QueriesCommandBase<P> {
 
@@ -15,12 +14,12 @@ public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> ex
     @Override
     protected void executeQueryCommand() {
         final String directoryName = getParameters().getDomain();
-        final ExternalId id = getParameters().getId();
+        final String id = getParameters().getId();
         final Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
         if (directory == null) {
             getQueryReturnValue().setSucceeded(false);
         } else {
-            final DirectoryGroup group = directory.findGroup(id);
+            final DirectoryGroup group = directory.findGroupById(id);
             getQueryReturnValue().setReturnValue(group);
         }
     }

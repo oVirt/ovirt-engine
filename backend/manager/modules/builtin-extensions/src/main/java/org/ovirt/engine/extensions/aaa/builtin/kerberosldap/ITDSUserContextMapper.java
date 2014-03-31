@@ -13,7 +13,6 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -48,7 +47,7 @@ public class ITDSUserContextMapper implements ContextMapper {
         try {
             String idText = (String) attributes.get(uniqueIdentifier.name()).get(0);
             Guid idObject = Guid.createGuidFromStringDefaultEmpty(idText);
-            user.setUserId(new ExternalId(idObject.toByteArray()));
+            user.setUserId(idObject.toString());
 
             // Getting other string properties
             Attribute att = attributes.get(uid.name());

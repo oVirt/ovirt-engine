@@ -11,7 +11,6 @@ import org.ovirt.engine.api.extensions.AAAExtensionException.AAAExtensionError;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -194,7 +193,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         proceedGroupsSearchResult(groupsResult.getId(), groupsList, groupsDict, generator);
     }
 
-    private void proceedGroupsSearchResult(ExternalId groupId, List<String> groupDNList,
+    private void proceedGroupsSearchResult(String groupId, List<String> groupDNList,
             Map<String, LdapGroup> groupsDict, GroupsDNQueryGenerator generator) {
         if (groupDNList == null) {
             return;

@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -186,7 +185,7 @@ public class BackendGroupsResource
             return getEntity(
                 DirectoryGroup.class,
                 VdcQueryType.GetDirectoryGroupById,
-                new DirectoryIdQueryParameters(directoryName, ExternalId.fromHex(groupId)),
+                new DirectoryIdQueryParameters(directoryName, groupId),
                 groupId,
                 true
             );

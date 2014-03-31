@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbGroupDAO;
 
@@ -35,14 +34,14 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
     @Override
     protected boolean canDoAction() {
         String directoryName = getParameters().getDirectory();
-        ExternalId id = getParameters().getId();
+        String id = getParameters().getId();
         Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
         if (directory == null) {
             addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
             return false;
         }
 
-        directoryGroup = directory.findGroup(id);
+        directoryGroup = directory.findGroupById(id);
         if (directoryGroup == null) {
             addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
             return false;

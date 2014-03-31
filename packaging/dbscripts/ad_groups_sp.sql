@@ -12,7 +12,7 @@ Create or replace FUNCTION InsertGroup(v_id UUID,
 	v_active BOOLEAN,
 	v_domain VARCHAR(100),
 	v_distinguishedname VARCHAR(4000),
-	v_external_id BYTEA)
+	v_external_id TEXT)
 RETURNS VOID
    AS $procedure$
 BEGIN
@@ -30,7 +30,7 @@ Create or replace FUNCTION UpdateGroup(v_id UUID,
 	v_active BOOLEAN,
 	v_domain VARCHAR(100),
 	v_distinguishedname VARCHAR(4000),
-	v_external_id BYTEA)
+	v_external_id TEXT)
 RETURNS VOID
 
 	--The [ad_groups] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -86,7 +86,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetGroupByExternalId(v_domain VARCHAR(100), v_external_id BYTEA) RETURNS SETOF ad_groups STABLE
+Create or replace FUNCTION GetGroupByExternalId(v_domain VARCHAR(100), v_external_id TEXT) RETURNS SETOF ad_groups STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *

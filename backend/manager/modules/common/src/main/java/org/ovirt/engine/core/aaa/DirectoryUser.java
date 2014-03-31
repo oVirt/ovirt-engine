@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.aaa;
 
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 public class DirectoryUser extends DirectoryEntry {
@@ -16,7 +15,7 @@ public class DirectoryUser extends DirectoryEntry {
     // Flag indicating if this user has the administrator role:
     private boolean isAdmin;
 
-    public DirectoryUser(String directoryName, ExternalId id, String name) {
+    public DirectoryUser(String directoryName, String id, String name) {
         super(directoryName, id, name);
         isAdmin = false;
     }

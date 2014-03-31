@@ -3,7 +3,6 @@ package org.ovirt.engine.core.aaa;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.api.extensions.Extension;
 
 /**
@@ -36,7 +35,7 @@ public abstract class Directory implements Extension {
      * @param id the identifier of the user
      * @return the user corresponding to the given identifier or {@code null} if no such user can be found
      */
-    public abstract DirectoryUser findUser(ExternalId id);
+    public abstract DirectoryUser findUserById(String id);
 
     /**
      * Retrieves a list of users from the directory given their identifiers.
@@ -45,7 +44,7 @@ public abstract class Directory implements Extension {
      * @return a list containing at most on user for each identifier in the given set with no particular order, note
      *     that the returned list may contain less elements than the given list of identifiers
      */
-    public abstract List<DirectoryUser> findUsers(List<ExternalId> ids);
+    public abstract List<DirectoryUser> findUsers(List<String> ids);
 
     /**
      * Retrieves a group from the directory given its name.
@@ -61,7 +60,7 @@ public abstract class Directory implements Extension {
      * @param id the identifier of the group
      * @return the group corresponding to the given identifier or {@code null} if no such group can be found
      */
-    public abstract DirectoryGroup findGroup(ExternalId id);
+    public abstract DirectoryGroup findGroupById(String id);
 
     /**
      * Search the directory looking for users that match the given search query. Note that the query uses the LDAP query

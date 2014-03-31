@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -94,7 +93,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         if (user != null) {
             Guid id = user.getId();
             String directory = user.getDomain();
-            ExternalId externalId = user.getExternalId();
+            String externalId = user.getExternalId();
             DbUser existing = getDbUserDAO().getByIdOrExternalId(id, directory, externalId);
             if (existing != null) {
                 user = existing;
@@ -111,7 +110,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         if (group != null) {
             Guid id = group.getId();
             String directory = group.getDomain();
-            ExternalId externalId = group.getExternalId();
+            String externalId = group.getExternalId();
             DbGroup existing = getAdGroupDAO().getByIdOrExternalId(id, directory, externalId);
             if (existing != null) {
                 group = existing;
@@ -201,7 +200,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         return permissionsSubject;
     }
 
-    private DbUser addUser(Guid id, String directory, ExternalId externalId) {
+    private DbUser addUser(Guid id, String directory, String externalId) {
         // Try to add the user with the external id:
         if (directory != null && externalId != null) {
             DirectoryIdParameters parameters = new DirectoryIdParameters();
@@ -220,7 +219,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         return null;
     }
 
-    private DbGroup addGroup(Guid id, String directory, ExternalId externalId) {
+    private DbGroup addGroup(Guid id, String directory, String externalId) {
         // Try to add the user with the external id:
         if (directory != null && externalId != null) {
             DirectoryIdParameters parameters = new DirectoryIdParameters();

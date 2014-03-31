@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.core.aaa.DirectoryGroup;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -19,7 +18,7 @@ public class DbGroup extends IVdcQueryable {
     /**
      * This is the identifier assigned by the external directory to this group.
      */
-    private ExternalId externalId;
+    private String externalId;
 
     private String domain;
     private String name;
@@ -51,11 +50,11 @@ public class DbGroup extends IVdcQueryable {
         id = value;
     }
 
-    public ExternalId getExternalId() {
+    public String getExternalId() {
         return externalId;
     }
 
-    public void setExternalId(ExternalId value) {
+    public void setExternalId(String value) {
         externalId = value;
     }
 

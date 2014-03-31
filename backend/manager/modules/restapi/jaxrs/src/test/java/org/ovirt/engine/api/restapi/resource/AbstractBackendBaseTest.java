@@ -52,7 +52,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendBaseTest extends Assert {
@@ -64,16 +63,16 @@ public abstract class AbstractBackendBaseTest extends Assert {
     /**
      * External identifiers used by directory users and groups.
      */
-    protected static final ExternalId[] EXTERNAL_IDS = {
-            ExternalId.fromHex(GUIDS[0].toString()),
-            ExternalId.fromHex(GUIDS[1].toString()),
-            ExternalId.fromHex(GUIDS[2].toString()),
+    protected static final String[] EXTERNAL_IDS = {
+            GUIDS[0].toString(),
+            GUIDS[1].toString(),
+            GUIDS[2].toString(),
     };
 
     /**
      * External identifier of a non existing user or group.
      */
-    protected static final ExternalId NON_EXISTANT_EXTERNAL_ID = new ExternalId(9);
+    protected static final String NON_EXISTANT_EXTERNAL_ID = Guid.newGuid().toString();
 
     protected static final Guid NON_EXISTANT_GUID = new Guid("99999999-9999-9999-9999-999999999999");
     protected static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");

@@ -318,7 +318,7 @@ public class BackendGroupsResourceTest
 
         Group model = new Group();
         model.setName(GROUP_NAMES[0]);
-        model.setId(EXTERNAL_IDS[0].toHex());
+        model.setId(EXTERNAL_IDS[0]);
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
@@ -343,7 +343,7 @@ public class BackendGroupsResourceTest
         control.replay();
         Group model = new Group();
         model.setName(GROUP_NAMES[0]);
-        model.setId(NON_EXISTANT_EXTERNAL_ID.toHex());
+        model.setId(NON_EXISTANT_EXTERNAL_ID);
 
         try {
             collection.add(model);

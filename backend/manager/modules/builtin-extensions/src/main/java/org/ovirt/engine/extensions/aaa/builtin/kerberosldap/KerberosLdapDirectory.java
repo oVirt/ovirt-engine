@@ -10,7 +10,7 @@ import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.common.utils.ExternalId;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.extensions.Extension.ExtensionProperties;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -46,11 +46,11 @@ public class KerberosLdapDirectory extends Directory {
     }
 
     @Override
-    public DirectoryUser findUser(ExternalId id) {
+    public DirectoryUser findUserById(String id) {
         // Find the user with the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.GetAdUserByUserId,
-                new LdapSearchByIdParameters(getName(), id)
+                new LdapSearchByIdParameters(getName(), Guid.createGuidFromString(id))
         );
         LdapUser ldapUser = (LdapUser) ldapResult.getReturnValue();
 
@@ -75,11 +75,15 @@ public class KerberosLdapDirectory extends Directory {
     }
 
     @Override
-    public List<DirectoryUser> findUsers(List<ExternalId> ids) {
+    public List<DirectoryUser> findUsers(List<String> ids) {
         // Find the users using the old mechanism:
+        List<Guid> guids = new ArrayList<>();
+        for (String id : ids) {
+            guids.add(Guid.createGuidFromString(id));
+        }
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.GetAdUserByUserIdList,
-                new LdapSearchByUserIdListParameters(getName(), ids, true)
+                new LdapSearchByUserIdListParameters(getName(), guids, true)
         );
         @SuppressWarnings("unchecked")
         List<LdapUser> ldapUsers = (List<LdapUser>) ldapResult.getReturnValue();
@@ -170,11 +174,11 @@ public class KerberosLdapDirectory extends Directory {
     }
 
     @Override
-    public DirectoryGroup findGroup(ExternalId id) {
+    public DirectoryGroup findGroupById(String id) {
         // Find the group using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.GetAdGroupByGroupId,
-                new LdapSearchByIdParameters(getName(), id)
+                new LdapSearchByIdParameters(getName(), Guid.createGuidFromString(id))
         );
         LdapGroup ldapGroup = (LdapGroup) ldapResult.getReturnValue();
 

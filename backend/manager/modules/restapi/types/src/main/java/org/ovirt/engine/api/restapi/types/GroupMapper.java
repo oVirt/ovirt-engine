@@ -7,7 +7,6 @@ import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GroupMapper {
@@ -29,7 +28,7 @@ public class GroupMapper {
     public static Group map(DirectoryGroup entity, Group template) {
         Group model = template != null ? template : new Group();
         model.setName(entity.getName());
-        model.setId(entity.getId().toHex());
+        model.setId(entity.getId());
         if (!StringUtils.isEmpty(entity.getDirectoryName())) {
             Domain dom = new Domain();
             dom.setId(new Guid(entity.getDirectoryName().getBytes(), true).toString());
@@ -48,7 +47,7 @@ public class GroupMapper {
             String id = model.getId();
             try {
                 entity.setId(GuidUtils.asGuid(id));
-                entity.setExternalId(ExternalId.fromHex(entity.getId().toString()));
+                entity.setExternalId(entity.getId().toString());
             }
             catch (MalformedIdException exception) {
                 // The identifier won't be a UUID if the group comes from /domains/{domain:id}/groups.

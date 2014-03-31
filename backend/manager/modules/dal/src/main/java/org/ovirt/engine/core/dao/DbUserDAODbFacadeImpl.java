@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.springframework.jdbc.core.RowMapper;
@@ -38,7 +37,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             entity.setLoginName(rs.getString("username"));
             entity.setAdmin(rs.getBoolean("last_admin_check_status"));
             entity.setGroupIds(rs.getString("group_ids"));
-            entity.setExternalId(new ExternalId(rs.getBytes("external_id")));
+            entity.setExternalId(rs.getString("external_id"));
 
             if (entity.isGroup())
                 entity.setDomain("");
@@ -85,16 +84,16 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
     }
 
     @Override
-    public DbUser getByExternalId(String domain, ExternalId externalId) {
+    public DbUser getByExternalId(String domain, String externalId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("domain", domain)
-                .addValue("external_id", externalId.getBytes());
+                .addValue("external_id", externalId);
 
         return getCallsHandler().executeRead("GetUserByExternalId", DbUserRowMapper.instance, parameterSource);
     }
 
     @Override
-    public DbUser getByIdOrExternalId(Guid id, String domain, ExternalId externalId) {
+    public DbUser getByIdOrExternalId(Guid id, String domain, String externalId) {
         // Check if there is a user with the given internal identifier:
         if (id != null) {
             DbUser existing = get(id);
@@ -114,8 +113,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
         // In older versions of the engine the internal and external identifiers were the same, so we also need to check
         // if the internal id is really an external id:
         if (domain != null && id != null) {
-            externalId = ExternalId.fromHex(id.toString());
-            DbUser existing = getByExternalId(domain, externalId);
+            DbUser existing = getByExternalId(domain, id.toString());
             if (existing != null) {
                 return existing;
             }
@@ -167,4 +165,5 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
 
         getCallsHandler().executeModification("DeleteUser", parameterSource);
     }
+
 }

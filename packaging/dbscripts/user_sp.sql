@@ -21,7 +21,7 @@ Create or replace FUNCTION InsertUser(v_department VARCHAR(255) ,
 	v_user_id UUID,
 	v_username VARCHAR(255),
 	v_group_ids VARCHAR(2048),
-	v_external_id BYTEA)
+	v_external_id TEXT)
 RETURNS VOID
    AS $procedure$
 BEGIN
@@ -47,7 +47,7 @@ Create or replace FUNCTION UpdateUser(v_department VARCHAR(255) ,
 	v_username VARCHAR(255),
 	v_last_admin_check_status BOOLEAN,
 	v_group_ids VARCHAR(2048),
-        v_external_id BYTEA)
+        v_external_id TEXT)
 RETURNS VOID
 
 	--The [users] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -117,7 +117,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetUserByExternalId(v_domain VARCHAR(255), v_external_id BYTEA) RETURNS SETOF users STABLE
+Create or replace FUNCTION GetUserByExternalId(v_domain VARCHAR(255), v_external_id TEXT) RETURNS SETOF users STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT users.*

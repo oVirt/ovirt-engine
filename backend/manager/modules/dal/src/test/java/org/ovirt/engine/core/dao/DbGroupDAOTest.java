@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -31,7 +30,7 @@ public class DbGroupDAOTest extends BaseDAOTestCase {
         // create some test data
         newGroup = new DbGroup();
         newGroup.setId(Guid.newGuid());
-        newGroup.setExternalId(new ExternalId(0));
+        newGroup.setExternalId("0");
         newGroup.setDomain("domain");
         newGroup.setName("name");
         newGroup.setActive(true);
@@ -66,8 +65,7 @@ public class DbGroupDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidExternalId() {
-        ExternalId externalId = new ExternalId(0);
-        DbGroup result = dao.getByExternalId("rhel", externalId);
+        DbGroup result = dao.getByExternalId("rhel", "0");
         assertNull(result);
     }
 
@@ -76,11 +74,7 @@ public class DbGroupDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByExternalId() {
-        ExternalId externalId = new ExternalId(
-            0xb3, 0x99, 0x94, 0x4a, 0x81, 0xab, 0x4e, 0xc5,
-            0x82, 0x66, 0xe1, 0x9b, 0xa7, 0xc3, 0xc9, 0xd1
-        );
-        DbGroup result = dao.getByExternalId("rhel", externalId);
+        DbGroup result = dao.getByExternalId("rhel", "a");
         assertNotNull(result);
     }
 

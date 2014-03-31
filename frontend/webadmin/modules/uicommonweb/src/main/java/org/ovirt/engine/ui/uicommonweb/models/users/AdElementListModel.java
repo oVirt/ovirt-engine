@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -275,7 +274,7 @@ public class AdElementListModel extends SearchableListModel
                     return;
                 }
 
-                HashSet<ExternalId> excludeUsers = new HashSet<ExternalId>();
+                HashSet<String> excludeUsers = new HashSet<String>();
                 if (adElementListModel.getExcludeItems() != null)
                 {
                     for (Object item : adElementListModel.getExcludeItems())
@@ -314,7 +313,7 @@ public class AdElementListModel extends SearchableListModel
                 _asyncQuery);
     }
 
-    protected void addUsersToModel(VdcQueryReturnValue returnValue, Set<ExternalId> excludeUsers) {
+    protected void addUsersToModel(VdcQueryReturnValue returnValue, Set<String> excludeUsers) {
         for (IVdcQueryable item : (List<IVdcQueryable>) returnValue.getReturnValue()) {
             DirectoryUser a = (DirectoryUser) item;
             if (!excludeUsers.contains(a.getId())) {
@@ -325,8 +324,8 @@ public class AdElementListModel extends SearchableListModel
         }
     }
 
-    protected Set<ExternalId> getExcludeUsers() {
-        Set<ExternalId> excludeUsers = new HashSet<ExternalId>();
+    protected Set<String> getExcludeUsers() {
+        Set<String> excludeUsers = new HashSet<String>();
         if (getExcludeItems() != null) {
             for (Object item : getExcludeItems()) {
                 DbUser a = (DbUser) item;

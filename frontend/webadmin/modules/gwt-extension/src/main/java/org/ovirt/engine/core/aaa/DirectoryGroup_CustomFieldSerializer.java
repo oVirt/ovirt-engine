@@ -1,7 +1,4 @@
 package org.ovirt.engine.core.aaa;
-
-import org.ovirt.engine.core.common.utils.ExternalId;
-
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamReader;
 import com.google.gwt.user.client.rpc.SerializationStreamWriter;
@@ -14,7 +11,7 @@ public class DirectoryGroup_CustomFieldSerializer {
 
     public static DirectoryGroup instantiate(SerializationStreamReader reader) throws SerializationException {
         String directoryName = reader.readString();
-        ExternalId id = (ExternalId) reader.readObject();
+        String id = reader.readString();
         String name = reader.readString();
         return new DirectoryGroup(directoryName, id, name);
     }

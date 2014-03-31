@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.utils.ExternalId;
 
 /**
  * Contains search result information for directory groups.
@@ -12,7 +11,7 @@ import org.ovirt.engine.core.common.utils.ExternalId;
 public class GroupSearchResult {
     private List<String> memberOf = (List<String>) Collections.EMPTY_LIST;
     private String distinguishedName;
-    private ExternalId id;
+    private String id;
 
     public GroupSearchResult(LdapGroup group) {
         id = group.getid();
@@ -36,18 +35,18 @@ public class GroupSearchResult {
         this.distinguishedName = distinguishedName;
     }
 
-    public GroupSearchResult(ExternalId id, List<String> memberOf,
+    public GroupSearchResult(String id, List<String> memberOf,
             String distinguishedName) {
         this.id = id;
         this.memberOf = memberOf;
         this.distinguishedName = distinguishedName;
     }
 
-    public void setId(ExternalId id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public ExternalId getId() {
+    public String getId() {
         return id;
     }
 
