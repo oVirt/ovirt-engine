@@ -392,16 +392,7 @@ public class VdsManager {
 
     public void refreshHost(VDS vds) {
         try {
-            /**
-             * refresh capabilities
-             */
-            VDSStatus newStatus = refreshCapabilities(new AtomicBoolean(), vds);
-            if (log.isDebugEnabled()) {
-                log.debugFormat(
-                        "Succeeded to refreshCapabilities for host {0} , new status will be {1} ",
-                        getVdsId(),
-                        newStatus);
-            }
+            refreshCapabilities(new AtomicBoolean(), vds);
         } finally {
             if (vds != null) {
                 updateDynamicData(vds.getDynamicData());
@@ -527,7 +518,7 @@ public class VdsManager {
     }
 
     public VDSStatus refreshCapabilities(AtomicBoolean processHardwareCapsNeeded, VDS vds) {
-        log.debug("GetCapabilitiesVDSCommand started method");
+        log.debugFormat("monitoring: refresh {0} capabilities", vds);
         VDS oldVDS = vds.clone();
         GetCapabilitiesVDSCommand<VdsIdAndVdsVDSCommandParametersBase> vdsBrokerCommand =
                 new GetCapabilitiesVDSCommand<VdsIdAndVdsVDSCommandParametersBase>(new VdsIdAndVdsVDSCommandParametersBase(vds));
@@ -559,14 +550,11 @@ public class VdsManager {
                 setIsSetNonOperationalExecuted(true);
 
                 if (returnStatus != VDSStatus.NonOperational) {
-                    if (log.isDebugEnabled()) {
-                        log.debugFormat(
-                                "refreshCapabilities:GetCapabilitiesVDSCommand vds {0} networks do not match its cluster networks, vds will be moved to NonOperational",
-                                vds.getStaticData().getId());
-                    }
+                    log.debugFormat(
+                            "monitoring: vds {0} networks do not match its cluster networks, vds will be moved to NonOperational",
+                            vds);
                     vds.setStatus(VDSStatus.NonOperational);
                     vds.setNonOperationalReason(nonOperationalReason);
-                    returnStatus = vds.getStatus();
                 }
             }
 
