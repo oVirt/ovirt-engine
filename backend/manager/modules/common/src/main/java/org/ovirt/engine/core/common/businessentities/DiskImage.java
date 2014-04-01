@@ -34,6 +34,7 @@ public class DiskImage extends DiskImageBase implements IImage {
     private double actualDiskWithSnapthotsSize;
     private ArrayList<Guid> quotaIds;
     private ArrayList<String> quotaNames;
+    private String vmSnapshotDescription;
 
     public DiskImage() {
         setParentId(Guid.Empty);
@@ -231,6 +232,14 @@ public class DiskImage extends DiskImageBase implements IImage {
 
     public void setVmSnapshotId(Guid snapshotId) {
         getImage().setSnapshotId(snapshotId);
+    }
+
+    public String getVmSnapshotDescription() {
+        return vmSnapshotDescription;
+    }
+
+    public void setVmSnapshotDescription(String vmSnapshotDescription) {
+        this.vmSnapshotDescription = vmSnapshotDescription;
     }
 
     public ArrayList<String> getStoragePath() {
