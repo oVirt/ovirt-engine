@@ -485,11 +485,6 @@ public class VdsUpdateRunTimeInfo {
                 // check if its time for statistics refresh
                 if (_vdsManager.getRefreshStatistics() || _vds.getStatus() == VDSStatus.PreparingForMaintenance) {
                     refreshVdsStats();
-                } else {
-                    /**
-                     * TODO: Omer if vds team will not implement events to 4.2 please call here to refreshVdsStats -
-                     * refresh dynamic data
-                     */
                 }
             } else {
                 // refresh dynamic data
