@@ -96,15 +96,15 @@ public class BackendSnapshotResource extends AbstractBackendActionableResource<S
 
     @Override
     public SnapshotCdRomsResource getSnapshotCdRomsResource() {
-        return new BackendSnapshotCdRomsResource(this, id);
+        return inject(new BackendSnapshotCdRomsResource(this));
     }
     @Override
     public SnapshotDisksResource getSnapshotDisksResource() {
-        return new BackendSnapshotDisksResource(this, id);
+        return inject(new BackendSnapshotDisksResource(this));
     }
     @Override
     public SnapshotNicsResource getSnapshotNicsResource() {
-        return new BackendSnapshotNicsResource(this, id);
+        return inject(new BackendSnapshotNicsResource(this));
     }
 
     public void setCollectionResource(BackendSnapshotsResource collection) {

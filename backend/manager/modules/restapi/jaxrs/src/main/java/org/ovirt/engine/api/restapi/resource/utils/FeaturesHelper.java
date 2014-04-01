@@ -82,8 +82,16 @@ public class FeaturesHelper {
         if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_5)) {
             addBookmarksFeature(features);
             addNetworkCustomPropertiesFeature(features);
+            addFeatureRemoveDiskFromVmSnapshot(features);
         }
         return features;
+    }
+
+    private void addFeatureRemoveDiskFromVmSnapshot(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Remove disk from VM snapshot");
+        feature.setDescription("Ability to remove a disk from a VM snapshot");
+        features.getFeature().add(feature);
     }
 
     private void addRebootFeature(Features features) {

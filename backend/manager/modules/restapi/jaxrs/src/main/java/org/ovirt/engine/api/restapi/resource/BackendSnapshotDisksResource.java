@@ -6,13 +6,20 @@ import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.resource.SnapshotDiskResource;
 import org.ovirt.engine.api.resource.SnapshotDisksResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
+import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 
-public class BackendSnapshotDisksResource extends BackendSnapshotElementsResource implements SnapshotDisksResource {
+import javax.ws.rs.core.Response;
 
-    public BackendSnapshotDisksResource(BackendSnapshotResource parent, String vmId) {
-        super(parent, vmId);
+public class BackendSnapshotDisksResource extends AbstractBackendCollectionResource<Disk, Snapshot>  implements SnapshotDisksResource {
+
+    protected BackendSnapshotResource parent;
+
+    public BackendSnapshotDisksResource(BackendSnapshotResource parent) {
+        super(Disk.class, Snapshot.class);
+        this.parent = parent;
     }
 
     @Override
@@ -37,5 +44,19 @@ public class BackendSnapshotDisksResource extends BackendSnapshotElementsResourc
     @Override
     public SnapshotDiskResource getDiskSubResource(String id) {
         return new BackendSnapshotDiskResource(id, this);
+    }
+
+    @Override
+    public Response performRemove(String id) {
+        getEntity(id); //verifies that entity exists, returns 404 otherwise.
+
+        DiskImage diskImage = (DiskImage) DiskMapper.map(getDiskSubResource(id).get(), null);
+
+        return performAction(VdcActionType.RemoveDiskSnapshots, new RemoveDiskSnapshotsParameters(diskImage.getImageId()));
+    }
+
+    @Override
+    protected Disk doPopulate(Disk model, Snapshot entity) {
+        return model;
     }
 }

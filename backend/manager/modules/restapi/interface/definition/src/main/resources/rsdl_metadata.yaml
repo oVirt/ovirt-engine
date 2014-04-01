@@ -963,6 +963,16 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
+- name: /vms/{vm:id}/snapshots/{snapshot:id}/disks/{disk:id}|rel=delete
+  description: delete a disk from a VM snapshot
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
 - name: /vms/{vm:id}/snapshots/{snapshot:id}/nics|rel=get
   description: get the list of network interfaces attached to the virtual machine at the time the snapshot was created
   request:

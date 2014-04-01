@@ -1,15 +1,22 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
+import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.resource.SnapshotCdRomResource;
 import org.ovirt.engine.api.resource.SnapshotCdRomsResource;
 import org.ovirt.engine.api.restapi.types.CdRomMapper;
 import org.ovirt.engine.core.common.businessentities.VM;
 
-public class BackendSnapshotCdRomsResource extends BackendSnapshotElementsResource implements SnapshotCdRomsResource {
+import javax.ws.rs.core.Response;
 
-    public BackendSnapshotCdRomsResource(BackendSnapshotResource parent, String vmId) {
-        super(parent, vmId);
+public class BackendSnapshotCdRomsResource extends AbstractBackendCollectionResource<CdRom, Snapshot> implements SnapshotCdRomsResource {
+
+    protected BackendSnapshotResource parent;
+
+    public BackendSnapshotCdRomsResource(BackendSnapshotResource parent) {
+        super(CdRom.class, Snapshot.class);
+        this.parent = parent;
     }
 
     @Override
@@ -25,5 +32,15 @@ public class BackendSnapshotCdRomsResource extends BackendSnapshotElementsResour
     @Override
     public SnapshotCdRomResource getCdRomSubResource(String id) {
         return new BackendSnapshotCdRomResource(id, this);
+    }
+
+    @Override
+    protected Response performRemove(String id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected CdRom doPopulate(CdRom model, Snapshot entity) {
+        return model;
     }
 }
