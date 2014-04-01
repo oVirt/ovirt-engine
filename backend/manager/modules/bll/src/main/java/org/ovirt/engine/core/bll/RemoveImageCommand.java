@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -21,9 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -31,7 +27,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -43,7 +38,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute(forceCompensation=true)
 public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseImagesCommand<T> {
-    private EngineLock snapshotsEngineLock;
 
     public RemoveImageCommand(T parameters) {
         super(parameters);
@@ -190,19 +184,10 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                         }
                     });
         } finally {
-            if (snapshotsEngineLock != null) {
-                getLockManager().releaseLock(snapshotsEngineLock);
+            if (getSnapshotsEngineLock() != null) {
+                getLockManager().releaseLock(getSnapshotsEngineLock());
             }
         }
-    }
-
-    private void lockVmSnapshotsWithWait(VM vm) {
-        snapshotsEngineLock = new EngineLock();
-        Map<String, Pair<String, String>> snapshotsExlusiveLockMap =
-                Collections.singletonMap(vm.getId().toString(),
-                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_SNAPSHOTS, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-        snapshotsEngineLock.setExclusiveLocks(snapshotsExlusiveLockMap);
-        getLockManager().acquireLockWait(snapshotsEngineLock);
     }
 
     /**
@@ -263,7 +248,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     /**
-     * Prepare a single {@link Snapshot} object representing a snapshot of a given VM without the give disk.
+     * Prepare a single {@link org.ovirt.engine.core.common.businessentities.Snapshot} object representing a snapshot of a given VM without the give disk.
      */
     protected Snapshot prepareSnapshotConfigWithoutImageSingleImage(Guid vmSnapshotId, Guid imageId) {
         Snapshot snap = null;

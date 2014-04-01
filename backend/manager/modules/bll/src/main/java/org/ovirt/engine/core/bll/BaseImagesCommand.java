@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -13,8 +15,12 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -24,6 +30,7 @@ import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 
 /**
  * Base class for all image handling commands
@@ -32,6 +39,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     private DiskImage _destinationImage;
     private DiskImage mImage;
     private Guid mImageId = Guid.Empty;
+    private EngineLock snapshotsEngineLock;
 
     public BaseImagesCommand(T parameters) {
         super(parameters);
@@ -143,6 +151,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected void setImageGroupId(Guid value) {
         _imageGroupId = value;
+    }
+
+    protected EngineLock getSnapshotsEngineLock() {
+        return snapshotsEngineLock;
     }
 
     /**
@@ -385,5 +397,14 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                 .getImageStorageDomainMapDao()
                 .save(image_storage_domain_map);
         return image_storage_domain_map;
+    }
+
+    protected void lockVmSnapshotsWithWait(VM vm) {
+        snapshotsEngineLock = new EngineLock();
+        Map<String, Pair<String, String>> snapshotsExlusiveLockMap =
+                Collections.singletonMap(vm.getId().toString(),
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_SNAPSHOTS, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        snapshotsEngineLock.setExclusiveLocks(snapshotsExlusiveLockMap);
+        getLockManager().acquireLockWait(snapshotsEngineLock);
     }
 }
