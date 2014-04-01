@@ -3,7 +3,6 @@ package org.ovirt.engine.core.common.vdscommands;
 public enum VDSCommandType {
     AddVds("org.ovirt.engine.core.vdsbroker"),
     RemoveVds("org.ovirt.engine.core.vdsbroker"),
-    ActivateVds("org.ovirt.engine.core.vdsbroker"),
     FenceVds("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     CreateVm("org.ovirt.engine.core.vdsbroker"),

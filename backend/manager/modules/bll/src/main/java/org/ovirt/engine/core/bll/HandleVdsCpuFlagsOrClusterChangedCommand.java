@@ -83,7 +83,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                     // update group with the cpu name
 
                     grp.setcpu_name(sc.getCpuName());
-                    grp.setArchitecture(ArchitectureType.undefined);
+                    grp.setArchitecture(sc.getArchitecture());
 
                     // use suppress in order to update group even if action fails
                     // (out of the transaction)
