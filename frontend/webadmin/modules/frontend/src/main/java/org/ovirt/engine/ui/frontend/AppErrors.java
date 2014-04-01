@@ -2645,6 +2645,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following disk(s) ID(s) does not exist: ${diskIds}.")
     String ACTION_TYPE_FAILED_DISKS_NOT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following disk snapshot(s) ID(s) does not exist: ${diskSnapshotIds}.")
+    String ACTION_TYPE_FAILED_DISK_SNAPSHOTS_NOT_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following disk snapshot(s) is active: ${diskSnapshotIds}.")
+    String ACTION_TYPE_FAILED_DISK_SNAPSHOTS_ACTIVE();
+
     @DefaultStringValue("Cannot ${action} ${type}. No disks have been specified.")
     String ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED();
 

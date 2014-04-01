@@ -1,0 +1,143 @@
+package org.ovirt.engine.core.bll;
+
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
+import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
+import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
+
+public class RemoveDiskSnapshotTaskHandler implements SPMAsyncTaskHandler {
+    private static final Log log = LogFactory.getLog(RemoveDiskSnapshotTaskHandler.class);
+
+    private final TaskHandlerCommand<? extends RemoveDiskSnapshotsParameters> enclosingCommand;
+    private final Guid imageId;
+    private final Guid imageGroupId;
+    private final Guid vmId;
+
+    public RemoveDiskSnapshotTaskHandler(TaskHandlerCommand<? extends RemoveDiskSnapshotsParameters> enclosingCommand,
+                                         Guid imageId, Guid imageGroupId, Guid vmId) {
+        this.enclosingCommand = enclosingCommand;
+        this.imageId = imageId;
+        this.imageGroupId = imageGroupId;
+        this.vmId = vmId;
+    }
+
+    @Override
+    public void execute() {
+        if (enclosingCommand.getParameters().getExecutionIndex() == 0) {
+            // lock all disk images in advance
+            updateImagesStatus(ImageStatus.LOCKED);
+        }
+
+        VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
+                VdcActionType.RemoveSnapshotSingleDisk,
+                buildRemoveSnapshotSingleDiskParameters(),
+                getCommandContext());
+
+        if (vdcReturnValue.getSucceeded()) {
+            enclosingCommand.getReturnValue()
+                    .getVdsmTaskIdList()
+                    .addAll(vdcReturnValue.getInternalVdsmTaskIdList());
+        }
+        else {
+            log.errorFormat("Failed RemoveSnapshotSingleDisk (Image {0} , VM {1})", imageId, vmId);
+        }
+
+        ExecutionHandler.setAsyncJob(enclosingCommand.getExecutionContext(), true);
+        enclosingCommand.getReturnValue().setSucceeded(true);
+    }
+
+    private ImagesContainterParametersBase buildRemoveSnapshotSingleDiskParameters() {
+        ImagesContainterParametersBase parameters = new ImagesContainterParametersBase(
+                imageId, vmId);
+
+        DiskImage dest = DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForParent(imageId).get(0);
+
+        parameters.setDestinationImageId(dest.getImageId());
+        parameters.setEntityInfo(enclosingCommand.getParameters().getEntityInfo());
+        parameters.setParentParameters(enclosingCommand.getParameters());
+        parameters.setParentCommand(enclosingCommand.getActionType());
+        parameters.setSessionId(enclosingCommand.getParameters().getSessionId());
+        return parameters;
+    }
+
+    private CommandContext getCommandContext() {
+        CommandContext commandContext =
+                ExecutionHandler.createDefaultContexForTasks(enclosingCommand.getExecutionContext());
+        commandContext.getExecutionContext().setShouldEndJob(isLastTaskHandler());
+
+        return commandContext;
+    }
+
+    private boolean isLastTaskHandler() {
+        RemoveDiskSnapshotsParameters parameters = enclosingCommand.getParameters();
+        return parameters.getExecutionIndex() == parameters.getImageIds().size() - 1;
+    }
+
+    @Override
+    public void endSuccessfully() {
+        endRemoveSnapshotSingleDisk();
+        enclosingCommand.taskEndSuccessfully();
+        if (isLastTaskHandler()) {
+            // Unlock on job finish
+            updateImagesStatus(ImageStatus.OK);
+        }
+        enclosingCommand.getReturnValue().setSucceeded(true);
+    }
+
+    @Override
+    public void endWithFailure() {
+        endRemoveSnapshotSingleDisk();
+        // Unlock all images since failure aborts the entire job
+        DiskImage diskImage = DbFacade.getInstance().getDiskImageDao().get(imageGroupId);
+        if (diskImage.getImageStatus() == ImageStatus.LOCKED) {
+            updateImagesStatus(ImageStatus.OK);
+        }
+        enclosingCommand.preventRollback();
+        enclosingCommand.getReturnValue().setSucceeded(true);
+    }
+
+    private void endRemoveSnapshotSingleDisk() {
+        VdcReturnValueBase vdcReturnValue = Backend.getInstance().endAction(
+                VdcActionType.RemoveSnapshotSingleDisk,
+                buildRemoveSnapshotSingleDiskParameters(),
+                getCommandContext());
+        enclosingCommand.getReturnValue().setSucceeded(vdcReturnValue.getSucceeded());
+    }
+
+    private void updateImagesStatus(ImageStatus imageStatus) {
+        ImagesHandler.updateAllDiskImageSnapshotsStatusWithCompensation(imageGroupId,
+                imageStatus,
+                ImageStatus.ILLEGAL,
+                null);
+    }
+
+    @Override
+    public AsyncTaskType getTaskType() {
+        // No implementation - handled by the command
+        return null;
+    }
+
+    @Override
+    public AsyncTaskType getRevertTaskType() {
+        // No implementation - there is no live-merge
+        return null;
+    }
+
+    @Override
+    public void compensate() {
+        if (enclosingCommand.getParameters().getExecutionIndex() == 0) {
+            updateImagesStatus(ImageStatus.ILLEGAL);
+        }
+    }
+}

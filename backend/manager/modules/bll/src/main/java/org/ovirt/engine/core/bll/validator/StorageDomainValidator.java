@@ -187,4 +187,25 @@ public class StorageDomainValidator {
         }
         return map;
     }
+
+    /**
+     * Calculates the requires space for removing a set of disk snapshots consequently.
+     * The calculation takes into account that the required space (for each snapshots merge)
+     * couldn't be larger than either of disk's virtual size and sum of the actual sizes.
+     * I.e. the minimum between values.
+     *
+     * @param diskImages
+     * @return the required space
+     */
+    public ValidationResult hasSpaceForRemovingDiskSnapshots(Collection<DiskImage> diskImages) {
+        // Sums the actual sizes and finds the max virtual size
+        long sumOfActualSizes = 0L;
+        long maxVirtualSize = 0L;
+        for (DiskImage image : diskImages) {
+            sumOfActualSizes += (long) image.getActualSize();
+            maxVirtualSize = Math.max(maxVirtualSize, image.getSize());
+        }
+
+        return isDomainHasSpaceForRequest(Math.min(maxVirtualSize, sumOfActualSizes), false);
+    }
 }

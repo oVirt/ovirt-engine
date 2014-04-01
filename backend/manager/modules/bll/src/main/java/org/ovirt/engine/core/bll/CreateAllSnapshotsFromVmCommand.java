@@ -60,6 +60,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute(forceCompensation = true)
 @DisableInPrepareMode
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> implements QuotaStorageDependent, TaskHandlerCommand<CreateAllSnapshotsFromVmParameters> {

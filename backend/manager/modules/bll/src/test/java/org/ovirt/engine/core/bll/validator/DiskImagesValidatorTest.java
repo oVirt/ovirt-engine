@@ -343,24 +343,6 @@ public class DiskImagesValidatorTest {
                 EnumSet.of(StorageDomainStatus.Active)), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS));
     }
 
-    @Test
-    public void diskImagesBelongToSameImageGroup() {
-        Guid imageGroupId = Guid.newGuid();
-        disk1.setId(imageGroupId);
-        disk2.setId(imageGroupId);
-
-        assertThat(validator.diskImagesBelongToSameImageGroup(), isValid());
-    }
-
-    @Test
-    public void diskImagesDontBelongToSameImageGroup() {
-        disk1.setId(Guid.newGuid());
-        disk2.setId(Guid.newGuid());
-
-        assertThat(validator.diskImagesBelongToSameImageGroup(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_SNAPSHOTS_DONT_BELONG_TO_SAME_DISK));
-    }
-
     private VmDevice createVmDeviceForDisk(DiskImage disk) {
         VmDevice device = new VmDevice();
         device.setId(new VmDeviceId(null, disk.getId()));

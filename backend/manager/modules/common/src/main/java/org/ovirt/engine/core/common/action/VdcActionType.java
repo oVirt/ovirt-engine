@@ -139,6 +139,7 @@ public enum VdcActionType {
     GetDiskAlignment(232, QuotaDependency.NONE),
     RemoveVmHibernationVolumes(233, QuotaDependency.NONE),
     RemoveMemoryVolumes(234, QuotaDependency.NONE),
+    RemoveDiskSnapshots(235, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.NONE),
     // VmPoolCommands
     AddVmPool(301, QuotaDependency.NONE),
     AddVmPoolWithVms(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),

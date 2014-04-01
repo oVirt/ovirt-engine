@@ -25,6 +25,10 @@ public class ImagesContainterParametersBase extends ImagesActionsParametersBase 
         return containerid;
     }
 
+    public void setContainerId(Guid value) {
+        containerid = value;
+    }
+
     public boolean getWipeAfterDelete() {
         return wipeAfterDelete;
     }

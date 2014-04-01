@@ -240,20 +240,6 @@ public class DiskImagesValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult diskImagesBelongToSameImageGroup() {
-        Guid imageGroupId = null;
-        for (DiskImage diskImage : diskImages) {
-            if (imageGroupId == null || diskImage.getId().equals(imageGroupId)) {
-                imageGroupId = diskImage.getId();
-                continue;
-            }
-
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_SNAPSHOTS_DONT_BELONG_TO_SAME_DISK);
-        }
-
-        return ValidationResult.VALID;
-    }
-
     private DbFacade getDbFacade() {
        return DbFacade.getInstance();
     }
