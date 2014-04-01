@@ -369,9 +369,6 @@ public class VdsUpdateRunTimeInfo {
                     _vdsManager.setIsSetNonOperationalExecuted(!ResourceManager.getInstance()
                             .getEventListener()
                             .vdsUpEvent(_vds));
-
-                    // Check hardware capabilities in case VDS moved to up
-                    processHardwareCapsNeeded = true;
                 }
                 // save all data to db
                 saveDataToDb();
@@ -501,6 +498,9 @@ public class VdsUpdateRunTimeInfo {
                     refreshVdsStats();
                 }
             } else {
+                if (_firstStatus != VDSStatus.Up ) {
+                    monitoringStrategy.processHardwareCapabilities(_vds);
+                }
                 // refresh dynamic data
                 final AtomicBoolean processHardwareNeededAtomic = new AtomicBoolean();
                 VDSStatus refreshReturnStatus =

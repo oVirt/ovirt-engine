@@ -377,19 +377,6 @@ public class VdsManager {
         DbFacade.getInstance().getVdsStatisticsDao().update(statisticsData);
     }
 
-    public VDS activate() {
-        VDS vds = null;
-        try {
-            vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
-            refreshHost(vds);
-        } catch (Exception e) {
-            log.infoFormat("Failed to activate VDS = {0} with error: {1}.",
-                    getVdsId(), e.getMessage());
-        }
-
-        return vds;
-    }
-
     public void refreshHost(VDS vds) {
         try {
             refreshCapabilities(new AtomicBoolean(), vds);

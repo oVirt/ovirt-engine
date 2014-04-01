@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.ActivateVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -53,14 +52,10 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
         final VDS vds = getVds();
         try (EngineLock monitoringLock = acquireMonitorLock()) {
             ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
-            runVdsCommand(VDSCommandType.SetVdsStatus,
+            VDSReturnValue changeStatusToUnassigned = runVdsCommand(VDSCommandType.SetVdsStatus,
                     new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Unassigned));
 
-            VDSReturnValue returnValue =
-                    runVdsCommand(VDSCommandType.ActivateVds, new ActivateVdsVDSCommandParameters(getVdsId()));
-            setSucceeded(returnValue.getSucceeded());
-
-            if (getSucceeded()) {
+            if (changeStatusToUnassigned.getSucceeded()) {
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
                     @Override
