@@ -46,6 +46,38 @@
         </row>
     </table>
 
+    <table name="command_entities">
+        <column>command_id</column>
+        <column>command_type</column>
+        <column>root_command_id</column>
+        <column>created_at</column>
+        <column>action_parameters</column>
+        <column>status</column>
+        <row>
+            <value>340fd52b-3400-4cdd-8d3f-c9d03704b0a1</value>
+            <value>230</value>
+            <null/>
+            <value>2010-11-29 15:57:10</value>
+            <null/>
+            <value>ACTIVE</value>
+        </row>
+        <row>
+            <value>340fd52b-3400-4cdd-8d3f-c9d03704b0a2</value>
+            <value>211</value>
+            <value>340fd52b-3400-4cdd-8d3f-c9d03704b0a1</value>
+            <value>2010-11-29 15:57:10</value>
+            <null/>
+            <value>ACTIVE</value>
+        </row>
+        <row>
+            <value>340fd52b-3400-4cdd-8d3f-c9d03704b0a3</value>
+            <value>211</value>
+            <value>340fd52b-3400-4cdd-8d3f-c9d03704b0a1</value>
+            <value>2010-11-29 15:57:10</value>
+            <null/>
+            <value>ACTIVE</value>
+        </row>
+    </table>
 
     <table name="async_tasks">
         <column>task_id</column>

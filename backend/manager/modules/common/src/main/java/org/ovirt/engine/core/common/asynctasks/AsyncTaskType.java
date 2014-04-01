@@ -13,7 +13,8 @@ public enum AsyncTaskType {
     extendImageSize,
     downloadImage,
     uploadImageFromStream,
-    downloadImageFromStream;
+    downloadImageFromStream,
+    notSupported;
 
     public int getValue() {
         return this.ordinal();

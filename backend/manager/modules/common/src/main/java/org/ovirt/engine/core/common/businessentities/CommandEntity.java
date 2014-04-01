@@ -2,22 +2,24 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CommandEntity implements BusinessEntity<Guid> {
 
     private static final long serialVersionUID = 5293055556971973650L;
     private Guid commandId;
-    private Guid parentCommandId;
+    private Guid rootCommandId;
     private VdcActionType commandType;
-    private Map<String, Object> data = new HashMap<String, Object>();
+    private VdcActionParametersBase actionParameters;
     private Date createdAt;
+    private CommandStatus commandStatus = CommandStatus.UNKNOWN;
 
     @Override
     public int hashCode() {
@@ -25,9 +27,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
         int result = 1;
         result = prime * result + ((commandId == null) ? 0 : commandId.hashCode());
         result = prime * result + ((commandType == null) ? 0 : commandType.hashCode());
-        result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
-        result = prime * result + ((data == null) ? 0 : data.hashCode());
-        result = prime * result + ((parentCommandId == null) ? 0 : parentCommandId.hashCode());
+        result = prime * result + ((rootCommandId == null) ? 0 : rootCommandId.hashCode());
         return result;
     }
 
@@ -37,32 +37,12 @@ public class CommandEntity implements BusinessEntity<Guid> {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof CommandEntity))
+        if (getClass() != obj.getClass())
             return false;
         CommandEntity other = (CommandEntity) obj;
-        if (commandId == null) {
-            if (other.commandId != null)
-                return false;
-        } else if (!commandId.equals(other.commandId))
-            return false;
-        if (commandType != other.commandType)
-            return false;
-        if (createdAt == null) {
-            if (other.createdAt != null)
-                return false;
-        } else if (!createdAt.equals(other.createdAt))
-            return false;
-        if (data == null) {
-            if (other.data != null)
-                return false;
-        } else if (!data.equals(other.data))
-            return false;
-        if (parentCommandId == null) {
-            if (other.parentCommandId != null)
-                return false;
-        } else if (!parentCommandId.equals(other.parentCommandId))
-            return false;
-        return true;
+        return ObjectUtils.objectsEqual(commandId, other.commandId)
+                && commandType == other.commandType
+                && ObjectUtils.objectsEqual(rootCommandId, other.rootCommandId);
     }
 
     public Set<Guid> getChildCommandIds() {
@@ -83,12 +63,12 @@ public class CommandEntity implements BusinessEntity<Guid> {
         this.createdAt = createdAt;
     }
 
-    public Map<String, Object> getData() {
-        return data;
+    public VdcActionParametersBase getActionParameters() {
+        return this.actionParameters;
     }
 
-    public void setData(Map<String, Object> data) {
-        this.data = data;
+    public void setActionParameters(VdcActionParametersBase value) {
+        this.actionParameters = value;
     }
 
     public Guid getId() {
@@ -99,12 +79,12 @@ public class CommandEntity implements BusinessEntity<Guid> {
         this.commandId = commandId;
     }
 
-    public Guid getParentCommandId() {
-        return parentCommandId;
+    public Guid getRootCommandId() {
+        return rootCommandId;
     }
 
-    public void setParentCommandId(Guid parentCommandId) {
-        this.parentCommandId = parentCommandId;
+    public void setRootCommandId(Guid rootCommandId) {
+        this.rootCommandId = rootCommandId;
     }
 
     public VdcActionType getCommandType() {
@@ -113,5 +93,13 @@ public class CommandEntity implements BusinessEntity<Guid> {
 
     public void setCommandType(VdcActionType type) {
         this.commandType = type;
+    }
+
+    public CommandStatus getCommandStatus() {
+        return commandStatus;
+    }
+
+    public void setCommandStatus(CommandStatus commandStatus) {
+        this.commandStatus = commandStatus;
     }
 }

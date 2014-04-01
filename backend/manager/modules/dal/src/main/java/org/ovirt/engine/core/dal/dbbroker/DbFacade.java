@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
@@ -57,6 +58,7 @@ import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.BookmarkDAO;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
+import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.dao.DAO;
 import org.ovirt.engine.core.dao.DaoFactory;
 import org.ovirt.engine.core.dao.DbGroupDAO;
@@ -187,6 +189,7 @@ public class DbFacade {
             put(CpuStatistics.class, VdsCpuStatisticsDAO.class);
             put(VdsNumaNode.class, VdsNumaNodeDAO.class);
             put(VmNumaNode.class, VmNumaNodeDAO.class);
+            put(CommandEntity.class, CommandEntityDao.class);
         }
     };
 
@@ -336,6 +339,15 @@ public class DbFacade {
     public BookmarkDAO getBookmarkDao() {
         return getDao(BookmarkDAO.class);
 
+    }
+
+    /**
+     * Retrieves the singleton instance of {@link CommandEntityDao}.
+     *
+     * @return the dao
+     */
+    public CommandEntityDao getCommandEntityDao() {
+        return getDao(CommandEntityDao.class);
     }
 
     /**

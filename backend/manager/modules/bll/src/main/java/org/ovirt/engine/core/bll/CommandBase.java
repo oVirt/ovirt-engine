@@ -71,6 +71,7 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
@@ -133,6 +134,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private Map<Guid, CommandBase<?>> childCommandsMap = new HashMap<>();
     private Map<Guid, Pair<VdcActionType, VdcActionParametersBase>> childCommandInfoMap = new HashMap<>();
+    private CommandStatus commandStatus = CommandStatus.NOT_STARTED;
 
     public void addChildCommandInfo(Guid id, VdcActionType vdcActionType, VdcActionParametersBase parameters) {
         childCommandInfoMap.put(id, new Pair<VdcActionType, VdcActionParametersBase>(vdcActionType, parameters));
@@ -557,8 +559,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         boolean exceptionOccurred = false;
         try {
             if (isEndSuccessfully()) {
+                setCommandStatus(CommandStatus.SUCCEEDED);
                 internalEndSuccessfully();
             } else {
+                setCommandStatus(CommandStatus.FAILED);
                 internalEndWithFailure();
             }
         } catch (RuntimeException e) {
@@ -1263,6 +1267,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected final void execute() {
+        setCommandStatus(CommandStatus.ACTIVE);
         getReturnValue().setCanDoAction(true);
         getReturnValue().setIsSyncronious(true);
 
@@ -1604,7 +1609,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private Guid createTaskImpl(Guid taskId,
-            AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand,
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand,
             String description,
             Map<Guid, VdcObjectType> entitiesMap) {
         return TaskManagerUtil.createTask(taskId, this, asyncTaskCreationInfo, parentCommand, description, entitiesMap);
@@ -1656,12 +1662,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return getTaskType();
     }
 
-    /** @return The type of task that should be created for this command. Commands that do not create async tasks should throw a {@link UnsupportedOperationException} */
+    /** @return The type of task that should be created for this command.
+     * Commands that do not create async tasks return notSupported
+     **/
     protected AsyncTaskType getTaskType() {
-        throw new UnsupportedOperationException();
+        return AsyncTaskType.notSupported;
     }
 
     public AsyncTaskType getAsyncTaskType() {
+        if (getTaskType() == AsyncTaskType.notSupported) {
+            throw new UnsupportedOperationException();
+        }
         return getTaskType();
     }
 
@@ -2092,5 +2103,28 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         getReturnValue().setFault(internalReturnValue.getFault());
         getReturnValue().getCanDoActionMessages().addAll(internalReturnValue.getCanDoActionMessages());
         getReturnValue().setCanDoAction(internalReturnValue.getCanDoAction());
+    }
+
+    protected void persistCommand(VdcActionType parentCommand) {
+        VdcActionParametersBase parentParameters = getParentParameters(parentCommand);
+        TaskManagerUtil.persistCommand(
+                getCommandId(),
+                parentParameters.getCommandId(),
+                getActionType(),
+                getParameters(),
+                commandStatus);
+    }
+
+    protected void removeCommand() {
+        TaskManagerUtil.removeCommand(getCommandId());
+    }
+
+    protected void setCommandStatus(CommandStatus status) {
+        this.commandStatus = status;
+        TaskManagerUtil.updateCommandStatus(getCommandId(), getTaskType(), commandStatus);
+    }
+
+    public CommandStatus getCommandStatus() {
+        return commandStatus;
     }
 }

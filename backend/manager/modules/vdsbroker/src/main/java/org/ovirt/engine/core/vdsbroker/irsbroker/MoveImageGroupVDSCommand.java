@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.vdscommands.MoveImageGroupVDSCommandParameters;
 
 public class MoveImageGroupVDSCommand<P extends MoveImageGroupVDSCommandParameters> extends IrsCreateCommand<P> {

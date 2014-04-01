@@ -6,11 +6,15 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.compat.CommandStatus;
+import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 
 public class TaskManagerUtil {
@@ -104,6 +108,26 @@ public class TaskManagerUtil {
 
     public static void removeTaskFromDbByTaskId(Guid taskId) {
         AsyncTaskManager.removeTaskFromDbByTaskId(taskId);
+    }
+
+    public CommandBase<?> retrieveCommand(Guid commandId) {
+        return coco.retrieveCommand(commandId);
+    }
+
+    public static void persistCommand(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status) {
+        coco.persistCommand(commandId, rootCommandId, actionType, params, status);
+    }
+
+    public static void removeCommand(Guid commandId) {
+        coco.removeCommand(commandId);
+    }
+
+    public static void removeAllCommandsBeforeDate(DateTime cutoff) {
+        coco.removeAllCommandsBeforeDate(cutoff);
+    }
+
+    public static void updateCommandStatus(Guid commandId, AsyncTaskType taskType, CommandStatus status) {
+         coco.updateCommandStatus(commandId, taskType, status);
     }
 
     private static AsyncTaskManager getAsyncTaskManager() {

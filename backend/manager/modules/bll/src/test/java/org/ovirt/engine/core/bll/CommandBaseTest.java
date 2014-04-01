@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
@@ -79,6 +80,10 @@ public class CommandBaseTest {
         @Override
         protected void logRollbackedTask() {
             return;
+        }
+
+        @Override
+        public void setCommandStatus(CommandStatus status) {
         }
     }
 

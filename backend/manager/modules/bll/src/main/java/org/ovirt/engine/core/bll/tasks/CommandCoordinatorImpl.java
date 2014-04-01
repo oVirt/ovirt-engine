@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
+import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -30,6 +31,8 @@ import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParamet
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.compat.CommandStatus;
+import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
@@ -38,11 +41,12 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class CommandCoordinatorImpl extends CommandCoordinator {
 
-    private static final String EXECUTION_CONTEXT_MAP_NAME = "executionContext";
     private static final Log log = LogFactory.getLog(CommandCoordinator.class);
-    private CommandsCache commandsCache = new CommandsCacheImpl();
+    private CommandsCache commandsCache;
 
-    CommandCoordinatorImpl() {}
+    CommandCoordinatorImpl() {
+        commandsCache = new CommandsCacheImpl();
+    }
 
     public <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters) {
         return CommandsFactory.createCommand(action, parameters);
@@ -78,14 +82,53 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         SPMAsyncTask task = concreteCreateTask(taskId, command, asyncTaskCreationInfo, parentCommand);
         task.setEntitiesMap(entitiesMap);
         AsyncTaskUtils.addOrUpdateTaskInDB(task);
-        commandsCache.put(command.getCommandId(),
-                command.getParameters().getParentParameters() == null ? Guid.Empty : command.getParameters().getParentParameters().getCommandId(),
-                task);
+        persistCommand(
+                command.getCommandId(),
+                task.getParameters().getDbAsyncTask().getRootCommandId(),
+                task.getParameters().getDbAsyncTask().getActionParameters().getCommandType(),
+                task.getParameters().getDbAsyncTask().getActionParameters(),
+                command.getCommandStatus());
         getAsyncTaskManager().lockAndAddTaskToManager(task);
         Guid vdsmTaskId = task.getVdsmTaskId();
         ExecutionHandler.updateStepExternalId(taskStep, vdsmTaskId, ExternalSystemType.VDSM);
         return vdsmTaskId;
 
+    }
+
+    @Override
+    public void persistCommand(Guid commandId,
+                               Guid rootCommandId,
+                               VdcActionType actionType,
+                               VdcActionParametersBase params,
+                               CommandStatus status) {
+        commandsCache.put(
+                commandId,
+                rootCommandId,
+                actionType,
+                params,
+                status);
+    }
+
+    @Override
+    public CommandBase<?> retrieveCommand(Guid commandId) {
+        CommandBase<?> command = null;
+        CommandEntity cmdEntity = commandsCache.get(commandId);
+        if (cmdEntity != null) {
+            command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getActionParameters());
+        }
+        return command;
+    }
+
+    public void removeCommand(Guid commandId) {
+        commandsCache.remove(commandId);
+    }
+
+    public void removeAllCommandsBeforeDate(DateTime cutoff) {
+        commandsCache.removeAllCommandsBeforeDate(cutoff);
+    }
+
+    public void updateCommandStatus(Guid commandId, AsyncTaskType taskType, CommandStatus status) {
+        commandsCache.updateCommandStatus(commandId, taskType, status);
     }
 
     /**
@@ -250,16 +293,6 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     @Override
     public SPMTask construct(AsyncTaskType taskType, AsyncTaskParameters asyncTaskParams, boolean duringInit) {
         return AsyncTaskFactory.construct(this, taskType, asyncTaskParams, duringInit);
-    }
-
-    public VdcReturnValueBase endAction(Guid stepId,
-                                        VdcActionType actionType,
-                                        AsyncTasks dbAsyncTask,
-                                        ExecutionContext context) {
-        VdcActionParametersBase parameters = dbAsyncTask.getActionParameters();
-        CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters);
-        command.setContext(new CommandContext(context));
-        return command.endAction();
     }
 
     public VdcReturnValueBase endAction(SPMTask task, ExecutionContext context) {

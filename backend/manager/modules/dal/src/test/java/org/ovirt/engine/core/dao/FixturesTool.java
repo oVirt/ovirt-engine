@@ -576,6 +576,7 @@ public class FixturesTool {
      */
     public static final String STORAGE_CONNECTION_ID = "0cc146e8-e5ed-482c-8814-270bc48c297e";
 
+    public static final Guid EXISTING_COMMAND_ENTITY_ID = new Guid("340fd52b-3400-4cdd-8d3f-c9d03704b0a1");
 
     /**
      * Number of VMs on clusters
