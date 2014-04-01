@@ -133,8 +133,8 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
         Date dateToDelete = df.parse("2013-02-9 10:11:00");
         dao.deleteCompletedJobs(dateToDelete, dateToDelete);
         int sizeAfterDelete = dao.getAll().size();
-        assertTrue("Check job with step and no async task deleted",
-                dao.get(new Guid("54947df8-0e9e-4471-a2f9-9af509fb0002")) == null);
+        assertTrue("Check job with step and no async task are not deleted",
+                dao.get(new Guid("54947df8-0e9e-4471-a2f9-9af509fb0002")) != null);
         assertTrue("Check an entry was deleted", sizeBeforeDelete > sizeAfterDelete);
     }
 
