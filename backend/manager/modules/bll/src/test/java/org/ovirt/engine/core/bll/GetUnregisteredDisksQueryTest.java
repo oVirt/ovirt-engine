@@ -66,7 +66,7 @@ public class GetUnregisteredDisksQueryTest
         StorageDomainDAO storageDomainDAOMock = mock(StorageDomainDAO.class);
         when(dbFacadeMock.getStorageDomainDao()).thenReturn(storageDomainDAOMock);
         StorageDomain storageDomain = new StorageDomain();
-        when(storageDomainDAOMock.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
+        when(storageDomainDAOMock.get(storageDomainId)).thenReturn(storageDomain);
 
         // Execute query
         getQuery().executeQueryCommand();

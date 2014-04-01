@@ -25,8 +25,8 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
     @Override
     protected void executeQueryCommand() {
         VDSBrokerFrontend vdsBroker = getVdsBroker();
-        if (getDbFacade().getStorageDomainDao().getForStoragePool(getStorageDomainId(), getStoragePoolId()) == null) {
-            getQueryReturnValue().setExceptionString(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST_IN_DATA_CENTER.toString());
+        if (getDbFacade().getStorageDomainDao().get(getStorageDomainId()) == null) {
+            getQueryReturnValue().setExceptionString(VdcBllMessages.STORAGE_DOMAIN_DOES_NOT_EXIST.toString());
             getQueryReturnValue().setSucceeded(false);
             return;
         }

@@ -1255,9 +1255,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Storage Domain doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST();
 
-    @DefaultStringValue("Storage Domain doesn't exist in Data Center.")
-    String ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST_IN_DATA_CENTER();
-
     @DefaultStringValue("Cannot ${action} ${type}. Cannot change Storage Domain type.")
     String ACTION_TYPE_FAILED_CANNOT_CHANGE_STORAGE_DOMAIN_TYPE();
 
@@ -1416,6 +1413,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot remove Data Center which contains active/locked Storage Domains.\n-Please deactivate all domains and wait for tasks to finish before removing the Data Center.")
     String ERROR_CANNOT_REMOVE_POOL_WITH_ACTIVE_DOMAINS();
+
+    @DefaultStringValue("Storage Domain doesn't exist.")
+    String STORAGE_DOMAIN_DOES_NOT_EXIST();
 
     @DefaultStringValue("Cannot change Data Center association when editing a Cluster.")
     String VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL();

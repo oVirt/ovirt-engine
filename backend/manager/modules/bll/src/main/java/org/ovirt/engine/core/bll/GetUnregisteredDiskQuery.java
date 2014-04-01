@@ -23,8 +23,8 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
         Guid storagePoolId = getParameters().getStoragePoolId();
         Guid storageDomainId = getParameters().getStorageDomainId();
         Guid diskId = getParameters().getDiskId();
-        if (getDbFacade().getStorageDomainDao().getForStoragePool(storageDomainId, storagePoolId) == null) {
-            getQueryReturnValue().setExceptionString(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST_IN_DATA_CENTER.toString());
+        if (getDbFacade().getStorageDomainDao().get(storageDomainId) == null) {
+            getQueryReturnValue().setExceptionString(VdcBllMessages.STORAGE_DOMAIN_DOES_NOT_EXIST.toString());
             getQueryReturnValue().setSucceeded(false);
             return;
         }
