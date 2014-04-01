@@ -29,8 +29,9 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdsQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -337,9 +338,12 @@ public class BackendTemplatesResourceTest
 
         setUpHttpHeaderExpectations("Expect", "201-created");
 
-        setUpGetEntityExpectations("VM: name=" + NAMES[1],
-                                   SearchType.VM,
-                                   setUpVm(GUIDS[1]));
+        setUpGetEntityExpectations(VdcQueryType.GetVmByVmNameForDataCenter,
+                GetVmByVmNameForDataCenterParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[1] },
+                setUpVm(GUIDS[1]));
+
         setUpGetEntityExpectations(0);
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[] {0, 0});
@@ -485,9 +489,11 @@ public class BackendTemplatesResourceTest
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[] {0, 0});
 
-        setUpGetEntityExpectations("Cluster: name=" + NAMES[2],
-                                   SearchType.Cluster,
-                                   setUpVDSGroup(GUIDS[2]));
+        setUpGetEntityExpectations(VdcQueryType.GetVdsGroupByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[2] },
+                setUpVDSGroup(GUIDS[2]));
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,

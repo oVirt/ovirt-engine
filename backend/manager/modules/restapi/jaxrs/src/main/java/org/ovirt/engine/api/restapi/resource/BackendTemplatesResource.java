@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -175,19 +176,18 @@ public class BackendTemplatesResource
                            VdcQueryType.GetVmByVmId,
                            new IdQueryParameters(asGuid(template.getVm().getId())),
                            template.getVm().getId());
-        } else if (isFiltered()) {
+        } else {
             Guid dataCenterId = null;
             if (cluster != null && cluster.getStoragePoolId() != null) {
                 dataCenterId = cluster.getStoragePoolId();
             }
+            GetVmByVmNameForDataCenterParameters params =
+                    new GetVmByVmNameForDataCenterParameters(dataCenterId, template.getVm().getName());
+            params.setFiltered(isFiltered());
             vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
                            VdcQueryType.GetVmByVmNameForDataCenter,
-                           new GetVmByVmNameForDataCenterParameters(dataCenterId, template.getVm().getName()),
+                    params,
                            template.getVm().getName());
-        } else  {
-            vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
-                           SearchType.VM,
-                           "VM: name=" + template.getVm().getName());
         }
         return vm.getStaticData();
     }
@@ -197,8 +197,10 @@ public class BackendTemplatesResource
     }
 
     protected Guid getClusterId(Template template) {
-        return getEntity(VDSGroup.class, SearchType.Cluster,
-                         "Cluster: name=" + template.getCluster().getName()).getId();
+        return getEntity(VDSGroup.class,
+                VdcQueryType.GetVdsGroupByName,
+                new NameQueryParameters(template.getCluster().getName()),
+                "Cluster: name=" + template.getCluster().getName()).getId();
     }
 
     @Override
