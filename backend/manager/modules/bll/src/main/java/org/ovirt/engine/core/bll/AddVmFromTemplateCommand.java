@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
@@ -147,14 +148,16 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         return retValue;
     }
 
-    @Override
-    protected int getNeededDiskSize(Guid storageId) {
-        double actualSize = 0;
-        List<DiskImage> disks = storageToDisksMap.get(storageId);
-        for (DiskImage disk : disks) {
-            actualSize += disk.getActualSize();
+    protected boolean validateFreeSpace(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList) {
+        for (DiskImage diskImage : disksList) {
+            List<DiskImage> snapshots = getAllImageSnapshots(diskImage);
+            diskImage.getSnapshots().addAll(snapshots);
         }
-        return (int) actualSize;
+        return validate(storageDomainValidator.hasSpaceForClonedDisks(disksList));
+    }
+
+    protected List<DiskImage> getAllImageSnapshots(DiskImage diskImage) {
+        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getImageTemplateId());
     }
 
     @Override

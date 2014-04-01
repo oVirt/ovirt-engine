@@ -299,6 +299,18 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         return super.buildAndCheckDestStorageDomains();
     }
 
+    protected boolean validateFreeSpace(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList) {
+        for (DiskImage diskImage : disksList) {
+            List<DiskImage> snapshots = getAllImageSnapshots(diskImage);
+            diskImage.getSnapshots().addAll(snapshots);
+        }
+        return validate(storageDomainValidator.hasSpaceForClonedDisks(disksList));
+    }
+
+    protected List<DiskImage> getAllImageSnapshots(DiskImage diskImage) {
+        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getImageTemplateId());
+    }
+
     /**
      * Logs error if one or more active domains are missing for disk images
      */
@@ -458,21 +470,6 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
                 isVirtioScsiEnabled(),
                 isBalloonEnabled(),
                 false);
-    }
-
-    @Override
-    protected int getNeededDiskSize(Guid storageDomainId) {
-        // Get the needed disk size by accumulating disk size
-        // of images on a given storage domain
-        int result = 0;
-        for (DiskImage img : getDiskImagesFromConfiguration()) {
-            if (img.getImageStatus() != ImageStatus.ILLEGAL) {
-                if (img.getStorageIds().get(0).equals(storageDomainId)) {
-                    result = result + (int) Math.ceil(img.getActualSize());
-                }
-            }
-        }
-        return result;
     }
 
     protected abstract VM getVmFromConfiguration();

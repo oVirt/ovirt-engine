@@ -303,10 +303,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return vmDisksSource.getStoragePoolId();
     }
 
-    protected int getNeededDiskSize(Guid domainId) {
-        return getBlockSparseInitSizeInGb() * storageToDisksMap.get(domainId).size();
-    }
-
     protected boolean canDoAddVmCommand() {
         boolean returnValue = false;
         returnValue = areParametersLegal(getReturnValue().getCanDoActionMessages());
@@ -338,9 +334,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected boolean validateSpaceRequirements() {
         for (Map.Entry<Guid, List<DiskImage>> sdImageEntry : storageToDisksMap.entrySet()) {
             StorageDomain destStorageDomain = destStorages.get(sdImageEntry.getKey());
+            List<DiskImage> disksList = sdImageEntry.getValue();
             StorageDomainValidator storageDomainValidator = createStorageDomainValidator(destStorageDomain);
             if (!validateDomainsThreshold(storageDomainValidator) ||
-                !validateFreeSpace(storageDomainValidator, destStorageDomain)) {
+                !validateFreeSpace(storageDomainValidator, disksList)) {
                 return false;
             }
         }
@@ -355,8 +352,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return validate(storageDomainValidator.isDomainWithinThresholds());
     }
 
-    protected boolean validateFreeSpace(StorageDomainValidator storageDomainValidator, StorageDomain domain) {
-        return validate(storageDomainValidator.isDomainHasSpaceForRequest(getNeededDiskSize(domain.getId())));
+    protected boolean validateFreeSpace(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList)
+    {
+        return validate(storageDomainValidator.hasSpaceForNewDisks(disksList));
     }
 
     protected boolean checkSingleQxlDisplay() {
