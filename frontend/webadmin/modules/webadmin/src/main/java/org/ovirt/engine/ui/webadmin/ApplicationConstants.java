@@ -3634,4 +3634,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Remove")
     String removeInstanceType();
+
+    @DefaultStringValue("Disk Snapshots")
+    String snapshotsLabel();
 }

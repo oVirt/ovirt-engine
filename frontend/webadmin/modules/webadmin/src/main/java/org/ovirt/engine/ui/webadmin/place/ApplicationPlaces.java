@@ -101,6 +101,9 @@ public class ApplicationPlaces {
     public static final String storageDiskSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
             + "disks"; //$NON-NLS-1$
 
+    public static final String storageSnapshotSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
+            + "snapshots"; //$NON-NLS-1$
+
     public static final String storagePermissionSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$
 

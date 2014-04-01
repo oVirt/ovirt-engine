@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.TemplateBackupModel;
@@ -225,6 +226,27 @@ public class StorageModule extends AbstractGinModule {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageDiskListModel source,
                     UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                    return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
+                }
+            }
+        };
+    }
+
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<Disk, StorageListModel, StorageSnapshotListModel> getStorageSnapshotListProvider(EventBus eventBus,
+          Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+          final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<Disk, StorageListModel, StorageSnapshotListModel>(
+                eventBus, defaultConfirmPopupProvider,
+                StorageListModel.class,
+                StorageSnapshotListModel.class) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageSnapshotListModel source,
+                   UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {

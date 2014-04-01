@@ -906,6 +906,15 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Actual Size")
     String sizeDisk();
 
+    @DefaultStringValue("Size")
+    String diskSnapshotSize();
+
+    @DefaultStringValue("Disk Alias")
+    String diskSnapshotAlias();
+
+    @DefaultStringValue("Snapshot Description")
+    String diskSnapshotDescription();
+
     @DefaultStringValue("Storage Domain")
     String storageDomainDisk();
 

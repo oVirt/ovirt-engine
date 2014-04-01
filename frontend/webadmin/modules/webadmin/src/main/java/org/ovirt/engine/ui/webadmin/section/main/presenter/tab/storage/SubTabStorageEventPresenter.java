@@ -37,7 +37,7 @@ public class SubTabStorageEventPresenter extends AbstractSubTabPresenter<Storage
     @TabInfo(container = StorageSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
             SearchableDetailModelProvider<AuditLog, StorageListModel, StorageEventListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.storageEventSubTabLabel(), 9, modelProvider, Align.RIGHT);
+        return new ModelBoundTabData(applicationConstants.storageEventSubTabLabel(), 10, modelProvider, Align.RIGHT);
     }
 
     @Inject

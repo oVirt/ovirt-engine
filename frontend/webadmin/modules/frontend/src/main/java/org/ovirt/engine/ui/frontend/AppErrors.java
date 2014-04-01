@@ -796,6 +796,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type iSCSI Bond")
     String VAR__TYPE__ISCSI_BOND();
 
+    @DefaultStringValue("$type Disk Snapshot")
+    String VAR__TYPE__DISK__SNAPSHOT();
+
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
 

@@ -292,4 +292,18 @@ public class DisksViewColumns {
                 return diskModel.getDisk().getReadOnly();
             }
     };
+
+    public static final DiskSizeColumn<Disk> snapshotSizeColumn = new DiskSizeColumn<Disk>() {
+        @Override
+        protected Long getRawValue(Disk object) {
+            return ((DiskImage) object).getActualSizeInBytes();
+        }
+    };
+
+    public static final TextColumnWithTooltip<Disk> snapshotDescriptionColumn = new TextColumnWithTooltip<Disk>() {
+        @Override
+        public String getValue(Disk object) {
+            return ((DiskImage) object).getVmSnapshotDescription();
+        }
+    };
 }

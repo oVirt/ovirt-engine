@@ -109,6 +109,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.TemplateBackupModel;
@@ -227,6 +228,8 @@ public interface ClientGinjectorExtension {
     SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> getSubTabStorageIsoModelProvider();
 
     SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> getSubTabStorageDiskModelProvider();
+
+    SearchableDetailModelProvider<Disk, StorageListModel, StorageSnapshotListModel> getSubTabStorageSnapshotModelProvider();
 
     SearchableDetailModelProvider<Permissions, StorageListModel, PermissionListModel> getSubTabStoragePermissionModelProvider();
 

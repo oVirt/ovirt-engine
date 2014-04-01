@@ -358,4 +358,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("VM Boot menu is not supported in Cluster version {0}")
     String bootMenuNotSupported(String clusterVersion);
+
+    @DefaultMessage("Disk {0} from Snapshot {1}")
+    String diskSnapshotLabel(String diskAlias, String snapshotDescription);
 }
