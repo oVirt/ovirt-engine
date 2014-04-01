@@ -26,11 +26,13 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -153,10 +155,12 @@ public class BackendStorageDomainsResourceTest
     @Test
     public void testRemoveWithHostName() throws Exception {
         setUpGetEntityExpectations();
-        VDS host = BackendHostsResourceTest.setUpEntityExpectations(control.createMock(VDS.class), 1);
-        setUpGetEntityExpectations("Hosts: name=" + NAMES[1],
-                                   SearchType.VDS,
-                                   host);
+
+        setUpGetEntityExpectations(VdcQueryType.GetVdsStaticByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[1] },
+                setUpVDStatic(1));
 
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
                                            RemoveStorageDomainParameters.class,
@@ -289,7 +293,11 @@ public class BackendStorageDomainsResourceTest
         Host host = new Host();
         host.setName(NAMES[0]);
 
-        setUpGetEntityExpectations("Hosts: name=" + NAMES[0], SearchType.VDS, setUpVDS(0));
+        setUpGetEntityExpectations(VdcQueryType.GetVdsStaticByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[0] },
+                setUpVDStatic(0));
 
         doTestAddStorageDomain(0, host, false);
     }
@@ -704,6 +712,13 @@ public class BackendStorageDomainsResourceTest
 
     protected VDS setUpVDS(int index) {
         VDS vds = new VDS();
+        vds.setId(GUIDS[index]);
+        vds.setVdsName(NAMES[index]);
+        return vds;
+    }
+
+    protected VdsStatic setUpVDStatic(int index) {
+        VdsStatic vds = new VdsStatic();
         vds.setId(GUIDS[index]);
         vds.setVdsName(NAMES[index]);
         return vds;

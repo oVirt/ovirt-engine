@@ -34,12 +34,13 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -361,9 +362,10 @@ public class BackendStorageDomainsResource
         return storageDomain.getHost().isSetId()
                ? new Guid(storageDomain.getHost().getId())
                : storageDomain.getHost().isSetName()
-                 ? getEntity(VDS.class,
-                             SearchType.VDS,
-                             "Hosts: name=" + storageDomain.getHost().getName()).getId()
+                        ? getEntity(VdsStatic.class,
+                                VdcQueryType.GetVdsStaticByName,
+                                new NameQueryParameters(storageDomain.getHost().getName()),
+                                "Hosts: name=" + storageDomain.getHost().getName()).getId()
                  : null;
     }
 

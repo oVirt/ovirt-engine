@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResource.SUB_COLLECTIONS;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,11 +18,12 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.DisksResource;
+import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.api.resource.ImagesResource;
 import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
-import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.api.resource.StorageDomainServerConnectionsResource;
+import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -28,20 +31,16 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
-import org.ovirt.engine.core.common.businessentities.VDS;
-
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
-
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResource.SUB_COLLECTIONS;
 
 public class BackendStorageDomainResource extends
         AbstractBackendSubResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain> implements StorageDomainResource {
@@ -204,10 +203,12 @@ public class BackendStorageDomainResource extends
         return storageDomain.getHost().isSetId()
                ? new Guid(storageDomain.getHost().getId())
                : storageDomain.getHost().isSetName()
-                 ? getEntity(VDS.class,
-                             SearchType.VDS,
-                             "Hosts: name=" + storageDomain.getHost().getName()).getId()
+                        ? getEntity(VdsStatic.class,
+                                VdcQueryType.GetVdsStaticByName,
+                                new NameQueryParameters(storageDomain.getHost().getName()),
+                                "Hosts: name=" + storageDomain.getHost().getName()).getId()
                  : null;
+
     }
 
     private ExtendSANStorageDomainParameters createParameters(Guid storageDomainId, List<LogicalUnit> newLuns, boolean force) {

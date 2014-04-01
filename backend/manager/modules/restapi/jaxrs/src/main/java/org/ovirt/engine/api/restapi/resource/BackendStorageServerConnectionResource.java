@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -64,8 +64,9 @@ public class BackendStorageServerConnectionResource extends
             return host.isSetId()
                     ? new Guid(host.getId())
                     : host.isSetName()
-                            ? getEntity(VDS.class,
-                                    SearchType.VDS,
+                            ? getEntity(VdsStatic.class,
+                                    VdcQueryType.GetVdsStaticByName,
+                                    new NameQueryParameters(host.getName()),
                                     "Hosts: name=" + host.getName()).getId()
                             : null;
         }
