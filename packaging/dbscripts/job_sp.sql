@@ -484,17 +484,6 @@ BEGIN
     AND    status = 'FINISHED')
     OR    (end_time < v_failed_end_time
     AND    status IN ('FAILED', 'ABORTED', 'UNKNOWN'))));
-
-    DELETE FROM job
-    WHERE job_id IN
-        (SELECT job_id
-         FROM job
-         WHERE NOT is_external
-               AND NOT EXISTS
-                (SELECT step.step_id
-                 FROM step, async_tasks
-                 WHERE step.job_id = job_id AND async_tasks.step_id = step.step_id));
-
 END; $procedure$
 LANGUAGE plpgsql;
 
