@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -9,14 +11,17 @@ import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -31,6 +36,8 @@ import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.ovf.OvfManager;
+import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 /**
  * Base class for all image handling commands
@@ -406,5 +413,44 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                         LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_SNAPSHOTS, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         snapshotsEngineLock.setExclusiveLocks(snapshotsExlusiveLockMap);
         getLockManager().acquireLockWait(snapshotsEngineLock);
+    }
+
+    /**
+     * Prepare a single {@link org.ovirt.engine.core.common.businessentities.Snapshot} object representing a snapshot of a given VM without the give disk.
+     */
+    protected Snapshot prepareSnapshotConfigWithoutImageSingleImage(Guid vmSnapshotId, Guid imageId) {
+        Snapshot snap = null;
+        try {
+            OvfManager ovfManager = new OvfManager();
+            snap = getSnapshotDao().get(vmSnapshotId);
+            String snapConfig = snap.getVmConfiguration();
+
+            if (snap.isVmConfigurationAvailable() && snapConfig != null) {
+                VM vmSnapshot = new VM();
+                ArrayList<DiskImage> snapshotImages = new ArrayList<DiskImage>();
+
+                ovfManager.ImportVm(snapConfig,
+                        vmSnapshot,
+                        snapshotImages,
+                        new ArrayList<VmNetworkInterface>());
+
+                // Remove the image form the disk list
+                Iterator<DiskImage> diskIter = snapshotImages.iterator();
+                while (diskIter.hasNext()) {
+                    DiskImage imageInList = diskIter.next();
+                    if (imageInList.getImageId().equals(imageId)) {
+                        log.debugFormat("Recreating vmSnapshot {0} without the image {1}", vmSnapshotId, imageId);
+                        diskIter.remove();
+                        break;
+                    }
+                }
+
+                String newOvf = ovfManager.ExportVm(vmSnapshot, snapshotImages, ClusterUtils.getCompatibilityVersion(vmSnapshot));
+                snap.setVmConfiguration(newOvf);
+            }
+        } catch (OvfReaderException e) {
+            log.errorFormat("Can't remove image {0} from snapshot {1}", imageId, vmSnapshotId);
+        }
+        return snap;
     }
 }

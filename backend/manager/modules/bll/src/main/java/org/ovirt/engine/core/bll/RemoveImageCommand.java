@@ -2,11 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -17,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
@@ -27,8 +24,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.utils.ovf.OvfManager;
-import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -245,45 +240,6 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         }
 
         return result;
-    }
-
-    /**
-     * Prepare a single {@link org.ovirt.engine.core.common.businessentities.Snapshot} object representing a snapshot of a given VM without the give disk.
-     */
-    protected Snapshot prepareSnapshotConfigWithoutImageSingleImage(Guid vmSnapshotId, Guid imageId) {
-        Snapshot snap = null;
-        try {
-            OvfManager ovfManager = new OvfManager();
-            snap = getSnapshotDao().get(vmSnapshotId);
-            String snapConfig = snap.getVmConfiguration();
-
-            if (snap.isVmConfigurationAvailable() && snapConfig != null) {
-                VM vmSnapshot = new VM();
-                ArrayList<DiskImage> snapshotImages = new ArrayList<DiskImage>();
-
-                ovfManager.ImportVm(snapConfig,
-                        vmSnapshot,
-                        snapshotImages,
-                        new ArrayList<VmNetworkInterface>());
-
-                // Remove the image form the disk list
-                Iterator<DiskImage> diskIter = snapshotImages.iterator();
-                while (diskIter.hasNext()) {
-                    DiskImage imageInList = diskIter.next();
-                    if (imageInList.getImageId().equals(imageId)) {
-                        log.debugFormat("Recreating vmSnapshot {0} without the image {1}", vmSnapshotId, imageId);
-                        diskIter.remove();
-                        break;
-                    }
-                }
-
-                String newOvf = ovfManager.ExportVm(vmSnapshot, snapshotImages, ClusterUtils.getCompatibilityVersion(vmSnapshot));
-                snap.setVmConfiguration(newOvf);
-            }
-        } catch (OvfReaderException e) {
-            log.errorFormat("Can't remove image {0} from snapshot {1}", imageId, vmSnapshotId);
-        }
-        return snap;
     }
 
     @Override
