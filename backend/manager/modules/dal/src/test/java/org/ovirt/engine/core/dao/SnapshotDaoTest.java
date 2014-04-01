@@ -212,6 +212,12 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
     }
 
     @Test
+    public void getAllByStorageDomain() {
+        List<Snapshot> snapshots = dao.getAllByStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
+        assertFalse("Snapshots list shouldn't be empty", snapshots.isEmpty());
+    }
+
+    @Test
     public void getFilteredWithPermissions() {
         Snapshot snapshot = dao.get(EXISTING_SNAPSHOT_ID, PRIVILEGED_USER_ID, true);
         assertNotNull(snapshot);

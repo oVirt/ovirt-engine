@@ -131,6 +131,15 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
     List<Snapshot> getAll(Guid vmId, Guid userId, boolean isFiltered);
 
     /**
+     * Get all the snapshots with disks on the specified storage domain.
+     *
+     * @param storageId
+     *            The Storage Domain ID.
+     * @return the list of snapshots.
+     */
+    List<Snapshot> getAllByStorageDomain(Guid storageId);
+
+    /**
      * Check if there exists a snapshot of the given type for the VM.
      *
      * @param vmId

@@ -137,6 +137,19 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetAllSnapshotsByStorageDomainId(v_storage_id UUID) RETURNS SETOF snapshots STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT  snapshots.*
+    FROM    snapshots
+    JOIN    images ON snapshots.snapshot_id = images.vm_snapshot_id
+    JOIN    image_storage_domain_map ON image_storage_domain_map.storage_domain_id = v_storage_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
 Create or replace FUNCTION GetSnapshotByVmIdAndType(
     v_vm_id UUID,
     v_snapshot_type VARCHAR(32))

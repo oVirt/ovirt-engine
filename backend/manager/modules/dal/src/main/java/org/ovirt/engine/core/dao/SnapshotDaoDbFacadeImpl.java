@@ -122,6 +122,16 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
     }
 
     @Override
+    public List<Snapshot> getAllByStorageDomain(Guid storageId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("storage_id", storageId);
+
+        return getCallsHandler().executeReadList("GetAllSnapshotsByStorageDomainId",
+                createEntityRowMapper(),
+                parameterSource);
+    }
+
+    @Override
     public boolean exists(Guid vmId, SnapshotType type) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmId)
