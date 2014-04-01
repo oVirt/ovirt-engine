@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -174,7 +176,18 @@ public class ClusterServiceModel extends EntityModel {
         VDS selectedVds = (VDS) hostList.getSelectedItem();
         ServiceType serviceType = (ServiceType) serviceTypeList.getSelectedItem();
         ArrayList<EntityModel> list = new ArrayList<EntityModel>();
-        for (GlusterServerService service : getActualServiceList()) {
+        List<GlusterServerService> serviceList = new ArrayList<GlusterServerService>(getActualServiceList());
+        Collections.sort(serviceList, new Comparator<GlusterServerService>() {
+            @Override
+            public int compare(GlusterServerService o1, GlusterServerService o2) {
+                if(o1.getHostName().compareTo(o2.getHostName()) == 0) {
+                    return o1.getServiceType().toString().compareTo(o2.getServiceType().toString());
+                } else {
+                    return o1.getHostName().compareTo(o2.getHostName());
+                }
+            }
+        });
+        for (GlusterServerService service : serviceList) {
             if ((selectedVds == null || service.getHostName().equals(selectedVds.getHostName()))
                     && (serviceType == null || service.getServiceType() == serviceType)) {
                 list.add(new EntityModel(service));
