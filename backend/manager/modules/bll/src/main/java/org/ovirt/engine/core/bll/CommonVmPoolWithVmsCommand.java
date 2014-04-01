@@ -56,7 +56,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<Guid, StorageDomain>();
-    private boolean _addVmsSucceded = true;
+    private boolean addVmsSucceded = true;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -110,7 +110,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
      */
     @Override
     protected void executeCommand() {
-        UpdateVmInitPassword();
+        updateVmInitPassword();
         VmHandler.warnMemorySizeLegal(getParameters().getVmStaticData(), getVdsGroup().getcompatibility_version());
 
         Guid poolId = getPoolId();
@@ -157,7 +157,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                         getReturnValue().getCanDoActionMessages().add(msg);
                     }
                 }
-                _addVmsSucceded = returnValue.getSucceeded() && _addVmsSucceded;
+                addVmsSucceded = returnValue.getSucceeded() && addVmsSucceded;
                 subsequentFailedAttempts++;
             }
             else { // Succeed on that , reset subsequentFailedAttempts.
@@ -169,7 +169,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 AuditLogDirector.log(logable, AuditLogType.USER_VM_POOL_MAX_SUBSEQUENT_FAILURES_REACHED);
                 break;
             }
-            isAtLeastOneVMCreationFailed = isAtLeastOneVMCreationFailed || !_addVmsSucceded;
+            isAtLeastOneVMCreationFailed = isAtLeastOneVMCreationFailed || !addVmsSucceded;
         }
         getReturnValue().setCanDoAction(!isAtLeastOneVMCreationFailed);
         setSucceeded(!isAtLeastOneVMCreationFailed);
@@ -177,7 +177,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         getCompensationContext().resetCompensation();
     }
 
-    private void UpdateVmInitPassword() {
+    private void updateVmInitPassword() {
         // We are not passing the VmInit password to the UI,
         // so we need to update the VmInit password from its template.
         if (getParameters().getVmStaticData().getVmInit() != null &&
@@ -219,11 +219,8 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     @Override
     protected boolean canDoAction() {
-
-
         if (getVdsGroup() == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
-            return false;
+            return failCanDoAction(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
         }
 
         // A Pool cannot be added in a cluster without a defined architecture
@@ -235,11 +232,10 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (pool != null
                 && (getActionType() == VdcActionType.AddVmPoolWithVms || !pool.getVmPoolId().equals(
                         getParameters().getVmPoolId()))) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
         }
-        setStoragePoolId(getVdsGroup().getStoragePoolId());
 
+        setStoragePoolId(getVdsGroup().getStoragePoolId());
         if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             return false;
         }
@@ -269,18 +265,15 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
 
         if (getActionType() == VdcActionType.AddVmPoolWithVms && getParameters().getVmsCount() < 1) {
-            addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_CREATE_WITH_NO_VMS);
-            return false;
+            return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_CREATE_WITH_NO_VMS);
         }
 
         if (getParameters().getVmStaticData().isStateless()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_FROM_POOL_CANNOT_BE_STATELESS);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_FROM_POOL_CANNOT_BE_STATELESS);
         }
 
         if (getParameters().getVmPool().getPrestartedVms() > getParameters().getVmPool().getAssignedVmsCount()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PRESTARTED_VMS_CANNOT_EXCEED_VMS_COUNT);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_PRESTARTED_VMS_CANNOT_EXCEED_VMS_COUNT);
         }
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
@@ -377,7 +370,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     }
 
     protected boolean getAddVmsSucceded() {
-        return _addVmsSucceded;
+        return addVmsSucceded;
     }
 
     public String getVmsCount() {

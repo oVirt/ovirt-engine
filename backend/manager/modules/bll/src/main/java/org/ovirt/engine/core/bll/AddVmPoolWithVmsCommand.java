@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,15 +41,15 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = super.canDoAction();
-
-        if (returnValue && VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getParameters().getVmStaticData().getVmtGuid())) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_CREATE_FROM_BLANK_TEMPLATE);
-
+        if (!super.canDoAction()) {
+            return false;
         }
 
-        return returnValue;
+        if (VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getParameters().getVmStaticData().getVmtGuid())) {
+            return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_CREATE_FROM_BLANK_TEMPLATE);
+        }
+
+        return true;
     }
 
     @Override
@@ -68,9 +69,12 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getAddVmsSucceded() ? AuditLogType.USER_ADD_VM_POOL_WITH_VMS
-                : getSucceeded() ? AuditLogType.USER_ADD_VM_POOL_WITH_VMS_ADD_VDS_FAILED
-                        : AuditLogType.USER_ADD_VM_POOL_WITH_VMS_FAILED;
+        if (getAddVmsSucceded()) {
+            return AuditLogType.USER_ADD_VM_POOL_WITH_VMS;
+        }
+
+        return getSucceeded() ? AuditLogType.USER_ADD_VM_POOL_WITH_VMS_ADD_VDS_FAILED
+                : AuditLogType.USER_ADD_VM_POOL_WITH_VMS_FAILED;
     }
 
     @Override
@@ -108,9 +112,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
-        list.add(new QuotaSanityParameter(getQuotaId(), null));
-        return list;
+        return Arrays.<QuotaConsumptionParameter>asList(new QuotaSanityParameter(getQuotaId(), null));
     }
 
     @Override

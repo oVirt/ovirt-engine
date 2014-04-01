@@ -15,10 +15,9 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T>  implements RenamedEntityInfoProvider{
 
     private VmPool oldPool;
+
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected UpdateVmPoolWithVmsCommand(Guid commandId) {
         super(commandId);
@@ -36,16 +35,20 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = super.canDoAction();
-        oldPool = getVmPoolDAO().get(getVmPool().getVmPoolId());
-        if (returnValue && oldPool == null) {
-            addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_UPDATE_POOL_NOT_FOUND);
-            returnValue = false;
-        } else if (returnValue && getParameters().getVmsCount() < 0) {
-            addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_DECREASE_VMS_FROM_POOL);
-            returnValue = false;
+        if (!super.canDoAction()) {
+            return false;
         }
-        return returnValue;
+
+        oldPool = getVmPoolDAO().get(getVmPool().getVmPoolId());
+        if (oldPool == null) {
+            return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_UPDATE_POOL_NOT_FOUND);
+        }
+
+        if (getParameters().getVmsCount() < 0) {
+            return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_DECREASE_VMS_FROM_POOL);
+        }
+
+        return true;
     }
 
     @Override

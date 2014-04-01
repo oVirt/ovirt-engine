@@ -1,19 +1,17 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmPoolOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddVmPoolCommand<T extends VmPoolOperationParameters> extends VmPoolCommandBase<T> {
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected AddVmPoolCommand(Guid commandId) {
         super(commandId);
@@ -28,7 +26,7 @@ public class AddVmPoolCommand<T extends VmPoolOperationParameters> extends VmPoo
     protected void executeCommand() {
         VmPool vmPool = getVmPool();
 
-        DbFacade.getInstance().getVmPoolDao().save(vmPool);
+        getVmPoolDAO().save(vmPool);
         setActionReturnValue(vmPool.getVmPoolId());
         setSucceeded(true);
     }
