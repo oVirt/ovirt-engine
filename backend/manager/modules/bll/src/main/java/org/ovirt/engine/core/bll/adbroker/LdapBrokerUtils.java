@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ExternalId;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -242,6 +243,8 @@ public class LdapBrokerUtils {
                 ldapGroup = new LdapGroup(dbGroup);
             } else {
                 ldapGroup = new LdapGroup();
+                ldapGroup.setid(new ExternalId(Guid.Empty.toByteArray()));
+                ldapGroup.setname(groupName);
             }
             user.getGroups().put(groupName, ldapGroup);
         }

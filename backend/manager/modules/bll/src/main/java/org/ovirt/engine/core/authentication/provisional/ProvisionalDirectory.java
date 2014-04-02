@@ -83,7 +83,7 @@ public class ProvisionalDirectory implements Directory {
         // Find the users using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.GetAdUserByUserIdList,
-            new LdapSearchByUserIdListParameters(domain, ids, false)
+            new LdapSearchByUserIdListParameters(domain, ids, true)
         );
         @SuppressWarnings("unchecked")
         List<LdapUser> ldapUsers = (List<LdapUser>) ldapResult.getReturnValue();
