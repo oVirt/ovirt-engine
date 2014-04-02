@@ -613,7 +613,7 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    private void refreshVdsRunTimeInfo() {
+    public void refreshVdsRunTimeInfo() {
         boolean isVdsUpOrGoingToMaintenance = _vds.getStatus() == VDSStatus.Up
                 || _vds.getStatus() == VDSStatus.PreparingForMaintenance || _vds.getStatus() == VDSStatus.Error
                 || _vds.getStatus() == VDSStatus.NonOperational;
