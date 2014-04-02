@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -60,13 +60,19 @@ class Plugin(plugin.PluginBase):
         )[0]
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_INIT,
+        stage=plugin.Stages.STAGE_BOOT,
     )
-    def _init(self):
+    def _boot(self):
+        # Override existing post installs
         self.environment.setdefault(
             osetupcons.SystemEnv.NFS_CONFIG_ENABLED,
             None
         )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+    )
+    def _init(self):
         self.environment.setdefault(
             osetupcons.SystemEnv.NFS_SERVICE_NAME,
             None
@@ -97,8 +103,11 @@ class Plugin(plugin.PluginBase):
                     break
             else:
                 self._enabled = False
-        if not self.environment[osetupcons.DBEnv.NEW_DATABASE]:
-            self._enabled = False
+        if self.environment[osetupcons.SystemEnv.NFS_CONFIG_ENABLED] is None:
+            if not self.environment[osetupcons.DBEnv.NEW_DATABASE]:
+                self.environment[
+                    osetupcons.SystemEnv.NFS_CONFIG_ENABLED
+                ] = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
