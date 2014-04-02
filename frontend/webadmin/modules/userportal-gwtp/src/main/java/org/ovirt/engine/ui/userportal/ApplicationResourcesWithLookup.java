@@ -36,6 +36,9 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
     @Source("images/os/large/rhel_6x64.png")
     ImageResource rhel_6x64LargeImage();
 
+    @Source("images/os/large/rhel_7x64.png")
+    ImageResource rhel_7x64LargeImage();
+
     @Source("images/os/large/windows_2003.png")
     ImageResource windows_2003LargeImage();
 
@@ -130,6 +133,9 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
 
     @Source("images/os/rhel_6x64.jpg")
     ImageResource rhel_6x64SmallImage();
+
+    @Source("images/os/rhel_7x64.jpg")
+    ImageResource rhel_7x64SmallImage();
 
     @Source("images/os/windows_2003.jpg")
     ImageResource windows_2003SmallImage();
