@@ -38,6 +38,10 @@ public class QuotaManager {
     private final List<QuotaConsumptionParameter> corruptedParameters = new ArrayList<QuotaConsumptionParameter>();
     private final List<Integer> nonCountableQutoaVmStatusesList = new ArrayList<Integer>();
 
+    // Forbid the creation of new instances outside this class
+    private QuotaManager() {
+    }
+
     public static QuotaManager getInstance() {
         return INSTANCE;
     }
