@@ -655,6 +655,8 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String PROVIDER_IMPORT_CERTIFICATE_CHAIN_ERROR();
 
+    String VM_NOT_QUALIFIED_FOR_SNAPSHOT_MERGE();
+
     String MIGRATION_DEST_INVALID_HOSTNAME();
 
     String MIGRATION_CANCEL_ERROR();

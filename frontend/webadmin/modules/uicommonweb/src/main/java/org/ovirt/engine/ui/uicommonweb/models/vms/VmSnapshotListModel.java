@@ -202,6 +202,22 @@ public class VmSnapshotListModel extends SearchableListModel
         }
     }
 
+    private boolean liveMergeSupported;
+
+    public boolean isLiveMergeSupported()
+    {
+        return liveMergeSupported;
+    }
+
+    private void setLiveMergeSupported(boolean value)
+    {
+        if (liveMergeSupported != value)
+        {
+            liveMergeSupported = value;
+            onPropertyChanged(new PropertyChangedEventArgs("IsLiveMergeSupported")); //$NON-NLS-1$
+        }
+    }
+
     public VmSnapshotListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().snapshotsTitle());
@@ -262,6 +278,7 @@ public class VmSnapshotListModel extends SearchableListModel
     public void setEntity(Object value)
     {
         updateIsMemorySnapshotSupported(value);
+        updateIsLiveMergeSupported(value);
 
         super.setEntity(value);
 
@@ -348,8 +365,8 @@ public class VmSnapshotListModel extends SearchableListModel
         VM vm = (VM) getEntity();
         if (vm != null)
         {
-            Frontend.getInstance().runAction(VdcActionType.RemoveSnapshot, new RemoveSnapshotParameters(snapshot.getId(),
-                    vm.getId()), null, null);
+            Frontend.getInstance().runAction(VdcActionType.RemoveSnapshot,
+                    new RemoveSnapshotParameters(snapshot.getId(), vm.getId()), null, null);
         }
 
         getCanSelectSnapshot().setEntity(false);
@@ -645,6 +662,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         boolean isVmDown = vm != null && vm.getStatus() == VMStatus.Down;
         boolean isVmImageLocked = vm != null && vm.getStatus() == VMStatus.ImageLocked;
+        boolean isVmQualifiedForSnapshotMerge = vm != null && vm.getStatus().isQualifiedForSnapshotMerge();
         boolean isPreviewing = getIsPreviewing();
         boolean isLocked = getIsLocked();
         boolean isSelected = snapshot != null && snapshot.getType() != SnapshotType.ACTIVE;
@@ -658,7 +676,8 @@ public class VmSnapshotListModel extends SearchableListModel
         getCustomPreviewCommand().setIsExecutionAllowed(getPreviewCommand().getIsExecutionAllowed());
         getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
         getUndoCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
-        getRemoveCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
+        getRemoveCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && !isStateless
+                && (isLiveMergeSupported() ? isVmQualifiedForSnapshotMerge : isVmDown));
         getCloneVmCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing
                 && !isVmImageLocked && !isStateless && isCloneVmSupported);
     }
@@ -749,6 +768,16 @@ public class VmSnapshotListModel extends SearchableListModel
         VM vm = (VM) entity;
 
         setMemorySnapshotSupported(AsyncDataProvider.isMemorySnapshotSupported(vm));
+    }
+
+    private void updateIsLiveMergeSupported(Object entity) {
+        if (entity == null) {
+            return;
+        }
+
+        VM vm = (VM) entity;
+
+        setLiveMergeSupported(AsyncDataProvider.isLiveMergeSupported(vm));
     }
 
     @Override

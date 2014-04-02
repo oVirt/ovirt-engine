@@ -384,6 +384,12 @@ public final class AsyncDataProvider {
         return true;
     }
 
+    public static boolean isLiveMergeSupported(VM vm) {
+        return (vm != null && (Boolean) getConfigValuePreConverted(
+                ConfigurationValues.LiveMergeSupported,
+                vm.getVdsGroupCompatibilityVersion().toString()));
+    }
+
     public static void initNicHotplugSupportMap() {
         AsyncQuery callback = new AsyncQuery();
         callback.asyncCallback = new INewAsyncCallback() {
