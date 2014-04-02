@@ -65,6 +65,8 @@ actions:
           vm.display.type: xs:string
           vm.display.allow_override: xs:boolean
           vm.display.smartcard_enabled: xs:boolean
+          vm.display.file_transfer_enabled: xs:boolean
+          vm.display.copy_paste_enabled: xs:boolean
           vm.display.keyboard_layout: xs:string
           vm.os.cmdline: xs:string
           vm.cpu.mode: xs:string
@@ -143,6 +145,8 @@ actions:
           vm.display.type: xs:string
           vm.display.allow_override: xs:boolean
           vm.display.smartcard_enabled: xs:boolean
+          vm.display.file_transfer_enabled: xs:boolean
+          vm.display.copy_paste_enabled: xs:boolean
           vm.display.keyboard_layout: xs:string
           vm.os.cmdline: xs:string
           vm.cpu.topology.cores: xs:int
@@ -200,6 +204,8 @@ actions:
           vm.display.type: xs:string
           vm.display.allow_override: xs:boolean
           vm.display.smartcard_enabled: xs:boolean
+          vm.display.file_transfer_enabled: xs:boolean
+          vm.display.copy_paste_enabled: xs:boolean
           vm.display.keyboard_layout: xs:string
           vm.os.cmdline: xs:string
           vm.cpu.topology.cores: xs:int
@@ -250,6 +256,8 @@ actions:
                 vm.display.type: xs:string
                 vm.display.allow_override: xs:boolean
                 vm.display.smartcard_enabled: xs:boolean
+                vm.display.file_transfer_enabled: xs:boolean
+                vm.display.copy_paste_enabled: xs:boolean
                 vm.display.keyboard_layout: xs:string
                 vm.os.cmdline: xs:string
                 vm.cpu.topology.cores: xs:int
@@ -3588,6 +3596,8 @@ actions:
           vm.display.single_qxl_pci: xs:boolean
           template.display.allow_override: xs:boolean
           template.display.smartcard_enabled: xs:boolean
+          vm.display.file_transfer_enabled: xs:boolean
+          vm.display.copy_paste_enabled: xs:boolean
           template.display.keyboard_layout: xs:string
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
@@ -3643,6 +3653,8 @@ actions:
           vm.display.single_qxl_pci: xs:boolean
           template.display.allow_override: xs:boolean
           template.display.smartcard_enabled: xs:boolean
+          template.display.file_transfer_enabled: xs:boolean
+          template.display.copy_paste_enabled: xs:boolean
           template.display.keyboard_layout: xs:string
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean

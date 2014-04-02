@@ -127,6 +127,8 @@ public class VmMapper {
         staticVm.setVmInit(entity.getVmInit());
         staticVm.setSerialNumberPolicy(entity.getSerialNumberPolicy());
         staticVm.setCustomSerialNumber(entity.getCustomSerialNumber());
+        staticVm.setSpiceFileTransferEnabled(entity.isSpiceFileTransferEnabled());
+        staticVm.setSpiceCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
         return staticVm;
     }
 
@@ -261,6 +263,12 @@ public class VmMapper {
                     layout = null;  // uniquely represent unset keyboard layout as null
                 }
                 staticVm.setVncKeyboardLayout(layout);
+            }
+            if (vm.getDisplay().isSetFileTransferEnabled()) {
+                staticVm.setSpiceFileTransferEnabled(vm.getDisplay().isSetFileTransferEnabled());
+            }
+            if (vm.getDisplay().isSetCopyPasteEnabled()) {
+                staticVm.setSpiceCopyPasteEnabled(vm.getDisplay().isSetCopyPasteEnabled());
             }
         }
         if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetAffinity()) {
@@ -492,6 +500,8 @@ public class VmMapper {
             model.getDisplay().setAllowOverride(entity.getAllowConsoleReconnect());
             model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
             model.getDisplay().setKeyboardLayout(entity.getDefaultVncKeyboardLayout());
+            model.getDisplay().setFileTransferEnabled(entity.isSpiceFileTransferEnabled());
+            model.getDisplay().setCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
         }
         model.setType(map(entity.getVmType(), null));
         model.setStateless(entity.isStateless());

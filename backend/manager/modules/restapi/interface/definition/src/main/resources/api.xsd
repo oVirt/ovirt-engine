@@ -2583,6 +2583,8 @@
       <xs:element name="smartcard_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <xs:element name="keyboard_layout" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="proxy" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="file_transfer_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="copy_paste_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 

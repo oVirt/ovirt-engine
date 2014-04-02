@@ -152,6 +152,12 @@ public class TemplateMapper {
                 }
                 entity.setVncKeyboardLayout(layout);
             }
+            if (model.getDisplay().isSetFileTransferEnabled()) {
+                entity.setSpiceFileTransferEnabled(model.getDisplay().isFileTransferEnabled());
+            }
+            if (model.getDisplay().isSetCopyPasteEnabled()) {
+                entity.setSpiceCopyPasteEnabled(model.getDisplay().isCopyPasteEnabled());
+            }
         }
         if (model.isSetDomain() && model.getDomain().isSetName()) {
             if (entity.getVmInit() == null) {
@@ -291,6 +297,12 @@ public class TemplateMapper {
                 }
                 staticVm.setVncKeyboardLayout(layout);
             }
+            if (model.getDisplay().isSetFileTransferEnabled()) {
+                staticVm.setSpiceFileTransferEnabled(model.getDisplay().isFileTransferEnabled());
+            }
+            if (model.getDisplay().isSetCopyPasteEnabled()) {
+                staticVm.setSpiceCopyPasteEnabled(model.getDisplay().isCopyPasteEnabled());
+            }
         }
         if (model.isSetDomain() && model.getDomain().isSetName()) {
             if (staticVm.getVmInit() == null) {
@@ -376,6 +388,8 @@ public class TemplateMapper {
             model.getDisplay().setAllowOverride(entity.isAllowConsoleReconnect());
             model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
             model.getDisplay().setKeyboardLayout(entity.getVncKeyboardLayout());
+            model.getDisplay().setFileTransferEnabled(entity.isSpiceFileTransferEnabled());
+            model.getDisplay().setCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
         }
         if (entity.getClusterArch() != null) {
             model.getCpu().setArchitecture(CPUMapper.map(entity.getClusterArch(), null));

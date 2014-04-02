@@ -97,6 +97,8 @@ public class VmMapperTest extends
             guestNic.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class).value());
         }
         from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
+        from.getDisplay().setFileTransferEnabled(true);
+        from.getDisplay().setCopyPasteEnabled(true);
         return from;
     }
 
@@ -146,6 +148,8 @@ public class VmMapperTest extends
         assertEquals(model.getMigrationDowntime(), transform.getMigrationDowntime());
         assertEquals(model.getSerialNumber().getPolicy(), transform.getSerialNumber().getPolicy());
         assertEquals(model.getSerialNumber().getValue(), transform.getSerialNumber().getValue());
+        assertEquals(model.getDisplay().isFileTransferEnabled(), transform.getDisplay().isFileTransferEnabled());
+        assertEquals(model.getDisplay().isCopyPasteEnabled(), transform.getDisplay().isCopyPasteEnabled());
     }
 
     @Test

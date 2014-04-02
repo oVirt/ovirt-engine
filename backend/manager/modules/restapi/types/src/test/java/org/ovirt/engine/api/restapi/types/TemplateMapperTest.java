@@ -86,5 +86,7 @@ public class TemplateMapperTest
         assertEquals(model.getVersion().getBaseTemplate().getId(), transform.getVersion().getBaseTemplate().getId());
         assertEquals(model.getSerialNumber().getPolicy(), transform.getSerialNumber().getPolicy());
         assertEquals(model.getSerialNumber().getValue(), transform.getSerialNumber().getValue());
+        assertEquals(model.getDisplay().isFileTransferEnabled(), transform.getDisplay().isFileTransferEnabled());
+        assertEquals(model.getDisplay().isCopyPasteEnabled(), transform.getDisplay().isCopyPasteEnabled());
     }
 }
