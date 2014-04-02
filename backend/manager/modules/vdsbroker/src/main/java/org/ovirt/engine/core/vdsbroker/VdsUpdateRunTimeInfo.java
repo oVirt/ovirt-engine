@@ -659,7 +659,7 @@ public class VdsUpdateRunTimeInfo {
         moveVDSToMaintenanceIfNeeded();
     }
 
-    private void refreshVdsStats() {
+    public void refreshVdsStats() {
         if (Config.<Boolean> getValue(ConfigValues.DebugTimerLogging)) {
             log.debugFormat("vdsManager::refreshVdsStats entered, vds = {0} : {1}", _vds.getId(),
                     _vds.getName());
@@ -1772,7 +1772,7 @@ public class VdsUpdateRunTimeInfo {
                     updateVmStatistics(vmToUpdate);
                     if (_vmDict.containsKey(runningVm.getId())) {
                         staleRunningVms.add(runningVm.getId());
-                        if (!_vdsManager.getInitialized()) {
+                        if (!_vdsManager.isInitialized()) {
                             ResourceManager.getInstance().RemoveVmFromDownVms(_vds.getId(), runningVm.getId());
                         }
                     }

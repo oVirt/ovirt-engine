@@ -64,82 +64,31 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
 
 public class VdsManager {
+    private static Log log = LogFactory.getLog(VdsManager.class);
+    private static Map<Guid, String> recoveringJobIdMap = new ConcurrentHashMap<Guid, String>();
+    private final int _numberRefreshesBeforeSave = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
+    private final Object _lockObj = new Object();
+    private final AtomicInteger mFailedToRunVmAttempts;
+    private final AtomicInteger mUnrespondedAttempts;
+    private final AtomicBoolean sshSoftFencingExecuted;
+    private final Guid _vdsId;
+    private final VdsMonitor vdsMonitor = new VdsMonitor();
     private VDS _vds;
     private long lastUpdate;
     private long updateStartTime;
     private long nextMaintenanceAttemptTime;
-
-    private static final Log log = LogFactory.getLog(VdsManager.class);
-
-    public boolean getRefreshStatistics() {
-        return (_refreshIteration == _numberRefreshesBeforeSave);
-    }
-
     private int VDS_REFRESH_RATE = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
-
     private String onTimerJobId;
-
-    private final int _numberRefreshesBeforeSave = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
     private int _refreshIteration = 1;
-
-    private final Object _lockObj = new Object();
-    private static Map<Guid, String> recoveringJobIdMap = new ConcurrentHashMap<Guid, String>();
     private boolean isSetNonOperationalExecuted;
     private MonitoringStrategy monitoringStrategy;
     private EngineLock monitoringLock;
-    public Object getLockObj() {
-        return _lockObj;
-    }
-
-    public static void cancelRecoveryJob(Guid vdsId) {
-        String jobId = recoveringJobIdMap.remove(vdsId);
-        if (jobId != null) {
-            log.infoFormat("Cancelling the recovery from crash timer for VDS {0} because vds started initializing", vdsId);
-            try {
-                SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
-            } catch (Exception e) {
-                log.warnFormat("Failed deleting job {0} at cancelRecoveryJob", jobId);
-            }
-        }
-    }
-
-    private final AtomicInteger mFailedToRunVmAttempts;
-    private final AtomicInteger mUnrespondedAttempts;
-    private final AtomicBoolean sshSoftFencingExecuted;
-
     private int VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES = Config
             .<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes);
-    private boolean privateInitialized;
-
-    public boolean getInitialized() {
-        return privateInitialized;
-    }
-
-    public void setInitialized(boolean value) {
-        privateInitialized = value;
-    }
-
+    private boolean initialized;
     private IVdsServer _vdsProxy;
-
-    public IVdsServer getVdsProxy() {
-        return _vdsProxy;
-    }
-
-    public Guid getVdsId() {
-        return _vdsId;
-    }
-
     private boolean mBeforeFirstRefresh = true;
-
-    public boolean getbeforeFirstRefresh() {
-        return mBeforeFirstRefresh;
-    }
-
-    public void setbeforeFirstRefresh(boolean value) {
-        mBeforeFirstRefresh = value;
-    }
-
-    private final Guid _vdsId;
+    private VdsUpdateRunTimeInfo _vdsUpdater;
 
     private VdsManager(VDS vds) {
         log.info("Entered VdsManager constructor");
@@ -152,11 +101,13 @@ public class VdsManager {
         monitoringLock = new EngineLock(Collections.singletonMap(_vdsId.toString(),
                 new Pair<String, String>(LockingGroup.VDS_INIT.name(), "")), null);
 
-        if (_vds.getStatus() == VDSStatus.PreparingForMaintenance) {
-            _vds.setPreviousStatus(_vds.getStatus());
-        } else {
-            _vds.setPreviousStatus(VDSStatus.Up);
-        }
+        handlePreviousStatus();
+        handleSecureSetup();
+        initVdsBroker();
+        _vds = null;
+    }
+
+    public void handleSecureSetup() {
         // if ssl is on and no certificate file
         if (Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)
                 && !EngineEncryptionUtils.haveKey()) {
@@ -168,9 +119,14 @@ public class VdsManager {
             AuditLogableBase logable = new AuditLogableBase(_vdsId);
             AuditLogDirector.log(logable, AuditLogType.CERTIFICATE_FILE_NOT_FOUND);
         }
-        InitVdsBroker();
-        _vds = null;
+    }
 
+    public void handlePreviousStatus() {
+        if (_vds.getStatus() == VDSStatus.PreparingForMaintenance) {
+            _vds.setPreviousStatus(_vds.getStatus());
+        } else {
+            _vds.setPreviousStatus(VDSStatus.Up);
+        }
     }
 
     public static VdsManager buildVdsManager(VDS vds) {
@@ -187,7 +143,7 @@ public class VdsManager {
                 VDS_REFRESH_RATE, TimeUnit.MILLISECONDS);
     }
 
-    private void InitVdsBroker() {
+    private void initVdsBroker() {
         log.infoFormat("Initialize vdsBroker ({0},{1})", _vds.getHostName(), _vds.getPort());
 
         // Get the values of the timeouts:
@@ -201,9 +157,6 @@ public class VdsManager {
     public void updateVmDynamic(VmDynamic vmDynamic) {
         DbFacade.getInstance().getVmDynamicDao().update(vmDynamic);
     }
-
-    private VdsUpdateRunTimeInfo _vdsUpdater;
-    private final VdsMonitor vdsMonitor = new VdsMonitor();
 
     @OnTimerMethodAnnotation("onTimer")
     public void onTimer() {
@@ -235,7 +188,7 @@ public class VdsManager {
                             sshSoftFencingExecuted.set(false);
                             setLastUpdate();
                         }
-                        if (!getInitialized() && _vds.getStatus() != VDSStatus.NonResponsive
+                        if (!isInitialized() && _vds.getStatus() != VDSStatus.NonResponsive
                                 && _vds.getStatus() != VDSStatus.PendingApproval
                                 && _vds.getStatus() != VDSStatus.InstallingOS) {
                             log.infoFormat("Initializing Host: {0}", _vds.getName());
@@ -415,14 +368,18 @@ public class VdsManager {
                 new TransactionMethod<Void>() {
                     @Override
                     public Void runInTransaction() {
-                        if (!numaNodesToRemove.isEmpty()){
-                            DbFacade.getInstance().getVdsNumaNodeDAO().massRemoveNumaNodeByNumaNodeId(numaNodesToRemove);
+                        if (!numaNodesToRemove.isEmpty()) {
+                            DbFacade.getInstance()
+                                    .getVdsNumaNodeDAO()
+                                    .massRemoveNumaNodeByNumaNodeId(numaNodesToRemove);
                         }
-                        if (!numaNodesToUpdate.isEmpty()){
+                        if (!numaNodesToUpdate.isEmpty()) {
                             DbFacade.getInstance().getVdsNumaNodeDAO().massUpdateNumaNode(numaNodesToUpdate);
                         }
-                        if (!numaNodesToSave.isEmpty()){
-                            DbFacade.getInstance().getVdsNumaNodeDAO().massSaveNumaNode(numaNodesToSave, vds.getId(), null);
+                        if (!numaNodesToSave.isEmpty()) {
+                            DbFacade.getInstance()
+                                    .getVdsNumaNodeDAO()
+                                    .massSaveNumaNode(numaNodesToSave, vds.getId(), null);
                         }
                         return null;
                     }
@@ -540,7 +497,7 @@ public class VdsManager {
                     new Object[0], VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES,
                     TimeUnit.MINUTES);
             AuditLogableBase logable = new AuditLogableBase(vds.getId());
-            logable.addCustomValue("Time", Config.<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes)
+            logable.addCustomValue("Time", Config.<Integer>getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes)
                     .toString());
             AuditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_RUN_VMS);
             log.infoFormat("Vds {0} moved to Error mode after {1} attempts. Time: {2}", vds.getName(),
@@ -854,4 +811,47 @@ public class VdsManager {
         return vmList;
     }
 
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public void setInitialized(boolean value) {
+        initialized = value;
+    }
+
+    public IVdsServer getVdsProxy() {
+        return _vdsProxy;
+    }
+
+    public Guid getVdsId() {
+        return _vdsId;
+    }
+
+    public static void cancelRecoveryJob(Guid vdsId) {
+        String jobId = recoveringJobIdMap.remove(vdsId);
+        if (jobId != null) {
+            log.infoFormat("Cancelling the recovery from crash timer for VDS {0} because vds started initializing", vdsId);
+            try {
+                SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
+            } catch (Exception e) {
+                log.warnFormat("Failed deleting job {0} at cancelRecoveryJob", jobId);
+            }
+        }
+    }
+
+    public boolean getRefreshStatistics() {
+        return (_refreshIteration == _numberRefreshesBeforeSave);
+    }
+
+    public Object getLockObj() {
+        return _lockObj;
+    }
+
+    public boolean getbeforeFirstRefresh() {
+        return mBeforeFirstRefresh;
+    }
+
+    public void setbeforeFirstRefresh(boolean value) {
+        mBeforeFirstRefresh = value;
+    }
 }
