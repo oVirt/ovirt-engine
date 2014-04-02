@@ -77,14 +77,11 @@ public class VdsManager {
     private long lastUpdate;
     private long updateStartTime;
     private long nextMaintenanceAttemptTime;
-    private int VDS_REFRESH_RATE = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
     private String onTimerJobId;
     private int _refreshIteration = 1;
     private boolean isSetNonOperationalExecuted;
     private MonitoringStrategy monitoringStrategy;
     private EngineLock monitoringLock;
-    private int VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES = Config
-            .<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes);
     private boolean initialized;
     private IVdsServer _vdsProxy;
     private boolean mBeforeFirstRefresh = true;
@@ -136,11 +133,20 @@ public class VdsManager {
 
     public void schedulJobs() {
         SchedulerUtil sched = SchedulerUtilQuartzImpl.getInstance();
+        int refreshRate = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
+
         // start with refresh statistics
         _refreshIteration = _numberRefreshesBeforeSave - 1;
 
-        onTimerJobId = sched.scheduleAFixedDelayJob(this, "onTimer", new Class[0], new Object[0], VDS_REFRESH_RATE,
-                VDS_REFRESH_RATE, TimeUnit.MILLISECONDS);
+        onTimerJobId =
+                sched.scheduleAFixedDelayJob(
+                        this,
+                        "onTimer",
+                        new Class[0],
+                        new Object[0],
+                        refreshRate,
+                        refreshRate,
+                        TimeUnit.MILLISECONDS);
     }
 
     private void initVdsBroker() {
@@ -493,13 +499,18 @@ public class VdsManager {
                     new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.Error));
 
             SchedulerUtil sched = SchedulerUtilQuartzImpl.getInstance();
-            sched.scheduleAOneTimeJob(this, "recoverFromError", new Class[0],
-                    new Object[0], VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES,
+            sched.scheduleAOneTimeJob(
+                    this,
+                    "recoverFromError",
+                    new Class[0],
+                    new Object[0],
+                    Config.<Integer>getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes),
                     TimeUnit.MINUTES);
-            AuditLogableBase logable = new AuditLogableBase(vds.getId());
-            logable.addCustomValue("Time", Config.<Integer>getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes)
-                    .toString());
-            AuditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_RUN_VMS);
+            AuditLogDirector.log(
+                    new AuditLogableBase(vds.getId()).addCustomValue(
+                            "Time",
+                            Config.<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes).toString()),
+                    AuditLogType.VDS_FAILED_TO_RUN_VMS);
             log.infoFormat("Vds {0} moved to Error mode after {1} attempts. Time: {2}", vds.getName(),
                     mFailedToRunVmAttempts, new Date());
         }
