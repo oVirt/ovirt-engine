@@ -8,31 +8,53 @@ public class NameForVmInPoolGeneratorTest {
 
     @Test
     public void validateGenerateVmNameStartsWithMask() {
-        assertEquals("017mypool", NameForVmInPoolGenerator.generateVmName("???mypool".replace('?', VmPool.MASK_CHARACTER), 17));
+        NameForVmInPoolGenerator generator = createNameForVmInPoolGenerator("???mypool");
+        for (int i=1; i<17; ++i) {
+            generator.generateVmName();
+        }
+        assertEquals("017mypool", generator.generateVmName());
     }
 
     @Test
     public void validateGenerateVmNameMaskInside() {
-        assertEquals("my001pool", NameForVmInPoolGenerator.generateVmName("my???pool".replace('?', VmPool.MASK_CHARACTER), 1));
+        NameForVmInPoolGenerator generator = createNameForVmInPoolGenerator("my???pool");
+        assertEquals("my001pool", generator.generateVmName());
     }
 
     @Test
     public void validateGenerateVmNameEndsWithMask() {
-        assertEquals("mypool170", NameForVmInPoolGenerator.generateVmName("mypool???".replace('?', VmPool.MASK_CHARACTER), 170));
+        NameForVmInPoolGenerator generator = createNameForVmInPoolGenerator("mypool???");
+        for (int i=1; i<101; ++i) {
+            generator.generateVmName();
+        }
+        assertEquals("mypool101", generator.generateVmName());
     }
 
     @Test
     public void validateGenerateVmNameWithoutMask1() {
-        assertEquals("mypool-1", NameForVmInPoolGenerator.generateVmName("mypool", 1));
+        NameForVmInPoolGenerator generator = createNameForVmInPoolGenerator("mypool");
+        assertEquals("mypool-1", generator.generateVmName());
     }
 
     @Test
     public void validateGenerateVmNameWithoutMask2() {
-        assertEquals("mypool-17", NameForVmInPoolGenerator.generateVmName("mypool", 17));
+        NameForVmInPoolGenerator generator = createNameForVmInPoolGenerator("mypool");
+        for (int i=1; i<17; ++i) {
+            generator.generateVmName();
+        }
+        assertEquals("mypool-17", generator.generateVmName());
     }
 
     @Test
     public void validateGenerateVmNameWithoutMask3() {
-        assertEquals("mypool-170", NameForVmInPoolGenerator.generateVmName("mypool", 170));
+        NameForVmInPoolGenerator generator = createNameForVmInPoolGenerator("mypool");
+        for (int i=1; i<101; ++i) {
+            generator.generateVmName();
+        }
+        assertEquals("mypool-101", generator.generateVmName());
+    }
+
+    private NameForVmInPoolGenerator createNameForVmInPoolGenerator(String poolName) {
+        return new NameForVmInPoolGenerator(poolName.replace('?', VmPool.MASK_CHARACTER));
     }
 }

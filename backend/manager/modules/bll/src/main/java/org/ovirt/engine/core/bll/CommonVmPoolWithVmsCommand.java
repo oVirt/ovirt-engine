@@ -56,8 +56,9 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
-    protected Map<Guid, StorageDomain> destStorages = new HashMap<Guid, StorageDomain>();
+    protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
     private boolean addVmsSucceded = true;
+    private NameForVmInPoolGenerator nameForVmInPoolGenerator;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -92,9 +93,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         initTemplate();
         diskInfoDestinationMap = getParameters().getDiskInfoDestinationMap();
         if (diskInfoDestinationMap == null) {
-            diskInfoDestinationMap = new HashMap<Guid, DiskImage>();
+            diskInfoDestinationMap = new HashMap<>();
         }
         setVdsGroupId(parameters.getVmPool().getVdsGroupId());
+
+        nameForVmInPoolGenerator = new NameForVmInPoolGenerator(getParameters().getVmPool().getName());
     }
 
     protected void initTemplate() {
@@ -121,44 +124,17 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         VmTemplateHandler.lockVmTemplateInTransaction(getParameters().getVmStaticData().getVmtGuid(),
                 getCompensationContext());
 
-        String poolName = getParameters().getVmStaticData().getName();
         int subsequentFailedAttempts = 0;
         int vmPoolMaxSubsequentFailures = Config.<Integer> getValue(ConfigValues.VmPoolMaxSubsequentFailures);
-        for (int i = 1, number = 1; i <= getParameters().getVmsCount(); i++, number++) {
-            String currentVmName;
-            number--;
-            do {
-                number++;
-                currentVmName = NameForVmInPoolGenerator.generateVmName(poolName, number);
-            } while (VmHandler.isVmWithSameNameExistStatic(currentVmName));
-
-            VmStatic currVm = new VmStatic(getParameters().getVmStaticData());
-            currVm.setName(currentVmName);
-            AddVmAndAttachToPoolParameters addVmAndAttachToPoolParams =
-                    new AddVmAndAttachToPoolParameters(currVm, poolId, currentVmName,
-                            diskInfoDestinationMap);
-            addVmAndAttachToPoolParams.setSessionId(getParameters().getSessionId());
-            addVmAndAttachToPoolParams.setParentCommand(VdcActionType.AddVmPoolWithVms);
-
-            addVmAndAttachToPoolParams.setSoundDeviceEnabled(getParameters().isSoundDeviceEnabled() != null
-                    ? getParameters().isSoundDeviceEnabled()
-                    : VmType.Desktop == getParameters().getVmStaticData().getVmType());
-
-            addVmAndAttachToPoolParams.setConsoleEnabled(getParameters().isConsoleEnabled());
-
-            addVmAndAttachToPoolParams.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
-
-            VmRngDevice rngDevice = getParameters().getRngDevice();
-            if (rngDevice != null) {
-                addVmAndAttachToPoolParams.setUpdateRngDevice(true);
-                addVmAndAttachToPoolParams.setRngDevice(rngDevice);
-            }
-
+        int numOfVms = 0;
+        do {
+            String currentVmName = generateUniqueVmName();
             VdcReturnValueBase returnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.AddVmAndAttachToPool,
-                            addVmAndAttachToPoolParams,
+                            buildAddVmAndAttachToPoolParameters(poolId, currentVmName),
                             createAddVmStepContext(currentVmName));
-            if (returnValue != null && !returnValue.getSucceeded() && returnValue.getCanDoActionMessages().size() > 0) {
+
+            if (returnValue != null && !returnValue.getSucceeded() && !returnValue.getCanDoActionMessages().isEmpty()) {
                 for (String msg : returnValue.getCanDoActionMessages()) {
                     if (!getReturnValue().getCanDoActionMessages().contains(msg)) {
                         getReturnValue().getCanDoActionMessages().add(msg);
@@ -177,11 +153,44 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 break;
             }
             isAtLeastOneVMCreationFailed = isAtLeastOneVMCreationFailed || !addVmsSucceded;
-        }
+        } while (++numOfVms < getParameters().getVmsCount());
+
         getReturnValue().setCanDoAction(!isAtLeastOneVMCreationFailed);
         setSucceeded(!isAtLeastOneVMCreationFailed);
         VmTemplateHandler.unlockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
         getCompensationContext().resetCompensation();
+    }
+
+    private String generateUniqueVmName() {
+        String currentVmName;
+        do {
+            currentVmName = nameForVmInPoolGenerator.generateVmName();
+        } while (VmHandler.isVmWithSameNameExistStatic(currentVmName));
+
+        return currentVmName;
+    }
+
+    private AddVmAndAttachToPoolParameters buildAddVmAndAttachToPoolParameters(Guid poolId, String vmName) {
+        VmStatic currVm = new VmStatic(getParameters().getVmStaticData());
+        currVm.setName(vmName);
+
+        AddVmAndAttachToPoolParameters parameters = new AddVmAndAttachToPoolParameters(
+                currVm, poolId, vmName, diskInfoDestinationMap);
+        parameters.setSessionId(getParameters().getSessionId());
+        parameters.setParentCommand(VdcActionType.AddVmPoolWithVms);
+        parameters.setSoundDeviceEnabled(getParameters().isSoundDeviceEnabled() != null
+                ? getParameters().isSoundDeviceEnabled()
+                : VmType.Desktop == getParameters().getVmStaticData().getVmType());
+        parameters.setConsoleEnabled(getParameters().isConsoleEnabled());
+        parameters.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
+
+        VmRngDevice rngDevice = getParameters().getRngDevice();
+        if (rngDevice != null) {
+            parameters.setUpdateRngDevice(true);
+            parameters.setRngDevice(rngDevice);
+        }
+
+        return parameters;
     }
 
     private void updateVmInitPassword() {
