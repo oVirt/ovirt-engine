@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +61,8 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
             mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, 2048),
             mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, 262144),
             mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, 1),
-            mockConfig(ConfigValues.InitStorageSparseSizeInGB, 1)
+            mockConfig(ConfigValues.InitStorageSparseSizeInGB, 1),
+            mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1,2,4".split(",")))
             );
 
     private final Guid vdsGroupId = Guid.newGuid();
@@ -204,6 +206,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         vm.setVmtGuid(vmTemplateId);
         vm.setStaticData(getVmStatic());
         vm.setClusterArch(ArchitectureType.x86_64);
+        vm.setName("my_vm");
         return vm;
     }
 
@@ -308,6 +311,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     private VmStatic getVmStatic() {
         VmStatic vmStatic = new VmStatic();
         vmStatic.setOsId(OsRepository.DEFAULT_X86_OS);
+        vmStatic.setNumOfMonitors(1);
         vmStatic.setMemSizeMb(300);
         vmStatic.setStateless(false);
         vmStatic.setVmtGuid(vmTemplateId);

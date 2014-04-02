@@ -6,9 +6,9 @@ import javax.validation.groups.Default;
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
-import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
-import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmStatic extends VmBase {
@@ -116,7 +116,7 @@ public class VmStatic extends VmBase {
     @Override
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_NAME_SIZE, groups = { Default.class, ImportClonedEntity.class })
     @ValidI18NName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS",
-            groups = { CreateEntity.class, UpdateEntity.class, ImportClonedEntity.class })
+            groups = { CreateVm.class, UpdateVm.class, ImportClonedEntity.class })
     public String getName() {
         return super.getName();
     }

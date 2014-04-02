@@ -52,4 +52,12 @@ public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestA
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN.toString()));
     }
+
+    @Test
+    public void validatePatternBasedPoolName() {
+        String patternBaseName = "aa-??bb";
+        command.getParameters().getVmStaticData().setName(patternBaseName);
+        command.getParameters().getVmPool().setName(patternBaseName);
+        assertTrue(command.validateInputs());
+    }
 }
