@@ -465,6 +465,7 @@ Summary:	%{ovirt_product_name_short} Websocket Proxy
 Group:		%{ovirt_product_group}
 Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	m2crypto
+Requires:	numpy
 Requires:	python-websockify
 Requires:	%{name}-setup-plugin-websocket-proxy >= %{version}-%{release}
 
