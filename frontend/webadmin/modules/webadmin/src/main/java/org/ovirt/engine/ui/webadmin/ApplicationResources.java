@@ -154,10 +154,13 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/search_button.png")
     ImageResource searchButtonImage();
 
-    @Source("images/split.png")
-    ImageResource splitImage();
+    @Source("images/split_up.png")
+    ImageResource splitUpImage();
 
-    @Source("images/split-rotate.png")
+    @Source("images/split_down.png")
+    ImageResource splitDownImage();
+
+    @Source("images/split_rotate.png")
     ImageResource splitRotateImage();
 
     @Source("images/stop.gif")

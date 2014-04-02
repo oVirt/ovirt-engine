@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.host;
 
+import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.ui.common.widget.TogglePanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
@@ -32,7 +33,11 @@ public class BondPanel extends TogglePanel {
             }
 
             // Bond icon
-            add(new Image(ClientGinjectorProvider.getApplicationResources().splitImage()));
+            if (InterfaceStatus.UP.equals(lineModel.getInterface().getStatistics().getStatus())) {
+                add(new Image(ClientGinjectorProvider.getApplicationResources().splitUpImage()));
+            } else {
+                add(new Image(ClientGinjectorProvider.getApplicationResources().splitDownImage()));
+            }
 
             // Bond name
             add(new Label(new HostInterfaceBondNameRenderer().render(lineModel)));
