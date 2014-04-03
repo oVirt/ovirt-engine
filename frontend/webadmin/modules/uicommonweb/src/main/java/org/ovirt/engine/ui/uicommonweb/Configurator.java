@@ -309,12 +309,10 @@ public abstract class Configurator {
     protected void updateSpiceVersion() {
         // Update spice version from the text files which are located on the server.
         // If can't update spice version - leave the default value from the Configurator.
-        if ((clientOsType().equalsIgnoreCase("Windows")) && (clientBrowserType().equalsIgnoreCase("Explorer"))) { //$NON-NLS-1$ //$NON-NLS-2$
-            if (clientPlatformType().equalsIgnoreCase("win32")) { //$NON-NLS-1$
-                updateSpice32Version();
-            } else if (clientPlatformType().equalsIgnoreCase("win64")) { //$NON-NLS-1$
-                updateSpice64Version();
-            }
+        if (clientPlatformType().equalsIgnoreCase("win32")) { //$NON-NLS-1$
+            updateSpice32Version();
+        } else if (clientPlatformType().equalsIgnoreCase("win64")) { //$NON-NLS-1$
+            updateSpice64Version();
         }
     }
 
