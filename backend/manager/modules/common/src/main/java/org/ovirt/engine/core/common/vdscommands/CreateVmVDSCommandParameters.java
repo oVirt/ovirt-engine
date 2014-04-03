@@ -2,13 +2,11 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.action.SysPrepParams;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 
     private VM vm;
-    private VmInit vmInit;
     private SysPrepParams sysPrepParams;
 
     public CreateVmVDSCommandParameters() {
