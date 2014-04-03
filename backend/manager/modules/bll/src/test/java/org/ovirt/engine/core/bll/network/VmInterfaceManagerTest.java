@@ -47,9 +47,16 @@ public class VmInterfaceManagerTest {
     private final static Version VERSION_3_2 = new Version(3, 2);
     private final static int OS_ID = 0;
 
+    public static final int MAX_MACS_COUNT_IN_POOL = 100000;
+    public static final boolean ALLOW_DUPLICATES = false;
+    public static final String MAC_POOL_RANGES = "00:1a:4a:15:c0:00-00:1a:4a:15:c0:ff";
+
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.HotPlugEnabled, VERSION_3_2.getValue(), true));
+            mockConfig(ConfigValues.HotPlugEnabled, VERSION_3_2.getValue(), true),
+            mockConfig(ConfigValues.MacPoolRanges, MAC_POOL_RANGES),
+            mockConfig(ConfigValues.MaxMacsCountInPool, MAX_MACS_COUNT_IN_POOL),
+            mockConfig(ConfigValues.AllowDuplicateMacAddresses, ALLOW_DUPLICATES));
 
     @Mock
     private MacPoolManager macPoolManager;
