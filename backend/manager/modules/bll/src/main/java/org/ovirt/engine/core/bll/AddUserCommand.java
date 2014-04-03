@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbUserDAO;
 
 public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase<T> {
     // We save a reference to the directory user to avoid looking it up once when checking the conditions and another
@@ -93,6 +93,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
             dbUser = new DbUser(directoryUser);
             String groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
             dbUser.setGroupIds(groupIds);
+            dbUser.setId(Guid.newGuid());
             dao.save(dbUser);
         }
         else {
@@ -100,6 +101,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
             dbUser = new DbUser(directoryUser);
             dbUser.setId(id);
             String groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
+            dbUser.setId(id);
             dbUser.setGroupIds(groupIds);
             dao.update(dbUser);
         }

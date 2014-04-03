@@ -2,8 +2,11 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
 
+import java.nio.charset.Charset;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Domain;
@@ -67,14 +70,15 @@ public class BackendDomainGroupResourceTest
             VdcQueryType.GetDirectoryGroupById,
             DirectoryIdQueryParameters.class,
             new String[] { "Domain", "Id" },
-            new Object[] { DOMAIN, EXTERNAL_IDS[index] },
+                new Object[] { DOMAIN, new String(DatatypeConverter.parseHexBinary(EXTERNAL_IDS[index]), Charset.forName("UTF-8"))
+                         },
             notFound? null: getEntity(index)
         );
     }
 
     @Override
     protected DirectoryGroup getEntity(int index) {
-        return new DirectoryGroup(DOMAIN, EXTERNAL_IDS[index], NAMES[index]);
+        return new DirectoryGroup(DOMAIN, new String(DatatypeConverter.parseHexBinary(EXTERNAL_IDS[index]), Charset.forName("UTF-8")), NAMES[index]);
     }
 }
 

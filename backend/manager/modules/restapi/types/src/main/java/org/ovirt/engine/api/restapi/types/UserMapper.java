@@ -5,8 +5,8 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.model.User;
+import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
-import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -23,6 +23,7 @@ public class UserMapper {
         model.setLastName(entity.getLastName());
         model.setEmail(entity.getEmail());
         model.setDepartment(entity.getDepartment());
+        model.setDomainEntryId(DirectoryEntryIdUtils.encode(entity.getExternalId()));
         if (entity.getGroupNames() != null && entity.getGroupNames().trim().length() > 0) {
             model.setGroups(new Groups());
             for (String name : entity.getGroupNames().split(",")) {
@@ -44,7 +45,7 @@ public class UserMapper {
         User model = template != null ? template : new User();
         model.setName(entity.getFirstName());
         model.setUserName(entity.getName() + "@" + entity.getDirectoryName());
-        model.setId(new Guid(entity.getId().getBytes(), true).toString());
+        model.setId(DirectoryEntryIdUtils.encode(entity.getId()));
         model.setLastName(entity.getLastName());
         model.setEmail(entity.getEmail());
         model.setDepartment(entity.getDepartment());
@@ -72,19 +73,16 @@ public class UserMapper {
         }
         if (model.isSetId()) {
             String id = model.getId();
-            try {
-                entity.setId(GuidUtils.asGuid(id));
-                entity.setExternalId(entity.getId().toString());
-            }
-            catch (MalformedIdException exception) {
-                // The identifier won't be a UUID if the user comes from /domains/{domain:id}/users.
-            }
+            entity.setId(GuidUtils.asGuid(id));
         }
         if (model.isSetDomain()) {
             Domain domain = model.getDomain();
             if (domain.isSetName()) {
                 entity.setDomain(domain.getName());
             }
+        }
+        if (model.isSetDomainEntryId()) {
+            entity.setExternalId(DirectoryEntryIdUtils.decode(model.getDomainEntryId()));
         }
         return entity;
     }

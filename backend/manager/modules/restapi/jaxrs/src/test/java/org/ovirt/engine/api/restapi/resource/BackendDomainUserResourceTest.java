@@ -8,6 +8,7 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.User;
+import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -67,14 +68,16 @@ public class BackendDomainUserResourceTest
             VdcQueryType.GetDirectoryUserById,
             DirectoryIdQueryParameters.class,
             new String[] { "Domain", "Id" },
-            new Object[] { DOMAIN, EXTERNAL_IDS[index] },
+                new Object[] { DOMAIN, DirectoryEntryIdUtils.decode(EXTERNAL_IDS[index]) },
             notFound? null: getEntity(index)
         );
     }
 
     @Override
     protected DirectoryUser getEntity(int index) {
-        return new DirectoryUser(DOMAIN, EXTERNAL_IDS[index], NAMES[index]);
+        return new DirectoryUser(DOMAIN,
+                DirectoryEntryIdUtils.decode(EXTERNAL_IDS[index]),
+                NAMES[index]);
     }
 }
 

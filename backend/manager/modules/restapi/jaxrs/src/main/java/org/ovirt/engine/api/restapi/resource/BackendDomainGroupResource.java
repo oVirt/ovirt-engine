@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.resource.DomainGroupResource;
+import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -20,7 +21,7 @@ public class BackendDomainGroupResource
     private BackendDomainGroupsResource parent;
 
     public BackendDomainGroupResource(String id, BackendDomainGroupsResource parent) {
-        super(id, Group.class, DirectoryGroup.class);
+        super(DirectoryEntryIdUtils.decode(id), Group.class, DirectoryGroup.class);
         this.parent = parent;
     }
 

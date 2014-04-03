@@ -94,7 +94,6 @@ public class DbUser extends IVdcQueryable {
         groupNames = ldapUser.getGroup();
         role = "";
         note = "";
-        id = new Guid(externalId.getBytes(), true);
     }
 
     public DbUser(DirectoryUser directoryUser) {
@@ -108,7 +107,6 @@ public class DbUser extends IVdcQueryable {
         active = true;
         role = "";
         note = "";
-        id = new Guid(externalId.getBytes(), true);
 
         StringBuilder namesBuffer = new StringBuilder();
         boolean first = true;

@@ -60,7 +60,7 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
         DbGroup dbGroup = dao.getByExternalId(directoryGroup.getDirectoryName(), directoryGroup.getId());
         if (dbGroup == null) {
             dbGroup = new DbGroup(directoryGroup);
-            dbGroup.setId(new Guid(directoryGroup.getId().getBytes(), true));
+            dbGroup.setId(Guid.newGuid());
             dao.save(dbGroup);
         }
         else {

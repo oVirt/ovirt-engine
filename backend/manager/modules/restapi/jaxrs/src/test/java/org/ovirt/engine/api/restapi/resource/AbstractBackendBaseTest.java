@@ -36,6 +36,7 @@ import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
+import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -64,15 +65,16 @@ public abstract class AbstractBackendBaseTest extends Assert {
      * External identifiers used by directory users and groups.
      */
     protected static final String[] EXTERNAL_IDS = {
-            GUIDS[0].toString(),
-            GUIDS[1].toString(),
-            GUIDS[2].toString(),
+            DirectoryEntryIdUtils.encode("0"),
+            DirectoryEntryIdUtils.encode("1"),
+            DirectoryEntryIdUtils.encode("2"),
+            DirectoryEntryIdUtils.encode("3"),
     };
 
     /**
      * External identifier of a non existing user or group.
      */
-    protected static final String NON_EXISTANT_EXTERNAL_ID = Guid.newGuid().toString();
+    protected static final String NON_EXISTANT_EXTERNAL_ID = DirectoryEntryIdUtils.encode("10".toString());
 
     protected static final Guid NON_EXISTANT_GUID = new Guid("99999999-9999-9999-9999-999999999999");
     protected static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");

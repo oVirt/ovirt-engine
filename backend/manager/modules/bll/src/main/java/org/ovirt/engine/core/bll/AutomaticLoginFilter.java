@@ -118,6 +118,7 @@ public class AutomaticLoginFilter implements Filter {
         dbUser = dbUserDao.getByExternalId(directory.getName(), directoryUser.getId());
         if (dbUser == null) {
             dbUser = new DbUser(directoryUser);
+            dbUser.setId(Guid.newGuid());
             dbUserDao.save(dbUser);
         }
 

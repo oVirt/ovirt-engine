@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.DomainUserResource;
+import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -22,7 +23,7 @@ public class BackendDomainUserResource
     private BackendDomainUsersResource parent;
 
     public BackendDomainUserResource(String id, BackendDomainUsersResource parent) {
-        super(id, User.class, DirectoryUser.class);
+        super(DirectoryEntryIdUtils.decode(id), User.class, DirectoryUser.class);
         this.parent = parent;
     }
 
