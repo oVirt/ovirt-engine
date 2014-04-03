@@ -30,7 +30,9 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 public class MultipleHostsPopupView extends AbstractModelBoundPopupView<MultipleHostsModel> implements MultipleHostsPopupPresenterWidget.ViewDef {
@@ -57,6 +59,11 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
     @Path(value = "useCommonPassword.entity")
     @WithElementId
     EntityModelCheckBoxEditor useCommonPasswordEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    @WithElementId
+    EntityModelCheckBoxEditor configureFirewallEditor;
 
     @UiField
     @Path(value = "commonPassword.entity")
@@ -89,6 +96,8 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
     private void initEditors() {
         hostsTable = new EntityModelCellTable<ListModel<EntityModel<HostDetailModel>>>(SelectionMode.SINGLE, true);
         useCommonPasswordEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        configureFirewallEditor = new EntityModelCheckBoxEditor(Align.LEFT);
+        configureFirewallEditor.setAccessible(true);
     }
 
     private void initTableColumns(ApplicationConstants constants) {
@@ -156,13 +165,21 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
         useCommonPasswordEditor.setLabel(constants.hostsPopupUseCommonPassword());
         commonPasswordEditor.setLabel(constants.hostsPopupRootPassword());
         applyPasswordButton.setLabel(constants.hostsPopupApply());
+        configureFirewallEditor.setLabel(constants.configureFirewallForAllHostsOfThisCluster());
     }
 
     @Override
-    public void edit(MultipleHostsModel object) {
+    public void edit(final MultipleHostsModel object) {
         hostsTable.asEditor().edit(object.getHosts());
         driver.edit(object);
         applyPasswordButton.setCommand(object.getApplyPasswordCommand());
+        configureFirewallEditor.asCheckBox().setChecked(true);
+        configureFirewallEditor.asCheckBox().addClickListener(new ClickListener() {
+            @Override
+            public void onClick(Widget sender) {
+                object.setConfigureFirewall(configureFirewallEditor.asCheckBox().isChecked());
+            }
+        });
     }
 
     @Override

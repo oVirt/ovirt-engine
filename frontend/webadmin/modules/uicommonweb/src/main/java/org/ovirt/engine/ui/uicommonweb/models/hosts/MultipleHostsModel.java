@@ -19,6 +19,7 @@ public class MultipleHostsModel extends Model {
     EntityModel<Boolean> useCommonPassword;
     EntityModel<String> commonPassword;
 
+    boolean configureFirewall;
     ClusterModel clusterModel;
 
     private UICommand applyPasswordCommand;
@@ -29,6 +30,7 @@ public class MultipleHostsModel extends Model {
         setUseCommonPassword(new EntityModel<Boolean>());
         setCommonPassword(new EntityModel<String>());
         setApplyPasswordCommand(new UICommand("ApplyPassword", this)); //$NON-NLS-1$
+        setConfigureFirewall(true);
 
         getUseCommonPassword().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
@@ -137,5 +139,13 @@ public class MultipleHostsModel extends Model {
             }
         }
         return isValid;
+    }
+
+    public boolean isConfigureFirewall() {
+        return configureFirewall;
+    }
+
+    public void setConfigureFirewall(boolean enableFirewall) {
+        this.configureFirewall = enableFirewall;
     }
 }

@@ -934,7 +934,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             parameters.setVdsId(host.getId());
             parameters.setvds(host);
             parameters.setPassword(hostDetailModel.getPassword());
-            parameters.setOverrideFirewall(false);
+            parameters.setOverrideFirewall(hostsModel.isConfigureFirewall());
             parameters.setRebootAfterInstallation(hostsModel.getClusterModel().getEnableOvirtService().getIsSelected());
 
             parametersList.add(parameters);

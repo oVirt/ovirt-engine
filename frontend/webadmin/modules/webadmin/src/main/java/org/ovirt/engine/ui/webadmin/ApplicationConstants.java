@@ -2485,6 +2485,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Use a common password")
     String hostsPopupUseCommonPassword();
 
+    @DefaultStringValue("Automatically configure firewall for the hosts of this cluster")
+    String configureFirewallForAllHostsOfThisCluster();
+
     @DefaultStringValue("Root Password")
     String hostsPopupRootPassword();
 

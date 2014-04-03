@@ -31,6 +31,7 @@
                 <g:ScrollPanel addStyleNames="{style.tablePanel}">
                     <e:EntityModelCellTable ui:field="hostsTable"/>
                 </g:ScrollPanel>
+                <ge:EntityModelCheckBoxEditor ui:field="configureFirewallEditor" />
                 <g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
             </g:VerticalPanel>
         </d:content>
