@@ -29,8 +29,11 @@ public enum AuditLogType {
             AuditLogTimeInterval.MINUTE.getValue() * 5), // ?
     VDS_ALREADY_IN_REQUESTED_STATUS(493, AuditLogSeverity.WARNING),
     VDS_MANUAL_FENCE_STATUS(494),
+    VDS_AUTO_FENCE_STATUS(539),
     VDS_MANUAL_FENCE_STATUS_FAILED(495, AuditLogSeverity.ERROR),
+    VDS_AUTO_FENCE_STATUS_FAILED(540, AuditLogSeverity.ERROR),
     VDS_MANUAL_FENCE_FAILED_CALL_FENCE_SPM(530, AuditLogSeverity.WARNING),
+    VDS_AUTO_FENCE_FAILED_CALL_FENCE_SPM(541, AuditLogSeverity.WARNING),
     VDS_LOW_MEM(531, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.MINUTE.getValue() * 30),
     VDS_HIGH_MEM_USE(532, AuditLogSeverity.WARNING,

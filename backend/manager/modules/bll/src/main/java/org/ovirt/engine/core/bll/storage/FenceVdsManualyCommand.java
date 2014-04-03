@@ -111,8 +111,19 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return _fenceSpmCalled != null && !_fenceSpmCalled ? AuditLogType.VDS_MANUAL_FENCE_FAILED_CALL_FENCE_SPM
-                : getSucceeded() ? AuditLogType.VDS_MANUAL_FENCE_STATUS : AuditLogType.VDS_MANUAL_FENCE_STATUS_FAILED;
+        if (isInternalExecution()) {
+            return _fenceSpmCalled != null && !_fenceSpmCalled
+                    ? AuditLogType.VDS_AUTO_FENCE_FAILED_CALL_FENCE_SPM
+                    : getSucceeded()
+                            ? AuditLogType.VDS_AUTO_FENCE_STATUS
+                            : AuditLogType.VDS_AUTO_FENCE_STATUS_FAILED;
+        } else {
+            return _fenceSpmCalled != null && !_fenceSpmCalled
+                    ? AuditLogType.VDS_MANUAL_FENCE_FAILED_CALL_FENCE_SPM
+                    : getSucceeded()
+                            ? AuditLogType.VDS_MANUAL_FENCE_STATUS
+                            : AuditLogType.VDS_MANUAL_FENCE_STATUS_FAILED;
+        }
     }
 
     /**
@@ -234,6 +245,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                 getActionType().getActionGroup()));
     }
 
+    @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MANUAL_FENCE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
