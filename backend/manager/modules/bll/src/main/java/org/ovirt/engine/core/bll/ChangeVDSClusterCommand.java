@@ -114,13 +114,17 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         vds.setCpuName(CpuFlagsManagerHandler.FindMaxServerCpuByFlags(vds.getCpuFlags(),
                 getTargetCluster().getcompatibility_version()));
 
-        if (vds.getCpuName() == null) {
-            return failCanDoAction(VdcBllMessages.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION);
-        }
 
-        if (getTargetCluster().getArchitecture() != ArchitectureType.undefined &&
-                getTargetCluster().getArchitecture() != vds.getCpuName().getArchitecture()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_CLUSTER_DIFFERENT_ARCHITECTURES);
+        // CPU flags are null if oVirt node cluster is changed during approve process.
+        if (!StringUtils.isEmpty(vds.getCpuFlags())) {
+            if (vds.getCpuName() == null) {
+                return failCanDoAction(VdcBllMessages.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION);
+            }
+
+            if (getTargetCluster().getArchitecture() != ArchitectureType.undefined &&
+                    getTargetCluster().getArchitecture() != vds.getCpuName().getArchitecture()) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_CLUSTER_DIFFERENT_ARCHITECTURES);
+            }
         }
 
         if (FeatureSupported.hostNetworkQos(getSourceCluster().getcompatibility_version())
