@@ -1,30 +1,27 @@
 package org.ovirt.engine.core.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.LongRange;
 
 public class MacAddressRangeUtils {
 
-    private static final long MAC_ADDRESS_MULTICAST_BIT = 0x010000000000L;
     private static final int HEX_RADIX = 16;
 
-    public static List<String> initRange(String start, String end, int size) {
-        return innerInitRange(start, end, size);
+    public static final long MAC_ADDRESS_MULTICAST_BIT = 0x010000000000L;
+
+    private MacAddressRangeUtils() {
     }
 
-    private static List<String> innerInitRange(String start, String end, int stopAfter) {
-        String parsedRangeStart = StringUtils.remove(start, ':');
-        String parsedRangeEnd = StringUtils.remove(end, ':');
-        if (parsedRangeEnd == null || parsedRangeStart == null) {
-            return Collections.emptyList();
-        }
+    public static List<String> initRange(String start, String end, int size) {
+        long startNum = macToLong(start);
+        long endNum = macToLong(end);
 
-        long startNum = Long.parseLong(parsedRangeStart, HEX_RADIX);
-        long endNum = Long.parseLong(parsedRangeEnd, HEX_RADIX);
-        return innerInitRange(stopAfter, startNum, endNum);
+        return innerInitRange(size, startNum, endNum);
     }
 
     private static List<String> innerInitRange(int stopAfter, long startNum, long endNum) {
@@ -35,18 +32,53 @@ public class MacAddressRangeUtils {
         // Initialize ArrayList for all potential records. (ignore that there need not be that many records.
         List<String> macAddresses = new ArrayList<>(Math.min(stopAfter, (int) (endNum - startNum)));
         for (long i = startNum; i <= endNum; i++) {
-            if ((MAC_ADDRESS_MULTICAST_BIT & i) != 0) {
+            if (macIsMulticast(i)) {
                 continue;
             }
 
             macAddresses.add(macToString(i));
 
-            if (stopAfter-- <= 0) {
+            if (--stopAfter <= 0) {
                 return macAddresses;
             }
         }
 
         return macAddresses;
+    }
+
+    public static List<String> macAddressesToStrings(List<Long> macAddresses) {
+        final List<String> result = new ArrayList<>(macAddresses.size());
+
+        for (Long macAddress : macAddresses) {
+            result.add(macToString(macAddress));
+        }
+
+        return result;
+    }
+
+    public static Collection<LongRange> rangesTextualDefinitionToRangeBoundaries(String ranges) {
+        if (StringUtils.isEmpty(ranges)) {
+            return Collections.emptyList();
+        }
+
+        String[] rangesArray = ranges.split("[,]", -1);
+        DisjointRanges disjointRanges = new DisjointRanges();
+
+        for (int i = 0; i < rangesArray.length; i++) {
+            String[] startEndArray = rangesArray[i].split("[-]", -1);
+
+            if (startEndArray.length == 2) {
+                disjointRanges.addRange(macToLong(startEndArray[0]), macToLong(startEndArray[1]));
+            } else {
+                throw new IllegalArgumentException("Failed to initialize Mac Pool range. Please fix Mac Pool range: rangesArray[i]");
+            }
+        }
+
+        return disjointRanges.getRanges();
+    }
+
+    public static boolean macIsMulticast(long mac) {
+        return (MAC_ADDRESS_MULTICAST_BIT & mac) != 0;
     }
 
     public static String macToString(long macAddress) {
@@ -64,7 +96,14 @@ public class MacAddressRangeUtils {
         return stringBuilder.toString();
     }
 
+    public static long macToLong(String mac) {
+        return Long.parseLong(StringUtils.remove(mac, ':'), HEX_RADIX);
+    }
+
     public static boolean isRangeValid(String start, String end) {
-        return !innerInitRange(start, end, 1).isEmpty();
+        long startNum = macToLong(start);
+        long endNum = macToLong(end);
+
+        return !innerInitRange(1, startNum, endNum).isEmpty();
     }
 }
