@@ -776,7 +776,7 @@ spm_status, vds_dynamic.supported_cluster_levels, vds_dynamic.supported_engines,
                       storage_pool_iso_map.storage_id, vds_static.ssh_port, vds_static.ssh_username, vds_statistics.ha_score,
                       vds_statistics.ha_configured, vds_statistics.ha_active, vds_statistics.ha_global_maintenance, vds_statistics.ha_local_maintenance,
                       vds_static.disable_auto_pm as disable_auto_pm, vds_dynamic.controlled_by_pm_policy as controlled_by_pm_policy,
-                      vds_statistics.boot_time
+                      vds_statistics.boot_time as boot_time
 FROM         vds_groups INNER JOIN
 vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id INNER JOIN
 vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id INNER JOIN
