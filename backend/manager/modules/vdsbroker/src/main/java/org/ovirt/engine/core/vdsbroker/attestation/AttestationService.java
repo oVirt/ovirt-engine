@@ -16,10 +16,10 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
-import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -119,47 +119,22 @@ public class AttestationService {
     }
 
     public List<AttestationValue> parsePostedResp(String str)
-            throws JsonParseException, IOException {
-        JsonFactory jfactory = new JsonFactory();
-        List<AttestationValue> values = new ArrayList<AttestationValue>();
-        JsonParser jParser = jfactory.createJsonParser(str);
-        try {
-            jParser.nextToken();
-            while (jParser.nextToken() != JsonToken.END_OBJECT) {
-                if (jParser.getCurrentName().equalsIgnoreCase(HEADER_HOSTS)) {
-                    while (jParser.nextToken() != JsonToken.END_ARRAY
-                            && jParser.getCurrentToken() != JsonToken.END_OBJECT) {
-                        AttestationValue value = new AttestationValue();
-                        if (jParser.getCurrentName().equalsIgnoreCase(
-                                HEADER_HOST_NAME)) {
-                            jParser.nextToken();
-                            value.setHostName(jParser.getText());
-                            jParser.nextToken();
-                        }
-                        if (jParser.getCurrentName().equalsIgnoreCase(
-                                HEADER_RESULT)) {
-                            jParser.nextToken();
-                            value.setTrustLevel(AttestationResultEnum
-                                    .valueOf(jParser.getText().toUpperCase()));
-                            jParser.nextToken();
-                        }
-                        if (jParser.getCurrentName().equalsIgnoreCase(
-                                HEADER_VTIME)) {
-                            jParser.nextToken();
-                            jParser.nextToken();
-                        }
-                        if (value.getHostName() != null) {
-                            log.debug("host_name:" + value.getHostName()
-                                    + ", trustLevel:" + value.getTrustLevel());
-                            values.add(value);
-                        }
-                        jParser.nextToken();
-                    }
-                    break;
-                }
-            }
-        } finally {
-            jParser.close();
+            throws JsonProcessingException, IOException {
+        List<AttestationValue> values = new ArrayList<>();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(str);
+
+        JsonNode hosts = tree.get(HEADER_HOSTS);
+        if (hosts != null) {
+          for (JsonNode host : hosts) {
+            String name = host.get(HEADER_HOST_NAME).asText();
+            String level = host.get(HEADER_RESULT).asText();
+            AttestationValue value = new AttestationValue();
+            value.setHostName(name);
+            value.setTrustLevel(AttestationResultEnum.valueOf(level.toUpperCase()));
+            values.add(value);
+          }
         }
         return values;
     }
