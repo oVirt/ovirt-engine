@@ -7,43 +7,19 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.LongRange;
+import org.apache.commons.lang.math.Range;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class MacAddressRangeUtils {
+
+    private static final Log log = LogFactory.getLog(MacAddressRangeUtils.class);
 
     private static final int HEX_RADIX = 16;
 
     public static final long MAC_ADDRESS_MULTICAST_BIT = 0x010000000000L;
 
     private MacAddressRangeUtils() {
-    }
-
-    public static List<String> initRange(String start, String end, int size) {
-        long startNum = macToLong(start);
-        long endNum = macToLong(end);
-
-        return innerInitRange(size, startNum, endNum);
-    }
-
-    private static List<String> innerInitRange(int stopAfter, long startNum, long endNum) {
-        if (startNum > endNum) {
-            return Collections.emptyList();
-        }
-
-        // Initialize ArrayList for all potential records. (ignore that there need not be that many records.
-        List<String> macAddresses = new ArrayList<>(Math.min(stopAfter, (int) (endNum - startNum)));
-        for (long i = startNum; i <= endNum; i++) {
-            if (macIsMulticast(i)) {
-                continue;
-            }
-
-            macAddresses.add(macToString(i));
-
-            if (--stopAfter <= 0) {
-                return macAddresses;
-            }
-        }
-
-        return macAddresses;
     }
 
     public static List<String> macAddressesToStrings(List<Long> macAddresses) {
@@ -56,7 +32,7 @@ public class MacAddressRangeUtils {
         return result;
     }
 
-    public static Collection<LongRange> rangesTextualDefinitionToRangeBoundaries(String ranges) {
+    public static Collection<LongRange> parseRangeString(String ranges) {
         if (StringUtils.isEmpty(ranges)) {
             return Collections.emptyList();
         }
@@ -70,11 +46,57 @@ public class MacAddressRangeUtils {
             if (startEndArray.length == 2) {
                 disjointRanges.addRange(macToLong(startEndArray[0]), macToLong(startEndArray[1]));
             } else {
-                throw new IllegalArgumentException("Failed to initialize Mac Pool range. Please fix Mac Pool range: rangesArray[i]");
+                throw new IllegalArgumentException(
+                        "Failed to initialize Mac Pool range. Please fix Mac Pool range: rangesArray[i]");
             }
         }
 
-        return disjointRanges.getRanges();
+        return clipMultiCastsFromRanges(disjointRanges.getRanges());
+    }
+
+    private static Collection<LongRange> clipMultiCastsFromRanges(Collection<LongRange> ranges) {
+        final Collection<LongRange> result = new ArrayList<>();
+        for (LongRange range : ranges) {
+            final LongRange clippedRange = clipRange(range);
+            if (clippedRange != null) {
+                result.add(clippedRange);
+            }
+        }
+        return result;
+    }
+
+    private static LongRange clipRange(Range range) {
+        long rangeEnd = range.getMaximumLong();
+        long rangeStart = range.getMinimumLong();
+
+        boolean trimmingOccurred = false;
+        if (MacAddressRangeUtils.macIsMulticast(rangeStart)) {
+            rangeStart = (rangeStart | 0x00FFFFFFFFFFL) + 1;
+            trimmingOccurred = true;
+        }
+
+        final long trimmedRangeEnd = Math.min(rangeStart + Integer.MAX_VALUE, rangeEnd);
+        if (rangeEnd != trimmedRangeEnd) {
+            rangeEnd = trimmedRangeEnd;
+            trimmingOccurred = true;
+        }
+
+        if (MacAddressRangeUtils.macIsMulticast(rangeEnd)) {
+            rangeEnd = (rangeEnd & 0xFF0000000000L) - 1;
+            trimmingOccurred = true;
+        }
+
+        if (rangeStart > rangeEnd) {
+            log.warnFormat(
+                    "User supplied range({0}) contains only multicast addresses, so this range is not usable.", range);
+            return null;
+        }
+
+        final LongRange result = new LongRange(rangeStart, rangeEnd);
+        if (trimmingOccurred) {
+            log.warnFormat("User supplied range({0}) need to be trimmed to {1}, ", range, result);
+        }
+        return result;
     }
 
     public static boolean macIsMulticast(long mac) {
@@ -104,6 +126,18 @@ public class MacAddressRangeUtils {
         long startNum = macToLong(start);
         long endNum = macToLong(end);
 
-        return !innerInitRange(1, startNum, endNum).isEmpty();
+        if (startNum > endNum) {
+            return false;
+        }
+
+        Collection<LongRange> ranges = parseRangeString(start + "-" + end);
+
+        for (LongRange range : ranges) {
+            if (range.getMaximumLong() - range.getMinimumLong() > 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

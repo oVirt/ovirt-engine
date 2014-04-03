@@ -12,10 +12,9 @@ public class MacPoolManager {
     private static final MacPoolManager INSTANCE = new MacPoolManager();
 
     private MacPoolManager() {
-        final Integer maxMacsCountInPool = Config.getValue(ConfigValues.MaxMacsCountInPool);
         final String macPoolRanges = Config.getValue(ConfigValues.MacPoolRanges);
         final Boolean allowDuplicates = Config.getValue(ConfigValues.AllowDuplicateMacAddresses);
-        macPoolManagerStrategy = new MacPoolManagerOriginal(maxMacsCountInPool, macPoolRanges, allowDuplicates);
+        macPoolManagerStrategy = new MacPoolManagerRanges(macPoolRanges, allowDuplicates);
     }
 
     public static MacPoolManager getInstance() {

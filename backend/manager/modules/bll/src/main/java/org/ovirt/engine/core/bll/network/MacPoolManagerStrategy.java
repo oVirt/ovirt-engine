@@ -59,6 +59,4 @@ interface MacPoolManagerStrategy {
      * @throws org.ovirt.engine.core.common.errors.VdcBLLException if mac address cannot be allocated.
      */
     List<String> allocateMacAddresses(int numberOfAddresses);
-
-
 }
