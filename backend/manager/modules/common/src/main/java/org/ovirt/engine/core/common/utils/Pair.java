@@ -16,6 +16,11 @@ public final class Pair<T, K> implements Serializable {
         this.second = second;
     }
 
+    public Pair(Pair<T, K> original) {
+        this.first = original.getFirst();
+        this.second = original.getSecond();
+    }
+
     public void setFirst(T value) {
         this.first = value;
     }
@@ -30,6 +35,11 @@ public final class Pair<T, K> implements Serializable {
 
     public K getSecond() {
         return this.second;
+    }
+
+    @Override
+    public String toString() {
+        return "<" + first + ", " + second + '>';
     }
 
     @Override
