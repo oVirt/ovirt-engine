@@ -41,6 +41,7 @@ import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
+import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -65,6 +66,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
@@ -695,6 +697,30 @@ public class BackendVmResourceTest
         Action action = (Action)response.getEntity();
         assertTrue(action.isSetStatus());
         assertEquals(CreationStatus.COMPLETE.value(), action.getStatus().getState());
+    }
+
+    @Test
+    public void testCloneVm() throws Exception {
+        org.ovirt.engine.core.common.businessentities.VM mockedVm = control.createMock(org.ovirt.engine.core.common.businessentities.VM.class);
+        VmStatic vmStatic = control.createMock(VmStatic.class);
+        expect(mockedVm.getStaticData()).andReturn(vmStatic).anyTimes();
+
+        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId, IdQueryParameters.class, new String[]{"Id"}, new Object[]{GUIDS[0]}, mockedVm);
+
+        setUriInfo(setUpActionExpectations(VdcActionType.CloneVm,
+                CloneVmParameters.class,
+                new String[] { "VmStaticData", "NewName" },
+                new Object[] { vmStatic, "someNewName" }));
+
+        Action action = new Action();
+        VM vm = new VM();
+        vm.setName("someNewName");
+        action.setVm(vm);
+
+        Response response = resource.cloneVm(action);
+        verifyActionResponse(response);
+        Action actionResponse = (Action)response.getEntity();
+        assertTrue(actionResponse.isSetStatus());
     }
 
     @Test

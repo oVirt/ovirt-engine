@@ -34,7 +34,7 @@ import org.ovirt.engine.api.model.VM;
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreatedResource, MeasurableResource {
 
-    @Path("{action: (start|stop|shutdown|reboot|suspend|detach|migrate|export|move|ticket|cancelmigration|preview_snapshot|commit_snapshot|undo_snapshot)}/{oid}")
+    @Path("{action: (start|stop|shutdown|reboot|suspend|detach|migrate|export|move|ticket|cancelmigration|preview_snapshot|commit_snapshot|undo_snapshot|clone)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
 
     @POST
@@ -128,6 +128,13 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
     @Actionable
     @Path("undo_snapshot")
     public Response undoSnapshot(Action action);
+
+    @POST
+    @Formatted
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("clone")
+    public Response cloneVm(Action action);
 
     @POST
     @Formatted

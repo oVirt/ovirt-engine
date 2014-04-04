@@ -44,6 +44,7 @@ import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
+import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -257,6 +258,23 @@ public class BackendVmResource extends
         Response response = doAction(VdcActionType.RestoreAllSnapshots,
                 restoreParams,
                 action);
+        return response;
+    }
+
+    @Override
+    public Response cloneVm(Action action) {
+        validateParameters(action, "vm.name");
+
+        org.ovirt.engine.core.common.businessentities.VM vm = getEntity(
+                org.ovirt.engine.core.common.businessentities.VM.class,
+                VdcQueryType.GetVmByVmId,
+                new IdQueryParameters(guid), "VM: id=" + guid);
+                CloneVmParameters cloneVmParameters = new CloneVmParameters(vm, action.getVm().getName());
+        cloneVmParameters.setMakeCreatorExplicitOwner(isFiltered());
+        Response response = doAction(VdcActionType.CloneVm,
+                cloneVmParameters,
+                action);
+
         return response;
     }
 

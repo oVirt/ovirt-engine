@@ -165,7 +165,7 @@
       <!-- for VM export action -->
       <xs:element name="discard_snapshots" type="xs:boolean" minOccurs="0"/>
       <xs:element name="exclusive" type="xs:boolean" minOccurs="0"/>
-      <!-- For VM start -->
+      <!-- For VM start and clone-->
       <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
       <!-- For VM preview -->
       <xs:element name="snapshot" type="Snapshot" minOccurs="0" maxOccurs="1"/>
