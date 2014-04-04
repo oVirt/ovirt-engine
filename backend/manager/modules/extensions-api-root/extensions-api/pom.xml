@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.ovirt.engine.api</groupId>
-    <artifactId>extensions-api-root</artifactId>
+    <artifactId>ovirt-engine-extensions-api-root</artifactId>
     <version>0.0.0-SNAPSHOT</version>
   </parent>
 
@@ -12,6 +12,42 @@
   <packaging>jar</packaging>
 
   <name>ovirt-engine-extensions-api</name>
+
+  <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>attach-sources</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>jar-no-fork</goal>
+                        <goal>test-jar-no-fork</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>attach-javadoc</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>jar</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+  </build>
 
   <profiles>
     <profile>
@@ -29,7 +65,7 @@
                     <configuration>
                         <xmlOutput>true</xmlOutput>
                         <!-- Optional directory to put findbugs xdoc xml report -->
-                        <excludeFilterFile> ${basedir}/exclude-filters.xml</excludeFilterFile>
+                        <excludeFilterFile>${basedir}/exclude-filters.xml</excludeFilterFile>
                         <xmlOutputDirectory>target/site</xmlOutputDirectory>
                     </configuration>
                 </plugin>
@@ -49,7 +85,7 @@
                     <configuration>
                         <xmlOutput>true</xmlOutput>
                         <!-- Optional directory to put findbugs xdoc xml report -->
-                        <excludeFilterFile> ${basedir}/exclude-filters.xml, ${basedir}/../../../../../exclude-filters-general.xml</excludeFilterFile>
+                        <excludeFilterFile>${basedir}/exclude-filters.xml</excludeFilterFile>
                         <xmlOutputDirectory>target/site</xmlOutputDirectory>
                     </configuration>
                 </plugin>

@@ -249,6 +249,22 @@ BuildRequires:	systemd
 system that provides advanced capabilities for managing the Open
 virtualization infrastructure for Servers and Desktops.
 
+%package extensions-api-impl
+Summary:	%{ovirt_product_name_short} extensions api
+Group:		%{ovirt_product_group}
+Provides:	ovirt-engine-extensions-api = 0
+
+%description extensions-api-impl
+%{ovirt_product_name_short} extensions api
+
+%package extensions-api-impl-javadoc
+Summary:	%{ovirt_product_name_short} extensions api documentation
+Group:		%{ovirt_product_group}
+Provides:	ovirt-engine-extensions-api-javadoc = 0
+
+%description extensions-api-impl-javadoc
+%{ovirt_product_name_short} extensions api documentation
+
 %package lib
 Summary:	%{ovirt_product_name_short} library
 Group:		%{ovirt_product_group}
@@ -261,6 +277,7 @@ Requires:	python-daemon
 Summary:	Engine core of %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-extensions-api-impl >= %{version}-%{release}
 Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	httpd
 Requires:	java
@@ -634,6 +651,8 @@ base %{name}-compat.pom
 base %{name}-extensions-manager.pom
 base %{name}-root.pom
 base %{name}-utils.pom
+extensions-api %{name}-ovirt-engine-extensions-api-root.pom
+extensions-api %{name}-ovirt-engine-extensions-api.pom
 restapi %{name}-interface-common-jaxrs.pom
 restapi %{name}-restapi-definition.pom
 restapi %{name}-restapi-jaxrs.pom
@@ -812,6 +831,11 @@ fi
 %if "%{name}" != "%{engine_name}"
 %{_javadir}/%{engine_name}
 %endif
+
+%files extensions-api-impl -f .mfiles-extensions-api
+
+%files extensions-api-impl-javadoc
+%{engine_doc}/ovirt-engine-extensions-api/
 
 %files lib
 %{engine_data}/bin/java-home

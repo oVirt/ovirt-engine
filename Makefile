@@ -59,6 +59,7 @@ JAVA_DIR=$(DATAROOT_DIR)/java
 PKG_SYSCONF_DIR=$(SYSCONF_DIR)/$(ENGINE_NAME)
 PKG_PKI_DIR=$(SYSCONF_DIR)/pki/$(ENGINE_NAME)
 PKG_DOC_DIR=$(DOC_DIR)/$(ENGINE_NAME)
+PKG_HTML_DIR=$(PKG_DOC_DIR)
 PKG_EAR_DIR=$(DATA_DIR)/engine.ear
 PKG_JBOSS_MODULES=$(DATA_DIR)/modules
 PKG_CACHE_DIR=$(LOCALSTATE_DIR)/cache/$(ENGINE_NAME)
@@ -339,6 +340,11 @@ install_artifacts:
 	find "$(MAVEN_OUTPUT_DIR)" -name '*-modules.zip' | grep -v tmp.repos | xargs -n 1 unzip -q -o -d "$(DESTDIR)$(PKG_JBOSS_MODULES)"
 	install -dm 0755 "$(DESTDIR)$(PKG_EAR_DIR)"
 	find "$(MAVEN_OUTPUT_DIR)" -name '*.ear' -type f | grep -v tmp.repos | xargs -n 1 unzip -q -o -d "$(DESTDIR)$(PKG_EAR_DIR)"
+	install -dm 0755 "$(DESTDIR)$(PKG_HTML_DIR)"
+	find "$(MAVEN_OUTPUT_DIR)" -name '*-javadoc.jar' -type f | grep -v tmp.repos | while read f; do \
+		comp="$$(basename "$${f}" | sed 's/-[0-9].*//')"; \
+		unzip -q -o -d "$(DESTDIR)$(PKG_HTML_DIR)/$${comp}" "$${f}"; \
+	done
 
 	# extract embedded artifacts as doc
 	# no need to relay on source tree for these
@@ -357,6 +363,7 @@ install_poms:
 	install -m 644 backend/manager/modules/compat/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-compat.pom"
 	install -m 644 backend/manager/modules/dal/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-dal.pom"
 	install -m 644 backend/manager/modules/extensions-api-root/extensions-api/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-ovirt-engine-extensions-api.pom"
+	install -m 644 backend/manager/modules/extensions-api-root/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-ovirt-engine-extensions-api-root.pom"
 	install -m 644 backend/manager/modules/extensions-manager/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-extensions-manager.pom"
 	install -m 644 backend/manager/modules/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-manager-modules.pom"
 	install -m 644 backend/manager/modules/restapi/interface/common/jaxrs/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-interface-common-jaxrs.pom"
