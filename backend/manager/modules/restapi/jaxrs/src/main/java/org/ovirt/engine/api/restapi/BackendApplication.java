@@ -28,14 +28,12 @@ import org.apache.log4j.Logger;
 import org.ovirt.engine.api.common.invocation.Current;
 import org.ovirt.engine.api.common.security.auth.BasicAuthorizationScheme;
 import org.ovirt.engine.api.common.security.auth.Challenger;
-import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.logging.RequestPayloadLogger;
 import org.ovirt.engine.api.restapi.logging.RequestVerbLogger;
 import org.ovirt.engine.api.restapi.logging.ResponsePayloadLogger;
 import org.ovirt.engine.api.restapi.logging.ResponseStatusLogger;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendResource;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.restapi.resource.BackendBookmarksResource;
 import org.ovirt.engine.api.restapi.resource.BackendCapabilitiesResource;
@@ -182,12 +180,7 @@ public class BackendApplication extends Application {
         resource.setMessageBundle(messageBundle);
         resource.setBackend(backend);
         resource.setSessionHelper(sessionHelper);
-        if (resource instanceof AbstractBackendResource) {
-            ((AbstractBackendResource) resource).setMappingLocator(mappingLocator);
-        }
-        else if (resource instanceof CapabilitiesResource) {
-            ((BackendCapabilitiesResource) resource).setMappingLocator(mappingLocator);
-        }
+        resource.setMappingLocator(mappingLocator);
         resource.setValidatorLocator(validatorLocator);
         singletons.add(resource);
     }

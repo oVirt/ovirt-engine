@@ -116,7 +116,6 @@ import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.resource.utils.FeaturesHelper;
 import org.ovirt.engine.api.restapi.types.CPUMapper;
 import org.ovirt.engine.api.restapi.types.IpVersion;
-import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.NetworkUsage;
 import org.ovirt.engine.api.restapi.util.FenceOptionsParser;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
@@ -135,12 +134,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendCapabilitiesResource extends BackendResource implements CapabilitiesResource {
 
-    private MappingLocator mappingLocator;
     private FeaturesHelper featuresHelper = new FeaturesHelper();
-
-    public void setMappingLocator(MappingLocator mappingLocator) {
-        this.mappingLocator = mappingLocator;
-    }
 
     public static final Version VERSION_3_0 = new Version() {
         {
