@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 
@@ -18,6 +19,8 @@ public class SessionDataContainer {
 
     private static final String USER_PARAMETER_NAME = "user";
     private static final String PASSWORD_PARAMETER_NAME = "password";
+    private static final String AUTHN_PARAMETER_NAME = "authn";
+    private static final String PRINCIPAL_PARAMETER_NAME = "principal";
 
     private static SessionDataContainer dataProviderInstance = new SessionDataContainer();
 
@@ -229,5 +232,21 @@ public class SessionDataContainer {
      */
     public String getPassword() {
         return (String) getData(PASSWORD_PARAMETER_NAME, false);
+    }
+
+    public ExtensionProxy getAuthn() {
+        return (ExtensionProxy) getData(AUTHN_PARAMETER_NAME, false);
+    }
+
+    public void setAuthn(ExtensionProxy authn) {
+        setData(AUTHN_PARAMETER_NAME, authn);
+    }
+
+    public void setPrincipal(String principal) {
+        setData(PRINCIPAL_PARAMETER_NAME, principal);
+    }
+
+    public String getPrincipal() {
+        return (String) getData(PRINCIPAL_PARAMETER_NAME, false);
     }
 }

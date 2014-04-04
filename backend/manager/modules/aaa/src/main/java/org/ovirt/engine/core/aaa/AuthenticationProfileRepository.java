@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import org.ovirt.engine.api.extensions.Base;
+import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
+import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
-import org.ovirt.engine.core.extensions.mgr.ExtensionsManager.ExtensionEntry;
 
 public class AuthenticationProfileRepository {
 
-    private static final String AUTHN_SERVICE = "org.ovirt.engine.authentication";
+    private static final String AUTHN_SERVICE = Authn.class.getName();
     private static final String AUTHN_AUTHZ_PLUGIN = "ovirt.engine.aaa.authn.authz.plugin";
 
 
@@ -48,8 +51,8 @@ public class AuthenticationProfileRepository {
         return profiles.get(name);
     }
 
-    public Directory getDirectory(String name) {
-        return getProfile(name).getDirectory();
+    public ExtensionProxy getAuthz(String name) {
+        return getProfile(name).getAuthz();
     }
 
     /**
@@ -74,14 +77,16 @@ public class AuthenticationProfileRepository {
         // Get the extensions that correspond to authn (authentication) service.
         // For each extension - get the relevant authn extension.
 
-        for (ExtensionEntry authnExtension : ExtensionsManager.getInstance().getProvidedExtensions(AUTHN_SERVICE)) {
+        for (ExtensionProxy authnExtension : ExtensionsManager.getInstance().getProvidedExtensions(AUTHN_SERVICE)) {
             registerProfile(
-                    new AuthenticationProfile(
-                    (Authenticator) authnExtension.getExtension(),
-                    (Directory) ExtensionsManager.getInstance().getExtensionByName(
-                            authnExtension.getConfig().getProperty(AUTHN_AUTHZ_PLUGIN)
-                            ).getExtension()
+                new AuthenticationProfile(
+                    authnExtension,
+                    ExtensionsManager.getInstance().getExtensionByName(
+                        authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(
+                            AUTHN_AUTHZ_PLUGIN
+                                    )
                     )
+                )
             );
         }
     }

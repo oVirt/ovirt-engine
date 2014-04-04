@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
-import org.ovirt.engine.core.aaa.Directory;
+import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.DirectoryUtils;
@@ -22,6 +22,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbGroupDAO;
 import org.ovirt.engine.core.dao.DbUserDAO;
+import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
+import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -78,7 +80,8 @@ public class DbUserCacheManager {
 
         // Classify the users by directory. Note that the resulting map may have an entry with a null key, that
         // corresponds to the users whose directory has been removed from the configuration.
-        Map<Directory, List<DbUser>> index = new HashMap<>();
+        Map<String, List<DbUser>> authzToPrincipalMap = new HashMap<>();
+        Map<String, ExtensionProxy> authzMap = new HashMap<>();
 
         for (DbUser dbUser : dbUsers) {
             AuthenticationProfile profile = AuthenticationProfileRepository.getInstance().getProfile(dbUser.getDomain());
@@ -93,19 +96,15 @@ public class DbUserCacheManager {
                 continue;
 
             }
-            Directory key = profile.getDirectory();
-            List<DbUser> value = index.get(key);
-            if (value == null) {
-                value = new ArrayList<DbUser>();
-                index.put(key, value);
-            }
-            value.add(dbUser);
+            String auhtzName = AuthzUtils.getName(profile.getAuthz());
+            MultiValueMapUtils.addToMap(auhtzName, dbUser, authzToPrincipalMap);
+            authzMap.put(auhtzName, profile.getAuthz());
         }
 
         // Refresh the users for each directory:
         List<DbUser> updates = new ArrayList<>();
-        for (Map.Entry<Directory, List<DbUser>> entry : index.entrySet()) {
-            List<DbUser> refreshed = refreshUsers(entry.getValue(), entry.getKey());
+        for (Map.Entry<String, List<DbUser>> entry : authzToPrincipalMap.entrySet()) {
+            List<DbUser> refreshed = refreshUsers(entry.getValue(), authzMap.get(entry.getKey()));
             updates.addAll(refreshed);
         }
 
@@ -120,19 +119,19 @@ public class DbUserCacheManager {
      * Refresh a list of users retrieving their data from a given directory.
      *
      * @param dbUsers the list of users to refresh
-     * @param directory the directory where the data of the users will be extracted from, it may be {@code null} if the
+     * @param authz the authz extension where the data of the users will be extracted from, it may be {@code null} if the
      *     directory has already been removed from the configuration
      * @return the list of database users that have been actually modified and that need to be updated in the database
      */
-    private List<DbUser> refreshUsers(List<DbUser> dbUsers, Directory directory) {
+    private List<DbUser> refreshUsers(List<DbUser> dbUsers, ExtensionProxy authz) {
         // Find all the users in the directory using a batch operation to improve performance:
         List<String> ids = new ArrayList<>(dbUsers.size());
         for (DbUser dbUser : dbUsers) {
             ids.add(dbUser.getExternalId());
         }
         List<DirectoryUser> directoryUsers = null;
-        if (directory != null) {
-            directoryUsers = directory.findUsers(ids);
+        if (authz != null) {
+            directoryUsers = AuthzUtils.findPrincipalsByIds(authz, ids);
         }
         else {
             directoryUsers = Collections.emptyList();
@@ -150,12 +149,14 @@ public class DbUserCacheManager {
         List<DbUser> refreshed = new ArrayList<>();
         for (DbUser dbUser : dbUsers) {
             DirectoryUser directoryUser = index.get(dbUser.getExternalId());
-            String groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
-            dbUser.setActive(false);
-            dbUser.setGroupIds(groupIds);
-            dbUser = refreshUser(dbUser, directoryUser);
-            if (dbUser != null) {
-                refreshed.add(dbUser);
+            if (directoryUser != null) {
+                String groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
+                dbUser.setActive(false);
+                dbUser.setGroupIds(groupIds);
+                dbUser = refreshUser(dbUser, directoryUser);
+                if (dbUser != null) {
+                    refreshed.add(dbUser);
+                }
             }
         }
 

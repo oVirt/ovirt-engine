@@ -13,12 +13,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.ovirt.engine.api.extensions.Base;
+import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
-import org.ovirt.engine.core.aaa.Authenticator;
-import org.ovirt.engine.core.aaa.Directory;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
+import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
@@ -58,13 +59,16 @@ public class GetDomainListQueryTest
      * @param name the name for the mocked authenticator, directory and authentication profile
      */
     private void setUpProfileMock(String name) {
-        Directory directoryMock = mock(Directory.class);
-        doReturn(name).when(directoryMock).getName();
-        Authenticator authenticatorMock = mock(Authenticator.class);
+        ExtensionProxy authzMock = mock(ExtensionProxy.class);
+        ExtMap mockContext = mock(ExtMap.class);
+        doReturn(name).when(mockContext).get(Base.ContextKeys.INSTANCE_NAME);
+        doReturn(mockContext).when(authzMock).getContext();
+        ExtensionProxy authnMock = mock(ExtensionProxy.class);
+        doReturn(mockContext).when(authnMock).getContext();
         AuthenticationProfile profileMock = mock(AuthenticationProfile.class);
         doReturn(name).when(profileMock).getName();
-        doReturn(directoryMock).when(profileMock).getDirectory();
-        doReturn(authenticatorMock).when(profileMock).getAuthenticator();
+        doReturn(authzMock).when(profileMock).getAuthz();
+        doReturn(authnMock).when(profileMock).getAuthn();
         AuthenticationProfileRepository.getInstance().registerProfile(profileMock);
     }
 

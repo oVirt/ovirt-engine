@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.io.IOException;
 import java.security.Principal;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -11,9 +12,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
-import org.ovirt.engine.core.aaa.Directory;
+import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.dao.PermissionDAO;
+import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,8 +96,8 @@ public class AutomaticLoginFilter implements Filter {
         }
 
         // Check that the user exists in the directory associated to the authentication profile:
-        Directory directory = profile.getDirectory();
-        if (directory == null) {
+        ExtensionProxy authz = profile.getAuthz();
+        if (authz == null) {
             log.info(
                 "Can't login user \"{}\" with authentication profile \"{}\" because the directory doesn't exist.",
                 profileName
@@ -102,7 +105,10 @@ public class AutomaticLoginFilter implements Filter {
             rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-        DirectoryUser directoryUser = directory.findUser(loginName);
+        // TODO: revisit this, as fetchPrincipalRecord is supposed to get authentication record
+        // that was returned from authentication.
+        ExtMap authRecord = new ExtMap();
+        DirectoryUser directoryUser = AuthzUtils.fetchPrincipalRecord(authz, authRecord);
         if (directoryUser == null) {
             log.info(
                 "Can't login user \"{}\" with authentication profile \"{}\" because the user doesn't exist in the " +
@@ -115,7 +121,7 @@ public class AutomaticLoginFilter implements Filter {
 
         // Check that the user exists in the database, if it doesn't exist then we need to add it now:
         DbUserDAO dbUserDao = DbFacade.getInstance().getDbUserDao();
-        dbUser = dbUserDao.getByExternalId(directory.getName(), directoryUser.getId());
+        dbUser = dbUserDao.getByExternalId(AuthzUtils.getName(authz), directoryUser.getId());
         if (dbUser == null) {
             dbUser = new DbUser(directoryUser);
             dbUser.setId(Guid.newGuid());

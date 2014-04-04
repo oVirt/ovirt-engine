@@ -20,7 +20,8 @@ public class ADLdapIdEncoder implements LdapIdEncoder {
         // aligned,
         // for each GUID -before using with AD we will change its byte order to
         // support AD
-        byte[] bytes = id.toByteArray();
+        byte[] bytes = new Guid(id.toByteArray(), false).toByteArray();
+
         StringBuilder sb = new StringBuilder();
         for (int idx = 0; idx < bytes.length; idx++) {
             sb.append("\\" + String.format("%02X", bytes[idx]));

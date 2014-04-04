@@ -728,7 +728,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("1000")
     LdapQueryPageSize,
 
-    @TypeConverterAttribute(Long.class)
+    @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
     MaxLDAPQueryPartsNumber,
 

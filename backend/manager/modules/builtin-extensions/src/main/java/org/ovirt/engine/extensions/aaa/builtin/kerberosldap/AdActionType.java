@@ -4,11 +4,7 @@ public enum AdActionType {
     AuthenticateUser,
     SearchGroupsByQuery,
     SearchUserByQuery,
-    GetAdGroupByGroupId,
-    GetAdUserByUserId,
-    GetAdUserByUserName,
-    GetAdUserByUserIdList,
-    IsComputerWithTheSameNameExists;
+    GetAdUserByUserName;
 
     public int getValue() {
         return this.ordinal();

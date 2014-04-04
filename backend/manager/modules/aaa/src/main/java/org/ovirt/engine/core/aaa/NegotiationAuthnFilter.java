@@ -16,11 +16,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.ovirt.engine.api.extensions.Base;
+import org.ovirt.engine.api.extensions.ExtMap;
+import org.ovirt.engine.api.extensions.aaa.Authn;
+
 /**
  * This filter should be added to the {@code web.xml} file to the applications that want to use the authentication
  * mechanism implemented in this package.
  */
-public class AuthenticationFilter implements Filter {
+public class NegotiationAuthnFilter implements Filter {
+
     /**
      * The authentication profiles used to perform the authentication process.
      */
@@ -30,18 +35,18 @@ public class AuthenticationFilter implements Filter {
      * We store a boolean flag in the HTTP session that indicates if the user has been already authenticated, this is
      * the key for that flag.
      */
-    private static final String AUTHENTICATED_ATTR = AuthenticationFilter.class.getName() + ".authenticated";
+    private static final String AUTHENTICATED_ATTR = NegotiationAuthnFilter.class.getName() + ".authenticated";
 
     /**
      * When a user has been authenticated we store its login name in the HTTP session, this is the key for that name.
      */
-    private static final String NAME_ATTR = AuthenticationFilter.class.getName() + ".name";
+    private static final String NAME_ATTR = NegotiationAuthnFilter.class.getName() + ".name";
 
     /**
      * In order to support several alternative authenticators we store their names in a stack inside the HTTP session,
      * this is the key for that stack.
      */
-    private static final String STACK_ATTR = AuthenticationFilter.class.getName() + ".stack";
+    private static final String STACK_ATTR = NegotiationAuthnFilter.class.getName() + ".stack";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -62,8 +67,8 @@ public class AuthenticationFilter implements Filter {
                     profiles = new ArrayList<AuthenticationProfile>(1);
                     for (AuthenticationProfile profile : AuthenticationProfileRepository.getInstance().getProfiles()) {
                         if (profile != null) {
-                            Authenticator authenticator = profile.getAuthenticator();
-                            if (authenticator.isNegotiationAuth()) {
+                            if ((profile.getAuthn().getContext().<Long> get(Authn.ContextKeys.CAPABILITIES).longValue() &
+                                    Authn.Capabilities.AUTHENTICATE_NEGOTIATE_NON_INTERACTIVE) != 0) {
                                 profiles.add(0, profile);
                             }
 
@@ -123,33 +128,46 @@ public class AuthenticationFilter implements Filter {
                 return;
             }
 
-            NegotiationResult result = profile.getAuthenticator().negotiate(req, rsp);
+            ExtMap output = profile.getAuthn().invoke(
+                    new ExtMap().mput(
+                            Base.InvokeKeys.COMMAND,
+                            Authn.InvokeCommands.AUTHENTICATE_NEGOTIATE
+                            ).mput(
+                                    Authn.InvokeKeys.HTTP_SERVLET_REQUEST,
+                                    req
+                            ).mput(
+                                    Authn.InvokeKeys.HTTP_SERVLET_RESPONSE,
+                                    rsp
+                            )
+                    );
 
-            // If the negotiation is finished and authentication succeeded then we have to remember in the session that
-            // the user has been authenticated and its login name, also we need to clean the stack of authenticators and
-            // replace the request with a wrapper that contains the user name returned by the authenticator:
-            if (result.isAuthenticated()) {
-                String name = new StringBuilder(result.getName())
-                    .append("@")
-                    .append(profile.getName())
-                    .toString();
-                session.setAttribute(AUTHENTICATED_ATTR, true);
-                session.setAttribute(NAME_ATTR, name);
-                session.removeAttribute(STACK_ATTR);
-                req = new AuthenticatedRequestWrapper(req, name);
-                chain.doFilter(req, rsp);
-                return;
+            switch (output.<Integer> get(Authn.InvokeKeys.RESULT)) {
+                case Authn.AuthResult.SUCCESS:
+                    String name = output.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD).<String> get(Authn.AuthRecord.PRINCIPAL);
+                    session.setAttribute(AUTHENTICATED_ATTR, true);
+                    session.setAttribute(NAME_ATTR, name);
+                    session.removeAttribute(STACK_ATTR);
+                    req = new AuthenticatedRequestWrapper(req, name);
+                    chain.doFilter(req, rsp);
+                    return;
+
+                case Authn.AuthResult.NEGOTIATION_UNAUTHORIZED:
+                    moveToNextProfile(session, stack);
+                    break;
+
+                default:
+                    moveToNextProfile(session, stack);
             }
-
-            // The negotiation finished, but the authentication failed, so we need to clear the current authenticator
-            // from the stack and try with the next one:
-            stack.pop();
-            session.setAttribute(STACK_ATTR, stack);
         }
 
         // If we are here then there are no more authenticators to try so we need to invalidate the session and reject
         // the request:
         session.invalidate();
         rsp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    }
+
+    private void moveToNextProfile(HttpSession session, Deque<String> stack) {
+        stack.pop();
+        session.setAttribute(STACK_ATTR, stack);
     }
 }

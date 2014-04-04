@@ -1,13 +1,12 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.api.extensionsold.AAAExtensionException.AAAExtensionError;
+import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -17,40 +16,39 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
 
-    protected static final EnumMap<AuthenticationResult, AAAExtensionError> authResultToExceptionMap =
-            new EnumMap<>(AuthenticationResult.class);
+    protected static final Map<AuthenticationResult, Integer> resultsMap = new HashMap<>();
 
     static {
-        authResultToExceptionMap.put(AuthenticationResult.CANNOT_FIND_LDAP_SERVER_FOR_DOMAIN,
-                AAAExtensionError.SERVER_IS_NOT_AVAILABLE);
-        authResultToExceptionMap.put(AuthenticationResult.CLIENT_NOT_FOUND_IN_KERBEROS_DATABASE,
-                AAAExtensionError.INCORRECT_CREDENTIALS);
-        authResultToExceptionMap.put(AuthenticationResult.CLOCK_SKEW_TOO_GREAT,
-                AAAExtensionError.GENERAL_ERROR);
-        authResultToExceptionMap.put(AuthenticationResult.CONNECTION_ERROR,
-                AAAExtensionError.SERVER_IS_NOT_AVAILABLE);
-        authResultToExceptionMap.put(AuthenticationResult.CONNECTION_TIMED_OUT,
-                AAAExtensionError.TIMED_OUT);
-        authResultToExceptionMap.put(AuthenticationResult.DNS_COMMUNICATION_ERROR,
-                AAAExtensionError.SERVER_IS_NOT_AVAILABLE);
-        authResultToExceptionMap.put(AuthenticationResult.DNS_ERROR,
-                AAAExtensionError.SERVER_IS_NOT_AVAILABLE);
-        authResultToExceptionMap.put(AuthenticationResult.INTERNAL_KERBEROS_ERROR,
-                AAAExtensionError.GENERAL_ERROR);
-        authResultToExceptionMap.put(AuthenticationResult.INVALID_CREDENTIALS,
-                AAAExtensionError.INCORRECT_CREDENTIALS);
-        authResultToExceptionMap.put(AuthenticationResult.NO_KDCS_FOUND,
-                AAAExtensionError.SERVER_IS_NOT_AVAILABLE);
-        authResultToExceptionMap.put(AuthenticationResult.NO_USER_INFORMATION_WAS_FOUND_FOR_USER,
-                AAAExtensionError.INCORRECT_CREDENTIALS);
-        authResultToExceptionMap.put(AuthenticationResult.OTHER,
-                AAAExtensionError.GENERAL_ERROR);
-        authResultToExceptionMap.put(AuthenticationResult.PASSWORD_EXPIRED,
-                AAAExtensionError.CREDENTIALS_EXPIRED);
-        authResultToExceptionMap.put(AuthenticationResult.USER_ACCOUNT_DISABLED_OR_LOCKED,
-                AAAExtensionError.LOCKED_OR_DISABLED_ACCOUNT);
-        authResultToExceptionMap.put(AuthenticationResult.WRONG_REALM,
-                AAAExtensionError.INCORRECT_CREDENTIALS);
+        resultsMap.put(AuthenticationResult.CANNOT_FIND_LDAP_SERVER_FOR_DOMAIN,
+                Authn.AuthResult.REMOTE_UNAVAILABLE);
+        resultsMap.put(AuthenticationResult.CLIENT_NOT_FOUND_IN_KERBEROS_DATABASE,
+                Authn.AuthResult.CREDENTIALS_INCORRECT);
+        resultsMap.put(AuthenticationResult.CLOCK_SKEW_TOO_GREAT,
+                Authn.AuthResult.GENERAL_ERROR);
+        resultsMap.put(AuthenticationResult.CONNECTION_ERROR,
+                Authn.AuthResult.REMOTE_UNAVAILABLE);
+        resultsMap.put(AuthenticationResult.CONNECTION_TIMED_OUT,
+                Authn.AuthResult.TIMED_OUT);
+        resultsMap.put(AuthenticationResult.DNS_COMMUNICATION_ERROR,
+                Authn.AuthResult.REMOTE_UNAVAILABLE);
+        resultsMap.put(AuthenticationResult.DNS_ERROR,
+                Authn.AuthResult.REMOTE_UNAVAILABLE);
+        resultsMap.put(AuthenticationResult.INTERNAL_KERBEROS_ERROR,
+                Authn.AuthResult.GENERAL_ERROR);
+        resultsMap.put(AuthenticationResult.INVALID_CREDENTIALS,
+                Authn.AuthResult.CREDENTIALS_INVALID);
+        resultsMap.put(AuthenticationResult.NO_KDCS_FOUND,
+                Authn.AuthResult.REMOTE_UNAVAILABLE);
+        resultsMap.put(AuthenticationResult.NO_USER_INFORMATION_WAS_FOUND_FOR_USER,
+                Authn.AuthResult.CREDENTIALS_INCORRECT);
+        resultsMap.put(AuthenticationResult.OTHER,
+                Authn.AuthResult.GENERAL_ERROR);
+        resultsMap.put(AuthenticationResult.PASSWORD_EXPIRED,
+                Authn.AuthResult.CREDENTIALS_EXPIRED);
+        resultsMap.put(AuthenticationResult.USER_ACCOUNT_DISABLED_OR_LOCKED,
+                Authn.AuthResult.ACCOUNT_LOCKED);
+        resultsMap.put(AuthenticationResult.WRONG_REALM,
+                Authn.AuthResult.CREDENTIALS_INCORRECT);
     }
 
     private Map<String, LdapGroup> globalGroupsDict = new HashMap<>();

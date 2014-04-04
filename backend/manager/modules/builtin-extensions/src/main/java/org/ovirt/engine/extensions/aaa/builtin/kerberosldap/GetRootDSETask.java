@@ -71,6 +71,9 @@ public class GetRootDSETask implements Callable<Boolean> {
                     } else {
                         baseDNExist = true;
                     }
+                    //TODO: change this exception logging to something nicer
+                } catch (Exception ex) {
+                    log.error("", ex);
                 } finally {
                     domainObject.getLock().writeLock().unlock();
                 }

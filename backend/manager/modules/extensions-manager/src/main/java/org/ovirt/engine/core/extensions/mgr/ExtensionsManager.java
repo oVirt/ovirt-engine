@@ -6,9 +6,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EnumMap;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ServiceLoader;
@@ -17,87 +18,54 @@ import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoadException;
 import org.jboss.modules.ModuleLoader;
-import org.ovirt.engine.api.extensionsold.Extension;
-import org.ovirt.engine.api.extensionsold.Extension.ExtensionProperties;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.ovirt.engine.api.extensions.Base;
+import org.ovirt.engine.api.extensions.ExtMap;
+import org.ovirt.engine.api.extensions.ExtKey;
+import org.ovirt.engine.api.extensions.Extension;
 /**
  * This class is responsible for loading the required {@code Configuration} in order to create an extension. It holds
  * the logic of ordering and solving conflicts during loading the configuration
  */
 public class ExtensionsManager {
-
-    public static final String NAME = "ovirt.engine.extension.name";
-    public static final String PROVIDES = "ovirt.engine.extension.provides";
-    public static final String ENABLED = "ovirt.engine.extension.enabled";
-    public static final String MODULE = "ovirt.engine.extension.module";
-    public static final String CLASS = "ovirt.engine.extension.class";
-    public static final String SENSITIVE_KEYS = "ovirt.engine.extension.sensitiveKeys";
     private static final String ENGINE_EXTENSION_ENABLED = "ENGINE_EXTENSION_ENABLED_";
 
-    public static class ExtensionEntry {
+    public static final ExtKey TRACE_LOG_CONTEXT_KEY = new ExtKey("EXTENSION_MANAGER_TRACE_LOG", Logger.class, "863db666-3ea7-4751-9695-918a3197ad83");
+    public static final ExtKey CAUSE_OUTPUT_KEY = new ExtKey("EXTENSION_MANAGER_CAUSE_OUTPUT_KEY", Throwable.class, "894e1c86-518b-40a2-a92b-29ea1eb0403d");
+
+    private static int extensionNameIndex = 0;
+
+    private static class ExtensionEntry {
+
+        private String name;
         private File file;
         private boolean enabled;
         private boolean activated;
-        private Extension extension;
-        private Map<ExtensionProperties, Object> context = new EnumMap<>(ExtensionProperties.class);
+        private ExtensionProxy extension;
 
-        public ExtensionEntry(Properties props, File file) {
+        private ExtensionEntry(Properties props, File file) {
             this.file = file;
-            load(props);
+            this.name = props.getProperty(
+                Base.ConfigKeys.NAME,
+                String.format("__unamed_%1$03d__", extensionNameIndex++)
+            );
+            this.enabled = Boolean.parseBoolean(props.getProperty(Base.ConfigKeys.ENABLED, "true"));
         }
 
-        public String getName() {
-            return (String) context.get(ExtensionProperties.NAME);
+        private String getFileName() {
+            return file != null ? file.getAbsolutePath() : "N/A";
         }
-
-        public File getFile() {
-            return file;
-        }
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public boolean isActivated() {
-            return activated;
-        }
-
-        public List<String> getProvides() {
-            List<String> providers = new ArrayList<>();
-            for (String provider : ((String) context.get(ExtensionProperties.PROVIDES)).split(",")) {
-                providers.add(provider.trim());
-            }
-            return providers;
-        }
-
-        public Map<ExtensionProperties, Object> getContext() {
-            return context;
-        }
-
-        public Extension getExtension() {
-            return extension;
-        }
-
-        public Properties getConfig() {
-            return (Properties) context.get(ExtensionProperties.CONFIGURATION);
-        }
-
-        private void load(Properties props) {
-            enabled = props.get(ENABLED) != null ? Boolean.parseBoolean(props.getProperty(ENABLED)) : true;
-            context.put(ExtensionProperties.CONFIGURATION, props);
-            context.put(ExtensionProperties.NAME, props.getProperty(NAME));
-            context.put(ExtensionProperties.PROVIDES, props.getProperty(PROVIDES));
-        }
-
     }
 
     private static final Logger log = LoggerFactory.getLogger(ExtensionsManager.class);
+    private static final Logger traceLog = LoggerFactory.getLogger(ExtensionsManager.class.getName() + ".trace");
     private static volatile ExtensionsManager instance = null;
     private Map<String, ExtensionEntry> loadedEntries = new HashMap<>();
     private Map<String, Module> loadedModules = new HashMap<>();
+    private ExtMap globalContext = new ExtMap().mput(Base.GlobalContextKeys.EXTENSIONS, new ArrayList<ExtMap>());
 
     public static ExtensionsManager getInstance() {
         if (instance == null) {
@@ -110,30 +78,21 @@ public class ExtensionsManager {
         return instance;
     }
 
-    public List<ExtensionEntry> getProvidedExtensions(String provides) {
-        List<ExtensionEntry> results = new ArrayList<>();
+    public List<ExtensionProxy> getProvidedExtensions(String provides) {
+        List<ExtensionProxy> results = new ArrayList<>();
         for (ExtensionEntry entry : loadedEntries.values()) {
-            if (entry.activated && entry.getProvides().contains(provides)) {
-                results.add(entry);
+            if (entry.activated && entry.extension.getContext().<List>get(Base.ContextKeys.PROVIDES).contains(provides)) {
+                results.add(entry.extension);
             }
         }
         return results;
     }
 
-    public ExtensionEntry getExtensionByName(String pluginName) throws ConfigurationException {
-        ExtensionEntry result = loadedEntries.get(pluginName);
-        if (result == null) {
-            throw new ConfigurationException(String.format(
-                            "No configuration was found for extension named '%1$s'",
-                            pluginName)
-                    );
-
-        }
-        if (!result.activated) {
-            throw new ConfigurationException(String.format(
-                        "The configuration '%1$s' is not active",
-                        pluginName)
-                    );
+    public ExtensionProxy getExtensionByName(String name) throws ConfigurationException {
+        ExtensionEntry entry = loadedEntries.get(name);
+        ExtensionProxy result = null;
+        if (entry != null && entry.activated) {
+            result = entry.extension;
         }
         return result;
     }
@@ -178,48 +137,133 @@ public class ExtensionsManager {
         }
     }
 
-    private synchronized void loadImpl(Properties props, File confFile) {
-        ExtensionEntry entry = new ExtensionEntry(props, confFile);
-        ExtensionEntry alreadyLoadedEntry = loadedEntries.get(entry.getName());
-        if (alreadyLoadedEntry != null) {
-            throw new ConfigurationException(String.format(
-                    "Could not load the configuration '%1$s' from file %2$s. A configuration with the same name was already loaded from file %3$s",
-                    entry.getName(),
-                    getFileName(entry.file),
-                    getFileName(alreadyLoadedEntry.file))
-             );
-        }
-        loadedEntries.put(entry.getName(), entry);
-        entry.enabled =
-                EngineLocalConfig.getInstance().getBoolean(ENGINE_EXTENSION_ENABLED + entry.getName(), entry.enabled);
-        //Activate the extension
-        if (entry.enabled && entry.extension == null) {
-            try {
-                entry.extension = (Extension) lookupService(
-                        Extension.class,
-                        entry.getConfig().getProperty(CLASS),
-                        entry.getConfig().getProperty(MODULE)
-                        ).newInstance();
-                entry.extension.setContext(entry.context);
-                entry.extension.init();
-                entry.activated = true;
-            } catch (Exception ex) {
-                log.error(
-                        String.format(
-                                "Error in activating extension %1$s. Exception message is %2$s",
-                                entry.getName(),
-                                ex.getMessage()
-                                )
-                        );
-                if (log.isDebugEnabled()) {
-                    log.error("", ex);
-                }
+    private void dumpConfig(ExtensionProxy extension) {
+        Logger logger = extension.getContext().<Logger>get(TRACE_LOG_CONTEXT_KEY);
+        if (logger.isDebugEnabled()) {
+            List sensitive = extension.getContext().<List>get(Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS);
+            logger.debug("Config BEGIN");
+            for (Map.Entry<Object, Object> entry : extension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).entrySet()) {
+                logger.debug(
+                    String.format(
+                        "%s: %s",
+                        entry.getKey(),
+                        sensitive.contains(entry.getKey()) ? "***" : entry.getValue()
+                    )
+                );
             }
+            logger.debug("Config END");
         }
     }
 
-    private String getFileName(File file) {
-        return file != null ? file.getAbsolutePath() : "N/A";
+    private List<String> splitString(String s) {
+        return new ArrayList<String>(Arrays.asList(s.trim().split("\\s*,\\s*", 0)));
+    }
+
+    private synchronized void loadImpl(Properties props, File confFile) {
+        ExtensionEntry entry = new ExtensionEntry(props, confFile);
+        ExtensionEntry alreadyLoadedEntry = loadedEntries.get(entry.name);
+        if (alreadyLoadedEntry != null) {
+            throw new ConfigurationException(String.format(
+                    "Could not load the configuration '%1$s' from file %2$s. A configuration with the same name was already loaded from file %3$s",
+                    entry.name,
+                    entry.getFileName(),
+                    alreadyLoadedEntry.getFileName()
+             ));
+        }
+        loadedEntries.put(entry.name, entry);
+        entry.enabled =
+                EngineLocalConfig.getInstance().getBoolean(ENGINE_EXTENSION_ENABLED + entry.name, entry.enabled);
+        //Activate the extension
+        if (entry.enabled && entry.extension == null) {
+            try {
+                entry.extension = new ExtensionProxy(
+                    (Extension) lookupService(
+                        Extension.class,
+                        props.getProperty(Base.ConfigKeys.CLASS),
+                        props.getProperty(Base.ConfigKeys.MODULE)
+                    ).newInstance(),
+                    (
+                        new ExtMap().mput(
+                            Base.ContextKeys.GLOBAL_CONTEXT,
+                            globalContext
+                        ).mput(
+                            TRACE_LOG_CONTEXT_KEY,
+                            traceLog
+                        ).mput(
+                            Base.ContextKeys.INTERFACE_VERSION_MIN,
+                            0
+                        ).mput(
+                            Base.ContextKeys.INTERFACE_VERSION_MAX,
+                            Base.INTERFACE_VERSION_CURRENT
+                        ).mput(
+                            Base.ContextKeys.LOCALE,
+                            Locale.getDefault().toString()
+                        ).mput(
+                            Base.ContextKeys.CONFIGURATION,
+                            props
+                        ).mput(
+                            Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS,
+                            splitString(props.getProperty(Base.ConfigKeys.SENSITIVE_KEYS, ""))
+                        ).mput(
+                            Base.ContextKeys.INSTANCE_NAME,
+                            entry.name
+                        ).mput(
+                            Base.ContextKeys.PROVIDES,
+                            splitString(props.getProperty(Base.ConfigKeys.PROVIDES, ""))
+                        )
+                    )
+                );
+
+                ExtMap output = entry.extension.invoke(
+                    new ExtMap().mput(
+                        Base.InvokeKeys.COMMAND,
+                        Base.InvokeCommands.INITIALIZE
+                    )
+                );
+
+                entry.extension.getContext().put(
+                    TRACE_LOG_CONTEXT_KEY,
+                    LoggerFactory.getLogger(
+                        String.format(
+                            "%1$s.%2$s.%3$s",
+                            traceLog.getName(),
+                            entry.extension.getContext().get(Base.ContextKeys.EXTENSION_NAME),
+                            entry.extension.getContext().get(Base.ContextKeys.INSTANCE_NAME)
+                        )
+                    )
+                );
+
+                globalContext.<List<ExtMap>>get(Base.GlobalContextKeys.EXTENSIONS).add(
+                    new ExtMap().mput(
+                        Base.ExtensionRecord.INSTANCE_NAME,
+                        entry.extension.getContext().get(Base.ContextKeys.INSTANCE_NAME)
+                    ).mput(
+                        Base.ExtensionRecord.PROVIDES,
+                        entry.extension.getContext().get(Base.ContextKeys.PROVIDES)
+                    ).mput(
+                        Base.ExtensionRecord.EXTENSION,
+                        entry.extension.getExtension()
+                    ).mput(
+                        Base.ExtensionRecord.CONTEXT,
+                        entry.extension.getContext()
+                    )
+                );
+                entry.activated = true;
+
+                dumpConfig(entry.extension);
+            } catch (Exception ex) {
+                log.error(
+                    String.format(
+                        "Error in activating extension %1$s. Exception message is %2$s",
+                        entry.name,
+                        ex.getMessage()
+                    )
+                );
+                if (log.isDebugEnabled()) {
+                    log.error(ex.toString(), ex);
+                }
+            }
+        }
     }
 
     private Module loadModule(String moduleSpec) {
@@ -265,19 +309,19 @@ public class ExtensionsManager {
         log.info("Start of enabled extensions list");
         for (ExtensionEntry entry : loadedEntries.values()) {
             if (entry.extension != null) {
-                Map<ExtensionProperties, Object> context = entry.extension.getContext();
+                ExtMap context = entry.extension.getContext();
                 log.info(String.format(
-                        "Instance name: '%1$s', Extension name: '%2$s', Version: '%3$s', License: '%4$s', Home: '%5$s', Author '%6$s',  File: '%7$s', Activated: '%8$s",
-                        emptyIfNull(context.get(ExtensionProperties.NAME)),
-                        emptyIfNull(context.get(ExtensionProperties.EXTENSION_NAME)),
-                        emptyIfNull(context.get(ExtensionProperties.VERSION)),
-                        emptyIfNull(context.get(ExtensionProperties.LICENSE)),
-                        emptyIfNull(context.get(ExtensionProperties.HOME)),
-                        emptyIfNull(context.get(ExtensionProperties.AUTHOR)),
-                        emptyIfNull(getFileName(entry.file)),
-                        entry.activated
-                        )
-                        );
+                        "Instance name: '%1$s', Extension name: '%2$s', Version: '%3$s', Build interface Version: '%4$s', License: '%5$s', Home: '%6$s', Author '%7$s',  File: '%8$s', Activated: '%9$s",
+                    emptyIfNull(context.get(Base.ContextKeys.INSTANCE_NAME)),
+                    emptyIfNull(context.get(Base.ContextKeys.EXTENSION_NAME)),
+                    emptyIfNull(context.get(Base.ContextKeys.VERSION)),
+                    emptyIfNull(context.get(Base.ContextKeys.BUILD_INTERFACE_VERSION)),
+                    emptyIfNull(context.get(Base.ContextKeys.LICENSE)),
+                    emptyIfNull(context.get(Base.ContextKeys.HOME_URL)),
+                    emptyIfNull(context.get(Base.ContextKeys.AUTHOR)),
+                    entry.getFileName(),
+                    entry.activated
+                ));
             }
         }
         log.info("End of enabled extensions list");

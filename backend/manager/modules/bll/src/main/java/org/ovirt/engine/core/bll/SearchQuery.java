@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
-import org.ovirt.engine.core.aaa.Directory;
+import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.utils.ListUtils.Filter;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.dao.SearchDAO;
+import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
@@ -177,14 +178,12 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
         // Find the directory:
         String directoryName = data.getDomain();
-        Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
-        if (directory == null) {
+        ExtensionProxy authz = AuthenticationProfileRepository.getInstance().getAuthz(directoryName);
+        if (authz == null) {
             return Collections.emptyList();
         }
 
-        // Run the query:
-        String query = data.getQuery();
-        return directory.queryUsers(query);
+        return AuthzUtils.findPrincipalsByQuery(authz, data.getQuery());
     }
 
     private List<DirectoryGroup> searchDirectoryGroups() {
@@ -196,14 +195,13 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
         // Find the directory:
         String directoryName = data.getDomain();
-        Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
-        if (directory == null) {
+        ExtensionProxy authz = AuthenticationProfileRepository.getInstance().getAuthz(directoryName);
+        if (authz == null) {
             return Collections.emptyList();
         }
 
         // Run the query:
-        String query = data.getQuery();
-        return directory.queryGroups(query);
+        return AuthzUtils.findGroupsByQuery(authz, data.getQuery());
     }
 
     private List<DbUser> searchDbUsers() {
@@ -402,7 +400,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     protected String getDefaultDomain() {
-        return AuthenticationProfileRepository.getInstance().getProfiles().get(0).getDirectory().getName();
+        return AuthzUtils.getName(AuthenticationProfileRepository.getInstance().getProfiles().get(0).getAuthz());
     }
 
     private static boolean containsStaticInValues(String query) {

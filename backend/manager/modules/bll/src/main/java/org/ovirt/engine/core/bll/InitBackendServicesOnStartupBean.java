@@ -1,7 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
@@ -9,6 +14,9 @@ import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import org.ovirt.engine.api.extensions.Base;
+import org.ovirt.engine.api.extensions.aaa.Authn;
+import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
@@ -108,55 +116,81 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
     private void createInternalAAAConfigurations() {
         Properties authConfig = new Properties();
-        authConfig.put(ExtensionsManager.CLASS,
-                "org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthenticator");
-        authConfig.put(ExtensionsManager.PROVIDES, "org.ovirt.engine.authentication");
-        authConfig.put(ExtensionsManager.ENABLED, "true");
-        authConfig.put(ExtensionsManager.MODULE, "org.ovirt.engine.extensions.builtin");
-        authConfig.put(ExtensionsManager.NAME, "builtin-authn-internal");
+        authConfig.put(Base.ConfigKeys.NAME, "builtin-authn-internal");
+        authConfig.put(Base.ConfigKeys.PROVIDES, Authn.class.getName());
+        authConfig.put(Base.ConfigKeys.MODULE, "org.ovirt.engine.extensions.builtin");
+        authConfig.put(Base.ConfigKeys.CLASS, "org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthn");
         authConfig.put("ovirt.engine.aaa.authn.profile.name", "internal");
         authConfig.put("ovirt.engine.aaa.authn.authz.plugin", "internal");
         authConfig.put("config.authn.user.name", Config.<String> getValue(ConfigValues.AdminUser));
         authConfig.put("config.authn.user.password", Config.<String> getValue(ConfigValues.AdminPassword));
-        authConfig.put(ExtensionsManager.SENSITIVE_KEYS, "config.authn.user.password)");
+        authConfig.put(Base.ConfigKeys.SENSITIVE_KEYS, "config.authn.user.password)");
         ExtensionsManager.getInstance().load(authConfig);
 
         Properties dirConfig = new Properties();
-        dirConfig.put(ExtensionsManager.CLASS, "org.ovirt.engine.extensions.aaa.builtin.internal.InternalDirectory");
-        dirConfig.put(ExtensionsManager.PROVIDES, "org.ovirt.engine.authorization");
-        dirConfig.put(ExtensionsManager.ENABLED, "true");
-        dirConfig.put(ExtensionsManager.MODULE, "org.ovirt.engine.extensions.builtin");
-        dirConfig.put(ExtensionsManager.NAME, "internal");
+        dirConfig.put(Base.ConfigKeys.NAME, "internal");
+        dirConfig.put(Base.ConfigKeys.PROVIDES, Authz.class.getName());
+        dirConfig.put(Base.ConfigKeys.MODULE, "org.ovirt.engine.extensions.builtin");
+        dirConfig.put(Base.ConfigKeys.CLASS, "org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthz");
         dirConfig.put("config.authz.user.name", Config.<String> getValue(ConfigValues.AdminUser));
+        dirConfig.put("config.authz.user.id", "fdfc627c-d875-11e0-90f0-83df133b58cc");
+        dirConfig.put("config.query.filter.size",
+                Config.<Integer> getValue(ConfigValues.MaxLDAPQueryPartsNumber));
         ExtensionsManager.getInstance().load(dirConfig);
     }
 
     private void createKerberosLdapAAAConfigurations() {
-
+        Map<String, String> passwordChangeMsgPerDomain = new HashMap<>();
+        Map<String, String> passwordChangeUrlPerDomain = new HashMap<>();
+        String[] pairs = Config.<String> getValue(ConfigValues.ChangePasswordMsg).split(",");
+        for (String pair : pairs) {
+            //Split the pair in such a way that if the URL contains :, it will not be split to strings
+            String[] pairParts = pair.split(":", 2);
+            if (pairParts.length >= 2) {
+                String decodedMsgOrUrl;
+                try {
+                    decodedMsgOrUrl = URLDecoder.decode(pairParts[1], Charset.forName("UTF-8").toString());
+                    if (decodedMsgOrUrl.indexOf("http:") == 0 || decodedMsgOrUrl.indexOf("https:") == 0) {
+                        passwordChangeUrlPerDomain.put(pairParts[0], decodedMsgOrUrl);
+                    } else {
+                        passwordChangeMsgPerDomain.put(pairParts[0], decodedMsgOrUrl);
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
         for (String domain : Config.<String> getValue(ConfigValues.DomainName).split("[,]", 0)) {
             domain = domain.trim();
             if (!domain.isEmpty()) {
                 Properties authConfig = new Properties();
-                authConfig.put(ExtensionsManager.CLASS,
-                        "org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapAuthenticator");
-                authConfig.put(ExtensionsManager.PROVIDES, "org.ovirt.engine.authentication");
-                authConfig.put(ExtensionsManager.ENABLED, "true");
-                authConfig.put(ExtensionsManager.MODULE, "org.ovirt.engine.extensions.builtin");
-                authConfig.put(ExtensionsManager.NAME, String.format("builtin-authn-%1$s", domain));
+                authConfig.put(Base.ConfigKeys.NAME, String.format("builtin-authn-%1$s", domain));
+                authConfig.put(Base.ConfigKeys.PROVIDES, Authn.class.getName());
+                authConfig.put(Base.ConfigKeys.ENABLED, "true");
+                authConfig.put(Base.ConfigKeys.MODULE, "org.ovirt.engine.extensions.builtin");
+                authConfig.put(Base.ConfigKeys.CLASS,
+                        "org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapAuthn");
                 authConfig.put("ovirt.engine.aaa.authn.profile.name", domain);
                 authConfig.put("ovirt.engine.aaa.authn.authz.plugin", domain);
+                authConfig.put("config.change.password.url", blankIfNull(passwordChangeUrlPerDomain.get(domain)));
+                authConfig.put("config.change.password.msg", blankIfNull(passwordChangeMsgPerDomain.get(domain)));
                 ExtensionsManager.getInstance().load(authConfig);
 
                 Properties dirConfig = new Properties();
-                dirConfig.put(ExtensionsManager.CLASS,
-                        "org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapDirectory");
-                dirConfig.put(ExtensionsManager.PROVIDES, "org.ovirt.engine.authorization");
-                dirConfig.put(ExtensionsManager.ENABLED, "true");
-                dirConfig.put(ExtensionsManager.MODULE, "org.ovirt.engine.extensions.builtin");
-                dirConfig.put(ExtensionsManager.NAME, domain);
+                dirConfig.put(Base.ConfigKeys.NAME, domain);
+                dirConfig.put(Base.ConfigKeys.PROVIDES, Authz.class.getName());
+                dirConfig.put(Base.ConfigKeys.MODULE, "org.ovirt.engine.extensions.builtin");
+                dirConfig.put(Base.ConfigKeys.CLASS,
+                        "org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapAuthz");
+                dirConfig.put("config.query.filter.size",
+                        Config.<Integer> getValue(ConfigValues.MaxLDAPQueryPartsNumber));
                 ExtensionsManager.getInstance().load(dirConfig);
             }
         }
+    }
+
+    private String blankIfNull(String value) {
+        return value == null ? "" : value;
     }
 
 }

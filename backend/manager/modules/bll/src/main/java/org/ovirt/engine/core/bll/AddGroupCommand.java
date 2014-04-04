@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
-import org.ovirt.engine.core.aaa.Directory;
+import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbGroupDAO;
+import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 
 public class AddGroupCommand<T extends DirectoryIdParameters>
     extends CommandBase<T> {
@@ -35,13 +36,13 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
     protected boolean canDoAction() {
         String directoryName = getParameters().getDirectory();
         String id = getParameters().getId();
-        Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
-        if (directory == null) {
+        ExtensionProxy authz = AuthenticationProfileRepository.getInstance().getAuthz(directoryName);
+        if (authz == null) {
             addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
             return false;
         }
 
-        directoryGroup = directory.findGroupById(id);
+        directoryGroup = AuthzUtils.findGroupById(authz, id);
         if (directoryGroup == null) {
             addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
             return false;

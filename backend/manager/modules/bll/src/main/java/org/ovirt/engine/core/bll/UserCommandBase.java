@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
-import org.ovirt.engine.core.aaa.Directory;
+import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.IdParameters;
@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDAO;
+import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 
 public abstract class UserCommandBase<T extends IdParameters> extends CommandBase<T> {
     public UserCommandBase() {
@@ -58,11 +59,11 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
     public static DbUser initUser(String sessionId, String directoryName, String id) {
         DbUser dbUser = DbFacade.getInstance().getDbUserDao().getByExternalId(directoryName, id);
         if (dbUser == null) {
-            Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
-            if (directory == null) {
+            ExtensionProxy authz = AuthenticationProfileRepository.getInstance().getAuthz(directoryName);
+            if (authz == null) {
                 throw new VdcBLLException(VdcBllErrors.USER_FAILED_POPULATE_DATA);
             }
-            DirectoryUser directoryUser = directory.findUserById(id);
+            DirectoryUser directoryUser = AuthzUtils.findPrincipalById(authz, id);
             if (directoryUser == null) {
                 throw new VdcBLLException(VdcBllErrors.USER_FAILED_POPULATE_DATA);
             }

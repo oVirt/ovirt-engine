@@ -1,10 +1,14 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
+import org.ovirt.engine.api.extensions.ExtMap;
+
 public class LdapBrokerBaseParameters {
     private String privateDomain;
     private String authenticationDomain;
     private String sessionId;
     private String privatePassword;
+    private ExtMap inputMap;
+    private ExtMap outputMap;
 
     public LdapBrokerBaseParameters(String domain) {
         setDomain(domain);
@@ -25,6 +29,22 @@ public class LdapBrokerBaseParameters {
 
     public String getDomain() {
         return privateDomain;
+    }
+
+    public ExtMap getInputMap() {
+        return inputMap;
+    }
+
+    public void setInputMap(ExtMap inputMap) {
+        this.inputMap = inputMap;
+    }
+
+    public ExtMap getOutputMap() {
+        return outputMap;
+    }
+
+    public void setOutputMap(ExtMap outputMap) {
+        this.outputMap = outputMap;
     }
 
     public void setDomain(String value) {
@@ -64,5 +84,6 @@ public class LdapBrokerBaseParameters {
     public void setAuthenticationDomain(String value) {
         authenticationDomain = value;
     }
+
 
 }

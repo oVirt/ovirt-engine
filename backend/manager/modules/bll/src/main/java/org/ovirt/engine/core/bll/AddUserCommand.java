@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
-import org.ovirt.engine.core.aaa.Directory;
+import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbUserDAO;
+import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 
 public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase<T> {
     // We save a reference to the directory user to avoid looking it up once when checking the conditions and another
@@ -54,8 +55,8 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
         }
 
         // Check that the directory exists:
-        Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(directoryName);
-        if (directory == null) {
+        ExtensionProxy authz = AuthenticationProfileRepository.getInstance().getAuthz(directoryName);
+        if (authz == null) {
             log.errorFormat(
                 "Can't add user with id \"{0}\" because directory \"{1}\" doesn't exist.",
                 id, directoryName
@@ -66,7 +67,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
 
         // Check that the user is available in the directory (and save the reference to avoid looking it up later when
         // actually adding the user to the database):
-        directoryUser = directory.findUserById(id);
+        directoryUser = AuthzUtils.findPrincipalById(authz, id);
         if (directoryUser == null) {
             log.errorFormat(
                 "Can't add user with id \"{0}\" because it doesn't exist in directory \"{1}\".",

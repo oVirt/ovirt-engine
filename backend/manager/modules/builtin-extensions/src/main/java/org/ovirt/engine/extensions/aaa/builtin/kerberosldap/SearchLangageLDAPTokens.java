@@ -10,5 +10,7 @@ public enum SearchLangageLDAPTokens {
     $SAMACCOUNTNAME,
     $SN,
     $DEPARTMENT,
-    $TITLE
+    $TITLE,
+    $USER_ID,
+    $GROUP_ID,
 }

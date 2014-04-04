@@ -1,8 +1,13 @@
 package org.ovirt.engine.core.aaa;
 
+import java.util.Properties;
+
+import org.ovirt.engine.api.extensions.Base;
+import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
+
 /**
- * An authentication profile is the combination of an authenticator and a directory. An user wishing to login to the
- * system is authenticated by the authenticator and then the details are looked up in the directory.
+ * An authentication profile is the combination of an authn and authz extensions. An user wishing to login to the system
+ * is authenticated by the authn extension and then the details are looked up in the authz extension.
  */
 public class AuthenticationProfile {
     /**
@@ -10,27 +15,22 @@ public class AuthenticationProfile {
      */
     private String name;
 
-    /**
-     * Reference to the authenticator object.
-     */
-    private Authenticator authenticator;
+    private ExtensionProxy authn;
 
-    /**
-     * Reference to the directory object.
-     */
-    private Directory directory;
+    private ExtensionProxy authz;
 
     /**
      * Create a new authentication profile with the given name, authenticator and directory.
      *
-     * @param authenticator the authenticator that will be used to check the credentials of the user
-     * @param directory the directory that will be used to lookup the details of the user once it is successfully
+     * @param authn the authenticator that will be used to check the credentials of the user
+     * @param authz the directory that will be used to lookup the details of the user once it is successfully
      *     authenticated
      */
-    public AuthenticationProfile(Authenticator authenticator, Directory directory) {
-        this.name = authenticator.getProfileName();
-        this.authenticator = authenticator;
-        this.directory = directory;
+    public AuthenticationProfile(ExtensionProxy authn, ExtensionProxy authz) {
+        this.name = authn.getContext().<Properties> get(Base.ContextKeys.CONFIGURATION)
+                .getProperty("ovirt.engine.aaa.authn.profile.name");
+        this.authn = authn;
+        this.authz = authz;
     }
 
     /**
@@ -43,14 +43,15 @@ public class AuthenticationProfile {
     /**
      * Get a reference to the authenticator.
      */
-    public Authenticator getAuthenticator() {
-        return authenticator;
+    public ExtensionProxy getAuthn() {
+        return authn;
     }
 
     /**
      * Get a reference to the directory.
      */
-    public Directory getDirectory() {
-        return directory;
+
+    public ExtensionProxy getAuthz() {
+        return authz;
     }
 }
