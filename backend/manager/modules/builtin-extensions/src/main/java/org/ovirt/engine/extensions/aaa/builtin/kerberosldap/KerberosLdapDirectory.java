@@ -11,7 +11,7 @@ import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.extensions.Extension.ExtensionProperties;
+import org.ovirt.engine.api.extensionsold.Extension.ExtensionProperties;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 

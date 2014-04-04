@@ -3,7 +3,7 @@ package org.ovirt.engine.core.aaa;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.api.extensions.Extension;
+import org.ovirt.engine.api.extensionsold.Extension;
 
 /**
  * A directory is an object that manages a collection of users and groups, usually stored in an external system like an

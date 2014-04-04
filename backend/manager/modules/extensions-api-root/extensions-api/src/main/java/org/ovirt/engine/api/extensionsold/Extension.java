@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.extensions;
+package org.ovirt.engine.api.extensionsold;
 
 import java.util.Map;
 

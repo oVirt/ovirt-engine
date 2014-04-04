@@ -5,7 +5,7 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ovirt.engine.api.extensions.Extension.ExtensionProperties;
+import org.ovirt.engine.api.extensionsold.Extension.ExtensionProperties;
 import org.ovirt.engine.core.aaa.Authenticator;
 import org.ovirt.engine.core.aaa.NegotiationResult;
 import org.slf4j.Logger;

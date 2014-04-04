@@ -5,8 +5,8 @@ import java.util.EnumMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.extensions.AAAExtensionException;
-import org.ovirt.engine.api.extensions.AAAExtensionException.AAAExtensionError;
+import org.ovirt.engine.api.extensionsold.AAAExtensionException;
+import org.ovirt.engine.api.extensionsold.AAAExtensionException.AAAExtensionError;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.Authenticator;

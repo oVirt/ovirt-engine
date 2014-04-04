@@ -6,7 +6,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ovirt.engine.api.extensions.Extension;
+import org.ovirt.engine.api.extensionsold.Extension;
 
 /**
  * A authenticator is an object used to verify an identity.

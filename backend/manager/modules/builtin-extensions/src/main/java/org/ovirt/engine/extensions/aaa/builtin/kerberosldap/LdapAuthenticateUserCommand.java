@@ -5,8 +5,8 @@ import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.api.extensions.AAAExtensionException;
-import org.ovirt.engine.api.extensions.AAAExtensionException.AAAExtensionError;
+import org.ovirt.engine.api.extensionsold.AAAExtensionException;
+import org.ovirt.engine.api.extensionsold.AAAExtensionException.AAAExtensionError;
 
 public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
 

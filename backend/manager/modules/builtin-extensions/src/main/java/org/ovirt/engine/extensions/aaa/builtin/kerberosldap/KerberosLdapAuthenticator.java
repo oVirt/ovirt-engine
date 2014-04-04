@@ -5,8 +5,8 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.api.extensions.AAAExtensionException;
-import org.ovirt.engine.api.extensions.AAAExtensionException.AAAExtensionError;
+import org.ovirt.engine.api.extensionsold.AAAExtensionException;
+import org.ovirt.engine.api.extensionsold.AAAExtensionException.AAAExtensionError;
 import org.ovirt.engine.core.aaa.Authenticator;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;

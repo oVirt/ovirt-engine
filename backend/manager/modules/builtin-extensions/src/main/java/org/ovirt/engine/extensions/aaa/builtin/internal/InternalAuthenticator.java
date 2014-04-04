@@ -2,7 +2,7 @@ package org.ovirt.engine.extensions.aaa.builtin.internal;
 
 import java.util.Properties;
 
-import org.ovirt.engine.api.extensions.AAAExtensionException;
+import org.ovirt.engine.api.extensionsold.AAAExtensionException;
 import org.ovirt.engine.core.aaa.Authenticator;
 
 /**
