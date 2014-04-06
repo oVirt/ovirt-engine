@@ -810,6 +810,21 @@ class SystemEnv(object):
     def NFS_CONFIG_ENABLED(self):
         return 'OVESETUP_SYSTEM/nfsConfigEnabled'
 
+    #
+    # In 3.3/3.4.0 the NFS_CONFIG_ENABLED was in postinstall file
+    # and now removed.
+    # At first upgrade from these versions we should not consider
+    # its value from environment.
+    # This variable will not be available at these versions, and
+    # will set to False in future runs to allow us to
+    # consider the value of NFS_CONFIG_ENABLED in later setups.
+    #
+    @osetupattrs(
+        postinstallfile=True,
+    )
+    def NFS_CONFIG_ENABLED_LEGACY_IN_POSTINSTALL(self):
+        return 'OVESETUP_SYSTEM/nfsConfigEnabled_legacyInPostInstall'
+
     HOSTILE_SERVICES = 'OVESETUP_SYSTEM/hostileServices'
 
 
