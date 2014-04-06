@@ -426,7 +426,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     public String getDuration() {
         // return time in seconds
-        return String.valueOf((new Date().getTime() - getParameters().getStartTime().getTime()) / 1000 % 60);
+        return String.valueOf((new Date().getTime() - getParameters().getStartTime().getTime()) / 1000);
     }
 
     @Override
