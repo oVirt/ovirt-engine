@@ -1691,5 +1691,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("en_US")
     DefaultSysprepLocale,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    MixedDomainTypesInDataCenter,
+
     Invalid;
 }
