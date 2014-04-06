@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -126,7 +127,9 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                 .addValue("mtu", nic.getMtu())
                 .addValue("bridged", nic.isBridged())
                 .addValue("qos_overridden", nic.isQosOverridden())
-                .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()));
+                .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()))
+                .addValue("custom_properties",
+                        SerializationFactory.getSerializer().serialize(nic.getCustomProperties()));
     }
 
     private void persistQosChanges(VdsNetworkInterface entity) {
@@ -308,6 +311,8 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                     entity.setQosOverridden(rs.getBoolean("qos_overridden"));
                     entity.setLabels(SerializationFactory.getDeserializer().deserialize(rs.getString("labels"),
                             HashSet.class));
+                    entity.setCustomProperties(SerializationFactory.getDeserializer()
+                            .deserialize(rs.getString("custom_properties"), LinkedHashMap.class));
                     return entity;
                 }
 

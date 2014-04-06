@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -45,6 +46,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private NetworkImplementationDetails networkImplementationDetails;
     private NetworkQoS qos;
     private boolean qosOverridden;
+    private Map<String, String> customProperties;
 
     @ValidNetworkLabelFormat(message = "NETWORK_LABEL_FORMAT_INVALID")
     private Set<String> labels;
@@ -364,6 +366,14 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         this.labels = labels;
     }
 
+    public Map<String, String> getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties (Map<String, String> customProperties) {
+        this.customProperties = customProperties;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -408,6 +418,8 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 .append(isQosOverridden())
                 .append(", labels=")
                 .append(getLabels())
+                .append(", customProperties=")
+                .append(getCustomProperties())
                 .append("}");
         return builder.toString();
     }
@@ -432,6 +444,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         result = prime * result + ((qos == null) ? 0 : qos.hashCode());
         result = prime * result + (qosOverridden ? 1231 : 1237);
         result = prime * result + ((labels == null) ? 0 : labels.hashCode());
+        result = prime * result + ((customProperties == null) ? 0 : customProperties.hashCode());
         return result;
     }
 
@@ -529,6 +542,9 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
             return false;
         }
         if (!ObjectUtils.objectsEqual(labels, other.labels)) {
+            return false;
+        }
+        if (!ObjectUtils.objectsEqual(customProperties, other.customProperties)) {
             return false;
         }
 
