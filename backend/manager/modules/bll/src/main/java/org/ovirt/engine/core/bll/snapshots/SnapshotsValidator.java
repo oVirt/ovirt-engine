@@ -59,18 +59,6 @@ public class SnapshotsValidator {
     }
 
     /**
-     * Check that the given snapshot is not broken, and if it is then return the corresponding error.
-     *
-     * @param snapshot
-     *            The snapshot to check.
-     * @return Is snapshot broken or not.
-     */
-    public ValidationResult snapshotNotBroken(Snapshot snapshot) {
-        return SnapshotStatus.BROKEN == snapshot.getStatus() ?
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_IS_BROKEN) : ValidationResult.VALID;
-    }
-
-    /**
      * Check if the given snapshot id exists for the given VM in the DB.
      *
      * @param vmId

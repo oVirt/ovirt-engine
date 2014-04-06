@@ -104,19 +104,6 @@ public class SnapshotsValidatorTest {
         validateValidResult(validator.snapshotExists(snapshot));
     }
 
-    @Test
-    public void snapshotNotBrokenReturnsInvalidResult() throws Exception {
-        snapshot.setStatus(SnapshotStatus.BROKEN);
-
-        validateInvalidResult(validator.snapshotNotBroken(snapshot),
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_IS_BROKEN);
-    }
-
-    @Test
-    public void snapshotNotBrokenReturnsValidResult() throws Exception {
-        validateValidResult(validator.snapshotNotBroken(snapshot));
-    }
-
     /**
      * Validate that the given result is valid.
      *

@@ -67,9 +67,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The snapshot ${SnapshotName} of VM ${VmName} has no configuration available. Please choose a snapshot with configuration available.")
     String ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The snapshot is broken, and no further work can be done on it. Please remove this snapshot from the VM.")
-    String ACTION_TYPE_FAILED_VM_SNAPSHOT_IS_BROKEN();
-
     @DefaultStringValue("Cannot ${action} ${type}. This VM is not managed by the engine.")
     String ACTION_TYPE_FAILED_CANNOT_RUN_ACTION_ON_NON_MANAGED_VM();
 
