@@ -60,23 +60,29 @@ class Plugin(plugin.PluginBase):
         )[0]
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_BOOT,
-    )
-    def _boot(self):
-        # Override existing post installs
-        self.environment.setdefault(
-            osetupcons.SystemEnv.NFS_CONFIG_ENABLED,
-            None
-        )
-
-    @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
         self.environment.setdefault(
+            osetupcons.SystemEnv.NFS_CONFIG_ENABLED,
+            None
+        )
+        self.environment.setdefault(
             osetupcons.SystemEnv.NFS_SERVICE_NAME,
             None
         )
+
+        #
+        # Assume we have the flag in post install
+        # on non new installation.
+        #
+        self.environment.setdefault(
+            osetupcons.SystemEnv.NFS_CONFIG_ENABLED_LEGACY_IN_POSTINSTALL,
+            self.environment[
+                osetupcons.CoreEnv.ORIGINAL_GENERATED_BY_VERSION
+            ] is not None
+        )
+
         self._enabled = True
 
     @plugin.event(
@@ -103,11 +109,22 @@ class Plugin(plugin.PluginBase):
                     break
             else:
                 self._enabled = False
-        if self.environment[osetupcons.SystemEnv.NFS_CONFIG_ENABLED] is None:
+        if (
+            self.environment[
+                osetupcons.SystemEnv.NFS_CONFIG_ENABLED
+            ] is None or
+            self.environment[
+                osetupcons.SystemEnv.NFS_CONFIG_ENABLED_LEGACY_IN_POSTINSTALL
+            ]
+        ):
             if not self.environment[osetupcons.DBEnv.NEW_DATABASE]:
                 self.environment[
                     osetupcons.SystemEnv.NFS_CONFIG_ENABLED
                 ] = False
+
+        self.environment[
+            osetupcons.SystemEnv.NFS_CONFIG_ENABLED_LEGACY_IN_POSTINSTALL
+        ] = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
