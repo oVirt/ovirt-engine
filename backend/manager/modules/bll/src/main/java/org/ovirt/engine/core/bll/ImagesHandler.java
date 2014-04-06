@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +14,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
@@ -25,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.DiskLunMapId;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -37,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -50,6 +54,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.ovf.OvfManager;
+import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -765,5 +771,42 @@ public final class ImagesHandler {
             }
         }
         return intersection;
+    }
+
+    /**
+     * Prepare a single {@link org.ovirt.engine.core.common.businessentities.Snapshot} object representing a snapshot of a given VM without the give disk.
+     */
+    public static Snapshot prepareSnapshotConfigWithoutImageSingleImage(Snapshot snapshot, Guid imageId) {
+        try {
+            OvfManager ovfManager = new OvfManager();
+            String snapConfig = snapshot.getVmConfiguration();
+
+            if (snapshot.isVmConfigurationAvailable() && snapConfig != null) {
+                VM vmSnapshot = new VM();
+                ArrayList<DiskImage> snapshotImages = new ArrayList<DiskImage>();
+
+                ovfManager.ImportVm(snapConfig,
+                        vmSnapshot,
+                        snapshotImages,
+                        new ArrayList<VmNetworkInterface>());
+
+                // Remove the image from the disk list
+                Iterator<DiskImage> diskIter = snapshotImages.iterator();
+                while (diskIter.hasNext()) {
+                    DiskImage imageInList = diskIter.next();
+                    if (imageInList.getImageId().equals(imageId)) {
+                        log.debugFormat("Recreating vmSnapshot {0} without the image {1}", snapshot.getId(), imageId);
+                        diskIter.remove();
+                        break;
+                    }
+                }
+
+                String newOvf = ovfManager.ExportVm(vmSnapshot, snapshotImages, ClusterUtils.getCompatibilityVersion(vmSnapshot));
+                snapshot.setVmConfiguration(newOvf);
+            }
+        } catch (OvfReaderException e) {
+            log.errorFormat("Can't remove image {0} from snapshot {1}", imageId, snapshot.getId());
+        }
+        return snapshot;
     }
 }

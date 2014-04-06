@@ -112,7 +112,7 @@ public class RemoveImageCommandTest {
         doReturn(disk2).when(cmd).getDiskImage();
         doReturn(disk2).when(cmd).getImage();
         doReturn(disk2.getId()).when(cmd).getImageId();
-        Snapshot actual = cmd.prepareSnapshotConfigWithoutImageSingleImage(vmSnapshotId, disk2.getImageId());
+        Snapshot actual = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snap, disk2.getImageId());
         String actualOvf = actual.getVmConfiguration();
 
         ArrayList<DiskImage> actualImages = new ArrayList<DiskImage>();
@@ -146,7 +146,7 @@ public class RemoveImageCommandTest {
         doReturn(disk2).when(cmd).getDiskImage();
         doReturn(disk2).when(cmd).getImage();
         doReturn(disk2.getId()).when(cmd).getImageId();
-        Snapshot actual = cmd.prepareSnapshotConfigWithoutImageSingleImage(vmSnapshotId, disk2.getImageId());
+        Snapshot actual = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snap, disk2.getImageId());
         String actualOvf = actual.getVmConfiguration();
 
         ArrayList<DiskImage> actualImages = new ArrayList<DiskImage>();

@@ -171,7 +171,9 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
     protected void updateSnapshotVmConfiguration() {
         Guid imageId = getParameters().getImageIds().get(getParameters().getExecutionIndex());
-        Snapshot snapshotWithoutImage = prepareSnapshotConfigWithoutImageSingleImage(getSnapshotId(), imageId);
+        Snapshot snapshot = getSnapshotDao().get(getSnapshotId());
+
+        Snapshot snapshotWithoutImage = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot, imageId);
         getSnapshotDao().update(snapshotWithoutImage);
     }
 

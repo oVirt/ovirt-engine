@@ -230,8 +230,9 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         for (DiskImage snapshotDisk : snapshotDisks) {
             Guid vmSnapshotId = snapshotDisk.getVmSnapshotId();
             if (vmSnapshotId != null && !Guid.Empty.equals(vmSnapshotId)) {
+                Snapshot snapshot = getSnapshotDao().get(vmSnapshotId);
                 Snapshot updated =
-                        prepareSnapshotConfigWithoutImageSingleImage(vmSnapshotId,
+                        ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot,
                                 snapshotDisk.getImageId());
                 if (updated != null) {
                     result.add(updated);
