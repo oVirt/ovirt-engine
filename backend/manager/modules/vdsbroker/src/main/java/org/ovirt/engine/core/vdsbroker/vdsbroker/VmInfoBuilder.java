@@ -368,31 +368,22 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 if (vmInterface.getType() != null) {
                     ifaceType = VmInterfaceType.forValue(vmInterface.getType());
                 }
-                if (ifaceType == VmInterfaceType.rtl8139_pv) {
-                    if (vm.getHasAgent()) {
-                        addNetworkInterfaceProperties(struct,
-                                vmInterface,
-                                vmDevice,
-                                VmInterfaceType.pv.name(),
-                                vm.getVdsGroupCompatibilityVersion());
-                    } else {
-                        addNetworkInterfaceProperties(struct,
-                                vmInterface,
-                                vmDevice,
-                                VmInterfaceType.rtl8139.name(),
-                                vm.getVdsGroupCompatibilityVersion());
-                    }
-                } else {
-                    addNetworkInterfaceProperties(struct,
-                            vmInterface,
-                            vmDevice,
-                            ifaceType.getInternalName(),
-                            vm.getVdsGroupCompatibilityVersion());
-                }
+
+                addNetworkInterfaceProperties(struct,
+                        vmInterface,
+                        vmDevice,
+                        VmInfoBuilder.evaluateInterfaceType(ifaceType, vm.getHasAgent()),
+                        vm.getVdsGroupCompatibilityVersion());
                 devices.add(struct);
                 addToManagedDevices(vmDevice);
             }
         }
+    }
+
+    public static String evaluateInterfaceType(VmInterfaceType ifaceType, boolean vmHasAgent) {
+        return ifaceType == VmInterfaceType.rtl8139_pv
+                ? (vmHasAgent ? VmInterfaceType.pv.name() : VmInterfaceType.rtl8139.name())
+                : ifaceType.getInternalName();
     }
 
     @Override
