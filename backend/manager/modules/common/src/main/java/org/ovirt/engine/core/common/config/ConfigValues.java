@@ -1434,6 +1434,18 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
+    NetworkCustomPropertiesSupported,
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    PreDefinedNetworkCustomProperties,
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    UserDefinedNetworkCustomProperties,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
     MultipleGatewaysSupported,
 
     @TypeConverterAttribute(Boolean.class)

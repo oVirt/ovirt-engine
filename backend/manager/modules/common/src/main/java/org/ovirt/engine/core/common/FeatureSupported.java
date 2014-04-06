@@ -122,6 +122,10 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.SupportCustomDeviceProperties, version);
     }
 
+    public static boolean networkCustomProperties(Version version) {
+        return supportedInConfig(ConfigValues.NetworkCustomPropertiesSupported, version);
+    }
+
     /**
      * @param version
      *            Compatibility version to check for.
