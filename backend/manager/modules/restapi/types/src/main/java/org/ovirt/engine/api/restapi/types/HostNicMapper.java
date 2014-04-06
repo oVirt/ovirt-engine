@@ -160,7 +160,7 @@ public class HostNicMapper {
 
     public static Integer tryParse(String text) {
         try {
-          return new Integer(text);
+          return Integer.valueOf(text);
         } catch (NumberFormatException e) {
           return null;
         }

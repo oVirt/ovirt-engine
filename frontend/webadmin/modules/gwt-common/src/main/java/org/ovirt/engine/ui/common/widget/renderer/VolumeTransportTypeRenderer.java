@@ -33,7 +33,7 @@ public class VolumeTransportTypeRenderer extends AbstractRenderer<Set<TransportT
                 transportTypesBuilder.append(", "); //$NON-NLS-1$
             }
         }
-        return (new String(transportTypesBuilder.toString()));
+        return transportTypesBuilder.toString();
     }
 
 }

@@ -292,7 +292,7 @@ public class BaseBackendResource {
 
     protected Long asLong(String id) {
         try {
-            return new Long(id);
+            return Long.valueOf(id);
         }catch (IllegalArgumentException e) {
             throw new MalformedIdException(e);
         }

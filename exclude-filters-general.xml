@@ -5,7 +5,7 @@
     Dm: Reliance on default encoding (DM_DEFAULT_ENCODING)
     -->
     <Match>
-        <Bug code="Dm" />
+        <Bug pattern="DM_DEFAULT_ENCODING" />
     </Match>
 
     <!--

@@ -236,7 +236,7 @@
      <Match>
        <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.UpdateMainContentLayoutEvent" />
        <Method name="hashCode"/>
-       <Bug code="DM"/>
+       <Bug pattern="DM_BOOLEAN_CTOR"/>
      </Match>
 
     <!--
