@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.validator.NetworkQosValidator;
@@ -22,13 +23,20 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.customprop.SimpleCustomPropertiesUtil;
+import org.ovirt.engine.core.utils.customprop.ValidationError;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class SetupNetworksHelper {
     protected static final String VIOLATING_ENTITIES_LIST_FORMAT = "${0}_LIST {1}";
+    private static final Log log = LogFactory.getLog(SetupNetworksHelper.class);
     private SetupNetworksParameters params;
     private VDS vds;
     private Map<VdcBllMessages, List<String>> violations = new HashMap<VdcBllMessages, List<String>>();
@@ -52,12 +60,24 @@ public class SetupNetworksHelper {
 
     private Map<String, List<NetworkType>> ifacesWithExclusiveNetwork = new HashMap<String, List<NetworkType>>();
 
-    private final boolean hostNetworkQosSupported;
+    private boolean hostNetworkQosSupported;
+    private boolean networkCustomPropertiesSupported;
 
     public SetupNetworksHelper(SetupNetworksParameters parameters, VDS vds) {
         params = parameters;
         this.vds = vds;
+
+        setSupportedFeatures();
+    }
+
+    private void setSupportedFeatures() {
         hostNetworkQosSupported = FeatureSupported.hostNetworkQos(vds.getVdsGroupCompatibilityVersion());
+        networkCustomPropertiesSupported =
+                FeatureSupported.networkCustomProperties(vds.getVdsGroupCompatibilityVersion());
+    }
+
+    protected List<String> translateErrorMessages(List<String> messages) {
+        return Backend.getInstance().getErrorsTranslator().TranslateErrorText(messages);
     }
 
     /**
@@ -101,6 +121,7 @@ public class SetupNetworksHelper {
         validateMTU();
         validateNetworkQos();
         validateNotRemovingLabeledNetworks();
+        validateCustomProperties();
 
         return translateViolations();
     }
@@ -137,9 +158,11 @@ public class SetupNetworksHelper {
                 Set<String> existingLabels =
                         NetworkUtils.isLabeled(existingNic) ? existingNic.getLabels() : Collections.<String> emptySet();
                 if (!CollectionUtils.isEqualCollection(newLabels, existingLabels)
-                        || nic.isQosOverridden() != existingNic.isQosOverridden()) {
+                        || nic.isQosOverridden() != existingNic.isQosOverridden()
+                        || customPropertiesChanged(nic, existingNic)) {
                     existingNic.setLabels(newLabels);
                     existingNic.setQosOverridden(nic.isQosOverridden());
+                    existingNic.setCustomProperties(nic.getCustomProperties());
                     modifiedInterfaces.add(existingNic);
                 }
             }
@@ -212,6 +235,38 @@ public class SetupNetworksHelper {
                 }
                 if (qosValidator.peakConsistentWithAverage() != ValidationResult.VALID) {
                     addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE, iface.getNetworkName());
+                }
+            }
+        }
+    }
+
+    private void validateCustomProperties() {
+        String version = vds.getVdsGroupCompatibilityVersion().getValue();
+        SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
+        Map<String, String> validProperties =
+                util.convertProperties(Config.<String> getValue(ConfigValues.PreDefinedNetworkCustomProperties, version));
+        validProperties.putAll(util.convertProperties(Config.<String> getValue(ConfigValues.UserDefinedNetworkCustomProperties,
+                version)));
+        for (VdsNetworkInterface iface : params.getInterfaces()) {
+            if (iface.hasCustomProperties()) {
+                String networkName = iface.getNetworkName();
+                if (StringUtils.isEmpty(networkName)) {
+                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NO_NETWORK,
+                            iface.getName());
+                } else {
+                    if (!networkCustomPropertiesSupported) {
+                        addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
+                                networkName);
+                    }
+
+                    List<ValidationError> errors =
+                            util.validateProperties(validProperties, iface.getCustomProperties());
+                    if (!errors.isEmpty()) {
+                        addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT, networkName);
+                        List<String> messages = new ArrayList<>();
+                        util.handleCustomPropertiesError(errors, messages);
+                        log.error(StringUtils.join(translateErrorMessages(messages), ','));
+                    }
                 }
             }
         }
@@ -504,7 +559,8 @@ public class SetupNetworksHelper {
         return !ObjectUtils.equals(iface.getNetworkName(), existingIface.getNetworkName())
                 || iface.getBootProtocol() != existingIface.getBootProtocol()
                 || staticBootProtoPropertiesChanged(iface, existingIface)
-                || !ObjectUtils.equals(iface.getQos(), existingIface.getQos());
+                || !ObjectUtils.equals(iface.getQos(), existingIface.getQos())
+                || customPropertiesChanged(iface, existingIface);
     }
 
     /**
@@ -531,6 +587,19 @@ public class SetupNetworksHelper {
                 && (!ObjectUtils.equals(iface.getAddress(), existingIface.getAddress())
                         || !ObjectUtils.equals(iface.getGateway(), existingIface.getGateway())
                         || !ObjectUtils.equals(iface.getSubnet(), existingIface.getSubnet()));
+    }
+
+    /**
+     * @param iface
+     *            New interface definition.
+     * @param existingIface
+     *            Existing interface definition.
+     * @return <code>true</code> iff the custom properties have changed (null and empty map are considered equal).
+     */
+    private boolean customPropertiesChanged(VdsNetworkInterface iface, VdsNetworkInterface existingIface) {
+        return (iface.hasCustomProperties() != existingIface.hasCustomProperties())
+                || (iface.hasCustomProperties()
+                        && !iface.getCustomProperties().equals(existingIface.getCustomProperties()));
     }
 
     private boolean isBond(VdsNetworkInterface iface) {

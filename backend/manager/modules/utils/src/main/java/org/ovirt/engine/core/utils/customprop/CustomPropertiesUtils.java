@@ -66,7 +66,7 @@ public class CustomPropertiesUtils {
      * Regex describing properties definition. They can be in the from of "key=value" or "key1=value1;... key-n=value_n"
      * (last {@code ;} character can be omitted)
      */
-    protected static final String VALIDATION_STR = KEY_VALUE_REGEX_STR + "(;" + KEY_VALUE_REGEX_STR + ")*;?";
+    protected static final String VALIDATION_STR = "(" + KEY_VALUE_REGEX_STR + "(;" + KEY_VALUE_REGEX_STR + ")*;?)?";
 
     /**
      * Pattern to validation properties definition

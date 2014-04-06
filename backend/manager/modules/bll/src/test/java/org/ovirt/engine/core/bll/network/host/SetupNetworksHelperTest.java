@@ -13,8 +13,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -56,7 +58,19 @@ public class SetupNetworksHelperTest {
             mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_2.toString(), false),
             mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_2.toString(), false),
             mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_3.toString(), false),
-            mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_4.toString(), true));
+            mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_4.toString(), true),
+            mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_5.toString(), true),
+            mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_3.toString(), false),
+            mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_4.toString(), false),
+            mockConfig(ConfigValues.NetworkCustomPropertiesSupported, Version.v3_5.toString(), true),
+            mockConfig(ConfigValues.PreDefinedNetworkCustomProperties, Version.v3_2.toString(), ""),
+            mockConfig(ConfigValues.PreDefinedNetworkCustomProperties, Version.v3_3.toString(), ""),
+            mockConfig(ConfigValues.PreDefinedNetworkCustomProperties, Version.v3_4.toString(), ""),
+            mockConfig(ConfigValues.PreDefinedNetworkCustomProperties, Version.v3_5.toString(), ""),
+            mockConfig(ConfigValues.UserDefinedNetworkCustomProperties, Version.v3_2.toString(), ""),
+            mockConfig(ConfigValues.UserDefinedNetworkCustomProperties, Version.v3_3.toString(), ""),
+            mockConfig(ConfigValues.UserDefinedNetworkCustomProperties, Version.v3_4.toString(), ""),
+            mockConfig(ConfigValues.UserDefinedNetworkCustomProperties, Version.v3_5.toString(), "foo=^[a-zA-Z0-9]*$"));
 
     @Mock
     private NetworkDao networkDAO;
@@ -387,6 +401,70 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_4);
 
         validateAndAssertNetworkModified(helper, network);
+    }
+
+    @Test
+    public void customPropertiesNotSupported() {
+        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        mockExistingNetworks(network);
+        VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
+        mockExistingIfaces(iface);
+        iface.setCustomProperties(createCustomProperties());
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(iface));
+
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
+                network.getName());
+    }
+
+    @Test
+    public void customPropertiesNoNetwork() {
+        mockExistingNetworks();
+        VdsNetworkInterface iface = createNic("eth0", null);
+        mockExistingIfaces(iface);
+        iface.setCustomProperties(createCustomProperties());
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_5);
+
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NO_NETWORK,
+                iface.getName());
+    }
+
+    @Test
+    public void customPropertiesBadInput() {
+        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        mockExistingNetworks(network);
+        VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
+        mockExistingIfaces(iface);
+        Map<String, String> customProperties = new HashMap<String, String>();
+        customProperties.put("foo", "b@r");
+        iface.setCustomProperties(customProperties);
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_5);
+
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT,
+                network.getName());
+    }
+
+    @Test
+    public void customPropertiesModified() {
+        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        mockExistingNetworks(network);
+        VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
+        mockExistingIfaces(iface);
+        iface.setCustomProperties(createCustomProperties());
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_5);
+
+        validateAndExpectNoViolations(helper);
+        assertNoBondsModified(helper);
+        assertNetworkModified(helper, network);
+        assertNoNetworksRemoved(helper);
+        assertNoBondsRemoved(helper);
+        assertInterfaceModified(helper, iface);
     }
 
     /* --- Tests for external networks --- */
@@ -1773,6 +1851,12 @@ public class SetupNetworksHelperTest {
         return qos;
     }
 
+    private Map<String, String> createCustomProperties() {
+        Map<String, String> customProperties = new HashMap<String, String>();
+        customProperties.put("foo", "bar");
+        return customProperties;
+    }
+
     private void mockExistingNetworks(Network... networks) {
         when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(Arrays.asList(networks));
     }
@@ -1822,6 +1906,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = spy(new SetupNetworksHelper(params, vds));
 
         when(helper.getVmInterfaceManager()).thenReturn(vmInterfaceManager);
+        doReturn(null).when(helper).translateErrorMessages(any(List.class));
         DbFacade dbFacade = mock(DbFacade.class);
         doReturn(dbFacade).when(helper).getDbFacade();
         doReturn(interfaceDAO).when(dbFacade).getInterfaceDao();

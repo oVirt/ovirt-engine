@@ -191,6 +191,7 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
                 vdsIface.setId(dbIface.getId());
                 vdsIface.setLabels(dbIface.getLabels());
                 vdsIface.setQosOverridden(dbIface.isQosOverridden());
+                vdsIface.setCustomProperties(dbIface.getCustomProperties());
                 dbIfacesToBatch.add(vdsIface);
                 updatedIfaces.add(vdsIface.getName());
             } else {
@@ -224,6 +225,7 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
                 VdsNetworkInterface nic = nicsByName.get(nicForUpdate.getName());
                 nicForUpdate.setLabels(nic.getLabels());
                 nicForUpdate.setQosOverridden(nic.isQosOverridden());
+                nicForUpdate.setCustomProperties(nic.getCustomProperties());
             }
         }
     }

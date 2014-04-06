@@ -79,6 +79,10 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 opts.put(DEFAULT_ROUTE, Boolean.TRUE);
             }
 
+            if (iface.hasCustomProperties()) {
+                opts.put(VdsProperties.NETWORK_CUSTOM_PROPERTIES, iface.getCustomProperties());
+            }
+
             networks.put(network.getName(), opts);
         }
 
