@@ -93,6 +93,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("pm_secondary_port", vds.getPmSecondaryPort())
                 .addValue("pm_secondary_options", vds.getPmSecondaryOptions())
                 .addValue("pm_secondary_concurrent", vds.isPmSecondaryConcurrent())
+                .addValue("pm_detect_kdump", vds.isPmKdumpDetection())
                 .addValue("otp_validity", vds.getOtpValidity())
                 .addValue("vds_spm_priority", vds.getVdsSpmPriority())
                 .addValue("console_address", vds.getConsoleAddress())
@@ -154,6 +155,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
             entity.setPmSecondaryPort((Integer) rs.getObject("pm_secondary_port"));
             entity.setPmSecondaryOptions(rs.getString("pm_secondary_options"));
             entity.setPmSecondaryConcurrent(rs.getBoolean("pm_secondary_concurrent"));
+            entity.setPmKdumpDetection(rs.getBoolean("pm_detect_kdump"));
             entity.setOtpValidity(rs.getLong("otp_validity"));
             entity.setSshKeyFingerprint(rs.getString("sshKeyFingerprint"));
             entity.setConsoleAddress(rs.getString("console_address"));

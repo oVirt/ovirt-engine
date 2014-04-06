@@ -55,7 +55,8 @@ BEGIN
           'vds_group_compatibility_version', 'vds_group_virt_service', 'vds_group_gluster_service', 'host_os', 'kvm_version', 'libvirt_version', 'spice_version', 'kernel_version',
           'iscsi_initiator_name', 'transparent_hugepages_state', 'anonymous_hugepages',
           'non_operational_reason', 'recoverable', 'sshkeyfingerprint', 'count_threads_as_cores', 'cpu_threads',
-          'hw_manufacturer', 'hw_product_name', 'hw_version', 'hw_serial_number', 'hw_uuid', 'hw_family', 'ssh_port', 'ssh_username', 'boot_time'));
+          'hw_manufacturer', 'hw_product_name', 'hw_version', 'hw_serial_number', 'hw_uuid', 'hw_family', 'ssh_port', 'ssh_username', 'boot_time',
+          'pm_detect_kdump'));
 -- pm_options are missing
 END; $function$
 LANGUAGE plpgsql;

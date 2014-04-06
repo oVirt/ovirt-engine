@@ -161,6 +161,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setPmSecondaryPassword(getPmSecondaryPassword());
         vds.setPmSecondaryConcurrent(isPmSecondaryConcurrent());
         vds.setPmPort(getPmPort());
+        vds.setPmKdumpDetection(isPmKdumpDetection());
         vds.setConsoleAddress(getConsoleAddress());
         vds.setHBAs(getHBAs());
         vds.setVdsSpmPriority(getVdsSpmPriority());
@@ -947,6 +948,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public void setPmSecondaryOptionsMap(HashMap<String, String> value) {
         mVdsStatic.setPmSecondaryOptionsMap(value);
+    }
+
+    public boolean isPmKdumpDetection() {
+        return mVdsStatic.isPmKdumpDetection();
+    }
+
+    public void setPmKdumpDetection(boolean pmKdumpDetection) {
+        mVdsStatic.setPmKdumpDetection(pmKdumpDetection);
     }
 
     public void setPmOptionsMap(HashMap<String, String> value) {

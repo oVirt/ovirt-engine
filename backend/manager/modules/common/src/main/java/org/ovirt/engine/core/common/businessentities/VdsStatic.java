@@ -142,6 +142,8 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @EditableField
     private HashMap<String, String> pmSecondaryOptionsMap;
 
+    @EditableField
+    private boolean pmKdumpDetection;
 
     /**
      * When this flag is true, the automatic power management
@@ -185,6 +187,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         vdsType = VDSType.VDS;
         autoRecoverable = true;
         disablePowerManagementPolicy = false;
+        pmKdumpDetection = true;
     }
 
     public VdsStatic(String host_name, String ip, String uniqueId, int port, int ssh_port, String ssh_username, Guid vds_group_id, Guid vds_id,
@@ -447,6 +450,14 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         pmSecondaryOptions = pmOptionsMapToString(value);
     }
 
+    public boolean isPmKdumpDetection() {
+        return pmKdumpDetection;
+    }
+
+    public void setPmKdumpDetection(boolean pmKdumpDetection) {
+        this.pmKdumpDetection = pmKdumpDetection;
+    }
+
     public boolean isDisablePowerManagementPolicy() {
         return disablePowerManagementPolicy;
     }
@@ -563,6 +574,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         result = prime * result + ((pmSecondaryPort == null) ? 0 : pmSecondaryPort.hashCode());
         result = prime * result + ((pmSecondaryType == null) ? 0 : pmSecondaryType.hashCode());
         result = prime * result + ((pmSecondaryUser == null) ? 0 : pmSecondaryUser.hashCode());
+        result = prime * result + (pmKdumpDetection ? 1 : 0);
         result = prime * result + port;
         result = prime * result + sshPort;
         result = prime * result + ((sshUsername == null) ? 0 : sshUsername.hashCode());
@@ -608,6 +620,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && ObjectUtils.objectsEqual(pmSecondaryPort, other.pmSecondaryPort)
                 && ObjectUtils.objectsEqual(pmSecondaryType, other.pmSecondaryType)
                 && ObjectUtils.objectsEqual(pmSecondaryUser, other.pmSecondaryUser)
+                && pmKdumpDetection == other.isPmKdumpDetection()
                 && port == other.port
                 && sshPort == other.sshPort
                 && ObjectUtils.objectsEqual(sshUsername, other.sshUsername)

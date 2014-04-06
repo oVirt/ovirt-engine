@@ -1215,6 +1215,7 @@
         <column>sshKeyFingerprint</column>
         <column>ssh_port</column>
         <column>ssh_username</column>
+        <column>pm_detect_kdump</column>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>magenta-vdsc</value>
@@ -1246,6 +1247,7 @@
             <value>b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31</value>
             <value>22</value>
             <value>root</value>
+            <value>1</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
@@ -1278,6 +1280,7 @@
             <value>b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31</value>
             <value>22</value>
             <value>root</value>
+            <value>1</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e8</value>
@@ -1310,6 +1313,7 @@
             <value>b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31</value>
             <value>22</value>
             <value>root</value>
+            <value>1</value>
         </row>
         <row>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
@@ -1342,6 +1346,7 @@
             <value>b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31</value>
             <value>22</value>
             <value>root</value>
+            <value>1</value>
         </row>
         <row>
             <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
@@ -1374,6 +1379,7 @@
             <value>b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31</value>
             <value>22</value>
             <value>root</value>
+            <value>1</value>
         </row>
     </table>
 
