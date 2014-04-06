@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -36,6 +37,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -189,7 +191,43 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         if (getParameters().getTaskGroupSuccess()) {
             getSnapshotDao().remove(getParameters().getSnapshotId());
         } else {
-            getSnapshotDao().updateStatus(getParameters().getSnapshotId(), SnapshotStatus.BROKEN);
+            List<String> failedToRemoveDisks = new ArrayList<>();
+            Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
+
+            for (VdcActionParametersBase parameters : getParameters().getImagesParameters()) {
+                ImagesContainterParametersBase imagesParams = (parameters instanceof ImagesContainterParametersBase ?
+                        (ImagesContainterParametersBase) parameters : null);
+
+                if (imagesParams == null) {
+                    // Shouldn't happen as for now ImagesParameters list contains only
+                    // instances of ImagesContainterParametersBase objects.
+                    continue;
+                }
+
+                if (imagesParams.getTaskGroupSuccess()) {
+                    snapshot = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(
+                            snapshot, imagesParams.getImageId());
+                } else {
+                    log.errorFormat("Could not delete image {0} from snapshot {1}",
+                            imagesParams.getImageId(), getParameters().getSnapshotId());
+
+                    DiskImage diskImage = getDiskImageDao().getSnapshotById(imagesParams.getImageId());
+                    failedToRemoveDisks.add(diskImage.getDiskAlias());
+                }
+            }
+
+            // Remove memory volume and update the dao.
+            // Note: on failure, we can treat memory volume deletion as deleting an image
+            // and remove it from the snapshot entity (rollback isn't applicable).
+            snapshot.setMemoryVolume("");
+            getSnapshotDao().update(snapshot);
+
+            if (!failedToRemoveDisks.isEmpty()) {
+                addCustomValue("DiskAliases", StringUtils.join(failedToRemoveDisks, ", "));
+                AuditLogDirector.log(this, AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE_PARTIAL_SNAPSHOT);
+            }
+
+            getSnapshotDao().updateStatus(getParameters().getSnapshotId(), SnapshotStatus.OK);
         }
 
         super.endVmCommand();
