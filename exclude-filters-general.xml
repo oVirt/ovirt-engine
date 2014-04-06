@@ -52,13 +52,4 @@
     <Match>
         <Bug code="SF" />
     </Match>
-
-    <!--
-    Currently Ignoring.
-    findbugs reason:
-    ST: Write to static field from instance method (ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD)
-    -->
-    <Match>
-        <Bug code="ST" />
-    </Match>
 </FindBugsFilter>

@@ -105,7 +105,18 @@
      </Match>
 
      <Match>
+       <Class name="org.ovirt.engine.core.bll.Backend" />
+       <Method name="initialize" />
+       <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
+     </Match>
+
+    <Match>
        <Class name="org.ovirt.engine.core.bll.AsyncTaskManager" />
        <Bug pattern="IS2_INCONSISTENT_SYNC" />
-     </Match>
+    </Match>
+
+    <Match>
+       <Class name="org.ovirt.engine.core.bll.VdsDeploy" />
+       <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
+    </Match>
 </FindBugsFilter>

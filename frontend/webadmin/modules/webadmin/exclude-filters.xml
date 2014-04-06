@@ -251,6 +251,26 @@
      <Bug code="UuF"/>
    </Match>
 
+     <!--
+      Suppress current instance methods assigning values to static variables
+      -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabReportsPresenter" />
+       <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
+     </Match>
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.uicommon.model.TaskFirstRowModelProvider" />
+       <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
+     </Match>
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.widget.table.column.CustomSelectionCell" />
+       <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
+     </Match>
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.widget.tags.TagItemCell" />
+       <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
+     </Match>
+
     <!--
      Ignore all the unconfirmed casts in this module.
      Unfortunately, these warnings are currently inherit to the design,

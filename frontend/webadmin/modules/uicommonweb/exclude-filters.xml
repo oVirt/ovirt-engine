@@ -1,4 +1,17 @@
 <FindBugsFilter>
+
+    <!--
+      Suppress current instance methods assigning values to static variables
+      -->
+    <Match>
+       <Class name="org.ovirt.engine.ui.uicommonweb.Configurator" />
+       <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
+    </Match>
+    <Match>
+       <Class name="org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkListModel" />
+       <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
+    </Match>
+
        <!--
         findbugs complains about loading known null to a variable
         in this case we are using it for equals check and its intended

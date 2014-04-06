@@ -160,6 +160,26 @@
      </Match>
 
      <!--
+      Suppress current instance methods assigning values to static variables
+      -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.widget.refresh.BaseRefreshPanel" />
+       <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
+     </Match>
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.widget.table.column.PasswordTextInputCell" />
+       <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
+     </Match>
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.widget.table.column.StyledImageResourceCell" />
+       <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
+     </Match>
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.widget.table.column.TextCellWithTooltip" />
+       <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
+     </Match>
+
+     <!--
       Ignore all the unconfirmed casts in this module.
       Unfortunately, these warnings are currently inherit to the design,
       and handling them on an individual basis just adds noise to the
