@@ -1639,5 +1639,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     ImportGlanceImageAsTemplate,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    MixedDomainTypesInDataCenter,
+
     Invalid;
 }

@@ -239,4 +239,12 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.ImportGlanceImageAsTemplate, version);
     }
 
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if mixed domain type is supported for the given version.
+     */
+    public static boolean mixedDomainTypesOnDataCenter(Version version) {
+        return supportedInConfig(ConfigValues.MixedDomainTypesInDataCenter, version);
+    }
 }
