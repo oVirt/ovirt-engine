@@ -34,6 +34,8 @@ public interface IrsServerConnector {
 
     public Map<String, Object> getVolumeInfo(String sdUUID, String spUUID, String imgGUID, String volUUID);
 
+    public Map<String, Object> setVolumeDescription(String sdUUID, String spUUID, String imgGUID, String volUUID, String description);
+
     public Map<String, Object> getStats();
 
     public Map<String, Object> importCandidate(String sdUUID, String vmGUID, String templateGUID,

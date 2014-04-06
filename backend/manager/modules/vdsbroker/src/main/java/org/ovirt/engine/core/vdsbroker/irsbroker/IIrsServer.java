@@ -27,6 +27,8 @@ public interface IIrsServer {
 
     OneImageInfoReturnForXmlRpc getVolumeInfo(String sdUUID, String spUUID, String imgGUID, String volUUID);
 
+    StatusOnlyReturnForXmlRpc setVolumeDescription(String sdUUID, String spUUID, String imgGUID, String volUUID, String description);
+
     IrsStatsAndStatusXmlRpc getIrsStats();
 
     OneUuidReturnForXmlRpc importCandidate(String sdUUID, String vmGUID, String templateGUID, String templateVolGUID,
