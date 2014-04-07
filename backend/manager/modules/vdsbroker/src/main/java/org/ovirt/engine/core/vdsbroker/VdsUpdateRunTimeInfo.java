@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
+import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -70,6 +71,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -644,6 +646,7 @@ public class VdsUpdateRunTimeInfo {
         List<String> brokenNics = new ArrayList<String>();
 
         try {
+            reportNicStatusChanges();
             Pair<List<String>, List<String>> problematicNics = NetworkMonitoringHelper.determineProblematicNics(_vds.getInterfaces(),
                     getDbFacade().getNetworkDao().getAllForCluster(_vds.getVdsGroupId()));
             brokenNics.addAll(problematicNics.getFirst());
@@ -697,6 +700,67 @@ public class VdsUpdateRunTimeInfo {
             } else {
                 // no nics are down, remove from list if exists
                 hostDownTimes.remove(_vds.getId());
+            }
+        }
+    }
+
+    private void reportNicStatusChanges() {
+        List<VdsNetworkInterface> interfaces = _vds.getInterfaces();
+        Set<VdsNetworkInterface> slaves = new HashSet<>();
+        Map<String, VdsNetworkInterface> monitoredInterfaces = new HashMap<String, VdsNetworkInterface>();
+        Map<String, VdsNetworkInterface> interfaceByName = Entities.entitiesByName(interfaces);
+
+        for (VdsNetworkInterface iface : interfaces) {
+            if (iface.getBondName() != null) {
+                slaves.add(iface);
+            }
+
+            String baseIfaceName = NetworkUtils.stripVlan(iface.getName());
+
+            // If the parent interface already marked as monitored- no need to check it again
+            if (monitoredInterfaces.containsKey(baseIfaceName)) {
+                continue;
+            }
+
+            // The status of the interface should be monitored only if it has networks attached to it or has labels
+            if (StringUtils.isNotEmpty(iface.getNetworkName()) || NetworkUtils.isLabeled(iface)) {
+                VdsNetworkInterface baseIface = iface;
+                // If vlan find the parent interface
+                if (iface.getVlanId() != null) {
+                    baseIface = interfaceByName.get(baseIfaceName);
+                }
+
+                monitoredInterfaces.put(baseIfaceName, baseIface);
+            }
+        }
+
+        // Slaves should be monitored if the bond is monitored
+        for (VdsNetworkInterface slave : slaves) {
+            if (monitoredInterfaces.containsKey(slave.getBondName())) {
+                monitoredInterfaces.put(slave.getName(), slave);
+            }
+        }
+
+        for (VdsNetworkInterface oldIface : getDbFacade().getInterfaceDao().getAllInterfacesForVds(_vds.getId())) {
+            VdsNetworkInterface iface = monitoredInterfaces.get(oldIface.getName());
+            InterfaceStatus status;
+            if (iface != null) {
+                status = iface.getStatistics().getStatus();
+                if (oldIface.getStatistics().getStatus() != InterfaceStatus.NONE
+                        && oldIface.getStatistics().getStatus() != status) {
+                    AuditLogableBase logable = new AuditLogableBase(_vds.getId());
+                    logable.setCustomId(iface.getName());
+                    if (iface.getBondName() != null) {
+                        logable.addCustomValue("SlaveName", iface.getName());
+                        logable.addCustomValue("BondName", iface.getBondName());
+                        auditLog(logable, status == InterfaceStatus.UP ? AuditLogType.HOST_BOND_SLAVE_STATE_UP
+                                : AuditLogType.HOST_BOND_SLAVE_STATE_DOWN);
+                    } else {
+                        logable.addCustomValue("InterfaceName", iface.getName());
+                        auditLog(logable, status == InterfaceStatus.UP ? AuditLogType.HOST_INTERFACE_STATE_UP
+                                : AuditLogType.HOST_INTERFACE_STATE_DOWN);
+                    }
+                }
             }
         }
     }

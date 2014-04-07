@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicompat;
 
+import org.ovirt.engine.core.common.AuditLogSeverity;
+import org.ovirt.engine.core.common.AuditLogTimeInterval;
+
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public interface LocalizedEnums extends ConstantsWithLookup {
@@ -269,6 +272,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String AuditLogType___VDC_STOP();
 
     String AuditLogType___CLUSTER_ALERT_HA_RESERVATION();
+
+    String AuditLogType___HOST_INTERFACE_STATE_DOWN();
+
+    String AuditLogType___HOST_BOND_SLAVE_STATE_DOWN();
 
     // Gluster Audit log types
     String AuditLogType___GLUSTER_VOLUME_CREATE();
