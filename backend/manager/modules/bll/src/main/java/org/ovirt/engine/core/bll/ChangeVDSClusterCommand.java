@@ -138,6 +138,17 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         }
 
+        if (FeatureSupported.networkCustomProperties(getSourceCluster().getcompatibility_version())
+                && !FeatureSupported.networkCustomProperties(getTargetCluster().getcompatibility_version())) {
+            for (VdsNetworkInterface iface : getHostNics()) {
+                if (iface.hasCustomProperties()) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
+                            String.format("$ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED_LIST %s",
+                                    iface.getNetworkName()));
+                }
+            }
+        }
+
         if (!targetClusterSupportsSetupNetworks() && hostHasLabeledNics()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_LABELS_NOT_SUPPORTED);
         }
