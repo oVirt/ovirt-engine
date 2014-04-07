@@ -205,7 +205,7 @@ public interface OsRepository {
      * @param version
      * @return the maximum allowed number of PCI devices
      */
-    public int getMaxPciDevices(int osId, Version Version);
+    public int getMaxPciDevices(int osId, Version version);
 
     /**
      * @param osId
