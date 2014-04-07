@@ -291,71 +291,73 @@ public class SSHDialog implements Closeable {
             final OutputStream poutStdout = new PipedOutputStream(pinStdout);
             final ByteArrayOutputStream stderr = new ConstraintByteArrayOutputStream(1024);
         ) {
-            List<InputStream> stdinList;
-            if (initial == null) {
-                stdinList = new LinkedList<InputStream>();
-            }
-            else {
-                stdinList = new LinkedList<InputStream>(Arrays.asList(initial));
-            }
-            stdinList.add(pinStdin);
+            try {
+                List<InputStream> stdinList;
+                if (initial == null) {
+                    stdinList = new LinkedList<InputStream>();
+                }
+                else {
+                    stdinList = new LinkedList<InputStream>(Arrays.asList(initial));
+                }
+                stdinList.add(pinStdin);
 
-            sink.setControl(
-                new Control() {
-                    @Override
-                    public void close() throws IOException {
-                        if (_client != null) {
-                            _client.close();
+                sink.setControl(
+                    new Control() {
+                        @Override
+                        public void close() throws IOException {
+                            if (_client != null) {
+                                _client.close();
+                            }
                         }
                     }
-                }
-            );
-            sink.setStreams(pinStdout, poutStdin);
-            sink.start();
-
-            try {
-                _client.executeCommand(
-                    command,
-                    new SequenceInputStream(Collections.enumeration(stdinList)),
-                    poutStdout,
-                    stderr
                 );
-            }
-            catch (Exception e) {
-                if (stderr.size() == 0) {
-                    throw e;
-                }
+                sink.setStreams(pinStdout, poutStdin);
+                sink.start();
 
-                log.error(
-                    "Swallowing exception as preferring stderr",
-                    e
-                );
-            }
-            finally {
-                if (stderr.size() > 0) {
-                    throw new RuntimeException(
-                        String.format(
-                            "Unexpected error during execution: %1$s",
-                            new String(stderr.toByteArray(), Charset.forName("UTF-8"))
-                        )
+                try {
+                    _client.executeCommand(
+                        command,
+                        new SequenceInputStream(Collections.enumeration(stdinList)),
+                        poutStdout,
+                        stderr
                     );
                 }
+                catch (Exception e) {
+                    if (stderr.size() == 0) {
+                        throw e;
+                    }
+
+                    log.error(
+                        "Swallowing exception as preferring stderr",
+                        e
+                    );
+                }
+                finally {
+                    if (stderr.size() > 0) {
+                        throw new RuntimeException(
+                            String.format(
+                                "Unexpected error during execution: %1$s",
+                                new String(stderr.toByteArray(), Charset.forName("UTF-8"))
+                            )
+                        );
+                    }
+                }
             }
-        }
-        catch (Exception e) {
-            log.error(
-                String.format(
-                    "SSH error running command %1$s:'%2$s'",
-                    _client.getDisplayHost(),
-                    command
-                ),
-                e
-            );
-            throw e;
-        }
-        finally {
-            sink.stop();
-            sink.setStreams(null, null);
+            catch (Exception e) {
+                log.error(
+                    String.format(
+                        "SSH error running command %1$s:'%2$s'",
+                        _client.getDisplayHost(),
+                        command
+                    ),
+                    e
+                );
+                throw e;
+            }
+            finally {
+                sink.stop();
+                sink.setStreams(null, null);
+            }
         }
 
         log.debug("execute leave");
