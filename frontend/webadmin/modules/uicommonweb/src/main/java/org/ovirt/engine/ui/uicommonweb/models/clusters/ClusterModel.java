@@ -1425,7 +1425,7 @@ public class ClusterModel extends EntityModel
         // possible versions for new cluster (when editing cluster, this event won't occur)
         // are actually the possible versions for the data-center that the cluster is going
         // to be attached to.
-        StoragePool selectedDataCenter = getDataCenter().getSelectedItem();
+        final StoragePool selectedDataCenter = getDataCenter().getSelectedItem();
         if (selectedDataCenter == null)
         {
             return;
@@ -1449,9 +1449,11 @@ public class ClusterModel extends EntityModel
                 ArrayList<Version> versions = (ArrayList<Version>) result;
                 Version selectedVersion = clusterModel.getVersion().getSelectedItem();
                 clusterModel.getVersion().setItems(versions);
-                if (selectedVersion == null || !versions.contains(selectedVersion))
+                if (selectedVersion == null ||
+                        !versions.contains(selectedVersion) ||
+                        selectedVersion.compareTo(selectedDataCenter.getcompatibility_version()) > 0)
                 {
-                    clusterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(versions));
+                    clusterModel.getVersion().setSelectedItem(selectedDataCenter.getcompatibility_version());
                 }
                 else if (clusterModel.getIsEdit()) {
                     clusterModel.getVersion().setSelectedItem(Linq.firstOrDefault(versions,
