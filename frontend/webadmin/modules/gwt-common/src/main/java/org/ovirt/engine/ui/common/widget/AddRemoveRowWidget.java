@@ -113,6 +113,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
         this.model = model;
         model.getItemsChangedEvent().addListener(itemsChangedListener);
+        setVisible(model.getIsAvailable());
         init(model);
     }
 
