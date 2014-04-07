@@ -471,8 +471,6 @@
 				<t:content>
 					<g:FlowPanel>
 						<ge:EntityModelCheckBoxEditor ui:field="vmInitEnabledEditor"/>
-
-                        <e:ListModelListBoxEditor ui:field="domainEditor" />
                         <vm:VmPopupVmInitWidget ui:field="vmInitEditor" />
 					</g:FlowPanel>
 				</t:content>

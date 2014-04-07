@@ -193,7 +193,6 @@ public class UnitVmModel extends Model {
 
             // ==Initial run Tab==
             getTimeZone().setIsChangable(false);
-            getDomain().setIsChangable(false);
 
             // ==Console Tab==
             getDisplayProtocol().setIsChangable(false);
@@ -594,18 +593,6 @@ public class UnitVmModel extends Model {
     private void setTemplateVersionName(NotChangableForVmInPoolEntityModel<String> value)
     {
         templateVersionName = value;
-    }
-
-    private NotChangableForVmInPoolListModel<String> privateDomain;
-
-    public ListModel<String> getDomain()
-    {
-        return privateDomain;
-    }
-
-    private void setDomain(NotChangableForVmInPoolListModel<String> value)
-    {
-        privateDomain = value;
     }
 
     private NotChangableForVmInPoolEntityModel<Integer> privateMemSize;
@@ -1284,7 +1271,6 @@ public class UnitVmModel extends Model {
         setAllowConsoleReconnect(new NotChangableForVmInPoolEntityModel<Boolean>());
         setDescription(new NotChangableForVmInPoolEntityModel<String>());
         setComment(new NotChangableForVmInPoolEntityModel<String>());
-        setDomain(new NotChangableForVmInPoolListModel<String>());
         setMinAllocatedMemory(new NotChangableForVmInPoolEntityModel<Integer>());
         setUsbPolicy(new NotChangableForVmInPoolListModel<UsbPolicy>());
         setIsStateless(new NotChangableForVmInPoolEntityModel<Boolean>());
@@ -1927,8 +1913,6 @@ public class UnitVmModel extends Model {
         getKernel_parameters().setIsChangable(getIsLinuxOS());
         getKernel_parameters().setIsAvailable(getIsLinuxOS());
 
-        getDomain().setIsChangable(getIsWindowsOS());
-
         getBehavior().updateDefaultTimeZone();
 
 
@@ -2412,7 +2396,7 @@ public class UnitVmModel extends Model {
                 && getTemplate().getIsValid()
                 && getMinAllocatedMemory().getIsValid());
 
-        setIsFirstRunTabValid(getDomain().getIsValid() && getTimeZone().getIsValid());
+        setIsFirstRunTabValid(getTimeZone().getIsValid());
         setIsDisplayTabValid(getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid() && getSpiceProxy().getIsValid());
         setIsHostTabValid(getDefaultHost().getIsValid() && getMigrationDowntime().getIsValid());
         setIsAllocationTabValid(getDisksAllocationModel().getIsValid() && getMinAllocatedMemory().getIsValid()
@@ -2424,16 +2408,19 @@ public class UnitVmModel extends Model {
                             getTotalCPUCores().getIsValid() &&
                             getSerialNumberPolicy().getCustomSerialNumber().getIsValid());
 
+        boolean vmInitIsValid = getVmInitModel().validate();
+
         return getName().getIsValid() && getDescription().getIsValid() && getDataCenterWithClustersList().getIsValid()
                 && getDisksAllocationModel().getIsValid() && getTemplate().getIsValid() && getComment().getIsValid()
                 && getDefaultHost().getIsValid() && getMinAllocatedMemory().getIsValid()
-                && getNumOfMonitors().getIsValid() && getDomain().getIsValid() && getUsbPolicy().getIsValid()
+                && getNumOfMonitors().getIsValid() && getUsbPolicy().getIsValid()
                 && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid()
                 && getKernel_path().getIsValid()
                 && getInitrd_path().getIsValid()
                 && getKernel_parameters().getIsValid()
                 && getCpuSharesAmount().getIsValid()
                 && behaviorValid
+                && vmInitIsValid
                 && customPropertySheetValid && getQuota().getIsValid()
                 && getMigrationDowntime().getIsValid()
                 && getIsSystemTabValid();

@@ -321,9 +321,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         updateTimeZone(this.vm.getTimeZone());
         updateConsoleDevice(this.vm.getId());
 
-        // Update domain list
-        updateDomain();
-
         getModel().getStorageDomain().setIsChangable(true);
         getModel().getProvisioning().setIsAvailable(false);
 

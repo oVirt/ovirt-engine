@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -111,6 +112,11 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     StringEntityModelTextBoxEditor windowsHostnameEditor;
 
     @UiField
+    @Path(value = "sysprepDomain.selectedItem")
+    @WithElementId
+    ListModelSuggestBoxEditor sysprepDomainEditor;
+
+    @UiField
     @Path(value = "inputLocale.entity")
     @WithElementId
     StringEntityModelTextBoxEditor inputLocaleEditor;
@@ -149,11 +155,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @Path(value = "hostname.entity")
     @WithElementId
     StringEntityModelTextBoxEditor hostnameEditor;
-
-    @UiField
-    @Path(value = "domain.entity")
-    @WithElementId
-    StringEntityModelTextBoxEditor domainEditor;
 
     @UiField
     @Path(value = "authorizedKeys.entity")
@@ -372,6 +373,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     void localize() {
         hostnameEditor.setLabel(constants.cloudInitHostnameLabel());
         windowsHostnameEditor.setLabel(constants.cloudInitHostnameLabel());
+        sysprepDomainEditor.setLabel(constants.domainVmPopup());
         inputLocaleEditor.setLabel(constants.inputLocaleLabel());
         uiLanguageEditor.setLabel(constants.uiLanguageLabel());
         sysprepScriptEditor.setTitle(constants.sysprepLabel());
@@ -391,7 +393,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         rootPasswordVerificationEditor.setLabel(constants.cloudInitRootPasswordVerificationLabel());
 
         networkEnabledEditor.setLabel(constants.cloudInitNetworkLabel());
-        domainEditor.setLabel(constants.domainVmPopup());
 
         String sep = "|"; //$NON-NLS-1$
         // sequence is: <select label> | [+] <add label> | [-] <remove label>
@@ -448,6 +449,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         setNetworkStaticDetailsStyle(false);
 
         windowsSyspreptimeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
+        sysprepDomainEditor.addStyleName(customizableStyle.primaryOption());
         networkStartOnBootEditor.addStyleName(customizableStyle.primaryOption());
         networkDhcpEditor.addStyleName(customizableStyle.primaryOption());
         windowsSysprepTimeZoneEditor.addStyleName(customizableStyle.primaryOption());
@@ -460,7 +462,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         userNameEditor.addStyleName(customizableStyle.primaryOption());
         hostnameEditor.addStyleName(customizableStyle.primaryOption());
         windowsHostnameEditor.addStyleName(customizableStyle.primaryOption());
-        domainEditor.addStyleName(customizableStyle.primaryOption());
         timeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
         timeZoneEditor.addStyleName(customizableStyle.primaryOption());
         rootPasswordEditor.addStyleName(customizableStyle.primaryOption());
