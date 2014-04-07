@@ -541,6 +541,16 @@ public class SSHClient implements Closeable {
                     )
                 );
             }
+
+            // the PipedOutputStream does not
+            // flush streams at close
+            // this leads other side of pipe
+            // to miss last bytes
+            // not sure why it is required as
+            // FilteredOutputStream does flush
+            // on close.
+            out.flush();
+            err.flush();
         }
         catch (RuntimeException e) {
             log.debug("Execute failed", e);
@@ -709,12 +719,6 @@ public class SSHClient implements Closeable {
                 pout,
                 remoteDigest
             );
-
-            // the apache-sshd does not
-            // flush streams nor close them
-            // this leads other side of pipe
-            // to miss last bytes
-            pout.flush();
 
             t.join(THREAD_JOIN_WAIT_TIME);
             if (t.getState() != Thread.State.TERMINATED) {
