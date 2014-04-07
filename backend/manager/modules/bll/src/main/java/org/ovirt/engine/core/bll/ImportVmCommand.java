@@ -239,14 +239,18 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             domainsMap.put(destGuid, storageDomain);
         }
 
-        if (getParameters().isImportAsNewEntity() && !getParameters().getCopyCollapse()) {
+        if (!isImagesAlreadyOnTarget() && getParameters().isImportAsNewEntity() && !getParameters().getCopyCollapse()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_CLONE_NOT_COLLAPSED);
+        }
+
+        if (isImagesAlreadyOnTarget() && getParameters().getCopyCollapse()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_UNREGISTERED_NOT_COLLAPSED);
         }
 
         setSourceDomainId(getParameters().getSourceDomainId());
         StorageDomainValidator validator = new StorageDomainValidator(getSourceDomain());
-        if (validator.isDomainExistAndActive().isValid() &&
-                getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
+        if (validator.isDomainExistAndActive().isValid() && !isImagesAlreadyOnTarget()
+                && getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
@@ -295,7 +299,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                     }
                 } else {
                     // If no copy collapse sent, validate each image configuration (snapshot or active image).
-                    if (!validateImageConfig(canDoActionMessages, domainsMap, image)) {
+                    if (!isImagesAlreadyOnTarget() && !validateImageConfig(canDoActionMessages, domainsMap, image)) {
                         return false;
                     }
                 }
@@ -404,15 +408,17 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             return false;
         }
 
-        Map<StorageDomain, Integer> domainMap = getSpaceRequirementsForStorageDomains(imageList);
+        if (!isImagesAlreadyOnTarget()) {
+            Map<StorageDomain, Integer> domainMap = getSpaceRequirementsForStorageDomains(imageList);
 
-        if (!setDomainsForMemoryImages(domainMap)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
-        }
+            if (!setDomainsForMemoryImages(domainMap)) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
+            }
 
-        for (Map.Entry<StorageDomain, Integer> entry : domainMap.entrySet()) {
-            if (!doesStorageDomainhaveSpaceForRequest(entry.getKey(), entry.getValue())) {
-                return false;
+            for (Map.Entry<StorageDomain, Integer> entry : domainMap.entrySet()) {
+                if (!doesStorageDomainhaveSpaceForRequest(entry.getKey(), entry.getValue())) {
+                    return false;
+                }
             }
         }
 
@@ -580,7 +586,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     protected boolean checkTemplateInStorageDomain() {
-        boolean retValue = getParameters().isImportAsNewEntity() || checkIfDisksExist(imageList);
+        boolean retValue = verifyDisksIfNeeded();
         if (retValue && !VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getVmtGuid())
                 && !getParameters().getCopyCollapse()) {
             List<StorageDomain> domains = Backend.getInstance()
@@ -598,6 +604,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             }
         }
         return retValue;
+    }
+
+    private boolean verifyDisksIfNeeded() {
+        if (!getParameters().isImportAsNewEntity() && !isImagesAlreadyOnTarget()) {
+            return checkIfDisksExist(imageList);
+        }
+        return true;
     }
 
     private boolean templateExists() {
@@ -642,7 +655,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     protected void executeCommand() {
         try {
             addVmToDb();
-            processImages();
+            processImages(!isImagesAlreadyOnTarget());
             // if there aren't tasks - we can just perform the end
             // vm related ops
             if (getReturnValue().getVdsmTaskIdList().isEmpty()) {
@@ -654,7 +667,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             MacPoolManager.getInstance().freeMacs(macsAdded);
             throw e;
         }
-
         setSucceeded(true);
     }
 
@@ -673,14 +685,16 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         });
     }
 
-    private void processImages() {
+    private void processImages(final boolean useCopyImages) {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
             @Override
             public Void runInTransaction() {
                 addVmImagesAndSnapshots();
                 updateSnapshotsFromExport();
-                moveOrCopyAllImageGroups();
+                if (useCopyImages) {
+                    moveOrCopyAllImageGroups();
+                }
                 VmDeviceUtils.addImportedDevices(getVm().getStaticData(), getParameters().isImportAsNewEntity());
                 VmHandler.lockVm(getVm().getId());
                 if (getParameters().isImportAsNewEntity()) {

@@ -130,7 +130,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                 retValue =
                         checkStorageDomain()
                                 && checkStorageDomainStatus(StorageDomainStatus.Active)
-                                && (getParameters().getForceOverride() || checkIfDisksExist(getTemplateDisks()))
+                                && (getParameters().getForceOverride() || (!isImagesAlreadyOnTarget() && checkIfDisksExist(getTemplateDisks())))
                                 && checkFreeSpaceOnDestinationDomain(getStorageDomain(),
                                         (int) getVmTemplate().getActualDiskSize());
             }
@@ -144,6 +144,10 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             }
         }
         return retValue;
+    }
+
+    protected boolean isImagesAlreadyOnTarget() {
+        return getParameters().isImagesExistOnTargetStorageDomain();
     }
 
     @Override

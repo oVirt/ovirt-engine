@@ -10,6 +10,7 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
 
     private Map<Guid, Guid> imageToDestinationDomainMap;
     private boolean importAsNewEntity;
+    private boolean imagesExistOnTargetStorageDomain;
 
     public MoveOrCopyParameters(Guid containerId, Guid storageDomainId) {
         super(storageDomainId);
@@ -76,5 +77,13 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
 
     public void setImportAsNewEntity(boolean importAsNewEntity) {
         this.importAsNewEntity = importAsNewEntity;
+    }
+
+    public boolean isImagesExistOnTargetStorageDomain() {
+        return imagesExistOnTargetStorageDomain;
+    }
+
+    public void setImagesExistOnTargetStorageDomain(boolean imagesExistOnTargetStorageDomain) {
+        this.imagesExistOnTargetStorageDomain = imagesExistOnTargetStorageDomain;
     }
 }

@@ -202,6 +202,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The operation is currently not supported for disks used as OVF store.")
     String ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. There is no OVF for the specific entity.")
+    String ACTION_TYPE_FAILED_UNSUPPORTED_OVF();
+
     @DefaultStringValue("Cannot ${action} ${type}. The operation can be performed only for disks that are in ${status} status.")
     String ACTION_TYPE_FAILED_DISK_NOT_IN_APPLICABLE_STATUS();
 
@@ -552,6 +555,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Disk configuration (${volumeFormat} ${volumeType}) is incompatible with the storage domain type.")
     String ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The OVF configuration could not be parsed.")
+    String ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM migration is in progress")
     String ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS();
@@ -2891,6 +2897,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The VM Network Interface is plugged to a running VM.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_DEVICE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Unregistered VM can not be collapsed.")
+    String ACTION_TYPE_FAILED_IMPORT_UNREGISTERED_NOT_COLLAPSED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Enabling both Virt and Gluster services is not allowed.")
     String VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED();

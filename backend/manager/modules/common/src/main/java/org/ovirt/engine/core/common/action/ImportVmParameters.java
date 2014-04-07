@@ -24,8 +24,8 @@ public class ImportVmParameters extends MoveVmParameters implements Serializable
     public ImportVmParameters(VM vm, Guid sourceStorageDomainId, Guid destStorageDomainId, Guid storagePoolId,
             Guid vdsGroupId) {
         super(vm.getId(), destStorageDomainId);
-        this.sourceDomainId = sourceStorageDomainId;
-        this.destDomainId = destStorageDomainId;
+        sourceDomainId = sourceStorageDomainId;
+        destDomainId = destStorageDomainId;
         setVm(vm);
         setStorageDomainId(destStorageDomainId);
         setStoragePoolId(storagePoolId);
@@ -54,6 +54,14 @@ public class ImportVmParameters extends MoveVmParameters implements Serializable
 
     public void setVdsGroupId(Guid vdsGroupId) {
         this.vdsGroupId = vdsGroupId;
+    }
+
+    public void setDestDomainId(Guid destDomainId) {
+        this.destDomainId = destDomainId;
+    }
+
+    public void setSourceDomainId(Guid sourceDomainId) {
+        this.sourceDomainId = sourceDomainId;
     }
 
 }
