@@ -422,4 +422,112 @@ public class SSHDialogTest {
         );
         sink.exception();
     }
+
+    private static class ReaderSink
+    implements Runnable, SSHDialog.Sink {
+
+        private SSHDialog.Control _control;
+        private BufferedReader _incoming;
+        private PrintWriter _outgoing;
+        private Throwable _throwable;
+        private Thread _thread;
+        private int _delay;
+        private String _last;
+
+        public ReaderSink(int delay) {
+            _thread = new Thread(this);
+            _delay = delay;
+        }
+
+        public String getLast() {
+            return _last;
+        }
+
+        public void exception() throws Throwable {
+            if (_throwable != null) {
+                throw _throwable;
+            }
+        }
+
+        @Override
+        public void setControl(SSHDialog.Control control) {
+            _control = control;
+        }
+
+        @Override
+        public void setStreams(InputStream incoming, OutputStream outgoing) {
+            _incoming = incoming == null ? null : new BufferedReader(
+                new InputStreamReader(
+                    incoming,
+                    Charset.forName("UTF-8")
+                ),
+                BUFFER_SIZE
+            );
+            _outgoing = outgoing == null ? null : new PrintWriter(
+                new OutputStreamWriter(
+                    outgoing,
+                    Charset.forName("UTF-8")
+                ),
+                true
+            );
+        }
+
+        @Override
+        public void start() {
+            _thread.start();
+        }
+
+        @Override
+        public void stop() {
+            if (_thread != null) {
+                while(true) {
+                    try {
+                        _thread.join();
+                        break;
+                    }
+                    catch (InterruptedException e) {}
+                }
+                _thread = null;
+            }
+        }
+
+        public void run()  {
+            try {
+                String l;
+                while ((l = _incoming.readLine()) != null) {
+                    _last = l;
+                    Thread.sleep(_delay);
+                }
+            }
+            catch (Throwable t) {
+                if (_throwable == null) {
+                    _throwable = t;
+                }
+            }
+            finally {
+                try {
+                    _control.close();
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testDelay() throws Throwable {
+        ReaderSink sink = new ReaderSink(10);
+        _sshdialog.setSoftTimeout(60*1000);
+        _sshdialog.setHardTimeout(60*1000);
+        _sshdialog.connect();
+        _sshdialog.authenticate();
+        _sshdialog.executeCommand(
+            sink,
+            "x=0;while [ $x -lt 100 ]; do echo line$x; x=$(($x+1)); done",
+            null
+        );
+        sink.exception();
+        assertEquals("line99", sink.getLast());
+    }
 }
