@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -61,12 +62,19 @@ public class StorageHandlingCommandBaseTest {
     public static MockConfigRule mcr = new MockConfigRule(
             // Indicates a supported storage format of V2 & V3 in version 3.4
             mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_0.toString(), "0,1"),
+            mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_1.toString(), "3"),
             mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_2.toString(), "3"),
+            mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_3.toString(), "3"),
             mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_4.toString(), "3"),
             mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_0.toString(), false),
             mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_4.toString(), true),
             mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_0.toString(), false),
-            mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_4.toString(), true)
+            mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_4.toString(), true),
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_0.toString(), false),
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_1.toString(), false),
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_2.toString(), false),
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_3.toString(), false),
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_4.toString(), true)
     );
 
     @Before
@@ -132,28 +140,43 @@ public class StorageHandlingCommandBaseTest {
         assertTrue("Attaching a valid domain to attach was failed", cmd.checkDomainCanBeAttached(storageDomain));
     }
 
+
     /**
-     * Mixed types are not allowed on V3.0, test that attempting to attach a domain of different type than what already
-     * exists in the data center will fail
+     * Mixed types are not allowed on version lower than V3.4, test that attempting to attach a domain of different type
+     * than what already exists in the data center will fail for versions 3.0 to 3.3 inclusive
      */
     @Test
-    public void testMixedTypesUnsupported() {
-        storagePool.setcompatibility_version(Version.v3_0);
+    public void testMixedTypesOnAllVersions() {
+        for (Version version : Version.ALL) {
+            if (version.compareTo(Version.v3_0) >= 0) { // No reason to test unsupported versions
+                testAddingMixedTypes(version, FeatureSupported.mixedDomainTypesOnDataCenter(version));
+            }
+        }
+    }
+
+    private void testAddingMixedTypes(Version version, boolean addingMixedTypesShouldSucceed) {
+        storagePool.setcompatibility_version(version);
 
         StorageDomain existingStorageDomain = createValidStorageDomain();
         existingStorageDomain.setStorageType(StorageType.NFS);
         addDomainToPool(existingStorageDomain);
 
         StorageDomain domainToAttach = createValidStorageDomain();
-        domainToAttach.setStorageFormat(StorageFormatType.V1);
+        domainToAttach.setStorageFormat(cmd.getSupportedStorageFormatSet(version).iterator().next());
         existingStorageDomain.setStorageType(StorageType.NFS);
-        assertTrue("Attaching an NFS domain to a pool with NFS domain with no mixed type allowed failed", cmd.checkDomainCanBeAttached(domainToAttach));
+        initCommand();
+        assertTrue("Attaching an NFS domain to a pool with NFS domain with no mixed type allowed failed, version: " + version, cmd.checkDomainCanBeAttached(domainToAttach));
 
         domainToAttach.setStorageType(StorageType.ISCSI);
         initCommand();
-        assertFalse("Attaching an ISCSI domain to a pool with NFS domain with no mixed type allowed succeeded", cmd.checkDomainCanBeAttached(domainToAttach));
-        CanDoActionTestUtils.assertCanDoActionMessages("Attaching an ISCSI domain to a pool with NFS domain with no mixed type failed with the wrong message", cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
+        if (addingMixedTypesShouldSucceed) {
+            assertTrue("Attaching an ISCSI domain to a pool with NFS domain with with mixed type allowed failed, version: " + version, cmd.checkDomainCanBeAttached(domainToAttach));
+        }
+        else {
+            assertFalse("Attaching an ISCSI domain to a pool with NFS domain with no mixed type allowed succeeded, version: " + version, cmd.checkDomainCanBeAttached(domainToAttach));
+            CanDoActionTestUtils.assertCanDoActionMessages("Attaching an ISCSI domain to a pool with NFS domain with no mixed type failed with the wrong message", cmd,
+                    VdcBllMessages.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
+        }
 
     }
 
