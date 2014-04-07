@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -215,7 +216,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         if (!isStorageDomainCompatibleWithDC(storageDomain)) {
             return false;
         }
-        if (!isMixedTypesAllowedInDC() && isMixedTypeDC(storageDomain)) {
+        if (!isMixedTypesAllowedInDC(getStoragePool().getcompatibility_version()) && isMixedTypeDC(storageDomain)) {
             return false;
         }
 
@@ -226,8 +227,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     // TODO: Should be removed when 3.0 compatibility will not be supported, for now we are blocking the possibility
     // to mix NFS domains with block domains on 3.0 pools since block domains on 3.0 pools can be in V2 format while NFS
     // domains on 3.0 can only be in V1 format
-    protected boolean isMixedTypesAllowedInDC() {
-        return getStoragePool().getcompatibility_version().compareTo(Version.v3_0) > 0;
+    protected boolean isMixedTypesAllowedInDC(Version version) {
+        return FeatureSupported.mixedDomainTypesOnDataCenter(version);
     }
 
     public boolean isMixedTypeDC(StorageDomain storageDomain) {
