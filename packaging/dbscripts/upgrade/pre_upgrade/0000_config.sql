@@ -399,7 +399,7 @@ select fn_db_add_config_value('OriginType','OVIRT','general');
 select fn_db_add_config_value('OvfVirtualSystemType','ENGINE','general');
 --Handling The ovirt-node installation files path
 select fn_db_add_config_value('OvirtInitialSupportedIsoVersion','2.5.5:5.8','general');
-select fn_db_add_config_value('OvirtIsoPrefix','^ovirt-node-iso-(.*)\.*\.iso$:^rhevh-(.*)\.*\.iso$','general');
+select fn_db_add_config_value('OvirtIsoPrefix','^ovirt-node-iso-([0-9].*)\.iso$:^rhevh-([0-9].*)\.iso$','general');
 select fn_db_add_config_value('OvirtNodeOS','^ovirt.*$:^rhev.*$','general');
 select fn_db_add_config_value('oVirtISOsRepositoryPath','/usr/share/ovirt-node-iso:/usr/share/rhev-hypervisor','general');
 select fn_db_add_config_value('oVirtUpgradeScriptName','/usr/share/vdsm-reg/vdsm-upgrade','general');
@@ -738,7 +738,7 @@ select fn_db_update_config_value('MigrationSupportForNativeUsb','false','3.0');
 select fn_db_update_config_value('MigrationSupportForNativeUsb','false','3.1');
 select fn_db_update_config_value('MinimalETLVersion','3.4.0','general');
 select fn_db_update_config_value('OvirtInitialSupportedIsoVersion','2.5.5:5.8','general');
-select fn_db_update_config_value('OvirtIsoPrefix','^ovirt-node-iso-(.*)\.*\.iso$:^rhevh-(.*)\.*\.iso$','general');
+select fn_db_update_config_value('OvirtIsoPrefix','^ovirt-node-iso-([0-9].*)\.iso$:^rhevh-([0-9].*)\.iso$','general');
 select fn_db_update_config_value('OvirtNodeOS','^ovirt.*$:^rhev.*$','general');
 select fn_db_update_config_value('oVirtISOsRepositoryPath','/usr/share/ovirt-node-iso:/usr/share/rhev-hypervisor','general');
 select fn_db_update_config_value('PostgresPagingSyntax','OFFSET (%1$s -1) LIMIT %2$s','general');
