@@ -131,7 +131,7 @@ public class KeyValueModel extends BaseKeyModel {
 
     public boolean validate() {
         boolean isValid = true;
-        if (getItems() == null) {
+        if (getItems() == null || !getIsAvailable()) {
             return isValid;
         }
         for (KeyValueLineModel keyValueLineModel : (List<KeyValueLineModel>) getItems()) {
