@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirectorDelegator;
+import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -63,15 +64,6 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected void executeCommand() {
-        final DisplayNetworkClusterHelper displayNetworkClusterHelper = new DisplayNetworkClusterHelper(
-                getNetworkClusterDAO(),
-                getVmDAO(),
-                getNetworkCluster(),
-                getNetworkName(),
-                AuditLogDirectorDelegator.getInstance());
-        if (displayNetworkClusterHelper.isDisplayToBeUpdated()) {
-            displayNetworkClusterHelper.warnOnActiveVm();
-        }
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
@@ -234,6 +226,16 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
                 networkCluster.isMigration()));
 
         if (network.getCluster().isDisplay()) {
+            final DisplayNetworkClusterHelper displayNetworkClusterHelper = new DisplayNetworkClusterHelper(
+                    getNetworkClusterDao(),
+                    getVmDao(),
+                    networkCluster,
+                    network.getName(),
+                    AuditLogDirectorDelegator.getInstance());
+            if (displayNetworkClusterHelper.isDisplayToBeUpdated()) {
+                displayNetworkClusterHelper.warnOnActiveVm();
+            }
+
             getNetworkClusterDao().setNetworkExclusivelyAsDisplay(clusterId, network.getId());
         }
 
@@ -257,5 +259,9 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     private static NetworkClusterDao getNetworkClusterDao() {
         return DbFacade.getInstance().getNetworkClusterDao();
+    }
+
+    private static VmDAO getVmDao() {
+        return DbFacade.getInstance().getVmDao();
     }
 }
