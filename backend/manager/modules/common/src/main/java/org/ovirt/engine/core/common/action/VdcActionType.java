@@ -192,9 +192,6 @@ public enum VdcActionType {
     RemoveVdsGroup(706, ActionGroup.DELETE_CLUSTER, false, QuotaDependency.NONE),
     AttachNetworkToVdsGroup(708, ActionGroup.ASSIGN_CLUSTER_NETWORK, false, QuotaDependency.NONE),
     DetachNetworkToVdsGroup(709, ActionGroup.ASSIGN_CLUSTER_NETWORK, false, QuotaDependency.NONE),
-    @Deprecated
-    // AttachNetworkToVdsGroup is taking over this functionality
-    UpdateDisplayToVdsGroup(710, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
     UpdateNetworkOnCluster(711, ActionGroup.CONFIGURE_CLUSTER_NETWORK, false, QuotaDependency.NONE),
     AttachNetworksToCluster(712, false, QuotaDependency.NONE),
     DetachNetworksFromCluster(713, false, QuotaDependency.NONE),

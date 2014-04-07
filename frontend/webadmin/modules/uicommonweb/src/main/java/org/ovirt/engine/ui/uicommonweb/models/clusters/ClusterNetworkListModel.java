@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.DisplayNetworkToVdsGroupParameters;
+import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -140,12 +140,13 @@ public class ClusterNetworkListModel extends SearchableListModel
         Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworksByClusterId, tempVar, _asyncQuery);
     }
 
-    public void setAsDisplay()
-    {
-        Network network = (Network) getSelectedItem();
+    public void setAsDisplay() {
+        final Network network = (Network) Cloner.clone(getSelectedItem());
+        network.getCluster().setDisplay(true);
 
-        Frontend.getInstance().runAction(VdcActionType.UpdateDisplayToVdsGroup, new DisplayNetworkToVdsGroupParameters(getEntity(),
-                network, true));
+        final NetworkClusterParameters networkClusterParameters = new NetworkClusterParameters(network.getCluster());
+
+        Frontend.getInstance().runAction(VdcActionType.UpdateNetworkOnCluster, networkClusterParameters);
     }
 
     public void manage() {
