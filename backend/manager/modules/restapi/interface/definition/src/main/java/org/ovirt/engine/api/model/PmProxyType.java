@@ -2,7 +2,7 @@ package org.ovirt.engine.api.model;
 
 public enum PmProxyType {
 
-    CLUSTER("cluster"), DC("dc");
+    CLUSTER("cluster"), DC("dc"), OTHER_DC("other_dc");
 
     private String value;
 
@@ -23,6 +23,8 @@ public enum PmProxyType {
                 return CLUSTER;
             } else if (v.equals("dc")) {
                 return DC;
+            } else if (v.equals("other_dc")) {
+                return OTHER_DC;
             } else {
                 return null;
             }

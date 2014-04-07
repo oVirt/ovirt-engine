@@ -1232,7 +1232,7 @@
             <null />
             <value></value>
             <value>0</value>
-            <value>cluster,dc</value>
+            <value>cluster,dc,other_dc</value>
             <null />
             <null />
             <null />

@@ -76,6 +76,9 @@ public class FenceExecutor {
             else if (pmProxyOption.equalsIgnoreCase(PMProxyOptions.DC.name())) {
                 proxyOption = PMProxyOptions.DC;
             }
+            else if (pmProxyOption.equalsIgnoreCase(PMProxyOptions.OTHER_DC.name())) {
+                proxyOption = PMProxyOptions.OTHER_DC;
+            }
             else {
                 log.errorFormat("Illegal value in PM Proxy Preferences string {0}, skipped.", pmProxyOption);
                 continue;
@@ -338,6 +341,26 @@ public class FenceExecutor {
                         }
                     }
                 }
+                else if (proxyOptions == PMProxyOptions.OTHER_DC) {
+                    if (onlyUpHost) {
+                        if (filterSelf) {
+                            return !vds.getId().equals(_vds.getId())
+                                    && vds.getStatus() == VDSStatus.Up;
+                        }
+                        else {
+                            return vds.getStatus() == VDSStatus.Up;
+                        }
+                    }
+                    else {
+                        if (filterSelf) {
+                            return !isHostNetworkUnreacable(vds)
+                                    && !vds.getId().equals(_vds.getId());
+                        }
+                        else {
+                            return !isHostNetworkUnreacable(vds);
+                        }
+                    }
+                }
                 return false;
             }
 
@@ -363,7 +386,8 @@ public class FenceExecutor {
 
     private enum PMProxyOptions {
         CLUSTER("cluster "),
-        DC("data center ");
+        DC("data center "),
+        OTHER_DC("other data center");
 
         private final String logEntry;
 
