@@ -2416,6 +2416,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Gateway")
     String gwHostPopup();
 
+    @DefaultStringValue("Custom Properties")
+    String customPropertiesHostPopup();
+
     @DefaultStringValue("Verify connectivity between Host and Engine")
     String checkConHostPopup();
 

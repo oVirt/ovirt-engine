@@ -11,6 +11,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.BaseNetworkQosModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -266,6 +267,16 @@ public class HostInterfaceModel extends EntityModel
         this.qosModel = qosModel;
     }
 
+    private KeyValueModel customPropertiesModel;
+
+    public KeyValueModel getCustomPropertiesModel() {
+        return customPropertiesModel;
+    }
+
+    private void setCustomPropertiesModel(KeyValueModel customProperties) {
+        this.customPropertiesModel = customProperties;
+    }
+
     public HostInterfaceModel() {
         this(false);
     }
@@ -284,6 +295,7 @@ public class HostInterfaceModel extends EntityModel
         setCommitChanges(new EntityModel<Boolean>());
         setQosOverridden(new EntityModel<Boolean>());
         setQosModel(new BaseNetworkQosModel());
+        setCustomPropertiesModel(new KeyValueModel());
 
         setIsToSync(new EntityModel<Boolean>(){
             @Override
@@ -310,6 +322,7 @@ public class HostInterfaceModel extends EntityModel
         getGateway().setIsChangable(false);
         getQosOverridden().setIsAvailable(false);
         getQosModel().setIsAvailable(false);
+        getCustomPropertiesModel().setIsAvailable(false);
 
         getNetwork().getSelectedItemChangedEvent().addListener(this);
         getQosOverridden().getEntityChangedEvent().addListener(this);
@@ -321,6 +334,7 @@ public class HostInterfaceModel extends EntityModel
             getAddress().setEntity(originalNetParams.getAddress());
             getSubnet().setEntity(originalNetParams.getSubnet());
             getGateway().setEntity(originalNetParams.getGateway());
+            getCustomPropertiesModel().deserialize(KeyValueModel.convertProperties(originalNetParams.getCustomProperties()));
         }
     }
 
@@ -379,6 +393,7 @@ public class HostInterfaceModel extends EntityModel
         getAddress().setIsChangable(isChangable && staticIpChangeAllowed);
         getSubnet().setIsChangable(isChangable);
         getGateway().setIsChangable(isChangable);
+        getCustomPropertiesModel().setIsChangable(bootProtocolsAvailable);
     }
 
     public boolean validate()
@@ -397,8 +412,9 @@ public class HostInterfaceModel extends EntityModel
         }
 
         getQosModel().validate();
+        getCustomPropertiesModel().validate();
 
         return getNetwork().getIsValid() && getAddress().getIsValid() && getSubnet().getIsValid()
-                && getGateway().getIsValid() && getQosModel().getIsValid();
+                && getGateway().getIsValid() && getQosModel().getIsValid() && getCustomPropertiesModel().getIsValid();
     }
 }

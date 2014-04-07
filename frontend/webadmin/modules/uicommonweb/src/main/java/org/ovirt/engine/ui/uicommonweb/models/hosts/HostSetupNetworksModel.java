@@ -46,6 +46,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory.OperationMap;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.OperationCadidateEventArgs;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -374,6 +375,7 @@ public class HostSetupNetworksModel extends EntityModel {
                             : logicalNetwork.getAttachedToNic().getEntity();
 
             final HostInterfaceModel networkDialogModel;
+            String version = getEntity().getVdsGroupCompatibilityVersion().getValue();
             if (logicalNetwork.isManagement()) {
                 networkDialogModel = new HostManagementNetworkModel(true);
                 networkDialogModel.setTitle(ConstantsManager.getInstance().getConstants().editManagementNetworkTitle());
@@ -390,7 +392,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 networkDialogModel.getNetwork().setSelectedItem(logicalNetwork.getEntity());
                 networkDialogModel.getGateway()
                         .setIsAvailable((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MultipleGatewaysSupported,
-                                getEntity().getVdsGroupCompatibilityVersion().getValue()));
+                                version));
             }
             networkDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetwork.getName()));
             networkDialogModel.getAddress().setEntity(entity.getAddress());
@@ -399,16 +401,29 @@ public class HostSetupNetworksModel extends EntityModel {
             networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(entity.getAddress()));
             networkDialogModel.getBondingOptions().setIsAvailable(false);
             networkDialogModel.setBootProtocol(entity.getBootProtocol());
+            if ((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.NetworkCustomPropertiesSupported,
+                    version)) {
+                KeyValueModel customPropertiesModel = networkDialogModel.getCustomPropertiesModel();
+                customPropertiesModel.setIsAvailable(true);
+                Map<String, String> validProperties =
+                        KeyValueModel.convertProperties((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.PreDefinedNetworkCustomProperties,
+                                version));
+                validProperties.putAll(KeyValueModel.convertProperties((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.UserDefinedNetworkCustomProperties,
+                        version)));
+                customPropertiesModel.setKeyValueMap(validProperties);
+                customPropertiesModel.deserialize(KeyValueModel.convertProperties(entity.getCustomProperties()));
+            }
             networkDialogModel.getIsToSync().setIsChangable(!logicalNetwork.isInSync());
             networkDialogModel.getIsToSync()
                     .setEntity(networksToSync.contains(logicalNetwork.getName()));
             if ((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HostNetworkQosSupported,
-                    getEntity().getVdsGroupCompatibilityVersion().getValue())) {
+                    version)) {
                 networkDialogModel.getQosOverridden().setIsAvailable(true);
                 networkDialogModel.getQosModel().setIsAvailable(true);
                 networkDialogModel.getQosOverridden().setEntity(entity.isQosOverridden());
                 networkDialogModel.getQosModel().init(entity.getQos());
             }
+
             editPopup = networkDialogModel;
 
             // OK Target
@@ -428,6 +443,11 @@ public class HostSetupNetworksModel extends EntityModel {
                     if (networkDialogModel.getQosModel().getIsAvailable()) {
                         entity.setQosOverridden(networkDialogModel.getQosOverridden().getEntity());
                         entity.setQos(networkDialogModel.getQosModel().flush());
+                    }
+
+                    if (networkDialogModel.getCustomPropertiesModel().getIsAvailable()) {
+                        entity.setCustomProperties(KeyValueModel.convertProperties(networkDialogModel.getCustomPropertiesModel()
+                                .serialize()));
                     }
 
                     if (networkDialogModel.getIsToSync().getEntity()) {

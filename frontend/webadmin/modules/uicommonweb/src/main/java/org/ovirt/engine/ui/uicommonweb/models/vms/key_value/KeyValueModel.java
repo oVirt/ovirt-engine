@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.key_value;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -105,6 +106,18 @@ public class KeyValueModel extends BaseKeyModel {
         }
 
         deserialize(saveEntity);
+    }
+
+    public void setKeyValueMap(Map<String, String> keyValueMap) {
+        if (keyValueMap == null) {
+            return;
+        }
+
+        List<String> lines = new ArrayList<String>();
+        for (Map.Entry<String, String> entry : keyValueMap.entrySet()) {
+            lines.add(entry.getKey() + '=' + entry.getValue());
+        }
+        setKeyValueString(lines);
     }
 
     public String serialize() {

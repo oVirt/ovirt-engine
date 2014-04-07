@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
@@ -9,6 +11,7 @@ public class NetworkParameters {
     private String address;
     private String subnet;
     private String gateway;
+    private Map<String, String> customProperties;
 
 
     public NetworkParameters() {
@@ -19,6 +22,7 @@ public class NetworkParameters {
         setAddress(nic.getAddress());
         setSubnet(nic.getSubnet());
         setGateway(nic.getGateway());
+        setCustomProperties(nic.getCustomProperties());
     }
 
     public NetworkBootProtocol getBootProtocol() {
@@ -45,4 +49,13 @@ public class NetworkParameters {
     public void setGateway(String gateway) {
         this.gateway = gateway;
     }
+
+    public Map<String, String> getCustomProperties() {
+        return customProperties;
+    }
+
+    private void setCustomProperties(Map<String, String> customProperties) {
+        this.customProperties = customProperties;
+    }
+
 }

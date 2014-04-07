@@ -5,7 +5,8 @@
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
 	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:n="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS">
+	xmlns:n="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS"
+	xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInterfacePopupView.Style">
 		.checkCon{
@@ -18,6 +19,10 @@
 		.sectionStyle {
 			margin-top: 20px;
 			margin-bottom: 20px;
+		}
+
+		.customPropertiesStyle {
+			max-height: 100px;
 		}
 	</ui:style>
 
@@ -39,6 +44,10 @@
 						<g:FlowPanel addStyleNames="{style.sectionStyle}" visible="false" >
 							<ge:EntityModelCheckBoxEditor ui:field="qosOverridden" />
 							<n:NetworkQosWidget ui:field="qosWidget" />
+						</g:FlowPanel>
+						<g:FlowPanel ui:field="customPropertiesPanel" addStyleNames="{style.sectionStyle}" visible="false" >
+							<ge:StringEntityModelLabelEditor ui:field="customPropertiesLabel" />
+							<k:KeyValueWidget ui:field="customPropertiesWidget" addStyleNames="{style.customPropertiesStyle}" />
 						</g:FlowPanel>
 						<g:HorizontalPanel>
 							<ge:EntityModelCheckBoxEditor ui:field="isToSync" />

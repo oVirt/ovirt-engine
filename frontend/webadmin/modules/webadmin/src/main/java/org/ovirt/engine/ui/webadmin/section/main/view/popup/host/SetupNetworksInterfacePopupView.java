@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -41,8 +40,9 @@ public class SetupNetworksInterfacePopupView extends HostInterfacePopupView impl
         layoutPanel.setWidgetSize(mainPanel, 510);
         asPopupPanel().setPixelSize(400, 590);
 
-        bootProtocolLabel.setEnabled(object.getBootProtocolsAvailable());
-        bootProtocol.setEnabled(object.getBootProtocolsAvailable());
-        bootProtocol.setEnabled(NetworkBootProtocol.NONE, object.getNoneBootProtocolAvailable());
+        enableDisableBySync(object);
+
+        customPropertiesPanel.setVisible(object.getCustomPropertiesModel().getIsAvailable());
+        customPropertiesWidget.edit(object.getCustomPropertiesModel());
     }
 }

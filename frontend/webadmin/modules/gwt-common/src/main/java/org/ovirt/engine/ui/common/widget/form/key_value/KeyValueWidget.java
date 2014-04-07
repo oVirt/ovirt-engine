@@ -41,13 +41,6 @@ public class KeyValueWidget<T extends BaseKeyModel> extends AddRemoveRowWidget<T
         this.model = model;
         widgets.clear();
         super.init(model);
-
-        if (!enabled) { // get rid of ghost entry if it exists and the widget isn't editable
-            KeyValueLineWidget lastWidget = widgets.getLast();
-            if (isGhost(lastWidget.flush())) {
-                removeWidget(lastWidget);
-            }
-        }
     }
 
     @Override

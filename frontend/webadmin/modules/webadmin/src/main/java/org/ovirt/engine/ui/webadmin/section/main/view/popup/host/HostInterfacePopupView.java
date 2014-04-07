@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -25,6 +26,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS.NetworkQosWidget;
 import org.ovirt.engine.ui.common.widget.editor.EnumRadioEditor;
+import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -37,6 +39,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
@@ -97,6 +100,17 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
     @UiField(provided = true)
     @Ignore
     NetworkQosWidget qosWidget;
+
+    @UiField
+    Panel customPropertiesPanel;
+
+    @UiField
+    @Ignore
+    StringEntityModelLabelEditor customPropertiesLabel;
+
+    @UiField(provided = true)
+    @Ignore
+    KeyValueWidget<KeyValueModel> customPropertiesWidget;
 
     @UiField(provided = true)
     @Path(value = "checkConnectivity.entity")
@@ -174,6 +188,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         });
         bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class, eventBus);
         qosWidget = new NetworkQosWidget(constants);
+        customPropertiesWidget = new KeyValueWidget<KeyValueModel>("310px", "140px"); //$NON-NLS-1$ $NON-NLS-2$
 
         qosOverridden = new org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor(Align.RIGHT);
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -187,6 +202,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         bootProtocolLabel.asValueBox().setVisible(false);
         checkConnectivity.setContentWidgetStyleName(style.checkCon());
         qosOverridden.setContentWidgetStyleName(style.syncInfo());
+        customPropertiesLabel.asValueBox().setVisible(false);
         isToSync.setContentWidgetStyleName(style.syncInfo());
         mainPanel.getElement().setPropertyString("width", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -202,6 +218,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         subnet.setLabel(constants.subnetMaskHostPopup() + ":"); //$NON-NLS-1$
         gateway.setLabel(constants.gwHostPopup() + ":"); //$NON-NLS-1$
         qosOverridden.setLabel(constants.qosOverrideLabel());
+        customPropertiesLabel.setLabel(constants.customPropertiesHostPopup());
         checkConnectivity.setLabel(constants.checkConHostPopup() + ":"); //$NON-NLS-1$
         info.setHTML(constants.changesTempHostPopup());
         isToSync.setLabel(constants.syncNetwork());
@@ -221,11 +238,8 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
                 HostInterfaceModel model = (HostInterfaceModel) sender;
                 String propertyName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("BootProtocolsAvailable".equals(propertyName)) { //$NON-NLS-1$
-                    boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
-                    bootProtocolLabel.setEnabled(bootProtocolsAvailable);
-                    bootProtocol.setEnabled(bootProtocolsAvailable);
-                    bootProtocol.setEnabled(NetworkBootProtocol.NONE, object.getNoneBootProtocolAvailable());
-                    checkConnectivity.setEnabled(bootProtocolsAvailable);
+                    enableDisableBySync(model);
+                    checkConnectivity.setEnabled(model.getBootProtocolsAvailable());
                 }
                 if ("NoneBootProtocolAvailable".equals(propertyName)) { //$NON-NLS-1$
                     bootProtocol.setEnabled(NetworkBootProtocol.NONE, model.getNoneBootProtocolAvailable());
@@ -269,6 +283,15 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
         isToSync.setVisible(false);
         isToSyncInfo.setVisible(false);
+    }
+
+    protected void enableDisableBySync(HostInterfaceModel model) {
+        boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
+        bootProtocolLabel.setEnabled(bootProtocolsAvailable);
+        bootProtocol.setEnabled(bootProtocolsAvailable);
+        bootProtocol.setEnabled(NetworkBootProtocol.NONE, model.getNoneBootProtocolAvailable());
+        customPropertiesLabel.setEnabled(bootProtocolsAvailable);
+        customPropertiesWidget.setEnabled(bootProtocolsAvailable);
     }
 
     @Override
