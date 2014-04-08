@@ -10,7 +10,7 @@ public class GetVdsStaticByNameQuery<P extends NameQueryParameters> extends Quer
 
     @Override
     protected void executeQueryCommand() {
-        VdsStatic vds = getDbFacade().getVdsStaticDao().getByHostName(getParameters().getName());
+        VdsStatic vds = getDbFacade().getVdsStaticDao().getByVdsName(getParameters().getName());
 
         getQueryReturnValue().setReturnValue(vds);
 

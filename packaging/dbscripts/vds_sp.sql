@@ -554,12 +554,22 @@ Create or replace FUNCTION GetVdsStaticByHostName(v_host_name VARCHAR(255)) RETU
 BEGIN
 RETURN QUERY SELECT vds_static.*
    FROM vds_static
-   WHERE vds_name = v_host_name;
+   WHERE host_name = v_host_name;
 
    RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetVdsStaticByVdsName(v_host_name VARCHAR(255)) RETURNS SETOF vds_static STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT vds_static.*
+   FROM vds_static
+   WHERE vds_name = v_host_name;
+
+   RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 

@@ -21,8 +21,15 @@ public interface VdsStaticDAO extends GenericDao<VdsStatic, Guid> {
     VdsStatic getByHostName(String hostname);
 
     /**
+     * Retrieves the instance for the given vds name.
+     * @param vdsName
+     *            the vds name
+     * @return the instance
+     */
+    VdsStatic getByVdsName(String vdsName);
+
+    /**
      * Finds all instances with the given ip address.
-     *
      * @param address
      *            the ip address
      * @return the list of instances
