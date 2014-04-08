@@ -2,7 +2,6 @@ package org.ovirt.engine.core.config;
 
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
 
 /**
@@ -11,9 +10,6 @@ import org.ovirt.engine.core.config.validation.ConfigActionType;
  * not as a char that is actually part of a key/value.
  */
 public class EngineConfigCLIParser {
-    // The log:
-    private static final Logger log = Logger.getLogger(EngineConfigCLIParser.class);
-
     private HashMap<String, String> argsMap = new HashMap<String, String>();
     private EngineConfigMap engineConfigMap = new EngineConfigMap();
 
@@ -30,16 +26,13 @@ public class EngineConfigCLIParser {
      *             but action is not 'set'.
      */
     public void parse(String[] args) {
-        log.debug("parse: beginning to parse passed arguments.");
         validateNonEmpty(args);
         parseAction(args);
         parseArguments(args);
-        log.debug("parse: Finished parsing arguments.");
     }
 
     private void validateNonEmpty(String[] args) {
         if (args.length == 0) {
-            log.debug("parse error: no arguments given.");
             throw (new IllegalArgumentException("Error: at least 1 argument needed for configuration utility to run."));
         }
     }
@@ -67,12 +60,8 @@ public class EngineConfigCLIParser {
                 if (args.length > currentIndex + 1) { // To make sure there is another argument
                     argsMap.put(key, args[currentIndex + 1]);
                     fShouldSkip = true;
-                } else {
-                    log.debug("parsing error: missing pair for key " + args[currentIndex] + ". Skipping argument.");
                 }
             }
-        } else {
-            log.debug("parsing error: illegal argument " + args[currentIndex] + ", starts with '='. Skipping argument.");
         }
         return fShouldSkip;
     }
@@ -107,11 +96,7 @@ public class EngineConfigCLIParser {
             } else if ((getConfigAction().equals(ConfigActionType.ACTION_GET) || getConfigAction().equals(ConfigActionType.ACTION_HELP))
                     && getKey() == null) {
                 engineConfigMap.setKey(arg); // sets the key in 'get' action with format: "-g key"
-            } else {
-                log.debug("parsing error: illegal argument " + arg + ". Skipping argument.");
             }
-        } else {
-            log.debug("parsing error: illegal argument " + arg + ", starts with '='. Skipping argument.");
         }
     }
 
@@ -125,8 +110,6 @@ public class EngineConfigCLIParser {
             engineConfigMap.setKey(key);
             engineConfigMap.setValue(value);
         } else {
-            log.debug("parseArguments error: second argument '"
-                    + arg + "' has an '=' char but action is not 'set'.");
             throw new IllegalArgumentException("Illegal second argument: " + arg + ".");
         }
     }
@@ -161,8 +144,6 @@ public class EngineConfigCLIParser {
                 fShouldSkip = parseKeyValue(args, currentIndex);
             } else if (currentIndex == 1) {
                 parseSecondArgWithoutDash(args[currentIndex], passFileExists);
-            } else {
-                log.debug("parseArguments error: Skipping argument " + args[currentIndex] + ".");
             }
         }
         fillEngineConfigMap();
@@ -187,7 +168,6 @@ public class EngineConfigCLIParser {
                 handleActionWithoutKey(action);
             }
         } else {
-            log.debug("parseAction error: Illegal first argument: '" + args[0] + "' - not a legal action.");
             throw new IllegalArgumentException("Action verb must come first, and '" + args[0]
                     + "' is not an action.\nPlease tell me what to do: list? get? set? get-all?");
         }
@@ -229,7 +209,6 @@ public class EngineConfigCLIParser {
     private void handleActionWithoutKey(String action) {
         engineConfigMap.setConfigAction(ConfigActionType.getActionType(action));
         if (getConfigAction() == null) {
-            log.debug("parseAction error: Illegal first argument: '" + action + "' - not a legal action.");
             throw new IllegalArgumentException("Action verb must come first, and '" + action
                     + "' is not an action.\nPlease tell me what to do: list? get? set? get-all?");
         }
@@ -247,7 +226,6 @@ public class EngineConfigCLIParser {
         if (action.equals("--get") || action.equals("--help")) {
             engineConfigMap.setKey(key);
         } else {
-            log.debug("parseAction error: first argument is illegal.");
             throw new IllegalArgumentException("Action verb must come first, and '" + action + '=' + key
                     + "' is not an action.\nPlease tell me what to do: list? get? set? get-all?");
         }
@@ -259,9 +237,7 @@ public class EngineConfigCLIParser {
      * @param arg
      */
     private void validateArgStartsWithDash(String arg) {
-        log.debug("Validating arrgument" + arg);
         if (!arg.startsWith("-")) {
-            log.debug("parseAction error: first argument '" + arg + "' did not start with '-' or '--'.");
             throw (new IllegalArgumentException("First argument must be an action, and start with '-' or '--'"));
         }
     }
