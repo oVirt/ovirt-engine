@@ -523,6 +523,7 @@ public class AddVmCommandTest {
         mcr.mockConfigValue(ConfigValues.UserDefinedVMProperties, Version.v3_0, "");
         mcr.mockConfigValue(ConfigValues.InitStorageSparseSizeInGB, 1);
         mcr.mockConfigValue(ConfigValues.VirtIoScsiEnabled, Version.v3_3, true);
+        mcr.mockConfigValue(ConfigValues.ValidNumOfMonitors, Arrays.asList("1,2,4".split(",")));
     }
 
     private void mockConfigSizeRequirements(int requiredSpaceBufferInGB) {
@@ -587,5 +588,17 @@ public class AddVmCommandTest {
         doReturn(Collections.<DiskImageBase> emptyList()).when(spy).getVmDisks();
         doReturn(false).when(spy).isVirtioScsiControllerAttached(any(Guid.class));
         spy.setVmTemplateId(Guid.newGuid());
+    }
+
+    @Test
+    public void testBeanValidations() {
+        assertTrue(createCommand(initializeMock(1, 1)).validateInputs());
+    }
+
+    @Test
+    public void testPatternBasedNameFails() {
+        AddVmCommand<VmManagementParametersBase> cmd = createCommand(initializeMock(1, 1));
+        cmd.getParameters().getVm().setName("aa-??bb");
+        assertFalse("Pattern-based name should not be supported for VM", cmd.validateInputs());
     }
 }

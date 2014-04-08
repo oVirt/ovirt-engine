@@ -25,10 +25,10 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -61,6 +61,8 @@ public class UpdateVmCommandTest {
     private UpdateVmCommand<VmManagementParametersBase> command;
     private VDSGroup group;
 
+    private static String vncKeyboardLayoutValues =
+            "ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr";
     @Mock
     private VmDAO vmDAO;
     @Mock
@@ -85,7 +87,6 @@ public class UpdateVmCommandTest {
             mockConfig(ConfigValues.UserDefinedVMProperties, "3.1", ""),
             mockConfig(ConfigValues.PredefinedVMProperties, "3.0", ""),
             mockConfig(ConfigValues.UserDefinedVMProperties, "3.0", ""),
-            mockConfig(ConfigValues.ValidNumOfMonitors, "1,2,4"),
             mockConfig(ConfigValues.VmPriorityMaxValue, 100),
             mockConfig(ConfigValues.MaxNumOfVmCpus, "3.0", 16),
             mockConfig(ConfigValues.MaxNumOfVmSockets, "3.0", 16),
@@ -93,7 +94,9 @@ public class UpdateVmCommandTest {
             mockConfig(ConfigValues.MaxNumOfVmCpus, "3.3", 16),
             mockConfig(ConfigValues.MaxNumOfVmSockets, "3.3", 16),
             mockConfig(ConfigValues.MaxNumOfCpuPerSocket, "3.3", 16),
-            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_3.toString(), true)
+            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_3.toString(), true),
+            mockConfig(ConfigValues.VncKeyboardLayoutValidValues, Arrays.asList(vncKeyboardLayoutValues.split(","))),
+            mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1,2,4".split(",")))
             );
 
     @Before
@@ -127,6 +130,7 @@ public class UpdateVmCommandTest {
         vm.setVdsGroupId(group.getId());
         vm.setClusterArch(ArchitectureType.x86_64);
         vmStatic.setVdsGroupId(group.getId());
+        vmStatic.setName("my_vm");
 
         VmManagementParametersBase params = new VmManagementParametersBase();
         params.setCommandType(VdcActionType.UpdateVm);
@@ -141,6 +145,17 @@ public class UpdateVmCommandTest {
         doReturn(vm).when(command).getVm();
 
         doReturn(false).when(command).isVirtioScsiEnabledForVm(any(Guid.class));
+    }
+
+    @Test
+    public void testBeanValidations() {
+        assertTrue(command.validateInputs());
+    }
+
+    @Test
+    public void testPatternBasedNameFails() {
+        vmStatic.setName("aa-??bb");
+        assertFalse("Pattern-based name should not be supported for VM", command.validateInputs());
     }
 
     @Test

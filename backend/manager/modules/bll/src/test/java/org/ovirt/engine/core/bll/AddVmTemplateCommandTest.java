@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -103,5 +105,16 @@ public class AddVmTemplateCommandTest {
         vm.setStatus(VMStatus.Up);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM);
+    }
+
+    @Test
+    public void testBeanValidations() {
+        assertTrue(cmd.validateInputs());
+    }
+
+    @Test
+    public void testPatternBasedNameFails() {
+        cmd.getParameters().setName("aa-??bb");
+        assertFalse("Pattern-based name should not be supported for Template", cmd.validateInputs());
     }
 }
