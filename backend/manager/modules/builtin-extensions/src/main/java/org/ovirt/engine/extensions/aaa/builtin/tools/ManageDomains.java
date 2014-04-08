@@ -329,9 +329,6 @@ public class ManageDomains {
             } catch (Exception e) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_READING_PASSWORD_FILE, e.getMessage());
             }
-            if (pass == null) {
-                throw new ManageDomainsResult(ManageDomainsResultEnum.EMPTY_PASSWORD_FILE);
-            }
         } else {
             pass = readInteractively("Enter password:", true);
         }
@@ -342,6 +339,9 @@ public class ManageDomains {
     }
 
     private void validatePassword(String pass) throws ManageDomainsResult {
+        if (StringUtils.isBlank(pass)) {
+            throw new ManageDomainsResult(ManageDomainsResultEnum.EMPTY_PASSWORD);
+        }
         if (StringUtils.containsAny(pass, ILLEGAL_PASSWORD_CHARACTERS)) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.ILLEGAL_PASSWORD);
         }
@@ -349,12 +349,17 @@ public class ManageDomains {
 
     private String readInteractively(String prompt, boolean isPassword) {
         String value = null;
-        while (StringUtils.isBlank(value)) {
+        try {
             if (isPassword) {
-                value = new String(System.console().readPassword(prompt));
+                char[] pass = System.console().readPassword(prompt);
+                if (pass != null && pass.length > 0) {
+                    value = new String(pass);
+                }
             } else {
                 value = System.console().readLine(prompt);
             }
+        } catch (Exception ex) {
+            value = null;
         }
         return value;
     }
