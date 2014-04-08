@@ -95,9 +95,9 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                     @Override
                     public String getValue(StorageDomain object) {
                         if (object.getStorageDomainType() == StorageDomainType.ISO) {
-                            return EnumTranslator.getInstance().get(object.getStorageDomainSharedStatus());
+                            return EnumTranslator.getInstance().translate(object.getStorageDomainSharedStatus());
                         } else {
-                            return EnumTranslator.getInstance().get(object.getStatus());
+                            return EnumTranslator.getInstance().translate(object.getStatus());
                         }
                     }
                 };

@@ -3,14 +3,12 @@ package org.ovirt.engine.ui.uicompat;
 import java.util.MissingResourceException;
 import java.util.logging.Logger;
 
-import com.google.gwt.core.client.GWT;
-
-public class EnumTranslator extends Translator<Enum<?>> {
+public class EnumTranslator implements Translator<Enum<?>> {
     private static final Logger logger = Logger.getLogger(EnumTranslator.class.getName());
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private static final EnumTranslator INSTANCE = new EnumTranslator();
 
-    private Enums enums = ConstantsManager.getInstance().getEnums();
+    private static final Enums enums = ConstantsManager.getInstance().getEnums();
 
     private EnumTranslator() {
     }
@@ -20,22 +18,48 @@ public class EnumTranslator extends Translator<Enum<?>> {
     }
 
     @Override
-    public String get(Enum<?> key) {
-        if(key == null) {
-           return constants.notAvailableLabel();
+    public String translate(Enum<?> key) {
+        if (key == null) {
+            final String result = constants.notAvailableLabel();
+            logger.warning("trying to localize null, probable error. " +
+                    "Exception is not thrown, returning '" + result + "'");
+            return result;
         }
 
         try {
-            //FIXME: hack: due to java restriction for method names with chars that are not letters, digits, and underscores, replace . with 0
-            String enumName = key.getDeclaringClass().toString();
-            enumName = enumName.substring(enumName.lastIndexOf(".")+1,enumName.length()); //$NON-NLS-1$
-            String translatedEnum = enums.getString(enumName + "___" + key.toString()); //$NON-NLS-1$
-
-            return translatedEnum;
+            final String translatedString = enums.getString(keyToTranslate(key));
+            return translatedString != null ? translatedString : notLocalizedKey(key);
         } catch (MissingResourceException e) {
             // Silently ignore missing resource
-            logger.info("Missing Enum resource: " + e.getLocalizedMessage()); //$NON-NLS-1$
-            return key.name();
+            return notLocalizedKey(key, e);
         }
+    }
+
+    private String notLocalizedKey(Enum<?> key) {
+        return notLocalizedKey(key, null);
+    }
+
+    private String notLocalizedKey(Enum<?> key, MissingResourceException e) {
+        String logString = "Missing Enum resource '" + key + "'."; //$NON-NLS-1$
+        if (e != null) {
+            logString += " " + e.getLocalizedMessage();
+        }
+
+        logger.warning(logString);
+        return key.name();
+    }
+
+    private String keyToTranslate(Enum<?> key) {
+        String className = key.getDeclaringClass().toString();
+        String classNameWithoutPackage = className.substring(className.lastIndexOf(".") + 1, className.length()); //$NON-NLS-1$
+
+        return classNameWithoutPackage + "___" + key.name();
+    }
+
+    @Override
+    public boolean containsKey(Enum<?> key) {
+        final String translatedString = enums.getString(keyToTranslate(key));
+
+        return translatedString != null;
     }
 }

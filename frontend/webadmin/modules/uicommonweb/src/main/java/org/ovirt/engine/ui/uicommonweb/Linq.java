@@ -1461,7 +1461,7 @@ public final class Linq
         @Override
         public int compare(ProviderType type1, ProviderType type2) {
             final EnumTranslator enumTranslator = EnumTranslator.getInstance();
-            return LexoNumericComparator.comp(enumTranslator.get(type1), enumTranslator.get(type2));
+            return LexoNumericComparator.comp(enumTranslator.translate(type1), enumTranslator.translate(type2));
         }
     }
 

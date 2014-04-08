@@ -23,7 +23,7 @@ public class VolumeTransportTypeRenderer extends AbstractRenderer<Set<TransportT
         while (iterator.hasNext()) {
             TransportType transportType = iterator.next();
 
-            transportTypesBuilder.append(transportTypeTranslator.get(transportType));
+            transportTypesBuilder.append(transportTypeTranslator.translate(transportType));
 
             if (iterator.hasNext()) {
                 transportTypesBuilder.append(", "); //$NON-NLS-1$

@@ -23,7 +23,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.Translator;
 
 
 @SuppressWarnings("unused")
@@ -567,10 +566,10 @@ public class VmGeneralModel extends AbstractGeneralModel {
 
         setOS(AsyncDataProvider.getInstance().getOsName(vm.getVmOsId()));
 
-        Translator translator = EnumTranslator.getInstance();
-        setDefaultDisplayType(translator.get(vm.getDefaultDisplayType()));
+        EnumTranslator translator = EnumTranslator.getInstance();
+        setDefaultDisplayType(translator.translate(vm.getDefaultDisplayType()));
 
-        setOrigin(translator.get(vm.getOrigin()));
+        setOrigin(translator.translate(vm.getOrigin()));
 
         setIsHighlyAvailable(vm.isAutoStartup());
 
@@ -578,7 +577,7 @@ public class VmGeneralModel extends AbstractGeneralModel {
 
         setMonitorCount(vm.getNumOfMonitors());
 
-        setUsbPolicy(translator.get(vm.getUsbPolicy()));
+        setUsbPolicy(translator.translate(vm.getUsbPolicy()));
 
         setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
                 vm.getNumOfCpus(),
@@ -607,7 +606,7 @@ public class VmGeneralModel extends AbstractGeneralModel {
         setHasAlert(vm.getVmPauseStatus() != VmPauseStatus.NONE && vm.getVmPauseStatus() != VmPauseStatus.NOERR);
         if (getHasAlert())
         {
-            setAlert(translator.get(vm.getVmPauseStatus()));
+            setAlert(translator.translate(vm.getVmPauseStatus()));
         }
         else
         {

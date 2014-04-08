@@ -900,14 +900,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         watchdogModelEditor = new ListModelListBoxEditor<VmWatchdogType>(new NullSafeRenderer<VmWatchdogType>() {
             @Override
             protected String renderNullSafe(VmWatchdogType object) {
-                return EnumTranslator.getInstance().get(object);
+                return EnumTranslator.getInstance().translate(object);
             }
         }, new ModeSwitchingVisibilityRenderer());
 
         watchdogActionEditor = new ListModelListBoxEditor<VmWatchdogAction>(new NullSafeRenderer<VmWatchdogAction>() {
             @Override
             protected String renderNullSafe(VmWatchdogAction object) {
-                return EnumTranslator.getInstance().get(object);
+                return EnumTranslator.getInstance().translate(object);
             }
         }, new ModeSwitchingVisibilityRenderer());
 
@@ -1835,7 +1835,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         if (!disksAliases.isEmpty()) {
             generalWarningMessage.setText(messages.disksStatusWarning(
-                    EnumTranslator.getInstance().get(imageStatus),
+                    EnumTranslator.getInstance().translate(imageStatus),
                     (StringUtils.join(disksAliases, ", ")))); //$NON-NLS-1$
         }
     }

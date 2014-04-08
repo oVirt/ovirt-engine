@@ -122,7 +122,7 @@ public class UserEventNotifierListModel extends SearchableListModel
         {
             SelectionTreeNodeModel stnm = new SelectionTreeNodeModel();
             stnm.setTitle(eventType.toString());
-            stnm.setDescription(translator.get(eventType));
+            stnm.setDescription(translator.translate(eventType));
             list.add(stnm);
 
             for (AuditLogType logtype : availableEvents.get(eventType))
@@ -131,7 +131,7 @@ public class UserEventNotifierListModel extends SearchableListModel
 
                 String description;
                 try {
-                    description = translator.get(logtype);
+                    description = translator.translate(logtype);
                 } catch (MissingResourceException e) {
                     description = logtype.toString();
                 }

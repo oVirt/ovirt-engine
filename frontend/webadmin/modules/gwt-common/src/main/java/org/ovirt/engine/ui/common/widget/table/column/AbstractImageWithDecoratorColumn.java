@@ -22,7 +22,7 @@ public abstract class AbstractImageWithDecoratorColumn<T> extends Column<T, Imag
     }
 
     public void setEnumTitle(Enum<?> enumObj) {
-        setTitle(EnumTranslator.getInstance().get(enumObj));
+        setTitle(EnumTranslator.getInstance().translate(enumObj));
     }
 
 }

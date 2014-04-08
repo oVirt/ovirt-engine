@@ -52,7 +52,7 @@ public class AbstractGeneralModel extends EntityModel {
 
                     UnitVmModel.GraphicsTypes graphicsTypes = UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypesCollection);
                     Translator translator = EnumTranslator.getInstance();
-                    setGraphicsType(translator.get(graphicsTypes));
+                    setGraphicsType(translator.translate(graphicsTypes));
                 }
             }
         ));

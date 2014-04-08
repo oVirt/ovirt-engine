@@ -973,8 +973,8 @@ public class HostGeneralModel extends EntityModel
         setAutomaticLargePage(vds.getTransparentHugePagesState());
         setBootTime(vds.getBootTime());
 
-        setKdumpStatus(EnumTranslator.getInstance().get(vds.getKdumpStatus()));
-        setSelinuxEnforceMode(EnumTranslator.getInstance().get(vds.getSELinuxEnforceMode()));
+        setKdumpStatus(EnumTranslator.getInstance().translate(vds.getKdumpStatus()));
+        setSelinuxEnforceMode(EnumTranslator.getInstance().translate(vds.getSELinuxEnforceMode()));
 
         setLiveSnapshotSupport(vds.getLiveSnapshotSupport());
 

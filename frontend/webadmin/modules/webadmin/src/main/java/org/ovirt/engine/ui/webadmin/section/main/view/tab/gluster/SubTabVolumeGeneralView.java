@@ -18,7 +18,6 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.Translator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeneralPresenter;
 
@@ -113,9 +112,9 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     }
 
     private void translateVolumeType(GlusterVolumeEntity volumeEntity) {
-        Translator translator = EnumTranslator.getInstance();
+        EnumTranslator translator = EnumTranslator.getInstance();
         if (translator.containsKey(volumeEntity.getVolumeType())) {
-            getDetailModel().setVolumeTypeSilently(translator.get(volumeEntity.getVolumeType()));
+            getDetailModel().setVolumeTypeSilently(translator.translate(volumeEntity.getVolumeType()));
         }
     }
 

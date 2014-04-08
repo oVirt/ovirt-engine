@@ -200,7 +200,7 @@ public class NeutronAgentModel extends EntityModel {
     }
 
     private String getDefaultPluginTypeString() {
-        return EnumTranslator.getInstance().get(OpenstackNetworkPluginType.OPEN_VSWITCH);
+        return EnumTranslator.getInstance().translate(OpenstackNetworkPluginType.OPEN_VSWITCH);
     }
 
 }

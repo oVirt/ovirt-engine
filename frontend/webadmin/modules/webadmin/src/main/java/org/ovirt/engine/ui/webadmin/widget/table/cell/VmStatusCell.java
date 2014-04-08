@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.uicompat.Translator;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
@@ -133,8 +132,8 @@ public class VmStatusCell extends AbstractCell<VM> {
             String html = imagePrototype.getHTML();
 
             // Append tooltip
-            Translator translator = EnumTranslator.getInstance();
-            String toolTip = updateNeeded ? constants.newtools() : translator.get(vm.getVmPauseStatus());
+            EnumTranslator translator = EnumTranslator.getInstance();
+            String toolTip = updateNeeded ? constants.newtools() : translator.translate(vm.getVmPauseStatus());
             html = html.replaceFirst("img", "img " + "title='" + toolTip + "' "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
             return SafeHtmlUtils.fromTrustedString(html);

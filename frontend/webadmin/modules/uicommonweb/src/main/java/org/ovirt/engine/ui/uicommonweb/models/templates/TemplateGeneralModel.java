@@ -361,9 +361,9 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
         setOS(AsyncDataProvider.getInstance().getOsName(template.getOsId()));
 
         Translator translator = EnumTranslator.getInstance();
-        setDefaultDisplayType(translator.get(template.getDefaultDisplayType()));
+        setDefaultDisplayType(translator.translate(template.getDefaultDisplayType()));
 
-        setOrigin(translator.get(template.getOrigin()));
+        setOrigin(translator.translate(template.getOrigin()));
 
         setHasDomain(AsyncDataProvider.getInstance().isWindowsOsType(template.getOsId()));
         if (template.getVmInit() != null) {
@@ -374,7 +374,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel {
         setTimeZone(template.getTimeZone());
 
         setHasUsbPolicy(true);
-        setUsbPolicy(translator.get(template.getUsbPolicy()));
+        setUsbPolicy(translator.translate(template.getUsbPolicy()));
 
         setIsStateless(template.isStateless());
     }

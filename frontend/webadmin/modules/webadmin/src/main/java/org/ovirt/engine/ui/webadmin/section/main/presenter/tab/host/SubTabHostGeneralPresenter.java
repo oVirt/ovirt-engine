@@ -128,7 +128,7 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
             addTextAndLinkAlert(view, messages.hostHasNoPowerManagementAlert(), model.getEditHostCommand());
         }
         if (model.getNonOperationalReasonEntity() != null) {
-            addTextAlert(view, EnumTranslator.getInstance().get(model.getNonOperationalReasonEntity()));
+            addTextAlert(view, EnumTranslator.getInstance().translate(model.getNonOperationalReasonEntity()));
         }
     }
 

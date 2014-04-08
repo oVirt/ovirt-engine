@@ -444,10 +444,10 @@ public class PoolGeneralModel extends AbstractGeneralModel
                     poolGeneralModel.setMinAllocatedMemory(getvm().getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 
                     Translator translator = EnumTranslator.getInstance();
-                    setDefaultDisplayType(translator.get(getvm().getDefaultDisplayType()));
+                    setDefaultDisplayType(translator.translate(getvm().getDefaultDisplayType()));
 
-                    poolGeneralModel.setOrigin(translator.get(getvm().getOrigin()));
-                    poolGeneralModel.setUsbPolicy(translator.get(getvm().getUsbPolicy()));
+                    poolGeneralModel.setOrigin(translator.translate(getvm().getOrigin()));
+                    poolGeneralModel.setUsbPolicy(translator.translate(getvm().getUsbPolicy()));
 
                     setHasDomain(AsyncDataProvider.getInstance().isWindowsOsType(getvm().getVmOsId()));
 

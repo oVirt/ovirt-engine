@@ -35,7 +35,7 @@ public class RoleNode {
     {
         this.setName(actionGroup.toString());
         this.setTooltip(tooltip);
-        this.setDesc(EnumTranslator.getInstance().get(actionGroup));
+        this.setDesc(EnumTranslator.getInstance().translate(actionGroup));
     }
 
     public RoleNode(String name, String desc)
