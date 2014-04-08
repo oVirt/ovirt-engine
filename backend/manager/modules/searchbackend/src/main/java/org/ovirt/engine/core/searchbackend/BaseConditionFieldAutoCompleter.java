@@ -28,8 +28,6 @@ import org.ovirt.engine.core.compat.TimeSpan;
  */
 public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implements IConditionFieldAutoCompleter {
 
-    public static final int DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
-
     protected final Map<String, List<ValueValidationFunction>> validationDict =
             new HashMap<String, List<ValueValidationFunction>>();
     private final Map<String, Class<?>> typeDict = new HashMap<String, Class<?>>();
