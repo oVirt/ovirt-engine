@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.UUID;
 
 import javax.sql.DataSource;
 
@@ -13,9 +15,8 @@ import org.ovirt.engine.core.utils.db.DbUtils;
 
 public class ManageDomainsDAOImpl implements ManageDomainsDAO {
 
-    private static final String SUPER_USER = "SuperUser";
     private DataSource ds;
-    private String actionQuery = "select attach_user_to_role(?,?,?,?)";
+    private String actionQuery = "select attach_user_to_su_role(?,?,?,?)";
     private String selectQuery = "select get_user_permissions_for_domain(?,?)";
     private final static Logger log = Logger.getLogger(ManageDomainsDAOImpl.class);
 
@@ -32,10 +33,11 @@ public class ManageDomainsDAOImpl implements ManageDomainsDAO {
             log.info("uuid: " + userId + " username: " + userName + " domain: " + domain);
             connection = ds.getConnection();
             prepareStatement = connection.prepareStatement(actionQuery);
-            prepareStatement.setString(1, userId);
-            prepareStatement.setString(2, userName);
-            prepareStatement.setString(3, domain);
-            prepareStatement.setString(4, SUPER_USER);
+            String permissionId = UUID.randomUUID().toString();
+            prepareStatement.setObject(1, permissionId, Types.OTHER);
+            prepareStatement.setString(2, userId);
+            prepareStatement.setString(3, userName);
+            prepareStatement.setString(4, domain);
             result = prepareStatement.execute();
         } finally {
             DbUtils.closeQuietly(prepareStatement, connection);
