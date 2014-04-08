@@ -60,4 +60,9 @@ public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestA
         command.getParameters().getVmPool().setName(patternBaseName);
         assertTrue(command.validateInputs());
     }
+
+    @Test
+    public void validateBeanValidations() {
+        assertTrue(command.validateInputs());
+    }
 }
