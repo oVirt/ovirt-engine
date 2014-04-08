@@ -26,7 +26,6 @@ public class EngineConfig {
 
     public static final String CONFIG_FILE_PATH_PROPERTY = "engine-config.config.file.path";
     public static final File DEFAULT_CONFIG_PATH = new File(EngineLocalConfig.getInstance().getEtcDir(), "engine-config");
-    private EngineConfigCLIParser parser;
     private EngineConfigLogic engineConfigLogic;
     private static EngineConfig instance = new EngineConfig();
 
@@ -37,13 +36,12 @@ public class EngineConfig {
      * Parses the arguments, validates that they are valid, instantiates the EngineConfigLogic object and executes the
      * desired action.
      *
-     * @param args
-     *            The arguments given by the user.
+     * @param parser
+     *            parser instance with parsed args
      *
      * @throws Exception
      */
-    public void setUpAndExecute(String... args) throws Exception {
-        parser.parse(args);
+    public void setUpAndExecute(EngineConfigCLIParser parser) throws Exception {
         log.debug("Arguments have been parsed: " + parser.engineConfigMapToString());
         ConfigActionType actionType = parser.getConfigAction();
         actionType.validate(parser.getEngineConfigMap());
@@ -76,8 +74,9 @@ public class EngineConfig {
     public static void main(String... args) {
         initLogging();
         try {
-            getInstance().setParser(new EngineConfigCLIParser());
-            getInstance().setUpAndExecute(args);
+            EngineConfigCLIParser parser = new EngineConfigCLIParser();
+            parser.parse(args);
+            getInstance().setUpAndExecute(parser);
 
         } catch (Throwable t) {
             log.debug("Exiting with error: ", t);
@@ -88,10 +87,6 @@ public class EngineConfig {
 
     public void setEngineConfigLogic(EngineConfigLogic engineConfigLogic) {
         this.engineConfigLogic = engineConfigLogic;
-    }
-
-    public void setParser(EngineConfigCLIParser parser) {
-        this.parser = parser;
     }
 
     public EngineConfigLogic getEngineConfigLogic() {
