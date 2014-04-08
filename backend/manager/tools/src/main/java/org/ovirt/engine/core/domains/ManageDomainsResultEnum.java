@@ -27,8 +27,8 @@ public enum ManageDomainsResultEnum {
     UNKNOWN_ERROR(
             "Operation failed due to exception. Details: %1$s",
             20),
-    FAILURE_READING_PASSWORD_FILE("failed reading password from password file", 21),
-    EMPTY_PASSWORD_FILE("password file is empty", 22),
+    FAILURE_READING_PASSWORD_FILE("Failed reading password from password file.", 21),
+    EMPTY_PASSWORD("Password cannot be empty.", 22),
     NO_LDAP_SERVERS_FOR_DOMAIN("No LDAP servers can be obtained for domain %1$s", 23),
     NO_KDC_SERVERS_FOR_DOMAIN("No KDC can be obtained for domain %1$s", 24),
     INVALID_ARGUMENT_VALUE("Invalid argument value. Details: %1$s", 26),
