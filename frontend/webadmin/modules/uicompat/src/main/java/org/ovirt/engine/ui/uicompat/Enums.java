@@ -101,50 +101,6 @@ public interface Enums extends LocalizedEnums {
 
     String VdsTransparentHugePages___Always();
 
-    String VmOsType___Unassigned();
-
-    String VmOsType___WindowsXP();
-
-    String VmOsType___Windows2003();
-
-    String VmOsType___Windows2003x64();
-
-    String VmOsType___Windows2008();
-
-    String VmOsType___Windows2008x64();
-
-    String VmOsType___Windows2008R2x64();
-
-    String VmOsType___Windows7();
-
-    String VmOsType___Windows7x64();
-
-    String VmOsType___Windows8();
-
-    String VmOsType___Windows8x64();
-
-    String VmOsType___Windows2012x64();
-
-    String VmOsType___OtherLinux();
-
-    String VmOsType___Other();
-
-    String VmOsType___RHEL6();
-
-    String VmOsType___RHEL6x64();
-
-    String VmOsType___RHEL5();
-
-    String VmOsType___RHEL5x64();
-
-    String VmOsType___RHEL4();
-
-    String VmOsType___RHEL4x64();
-
-    String VmOsType___RHEL3();
-
-    String VmOsType___RHEL3x64();
-
     String VMStatus___Down();
 
     String VMStatus___ImageIllegal();
