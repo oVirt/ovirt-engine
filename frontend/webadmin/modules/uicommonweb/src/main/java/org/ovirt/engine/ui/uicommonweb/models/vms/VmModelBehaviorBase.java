@@ -1132,7 +1132,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         if (cluster != null) {
             vmOsValues = AsyncDataProvider.getOsIds(cluster.getArchitecture());
+            Integer selectedOsId = getModel().getOSType().getSelectedItem();
             getModel().getOSType().setItems(vmOsValues);
+            if (selectedOsId != null && vmOsValues.contains(selectedOsId)) {
+                getModel().getOSType().setSelectedItem(selectedOsId);
+            }
+
             postOsItemChanged();
         }
 
