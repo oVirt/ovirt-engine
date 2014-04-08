@@ -28,7 +28,7 @@ UPDATE permissions p SET ad_element_id = (
 
 UPDATE users SET user_id = temp_id;
 --3. Cleanup
-ALTER TABLE tags_user_map DISABLE TRIGGER USER;
+ALTER TABLE tags_user_map ENABLE TRIGGER USER;
 PERFORM fn_db_drop_column('users','temp_id');
 RETURN;
 END; $procedure$
