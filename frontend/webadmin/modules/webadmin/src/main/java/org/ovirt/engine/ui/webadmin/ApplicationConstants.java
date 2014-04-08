@@ -3581,4 +3581,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("iSCSI Multipathing")
     String dataCenterIscsiMultipathingSubTabLabel();
+
+    @DefaultStringValue("Changing the display network will cause any running VMs in the cluster to lose display console connectivity until they are restarted.")
+    String changeDisplayNetworkWarning();
 }

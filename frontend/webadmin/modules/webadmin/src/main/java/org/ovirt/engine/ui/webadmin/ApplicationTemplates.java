@@ -166,4 +166,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
 
     @Template("<div style='max-width: 250px; display:inline-block;'>{0}</div>")
     SafeHtml maxWidthNteworkItemPopup(String text);
+
+    @Template("<abbr title='{1}'>{0}</abbr>")
+    SafeHtml textWithTooltip(String text, String tooltip);
 }

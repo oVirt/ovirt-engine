@@ -91,10 +91,13 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 new VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn(constants),
                 constants.vmNetwork(), "80px"); //$NON-NLS-1$
 
+        final SafeHtml displayNetworkColumnHeader = templates.textWithTooltip(
+                constants.displayNetwork(),
+                constants.changeDisplayNetworkWarning());
         networks.addColumn(
                 new DisplayNetworkIndicatorCheckboxColumn(multipleSelectionAllowed,
                         new DisplayNetworkIndicatorFieldUpdater()),
-                constants.displayNetwork(), "100px"); //$NON-NLS-1$
+                displayNetworkColumnHeader, "100px"); //$NON-NLS-1$
 
         networks.addColumn(
                 new MigrationNetworkIndicatorCheckboxColumn(multipleSelectionAllowed,
