@@ -626,6 +626,7 @@ select fn_db_add_config_value('NetworkCustomPropertiesSupported', 'false', '3.1'
 select fn_db_add_config_value('NetworkCustomPropertiesSupported', 'false', '3.2');
 select fn_db_add_config_value('NetworkCustomPropertiesSupported', 'false', '3.3');
 select fn_db_add_config_value('NetworkCustomPropertiesSupported', 'false', '3.4');
+select fn_db_add_config_value('PreDefinedNetworkCustomProperties', 'bridge_opts=^[^\s=]+=[^\s=]+(\s+[^\s=]+=[^\s=]+)*$', '3.5');
 select fn_db_add_config_value('UserDefinedNetworkCustomProperties', '', '3.5');
 
 select fn_db_add_config_value('SshSoftFencingCommand', 'service vdsmd restart', '3.0');

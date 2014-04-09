@@ -247,6 +247,8 @@ public class SetupNetworksHelper {
                 util.convertProperties(Config.<String> getValue(ConfigValues.PreDefinedNetworkCustomProperties, version));
         validProperties.putAll(util.convertProperties(Config.<String> getValue(ConfigValues.UserDefinedNetworkCustomProperties,
                 version)));
+        Map<String, String> validPropertiesNonVm = new HashMap<String, String>(validProperties);
+        validPropertiesNonVm.remove("bridge_opts");
         for (VdsNetworkInterface iface : params.getInterfaces()) {
             if (iface.hasCustomProperties()) {
                 String networkName = iface.getNetworkName();
@@ -259,8 +261,10 @@ public class SetupNetworksHelper {
                                 networkName);
                     }
 
+                    Network network = existingClusterNetworks.get(networkName);
                     List<ValidationError> errors =
-                            util.validateProperties(validProperties, iface.getCustomProperties());
+                            util.validateProperties(network == null || network.isVmNetwork() ? validProperties
+                                    : validPropertiesNonVm, iface.getCustomProperties());
                     if (!errors.isEmpty()) {
                         addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT, networkName);
                         List<String> messages = new ArrayList<>();

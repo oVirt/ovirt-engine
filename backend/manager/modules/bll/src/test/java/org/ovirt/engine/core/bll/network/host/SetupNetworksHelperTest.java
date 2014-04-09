@@ -70,7 +70,9 @@ public class SetupNetworksHelperTest {
             mockConfig(ConfigValues.UserDefinedNetworkCustomProperties, Version.v3_2.toString(), ""),
             mockConfig(ConfigValues.UserDefinedNetworkCustomProperties, Version.v3_3.toString(), ""),
             mockConfig(ConfigValues.UserDefinedNetworkCustomProperties, Version.v3_4.toString(), ""),
-            mockConfig(ConfigValues.UserDefinedNetworkCustomProperties, Version.v3_5.toString(), "foo=^[a-zA-Z0-9]*$"));
+            mockConfig(ConfigValues.UserDefinedNetworkCustomProperties,
+                    Version.v3_5.toString(),
+                    "bridge_opts=^[^\\s=]+=[^\\s=]+(\\s+[^\\s=]+=[^\\s=]+)*$"));
 
     @Mock
     private NetworkDao networkDAO;
@@ -465,6 +467,22 @@ public class SetupNetworksHelperTest {
         assertNoNetworksRemoved(helper);
         assertNoBondsRemoved(helper);
         assertInterfaceModified(helper, iface);
+    }
+
+    @Test
+    public void bridgePropertiesNonVm() {
+        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        network.setVmNetwork(false);
+        mockExistingNetworks(network);
+        VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
+        mockExistingIfaces(iface);
+        iface.setCustomProperties(createCustomProperties());
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_5);
+
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT,
+                MANAGEMENT_NETWORK_NAME);
     }
 
     /* --- Tests for external networks --- */
@@ -1853,7 +1871,7 @@ public class SetupNetworksHelperTest {
 
     private Map<String, String> createCustomProperties() {
         Map<String, String> customProperties = new HashMap<String, String>();
-        customProperties.put("foo", "bar");
+        customProperties.put("bridge_opts", "forward_delay=1500");
         return customProperties;
     }
 
