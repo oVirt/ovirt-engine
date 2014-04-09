@@ -14,7 +14,6 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -34,9 +33,6 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
     private boolean enabled = true;
 
     @UiField
-    WidgetStyle style;
-
-    @UiField
     @Ignore
     HorizontalPanel panel;
 
@@ -54,22 +50,29 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private String rowWidth;
+    private String rowWidth = "400px"; //$NON-NLS-1$
+    private String fieldWidth = "180px"; //$NON-NLS-1$
 
-    KeyValueLineWidget(String rowWidth) {
-        this.rowWidth = rowWidth;
+    KeyValueLineWidget(String rowWidth, String fieldWidth) {
+        if (rowWidth != null) {
+            this.rowWidth = rowWidth;
+        }
+        if (fieldWidth != null) {
+            this.fieldWidth = fieldWidth;
+        }
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
         addStyles();
     }
 
     private void addStyles() {
-        keyField.addContentWidgetStyleName(style.fieldWidth());
-        valueField.addContentWidgetStyleName(style.fieldWidth());
-        valuesField.addContentWidgetStyleName(style.fieldWidth());
-        if (rowWidth != null) {
-            panel.setWidth(rowWidth);
-        }
+        keyField.setWidth(fieldWidth);
+        valueField.setWidth(fieldWidth);
+        valuesField.setWidth(fieldWidth);
+        keyField.getContentWidgetContainer().setWidth(fieldWidth);
+        valueField.getContentWidgetContainer().setWidth(fieldWidth);
+        valuesField.getContentWidgetContainer().setWidth(fieldWidth);
+        panel.setWidth(rowWidth);
         hideLabels();
     }
 
@@ -107,10 +110,6 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
     @Override
     public KeyValueLineModel flush() {
         return driver.flush();
-    }
-
-    interface WidgetStyle extends CssResource {
-        String fieldWidth();
     }
 
     @Override

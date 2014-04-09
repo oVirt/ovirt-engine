@@ -20,6 +20,7 @@ public class KeyValueWidget<T extends BaseKeyModel> extends AddRemoveRowWidget<T
     private final LinkedList<KeyValueLineWidget> widgets = new LinkedList<KeyValueLineWidget>();
     private boolean enabled = true;
     String rowWidth = null;
+    String fieldWidth = null;
 
     KeyValueWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -28,6 +29,11 @@ public class KeyValueWidget<T extends BaseKeyModel> extends AddRemoveRowWidget<T
     public KeyValueWidget(String rowWidth) {
         this();
         this.rowWidth = rowWidth;
+    }
+
+    public KeyValueWidget(String rowWidth, String fieldWidth) {
+        this(rowWidth);
+        this.fieldWidth = fieldWidth;
     }
 
     @Override
@@ -62,7 +68,7 @@ public class KeyValueWidget<T extends BaseKeyModel> extends AddRemoveRowWidget<T
 
     @Override
     protected KeyValueLineWidget createWidget(KeyValueLineModel value) {
-        KeyValueLineWidget keyValueLineWidget = new KeyValueLineWidget(rowWidth);
+        KeyValueLineWidget keyValueLineWidget = new KeyValueLineWidget(rowWidth, fieldWidth);
         keyValueLineWidget.edit(value);
         widgets.add(keyValueLineWidget);
         return keyValueLineWidget;
