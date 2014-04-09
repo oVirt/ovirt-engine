@@ -1912,7 +1912,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            The message to add.
      */
     protected void addCanDoActionMessage(VdcBllMessages message) {
-        getReturnValue().getCanDoActionMessages().add(message.name());
+        addCanDoActionMessage(message.name());
     }
 
     /**
@@ -1938,7 +1938,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @param message The message to add.
      */
     protected void addCanDoActionMessage(String message) {
-        getReturnValue().getCanDoActionMessages().add(message);
+        if (StringUtils.isNotEmpty(message)) {
+            getReturnValue().getCanDoActionMessages().add(message);
+        }
     }
 
     /**
