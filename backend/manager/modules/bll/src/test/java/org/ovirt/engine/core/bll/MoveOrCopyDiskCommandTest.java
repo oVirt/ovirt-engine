@@ -272,9 +272,6 @@ public class MoveOrCopyDiskCommandTest {
                 destStorageId,
                 operation)));
 
-        // Spy away the image handler method
-        doReturn(true).when(command).checkImageConfiguration();
-
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
 
         doReturn(false).when(command).acquireLock();

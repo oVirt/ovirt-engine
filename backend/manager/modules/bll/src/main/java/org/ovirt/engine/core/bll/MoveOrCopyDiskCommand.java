@@ -85,7 +85,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && validateDestStorage()
                 && checkTemplateInDestStorageDomain()
                 && validateSpaceRequirements()
-                && checkImageConfiguration()
                 && checkCanBeMoveInVm()
                 && checkIfNeedToBeOverride();
     }
@@ -186,12 +185,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 new StorageDomainValidator(getStorageDomainDAO().getForStoragePool(sourceDomainId,
                         getImage().getStoragePoolId()));
         return validate(validator.isDomainExistAndActive());
-    }
-
-    protected boolean checkImageConfiguration() {
-        return ImagesHandler.checkImageConfiguration(getStorageDomain().getStorageStaticData(),
-                getImage(),
-                getReturnValue().getCanDoActionMessages());
     }
 
     /**
