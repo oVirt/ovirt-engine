@@ -168,27 +168,31 @@ public class ErrorTranslator {
 
         RegExp regex = RegExp.compile(VARIABLE_PATTERN, "gi"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        int fromIndex = 0;
-        int length = message.length();
         MatchResult result;
-        while (fromIndex < length) {
-            result = regex.exec(message);
+        while (returnValue.length() > 0) {
+            result = regex.exec(returnValue);
             if (result == null) {
                 // No more matches
                 break;
             }
 
-            int index = result.getIndex();
             String match = result.getGroup(0);
-
             String key = match.substring(2, match.length() - 1);
+
             if (variables.containsKey(key)) {
                 LinkedList<String> values = variables.get(key);
                 String value = values.size() == 1 ? values.getFirst() :
                         values.size() > 1 ? values.removeFirst() : ""; //$NON-NLS-1$
                 returnValue = returnValue.replace(match, value);
             }
+            else {
+                // Variable not found, break the cycle to avoid
+                // infinite loop
+                break;
+            }
 
+            // Make the next search start from the beginning
+            regex.setLastIndex(0);
         }
 
         return returnValue;
