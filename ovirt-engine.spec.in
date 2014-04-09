@@ -1014,7 +1014,6 @@ fi
 %{engine_data}/conf/jaas.conf
 %{engine_data}/services/ovirt-engine-notifier
 %{engine_etc}/engine-config/engine-config.*properties
-%{engine_etc}/engine-manage-domains/log4j.xml
 %{engine_etc}/notifier/notifier.conf.d/
 %{engine_java}/tools.jar
 

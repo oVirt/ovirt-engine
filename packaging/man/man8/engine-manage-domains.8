@@ -82,6 +82,21 @@ Show this help message and exit.
 A comma delimited list of LDAP servers to be set to the domain.
 .RE
 .PP
+\fB\-\-log\-file\fR=\fILOG_FILE\fR
+.RS 4
+Sets file to write logging into (if not set nothing is logged).
+.RE
+.PP
+\fB\-\-log\-level\fR=\fILOG_LEVEL\fR
+.RS 4
+Sets log level, one of DEBUG (default), INFO, WARN, ERROR (case insensitive).
+.RE
+.PP
+\fB\-\-log4j\-config\fR=\fIXML_FILE\fR
+.RS 4
+Sets log4j.xml file which logging configuration is loaded from.
+.RE
+.PP
 \fB\-\-provider\fR=\fIPROVIDER\fR
 .RS 4
 The LDAP provider type of server used for the domain (case insensitive).
