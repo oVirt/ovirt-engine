@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,11 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,8 +38,8 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
             return hosts;
         }
 
-        Set<Guid> allVmIdsPositive = new HashSet<Guid>();
-        Set<Guid> allVmIdsNegative = new HashSet<Guid>();
+        Set<Guid> allVmIdsPositive = new HashSet<>();
+        Set<Guid> allVmIdsNegative = new HashSet<>();
 
         List<String> positiveAffinityGroupNames = new ArrayList<>();
         // Group by all vms in affinity groups per positive or negative
@@ -69,12 +66,12 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
         }
 
         // Get all running VMs in cluster
-        Map<Guid, VM> runningVMsMap = new HashMap<Guid, VM>();
+        Map<Guid, VM> runningVMsMap = new HashMap<>();
         for (VM iter : getVmDao().getAllRunningByCluster(vm.getVdsGroupId())) {
             runningVMsMap.put(iter.getId(), iter);
         }
 
-        Set<Guid> acceptableHosts = new HashSet<Guid>();
+        Set<Guid> acceptableHosts = new HashSet<>();
         // Group all hosts for VMs with positive affinity
         for (Guid id : allVmIdsPositive) {
             VM runVm = runningVMsMap.get(id);
@@ -82,53 +79,51 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
                 acceptableHosts.add(runVm.getRunOnVds());
             }
         }
+
+        Set<Guid> unacceptableHosts = new HashSet<>();
+        // Group all hosts for VMs with negative affinity
+        for (Guid id : allVmIdsNegative) {
+            VM runVm = runningVMsMap.get(id);
+            if (runVm != null && runVm.getRunOnVds() != null) {
+                unacceptableHosts.add(runVm.getRunOnVds());
+            }
+        }
+
         Map<Guid, VDS> hostMap = new HashMap<>();
         for (VDS host : hosts) {
             hostMap.put(host.getId(), host);
         }
-        boolean hasPositiveConstraint = false;
-        // No hosts associated with positive affinity, all hosts is applicable.
-        if (acceptableHosts.isEmpty()) {
-            acceptableHosts.addAll(hostMap.keySet());
-        } else if (acceptableHosts.size() == 1 && hostMap.containsKey(acceptableHosts.iterator().next())) {
-            hasPositiveConstraint = true;
-            // Only one host is allowed for positive affinity, i.e. if the VM contained in a positive
-            // affinity group he must run on the host that all the other members are running, if the
-            // VMs spread across hosts, the affinity rule isn't applied.
-        } else {
-            messages.add(String.format("$affinityGroupName %1$s", StringUtils.join(positiveAffinityGroupNames, ", ")));
-            List<String> hostsNames = new ArrayList<>();
-            for (Guid hostId : acceptableHosts) {
-                if (hostMap.containsKey(hostId)) {
-                    hostsNames.add(hostMap.get(hostId).getName());
-                } else {
-                    hostsNames.add(getVdsStaticDao().get(hostId).getName());
-                }
-            }
-            messages.add(String.format("$hostName %1$s", StringUtils.join(hostsNames, ", ")));
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_POSITIVE_AFFINITY_GROUP.toString());
-            return null;
-        }
-        // Handle negative affinity
-        StringBuilder negativeLogMessage = new StringBuilder("Negative Affinity remove host(s):");
-        for (Guid id : allVmIdsNegative) {
-            VM runVm = runningVMsMap.get(id);
-            if (runVm != null && runVm.getRunOnVds() != null) {
-                acceptableHosts.remove(runVm.getRunOnVds());
-                negativeLogMessage.append(MessageFormat.format(" {0} (vm {1}),", runVm.getRunOnVds(), vm.getName()));
-            }
-        }
-        if (acceptableHosts.isEmpty()) {
-            if (hasPositiveConstraint) {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_MIX_POSITIVE_NEGATIVE_AFFINITY_GROUP.toString());
-            } else {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_NEGATIVE_AFFINITY_GROUP.toString());
-            }
-            log.info(negativeLogMessage);
-            return null;
+
+        // Compute the intersection of hosts with positive and negative affinity and report that
+        // contradicting rules to the log
+        unacceptableHosts.retainAll(acceptableHosts);
+        for (Guid id: unacceptableHosts) {
+            log.warnFormat("Host {1} ({2}) belongs to both positive and negative affinity list" +
+                    " while scheduling VM {3} ({4})",
+                    hostMap.get(id).getName(), id.toString(),
+                    vm.getName(), vm.getId());
         }
 
-        List<VDS> retList = new ArrayList<VDS>();
+        // No hosts associated with positive affinity, all hosts are applicable.
+        if (acceptableHosts.isEmpty()) {
+            acceptableHosts.addAll(hostMap.keySet());
+        }
+        else if (acceptableHosts.size() > 1) {
+            log.warnFormat("Invalid affinity situation was detected while scheduling VM {1} ({2})." +
+                    " VMs belonging to the same affinity groups are running on more than one host.",
+                    vm.getName(), vm.getId());
+        }
+
+        // Remove hosts that contain VMs with negaive affinity to the currently scheduled Vm
+        for (Guid id : allVmIdsNegative) {
+            VM runVm = runningVMsMap.get(id);
+            if (runVm != null && runVm.getRunOnVds() != null
+                    && acceptableHosts.contains(runVm.getRunOnVds())) {
+                acceptableHosts.remove(runVm.getRunOnVds());
+            }
+        }
+
+        List<VDS> retList = new ArrayList<>();
         for (VDS host : hosts) {
             if (acceptableHosts.contains(host.getId())) {
                 retList.add(host);
