@@ -120,6 +120,9 @@ public class ImportRepoImageCopyTaskHandler
         String vmTemplateName = "GlanceTemplate-" + Guid.newGuid().toString().substring(0, 7);
         AddVmTemplateParameters parameters = new AddVmTemplateParameters(masterVm, vmTemplateName, templateDiskImage.getDiskDescription());
 
+        // Setting the user from the parent command, as the session might already be invalid
+        parameters.setParametersCurrentUser(getEnclosingCommand().getParameters().getParametersCurrentUser());
+
         // Setting the cluster ID, and other related properties derived from it
         if (getEnclosingCommand().getParameters().getClusterId() != null) {
             masterVm.setVdsGroupId(getEnclosingCommand().getParameters().getClusterId());
