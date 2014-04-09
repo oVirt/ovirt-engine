@@ -5,6 +5,7 @@ xmlns:g="urn:import:com.google.gwt.user.client.ui"
 xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 xmlns:v="urn:import:org.ovirt.engine.ui.common.widget"
 xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
@@ -52,18 +53,18 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 				<g:FlowPanel addStyleNames="{style.protocolPanel}">
 					<g:Label ui:field="consoleTitle" addStyleNames="{style.labelStyle}" />
 					<g:FlowPanel>
-						<e:EntityModelRadioButtonEditor ui:field="spiceRadioButton" addStyleNames="{style.protocolRadioButton}"/>
-						<e:EntityModelRadioButtonEditor ui:field="vncRadioButton" addStyleNames="{style.protocolRadioButton}"/>
-						<e:EntityModelRadioButtonEditor ui:field="remoteDesktopRadioButton" addStyleNames="{style.protocolRadioButton}" />
+						<ge:EntityModelRadioButtonEditor ui:field="spiceRadioButton" addStyleNames="{style.protocolRadioButton}"/>
+						<ge:EntityModelRadioButtonEditor ui:field="vncRadioButton" addStyleNames="{style.protocolRadioButton}"/>
+						<ge:EntityModelRadioButtonEditor ui:field="remoteDesktopRadioButton" addStyleNames="{style.protocolRadioButton}" />
 					</g:FlowPanel>
 				</g:FlowPanel>
 
 				<g:FlowPanel ui:field="spicePanel" addStyleNames="{style.protocolPanel}">
                     <v:WidgetWithInfo ui:field="spiceHeadline" />
-					<e:EntityModelRadioButtonEditor ui:field="spiceAutoImplRadioButton"/>
-					<e:EntityModelRadioButtonEditor ui:field="spiceNativeImplRadioButton"/>
-					<e:EntityModelRadioButtonEditor ui:field="spicePluginImplRadioButton"/>
-					<e:EntityModelRadioButtonEditor ui:field="spiceHtml5ImplRadioButton"/>
+					<ge:EntityModelRadioButtonEditor ui:field="spiceAutoImplRadioButton"/>
+					<ge:EntityModelRadioButtonEditor ui:field="spiceNativeImplRadioButton"/>
+					<ge:EntityModelRadioButtonEditor ui:field="spicePluginImplRadioButton"/>
+					<ge:EntityModelRadioButtonEditor ui:field="spiceHtml5ImplRadioButton"/>
 
 					<g:Label ui:field="spiceTitle" text="{constants.spiceOptions}" addStyleNames="{style.labelStyle}" />
 					<w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteSpice" />
@@ -82,17 +83,17 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 
 				<g:FlowPanel ui:field="vncPanel" addStyleNames="{style.protocolPanel}">
                     <v:WidgetWithInfo ui:field="vncHeadline" />
-					<e:EntityModelRadioButtonEditor ui:field="vncNativeImplRadioButton" />
-					<e:EntityModelRadioButtonEditor ui:field="noVncImplRadioButton"/>
+					<ge:EntityModelRadioButtonEditor ui:field="vncNativeImplRadioButton" />
+					<ge:EntityModelRadioButtonEditor ui:field="noVncImplRadioButton"/>
                     <g:Label ui:field="vncTitle" text="{constants.vncOptions}" addStyleNames="{style.labelStyle}" />
                     <w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteVnc" />
 				</g:FlowPanel>
 
 				<g:FlowPanel ui:field="rdpPanel" addStyleNames="{style.protocolPanel}">
                     <v:WidgetWithInfo ui:field="rdpHeadline" />
-					<e:EntityModelRadioButtonEditor ui:field="rdpAutoImplRadioButton" />
-					<e:EntityModelRadioButtonEditor ui:field="rdpNativeImplRadioButton" />
-					<e:EntityModelRadioButtonEditor ui:field="rdpPluginImplRadioButton" />
+					<ge:EntityModelRadioButtonEditor ui:field="rdpAutoImplRadioButton" />
+					<ge:EntityModelRadioButtonEditor ui:field="rdpNativeImplRadioButton" />
+					<ge:EntityModelRadioButtonEditor ui:field="rdpPluginImplRadioButton" />
                     <g:Label text="{constants.rdpOptions}" addStyleNames="{style.labelStyle}" />
 					<w:EntityModelValueCheckBoxEditor ui:field="useLocalDrives" />
 				</g:FlowPanel>

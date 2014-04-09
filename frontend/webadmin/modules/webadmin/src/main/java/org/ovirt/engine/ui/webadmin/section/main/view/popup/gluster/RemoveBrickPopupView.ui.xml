@@ -2,7 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.RemoveBrickPopupView.WidgetStyle">
 		.contentPanel {
@@ -41,7 +41,7 @@
 				</g:ScrollPanel>
 				<g:FlowPanel ui:field="migratePanel">
 					<g:HorizontalPanel>
-						<e:EntityModelCheckBoxEditor ui:field="migrateEditor" />
+						<ge:EntityModelCheckBoxEditor ui:field="migrateEditor" />
 						<d:InfoIcon ui:field="migrateInfoIcon" addStyleNames="{style.migrateInfoIcon}"/>
 					</g:HorizontalPanel>
 					<g:Label ui:field="warningLabel" addStyleNames="{style.warningLabel}" />

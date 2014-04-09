@@ -40,34 +40,34 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 public abstract class VnicProfileModel extends Model {
 
 
-    private EntityModel name;
-    private EntityModel portMirroring;
+    private EntityModel<String> name;
+    private EntityModel<Boolean> portMirroring;
     private KeyValueModel customPropertySheet;
-    private EntityModel publicUse;
-    private EntityModel description;
+    private EntityModel<Boolean> publicUse;
+    private EntityModel<String> description;
     private final EntityModel sourceModel;
-    private ListModel network;
-    private ListModel networkQoS;
+    private ListModel<Network> network;
+    private ListModel<NetworkQoS> networkQoS;
     private VnicProfile vnicProfile = null;
     private final boolean customPropertiesVisible;
     private final Guid defaultQosId;
 
-    public EntityModel getName()
+    public EntityModel<String> getName()
     {
         return name;
     }
 
-    private void setName(EntityModel value)
+    private void setName(EntityModel<String> value)
     {
         name = value;
     }
 
-    public EntityModel getPortMirroring()
+    public EntityModel<Boolean> getPortMirroring()
     {
         return portMirroring;
     }
 
-    public void setPortMirroring(EntityModel value)
+    public void setPortMirroring(EntityModel<Boolean> value)
     {
         portMirroring = value;
     }
@@ -80,27 +80,27 @@ public abstract class VnicProfileModel extends Model {
         this.customPropertySheet = customPropertySheet;
     }
 
-    public EntityModel getPublicUse() {
+    public EntityModel<Boolean> getPublicUse() {
         return publicUse;
     }
 
-    public void setPublicUse(EntityModel publicUse) {
+    public void setPublicUse(EntityModel<Boolean> publicUse) {
         this.publicUse = publicUse;
     }
 
-    public EntityModel getDescription() {
+    public EntityModel<String> getDescription() {
         return description;
     }
 
-    public void setDescription(EntityModel description) {
+    public void setDescription(EntityModel<String> description) {
         this.description = description;
     }
 
-    public ListModel getNetwork() {
+    public ListModel<Network> getNetwork() {
         return network;
     }
 
-    public void setNetwork(ListModel network) {
+    public void setNetwork(ListModel<Network> network) {
         this.network = network;
     }
 
@@ -112,11 +112,11 @@ public abstract class VnicProfileModel extends Model {
         return vnicProfile;
     }
 
-    public ListModel getNetworkQoS() {
+    public ListModel<NetworkQoS> getNetworkQoS() {
         return networkQoS;
     }
 
-    public void setNetworkQoS(ListModel networkQoS) {
+    public void setNetworkQoS(ListModel<NetworkQoS> networkQoS) {
         this.networkQoS = networkQoS;
     }
 
@@ -129,20 +129,20 @@ public abstract class VnicProfileModel extends Model {
         this.customPropertiesVisible = customPropertiesVisible;
         this.defaultQosId = defaultQosId;
 
-        setName(new EntityModel());
-        setNetwork(new ListModel());
-        setNetworkQoS(new ListModel());
-        setPortMirroring(new EntityModel());
+        setName(new EntityModel<String>());
+        setNetwork(new ListModel<Network>());
+        setNetworkQoS(new ListModel<NetworkQoS>());
+        setPortMirroring(new EntityModel<Boolean>());
         setCustomPropertySheet(new KeyValueModel());
-        EntityModel publicUse = new EntityModel();
+        EntityModel<Boolean> publicUse = new EntityModel<Boolean>();
         publicUse.setEntity(true);
         setPublicUse(publicUse);
-        setDescription(new EntityModel());
+        setDescription(new EntityModel<String>());
 
         getNetwork().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                Network network = (Network) getNetwork().getSelectedItem();
+                Network network = getNetwork().getSelectedItem();
                 boolean portMirroringAllowed = (network == null || !network.isExternal());
                 if (!portMirroringAllowed) {
                     getPortMirroring().setEntity(false);
@@ -208,15 +208,15 @@ public abstract class VnicProfileModel extends Model {
         if (vnicProfile == null) {
             vnicProfile = new VnicProfile();
         }
-        vnicProfile.setName((String) getName().getEntity());
-        Network network = (Network) getNetwork().getSelectedItem();
+        vnicProfile.setName(getName().getEntity());
+        Network network = getNetwork().getSelectedItem();
         vnicProfile.setNetworkId(network != null ? network.getId() : null);
-        NetworkQoS networkQoS = (NetworkQoS) getNetworkQoS().getSelectedItem();
+        NetworkQoS networkQoS = getNetworkQoS().getSelectedItem();
         vnicProfile.setNetworkQosId(networkQoS != null
                 && networkQoS.getId() != null
                 && !networkQoS.getId().equals(Guid.Empty)
                 ? networkQoS.getId() : null);
-        vnicProfile.setPortMirroring((Boolean) getPortMirroring().getEntity());
+        vnicProfile.setPortMirroring(getPortMirroring().getEntity());
 
         if (customPropertiesVisible) {
             vnicProfile.setCustomProperties(KeyValueModel.convertProperties(getCustomPropertySheet().serialize()));
@@ -224,7 +224,7 @@ public abstract class VnicProfileModel extends Model {
             vnicProfile.setCustomProperties(null);
         }
 
-        vnicProfile.setDescription((String) getDescription().getEntity());
+        vnicProfile.setDescription(getDescription().getEntity());
     }
 
     private void cancel()
@@ -264,7 +264,7 @@ public abstract class VnicProfileModel extends Model {
                             public void onSuccess(Object target, Object returnValue) {
                                 if (returnValue != null) {
                                     Map<String, String> customPropertiesList =
-                                            ((Map<String, String>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                                            ((VdcQueryReturnValue) returnValue).getReturnValue();
 
                                     List<String> lines = new ArrayList<String>();
 

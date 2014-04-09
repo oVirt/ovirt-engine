@@ -48,33 +48,33 @@ public class PosixStorageModel extends Model implements IStorageModel {
         privateRole = value;
     }
 
-    private EntityModel path;
+    private EntityModel<String> path;
 
-    public EntityModel getPath() {
+    public EntityModel<String> getPath() {
         return path;
     }
 
-    private void setPath(EntityModel value) {
+    private void setPath(EntityModel<String> value) {
         path = value;
     }
 
-    private EntityModel vfsType;
+    private EntityModel<String> vfsType;
 
-    public EntityModel getVfsType() {
+    public EntityModel<String> getVfsType() {
         return vfsType;
     }
 
-    private void setVfsType(EntityModel value) {
+    private void setVfsType(EntityModel<String> value) {
         vfsType = value;
     }
 
-    private EntityModel mountOptions;
+    private EntityModel<String> mountOptions;
 
-    public EntityModel getMountOptions() {
+    public EntityModel<String> getMountOptions() {
         return mountOptions;
     }
 
-    private void setMountOptions(EntityModel value) {
+    private void setMountOptions(EntityModel<String> value) {
         mountOptions = value;
     }
 
@@ -83,10 +83,10 @@ public class PosixStorageModel extends Model implements IStorageModel {
 
         setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
 
-        setPath(new EntityModel());
-        setVfsType(new EntityModel());
+        setPath(new EntityModel<String>());
+        setVfsType(new EntityModel<String>());
         getVfsType().setTitle(ConstantsManager.getInstance().getConstants().posixVfsTypeHint());
-        setMountOptions(new EntityModel());
+        setMountOptions(new EntityModel<String>());
     }
 
     @Override

@@ -5,8 +5,8 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 
@@ -40,19 +40,19 @@ public class ChangeQuotaItemView extends Composite implements HasEditorDriver<Ch
 
     @UiField
     @Ignore
-    EntityModelLabelEditor objectNameLabel;
+    StringEntityModelLabelEditor objectNameLabel;
 
     @UiField
     @Ignore
-    EntityModelLabelEditor storageDomainNameLabel;
+    StringEntityModelLabelEditor storageDomainNameLabel;
 
     @UiField
     @Ignore
-    EntityModelLabelEditor currentQuotaLabel;
+    StringEntityModelLabelEditor currentQuotaLabel;
 
     @UiField(provided = true)
     @Path(value = "quota.selectedItem")
-    ListModelListBoxEditor<Object> quotaListEditor;
+    ListModelListBoxEditor<Quota> quotaListEditor;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -68,10 +68,10 @@ public class ChangeQuotaItemView extends Composite implements HasEditorDriver<Ch
     }
 
     void initEditors() {
-        quotaListEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        quotaListEditor = new ListModelListBoxEditor<Quota>(new NullSafeRenderer<Quota>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((Quota) object).getQuotaName();
+            public String renderNullSafe(Quota quota) {
+                return quota.getQuotaName();
             }
         });
     }

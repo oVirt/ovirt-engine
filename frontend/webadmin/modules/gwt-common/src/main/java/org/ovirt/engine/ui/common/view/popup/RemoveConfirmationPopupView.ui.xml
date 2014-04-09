@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 	<ui:style>
 		.items {
@@ -27,8 +26,8 @@
 			<g:FlowPanel>
 				<g:HTML ui:field="messageHTML" />
 				<g:FlowPanel ui:field="itemPanel" addStyleNames="{style.items}" />
-				<e:EntityModelCheckBoxEditor ui:field="latch" visible="false" />
-				<e:EntityModelCheckBoxEditor ui:field="force" visible="false" />
+				<ge:EntityModelCheckBoxEditor ui:field="latch" visible="false" />
+				<ge:EntityModelCheckBoxEditor ui:field="force" visible="false" />
 				<g:HTML ui:field="noteHTML" addStyleNames="{style.noteHTML}"/>
                 <g:FlowPanel ui:field="reasonPanel">
                     <ge:StringEntityModelTextBoxEditor ui:field="reasonEditor" />

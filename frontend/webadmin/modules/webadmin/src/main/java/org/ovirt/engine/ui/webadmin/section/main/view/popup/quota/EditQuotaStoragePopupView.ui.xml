@@ -2,7 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaStoragePopupView.WidgetStyle">
 		.textBoxWidth {
@@ -29,11 +29,11 @@
 		<g:VerticalPanel height="100px">
 			<g:Label ui:field="storageLabel" addStyleNames="{style.labelStyle}"/>
 			<g:HorizontalPanel>
-				<e:EntityModelRadioButtonEditor
+				<ge:EntityModelRadioButtonEditor
 					ui:field="unlimitedStorageRadioButtonEditor" addStyleNames="{style.radioButtonWidth}" />
-				<e:EntityModelRadioButtonEditor
+				<ge:EntityModelRadioButtonEditor
 					ui:field="specificStorageRadioButtonEditor" addStyleNames="{style.radioButtonWidth}" />
-				<e:EntityModelTextBoxEditor ui:field="storageValueEditor" addStyleNames="{style.textBoxWidth}" />
+				<ge:LongEntityModelTextBoxEditor ui:field="storageValueEditor" addStyleNames="{style.textBoxWidth}" />
 				<g:Label addStyleNames="{style.measureLabel}">GB</g:Label>
 			</g:HorizontalPanel>
 		</g:VerticalPanel>

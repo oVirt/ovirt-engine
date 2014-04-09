@@ -272,11 +272,11 @@ public class NewClusterPolicyModel extends Model {
     private final Map<Guid, Integer> filterPositionMap;
     private KeyValueModel customPropertySheet;
     private final Map<String, String> customProperties;
-    private EntityModel name;
-    private EntityModel description;
+    private EntityModel<String> name;
+    private EntityModel<String> description;
     private ListModel filterList;
     private ListModel functionList;
-    private ListModel loadBalanceList;
+    private ListModel<PolicyUnit> loadBalanceList;
     private PolicyUnit currentLoadBalance;
 
     public NewClusterPolicyModel(CommandType commandType,
@@ -297,28 +297,28 @@ public class NewClusterPolicyModel extends Model {
         unusedFunctions = new ArrayList<PolicyUnit>();
         filterPositionMap = new HashMap<Guid, Integer>();
         customProperties = new LinkedHashMap<String, String>();
-        setName(new EntityModel());
-        setDescription(new EntityModel());
+        setName(new EntityModel<String>());
+        setDescription(new EntityModel<String>());
         setFilterList(new ListModel());
         setFunctionList(new ListModel());
-        setLoadBalanceList(new ListModel());
+        setLoadBalanceList(new ListModel<PolicyUnit>());
         setFiltersChangedEvent(new Event(FILTERS_CHANGED_EVENT_DEFINITION));
         setFunctionsChangedEvent(new Event(FUNCTIONS_CHANGED_EVENT_DEFINITION));
     }
 
-    public EntityModel getName() {
+    public EntityModel<String> getName() {
         return name;
     }
 
-    public void setName(EntityModel name) {
+    public void setName(EntityModel<String> name) {
         this.name = name;
     }
 
-    public EntityModel getDescription() {
+    public EntityModel<String> getDescription() {
         return description;
     }
 
-    public void setDescription(EntityModel description) {
+    public void setDescription(EntityModel<String> description) {
         this.description = description;
     }
 
@@ -338,11 +338,11 @@ public class NewClusterPolicyModel extends Model {
         this.functionList = functionList;
     }
 
-    public ListModel getLoadBalanceList() {
+    public ListModel<PolicyUnit> getLoadBalanceList() {
         return loadBalanceList;
     }
 
-    public void setLoadBalanceList(ListModel loadBalanceList) {
+    public void setLoadBalanceList(ListModel<PolicyUnit> loadBalanceList) {
         this.loadBalanceList = loadBalanceList;
     }
 

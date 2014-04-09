@@ -9,8 +9,8 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.FcpStorageView;
@@ -55,37 +55,37 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     @UiField
     @Path(value = "name.entity")
     @WithElementId("name")
-    EntityModelTextBoxEditor nameEditor;
+    StringEntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
     @WithElementId("description")
-    EntityModelTextBoxEditor descriptionEditor;
+    StringEntityModelTextBoxEditor descriptionEditor;
 
     @UiField
     @Path(value = "comment.entity")
     @WithElementId("comment")
-    EntityModelTextBoxEditor commentEditor;
+    StringEntityModelTextBoxEditor commentEditor;
 
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
     @WithElementId("dataCenter")
-    ListModelListBoxEditor<Object> datacenterListEditor;
+    ListModelListBoxEditor<StoragePool> datacenterListEditor;
 
     @UiField(provided = true)
     @Path(value = "availableStorageItems.selectedItem")
     @WithElementId("availableStorageItems")
-    ListModelListBoxEditor<Object> storageTypeListEditor;
+    ListModelListBoxEditor<IStorageModel> storageTypeListEditor;
 
     @UiField(provided = true)
     @Path(value = "format.selectedItem")
     @WithElementId("format")
-    ListModelListBoxEditor<Object> formatListEditor;
+    ListModelListBoxEditor<StorageFormatType> formatListEditor;
 
     @UiField(provided = true)
     @Path(value = "host.selectedItem")
     @WithElementId("host")
-    ListModelListBoxEditor<Object> hostListEditor;
+    ListModelListBoxEditor<VDS> hostListEditor;
 
     @Ignore
     @UiField
@@ -115,13 +115,12 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     void initListBoxEditors(final ApplicationConstants constants) {
-        datacenterListEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
+        datacenterListEditor = new ListModelListBoxEditor<StoragePool>(new AbstractRenderer<StoragePool>() {
             @Override
-            public String render(Object object) {
+            public String render(StoragePool storage) {
                 String formattedString = ""; //$NON-NLS-1$
 
-                if (object != null) {
-                    StoragePool storage = (StoragePool) object;
+                if (storage != null) {
 
                     // Get formatted storage type and format using Enum renders
                     String storageType = storage.isLocal() ?  constants.storageTypeLocal() : ""; //$NON-NLS-1$
@@ -147,26 +146,26 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
             }
         });
 
-        formatListEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        formatListEditor = new ListModelListBoxEditor<StorageFormatType>(new EnumRenderer());
 
-        hostListEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
+        hostListEditor = new ListModelListBoxEditor<VDS>(new AbstractRenderer<VDS>() {
             @Override
-            public String render(Object object) {
-                return object == null ? "" : ((VDS) object).getName(); //$NON-NLS-1$
+            public String render(VDS vds) {
+                return vds == null ? "" : vds.getName(); //$NON-NLS-1$
             }
         });
 
-        storageTypeListEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
+        storageTypeListEditor = new ListModelListBoxEditor<IStorageModel>(new AbstractRenderer<IStorageModel>() {
             @Override
-            public String render(Object object) {
+            public String render(IStorageModel object) {
                 String formattedString = ""; //$NON-NLS-1$
 
                 if (object != null) {
                     EnumRenderer<StorageType> storageEnumRenderer = new EnumRenderer<StorageType>();
                     EnumRenderer<StorageDomainType> storageDomainEnumRenderer = new EnumRenderer<StorageDomainType>();
 
-                    String storageDomainType = storageDomainEnumRenderer.render(((IStorageModel) object).getRole());
-                    String storageType = storageEnumRenderer.render(((IStorageModel) object).getType());
+                    String storageDomainType = storageDomainEnumRenderer.render(object.getRole());
+                    String storageType = storageEnumRenderer.render(object.getType());
 
                     formattedString = storageDomainType + " / " + storageType; //$NON-NLS-1$
                 }

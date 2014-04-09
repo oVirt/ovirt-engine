@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
@@ -9,9 +11,9 @@ import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -50,35 +52,35 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     @UiField
     @Ignore
-    EntityModelLabelEditor diskAliasLabel;
+    StringEntityModelLabelEditor diskAliasLabel;
 
     @UiField
     @Path(value = "alias.entity")
-    EntityModelTextBoxEditor diskAliasEditor;
+    StringEntityModelTextBoxEditor diskAliasEditor;
 
     @UiField
     @Ignore
-    EntityModelLabelEditor diskSizeLabel;
+    StringEntityModelLabelEditor diskSizeLabel;
 
     @UiField
     @Path(value = "sourceStorageDomainName.entity")
-    EntityModelLabelEditor sourceStorageLabel;
+    StringEntityModelLabelEditor sourceStorageLabel;
 
     @UiField(provided = true)
     @Path(value = "volumeType.selectedItem")
-    ListModelListBoxEditor<Object> volumeTypeListEditor;
+    ListModelListBoxEditor<VolumeType> volumeTypeListEditor;
 
     @UiField(provided = true)
     @Path(value = "sourceStorageDomain.selectedItem")
-    ListModelListBoxEditor<Object> sourceStorageListEditor;
+    ListModelListBoxEditor<StorageDomain> sourceStorageListEditor;
 
     @UiField(provided = true)
     @Path(value = "storageDomain.selectedItem")
-    ListModelListBoxEditor<Object> storageListEditor;
+    ListModelListBoxEditor<StorageDomain> storageListEditor;
 
     @UiField(provided = true)
     @Path(value = "quota.selectedItem")
-    ListModelListBoxEditor<Object> quotaListEditor;
+    ListModelListBoxEditor<Quota> quotaListEditor;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -100,16 +102,16 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     }
 
     void initEditors() {
-        volumeTypeListEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        volumeTypeListEditor = new ListModelListBoxEditor<VolumeType>(new EnumRenderer<VolumeType>());
 
-        storageListEditor = new ListModelListBoxEditor<Object>(new StorageDomainFreeSpaceRenderer());
+        storageListEditor = new ListModelListBoxEditor<StorageDomain>(new StorageDomainFreeSpaceRenderer<StorageDomain>());
 
-        sourceStorageListEditor = new ListModelListBoxEditor<Object>(new StorageDomainFreeSpaceRenderer());
+        sourceStorageListEditor = new ListModelListBoxEditor<StorageDomain>(new StorageDomainFreeSpaceRenderer<StorageDomain>());
 
-        quotaListEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        quotaListEditor = new ListModelListBoxEditor<Quota>(new NullSafeRenderer<Quota>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((Quota) object).getQuotaName();
+            public String renderNullSafe(Quota quota) {
+                return quota.getQuotaName();
             }
         });
     }
@@ -144,7 +146,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
         diskAliasLabel.asValueBox().setValue(object.getAlias().getEntity());
         diskSizeLabel.asValueBox().setValue((new DiskSizeRenderer<Long>(SizeConverter.SizeUnit.GB).render(
-                (Long) object.getSize().getEntity())));
+                object.getSize().getEntity())));
 
         object.getVolumeType().setSelectedItem(((DiskImage) object.getDisk()).getVolumeType());
 

@@ -5,8 +5,8 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.ReplaceBrickModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -36,12 +36,12 @@ public class ReplaceBrickPopupView extends AbstractModelBoundPopupView<ReplaceBr
     @UiField(provided = true)
     @Path(value = "servers.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> serverEditor;
+    ListModelListBoxEditor<VDS> serverEditor;
 
     @UiField
     @Path(value = "brickDirectory.entity")
     @WithElementId
-    EntityModelTextBoxEditor brickDirEditor;
+    StringEntityModelTextBoxEditor brickDirEditor;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -56,10 +56,10 @@ public class ReplaceBrickPopupView extends AbstractModelBoundPopupView<ReplaceBr
     }
 
     private void initListBoxEditors() {
-        serverEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        serverEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((VDS) object).getHostName();
+            public String renderNullSafe(VDS vds) {
+                return vds.getHostName();
             }
         });
 

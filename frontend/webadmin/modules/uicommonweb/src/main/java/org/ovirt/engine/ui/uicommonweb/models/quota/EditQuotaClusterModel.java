@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.quota;
 
+import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
@@ -8,75 +9,75 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-public class EditQuotaClusterModel extends EntityModel {
-    EntityModel unlimitedMem;
-    EntityModel unlimitedCpu;
+public class EditQuotaClusterModel extends EntityModel<QuotaVdsGroup> {
+    EntityModel<Boolean> unlimitedMem;
+    EntityModel<Boolean> unlimitedCpu;
 
-    EntityModel specificMem;
-    EntityModel specificCpu;
+    EntityModel<Boolean> specificMem;
+    EntityModel<Boolean> specificCpu;
 
-    EntityModel specificMemValue;
-    EntityModel specificCpuValue;
+    EntityModel<Long> specificMemValue;
+    EntityModel<Integer> specificCpuValue;
 
-    public EntityModel getUnlimitedMem() {
+    public EntityModel<Boolean> getUnlimitedMem() {
         return unlimitedMem;
     }
 
-    public void setUnlimitedMem(EntityModel unlimitedMem) {
+    public void setUnlimitedMem(EntityModel<Boolean> unlimitedMem) {
         this.unlimitedMem = unlimitedMem;
     }
 
-    public EntityModel getUnlimitedCpu() {
+    public EntityModel<Boolean> getUnlimitedCpu() {
         return unlimitedCpu;
     }
 
-    public void setUnlimitedCpu(EntityModel unlimitedCpu) {
+    public void setUnlimitedCpu(EntityModel<Boolean> unlimitedCpu) {
         this.unlimitedCpu = unlimitedCpu;
     }
 
-    public EntityModel getSpecificMem() {
+    public EntityModel<Boolean> getSpecificMem() {
         return specificMem;
     }
 
-    public void setSpecificMem(EntityModel specificMem) {
+    public void setSpecificMem(EntityModel<Boolean> specificMem) {
         this.specificMem = specificMem;
     }
 
-    public EntityModel getSpecificCpu() {
+    public EntityModel<Boolean> getSpecificCpu() {
         return specificCpu;
     }
 
-    public void setSpecificCpu(EntityModel specificCpu) {
+    public void setSpecificCpu(EntityModel<Boolean> specificCpu) {
         this.specificCpu = specificCpu;
     }
 
-    public EntityModel getSpecificMemValue() {
+    public EntityModel<Long> getSpecificMemValue() {
         return specificMemValue;
     }
 
-    public void setSpecificMemValue(EntityModel specificMemValue) {
+    public void setSpecificMemValue(EntityModel<Long> specificMemValue) {
         this.specificMemValue = specificMemValue;
     }
 
-    public EntityModel getSpecificCpuValue() {
+    public EntityModel<Integer> getSpecificCpuValue() {
         return specificCpuValue;
     }
 
-    public void setSpecificCpuValue(EntityModel specificCpuValue) {
+    public void setSpecificCpuValue(EntityModel<Integer> specificCpuValue) {
         this.specificCpuValue = specificCpuValue;
     }
 
     public EditQuotaClusterModel() {
-        setSpecificMem(new EntityModel());
+        setSpecificMem(new EntityModel<Boolean>());
         getSpecificMem().setEntity(true);
-        setUnlimitedMem(new EntityModel());
+        setUnlimitedMem(new EntityModel<Boolean>());
         getUnlimitedMem().setEntity(false);
-        setSpecificMemValue(new EntityModel());
+        setSpecificMemValue(new EntityModel<Long>());
         getUnlimitedMem().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) getUnlimitedMem().getEntity()) {
+                if (getUnlimitedMem().getEntity()) {
                     getSpecificMem().setEntity(false);
                     getSpecificMemValue().setIsChangable(false);
                 }
@@ -87,21 +88,21 @@ public class EditQuotaClusterModel extends EntityModel {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) getSpecificMem().getEntity()) {
+                if (getSpecificMem().getEntity()) {
                     getUnlimitedMem().setEntity(false);
                     getSpecificMemValue().setIsChangable(true);
                 }
             }
         });
 
-        setSpecificCpu(new EntityModel());
-        setUnlimitedCpu(new EntityModel());
-        setSpecificCpuValue(new EntityModel());
+        setSpecificCpu(new EntityModel<Boolean>());
+        setUnlimitedCpu(new EntityModel<Boolean>());
+        setSpecificCpuValue(new EntityModel<Integer>());
         getUnlimitedCpu().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) getUnlimitedCpu().getEntity()) {
+                if (getUnlimitedCpu().getEntity()) {
                     getSpecificCpu().setEntity(false);
                     getSpecificCpuValue().setIsChangable(false);
                 }
@@ -112,7 +113,7 @@ public class EditQuotaClusterModel extends EntityModel {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) getSpecificCpu().getEntity()) {
+                if (getSpecificCpu().getEntity()) {
                     getUnlimitedCpu().setEntity(false);
                     getSpecificCpuValue().setIsChangable(true);
                 }
@@ -125,10 +126,10 @@ public class EditQuotaClusterModel extends EntityModel {
         intValidation.setMinimum(1);
         getSpecificMemValue().setIsValid(true);
         getSpecificCpuValue().setIsValid(true);
-        if ((Boolean) getSpecificMem().getEntity()) {
+        if (getSpecificMem().getEntity()) {
             getSpecificMemValue().validateEntity(new IValidation[] { intValidation, new NotEmptyValidation() });
         }
-        if ((Boolean) getSpecificCpu().getEntity()) {
+        if (getSpecificCpu().getEntity()) {
             getSpecificCpuValue().validateEntity(new IValidation[] { intValidation, new NotEmptyValidation() });
         }
         return getSpecificMemValue().getIsValid() && getSpecificCpuValue().getIsValid();

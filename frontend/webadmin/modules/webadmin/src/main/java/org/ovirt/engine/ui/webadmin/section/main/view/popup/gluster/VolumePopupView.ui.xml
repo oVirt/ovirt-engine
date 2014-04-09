@@ -2,7 +2,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
 	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
@@ -72,15 +73,15 @@
 					<e:ListModelListBoxEditor ui:field="dataCenterEditor" />
 					<e:ListModelListBoxEditor ui:field="clusterEditor" />
 				</g:FlowPanel>
-				<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+				<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
 				<e:ListModelListBoxEditor ui:field="typeListEditor" />
-				<e:EntityModelLabelEditor ui:field="replicaCountEditor" />
-				<e:EntityModelLabelEditor ui:field="stripeCountEditor" />
+				<ge:IntegerEntityModelLabelEditor ui:field="replicaCountEditor" />
+				<ge:IntegerEntityModelLabelEditor ui:field="stripeCountEditor" />
 				
 				<g:HorizontalPanel>
 					<g:Label ui:field="transportTypesLabel" addStyleNames="{style.transTypeLabel}"></g:Label>
-					<e:EntityModelCheckBoxEditor ui:field="tcpTransportTypeEditor" width="50px"/>
-					<e:EntityModelCheckBoxEditor ui:field="rdmaTransportTypeEditor" width="50px"/>
+					<ge:EntityModelCheckBoxEditor ui:field="tcpTransportTypeEditor" width="50px"/>
+					<ge:EntityModelCheckBoxEditor ui:field="rdmaTransportTypeEditor" width="50px"/>
 				</g:HorizontalPanel>
 				
 				<g:HorizontalPanel>
@@ -91,13 +92,13 @@
 					</g:VerticalPanel>
 				</g:HorizontalPanel>
 				<g:Label ui:field="accessProtocolsLabel" addStyleNames="{style.sectionLabel}"></g:Label>
-				<e:EntityModelCheckBoxEditor ui:field="gluster_accecssProtocolEditor"/>
-				<e:EntityModelCheckBoxEditor ui:field="nfs_accecssProtocolEditor"/>
-				<e:EntityModelCheckBoxEditor ui:field="cifs_accecssProtocolEditor"/>
-				<e:EntityModelTextBoxEditor ui:field="allowAccessEditor" />
+				<ge:EntityModelCheckBoxEditor ui:field="gluster_accecssProtocolEditor"/>
+				<ge:EntityModelCheckBoxEditor ui:field="nfs_accecssProtocolEditor"/>
+				<ge:EntityModelCheckBoxEditor ui:field="cifs_accecssProtocolEditor"/>
+				<ge:StringEntityModelTextBoxEditor ui:field="allowAccessEditor" />
 				<g:Label ui:field="allowAccessLabel" addStyleNames="{style.explanationLabel}"/>
 
-				<e:EntityModelCheckBoxEditor ui:field="optimizeForVirtStoreEditor"/>
+				<ge:EntityModelCheckBoxEditor ui:field="optimizeForVirtStoreEditor"/>
 
 				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
 			</g:VerticalPanel>

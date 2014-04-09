@@ -24,7 +24,7 @@ public class AbstractVmRemoveConfimationPopup extends RemoveConfirmationPopupVie
     @SuppressWarnings("unchecked")
     @Override
     protected void addItemText(Object item) {
-        Entry<Guid, EntityModel> entry = (Entry<Guid, EntityModel>) item;
+        Entry<Guid, EntityModel<Boolean>> entry = (Entry<Guid, EntityModel<Boolean>>) item;
         EntityModelCheckBoxWidget cb =
                 new EntityModelCheckBoxWidget(Align.RIGHT,
                         "- " + entry.getValue().getMessage(), entry.getValue().getTitle()); //$NON-NLS-1$

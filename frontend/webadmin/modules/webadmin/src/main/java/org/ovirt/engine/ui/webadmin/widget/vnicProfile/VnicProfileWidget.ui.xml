@@ -2,6 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
 
     <ui:style type="org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfileWidget.WidgetStyle" >
@@ -33,9 +34,9 @@
 		}
     </ui:style>
 	<g:HorizontalPanel>
-		<e:EntityModelTextBoxOnlyEditor ui:field="nameEditor" />
+		<ge:StringEntityModelTextBoxOnlyEditor ui:field="nameEditor" />
 		<g:FlowPanel addStyleNames="{style.publicUsePanel}">
-			<e:EntityModelCheckBoxEditor ui:field="publicUseEditor" addStyleNames="{style.publicUseElement}"/>
+			<ge:EntityModelCheckBoxEditor ui:field="publicUseEditor" addStyleNames="{style.publicUseElement}"/>
 			<d:InfoIcon ui:field="publicInfo" addStyleNames="{style.publicUseElement}"/>
 		</g:FlowPanel>
 		<g:SimplePanel addStyleNames="{style.qosPanel}">

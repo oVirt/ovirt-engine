@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 	<ui:style>
 		.messageLabel {
@@ -23,7 +23,7 @@
 			<g:FlowPanel>
 				<g:HTML ui:field="messageLabel" addStyleNames="{style.messageLabel}"/>
 				<g:HTML ui:field="noteLabel" addStyleNames="{style.noteLabel}"/>
-				<e:EntityModelCheckBoxEditor ui:field="latch" />
+				<ge:EntityModelCheckBoxEditor ui:field="latch" />
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

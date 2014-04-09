@@ -23,17 +23,17 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class VolumeBrickModel extends Model {
 
-    EntityModel volumeType;
+    EntityModel<GlusterVolumeType> volumeType;
 
-    EntityModel replicaCount;
-    EntityModel stripeCount;
+    EntityModel<Integer> replicaCount;
+    EntityModel<Integer> stripeCount;
 
-    ListModel servers;
-    EntityModel brickDirectory;
+    ListModel<VDS> servers;
+    EntityModel<String> brickDirectory;
 
-    ListModel bricks;
+    ListModel<EntityModel<GlusterBrickEntity>> bricks;
 
-    EntityModel force;
+    EntityModel<Boolean> force;
 
     private UICommand addBrickCommand;
     private UICommand removeBricksCommand;
@@ -44,20 +44,20 @@ public class VolumeBrickModel extends Model {
 
     public VolumeBrickModel()
     {
-        setVolumeType(new EntityModel());
+        setVolumeType(new EntityModel<GlusterVolumeType>());
 
-        setReplicaCount(new EntityModel());
+        setReplicaCount(new EntityModel<Integer>());
         getReplicaCount().setEntity(VolumeListModel.REPLICATE_COUNT_DEFAULT);
         getReplicaCount().setIsChangable(false);
 
-        setStripeCount(new EntityModel());
+        setStripeCount(new EntityModel<Integer>());
         getStripeCount().setEntity(VolumeListModel.STRIPE_COUNT_DEFAULT);
         getStripeCount().setIsChangable(false);
 
-        setServers(new ListModel());
-        setBrickDirectory(new EntityModel());
+        setServers(new ListModel<VDS>());
+        setBrickDirectory(new EntityModel<String>());
 
-        setBricks(new ListModel());
+        setBricks(new ListModel<EntityModel<GlusterBrickEntity>>());
 
         setForce(new EntityModel<Boolean>());
         getForce().setEntity(false);
@@ -122,8 +122,8 @@ public class VolumeBrickModel extends Model {
         }
         else
         {
-            EntityModel selectedItem = (EntityModel) bricks.getSelectedItems().get(0);
-            List<EntityModel> items = (List<EntityModel>) bricks.getItems();
+            EntityModel<GlusterBrickEntity> selectedItem = bricks.getSelectedItems().get(0);
+            List<EntityModel<GlusterBrickEntity>> items = (List<EntityModel<GlusterBrickEntity>>) bricks.getItems();
             int position = items.indexOf(selectedItem);
             if (position == 0)
             {
@@ -195,81 +195,67 @@ public class VolumeBrickModel extends Model {
         moveBricksDownCommand = value;
     }
 
-    public EntityModel getVolumeType() {
+    public EntityModel<GlusterVolumeType> getVolumeType() {
         return volumeType;
     }
 
-    public void setVolumeType(EntityModel volumeType) {
+    public void setVolumeType(EntityModel<GlusterVolumeType> volumeType) {
         this.volumeType = volumeType;
     }
 
-    public EntityModel getReplicaCount() {
+    public EntityModel<Integer> getReplicaCount() {
         return replicaCount;
     }
 
     public Integer getReplicaCountValue() {
-        if (replicaCount.getEntity() instanceof String)
-        {
-            return Integer.parseInt((String) replicaCount.getEntity());
-        }
-        else
-        {
-            return (Integer) replicaCount.getEntity();
-        }
+        return replicaCount.getEntity();
     }
 
-    public void setReplicaCount(EntityModel replicaCount) {
+    public void setReplicaCount(EntityModel<Integer> replicaCount) {
         this.replicaCount = replicaCount;
     }
 
-    public EntityModel getStripeCount() {
+    public EntityModel<Integer> getStripeCount() {
         return stripeCount;
     }
 
     public Integer getStripeCountValue() {
-        if (stripeCount.getEntity() instanceof String)
-        {
-            return Integer.parseInt((String) stripeCount.getEntity());
-        }
-        else
-        {
-            return (Integer) stripeCount.getEntity();
-        }
+        return stripeCount.getEntity();
     }
 
-    public void setStripeCount(EntityModel stripeCount) {
+    public void setStripeCount(EntityModel<Integer> stripeCount) {
         this.stripeCount = stripeCount;
     }
 
-    public ListModel getServers() {
+    public ListModel<VDS> getServers() {
         return servers;
     }
 
-    public void setServers(ListModel servers) {
+    public void setServers(ListModel<VDS> servers) {
         this.servers = servers;
     }
 
-    public EntityModel getBrickDirectory() {
+    public EntityModel<String> getBrickDirectory() {
         return brickDirectory;
     }
 
-    public void setBrickDirectory(EntityModel brickDirectory) {
+    public void setBrickDirectory(EntityModel<String> brickDirectory) {
         this.brickDirectory = brickDirectory;
     }
 
-    public ListModel getBricks() {
+    public ListModel<EntityModel<GlusterBrickEntity>> getBricks() {
         return bricks;
     }
 
-    public void setBricks(ListModel selectedBricks) {
+    public void setBricks(ListModel<EntityModel<GlusterBrickEntity>> selectedBricks) {
         this.bricks = selectedBricks;
     }
 
-    public EntityModel getForce() {
+    public EntityModel<Boolean> getForce() {
         return force;
     }
 
-    public void setForce(EntityModel force) {
+    public void setForce(EntityModel<Boolean> force) {
         this.force = force;
     }
 
@@ -282,7 +268,7 @@ public class VolumeBrickModel extends Model {
 
     private void addBrick()
     {
-        VDS server = (VDS) servers.getSelectedItem();
+        VDS server = servers.getSelectedItem();
 
         if (server == null)
         {
@@ -290,15 +276,15 @@ public class VolumeBrickModel extends Model {
             return;
         }
 
-        if (brickDirectory.getEntity() == null || ((String) brickDirectory.getEntity()).trim().length() == 0)
+        if (brickDirectory.getEntity() == null || brickDirectory.getEntity().trim().length() == 0)
         {
             setMessage(ConstantsManager.getInstance().getConstants().emptyBrickDirectoryMsg());
             return;
         }
 
-        brickDirectory.setEntity(((String)brickDirectory.getEntity()).trim());
+        brickDirectory.setEntity(brickDirectory.getEntity().trim());
 
-        if (!validateBrickDirectory((String) brickDirectory.getEntity()))
+        if (!validateBrickDirectory(brickDirectory.getEntity()))
         {
             return;
         }
@@ -306,18 +292,18 @@ public class VolumeBrickModel extends Model {
         GlusterBrickEntity brickEntity = new GlusterBrickEntity();
         brickEntity.setServerId(server.getId());
         brickEntity.setServerName(server.getHostName());
-        brickEntity.setBrickDirectory((String) brickDirectory.getEntity());
+        brickEntity.setBrickDirectory(brickDirectory.getEntity());
 
-        EntityModel entityModel = new EntityModel(brickEntity);
-        List<EntityModel> items = (List<EntityModel>) bricks.getItems();
+        EntityModel<GlusterBrickEntity> entityModel = new EntityModel<GlusterBrickEntity>(brickEntity);
+        List<EntityModel<GlusterBrickEntity>> items = (List<EntityModel<GlusterBrickEntity>>) bricks.getItems();
         if (items == null)
         {
-            items = new ArrayList<EntityModel>();
+            items = new ArrayList<EntityModel<GlusterBrickEntity>>();
         }
 
-        for (EntityModel model : items)
+        for (EntityModel<GlusterBrickEntity> model : items)
         {
-            GlusterBrickEntity existingBrick = (GlusterBrickEntity) model.getEntity();
+            GlusterBrickEntity existingBrick = model.getEntity();
 
             if (existingBrick.getServerId().equals(brickEntity.getServerId())
                     && existingBrick.getBrickDirectory().equals(brickEntity.getBrickDirectory()))
@@ -375,8 +361,8 @@ public class VolumeBrickModel extends Model {
 
     private void removeBricks()
     {
-        List<EntityModel> items = (List<EntityModel>) bricks.getItems();
-        List<EntityModel> selectedItems = bricks.getSelectedItems();
+        List<EntityModel<GlusterBrickEntity>> items = (List<EntityModel<GlusterBrickEntity>>) bricks.getItems();
+        List<EntityModel<GlusterBrickEntity>> selectedItems = bricks.getSelectedItems();
         if (items == null || selectedItems == null)
         {
             return;
@@ -389,7 +375,7 @@ public class VolumeBrickModel extends Model {
 
     private void removeAllBricks()
     {
-        List<EntityModel> items = (List<EntityModel>) bricks.getItems();
+        List<EntityModel<GlusterBrickEntity>> items = (List<EntityModel<GlusterBrickEntity>>) bricks.getItems();
         if (items == null)
         {
             return;
@@ -404,9 +390,9 @@ public class VolumeBrickModel extends Model {
     private void moveItemsUpDown(boolean isUp)
     {
 
-        List<EntityModel> selectedItems = bricks.getSelectedItems();
-        ArrayList<EntityModel> items = new ArrayList<EntityModel>((List<EntityModel>) bricks.getItems());
-        for (EntityModel selectedItem : selectedItems)
+        List<EntityModel<GlusterBrickEntity>> selectedItems = bricks.getSelectedItems();
+        ArrayList<EntityModel<GlusterBrickEntity>> items = new ArrayList<EntityModel<GlusterBrickEntity>>(bricks.getItems());
+        for (EntityModel<GlusterBrickEntity> selectedItem : selectedItems)
         {
             int position = items.indexOf(selectedItem);
 
@@ -442,7 +428,7 @@ public class VolumeBrickModel extends Model {
 
         if (bricks.getItems() != null)
         {
-            brickCount = ((List<?>) getBricks().getItems()).size();
+            brickCount = getBricks().getItems().size();
         }
 
         int replicaCount = getReplicaCountValue();

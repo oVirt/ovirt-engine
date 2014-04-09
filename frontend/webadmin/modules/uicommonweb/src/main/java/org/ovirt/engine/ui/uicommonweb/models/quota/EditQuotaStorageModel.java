@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.quota;
 
+import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
@@ -8,48 +9,48 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-public class EditQuotaStorageModel extends EntityModel {
-    EntityModel unlimitedStorage;
+public class EditQuotaStorageModel extends EntityModel<QuotaStorage> {
+    EntityModel<Boolean> unlimitedStorage;
 
-    EntityModel specificStorage;
+    EntityModel<Boolean> specificStorage;
 
-    EntityModel specificStorageValue;
+    EntityModel<Long> specificStorageValue;
 
-    public EntityModel getUnlimitedStorage() {
+    public EntityModel<Boolean> getUnlimitedStorage() {
         return unlimitedStorage;
     }
 
-    public void setUnlimitedStorage(EntityModel unlimitedStorage) {
+    public void setUnlimitedStorage(EntityModel<Boolean> unlimitedStorage) {
         this.unlimitedStorage = unlimitedStorage;
     }
 
-    public EntityModel getSpecificStorage() {
+    public EntityModel<Boolean> getSpecificStorage() {
         return specificStorage;
     }
 
-    public void setSpecificStorage(EntityModel specificStorage) {
+    public void setSpecificStorage(EntityModel<Boolean> specificStorage) {
         this.specificStorage = specificStorage;
     }
 
-    public EntityModel getSpecificStorageValue() {
+    public EntityModel<Long> getSpecificStorageValue() {
         return specificStorageValue;
     }
 
-    public void setSpecificStorageValue(EntityModel specificStorageValue) {
+    public void setSpecificStorageValue(EntityModel<Long> specificStorageValue) {
         this.specificStorageValue = specificStorageValue;
     }
 
     public EditQuotaStorageModel() {
-        setSpecificStorage(new EntityModel());
+        setSpecificStorage(new EntityModel<Boolean>());
         getSpecificStorage().setEntity(true);
-        setUnlimitedStorage(new EntityModel());
+        setUnlimitedStorage(new EntityModel<Boolean>());
         getUnlimitedStorage().setEntity(false);
-        setSpecificStorageValue(new EntityModel());
+        setSpecificStorageValue(new EntityModel<Long>());
         getUnlimitedStorage().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) getUnlimitedStorage().getEntity()) {
+                if (getUnlimitedStorage().getEntity()) {
                     getSpecificStorage().setEntity(false);
                     getSpecificStorageValue().setIsChangable(false);
                 }
@@ -60,7 +61,7 @@ public class EditQuotaStorageModel extends EntityModel {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) getSpecificStorage().getEntity()) {
+                if (getSpecificStorage().getEntity()) {
                     getUnlimitedStorage().setEntity(false);
                     getSpecificStorageValue().setIsChangable(true);
                 }
@@ -73,7 +74,7 @@ public class EditQuotaStorageModel extends EntityModel {
         intValidation.setMinimum(1);
         intValidation.setMaximum(65535);
         getSpecificStorageValue().setIsValid(true);
-        if ((Boolean) getSpecificStorage().getEntity()) {
+        if (getSpecificStorage().getEntity()) {
             getSpecificStorageValue().validateEntity(new IValidation[] { intValidation, new NotEmptyValidation() });
         }
         return getSpecificStorageValue().getIsValid();

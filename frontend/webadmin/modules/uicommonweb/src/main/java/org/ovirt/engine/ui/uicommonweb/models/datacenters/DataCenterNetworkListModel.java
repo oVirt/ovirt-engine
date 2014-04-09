@@ -124,7 +124,7 @@ public class DataCenterNetworkListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                ArrayList<Network> newItems = (ArrayList<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                ArrayList<Network> newItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Collections.sort(newItems, new Linq.NetworkComparator());
                 SearchableListModel searchableListModel = (SearchableListModel) model;
                 searchableListModel.setItems(newItems);

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -10,35 +11,35 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 public class RemoveStorageModel extends Model
 {
 
-    private ListModel privateHostList;
+    private ListModel<VDS> privateHostList;
 
-    public ListModel getHostList()
+    public ListModel<VDS> getHostList()
     {
         return privateHostList;
     }
 
-    private void setHostList(ListModel value)
+    private void setHostList(ListModel<VDS> value)
     {
         privateHostList = value;
     }
 
-    private EntityModel privateFormat;
+    private EntityModel<Boolean> privateFormat;
 
-    public EntityModel getFormat()
+    public EntityModel<Boolean> getFormat()
     {
         return privateFormat;
     }
 
-    private void setFormat(EntityModel value)
+    private void setFormat(EntityModel<Boolean> value)
     {
         privateFormat = value;
     }
 
     public RemoveStorageModel()
     {
-        setHostList(new ListModel());
+        setHostList(new ListModel<VDS>());
 
-        setFormat(new EntityModel());
+        setFormat(new EntityModel<Boolean>());
         getFormat().getEntityChangedEvent().addListener(this);
         getFormat().getPropertyChangedEvent().addListener(this);
         getFormat().setEntity(false);

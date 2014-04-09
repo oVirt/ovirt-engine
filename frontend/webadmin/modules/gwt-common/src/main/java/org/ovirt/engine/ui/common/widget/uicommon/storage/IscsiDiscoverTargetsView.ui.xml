@@ -2,6 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiDiscoverTargetsView.WidgetStyle">
@@ -109,14 +110,14 @@
 			<g:FlowPanel ui:field="discoverTargetsPanelInner">
 				<g:HorizontalPanel addStyleNames="{style.authPanelInner}">									
 					<g:VerticalPanel>
-						<e:EntityModelTextBoxEditor ui:field="addressEditor" addStyleNames="{style.textBoxEditor}" />
-						<e:EntityModelTextBoxEditor ui:field="portEditor" addStyleNames="{style.textBoxEditor}" />
+						<ge:StringEntityModelTextBoxEditor ui:field="addressEditor" addStyleNames="{style.textBoxEditor}" />
+						<ge:StringEntityModelTextBoxEditor ui:field="portEditor" addStyleNames="{style.textBoxEditor}" />
 					</g:VerticalPanel>																				
 					<g:VerticalPanel addStyleNames="{style.discoverTargetAuthPanel}">
-						<e:EntityModelCheckBoxEditor ui:field="useUserAuthEditor" addStyleNames="{style.userAuthLabel}" />
+						<ge:EntityModelCheckBoxEditor ui:field="useUserAuthEditor" addStyleNames="{style.userAuthLabel}" />
 						<g:HorizontalPanel>
-							<e:EntityModelTextBoxEditor ui:field="chapUserEditor" addStyleNames="{style.textBoxEditorChap}" />
-							<e:EntityModelTextBoxEditor ui:field="chapPassEditor" addStyleNames="{style.textBoxEditorChap}" />
+							<ge:StringEntityModelTextBoxEditor ui:field="chapUserEditor" addStyleNames="{style.textBoxEditorChap}" />
+							<ge:StringEntityModelTextBoxEditor ui:field="chapPassEditor" addStyleNames="{style.textBoxEditorChap}" />
 						</g:HorizontalPanel>
 					</g:VerticalPanel>										
 				</g:HorizontalPanel>

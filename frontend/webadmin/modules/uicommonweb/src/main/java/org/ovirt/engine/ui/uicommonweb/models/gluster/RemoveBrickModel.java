@@ -13,13 +13,13 @@ public class RemoveBrickModel extends ConfirmationModel {
 
     private String validationMessage;
 
-    private EntityModel migrateData;
+    private EntityModel<Boolean> migrateData;
 
     private boolean isMigrationSupported;
 
     public RemoveBrickModel() {
         setReduceReplica(false);
-        setMigrateData(new EntityModel(false));
+        setMigrateData(new EntityModel<Boolean>(false));
         setMigrationSupported(true);
     }
 
@@ -55,11 +55,11 @@ public class RemoveBrickModel extends ConfirmationModel {
         this.validationMessage = validationMessage;
     }
 
-    public EntityModel getMigrateData() {
+    public EntityModel<Boolean> getMigrateData() {
         return migrateData;
     }
 
-    public void setMigrateData(EntityModel migrateData) {
+    public void setMigrateData(EntityModel<Boolean> migrateData) {
         this.migrateData = migrateData;
     }
 

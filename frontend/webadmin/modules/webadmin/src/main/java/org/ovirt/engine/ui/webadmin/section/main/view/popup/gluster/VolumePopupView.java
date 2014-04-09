@@ -2,16 +2,17 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
@@ -50,32 +51,32 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @UiField
     @Path(value = "name.entity")
     @WithElementId
-    EntityModelTextBoxEditor nameEditor;
+    StringEntityModelTextBoxEditor nameEditor;
 
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
     @WithElementId("dataCenter")
-    ListModelListBoxEditor<Object> dataCenterEditor;
+    ListModelListBoxEditor<StoragePool> dataCenterEditor;
 
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
     @WithElementId("cluster")
-    ListModelListBoxEditor<Object> clusterEditor;
+    ListModelListBoxEditor<VDSGroup> clusterEditor;
 
     @UiField(provided = true)
     @Path(value = "typeList.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> typeListEditor;
+    ListModelListBoxEditor<GlusterVolumeType> typeListEditor;
 
     @UiField
     @Path(value = "replicaCount.entity")
     @WithElementId
-    EntityModelLabelEditor replicaCountEditor;
+    IntegerEntityModelLabelEditor replicaCountEditor;
 
     @UiField
     @Path(value = "stripeCount.entity")
     @WithElementId
-    EntityModelLabelEditor stripeCountEditor;
+    IntegerEntityModelLabelEditor stripeCountEditor;
 
     @UiField
     @Ignore
@@ -126,7 +127,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @UiField
     @Path(value = "allowAccess.entity")
     @WithElementId
-    EntityModelTextBoxEditor allowAccessEditor;
+    StringEntityModelTextBoxEditor allowAccessEditor;
 
     @UiField
     @Ignore
@@ -162,21 +163,21 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     }
 
     private void initListBoxEditors() {
-        dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((StoragePool) object).getName();
+            public String renderNullSafe(StoragePool storagePool) {
+                return storagePool.getName();
             }
         });
 
-        clusterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        clusterEditor = new ListModelListBoxEditor<VDSGroup>(new NullSafeRenderer<VDSGroup>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((VDSGroup) object).getName();
+            public String renderNullSafe(VDSGroup vdsGroup) {
+                return vdsGroup.getName();
             }
         });
 
-        typeListEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        typeListEditor = new ListModelListBoxEditor<GlusterVolumeType>(new EnumRenderer<GlusterVolumeType>());
     }
 
     private void initAddBricksButton() {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 	<ui:style>
 		.checkBox {
@@ -12,7 +12,7 @@
 
 	<g:HorizontalPanel width="100%" verticalAlignment="middle">
 		<g:Label ui:field="checkBoxTitle"/>
-		<e:EntityModelCheckBoxEditor ui:field="checkBoxEditor" addStyleNames="{style.checkBox}"/>
+		<ge:EntityModelCheckBoxEditor ui:field="checkBoxEditor" addStyleNames="{style.checkBox}"/>
 	</g:HorizontalPanel>
 
 </ui:UiBinder>

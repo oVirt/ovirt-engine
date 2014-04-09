@@ -106,62 +106,62 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     @Override
     public abstract StorageType getType();
 
-    private EntityModel privateAddress;
+    private EntityModel<String> privateAddress;
 
-    public EntityModel getAddress()
+    public EntityModel<String> getAddress()
     {
         return privateAddress;
     }
 
-    private void setAddress(EntityModel value)
+    private void setAddress(EntityModel<String> value)
     {
         privateAddress = value;
     }
 
-    private EntityModel privatePort;
+    private EntityModel<String> privatePort;
 
-    public EntityModel getPort()
+    public EntityModel<String> getPort()
     {
         return privatePort;
     }
 
-    private void setPort(EntityModel value)
+    private void setPort(EntityModel<String> value)
     {
         privatePort = value;
     }
 
-    private EntityModel privateUserName;
+    private EntityModel<String> privateUserName;
 
-    public EntityModel getUserName()
+    public EntityModel<String> getUserName()
     {
         return privateUserName;
     }
 
-    private void setUserName(EntityModel value)
+    private void setUserName(EntityModel<String> value)
     {
         privateUserName = value;
     }
 
-    private EntityModel privatePassword;
+    private EntityModel<String> privatePassword;
 
-    public EntityModel getPassword()
+    public EntityModel<String> getPassword()
     {
         return privatePassword;
     }
 
-    private void setPassword(EntityModel value)
+    private void setPassword(EntityModel<String> value)
     {
         privatePassword = value;
     }
 
-    private EntityModel privateUseUserAuth;
+    private EntityModel<Boolean> privateUseUserAuth;
 
-    public EntityModel getUseUserAuth()
+    public EntityModel<Boolean> getUseUserAuth()
     {
         return privateUseUserAuth;
     }
 
-    private void setUseUserAuth(EntityModel value)
+    private void setUseUserAuth(EntityModel<Boolean> value)
     {
         privateUseUserAuth = value;
     }
@@ -276,13 +276,13 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         setLoginAllCommand(tempVar);
         setDiscoverTargetsCommand(new UICommand("DiscoverTargets", this)); //$NON-NLS-1$
 
-        setAddress(new EntityModel());
-        EntityModel tempVar2 = new EntityModel();
+        setAddress(new EntityModel<String>());
+        EntityModel<String> tempVar2 = new EntityModel<String>();
         tempVar2.setEntity("3260"); //$NON-NLS-1$
         setPort(tempVar2);
-        setUserName(new EntityModel());
-        setPassword(new EntityModel());
-        EntityModel tempVar3 = new EntityModel();
+        setUserName(new EntityModel<String>());
+        setPassword(new EntityModel<String>());
+        EntityModel<Boolean> tempVar3 = new EntityModel<Boolean>();
         tempVar3.setEntity(false);
         setUseUserAuth(tempVar3);
         getUseUserAuth().getEntityChangedEvent().addListener(this);
@@ -354,7 +354,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     private void connectTargets() {
 
-        VDS host = (VDS) getContainer().getHost().getSelectedItem();
+        VDS host = getContainer().getHost().getSelectedItem();
         if (host == null)
         {
             return;
@@ -376,8 +376,8 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             SanTargetModel model = targetsToConnect.get(i);
             StorageServerConnections connection = new StorageServerConnections();
             connection.setstorage_type(StorageType.ISCSI);
-            connection.setuser_name((Boolean) getUseUserAuth().getEntity() ? (String) getUserName().getEntity() : ""); //$NON-NLS-1$
-            connection.setpassword((Boolean) getUseUserAuth().getEntity() ? (String) getPassword().getEntity() : ""); //$NON-NLS-1$
+            connection.setuser_name(getUseUserAuth().getEntity() ? getUserName().getEntity() : ""); //$NON-NLS-1$
+            connection.setpassword(getUseUserAuth().getEntity() ? getPassword().getEntity() : ""); //$NON-NLS-1$
             connection.setiqn(model.getName());
             connection.setconnection(model.getAddress());
             connection.setport(String.valueOf(model.getPort()));
@@ -425,14 +425,14 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             return;
         }
 
-        VDS host = (VDS) getContainer().getHost().getSelectedItem();
+        VDS host = getContainer().getHost().getSelectedItem();
 
         StorageServerConnections tempVar = new StorageServerConnections();
-        tempVar.setconnection(((String) getAddress().getEntity()).trim());
-        tempVar.setport(((String) getPort().getEntity()).trim());
+        tempVar.setconnection(getAddress().getEntity().trim());
+        tempVar.setport(getPort().getEntity().trim());
         tempVar.setstorage_type(StorageType.ISCSI);
-        tempVar.setuser_name((Boolean) getUseUserAuth().getEntity() ? (String) getUserName().getEntity() : ""); //$NON-NLS-1$
-        tempVar.setpassword((Boolean) getUseUserAuth().getEntity() ? (String) getPassword().getEntity() : ""); //$NON-NLS-1$
+        tempVar.setuser_name(getUseUserAuth().getEntity() ? getUserName().getEntity() : ""); //$NON-NLS-1$
+        tempVar.setpassword(getUseUserAuth().getEntity() ? getPassword().getEntity() : ""); //$NON-NLS-1$
         DiscoverSendTargetsQueryParameters parameters =
                 new DiscoverSendTargetsQueryParameters(host.getId(), tempVar);
 
@@ -457,12 +457,11 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         for (StorageServerConnections a : items)
         {
-            SanTargetModel tempVar = new SanTargetModel();
-            tempVar.setAddress(a.getconnection());
-            tempVar.setPort(a.getport());
-            tempVar.setName(a.getiqn());
-            tempVar.setLuns(new ObservableCollection<LunModel>());
-            SanTargetModel model = tempVar;
+            SanTargetModel model = new SanTargetModel();
+            model.setAddress(a.getconnection());
+            model.setPort(a.getport());
+            model.setName(a.getiqn());
+            model.setLuns(new ObservableCollection<LunModel>());
             model.getLoggedInEvent().addListener(this);
 
             newItems.add(model);
@@ -491,7 +490,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         tempVar.setMaximum(65535);
         getPort().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
 
-        if ((Boolean) getUseUserAuth().getEntity())
+        if (getUseUserAuth().getEntity())
         {
             getUserName().validateEntity(new IValidation[] { new NotEmptyValidation() });
             getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
@@ -515,10 +514,10 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     private void updateUserAuthFields()
     {
         getUserName().setIsValid(true);
-        getUserName().setIsChangable((Boolean) getUseUserAuth().getEntity());
+        getUserName().setIsChangable(getUseUserAuth().getEntity());
 
         getPassword().setIsValid(true);
-        getPassword().setIsChangable((Boolean) getUseUserAuth().getEntity());
+        getPassword().setIsChangable(getUseUserAuth().getEntity());
     }
 
     @Override

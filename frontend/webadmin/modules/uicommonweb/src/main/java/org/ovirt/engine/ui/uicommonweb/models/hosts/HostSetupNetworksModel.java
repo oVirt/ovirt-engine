@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -69,38 +68,38 @@ public class HostSetupNetworksModel extends EntityModel {
         return (VDS) super.getEntity();
     }
 
-    private EntityModel privateCheckConnectivity;
+    private EntityModel<Boolean> privateCheckConnectivity;
 
-    public EntityModel getCheckConnectivity()
+    public EntityModel<Boolean> getCheckConnectivity()
     {
         return privateCheckConnectivity;
     }
 
-    private void setCheckConnectivity(EntityModel value)
+    private void setCheckConnectivity(EntityModel<Boolean> value)
     {
         privateCheckConnectivity = value;
     }
 
-    private EntityModel connectivityTimeout;
+    private EntityModel<Integer> connectivityTimeout;
 
-    public EntityModel getConnectivityTimeout()
+    public EntityModel<Integer> getConnectivityTimeout()
     {
         return connectivityTimeout;
     }
 
-    private void setConnectivityTimeout(EntityModel value)
+    private void setConnectivityTimeout(EntityModel<Integer> value)
     {
         connectivityTimeout = value;
     }
 
-    private EntityModel privateCommitChanges;
+    private EntityModel<Boolean> privateCommitChanges;
 
-    public EntityModel getCommitChanges()
+    public EntityModel<Boolean> getCommitChanges()
     {
         return privateCommitChanges;
     }
 
-    public void setCommitChanges(EntityModel value)
+    public void setCommitChanges(EntityModel<Boolean> value)
     {
         privateCommitChanges = value;
     }
@@ -164,10 +163,10 @@ public class HostSetupNetworksModel extends EntityModel {
         setNicsChangedEvent(new Event(NICS_CHANGED_EVENT_DEFINITION));
         setNetworksChangedEvent(new Event(NETWORKS_CHANGED_EVENT_DEFINITION));
         setOperationCandidateEvent(new Event(OPERATION_CANDIDATE_EVENT_DEFINITION));
-        setCheckConnectivity(new EntityModel());
+        setCheckConnectivity(new EntityModel<Boolean>());
         getCheckConnectivity().setEntity(true);
-        setConnectivityTimeout(new EntityModel());
-        setCommitChanges(new EntityModel());
+        setConnectivityTimeout(new EntityModel<Integer>());
+        setCommitChanges(new EntityModel<Boolean>());
         getCommitChanges().setEntity(false);
 
         // ok command
@@ -421,9 +420,9 @@ public class HostSetupNetworksModel extends EntityModel {
                     }
                     entity.setBootProtocol(networkDialogModel.getBootProtocol());
                     if (networkDialogModel.getIsStaticAddress()) {
-                        entity.setAddress((String) networkDialogModel.getAddress().getEntity());
-                        entity.setSubnet((String) networkDialogModel.getSubnet().getEntity());
-                        entity.setGateway((String) networkDialogModel.getGateway().getEntity());
+                        entity.setAddress(networkDialogModel.getAddress().getEntity());
+                        entity.setSubnet(networkDialogModel.getSubnet().getEntity());
+                        entity.setGateway(networkDialogModel.getGateway().getEntity());
                     }
 
                     if (networkDialogModel.getQosModel().getIsAvailable()) {
@@ -431,7 +430,7 @@ public class HostSetupNetworksModel extends EntityModel {
                         entity.setQos(networkDialogModel.getQosModel().flush());
                     }
 
-                    if ((Boolean) networkDialogModel.getIsToSync().getEntity()) {
+                    if (networkDialogModel.getIsToSync().getEntity()) {
                         networksToSync.add(logicalNetwork.getName());
                     } else {
                         networksToSync.remove(logicalNetwork.getName());
@@ -516,7 +515,7 @@ public class HostSetupNetworksModel extends EntityModel {
                             if (!validateLabelChanges(potentialNetworks)) {
                                 return;
                             }
-                            VdsNetworkInterface bond = new Bond((String) bondPopup.getBond().getSelectedItem());
+                            VdsNetworkInterface bond = new Bond(bondPopup.getBond().getSelectedItem());
                             setBondOptions(bond, bondPopup);
 
                             networkCommand.execute(bond);
@@ -823,7 +822,7 @@ public class HostSetupNetworksModel extends EntityModel {
             public void onSuccess(Object model, Object returnValue)
             {
                 List<VdsNetworkInterface> bonds =
-                        (List<VdsNetworkInterface>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        ((VdcQueryReturnValue) returnValue).getReturnValue();
                 allBonds = bonds;
 
                 // chain the DC labels query
@@ -888,11 +887,9 @@ public class HostSetupNetworksModel extends EntityModel {
     }
 
     private void setBondOptions(VdsNetworkInterface entity, SetupNetworksBondModel bondDialogModel) {
-        KeyValuePairCompat<String, EntityModel> BondPair =
-                (KeyValuePairCompat<String, EntityModel>) bondDialogModel.getBondingOptions()
-                        .getSelectedItem();
+        Map.Entry<String, EntityModel<String>> BondPair = bondDialogModel.getBondingOptions().getSelectedItem();
         String key = BondPair.getKey();
-        entity.setBondOptions((String) ("custom".equals(key) ? BondPair.getValue().getEntity() : key)); //$NON-NLS-1$
+        entity.setBondOptions("custom".equals(key) ? BondPair.getValue().getEntity() : key); //$NON-NLS-1$
     }
 
     private void setNetworks(Map<String, LogicalNetworkModel> networks) {
@@ -949,7 +946,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
-                        getConnectivityTimeout().setEntity(returnValue);
+                        getConnectivityTimeout().setEntity((Integer) returnValue);
                         postOnSetupNetworks();
                     }
                 }));
@@ -960,8 +957,8 @@ public class HostSetupNetworksModel extends EntityModel {
 
         SetupNetworksParameters params = new SetupNetworksParameters();
         params.setInterfaces(model.getAllNics());
-        params.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
-        params.setConectivityTimeout((Integer) model.getConnectivityTimeout().getEntity());
+        params.setCheckConnectivity(model.getCheckConnectivity().getEntity());
+        params.setConectivityTimeout(model.getConnectivityTimeout().getEntity());
         params.setVdsId(getEntity().getId());
         params.setNetworksToSync(model.getNetworksToSync());
 
@@ -973,8 +970,8 @@ public class HostSetupNetworksModel extends EntityModel {
                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                 if (returnValueBase != null && returnValueBase.getSucceeded())
                 {
-                    EntityModel commitChanges = model.getCommitChanges();
-                    if ((Boolean) commitChanges.getEntity())
+                    EntityModel<Boolean> commitChanges = model.getCommitChanges();
+                    if (commitChanges.getEntity())
                     {
                         new SaveNetworkConfigAction(sourceListModel, model, getEntity()).execute();
                     }

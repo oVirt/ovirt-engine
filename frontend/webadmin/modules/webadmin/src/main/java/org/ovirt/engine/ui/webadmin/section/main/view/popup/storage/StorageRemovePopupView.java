@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RemoveStorageModel;
@@ -43,7 +43,7 @@ public class StorageRemovePopupView extends AbstractModelBoundPopupView<RemoveSt
     @UiField(provided = true)
     @Path(value = "hostList.selectedItem")
     @WithElementId("hostList")
-    ListModelListBoxEditor<Object> hostListEditor;
+    ListModelListBoxEditor<VDS> hostListEditor;
 
     @UiField(provided = true)
     @Path(value = "format.entity")
@@ -68,10 +68,10 @@ public class StorageRemovePopupView extends AbstractModelBoundPopupView<RemoveSt
     }
 
     void initListBoxEditors() {
-        hostListEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        hostListEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((VDS) object).getName();
+            public String renderNullSafe(VDS vds) {
+                return vds.getName();
             }
         });
     }

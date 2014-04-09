@@ -23,27 +23,27 @@ import com.google.gwt.user.client.Timer;
 
 public class VolumeRebalanceStatusModel extends Model {
 
-    private EntityModel volume;
+    private EntityModel<String> volume;
 
-    private EntityModel cluster;
+    private EntityModel<String> cluster;
 
-    private EntityModel startTime;
+    private EntityModel<Date> startTime;
 
-    private EntityModel statusTime;
+    private EntityModel<Date> statusTime;
 
-    public EntityModel getStopTime() {
+    public EntityModel<Date> getStopTime() {
         return stopTime;
     }
 
-    public void setStopTime(EntityModel stopTime) {
+    public void setStopTime(EntityModel<Date> stopTime) {
         this.stopTime = stopTime;
     }
 
-    private EntityModel stopTime;
+    private EntityModel<Date> stopTime;
 
     private GlusterVolumeEntity entity;
 
-    private ListModel rebalanceSessions;
+    private ListModel<EntityModel<GlusterVolumeTaskStatusForHost>> rebalanceSessions;
 
     private boolean isStatusAvailable;
 
@@ -52,14 +52,14 @@ public class VolumeRebalanceStatusModel extends Model {
     private UICommand stopReblanceFromStatus;
 
     public VolumeRebalanceStatusModel(final GlusterVolumeEntity volumeEntity) {
-        setVolume(new EntityModel());
-        setCluster(new EntityModel());
-        setStartTime(new EntityModel());
+        setVolume(new EntityModel<String>());
+        setCluster(new EntityModel<String>());
+        setStartTime(new EntityModel<Date>());
         getStartTime().setEntity(new Date());
-        setStatusTime(new EntityModel());
-        setStopTime(new EntityModel());
+        setStatusTime(new EntityModel<Date>());
+        setStopTime(new EntityModel<Date>());
         getStopTime().setEntity(new Date());
-        setRebalanceSessions(new ListModel());
+        setRebalanceSessions(new ListModel<EntityModel<GlusterVolumeTaskStatusForHost>>());
         setEntity(volumeEntity);
         refresh = new Timer() {
 
@@ -72,52 +72,52 @@ public class VolumeRebalanceStatusModel extends Model {
         refresh.scheduleRepeating(10000);
     }
 
-    public ListModel getRebalanceSessions() {
+    public ListModel<EntityModel<GlusterVolumeTaskStatusForHost>> getRebalanceSessions() {
         return rebalanceSessions;
     }
 
-    public void setRebalanceSessions(ListModel rebalanceSessions) {
+    public void setRebalanceSessions(ListModel<EntityModel<GlusterVolumeTaskStatusForHost>> rebalanceSessions) {
         this.rebalanceSessions = rebalanceSessions;
     }
 
-    public EntityModel getVolume() {
+    public EntityModel<String> getVolume() {
         return volume;
     }
 
-    public void setVolume(EntityModel volume) {
+    public void setVolume(EntityModel<String> volume) {
         this.volume = volume;
     }
 
-    public EntityModel getStartTime() {
+    public EntityModel<Date> getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(EntityModel startedTime) {
+    public void setStartTime(EntityModel<Date> startedTime) {
         this.startTime = startedTime;
     }
 
-    public EntityModel getCluster() {
+    public EntityModel<String> getCluster() {
         return cluster;
     }
 
-    public void setCluster(EntityModel cluster) {
+    public void setCluster(EntityModel<String> cluster) {
         this.cluster = cluster;
     }
 
-    public EntityModel getStatusTime() {
+    public EntityModel<Date> getStatusTime() {
         return statusTime;
     }
 
-    public void setStatusTime(EntityModel statusTime) {
+    public void setStatusTime(EntityModel<Date> statusTime) {
         this.statusTime = statusTime;
     }
 
     public void showStatus(GlusterVolumeTaskStatusEntity rebalanceStatusEntity) {
         List<GlusterVolumeTaskStatusForHost> rebalanceSessionsList =
                 rebalanceStatusEntity.getHostwiseStatusDetails();
-        List<EntityModel> sessionList = new ArrayList<EntityModel>();
+        List<EntityModel<GlusterVolumeTaskStatusForHost>> sessionList = new ArrayList<EntityModel<GlusterVolumeTaskStatusForHost>>();
         for (GlusterVolumeTaskStatusForHost hostDetail : rebalanceSessionsList) {
-            EntityModel sessionModel = new EntityModel(hostDetail);
+            EntityModel<GlusterVolumeTaskStatusForHost> sessionModel = new EntityModel<GlusterVolumeTaskStatusForHost>(hostDetail);
             sessionList.add(sessionModel);
         }
         getStartTime().setEntity(rebalanceStatusEntity.getStartTime());

@@ -2,7 +2,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 	<ui:style>
 		.tablePanel {
@@ -36,15 +37,15 @@
 			<g:VerticalPanel>
 				<g:HorizontalPanel>
 					<g:VerticalPanel>
-						<e:EntityModelLabelEditor ui:field="volumeEditor" />
-						<e:EntityModelLabelEditor ui:field="startTimeEditor" />
+						<ge:StringEntityModelLabelEditor ui:field="volumeEditor" />
+						<ge:EntityModelLabelEditor ui:field="startTimeEditor" />
 					</g:VerticalPanel>
 					<g:VerticalPanel ui:field="stopTimePanel" addStyleNames="{style.stopTime}">
-					    <e:EntityModelLabelEditor ui:field="stopTimeEditor" />
+					    <ge:EntityModelLabelEditor ui:field="stopTimeEditor" />
 					</g:VerticalPanel>
 					<g:VerticalPanel>
-					        <e:EntityModelLabelEditor ui:field="clusterEditor" />
-						<e:EntityModelLabelEditor ui:field="statusTimeEditor" />
+					        <ge:StringEntityModelLabelEditor ui:field="clusterEditor" />
+						<ge:EntityModelLabelEditor ui:field="statusTimeEditor" />
 					</g:VerticalPanel>
 					<g:VerticalPanel>
 					    <g:Label ui:field="status" addStyleNames="{style.labelStyle}"/>

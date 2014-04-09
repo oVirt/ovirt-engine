@@ -259,7 +259,7 @@ public class ClusterGeneralModel extends EntityModel {
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
-                        boolean isConsistent = (Boolean) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        boolean isConsistent = ((VdcQueryReturnValue) returnValue).getReturnValue();
                         setConsoleAddressPartiallyOverridden(!isConsistent);
                     }
                 }
@@ -345,15 +345,15 @@ public class ClusterGeneralModel extends EntityModel {
 
         ManageGlusterSwiftModel glusterSwiftModel = (ManageGlusterSwiftModel) getWindow();
         glusterSwiftModel.startProgress(null);
-        if ((Boolean) glusterSwiftModel.getIsManageServerLevel().getEntity()) {
+        if (glusterSwiftModel.getIsManageServerLevel().getEntity()) {
             ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
             for (Object model : glusterSwiftModel.getHostServicesList().getItems()) {
                 GlusterSwiftServiceModel swiftServiceModel = (GlusterSwiftServiceModel) model;
                 GlusterSwiftAction action =
                         getGlusterSwiftAction(swiftServiceModel.getEntity().getStatus(),
-                                (Boolean) swiftServiceModel.getStartSwift().getEntity(),
-                                (Boolean) swiftServiceModel.getStopSwift().getEntity(),
-                                (Boolean) swiftServiceModel.getRestartSwift().getEntity());
+                                              swiftServiceModel.getStartSwift().getEntity(),
+                                              swiftServiceModel.getStopSwift().getEntity(),
+                                              swiftServiceModel.getRestartSwift().getEntity());
                 if (action != null) {
                     GlusterServiceParameters parameters =
                             new GlusterServiceParameters(getEntity().getId(),
@@ -388,12 +388,12 @@ public class ClusterGeneralModel extends EntityModel {
             }
         }
         else {
-            GlusterServiceStatus swiftStatus = (GlusterServiceStatus) glusterSwiftModel.getSwiftStatus().getEntity();
+            GlusterServiceStatus swiftStatus = glusterSwiftModel.getSwiftStatus().getEntity();
             GlusterSwiftAction action =
                     getGlusterSwiftAction(swiftStatus,
-                            (Boolean) glusterSwiftModel.getStartSwift().getEntity(),
-                            (Boolean) glusterSwiftModel.getStopSwift().getEntity(),
-                            (Boolean) glusterSwiftModel.getRestartSwift().getEntity());
+                                          glusterSwiftModel.getStartSwift().getEntity(),
+                            glusterSwiftModel.getStopSwift().getEntity(),
+                            glusterSwiftModel.getRestartSwift().getEntity());
             if (action != null) {
                 GlusterServiceParameters parameters =
                         new GlusterServiceParameters(getEntity().getId(),
@@ -572,7 +572,7 @@ public class ClusterGeneralModel extends EntityModel {
         UICommand command = new UICommand("OnDetachGlusterHosts", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         hostsModel.getCommands().add(command);
-        hostsModel.getHosts().setItems(new ArrayList<EntityModel>());
+        hostsModel.getHosts().setItems(new ArrayList<EntityModel<String>>());
 
         command = new UICommand("Cancel", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
@@ -595,10 +595,10 @@ public class ClusterGeneralModel extends EntityModel {
                 }
                 else
                 {
-                    ArrayList<EntityModel> hostList = new ArrayList<EntityModel>();
+                    ArrayList<EntityModel<String>> hostList = new ArrayList<EntityModel<String>>();
                     for (String host : hostMap.keySet())
                     {
-                        hostList.add(new EntityModel(host));
+                        hostList.add(new EntityModel<String>(host));
                     }
                     hostsModel.getHosts().setItems(hostList);
                 }
@@ -620,7 +620,7 @@ public class ClusterGeneralModel extends EntityModel {
         {
             return;
         }
-        boolean force = (Boolean) hostsModel.getForce().getEntity();
+        boolean force = hostsModel.getForce().getEntity();
         ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
         for (Object model : hostsModel.getHosts().getSelectedItems()) {
             String host = (String) ((EntityModel) model).getEntity();

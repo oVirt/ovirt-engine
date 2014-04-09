@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 
+import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
@@ -8,10 +9,9 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.parser.EntityModelParser;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -37,6 +37,8 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
+import java.text.ParseException;
+
 public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<ManageGlusterSwiftModel> implements ManageGlusterSwiftPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ManageGlusterSwiftModel, ManageGlusterSwiftPopupView> {
@@ -57,7 +59,7 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
 
     @UiField(provided = true)
     @Path("swiftStatus.entity")
-    EntityModelLabelEditor swiftStatusEditor;
+    EntityModelLabelEditor<GlusterServiceStatus> swiftStatusEditor;
 
     @UiField(provided = true)
     @Path("startSwift.entity")
@@ -95,7 +97,12 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
     }
 
     private void initEditors(ApplicationConstants constants) {
-        swiftStatusEditor = new EntityModelLabelEditor(new EnumRenderer(), new EntityModelParser());
+        swiftStatusEditor = new EntityModelLabelEditor<GlusterServiceStatus>(new EnumRenderer<GlusterServiceStatus>(), new Parser<GlusterServiceStatus>() {
+            @Override
+            public GlusterServiceStatus parse(CharSequence text) throws ParseException {
+                return GlusterServiceStatus.valueOf(text.toString().toUpperCase());
+            }
+        });
         startSwift = new EntityModelRadioButtonEditor("swift_action", Align.RIGHT); //$NON-NLS-1$
         stopSwift = new EntityModelRadioButtonEditor("swift_action", Align.RIGHT); //$NON-NLS-1$
         restartSwift = new EntityModelRadioButtonEditor("swift_action", Align.RIGHT); //$NON-NLS-1$
@@ -128,7 +135,7 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
                     @Override
                     public Boolean getValue(EntityModel object) {
                         GlusterSwiftServiceModel swiftServiceModel = (GlusterSwiftServiceModel) object;
-                        return (Boolean) swiftServiceModel.getStartSwift().getEntity();
+                        return swiftServiceModel.getStartSwift().getEntity();
                     }
 
                     @Override
@@ -157,7 +164,7 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
             @Override
             public Boolean getValue(EntityModel object) {
                 GlusterSwiftServiceModel swiftServiceModel = (GlusterSwiftServiceModel) object;
-                return (Boolean) swiftServiceModel.getStopSwift().getEntity();
+                return swiftServiceModel.getStopSwift().getEntity();
             }
 
             @Override
@@ -189,7 +196,7 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
                     @Override
                     public Boolean getValue(EntityModel object) {
                         GlusterSwiftServiceModel swiftServiceModel = (GlusterSwiftServiceModel) object;
-                        return (Boolean) swiftServiceModel.getRestartSwift().getEntity();
+                        return swiftServiceModel.getRestartSwift().getEntity();
                     }
 
                     @Override

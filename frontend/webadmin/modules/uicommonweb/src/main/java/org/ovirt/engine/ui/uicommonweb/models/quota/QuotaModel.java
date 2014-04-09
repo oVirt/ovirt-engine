@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -22,28 +23,28 @@ public class QuotaModel extends EntityModel {
     UICommand editQuotaClusterCommand;
     UICommand editQuotaStorageCommand;
 
-    EntityModel name;
-    EntityModel description;
-    ListModel dataCenter;
+    EntityModel<String> name;
+    EntityModel<String> description;
+    ListModel<StoragePool> dataCenter;
 
-    EntityModel copyPermissions;
+    EntityModel<Boolean> copyPermissions;
 
-    EntityModel graceStorage;
-    EntityModel thresholdStorage;
-    EntityModel graceCluster;
-    EntityModel thresholdCluster;
+    EntityModel<Integer> graceStorage;
+    EntityModel<Integer> thresholdStorage;
+    EntityModel<Integer> graceCluster;
+    EntityModel<Integer> thresholdCluster;
 
-    EntityModel specificClusterQuota;
-    EntityModel globalClusterQuota;
+    EntityModel<Boolean> specificClusterQuota;
+    EntityModel<Boolean> globalClusterQuota;
 
-    EntityModel specificStorageQuota;
-    EntityModel globalStorageQuota;
+    EntityModel<Boolean> specificStorageQuota;
+    EntityModel<Boolean> globalStorageQuota;
 
-    ListModel quotaClusters;
-    ListModel quotaStorages;
+    ListModel<QuotaVdsGroup> quotaClusters;
+    ListModel<QuotaStorage> quotaStorages;
 
-    ListModel allDataCenterClusters;
-    ListModel allDataCenterStorages;
+    ListModel<QuotaVdsGroup> allDataCenterClusters;
+    ListModel<QuotaStorage> allDataCenterStorages;
 
     private QuotaStorage quotaStorage;
     private QuotaVdsGroup quotaCluster;
@@ -64,131 +65,131 @@ public class QuotaModel extends EntityModel {
         this.editQuotaStorageCommand = editQuotaStorageCommand;
     }
 
-    public ListModel getQuotaClusters() {
+    public ListModel<QuotaVdsGroup> getQuotaClusters() {
         return quotaClusters;
     }
 
-    public void setQuotaClusters(ListModel quotaClusters) {
+    public void setQuotaClusters(ListModel<QuotaVdsGroup> quotaClusters) {
         this.quotaClusters = quotaClusters;
     }
 
-    public ListModel getQuotaStorages() {
+    public ListModel<QuotaStorage> getQuotaStorages() {
         return quotaStorages;
     }
 
-    public void setQuotaStorages(ListModel quotaStorages) {
+    public void setQuotaStorages(ListModel<QuotaStorage> quotaStorages) {
         this.quotaStorages = quotaStorages;
     }
 
-    public ListModel getAllDataCenterClusters() {
+    public ListModel<QuotaVdsGroup> getAllDataCenterClusters() {
         return allDataCenterClusters;
     }
 
-    public void setAllDataCenterClusters(ListModel allDataCenterClusters) {
+    public void setAllDataCenterClusters(ListModel<QuotaVdsGroup> allDataCenterClusters) {
         this.allDataCenterClusters = allDataCenterClusters;
     }
 
-    public ListModel getAllDataCenterStorages() {
+    public ListModel<QuotaStorage> getAllDataCenterStorages() {
         return allDataCenterStorages;
     }
 
-    public void setAllDataCenterStorages(ListModel allDataCenterStorages) {
+    public void setAllDataCenterStorages(ListModel<QuotaStorage> allDataCenterStorages) {
         this.allDataCenterStorages = allDataCenterStorages;
     }
 
-    public EntityModel getSpecificClusterQuota() {
+    public EntityModel<Boolean> getSpecificClusterQuota() {
         return specificClusterQuota;
     }
 
-    public void setSpecificClusterQuota(EntityModel specificClusterQuota) {
+    public void setSpecificClusterQuota(EntityModel<Boolean> specificClusterQuota) {
         this.specificClusterQuota = specificClusterQuota;
     }
 
-    public EntityModel getGlobalClusterQuota() {
+    public EntityModel<Boolean> getGlobalClusterQuota() {
         return globalClusterQuota;
     }
 
-    public void setGlobalClusterQuota(EntityModel globalClusterQuota) {
+    public void setGlobalClusterQuota(EntityModel<Boolean> globalClusterQuota) {
         this.globalClusterQuota = globalClusterQuota;
     }
 
-    public EntityModel getSpecificStorageQuota() {
+    public EntityModel<Boolean> getSpecificStorageQuota() {
         return specificStorageQuota;
     }
 
-    public void setSpecificStorageQuota(EntityModel specificStorageQuota) {
+    public void setSpecificStorageQuota(EntityModel<Boolean> specificStorageQuota) {
         this.specificStorageQuota = specificStorageQuota;
     }
 
-    public EntityModel getGlobalStorageQuota() {
+    public EntityModel<Boolean> getGlobalStorageQuota() {
         return globalStorageQuota;
     }
 
-    public void setGlobalStorageQuota(EntityModel globalStorageQuota) {
+    public void setGlobalStorageQuota(EntityModel<Boolean> globalStorageQuota) {
         this.globalStorageQuota = globalStorageQuota;
     }
 
-    public EntityModel getName() {
+    public EntityModel<String> getName() {
         return name;
     }
 
-    public void setName(EntityModel name) {
+    public void setName(EntityModel<String> name) {
         this.name = name;
     }
 
-    public EntityModel getDescription() {
+    public EntityModel<String> getDescription() {
         return description;
     }
 
-    public void setDescription(EntityModel description) {
+    public void setDescription(EntityModel<String> description) {
         this.description = description;
     }
 
-    public ListModel getDataCenter() {
+    public ListModel<StoragePool> getDataCenter() {
         return dataCenter;
     }
 
-    public void setDataCenter(ListModel dataCenter) {
+    public void setDataCenter(ListModel<StoragePool> dataCenter) {
         this.dataCenter = dataCenter;
     }
 
-    public EntityModel getCopyPermissions() {
+    public EntityModel<Boolean> getCopyPermissions() {
         return copyPermissions;
     }
 
-    public void setCopyPermissions(EntityModel copyPermissions) {
+    public void setCopyPermissions(EntityModel<Boolean> copyPermissions) {
         this.copyPermissions = copyPermissions;
     }
 
-    public EntityModel getGraceStorage() {
+    public EntityModel<Integer> getGraceStorage() {
         return graceStorage;
     }
 
-    public void setGraceStorage(EntityModel graceStorage) {
+    public void setGraceStorage(EntityModel<Integer> graceStorage) {
         this.graceStorage = graceStorage;
     }
 
-    public EntityModel getThresholdStorage() {
+    public EntityModel<Integer> getThresholdStorage() {
         return thresholdStorage;
     }
 
-    public void setThresholdStorage(EntityModel thresholdStorage) {
+    public void setThresholdStorage(EntityModel<Integer> thresholdStorage) {
         this.thresholdStorage = thresholdStorage;
     }
 
-    public EntityModel getGraceCluster() {
+    public EntityModel<Integer> getGraceCluster() {
         return graceCluster;
     }
 
-    public void setGraceCluster(EntityModel graceCluster) {
+    public void setGraceCluster(EntityModel<Integer> graceCluster) {
         this.graceCluster = graceCluster;
     }
 
-    public EntityModel getThresholdCluster() {
+    public EntityModel<Integer> getThresholdCluster() {
         return thresholdCluster;
     }
 
-    public void setThresholdCluster(EntityModel thresholdCluster) {
+    public void setThresholdCluster(EntityModel<Integer> thresholdCluster) {
         this.thresholdCluster = thresholdCluster;
     }
 
@@ -196,29 +197,29 @@ public class QuotaModel extends EntityModel {
         setEditQuotaClusterCommand(new UICommand("EditQuotaCluster", this)); //$NON-NLS-1$
         setEditQuotaStorageCommand(new UICommand("EditQuotaStorage", this)); //$NON-NLS-1$
 
-        setName(new EntityModel());
-        setDescription(new EntityModel());
-        setDataCenter(new ListModel());
-        setCopyPermissions(new EntityModel(false));
+        setName(new EntityModel<String>());
+        setDescription(new EntityModel<String>());
+        setDataCenter(new ListModel<StoragePool>());
+        setCopyPermissions(new EntityModel<Boolean>(false));
         getCopyPermissions().setIsAvailable(false); // visible on copy quota.
-        setGraceCluster(new EntityModel());
+        setGraceCluster(new EntityModel<Integer>());
         getGraceCluster().setEntity(20);
-        setThresholdCluster(new EntityModel());
+        setThresholdCluster(new EntityModel<Integer>());
         getThresholdCluster().setEntity(80);
-        setGraceStorage(new EntityModel());
+        setGraceStorage(new EntityModel<Integer>());
         getGraceStorage().setEntity(20);
-        setThresholdStorage(new EntityModel());
+        setThresholdStorage(new EntityModel<Integer>());
         getThresholdStorage().setEntity(80);
 
-        setGlobalClusterQuota(new EntityModel());
-        setSpecificClusterQuota(new EntityModel());
+        setGlobalClusterQuota(new EntityModel<Boolean>());
+        setSpecificClusterQuota(new EntityModel<Boolean>());
         getGlobalClusterQuota().setEntity(true);
         getSpecificClusterQuota().setEntity(false);
         getGlobalClusterQuota().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) getGlobalClusterQuota().getEntity() == true) {
+                if (getGlobalClusterQuota().getEntity() == true) {
                     getSpecificClusterQuota().setEntity(false);
                 }
             }
@@ -227,21 +228,21 @@ public class QuotaModel extends EntityModel {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) getSpecificClusterQuota().getEntity() == true) {
+                if (getSpecificClusterQuota().getEntity() == true) {
                     getGlobalClusterQuota().setEntity(false);
                 }
             }
         });
 
-        setGlobalStorageQuota(new EntityModel());
-        setSpecificStorageQuota(new EntityModel());
+        setGlobalStorageQuota(new EntityModel<Boolean>());
+        setSpecificStorageQuota(new EntityModel<Boolean>());
         getGlobalStorageQuota().setEntity(true);
         getSpecificStorageQuota().setEntity(false);
         getGlobalStorageQuota().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) getGlobalStorageQuota().getEntity() == true) {
+                if (getGlobalStorageQuota().getEntity() == true) {
                     getSpecificStorageQuota().setEntity(false);
                 }
             }
@@ -250,14 +251,14 @@ public class QuotaModel extends EntityModel {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) getSpecificStorageQuota().getEntity() == true) {
+                if (getSpecificStorageQuota().getEntity() == true) {
                     getGlobalStorageQuota().setEntity(false);
                 }
             }
         });
 
-        setQuotaClusters(new ListModel());
-        setQuotaStorages(new ListModel());
+        setQuotaClusters(new ListModel<QuotaVdsGroup>());
+        setQuotaStorages(new ListModel<QuotaStorage>());
 
         ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<QuotaVdsGroup>();
         QuotaVdsGroup quotaVdsGroup = new QuotaVdsGroup();
@@ -275,8 +276,8 @@ public class QuotaModel extends EntityModel {
         quotaStorgaeList.add(quotaStorage);
         getQuotaStorages().setItems(quotaStorgaeList);
 
-        setAllDataCenterClusters(new ListModel());
-        setAllDataCenterStorages(new ListModel());
+        setAllDataCenterClusters(new ListModel<QuotaVdsGroup>());
+        setAllDataCenterStorages(new ListModel<QuotaStorage>());
     }
 
     public void editQuotaCluster(QuotaVdsGroup object) {
@@ -290,13 +291,13 @@ public class QuotaModel extends EntityModel {
             model.getUnlimitedMem().setEntity(true);
         } else {
             model.getSpecificMem().setEntity(true);
-            model.getSpecificMemValue().setEntity(object.getMemSizeMB().toString());
+            model.getSpecificMemValue().setEntity(object.getMemSizeMB());
         }
         if (object.getVirtualCpu() == null || object.getVirtualCpu().equals(QuotaVdsGroup.UNLIMITED_VCPU)) {
             model.getUnlimitedCpu().setEntity(true);
         } else {
             model.getSpecificCpu().setEntity(true);
-            model.getSpecificCpuValue().setEntity(object.getVirtualCpu().toString());
+            model.getSpecificCpuValue().setEntity(object.getVirtualCpu());
         }
 
         setWindow(model);
@@ -321,7 +322,7 @@ public class QuotaModel extends EntityModel {
             model.getUnlimitedStorage().setEntity(true);
         } else {
             model.getSpecificStorage().setEntity(true);
-            model.getSpecificStorageValue().setEntity(object.getStorageSizeGB().toString());
+            model.getSpecificStorageValue().setEntity(object.getStorageSizeGB());
         }
 
         setWindow(model);
@@ -341,16 +342,16 @@ public class QuotaModel extends EntityModel {
         if (!model.validate()) {
             return;
         }
-        if ((Boolean) model.getUnlimitedMem().getEntity()) {
+        if (model.getUnlimitedMem().getEntity()) {
             quotaCluster.setMemSizeMB(QuotaVdsGroup.UNLIMITED_MEM);
         } else {
-            quotaCluster.setMemSizeMB(new Long((String) model.getSpecificMemValue().getEntity()));
+            quotaCluster.setMemSizeMB(model.getSpecificMemValue().getEntity());
         }
 
-        if ((Boolean) model.getUnlimitedCpu().getEntity()) {
+        if (model.getUnlimitedCpu().getEntity()) {
             quotaCluster.setVirtualCpu(QuotaVdsGroup.UNLIMITED_VCPU);
         } else {
-            quotaCluster.setVirtualCpu(new Integer((String) model.getSpecificCpuValue().getEntity()));
+            quotaCluster.setVirtualCpu(model.getSpecificCpuValue().getEntity());
         }
         quotaCluster = null;
         setWindow(null);
@@ -361,10 +362,10 @@ public class QuotaModel extends EntityModel {
         if (!model.validate()) {
             return;
         }
-        if ((Boolean) model.getUnlimitedStorage().getEntity()) {
+        if (model.getUnlimitedStorage().getEntity()) {
             quotaStorage.setStorageSizeGB(QuotaStorage.UNLIMITED);
         } else {
-            quotaStorage.setStorageSizeGB(new Long((String) model.getSpecificStorageValue().getEntity()));
+            quotaStorage.setStorageSizeGB(model.getSpecificStorageValue().getEntity());
         }
         quotaStorage = null;
         setWindow(null);
@@ -424,12 +425,12 @@ public class QuotaModel extends EntityModel {
     private boolean validateNotEmpty() {
         getSpecificClusterQuota().setIsValid(true);
         getSpecificStorageQuota().setIsValid(true);
-        if ((Boolean) getGlobalClusterQuota().getEntity() || (Boolean) getGlobalStorageQuota().getEntity()) {
+        if (getGlobalClusterQuota().getEntity() || getGlobalStorageQuota().getEntity()) {
             return true;
         }
 
         if (getAllDataCenterClusters().getItems() != null) {
-            for (QuotaVdsGroup quotaVdsGroup : (ArrayList<QuotaVdsGroup>) getAllDataCenterClusters().getItems()) {
+            for (QuotaVdsGroup quotaVdsGroup : getAllDataCenterClusters().getItems()) {
                 if (quotaVdsGroup.getMemSizeMB() != null) {
                     return true;
                 }
@@ -437,7 +438,7 @@ public class QuotaModel extends EntityModel {
         }
 
         if (getAllDataCenterStorages().getItems() != null) {
-            for (QuotaStorage quotaStorage : (ArrayList<QuotaStorage>) getAllDataCenterStorages().getItems()) {
+            for (QuotaStorage quotaStorage : getAllDataCenterStorages().getItems()) {
                 if (quotaStorage.getStorageSizeGB() != null) {
                     return true;
                 }

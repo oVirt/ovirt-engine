@@ -52,23 +52,23 @@ public abstract class NetworkModel extends Model
     protected static final String ENGINE_NETWORK =
             (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
-    private EntityModel privateName;
-    private EntityModel privateDescription;
-    private EntityModel export;
-    private ListModel externalProviders;
+    private EntityModel<String> privateName;
+    private EntityModel<String> privateDescription;
+    private EntityModel<Boolean> export;
+    private ListModel<Provider> externalProviders;
     private ListModel<String> networkLabel;
     private Collection<String> dcLabels;
-    private EntityModel privateComment;
-    private EntityModel privateVLanTag;
-    private EntityModel privateIsStpEnabled;
-    private EntityModel privateHasVLanTag;
-    private EntityModel privateHasMtu;
-    private EntityModel privateMtu;
-    private EntityModel privateIsVmNetwork;
+    private EntityModel<String> privateComment;
+    private EntityModel<Integer> privateVLanTag;
+    private EntityModel<Boolean> privateIsStpEnabled;
+    private EntityModel<Boolean> privateHasVLanTag;
+    private EntityModel<Boolean> privateHasMtu;
+    private EntityModel<Integer> privateMtu;
+    private EntityModel<Boolean> privateIsVmNetwork;
     private ListModel<NetworkQoS> qos;
     private boolean isSupportBridgesReportByVDSM = false;
     private boolean mtuOverrideSupported = false;
-    private ListModel privateDataCenters;
+    private ListModel<StoragePool> privateDataCenters;
     private NetworkProfilesModel profiles;
     private EntityModel<String> subnetName;
     private EntityModel<String> subnetCidr;
@@ -87,10 +87,10 @@ public abstract class NetworkModel extends Model
         addCommands();
         this.network = network;
         this.sourceListModel = sourceListModel;
-        setName(new EntityModel());
-        setDescription(new EntityModel());
-        setComment(new EntityModel());
-        setDataCenters(new ListModel());
+        setName(new EntityModel<String>());
+        setDescription(new EntityModel<String>());
+        setComment(new EntityModel<String>());
+        setDataCenters(new ListModel<StoragePool>());
         getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener() {
 
             @Override
@@ -98,7 +98,7 @@ public abstract class NetworkModel extends Model
                 syncWithBackend();
             }
         });
-        setExport(new EntityModel(false));
+        setExport(new EntityModel<Boolean>(false));
         getExport().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
@@ -108,15 +108,15 @@ public abstract class NetworkModel extends Model
         });
 
         setNetworkLabel(new ListModel<String>());
-        setExternalProviders(new ListModel());
+        setExternalProviders(new ListModel<Provider>());
         initExternalProviderList();
 
-        EntityModel stpEnabled = new EntityModel();
+        EntityModel<Boolean> stpEnabled = new EntityModel<Boolean>();
         stpEnabled.setEntity(false);
         setIsStpEnabled(stpEnabled);
 
-        setVLanTag(new EntityModel());
-        EntityModel hasVlanTag = new EntityModel();
+        setVLanTag(new EntityModel<Integer>());
+        EntityModel<Boolean> hasVlanTag = new EntityModel<Boolean>();
         hasVlanTag.setEntity(false);
         setHasVLanTag(hasVlanTag);
         getHasVLanTag().getEntityChangedEvent().addListener(new IEventListener() {
@@ -126,8 +126,8 @@ public abstract class NetworkModel extends Model
             }
         });
 
-        setMtu(new EntityModel());
-        EntityModel hasMtu = new EntityModel();
+        setMtu(new EntityModel<Integer>());
+        EntityModel<Boolean> hasMtu = new EntityModel<Boolean>();
         hasMtu.setEntity(false);
         setHasMtu(hasMtu);
         getHasMtu().getEntityChangedEvent().addListener(new IEventListener() {
@@ -137,7 +137,7 @@ public abstract class NetworkModel extends Model
             }
         });
 
-        EntityModel isVmNetwork = new EntityModel();
+        EntityModel<Boolean> isVmNetwork = new EntityModel<Boolean>();
         isVmNetwork.setEntity(true);
         setIsVmNetwork(isVmNetwork);
         isVmNetwork.getEntityChangedEvent().addListener(new IEventListener() {
@@ -147,7 +147,7 @@ public abstract class NetworkModel extends Model
             }
         });
 
-        EntityModel publicUse = new EntityModel();
+        EntityModel<Boolean> publicUse = new EntityModel<Boolean>();
         publicUse.setEntity(true);
 
         setProfiles(new NetworkProfilesModel());
@@ -214,39 +214,39 @@ public abstract class NetworkModel extends Model
         AsyncDataProvider.getAllNetworkProviders(getProvidersQuery);
     }
 
-    public EntityModel getName()
+    public EntityModel<String> getName()
     {
         return privateName;
     }
 
-    private void setName(EntityModel value)
+    private void setName(EntityModel<String> value)
     {
         privateName = value;
     }
 
-    public EntityModel getDescription()
+    public EntityModel<String> getDescription()
     {
         return privateDescription;
     }
 
-    private void setDescription(EntityModel value)
+    private void setDescription(EntityModel<String> value)
     {
         privateDescription = value;
     }
 
-    public EntityModel getExport() {
+    public EntityModel<Boolean> getExport() {
         return export;
     }
 
-    private void setExport(EntityModel value) {
+    private void setExport(EntityModel<Boolean> value) {
         export = value;
     }
 
-    public ListModel getExternalProviders() {
+    public ListModel<Provider> getExternalProviders() {
         return externalProviders;
     }
 
-    public void setExternalProviders(ListModel externalProviders) {
+    public void setExternalProviders(ListModel<Provider> externalProviders) {
         this.externalProviders = externalProviders;
     }
 
@@ -258,70 +258,70 @@ public abstract class NetworkModel extends Model
         this.networkLabel = networkLabel;
     }
 
-    public EntityModel getComment() {
+    public EntityModel<String> getComment() {
         return privateComment;
     }
 
-    private void setComment(EntityModel value) {
+    private void setComment(EntityModel<String> value) {
         privateComment = value;
     }
 
-    public EntityModel getVLanTag()
+    public EntityModel<Integer> getVLanTag()
     {
         return privateVLanTag;
     }
 
-    private void setVLanTag(EntityModel value)
+    private void setVLanTag(EntityModel<Integer> value)
     {
         privateVLanTag = value;
     }
 
-    public EntityModel getIsStpEnabled()
+    public EntityModel<Boolean> getIsStpEnabled()
     {
         return privateIsStpEnabled;
     }
 
-    private void setIsStpEnabled(EntityModel value)
+    private void setIsStpEnabled(EntityModel<Boolean> value)
     {
         privateIsStpEnabled = value;
     }
 
-    public EntityModel getHasVLanTag()
+    public EntityModel<Boolean> getHasVLanTag()
     {
         return privateHasVLanTag;
     }
 
-    private void setHasVLanTag(EntityModel value)
+    private void setHasVLanTag(EntityModel<Boolean> value)
     {
         privateHasVLanTag = value;
     }
 
-    public EntityModel getHasMtu()
+    public EntityModel<Boolean> getHasMtu()
     {
         return privateHasMtu;
     }
 
-    private void setHasMtu(EntityModel value)
+    private void setHasMtu(EntityModel<Boolean> value)
     {
         privateHasMtu = value;
     }
 
-    public EntityModel getMtu()
+    public EntityModel<Integer> getMtu()
     {
         return privateMtu;
     }
 
-    private void setMtu(EntityModel value)
+    private void setMtu(EntityModel<Integer> value)
     {
         privateMtu = value;
     }
 
-    public EntityModel getIsVmNetwork()
+    public EntityModel<Boolean> getIsVmNetwork()
     {
         return privateIsVmNetwork;
     }
 
-    public void setIsVmNetwork(EntityModel value)
+    public void setIsVmNetwork(EntityModel<Boolean> value)
     {
         privateIsVmNetwork = value;
     }
@@ -374,12 +374,12 @@ public abstract class NetworkModel extends Model
         this.mtuOverrideSupported = mtuOverrideSupported;
     }
 
-    public ListModel getDataCenters()
+    public ListModel<StoragePool> getDataCenters()
     {
         return privateDataCenters;
     }
 
-    private void setDataCenters(ListModel value)
+    private void setDataCenters(ListModel<StoragePool> value)
     {
         privateDataCenters = value;
     }
@@ -448,7 +448,7 @@ public abstract class NetworkModel extends Model
         getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
         getVLanTag().setIsValid(true);
-        if ((Boolean) getHasVLanTag().getEntity())
+        if (getHasVLanTag().getEntity())
         {
             IntegerValidation tempVar4 = new IntegerValidation();
             tempVar4.setMinimum(0);
@@ -457,7 +457,7 @@ public abstract class NetworkModel extends Model
         }
 
         getMtu().setIsValid(true);
-        if ((Boolean) getHasMtu().getEntity())
+        if (getHasMtu().getEntity())
         {
             IntegerValidation tempVar5 = new IntegerValidation();
             tempVar5.setMinimum(68);
@@ -540,28 +540,28 @@ public abstract class NetworkModel extends Model
     }
 
     public StoragePool getSelectedDc() {
-        return (StoragePool) getDataCenters().getSelectedItem();
+        return getDataCenters().getSelectedItem();
     }
 
     public void flush() {
         network.setDataCenterId(getSelectedDc().getId());
-        network.setName((String) getName().getEntity());
-        network.setStp((Boolean) getIsStpEnabled().getEntity());
-        network.setDescription((String) getDescription().getEntity());
-        network.setComment((String) getComment().getEntity());
-        network.setVmNetwork((Boolean) getIsVmNetwork().getEntity());
+        network.setName(getName().getEntity());
+        network.setStp(getIsStpEnabled().getEntity());
+        network.setDescription(getDescription().getEntity());
+        network.setComment(getComment().getEntity());
+        network.setVmNetwork(getIsVmNetwork().getEntity());
 
         String label = getNetworkLabel().getSelectedItem();
         network.setLabel(label == null || !label.isEmpty() ? label : null);
 
         network.setMtu(0);
-        if ((Boolean) getHasMtu().getEntity())
+        if (getHasMtu().getEntity())
         {
             network.setMtu(Integer.parseInt(getMtu().getEntity().toString()));
         }
 
         network.setVlanId(null);
-        if ((Boolean) getHasVLanTag().getEntity())
+        if (getHasVLanTag().getEntity())
         {
             network.setVlanId(Integer.parseInt(getVLanTag().getEntity().toString()));
         }
@@ -610,7 +610,7 @@ public abstract class NetworkModel extends Model
     }
 
     protected void toggleProfilesAvailability() {
-        getProfiles().setIsAvailable((Boolean) getIsVmNetwork().getEntity());
+        getProfiles().setIsAvailable(getIsVmNetwork().getEntity());
     }
 
     void cancel() {
@@ -624,7 +624,7 @@ public abstract class NetworkModel extends Model
             @Override
             protected void postSaveAction(boolean succeeded) {
                 if (succeeded) {
-                    List<NetworkQoS> qosItems = new ArrayList<NetworkQoS>((Collection<NetworkQoS>) getQos().getItems());
+                    List<NetworkQoS> qosItems = new ArrayList<NetworkQoS>(getQos().getItems());
                     qosItems.add(1, networkQoS);
                     getQos().setItems(qosItems);
                     getQos().setSelectedItem(networkQoS);
@@ -707,7 +707,7 @@ public abstract class NetworkModel extends Model
     protected abstract void selectExternalProvider();
 
     protected void onExportChanged() {
-        boolean externalNetwork = (Boolean) getExport().getEntity();
+        boolean externalNetwork = getExport().getEntity();
 
         getQos().setIsChangable(!externalNetwork);
         getAddQosCommand().setIsExecutionAllowed(!externalNetwork);
@@ -732,10 +732,10 @@ public abstract class NetworkModel extends Model
     }
 
     private void updateVlanTagChangeability() {
-        getVLanTag().setIsChangable((Boolean) getHasVLanTag().getEntity());
+        getVLanTag().setIsChangable(getHasVLanTag().getEntity());
     }
 
     private void updateMtuChangeability() {
-        getMtu().setIsChangable((Boolean) getHasMtu().getEntity() && !((Boolean) getExport().getEntity()));
+        getMtu().setIsChangable(getHasMtu().getEntity() && !getExport().getEntity());
     }
 }

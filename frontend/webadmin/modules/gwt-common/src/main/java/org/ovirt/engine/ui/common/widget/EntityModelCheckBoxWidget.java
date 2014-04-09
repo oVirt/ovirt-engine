@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.widget;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 import com.google.gwt.core.client.GWT;
@@ -14,9 +14,9 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EntityModelCheckBoxWidget extends Composite implements HasEditorDriver<EntityModel>, HasElementId, FocusableComponentsContainer {
+public class EntityModelCheckBoxWidget extends Composite implements HasEditorDriver<EntityModel<Boolean>>, HasElementId, FocusableComponentsContainer {
 
-    interface Driver extends SimpleBeanEditorDriver<EntityModel, EntityModelCheckBoxWidget> {
+    interface Driver extends SimpleBeanEditorDriver<EntityModel<Boolean>, EntityModelCheckBoxWidget> {
     }
 
     interface ViewUiBinder extends UiBinder<Widget, EntityModelCheckBoxWidget> {
@@ -55,12 +55,12 @@ public class EntityModelCheckBoxWidget extends Composite implements HasEditorDri
     }
 
     @Override
-    public void edit(EntityModel object) {
+    public void edit(EntityModel<Boolean> object) {
         driver.edit(object);
     }
 
     @Override
-    public EntityModel flush() {
+    public EntityModel<Boolean> flush() {
         return driver.flush();
     }
 

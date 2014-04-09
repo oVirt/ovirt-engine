@@ -6,29 +6,29 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 public class DetachGlusterHostsModel extends Model {
 
-    ListModel hosts;
-    EntityModel force;
+    ListModel<EntityModel<String>> hosts;
+    EntityModel<Boolean> force;
 
     public DetachGlusterHostsModel()
     {
-        setHosts(new ListModel());
-        setForce(new EntityModel());
+        setHosts(new ListModel<EntityModel<String>>());
+        setForce(new EntityModel<Boolean>());
         getForce().setEntity(Boolean.FALSE);
     }
 
-    public ListModel getHosts() {
+    public ListModel<EntityModel<String>> getHosts() {
         return hosts;
     }
 
-    public void setHosts(ListModel hosts) {
+    public void setHosts(ListModel<EntityModel<String>> hosts) {
         this.hosts = hosts;
     }
 
-    public EntityModel getForce() {
+    public EntityModel<Boolean> getForce() {
         return force;
     }
 
-    public void setForce(EntityModel force) {
+    public void setForce(EntityModel<Boolean> force) {
         this.force = force;
     }
 

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.networkinterface;
 
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -7,10 +8,10 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.profile.ProfileEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
@@ -63,7 +64,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @UiField
     @Path("name.entity")
     @WithElementId("name")
-    EntityModelTextBoxEditor nameEditor;
+    StringEntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "profile.selectedItem")
@@ -73,14 +74,14 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @UiField(provided = true)
     @Path("nicType.selectedItem")
     @WithElementId("nicType")
-    ListModelListBoxEditor<Object> nicTypeEditor;
+    ListModelListBoxEditor<VmInterfaceType> nicTypeEditor;
 
     @UiField
     protected HorizontalPanel linkStateSelectionPanel;
 
     @UiField
     @Path(value = "linked.entity")
-    public ListModelListBoxEditor<Object> linkStateEditor;
+    public ListModelListBoxEditor<Boolean> linkStateEditor;
 
     @UiField(provided = true)
     @Path(value = "linked_IsSelected.entity")
@@ -113,7 +114,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @UiField
     @Path("MAC.entity")
     @WithElementId("mac")
-    EntityModelTextBoxEditor MACEditor;
+    StringEntityModelTextBoxEditor MACEditor;
 
     @UiField
     @Ignore
@@ -163,7 +164,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void initManualWidgets() {
-        nicTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        nicTypeEditor = new ListModelListBoxEditor<VmInterfaceType>(new EnumRenderer());
 
         pluggedEditor = new EntityModelRadioButtonEditor("cardStatus"); //$NON-NLS-1$
         unpluggedEditor = new EntityModelRadioButtonEditor("cardStatus"); //$NON-NLS-1$

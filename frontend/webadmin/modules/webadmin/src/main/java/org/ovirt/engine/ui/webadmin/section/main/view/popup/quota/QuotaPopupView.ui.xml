@@ -4,7 +4,8 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+  xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.QuotaPopupView.WidgetStyle">
 		.textBoxWidth {
@@ -57,13 +58,13 @@
 			<g:FlowPanel>
 				<g:FlowPanel addStyleNames="{style.topDecorator}">
 					<g:HorizontalPanel>
-						<e:EntityModelTextBoxEditor ui:field="nameEditor" />
-						<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+						<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
+						<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
 					</g:HorizontalPanel>
 					<g:HorizontalPanel>
 						<e:ListModelListBoxEditor ui:field="dataCenterEditor" />
 					</g:HorizontalPanel>
-					<e:EntityModelCheckBoxEditor ui:field="copyPermissionsEditor" />
+					<ge:EntityModelCheckBoxEditor ui:field="copyPermissionsEditor" />
 				</g:FlowPanel>
 				<g:Label ui:field="memAndCpuLabel" addStyleNames="{style.labelStyle}"/>
 				<g:HorizontalPanel addStyleNames="{style.marginPanel}">
@@ -82,8 +83,8 @@
 					</g:VerticalPanel>
 				</g:HorizontalPanel>
 				<g:HorizontalPanel>
-					<e:EntityModelRadioButtonEditor ui:field="globalClusterQuotaRadioButtonEditor" />
-					<e:EntityModelRadioButtonEditor ui:field="specificClusterQuotaRadioButtonEditor" />
+					<ge:EntityModelRadioButtonEditor ui:field="globalClusterQuotaRadioButtonEditor" />
+					<ge:EntityModelRadioButtonEditor ui:field="specificClusterQuotaRadioButtonEditor" />
 				</g:HorizontalPanel>
 				<g:ScrollPanel ui:field="clusterQuotaTableContainer" addStyleNames="{style.containerStyle}"/>
 				<g:Label ui:field="storageLabel" addStyleNames="{style.labelStyle}"/>
@@ -103,8 +104,8 @@
 					</g:VerticalPanel>
 				</g:HorizontalPanel>
 				<g:HorizontalPanel>
-					<e:EntityModelRadioButtonEditor ui:field="globalStorageQuotaRadioButtonEditor" />
-					<e:EntityModelRadioButtonEditor ui:field="specificStorageQuotaRadioButtonEditor" />
+					<ge:EntityModelRadioButtonEditor ui:field="globalStorageQuotaRadioButtonEditor" />
+					<ge:EntityModelRadioButtonEditor ui:field="specificStorageQuotaRadioButtonEditor" />
 				</g:HorizontalPanel>
 				<g:ScrollPanel ui:field="storageQuotaTableContainer" addStyleNames="{style.containerStyle}"/>
 		</g:FlowPanel>

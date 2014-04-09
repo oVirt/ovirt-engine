@@ -7,15 +7,15 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerServic
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
-public class GlusterSwiftServiceModel extends EntityModel {
+public class GlusterSwiftServiceModel extends EntityModel<GlusterServerService> {
 
     private List<GlusterServerService> internalServiceList;
 
-    private EntityModel startSwift;
+    private EntityModel<Boolean> startSwift;
 
-    private EntityModel stopSwift;
+    private EntityModel<Boolean> stopSwift;
 
-    private EntityModel restartSwift;
+    private EntityModel<Boolean> restartSwift;
 
     public GlusterSwiftServiceModel() {
         this(null);
@@ -26,9 +26,9 @@ public class GlusterSwiftServiceModel extends EntityModel {
     }
 
     public GlusterSwiftServiceModel(GlusterServerService service, List<GlusterServerService> internalServiceList) {
-        setStartSwift(new EntityModel(Boolean.FALSE));
-        setStopSwift(new EntityModel(Boolean.FALSE));
-        setRestartSwift(new EntityModel(Boolean.FALSE));
+        setStartSwift(new EntityModel<Boolean>(Boolean.FALSE));
+        setStopSwift(new EntityModel<Boolean>(Boolean.FALSE));
+        setRestartSwift(new EntityModel<Boolean>(Boolean.FALSE));
         setEntity(service);
         setInternalServiceList(internalServiceList);
     }
@@ -62,27 +62,27 @@ public class GlusterSwiftServiceModel extends EntityModel {
         this.internalServiceList = internalServiceList;
     }
 
-    public EntityModel getStartSwift() {
+    public EntityModel<Boolean> getStartSwift() {
         return startSwift;
     }
 
-    public void setStartSwift(EntityModel startSwift) {
+    public void setStartSwift(EntityModel<Boolean> startSwift) {
         this.startSwift = startSwift;
     }
 
-    public EntityModel getStopSwift() {
+    public EntityModel<Boolean> getStopSwift() {
         return stopSwift;
     }
 
-    public void setStopSwift(EntityModel stopSwift) {
+    public void setStopSwift(EntityModel<Boolean> stopSwift) {
         this.stopSwift = stopSwift;
     }
 
-    public EntityModel getRestartSwift() {
+    public EntityModel<Boolean> getRestartSwift() {
         return restartSwift;
     }
 
-    public void setRestartSwift(EntityModel restartSwift) {
+    public void setRestartSwift(EntityModel<Boolean> restartSwift) {
         this.restartSwift = restartSwift;
     }
 }

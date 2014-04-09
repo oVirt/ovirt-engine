@@ -2,7 +2,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.AddBrickPopupView.WidgetStyle">
 		.generalTabTopDecorator {
@@ -70,11 +71,11 @@
 
 				<g:HorizontalPanel addStyleNames="{style.generalTabTopDecorator}">
 					<g:VerticalPanel>
-						<e:EntityModelLabelEditor ui:field="volumeTypeEditor"/>
+						<ge:EntityModelLabelEditor ui:field="volumeTypeEditor"/>
 					</g:VerticalPanel>
 					<g:VerticalPanel>
-						<e:EntityModelTextBoxEditor ui:field="replicaCountEditor"/>
-						<e:EntityModelTextBoxEditor ui:field="stripeCountEditor"/>
+						<ge:IntegerEntityModelTextBoxEditor ui:field="replicaCountEditor"/>
+						<ge:IntegerEntityModelTextBoxEditor ui:field="stripeCountEditor"/>
 					</g:VerticalPanel>
 				</g:HorizontalPanel>
 
@@ -83,7 +84,7 @@
 				<g:HorizontalPanel verticalAlignment="ALIGN_BOTTOM">
 					<g:VerticalPanel>
 						<e:ListModelListBoxEditor ui:field="serverEditor"/>
-						<e:EntityModelTextBoxEditor ui:field="exportDirEditor" />
+						<ge:StringEntityModelTextBoxEditor ui:field="exportDirEditor" />
 					</g:VerticalPanel>
 					<g:HorizontalPanel spacing="5">
 						<w:UiCommandButton ui:field="addBrickButton" addStyleNames="{style.brickButton}"/>
@@ -108,7 +109,7 @@
 				</g:HorizontalPanel>
 
 				<g:VerticalPanel addStyleNames="{style.forcePanel}">
-					<e:EntityModelCheckBoxEditor ui:field="forceEditor"/>
+					<ge:EntityModelCheckBoxEditor ui:field="forceEditor"/>
 					<g:Label ui:field="forceWarningLabel" addStyleNames="{style.forceWarningLabel}" />
 				</g:VerticalPanel>
 

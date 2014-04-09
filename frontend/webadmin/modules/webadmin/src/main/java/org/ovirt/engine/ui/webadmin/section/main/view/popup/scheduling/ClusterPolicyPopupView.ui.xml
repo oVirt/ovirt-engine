@@ -3,6 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.panels"
 	xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value">
 
@@ -86,8 +87,8 @@
 			<g:VerticalPanel>
 				<g:FlowPanel>
 					<g:HorizontalPanel>
-						<e:EntityModelTextBoxEditor ui:field="nameEditor" />
-						<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+						<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
+						<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
 					</g:HorizontalPanel>
 					<g:HorizontalPanel>
 						<g:Label addStyleNames="{style.sectionLabel}"

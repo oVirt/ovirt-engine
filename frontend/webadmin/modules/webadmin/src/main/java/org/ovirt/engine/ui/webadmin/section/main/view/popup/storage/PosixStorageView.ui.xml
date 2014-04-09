@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.PosixStorageView.WidgetStyle">
 		.content {
@@ -39,7 +39,7 @@
                         <g:Label ui:field="pathLabel" addStyleNames="{style.label}"/>
                     </td>
                     <td>
-                        <e:EntityModelTextBoxOnlyEditor ui:field="pathEditor"/>
+                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="pathEditor"/>
                     </td>
                 </tr>
                 <tr>
@@ -53,7 +53,7 @@
                         <g:Label ui:field="vfsTypeLabel" addStyleNames="{style.label}"/>
                     </td>
                     <td>
-                        <e:EntityModelTextBoxOnlyEditor ui:field="vfsTypeEditor"/>
+                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="vfsTypeEditor"/>
                     </td>
                 </tr>
                 <tr>
@@ -61,7 +61,7 @@
                         <g:Label ui:field="mountOptionsLabel" addStyleNames="{style.label}"/>
                     </td>
                     <td>
-                        <e:EntityModelTextBoxOnlyEditor ui:field="mountOptionsEditor"/>
+                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="mountOptionsEditor"/>
                     </td>
                 </tr>
             </table>

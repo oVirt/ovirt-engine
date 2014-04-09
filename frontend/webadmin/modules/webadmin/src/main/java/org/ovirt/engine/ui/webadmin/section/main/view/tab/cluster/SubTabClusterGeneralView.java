@@ -2,13 +2,14 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 import javax.inject.Inject;
 
+import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
-import org.ovirt.engine.ui.common.widget.parser.EntityModelParser;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
@@ -33,6 +34,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import java.text.ParseException;
 
 public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, ClusterListModel, ClusterGeneralModel>
         implements SubTabClusterGeneralPresenter.ViewDef, Editor<ClusterGeneralModel> {
@@ -60,7 +63,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
     HorizontalPanel glusterSwiftPanel;
 
     @UiField(provided = true)
-    EntityModelLabelEditor glusterSwiftStatusEditor;
+    EntityModelLabelEditor<GlusterServiceStatus> glusterSwiftStatusEditor;
 
     @UiField
     UiCommandButton manageGlusterSwiftButton;
@@ -86,7 +89,12 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         // Inject a reference to the resources:
         this.resources = resources;
         this.form = new ClusterGeneralModelForm(modelProvider, constants);
-        glusterSwiftStatusEditor = new EntityModelLabelEditor(new EnumRenderer(), new EntityModelParser());
+        glusterSwiftStatusEditor = new EntityModelLabelEditor<GlusterServiceStatus>(new EnumRenderer<GlusterServiceStatus>(), new Parser<GlusterServiceStatus>() {
+            @Override
+            public GlusterServiceStatus parse(CharSequence text) throws ParseException {
+                return GlusterServiceStatus.valueOf(text.toString().toUpperCase());
+            }
+        });
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initManageGlusterSwift();

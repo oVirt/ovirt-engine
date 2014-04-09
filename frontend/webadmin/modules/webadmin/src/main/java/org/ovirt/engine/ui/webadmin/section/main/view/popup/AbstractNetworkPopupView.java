@@ -14,10 +14,9 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
@@ -74,19 +73,19 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @UiField(provided = true)
     @Path(value = "dataCenters.selectedItem")
     @WithElementId("dataCenter")
-    public ListModelListBoxEditor<Object> dataCenterEditor;
+    public ListModelListBoxEditor<StoragePool> dataCenterEditor;
 
     @UiField
     @Path(value = "name.entity")
-    public EntityModelTextBoxEditor nameEditor;
+    public StringEntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
-    public EntityModelTextBoxEditor descriptionEditor;
+    public StringEntityModelTextBoxEditor descriptionEditor;
 
     @UiField
     @Path(value = "comment.entity")
-    public EntityModelTextBoxEditor commentEditor;
+    public StringEntityModelTextBoxEditor commentEditor;
 
     @UiField(provided = true)
     @Path(value = "export.entity")
@@ -96,7 +95,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @UiField(provided = true)
     @Path(value = "externalProviders.selectedItem")
     @WithElementId("externalProviders")
-    public ListModelListBoxEditor<Object> externalProviderEditor;
+    public ListModelListBoxEditor<Provider> externalProviderEditor;
 
     @UiField(provided = true)
     @Path(value = "isVmNetwork.entity")
@@ -108,7 +107,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @UiField
     @Path(value = "VLanTag.entity")
-    public EntityModelTextBoxOnlyEditor vlanTag;
+    public IntegerEntityModelTextBoxOnlyEditor vlanTag;
 
     @UiField(provided = true)
     @Path(value = "hasMtu.entity")
@@ -116,7 +115,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @UiField
     @Path(value = "mtu.entity")
-    public EntityModelTextBoxOnlyEditor mtuEditor;
+    public IntegerEntityModelTextBoxOnlyEditor mtuEditor;
 
     @UiField
     @Path(value = "networkLabel.selectedItem")
@@ -184,16 +183,16 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             ApplicationConstants constants, ApplicationTemplates templates) {
         super(eventBus, resources);
         // Initialize Editors
-        dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((StoragePool) object).getName();
+            public String renderNullSafe(StoragePool storagePool) {
+                return storagePool.getName();
             }
         });
-        externalProviderEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        externalProviderEditor = new ListModelListBoxEditor<Provider>(new NullSafeRenderer<Provider>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((Provider) object).getName();
+            public String renderNullSafe(Provider provider) {
+                return provider.getName();
             }
         });
         qosEditor = new ListModelListBoxEditor<NetworkQoS>(new NullSafeRenderer<NetworkQoS>() {

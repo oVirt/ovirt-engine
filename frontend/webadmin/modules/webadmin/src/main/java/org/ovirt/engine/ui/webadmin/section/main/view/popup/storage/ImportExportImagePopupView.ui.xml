@@ -2,7 +2,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage">
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 	<ui:style>
 		.messagePanel {
@@ -23,7 +24,7 @@
 				<e:ListModelListBoxEditor ui:field="dataCenterEditor" />
 				<e:ListModelListBoxEditor ui:field="storageDomainEditor" />
 				<e:ListModelListBoxEditor ui:field="quotaEditor" />
-				<e:EntityModelCheckBoxEditor ui:field="importAsTemplateEditor" />
+				<ge:EntityModelCheckBoxEditor ui:field="importAsTemplateEditor" />
 				<e:ListModelListBoxEditor ui:field="clusterEditor" />
 				<g:FlowPanel ui:field="messagePanel" visible="false" addStyleNames="{style.messagePanel}" />
 				<g:SimplePanel ui:field="imageListPanel" addStyleNames="{style.imageListPanel}" />

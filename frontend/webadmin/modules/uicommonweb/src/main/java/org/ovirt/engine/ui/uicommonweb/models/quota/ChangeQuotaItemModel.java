@@ -1,43 +1,44 @@
 package org.ovirt.engine.ui.uicommonweb.models.quota;
 
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
 public class ChangeQuotaItemModel extends EntityModel {
-    EntityModel object;
-    EntityModel currentQuota;
-    ListModel quota;
+    EntityModel<String> object;
+    EntityModel<String> currentQuota;
+    ListModel<Quota> quota;
     private Guid storageDomainId;
     private String storageDomainName;
 
     public ChangeQuotaItemModel() {
-        object = new EntityModel();
-        currentQuota = new EntityModel();
-        quota = new ListModel();
+        object = new EntityModel<String>();
+        currentQuota = new EntityModel<String>();
+        quota = new ListModel<Quota>();
     }
 
-    public EntityModel getObject() {
+    public EntityModel<String> getObject() {
         return object;
     }
 
-    public void setObject(EntityModel object) {
+    public void setObject(EntityModel<String> object) {
         this.object = object;
     }
 
-    public EntityModel getCurrentQuota() {
+    public EntityModel<String> getCurrentQuota() {
         return currentQuota;
     }
 
-    public void setCurrentQuota(EntityModel currentQuota) {
+    public void setCurrentQuota(EntityModel<String> currentQuota) {
         this.currentQuota = currentQuota;
     }
 
-    public ListModel getQuota() {
+    public ListModel<Quota> getQuota() {
         return quota;
     }
 
-    public void setQuota(ListModel quota) {
+    public void setQuota(ListModel<Quota> quota) {
         this.quota = quota;
     }
 

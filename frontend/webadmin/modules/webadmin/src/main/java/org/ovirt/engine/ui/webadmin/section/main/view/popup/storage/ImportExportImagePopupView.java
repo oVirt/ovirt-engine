@@ -22,7 +22,7 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
@@ -55,22 +55,22 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
     @WithElementId
-    public ListModelListBoxEditor<Object> dataCenterEditor;
+    public ListModelListBoxEditor<StoragePool> dataCenterEditor;
 
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
     @WithElementId
-    public ListModelListBoxEditor<Object> clusterEditor;
+    public ListModelListBoxEditor<VDSGroup> clusterEditor;
 
     @UiField(provided = true)
     @Path(value = "storageDomain.selectedItem")
     @WithElementId
-    public ListModelListBoxEditor<Object> storageDomainEditor;
+    public ListModelListBoxEditor<StorageDomain> storageDomainEditor;
 
     @UiField(provided = true)
     @Path(value = "quota.selectedItem")
     @WithElementId
-    public ListModelListBoxEditor<Object> quotaEditor;
+    public ListModelListBoxEditor<Quota> quotaEditor;
 
     @UiField(provided = true)
     SimplePanel imageListPanel;
@@ -90,34 +90,34 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                                       final ApplicationConstants constants) {
         super(eventBus, resources);
 
-        dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((StoragePool) object).getName();
+            public String renderNullSafe(StoragePool storagePool) {
+                return storagePool.getName();
             }
         });
         dataCenterEditor.setLabel(constants.dataCenter());
 
-        clusterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        clusterEditor = new ListModelListBoxEditor<VDSGroup>(new NullSafeRenderer<VDSGroup>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((VDSGroup) object).getName();
+            public String renderNullSafe(VDSGroup vdsGroup) {
+                return vdsGroup.getName();
             }
         });
         clusterEditor.setLabel(constants.makeTemplateClusterLabel());
 
-        storageDomainEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        storageDomainEditor = new ListModelListBoxEditor<StorageDomain>(new NullSafeRenderer<StorageDomain>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((StorageDomain) object).getStorageName();
+            public String renderNullSafe(StorageDomain storageDomain) {
+                return storageDomain.getStorageName();
             }
         });
         storageDomainEditor.setLabel(constants.domainNameStorage());
 
-        quotaEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        quotaEditor = new ListModelListBoxEditor<Quota>(new NullSafeRenderer<Quota>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((Quota) object).getQuotaName();
+            public String renderNullSafe(Quota quota) {
+                return quota.getQuotaName();
             }
         });
         quotaEditor.setLabel(constants.quota());

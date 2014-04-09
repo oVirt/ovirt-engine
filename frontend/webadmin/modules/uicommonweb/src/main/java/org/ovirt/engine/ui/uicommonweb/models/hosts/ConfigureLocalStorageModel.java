@@ -69,13 +69,13 @@ public class ConfigureLocalStorageModel extends Model {
         privateCluster = value;
     }
 
-    private EntityModel privateFormattedStorageName;
+    private EntityModel<String> privateFormattedStorageName;
 
-    public EntityModel getFormattedStorageName() {
+    public EntityModel<String> getFormattedStorageName() {
         return privateFormattedStorageName;
     }
 
-    private void setFormattedStorageName(EntityModel value) {
+    private void setFormattedStorageName(EntityModel<String> value) {
         privateFormattedStorageName = value;
     }
 
@@ -135,7 +135,7 @@ public class ConfigureLocalStorageModel extends Model {
         setCluster(new ClusterModel());
         getCluster().init(false);
 
-        setFormattedStorageName(new EntityModel());
+        setFormattedStorageName(new EntityModel<String>());
 
         // Subscribe to the Frontend events.
         Frontend.getInstance().getQueryStartedEvent().addListener(this);

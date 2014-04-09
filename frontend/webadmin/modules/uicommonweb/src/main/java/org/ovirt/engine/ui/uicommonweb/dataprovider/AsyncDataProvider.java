@@ -225,7 +225,7 @@ public final class AsyncDataProvider {
             public void onSuccess(Object model, Object returnValue) {
                 if (returnValue != null) {
                     _defaultConfigurationVersion =
-                            (String) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                            ((VdcQueryReturnValue) returnValue).getReturnValue();
                 } else {
                     _defaultConfigurationVersion = GENERAL;
                 }
@@ -265,7 +265,7 @@ public final class AsyncDataProvider {
         callback.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                defaultOSes =(HashMap<ArchitectureType, Integer>) ((VdcQueryReturnValue) returnValue)
+                defaultOSes = ((VdcQueryReturnValue) returnValue)
                         .getReturnValue();
             }
         };
@@ -349,7 +349,7 @@ public final class AsyncDataProvider {
         callback.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                nicHotplugSupportMap =(Map<Pair<Integer, Version>, Boolean>) ((VdcQueryReturnValue) returnValue)
+                nicHotplugSupportMap = ((VdcQueryReturnValue) returnValue)
                         .getReturnValue();
             }
         };
@@ -376,7 +376,7 @@ public final class AsyncDataProvider {
         callback.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                diskHotpluggableInterfacesMap = (Map<Pair<Integer, Version>, Set<String>>) ((VdcQueryReturnValue) returnValue)
+                diskHotpluggableInterfacesMap = ((VdcQueryReturnValue) returnValue)
                         .getReturnValue();
             }
         };
@@ -2314,7 +2314,7 @@ public final class AsyncDataProvider {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         List<StoragePool> pools =
-                                (List<StoragePool>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                ((VdcQueryReturnValue) returnValue).getReturnValue();
                         if (pools != null && !pools.isEmpty()) {
                             StoragePool pool = pools.get(0);
                             getClusterList((AsyncQuery) model, pool.getId());
@@ -2798,7 +2798,7 @@ public final class AsyncDataProvider {
                         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
                         {
                             ArrayList<VdsNetworkInterface> childVlanInterfaces =
-                                    (ArrayList<VdsNetworkInterface>) (returnValue.getReturnValue());
+                                    returnValue.getReturnValue();
 
                             if (childVlanInterfaces.size() == 0)
                             {
@@ -3091,7 +3091,7 @@ public final class AsyncDataProvider {
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                ArrayList<String> nics = (ArrayList<String>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                ArrayList<String> nics = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 List<VmInterfaceType> interfaceTypes = new ArrayList<VmInterfaceType>();
                 for (String nic : nics) {
                     try {
@@ -3146,7 +3146,7 @@ public final class AsyncDataProvider {
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                ArrayList<String> interfaces = (ArrayList<String>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                ArrayList<String> interfaces = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 List<DiskInterface> interfaceTypes = new ArrayList<DiskInterface>();
                 for (String diskIfs : interfaces) {
                     try {
@@ -3334,7 +3334,7 @@ public final class AsyncDataProvider {
         callback.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                uniqueOsNames = (HashMap<Integer, String>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                uniqueOsNames = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 // Initialize specific UI dependencies for search
                 SimpleDependecyInjector.getInstance().bind(new OsValueAutoCompleter(uniqueOsNames));
             }
@@ -3348,7 +3348,7 @@ public final class AsyncDataProvider {
         callback.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                osNames = (HashMap<Integer, String>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                osNames = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 initOsIds();
             }
         };
@@ -3370,7 +3370,7 @@ public final class AsyncDataProvider {
         callback.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                osArchitectures = (HashMap<Integer, ArchitectureType>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                osArchitectures = ((VdcQueryReturnValue) returnValue).getReturnValue();
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetOsArchitectures), callback);
@@ -3450,26 +3450,26 @@ public final class AsyncDataProvider {
                 OsRepositoryVerb.GetVmWatchdogTypes, osId, version), asyncQuery);
     }
 
-    public static ArrayList<Map.Entry<String, EntityModel>> getBondingOptionList(RefObject<Map.Entry<String, EntityModel>> defaultItem)
+    public static ArrayList<Map.Entry<String, EntityModel<String>>> getBondingOptionList(RefObject<Map.Entry<String, EntityModel<String>>> defaultItem)
     {
-        ArrayList<Map.Entry<String, EntityModel>> list =
-                new ArrayList<Map.Entry<String, EntityModel>>();
-        EntityModel entityModel = new EntityModel();
+        ArrayList<Map.Entry<String, EntityModel<String>>> list =
+                new ArrayList<Map.Entry<String, EntityModel<String>>>();
+        EntityModel<String> entityModel = new EntityModel<String>();
         entityModel.setEntity("(Mode 1) Active-Backup"); //$NON-NLS-1$
-        list.add(new KeyValuePairCompat<String, EntityModel>("mode=1 miimon=100", entityModel)); //$NON-NLS-1$
-        entityModel = new EntityModel();
+        list.add(new KeyValuePairCompat<String, EntityModel<String>>("mode=1 miimon=100", entityModel)); //$NON-NLS-1$
+        entityModel = new EntityModel<String>();
         entityModel.setEntity("(Mode 2) Load balance (balance-xor)"); //$NON-NLS-1$
-        list.add(new KeyValuePairCompat<String, EntityModel>("mode=2 miimon=100", entityModel)); //$NON-NLS-1$
-        entityModel = new EntityModel();
+        list.add(new KeyValuePairCompat<String, EntityModel<String>>("mode=2 miimon=100", entityModel)); //$NON-NLS-1$
+        entityModel = new EntityModel<String>();
         entityModel.setEntity("(Mode 4) Dynamic link aggregation (802.3ad)"); //$NON-NLS-1$
-        defaultItem.argvalue = new KeyValuePairCompat<String, EntityModel>("mode=4 miimon=100", entityModel); //$NON-NLS-1$
+        defaultItem.argvalue = new KeyValuePairCompat<String, EntityModel<String>>("mode=4 miimon=100", entityModel); //$NON-NLS-1$
         list.add(defaultItem.argvalue);
-        entityModel = new EntityModel();
+        entityModel = new EntityModel<String>();
         entityModel.setEntity("(Mode 5) Adaptive transmit load balancing (balance-tlb)"); //$NON-NLS-1$
-        list.add(new KeyValuePairCompat<String, EntityModel>("mode=5 miimon=100", entityModel)); //$NON-NLS-1$
-        entityModel = new EntityModel();
+        list.add(new KeyValuePairCompat<String, EntityModel<String>>("mode=5 miimon=100", entityModel)); //$NON-NLS-1$
+        entityModel = new EntityModel<String>();
         entityModel.setEntity(""); //$NON-NLS-1$
-        list.add(new KeyValuePairCompat<String, EntityModel>("custom", entityModel)); //$NON-NLS-1$
+        list.add(new KeyValuePairCompat<String, EntityModel<String>>("custom", entityModel)); //$NON-NLS-1$
         return list;
     }
 

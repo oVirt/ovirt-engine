@@ -4,6 +4,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget"
 	xmlns:h="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.host">
 
@@ -19,25 +20,25 @@
 			<g:DockLayoutPanel ui:field="layoutPanel">
 				<g:north size="329">
 					<g:VerticalPanel ui:field="mainPanel">
-						<e:ListModelSuggestBoxEditor ui:field="bondSuggestEditor" />
+						<ge:ListModelSuggestBoxEditor ui:field="bondSuggestEditor" />
 						<e:ListModelListBoxEditor ui:field="bondEditor" />
 						<e:ListModelListBoxEditor ui:field="networkEditor" />
 						<e:ListModelListBoxEditor ui:field="bondingModeEditor" />
-						<e:EntityModelTextBoxEditor ui:field="customEditor" visible="false" />
+						<ge:StringEntityModelTextBoxEditor ui:field="customEditor" visible="false" />
 						<h:NicLabelWidget ui:field="labelsWidget" visible="false" />
-						<e:EntityModelLabelEditor ui:field="bootProtocolLabel" />
+						<ge:StringEntityModelLabelEditor ui:field="bootProtocolLabel" />
 						<e:EnumRadioEditor ui:field="bootProtocol" />
-						<e:EntityModelTextBoxEditor ui:field="address" />
-						<e:EntityModelTextBoxEditor ui:field="subnet" />
-						<e:EntityModelTextBoxEditor ui:field="gateway" />
-						<e:EntityModelCheckBoxEditor ui:field="checkConnectivity" />
+						<ge:StringEntityModelTextBoxEditor ui:field="address" />
+						<ge:StringEntityModelTextBoxEditor ui:field="subnet" />
+						<ge:StringEntityModelTextBoxEditor ui:field="gateway" />
+						<ge:EntityModelCheckBoxEditor ui:field="checkConnectivity" />
 						<g:Label ui:field="message" />
 					</g:VerticalPanel>
 				</g:north>
 				<g:south size="80">
 					<g:VerticalPanel ui:field="infoPanel" >
 						<g:HTML ui:field="info" />
-						<e:EntityModelCheckBoxEditor ui:field="commitChanges" />
+						<ge:EntityModelCheckBoxEditor ui:field="commitChanges" />
 					</g:VerticalPanel>
 				</g:south>
 			</g:DockLayoutPanel>

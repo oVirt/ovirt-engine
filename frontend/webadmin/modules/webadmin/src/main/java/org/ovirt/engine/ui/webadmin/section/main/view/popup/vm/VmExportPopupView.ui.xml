@@ -2,7 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" 
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label" >
 
 	<ui:style>
@@ -22,8 +22,8 @@
 	<d:SimpleDialogPanel width="440px" height="270px">
 		<d:content>
 			<g:FlowPanel>
-				<e:EntityModelCheckBoxEditor ui:field="forceOverride"/>
-				<e:EntityModelCheckBoxEditor ui:field="collapseSnapshots"/>
+				<ge:EntityModelCheckBoxEditor ui:field="forceOverride"/>
+				<ge:EntityModelCheckBoxEditor ui:field="collapseSnapshots"/>
 				<g:ScrollPanel addStyleNames="{style.scrollPanel}" >
 				    <g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" >
 				    </g:FlowPanel >

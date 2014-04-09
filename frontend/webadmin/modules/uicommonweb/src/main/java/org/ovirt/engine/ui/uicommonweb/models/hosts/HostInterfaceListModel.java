@@ -403,7 +403,7 @@ public class HostInterfaceListModel extends SearchableListModel
             public void onSuccess(Object model, Object ReturnValue)
             {
                 HostInterfaceListModel interfaceModel = (HostInterfaceListModel) model;
-                Iterable iVdcQueryableItems = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                Iterable iVdcQueryableItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 ArrayList<VdsNetworkInterface> items = new ArrayList<VdsNetworkInterface>();
 
                 Iterator networkInterfacesIterator = iVdcQueryableItems.iterator();
@@ -588,8 +588,7 @@ public class HostInterfaceListModel extends SearchableListModel
         else if (sender instanceof Model && "InterfaceList".equals(((Model) sender).getTitle())) //$NON-NLS-1$
         {
             HostManagementNetworkModel managementNetworkModel = ((HostManagementNetworkModel) getWindow());
-            VdsNetworkInterface vdsNetworkInterface =
-                    (VdsNetworkInterface) managementNetworkModel.getInterface().getSelectedItem();
+            VdsNetworkInterface vdsNetworkInterface = managementNetworkModel.getInterface().getSelectedItem();
             if (vdsNetworkInterface.getBonded() != null && vdsNetworkInterface.getBonded().equals(true))
             {
                 managementNetworkModel.getBondingOptions().setIsChangable(true);
@@ -922,14 +921,14 @@ public class HostInterfaceListModel extends SearchableListModel
                 if (item.getBonded() != null && item.getBonded().equals(true))
                 {
                     hostInterfaceModel.getBondingOptions().setIsAvailable(true);
-                    Map.Entry<String, EntityModel> defaultItem = null;
-                    RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
-                            new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
-                    ArrayList<Map.Entry<String, EntityModel>> list =
+                    Map.Entry<String, EntityModel<String>> defaultItem = null;
+                    RefObject<Map.Entry<String, EntityModel<String>>> tempRef_defaultItem =
+                            new RefObject<Map.Entry<String, EntityModel<String>>>(defaultItem);
+                    ArrayList<Map.Entry<String, EntityModel<String>>> list =
                             AsyncDataProvider.getBondingOptionList(tempRef_defaultItem);
                     defaultItem = tempRef_defaultItem.argvalue;
-                    Map.Entry<String, EntityModel> selectBondingOpt =
-                            new KeyValuePairCompat<String, EntityModel>();
+                    Map.Entry<String, EntityModel<String>> selectBondingOpt =
+                            new KeyValuePairCompat<String, EntityModel<String>>();
                     boolean containsSelectBondingOpt = false;
                     hostInterfaceModel.getBondingOptions().setItems(list);
                     for (int i = 0; i < list.size(); i++)
@@ -950,7 +949,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         else
                         {
                             selectBondingOpt = list.get(list.size() - 1);
-                            EntityModel entityModel = selectBondingOpt.getValue();
+                            EntityModel<String> entityModel = selectBondingOpt.getValue();
                             entityModel.setEntity(item.getBondOptions());
                         }
                     }
@@ -1045,7 +1044,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         String defaultInterfaceName = tmpDefaultInterfaceName.toString();
                         managementModel.getInterface().setItems(interfaces);
                         managementModel.getInterface()
-                                .setSelectedItem(Linq.findInterfaceByName(interfaces, defaultInterfaceName));
+                                .setSelectedItem(Linq.findInterfaceByNetworkName(interfaces, defaultInterfaceName));
                         if (item.getBonded() != null && item.getBonded().equals(true))
                         {
                             managementModel.getInterface().setTitle(ConstantsManager.getInstance()
@@ -1065,14 +1064,14 @@ public class HostInterfaceListModel extends SearchableListModel
                         if (item.getBonded() != null && item.getBonded().equals(true))
                         {
                             managementModel.getBondingOptions().setIsAvailable(true);
-                            Map.Entry<String, EntityModel> defaultItem = null;
-                            RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
-                                    new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
-                            ArrayList<Map.Entry<String, EntityModel>> list =
+                            Map.Entry<String, EntityModel<String>> defaultItem = null;
+                            RefObject<Map.Entry<String, EntityModel<String>>> tempRef_defaultItem =
+                                    new RefObject<Map.Entry<String, EntityModel<String>>>(defaultItem);
+                            ArrayList<Map.Entry<String, EntityModel<String>>> list =
                                     AsyncDataProvider.getBondingOptionList(tempRef_defaultItem);
                             defaultItem = tempRef_defaultItem.argvalue;
-                            Map.Entry<String, EntityModel> selectBondingOpt =
-                                    new KeyValuePairCompat<String, EntityModel>();
+                            Map.Entry<String, EntityModel<String>> selectBondingOpt =
+                                    new KeyValuePairCompat<String, EntityModel<String>>();
                             boolean containsSelectBondingOpt = false;
                             managementModel.getBondingOptions().setItems(list);
                             for (int i = 0; i < list.size(); i++)
@@ -1094,7 +1093,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                 else
                                 {
                                     selectBondingOpt = list.get(list.size() - 1);
-                                    EntityModel entityModel = selectBondingOpt.getValue();
+                                    EntityModel<String> entityModel = selectBondingOpt.getValue();
                                     entityModel.setEntity(item.getBondOptions());
                                 }
                             }
@@ -1133,7 +1132,7 @@ public class HostInterfaceListModel extends SearchableListModel
             {
                 return;
             }
-            if ((Boolean) model.getCheckConnectivity().getEntity() == true)
+            if (model.getCheckConnectivity().getEntity() == true)
             {
                 onEditManagementNetwork();
                 return;
@@ -1146,7 +1145,7 @@ public class HostInterfaceListModel extends SearchableListModel
             {
                 return;
             }
-            if ((Boolean) model.getCheckConnectivity().getEntity() == true)
+            if (model.getCheckConnectivity().getEntity() == true)
             {
                 onBond();
                 return;
@@ -1186,7 +1185,7 @@ public class HostInterfaceListModel extends SearchableListModel
         if (getConfirmWindow() != null)
         {
             ConfirmationModel confirmModel = (ConfirmationModel) getConfirmWindow();
-            if ((Boolean) confirmModel.getLatch().getEntity() == true)
+            if (confirmModel.getLatch().getEntity() == true)
             {
                 model.getCheckConnectivity().setEntity(true);
             }
@@ -1202,7 +1201,7 @@ public class HostInterfaceListModel extends SearchableListModel
             return;
         }
 
-        VdsNetworkInterface nic = (VdsNetworkInterface) model.getInterface().getSelectedItem();
+        VdsNetworkInterface nic = model.getInterface().getSelectedItem();
         Network network = model.getEntity();
 
         VdcActionType actionType = VdcActionType.UpdateNetworkToVdsInterface;
@@ -1211,10 +1210,10 @@ public class HostInterfaceListModel extends SearchableListModel
                         network,
                         new ArrayList<VdsNetworkInterface>(Arrays.asList(new VdsNetworkInterface[] { nic })));
 
-        Map.Entry<String, EntityModel> bondingOption;
+        Map.Entry<String, EntityModel<String>> bondingOption;
         if (model.getBondingOptions().getSelectedItem() != null)
         {
-            bondingOption = (Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
+            bondingOption = model.getBondingOptions().getSelectedItem();
 
             if (!bondingOption.getKey().equals("custom")) //$NON-NLS-1$
             {
@@ -1239,14 +1238,14 @@ public class HostInterfaceListModel extends SearchableListModel
         {
             parameters.setOldNetworkName(network.getName());
         }
-        parameters.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
+        parameters.setCheckConnectivity(model.getCheckConnectivity().getEntity());
         parameters.setBootProtocol(model.getBootProtocol());
 
         if (model.getIsStaticAddress())
         {
-            parameters.setAddress((String) model.getAddress().getEntity());
-            parameters.setSubnet((String) model.getSubnet().getEntity());
-            parameters.setGateway((String) model.getGateway().getEntity());
+            parameters.setAddress(model.getAddress().getEntity());
+            parameters.setSubnet(model.getSubnet().getEntity());
+            parameters.setGateway(model.getGateway().getEntity());
         }
 
         model.startProgress(null);
@@ -1261,9 +1260,9 @@ public class HostInterfaceListModel extends SearchableListModel
                         VdcReturnValueBase returnValueBase = result.getReturnValue();
                         if (returnValueBase != null && returnValueBase.getSucceeded())
                         {
-                            EntityModel commitChanges =
+                            EntityModel<Boolean> commitChanges =
                                     ((HostManagementNetworkModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
-                            if ((Boolean) commitChanges.getEntity())
+                            if (commitChanges.getEntity())
                             {
                                 new SaveNetworkConfigAction(HostInterfaceListModel.this,
                                         hostInterfaceListModel.getcurrentModel(), getEntity()).execute();
@@ -1422,7 +1421,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             HostBondInterfaceModel bModel =
                                     (HostBondInterfaceModel) innerHostInterfaceListModel.getWindow();
                             List<VdsNetworkInterface> bonds =
-                                    (List<VdsNetworkInterface>) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
+                                    ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
 
                             List<String> bondNames = new ArrayList<String>();
                             for (VdsNetworkInterface bond : bonds) {
@@ -1537,7 +1536,7 @@ public class HostInterfaceListModel extends SearchableListModel
         if (getConfirmWindow() != null)
         {
             ConfirmationModel confirmModel = (ConfirmationModel) getConfirmWindow();
-            if ((Boolean) confirmModel.getLatch().getEntity() == true)
+            if (confirmModel.getLatch().getEntity() == true)
             {
                 model.getCheckConnectivity().setEntity(true);
             }
@@ -1556,7 +1555,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         VDS host = getEntity();
         ArrayList<VdsNetworkInterface> selectedItems = getSelectedItems();
-        Network net = (Network) model.getNetwork().getSelectedItem();
+        Network net = model.getNetwork().getSelectedItem();
 
         // Interface interfaceWithNetwork = items.FirstOrDefault(a => !string.IsNullOrEmpty(a.network_name));
         VdsNetworkInterface interfaceWithNetwork = Linq.findInterfaceNetworkNameNotEmpty(selectedItems);
@@ -1578,13 +1577,13 @@ public class HostInterfaceListModel extends SearchableListModel
         {
             UpdateNetworkToVdsParameters parameters =
                     new UpdateNetworkToVdsParameters(host.getId(), net, selectedItems);
-            parameters.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
+            parameters.setCheckConnectivity(model.getCheckConnectivity().getEntity());
             parameters.setOldNetworkName(interfaceWithNetwork.getNetworkName());
 
-            Map.Entry<String, EntityModel> bondingOption;
+            Map.Entry<String, EntityModel<String>> bondingOption;
             if (model.getBondingOptions().getSelectedItem() != null)
             {
-                bondingOption = (Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
+                bondingOption = model.getBondingOptions().getSelectedItem();
 
                 if (!bondingOption.getKey().equals("custom")) //$NON-NLS-1$
                 {
@@ -1602,15 +1601,15 @@ public class HostInterfaceListModel extends SearchableListModel
             }
 
             parameters.setBootProtocol(model.getBootProtocol());
-            parameters.setBondName((String) model.getBond().getSelectedItem());
+            parameters.setBondName(model.getBond().getSelectedItem());
 
             if (model.getIsStaticAddress())
             {
-                parameters.setAddress((String) model.getAddress().getEntity());
-                parameters.setSubnet((String) model.getSubnet().getEntity());
+                parameters.setAddress(model.getAddress().getEntity());
+                parameters.setSubnet(model.getSubnet().getEntity());
                 if (interfaceWithNetwork.getIsManagement())
                 {
-                    parameters.setGateway((String) model.getGateway().getEntity());
+                    parameters.setGateway(model.getGateway().getEntity());
                 }
             }
 
@@ -1626,9 +1625,9 @@ public class HostInterfaceListModel extends SearchableListModel
                             VdcReturnValueBase returnValueBase = result.getReturnValue();
                             if (returnValueBase != null && returnValueBase.getSucceeded())
                             {
-                                EntityModel commitChanges =
+                                EntityModel<Boolean> commitChanges =
                                         ((HostBondInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
-                                if ((Boolean) commitChanges.getEntity())
+                                if (commitChanges.getEntity())
                                 {
                                     new SaveNetworkConfigAction(HostInterfaceListModel.this,
                                             hostInterfaceListModel.getcurrentModel(), getEntity()).execute();
@@ -1667,13 +1666,13 @@ public class HostInterfaceListModel extends SearchableListModel
             // };
             AddBondParameters parameters =
                     new AddBondParameters(host.getId(),
-                            (String) model.getBond().getSelectedItem(),
+                                          model.getBond().getSelectedItem(),
                             net,
                             nics);
-            Map.Entry<String, EntityModel> bondingOption;
+            Map.Entry<String, EntityModel<String>> bondingOption;
             if (model.getBondingOptions().getSelectedItem() != null)
             {
-                bondingOption = (Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
+                bondingOption = model.getBondingOptions().getSelectedItem();
 
                 if (!bondingOption.getKey().equals("custom")) //$NON-NLS-1$
                 {
@@ -1693,9 +1692,9 @@ public class HostInterfaceListModel extends SearchableListModel
 
             if (model.getIsStaticAddress())
             {
-                parameters.setAddress((String) model.getAddress().getEntity());
-                parameters.setSubnet((String) model.getSubnet().getEntity());
-                parameters.setGateway((String) model.getGateway().getEntity());
+                parameters.setAddress(model.getAddress().getEntity());
+                parameters.setSubnet(model.getSubnet().getEntity());
+                parameters.setGateway(model.getGateway().getEntity());
             }
 
             model.startProgress(null);
@@ -1710,9 +1709,9 @@ public class HostInterfaceListModel extends SearchableListModel
                             VdcReturnValueBase returnValueBase = result.getReturnValue();
                             if (returnValueBase != null && returnValueBase.getSucceeded())
                             {
-                                EntityModel commitChanges =
+                                EntityModel<Boolean> commitChanges =
                                         ((HostBondInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
-                                if ((Boolean) commitChanges.getEntity())
+                                if (commitChanges.getEntity())
                                 {
                                     new SaveNetworkConfigAction(HostInterfaceListModel.this,
                                             hostInterfaceListModel.getcurrentModel(), getEntity()).execute();
@@ -1799,9 +1798,9 @@ public class HostInterfaceListModel extends SearchableListModel
                                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                                 if (returnValueBase != null && returnValueBase.getSucceeded())
                                 {
-                                    EntityModel commitChanges =
+                                    EntityModel<Boolean> commitChanges =
                                             ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
-                                    if ((Boolean) commitChanges.getEntity())
+                                    if (commitChanges.getEntity())
                                     {
                                         new SaveNetworkConfigAction(HostInterfaceListModel.this,
                                                 getcurrentModel(),
@@ -1848,7 +1847,7 @@ public class HostInterfaceListModel extends SearchableListModel
             return;
         }
 
-        Network network = (Network) model.getNetwork().getSelectedItem();
+        Network network = model.getNetwork().getSelectedItem();
 
         // Save changes.
         if (network.getId().equals(Guid.Empty))
@@ -1912,9 +1911,9 @@ public class HostInterfaceListModel extends SearchableListModel
                                         VdcReturnValueBase returnValueBase = result.getReturnValue();
                                         if (returnValueBase != null && returnValueBase.getSucceeded())
                                         {
-                                            EntityModel commitChanges =
+                                            EntityModel<Boolean> commitChanges =
                                                     ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
-                                            if ((Boolean) commitChanges.getEntity())
+                                            if (commitChanges.getEntity())
                                             {
                                                 new SaveNetworkConfigAction(HostInterfaceListModel.this,
                                                         getcurrentModel(), getEntity()).execute();
@@ -1999,14 +1998,14 @@ public class HostInterfaceListModel extends SearchableListModel
                                 network,
                                 new ArrayList<VdsNetworkInterface>(Arrays.asList(new VdsNetworkInterface[] { nic })));
                 parameters.setOldNetworkName((nic.getNetworkName() != null ? nic.getNetworkName() : network.getName()));
-                parameters.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
+                parameters.setCheckConnectivity(model.getCheckConnectivity().getEntity());
 
                 actionType = VdcActionType.UpdateNetworkToVdsInterface;
             }
-            Map.Entry<String, EntityModel> bondingOption;
+            Map.Entry<String, EntityModel<String>> bondingOption;
             if (model.getBondingOptions().getSelectedItem() != null)
             {
-                bondingOption = (Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
+                bondingOption = model.getBondingOptions().getSelectedItem();
 
                 if (!bondingOption.getKey().equals("custom")) //$NON-NLS-1$
                 {
@@ -2027,8 +2026,8 @@ public class HostInterfaceListModel extends SearchableListModel
 
             if (model.getIsStaticAddress())
             {
-                parameters.setAddress((String) model.getAddress().getEntity());
-                parameters.setSubnet((String) model.getSubnet().getEntity());
+                parameters.setAddress(model.getAddress().getEntity());
+                parameters.setSubnet(model.getSubnet().getEntity());
             }
 
             model.startProgress(null);
@@ -2043,9 +2042,9 @@ public class HostInterfaceListModel extends SearchableListModel
                             VdcReturnValueBase returnValueBase = result.getReturnValue();
                             if (returnValueBase != null && returnValueBase.getSucceeded())
                             {
-                                EntityModel commitChanges =
+                                EntityModel<Boolean> commitChanges =
                                         ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
-                                if ((Boolean) commitChanges.getEntity())
+                                if (commitChanges.getEntity())
                                 {
                                     new SaveNetworkConfigAction(HostInterfaceListModel.this,
                                             hostInterfaceListModel.getcurrentModel(), getEntity()).execute();
@@ -2143,9 +2142,9 @@ public class HostInterfaceListModel extends SearchableListModel
                                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                                 if (returnValueBase != null && returnValueBase.getSucceeded())
                                 {
-                                    EntityModel commitChanges =
+                                    EntityModel<Boolean> commitChanges =
                                             ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
-                                    if ((Boolean) commitChanges.getEntity())
+                                    if (commitChanges.getEntity())
                                     {
                                         new SaveNetworkConfigAction(HostInterfaceListModel.this,
                                                 hostInterfaceListModel.getcurrentModel(), getEntity()).execute();

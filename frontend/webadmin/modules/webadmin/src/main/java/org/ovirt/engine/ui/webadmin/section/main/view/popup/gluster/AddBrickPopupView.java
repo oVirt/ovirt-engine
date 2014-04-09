@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
@@ -10,11 +11,11 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.parser.EntityModelParser;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
@@ -39,6 +40,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.inject.Inject;
 
+import java.text.ParseException;
+
 public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickModel> implements AddBrickPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<VolumeBrickModel, AddBrickPopupView> {
@@ -58,17 +61,17 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     @UiField(provided = true)
     @Path(value = "volumeType.entity")
     @WithElementId
-    EntityModelLabelEditor volumeTypeEditor;
+    EntityModelLabelEditor<GlusterVolumeType> volumeTypeEditor;
 
     @UiField
     @Path(value = "replicaCount.entity")
     @WithElementId
-    EntityModelTextBoxEditor replicaCountEditor;
+    IntegerEntityModelTextBoxEditor replicaCountEditor;
 
     @UiField
     @Path(value = "stripeCount.entity")
     @WithElementId
-    EntityModelTextBoxEditor stripeCountEditor;
+    IntegerEntityModelTextBoxEditor stripeCountEditor;
 
     @UiField(provided = true)
     @Path(value = "force.entity")
@@ -78,12 +81,12 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     @UiField(provided = true)
     @Path(value = "servers.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> serverEditor;
+    ListModelListBoxEditor<VDS> serverEditor;
 
     @UiField
     @Path(value = "brickDirectory.entity")
     @WithElementId
-    EntityModelTextBoxEditor exportDirEditor;
+    StringEntityModelTextBoxEditor exportDirEditor;
 
     @UiField
     @WithElementId
@@ -147,12 +150,17 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     }
 
     private void initEditors() {
-        volumeTypeEditor = new EntityModelLabelEditor(new EnumRenderer(), new EntityModelParser());
-        forceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        serverEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        volumeTypeEditor = new EntityModelLabelEditor<GlusterVolumeType>(new EnumRenderer<GlusterVolumeType>(), new Parser<GlusterVolumeType>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((VDS) object).getHostName();
+            public GlusterVolumeType parse(CharSequence text) throws ParseException {
+                return GlusterVolumeType.valueOf(text.toString().toUpperCase());
+            }
+        });
+        forceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        serverEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
+            @Override
+            public String renderNullSafe(VDS vds) {
+                return vds.getHostName();
             }
         });
 
@@ -267,7 +275,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         moveBricksUpButton.setCommand(object.getMoveBricksUpCommand());
         moveBricksDownButton.setCommand(object.getMoveBricksDownCommand());
 
-        GlusterVolumeType volumeType = (GlusterVolumeType) object.getVolumeType().getEntity();
+        GlusterVolumeType volumeType = object.getVolumeType().getEntity();
         if (volumeType == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
             infoLabel.setText(constants.distributedReplicateVolumeBrickInfoLabel());
         }
@@ -278,12 +286,12 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
             infoLabel.setText(null);
         }
 
-        forceWarningLabel.setVisible((Boolean) object.getForce().getEntity());
+        forceWarningLabel.setVisible(object.getForce().getEntity());
 
         object.getForce().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                forceWarningLabel.setVisible((Boolean) object.getForce().getEntity());
+                forceWarningLabel.setVisible(object.getForce().getEntity());
             }
         });
     }

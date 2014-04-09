@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClientInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
@@ -14,7 +15,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
-import org.ovirt.engine.ui.common.widget.parser.EntityModelParser;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -31,6 +31,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
+
+import java.text.ParseException;
 
 public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<BrickAdvancedDetailsModel> implements BrickAdvancedDetailsPopupPresenterWidget.ViewDef {
 
@@ -193,7 +195,12 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     }
 
     private void initEditors() {
-        statusEditor = new EntityModelLabelEditor(new EnumRenderer(), new EntityModelParser());
+        statusEditor = new EntityModelLabelEditor<GlusterStatus>(new EnumRenderer<GlusterStatus>(), new Parser<GlusterStatus>() {
+            @Override
+            public GlusterStatus parse(CharSequence text) throws ParseException {
+                return GlusterStatus.valueOf(text.toString().toUpperCase());
+            }
+        });
         clientsTable = new EntityModelCellTable<ListModel>(false, true);
         memoryPoolsTable = new EntityModelCellTable<ListModel>(false, true);
     }

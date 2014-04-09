@@ -2,7 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
-	xmlns:f="urn:import:org.ovirt.engine.ui.webadmin.widget.footer" xmlns:ce="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:f="urn:import:org.ovirt.engine.ui.webadmin.widget.footer" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels">
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
@@ -247,11 +247,11 @@
 				</g:HorizontalPanel>
 				<g:VerticalPanel styleName="{style.checkBoxesPanel}" >
 					<g:HorizontalPanel>
-						<ce:EntityModelCheckBoxEditor ui:field="checkConnectivity" />
+						<ge:EntityModelCheckBoxEditor ui:field="checkConnectivity" />
 						<d:InfoIcon ui:field="checkConnInfo"/>
 					</g:HorizontalPanel>
 					<g:HorizontalPanel>
-						<ce:EntityModelCheckBoxEditor ui:field="commitChanges" />
+						<ge:EntityModelCheckBoxEditor ui:field="commitChanges" />
 						<d:InfoIcon ui:field="commitChangesInfo"/>
 					</g:HorizontalPanel>
 				</g:VerticalPanel>

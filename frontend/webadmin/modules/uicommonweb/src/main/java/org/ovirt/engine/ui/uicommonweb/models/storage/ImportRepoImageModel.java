@@ -98,7 +98,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
                 importParameters.setQuotaId(selectedQuota.getId());
             }
 
-            Boolean importAsTemplate = (Boolean) getImportAsTemplate().getEntity();
+            Boolean importAsTemplate = getImportAsTemplate().getEntity();
             importParameters.setImportAsTemplate(importAsTemplate);
 
             if (importAsTemplate) {
@@ -120,7 +120,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
     }
 
     public void updateClusterEnabled() {
-        boolean importAsTemplate = (Boolean) getImportAsTemplate().getEntity();
+        boolean importAsTemplate = getImportAsTemplate().getEntity();
         getCluster().setIsAvailable(importAsTemplate);
         getCluster().setIsChangable(!getCluster().getIsEmpty());
     }

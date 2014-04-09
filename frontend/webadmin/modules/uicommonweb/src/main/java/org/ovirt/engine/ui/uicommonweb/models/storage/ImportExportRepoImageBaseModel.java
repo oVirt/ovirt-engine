@@ -42,18 +42,18 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     protected List<EntityModel> entities;
     private EntityModel<Boolean> importAsTemplate;
 
-    public EntityModel getImportAsTemplate() {
+    public EntityModel<Boolean> getImportAsTemplate() {
         return importAsTemplate;
     }
 
-    public void setImportAsTemplate(EntityModel importAsTemplate) {
+    public void setImportAsTemplate(EntityModel<Boolean> importAsTemplate) {
         this.importAsTemplate = importAsTemplate;
     }
 
-    private ListModel dataCenter;
-    private ListModel cluster;
-    private ListModel storageDomain;
-    private ListModel quota;
+    private ListModel<StoragePool> dataCenter;
+    private ListModel<VDSGroup> cluster;
+    private ListModel<StorageDomain> storageDomain;
+    private ListModel<Quota> quota;
 
     private UICommand okCommand;
     private UICommand cancelCommand;
@@ -70,39 +70,39 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         onPropertyChanged(new PropertyChangedEventArgs("ImportExportEntities")); //$NON-NLS-1$
     }
 
-    public ListModel getDataCenter()
+    public ListModel<StoragePool> getDataCenter()
     {
         return dataCenter;
     }
 
-    public void setDataCenter(ListModel value)
+    public void setDataCenter(ListModel<StoragePool> value)
     {
        dataCenter = value;
     }
 
-    public ListModel getCluster()
+    public ListModel<VDSGroup> getCluster()
     {
         return cluster;
     }
 
-    public void setCluster(ListModel value)
+    public void setCluster(ListModel<VDSGroup> value)
     {
         cluster = value;
     }
 
-    public ListModel getStorageDomain() {
+    public ListModel<StorageDomain> getStorageDomain() {
         return storageDomain;
     }
 
-    public void setStorageDomain(ListModel storageDomain) {
+    public void setStorageDomain(ListModel<StorageDomain> storageDomain) {
         this.storageDomain = storageDomain;
     }
 
-    public ListModel getQuota() {
+    public ListModel<Quota> getQuota() {
         return quota;
     }
 
-    public void setQuota(ListModel quota) {
+    public void setQuota(ListModel<Quota> quota) {
         this.quota = quota;
     }
 
@@ -124,20 +124,20 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     }
 
     public ImportExportRepoImageBaseModel() {
-        setDataCenter(new ListModel());
+        setDataCenter(new ListModel<StoragePool>());
         getDataCenter().setIsEmpty(true);
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
-        setCluster(new ListModel());
+        setCluster(new ListModel<VDSGroup>());
         getCluster().setIsEmpty(true);
         getCluster().getSelectedItemChangedEvent().addListener(this);
 
-        setStorageDomain(new ListModel());
+        setStorageDomain(new ListModel<StorageDomain>());
         getStorageDomain().setIsEmpty(true);
         getStorageDomain().getSelectedItemChangedEvent().addListener(this);
 
-        setQuota(new ListModel());
+        setQuota(new ListModel<Quota>());
         getQuota().setIsEmpty(true);
-        setImportAsTemplate(new EntityModel());
+        setImportAsTemplate(new EntityModel<Boolean>());
         getImportAsTemplate().setEntity(false);
 
         setOkCommand(new UICommand("Ok", this));  //$NON-NLS-1$
@@ -173,7 +173,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     protected void updateControlsAvailability() {
         getDataCenter().setIsChangable(!getDataCenter().getIsEmpty());
         getStorageDomain().setIsChangable(!getStorageDomain().getIsEmpty());
-        getCluster().setIsAvailable((Boolean) getImportAsTemplate().getEntity());
+        getCluster().setIsAvailable(getImportAsTemplate().getEntity());
         getCluster().setIsChangable(!getCluster().getIsEmpty());
         getQuota().setIsChangable(!getQuota().getIsEmpty());
         getOkCommand().setIsExecutionAllowed(!getStorageDomain().getIsEmpty());
@@ -227,12 +227,12 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     }
 
     protected QuotaEnforcementTypeEnum getDataCenterQuotaEnforcementType() {
-        StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
+        StoragePool dataCenter = getDataCenter().getSelectedItem();
         return (dataCenter == null) ? null : dataCenter.getQuotaEnforcementType();
     }
 
     private void updateQuotas() {
-        StorageDomain storageDomain = (StorageDomain) getStorageDomain().getSelectedItem();
+        StorageDomain storageDomain = getStorageDomain().getSelectedItem();
 
         if (getDataCenterQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED || storageDomain == null) {
             getQuota().setItems(null);
@@ -245,7 +245,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) target;
-                List<Quota> quotas = (List<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                List<Quota> quotas = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 model.getQuota().setItems(quotas);
                 model.getQuota().setIsEmpty(quotas.isEmpty());
                 model.updateControlsAvailability();
@@ -265,8 +265,8 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     }
 
     protected void dataCenter_SelectedItemChanged() {
-        updateStorageDomains(((StoragePool) getDataCenter().getSelectedItem()).getId());
-        updateClusters(((StoragePool) getDataCenter().getSelectedItem()).getId());
+        updateStorageDomains(getDataCenter().getSelectedItem().getId());
+        updateClusters(getDataCenter().getSelectedItem().getId());
     }
 
     protected void storageDomain_SelectedItemChanged() {

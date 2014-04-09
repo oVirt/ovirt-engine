@@ -7,26 +7,24 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 
 import com.google.gwt.core.client.GWT;
 
-public class ProfileEditor extends ListModelTypeAheadListBoxEditor<Object> {
+public class ProfileEditor extends ListModelTypeAheadListBoxEditor<VnicProfileView> {
 
     public final static CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
     public final static CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
 
     public ProfileEditor() {
         super(
-                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<VnicProfileView>() {
 
                     @Override
-                    public String getReplacementStringNullSafe(Object data) {
-                        VnicProfileView profile = (VnicProfileView) data;
+                    public String getReplacementStringNullSafe(VnicProfileView profile) {
                         return (profile == VnicProfileView.EMPTY) ? messages.emptyProfile().asString()
                                 : messages.profileAndNetworkSelected(profile.getName(), profile.getNetworkName())
                                         .asString();
                     }
 
                     @Override
-                    public String getDisplayStringNullSafe(Object data) {
-                        VnicProfileView profile = (VnicProfileView) data;
+                    public String getDisplayStringNullSafe(VnicProfileView profile) {
                         if (profile == VnicProfileView.EMPTY) {
                             return templates.typeAheadNameDescription(messages.emptyProfile().asString(),
                                     messages.emptyProfileDescription().asString()).asString();

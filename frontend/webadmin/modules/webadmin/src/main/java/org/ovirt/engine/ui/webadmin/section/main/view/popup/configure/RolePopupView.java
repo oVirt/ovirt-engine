@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleModel;
@@ -55,12 +55,12 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
     @UiField
     @Path(value = "name.entity")
     @WithElementId("name")
-    EntityModelTextBoxEditor nameEditor;
+    StringEntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
     @WithElementId("description")
-    EntityModelTextBoxEditor descriptionEditor;
+    StringEntityModelTextBoxEditor descriptionEditor;
 
     @UiField
     @Ignore
@@ -164,7 +164,7 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
     public void edit(RoleModel object) {
         this.roleModel = object;
         driver.edit(object);
-        final EntityModel adminRole = object.getIsAdminRole();
+        final EntityModel<Boolean> adminRole = object.getIsAdminRole();
 
         // Listen to Properties
         object.getPropertyChangedEvent().addListener(new IEventListener() {
@@ -181,7 +181,7 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
         object.getIsAdminRole().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) adminRole.getEntity() == true) {
+                if (adminRole.getEntity() == true) {
                     adminRadioButtonEditor.setValue(true);
                 } else {
                     userRadioButtonEditor.setValue(true);

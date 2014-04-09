@@ -111,12 +111,12 @@
                                     <g:HorizontalPanel addStyleNames="{style.horizontalPanelStyle}">
                                         <g:Label addStyleNames="{style.titleLabelStyle}" text="{constants.storageLocalStorage}" />
                                         <g:VerticalPanel addStyleNames="{style.verticalPanelStyle}">
-                                            <e:EntityModelTextBoxEditor ui:field="storageNameEditor" />
+                                            <ge:StringEntityModelTextBoxEditor ui:field="storageNameEditor" />
                                         </g:VerticalPanel>
                                         <g:Anchor ui:field="storageButton" styleName="{style.toggleButtonStyle}" />
                                     </g:HorizontalPanel>
                                 </g:VerticalPanel>
-                                <e:EntityModelTextBoxEditor ui:field="pathEditor" />
+                                <ge:StringEntityModelTextBoxEditor ui:field="pathEditor" />
                             </g:VerticalPanel>
 						</t:content>
 					</t:DialogTab>

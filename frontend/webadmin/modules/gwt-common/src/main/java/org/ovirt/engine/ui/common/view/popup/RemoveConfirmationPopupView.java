@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -156,7 +156,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
             force.setLabel(object.getForceLabel());
         }
 
-        force.asCheckBox().setValue((Boolean) object.getForce().getEntity());
+        force.asCheckBox().setValue(object.getForce().getEntity());
         // Bind "Force.Label"
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override

@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster;
 
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NewNetworkModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -29,7 +28,7 @@ public class NewClusterNetworkPopupPresenterWidget extends NewNetworkPopupPresen
         model.getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                ((ViewDef) getView()).setDataCenterName(((StoragePool) model.getDataCenters().getSelectedItem()).getName());
+                ((ViewDef) getView()).setDataCenterName((model.getDataCenters().getSelectedItem()).getName());
             }
         });
     }

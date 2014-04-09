@@ -7,8 +7,8 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.FocusComposite;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -66,11 +66,11 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
 
     @UiField
     @Path(value = "address.entity")
-    EntityModelTextBoxEditor addressEditor;
+    StringEntityModelTextBoxEditor addressEditor;
 
     @UiField
     @Path(value = "port.entity")
-    EntityModelTextBoxEditor portEditor;
+    StringEntityModelTextBoxEditor portEditor;
 
     @UiField(provided = true)
     @Path(value = "useUserAuth.entity")
@@ -78,11 +78,11 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
 
     @UiField
     @Path(value = "userName.entity")
-    EntityModelTextBoxEditor chapUserEditor;
+    StringEntityModelTextBoxEditor chapUserEditor;
 
     @UiField
     @Path(value = "password.entity")
-    EntityModelTextBoxEditor chapPassEditor;
+    StringEntityModelTextBoxEditor chapPassEditor;
 
     @UiField
     UiCommandButton discoverButton;

@@ -48,20 +48,20 @@ public class LocalStorageModel extends Model implements IStorageModel {
         role = value;
     }
 
-    private EntityModel path;
+    private EntityModel<String> path;
 
-    public EntityModel getPath() {
+    public EntityModel<String> getPath() {
         return path;
     }
 
-    public void setPath(EntityModel value) {
+    public void setPath(EntityModel<String> value) {
         path = value;
     }
 
     public LocalStorageModel() {
 
         setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
-        setPath(new EntityModel());
+        setPath(new EntityModel<String>());
     }
 
     @Override

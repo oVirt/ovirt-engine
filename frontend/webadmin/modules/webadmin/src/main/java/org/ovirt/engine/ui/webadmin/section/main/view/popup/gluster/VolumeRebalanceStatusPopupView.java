@@ -1,16 +1,18 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import java.text.ParseException;
 import java.util.Date;
 
+import com.google.gwt.text.shared.AbstractRenderer;
+import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusForHost;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelRenderer;
-import org.ovirt.engine.ui.common.widget.parser.EntityModelParser;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.renderer.GlusterRebalanceDateTimeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -52,22 +54,22 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     @UiField
     @Path("volume.entity")
     @WithElementId
-    EntityModelLabelEditor volumeEditor;
+    StringEntityModelLabelEditor volumeEditor;
 
     @UiField
     @Path("cluster.entity")
     @WithElementId
-    EntityModelLabelEditor clusterEditor;
+    StringEntityModelLabelEditor clusterEditor;
 
     @UiField(provided = true)
     @Path("startTime.entity")
     @WithElementId
-    EntityModelLabelEditor startTimeEditor;
+    EntityModelLabelEditor<Date> startTimeEditor;
 
     @UiField(provided = true)
     @Path("statusTime.entity")
     @WithElementId
-    EntityModelLabelEditor statusTimeEditor;
+    EntityModelLabelEditor<Date> statusTimeEditor;
 
     @UiField
     @Ignore
@@ -86,7 +88,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     @UiField(provided = true)
     @Path("stopTime.entity")
     @WithElementId
-    EntityModelLabelEditor stopTimeEditor;
+    EntityModelLabelEditor<Date> stopTimeEditor;
 
     @UiField
     @Ignore
@@ -218,16 +220,21 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
         });
     }
 
-    private EntityModelLabelEditor getInstanceOfDateEditor() {
-        return new EntityModelLabelEditor(new EntityModelRenderer(){
+    private EntityModelLabelEditor<Date> getInstanceOfDateEditor() {
+        return new EntityModelLabelEditor<Date>(new AbstractRenderer<Date>(){
             @Override
-            public String render(Object entity) {
+            public String render(Date entity) {
                 if(entity == null) {
                     return constants.unAvailablePropertyLabel();
                 }
-                return GlusterRebalanceDateTimeRenderer.getLocalizedDateTimeFormat().format((Date) entity);
+                return GlusterRebalanceDateTimeRenderer.getLocalizedDateTimeFormat().format(entity);
             }
-        }, new EntityModelParser());
+        }, new Parser<Date>() {
+            @Override
+            public Date parse(CharSequence text) throws ParseException {
+                return new Date(Date.parse(text.toString()));
+            }
+        });
     }
     @Override
     public VolumeRebalanceStatusModel flush() {

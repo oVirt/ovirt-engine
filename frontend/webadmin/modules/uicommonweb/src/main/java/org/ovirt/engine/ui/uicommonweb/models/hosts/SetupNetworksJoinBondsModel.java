@@ -17,8 +17,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class SetupNetworksJoinBondsModel extends SetupNetworksBondModel {
 
-    private List<Entry<String, EntityModel>> bondOptions = new ArrayList<Entry<String, EntityModel>>();
-    private Map<String, Entry<String, EntityModel>> pairForBondOption = new HashMap<String, Entry<String, EntityModel>>();
+    private List<Entry<String, EntityModel<String>>> bondOptions = new ArrayList<Entry<String, EntityModel<String>>>();
+    private Map<String, Entry<String, EntityModel<String>>> pairForBondOption = new HashMap<String, Entry<String, EntityModel<String>>>();
 
     @SuppressWarnings("unchecked")
     public SetupNetworksJoinBondsModel(List<String> freeBonds,
@@ -36,8 +36,8 @@ public class SetupNetworksJoinBondsModel extends SetupNetworksBondModel {
         getBond().setItems(availableBonds);
         getBond().setSelectedItem(target.getName());
 
-        bondOptions.addAll((List<Entry<String, EntityModel>>) getBondingOptions().getItems());
-        for (Entry<String, EntityModel> pair : bondOptions) {
+        bondOptions.addAll(getBondingOptions().getItems());
+        for (Entry<String, EntityModel<String>> pair : bondOptions) {
             pairForBondOption.put(getBondOptionForPair(pair), pair);
         }
         addBondOptionIfMissing(source.getBondOptions());
@@ -50,18 +50,18 @@ public class SetupNetworksJoinBondsModel extends SetupNetworksBondModel {
 
     private void addBondOptionIfMissing(String candidateOption) {
         if (!pairForBondOption.containsKey(candidateOption)) {
-            EntityModel entityModel = new EntityModel();
+            EntityModel<String> entityModel = new EntityModel<String>();
             entityModel.setEntity(candidateOption);
-            Entry<String, EntityModel> newPair = new KeyValuePairCompat<String, EntityModel>("custom", entityModel); //$NON-NLS-1$
+            Entry<String, EntityModel<String>> newPair = new KeyValuePairCompat<String, EntityModel<String>>("custom", entityModel); //$NON-NLS-1$
             bondOptions.add(newPair);
             pairForBondOption.put(candidateOption, newPair);
         }
     }
 
-    private String getBondOptionForPair(Entry<String, EntityModel> pair) {
+    private String getBondOptionForPair(Entry<String, EntityModel<String>> pair) {
         String res = pair.getKey();
         if ("custom".equals(res)) { //$NON-NLS-1$
-            return (String) pair.getValue().getEntity();
+            return pair.getValue().getEntity();
         }
         return res;
     }

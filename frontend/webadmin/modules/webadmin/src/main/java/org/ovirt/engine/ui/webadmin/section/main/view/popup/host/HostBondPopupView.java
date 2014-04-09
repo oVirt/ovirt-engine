@@ -2,15 +2,14 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
-import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelSuggestBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -38,6 +37,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
+import java.util.Map;
+
 public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInterfaceModel> implements HostBondPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<HostBondInterfaceModel, HostBondPopupView> {
@@ -53,19 +54,19 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
 
     @UiField(provided = true)
     @Path(value = "bond.selectedItem")
-    ListModelListBoxEditor<Object> bondEditor;
+    ListModelListBoxEditor<String> bondEditor;
 
     @UiField(provided = true)
     @Path(value = "network.selectedItem")
-    ListModelListBoxEditor<Object> networkEditor;
+    ListModelListBoxEditor<Network> networkEditor;
 
     @UiField(provided = true)
     @Path(value = "bondingOptions.selectedItem")
-    ListModelListBoxEditor<Object> bondingModeEditor;
+    ListModelListBoxEditor<Map.Entry<String, EntityModel<String>>> bondingModeEditor;
 
     @UiField
     @Ignore
-    EntityModelTextBoxEditor customEditor;
+    StringEntityModelTextBoxEditor customEditor;
 
     @UiField
     @Ignore
@@ -76,19 +77,19 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
 
     @UiField
     @Ignore
-    EntityModelLabelEditor bootProtocolLabel;
+    StringEntityModelLabelEditor bootProtocolLabel;
 
     @UiField
     @Path(value = "address.entity")
-    EntityModelTextBoxEditor address;
+    StringEntityModelTextBoxEditor address;
 
     @UiField
     @Path(value = "subnet.entity")
-    EntityModelTextBoxEditor subnet;
+    StringEntityModelTextBoxEditor subnet;
 
     @UiField
     @Path(value = "gateway.entity")
-    EntityModelTextBoxEditor gateway;
+    StringEntityModelTextBoxEditor gateway;
 
     @UiField(provided = true)
     @Path(value = "checkConnectivity.entity")
@@ -128,21 +129,20 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         super(eventBus, resources);
 
         bondSuggestEditor = new ListModelSuggestBoxEditor();
-        bondEditor = new ListModelListBoxEditor<Object>();
-        networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        bondEditor = new ListModelListBoxEditor<String>();
+        networkEditor = new ListModelListBoxEditor<Network>(new NullSafeRenderer<Network>() {
             @Override
-            protected String renderNullSafe(Object object) {
-                return ((Network) object).getName();
+            protected String renderNullSafe(Network network) {
+                return network.getName();
             }
 
         });
-        bondingModeEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        bondingModeEditor = new ListModelListBoxEditor<Map.Entry<String, EntityModel<String>>>(new NullSafeRenderer<Map.Entry<String, EntityModel<String>>>() {
             @SuppressWarnings("unchecked")
             @Override
-            protected String renderNullSafe(Object object) {
-                KeyValuePairCompat<String, EntityModel> pair = (KeyValuePairCompat<String, EntityModel>) object;
+            protected String renderNullSafe(Map.Entry<String, EntityModel<String>> pair) {
                 String key = pair.getKey();
-                String value = (String) pair.getValue().getEntity();
+                String value = pair.getValue().getEntity();
                 if ("custom".equals(key)) { //$NON-NLS-1$
                     return constants.customHostPopup() + ": " + value; //$NON-NLS-1$
                 }
@@ -208,17 +208,16 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         object.getBondingOptions().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                ListModel list = (ListModel) sender;
+                ListModel<Map.Entry<String, EntityModel<String>>> list = (ListModel<Map.Entry<String, EntityModel<String>>>) sender;
                 updateBondOptions(list);
             }
         });
 
-        customEditor.asValueBox().addValueChangeHandler(new ValueChangeHandler<Object>() {
+        customEditor.asValueBox().addValueChangeHandler(new ValueChangeHandler<String>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onValueChange(ValueChangeEvent<Object> event) {
-                for (Object item : object.getBondingOptions().getItems()) {
-                    KeyValuePairCompat<String, EntityModel> pair = (KeyValuePairCompat<String, EntityModel>) item;
+            public void onValueChange(ValueChangeEvent<String> event) {
+                for (Map.Entry<String, EntityModel<String>> pair : object.getBondingOptions().getItems()) {
                     if ("custom".equals(pair.getKey())) { //$NON-NLS-1$
                         pair.getValue().setEntity(event.getValue());
                     }
@@ -244,13 +243,12 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     public void setMessage(String message) {
     }
 
-    private void updateBondOptions(ListModel list) {
+    private void updateBondOptions(ListModel<Map.Entry<String, EntityModel<String>>> list) {
         @SuppressWarnings("unchecked")
-        KeyValuePairCompat<String, EntityModel> pair =
-                (KeyValuePairCompat<String, EntityModel>) list.getSelectedItem();
+        Map.Entry<String, EntityModel<String>> pair = list.getSelectedItem();
         if ("custom".equals(pair.getKey())) { //$NON-NLS-1$
             customEditor.setVisible(true);
-            Object entity = pair.getValue().getEntity();
+            String entity = pair.getValue().getEntity();
             customEditor.asEditor().getSubEditor().setValue(entity == null ? "" : entity); //$NON-NLS-1$
         } else {
             customEditor.setVisible(false);

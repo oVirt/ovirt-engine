@@ -2,7 +2,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ManageGlusterSwiftPopupView.WidgetStyle">
@@ -46,12 +47,12 @@
 		<d:content>
 			<g:VerticalPanel>
 				<g:HorizontalPanel addStyleNames="{style.generalTabTopDecorator}">
-					<e:EntityModelLabelEditor addStyleNames="{style.swiftStatus}" ui:field="swiftStatusEditor"/>
-					<e:EntityModelRadioButtonEditor ui:field="startSwift"/>
-					<e:EntityModelRadioButtonEditor ui:field="stopSwift"/>
-					<e:EntityModelRadioButtonEditor ui:field="restartSwift"/>
+					<ge:EntityModelLabelEditor addStyleNames="{style.swiftStatus}" ui:field="swiftStatusEditor"/>
+					<ge:EntityModelRadioButtonEditor ui:field="startSwift"/>
+					<ge:EntityModelRadioButtonEditor ui:field="stopSwift"/>
+					<ge:EntityModelRadioButtonEditor ui:field="restartSwift"/>
 				</g:HorizontalPanel>
-				<e:EntityModelCheckBoxEditor ui:field="manageSwiftServerLevel"/>
+				<ge:EntityModelCheckBoxEditor ui:field="manageSwiftServerLevel"/>
 				<g:ScrollPanel addStyleNames="{style.tablePanel}">
 					<e:EntityModelCellTable ui:field="hostServicesTable"/>
 				</g:ScrollPanel>

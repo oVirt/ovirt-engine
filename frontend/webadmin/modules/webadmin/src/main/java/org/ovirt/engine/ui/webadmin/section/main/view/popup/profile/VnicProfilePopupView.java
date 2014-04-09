@@ -7,9 +7,9 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
@@ -57,17 +57,17 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     @UiField
     @Path("name.entity")
     @WithElementId("name")
-    EntityModelTextBoxEditor nameEditor;
+    StringEntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path("description.entity")
     @WithElementId("description")
-    EntityModelTextBoxEditor descriptionEditor;
+    StringEntityModelTextBoxEditor descriptionEditor;
 
     @UiField(provided = true)
     @Path(value = "networkQoS.selectedItem")
     @WithElementId("networkQoS")
-    public ListModelListBoxEditor<Object> networkQoSEditor;
+    public ListModelListBoxEditor<NetworkQoS> networkQoSEditor;
 
     @UiField
     @Path("portMirroring.entity")
@@ -84,7 +84,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
 
     @UiField(provided = true)
     @Path("network.selectedItem")
-    ListModelListBoxEditor<Object> networkEditor;
+    ListModelListBoxEditor<Network> networkEditor;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -92,16 +92,16 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     public VnicProfilePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
         publicUseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        networkEditor = new ListModelListBoxEditor<Network>(new NullSafeRenderer<Network>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((Network) object).getName();
+            public String renderNullSafe(Network network) {
+                return network.getName();
             }
         });
-        networkQoSEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        networkQoSEditor = new ListModelListBoxEditor<NetworkQoS>(new NullSafeRenderer<NetworkQoS>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return (((NetworkQoS)object).getName());
+            public String renderNullSafe(NetworkQoS networkQoS) {
+                return networkQoS.getName();
             }
         });
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.webadmin.widget.provider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -49,7 +49,7 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
 
     @Path(value = "interfaceMappings.entity")
     @WithElementId("interfaceMappings")
-    EntityModelTextBoxOnlyEditor interfaceMappings;
+    StringEntityModelTextBoxOnlyEditor interfaceMappings;
 
     @UiField
     @Path(value = "qpidHost.entity")
@@ -75,7 +75,7 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
     public NeutronAgentWidget() {
 
         mappingsLabel = new StringEntityModelLabel();
-        interfaceMappings = new EntityModelTextBoxOnlyEditor();
+        interfaceMappings = new StringEntityModelTextBoxOnlyEditor();
         mappings = new EntityModelWidgetWithInfo<String>(mappingsLabel, interfaceMappings);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);

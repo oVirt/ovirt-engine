@@ -2,7 +2,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
 	xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.profile">
 
@@ -71,15 +72,15 @@
 	</ui:style>
 
 	<g:FlowPanel>
-		<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+		<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
 		<p:ProfileEditor ui:field="profileEditor" />
 		<e:ListModelListBoxEditor ui:field="nicTypeEditor" />
 		<g:HorizontalPanel ui:field="linkStateSelectionPanel" width="100%">
 			<e:ListModelListBoxEditor ui:field="linkStateEditor" />
 			<g:SimplePanel addStyleNames="{style.contentWidget}">
 				<g:HorizontalPanel>
-					<e:EntityModelRadioButtonEditor ui:field="linkedEditor"/>
-					<e:EntityModelRadioButtonEditor ui:field="unlinkedEditor"/>
+					<ge:EntityModelRadioButtonEditor ui:field="linkedEditor"/>
+					<ge:EntityModelRadioButtonEditor ui:field="unlinkedEditor"/>
 				</g:HorizontalPanel>
 			</g:SimplePanel>
 		</g:HorizontalPanel>
@@ -87,14 +88,14 @@
 			<e:ListModelListBoxEditor ui:field="cardStatusEditor" />
 			<g:SimplePanel addStyleNames="{style.contentWidget}">
 				<g:HorizontalPanel>
-					<e:EntityModelRadioButtonEditor ui:field="pluggedEditor"/>
-					<e:EntityModelRadioButtonEditor ui:field="unpluggedEditor"/>
+					<ge:EntityModelRadioButtonEditor ui:field="pluggedEditor"/>
+					<ge:EntityModelRadioButtonEditor ui:field="unpluggedEditor"/>
 				</g:HorizontalPanel>
 			</g:SimplePanel>
 		</g:HorizontalPanel>
 		<g:HorizontalPanel width="100%">
-			<e:EntityModelCheckBoxEditor ui:field="enableManualMacCheckbox" />
-			<e:EntityModelTextBoxEditor ui:field="MACEditor" />
+			<ge:EntityModelCheckBoxEditor ui:field="enableManualMacCheckbox" />
+			<ge:StringEntityModelTextBoxEditor ui:field="MACEditor" />
 		</g:HorizontalPanel>
 		<g:SimplePanel addStyleNames="{style.macExamplePanel}">
 			<g:Label ui:field="macExample" addStyleNames="{style.macExample}" text="{constants.exampleInterfacePopup} 00:14:4a:23:67:55" />

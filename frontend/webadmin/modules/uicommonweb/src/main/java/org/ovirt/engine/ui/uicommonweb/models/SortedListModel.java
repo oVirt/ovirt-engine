@@ -5,20 +5,18 @@ import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class SortedListModel extends ListModel {
+public class SortedListModel<T> extends ListModel<T> {
 
-    private final Comparator<?> comparator;
+    private final Comparator<? super T> comparator;
 
-    public SortedListModel(Comparator<?> comparator) {
+    public SortedListModel(Comparator<? super T> comparator) {
         this.comparator = comparator;
     }
 
     @Override
-    public void setItems(Collection value) {
-        SortedSet items = new TreeSet(comparator);
-        for (Object item : value) {
-            items.add(item);
-        }
+    public void setItems(Collection<T> value) {
+        SortedSet<T> items = new TreeSet<T>(comparator);
+        items.addAll(value);
 
         super.setItems(items);
     }

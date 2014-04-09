@@ -12,11 +12,11 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.Slider;
 import org.ovirt.engine.ui.common.widget.form.Slider.SliderValueChange;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
@@ -71,17 +71,17 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     @UiField
     @Path(value = "name.entity")
     @WithElementId
-    EntityModelTextBoxEditor nameEditor;
+    StringEntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
     @WithElementId
-    EntityModelTextBoxEditor descriptionEditor;
+    StringEntityModelTextBoxEditor descriptionEditor;
 
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> dataCenterEditor;
+    ListModelListBoxEditor<StoragePool> dataCenterEditor;
 
     @UiField(provided = true)
     @Path(value = "copyPermissions.entity")
@@ -249,7 +249,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
                     selectedStorageGuid.remove(object.getStorageId());
                     object.setStorageSizeGB(null);
                 }
-                if ((Boolean) model.getGlobalStorageQuota().getEntity()) {
+                if (model.getGlobalStorageQuota().getEntity()) {
                     quotaStorageTable.asEditor().edit(model.getQuotaStorages());
                 } else {
                     quotaStorageTable.asEditor().edit(model.getAllDataCenterStorages());
@@ -291,8 +291,8 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         Column<QuotaStorage, String> editColumn = new Column<QuotaStorage, String>(editCellButton) {
             @Override
             public String getValue(QuotaStorage object) {
-                if ((Boolean) model.getGlobalStorageQuota().getEntity()
-                        || ((Boolean) model.getSpecificStorageQuota().getEntity() && selectedStorageGuid.contains(object.getStorageId()))) {
+                if (model.getGlobalStorageQuota().getEntity()
+                        || (model.getSpecificStorageQuota().getEntity() && selectedStorageGuid.contains(object.getStorageId()))) {
                     return constants.editCellQuota();
                 }
                 return null;
@@ -339,7 +339,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
                     object.setVirtualCpu(null);
                     object.setMemSizeMB(null);
                 }
-                if ((Boolean) model.getGlobalClusterQuota().getEntity()) {
+                if (model.getGlobalClusterQuota().getEntity()) {
                     quotaClusterTable.asEditor().edit(model.getQuotaClusters());
                 } else {
                     quotaClusterTable.asEditor().edit(model.getAllDataCenterClusters());
@@ -389,8 +389,8 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         Column<QuotaVdsGroup, String> editColumn = new Column<QuotaVdsGroup, String>(editCellButton) {
             @Override
             public String getValue(QuotaVdsGroup object) {
-                if ((Boolean) model.getGlobalClusterQuota().getEntity()
-                        || ((Boolean) model.getSpecificClusterQuota().getEntity() && selectedClusterGuid.contains(object.getVdsGroupId()))) {
+                if (model.getGlobalClusterQuota().getEntity()
+                        || (model.getSpecificClusterQuota().getEntity() && selectedClusterGuid.contains(object.getVdsGroupId()))) {
                     return constants.editCellQuota();
                 }
                 return null;
@@ -414,10 +414,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     private void initListBoxEditors() {
-        dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((StoragePool) object).getName();
+            public String renderNullSafe(StoragePool pool) {
+                return pool.getName();
             }
         });
     }
@@ -460,12 +460,12 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("Window".equals(propName) && model.getWindow() == null) { //$NON-NLS-1$
-                    if ((Boolean) model.getSpecificClusterQuota().getEntity()) {
+                    if (model.getSpecificClusterQuota().getEntity()) {
                         quotaClusterTable.asEditor().edit(model.getAllDataCenterClusters());
                     } else {
                         quotaClusterTable.asEditor().edit(model.getQuotaClusters());
                     }
-                    if ((Boolean) model.getSpecificStorageQuota().getEntity()) {
+                    if (model.getSpecificStorageQuota().getEntity()) {
                         quotaStorageTable.asEditor().edit(model.getAllDataCenterStorages());
                     } else {
                         quotaStorageTable.asEditor().edit(model.getQuotaStorages());
@@ -483,7 +483,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
 
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
-            if ((Boolean) model.getSpecificClusterQuota().getEntity()) {
+            if (model.getSpecificClusterQuota().getEntity()) {
                 quotaClusterTable.insertColumn(0, isClusterInQuotaColumn);
                 quotaClusterTable.setColumnWidth(isClusterInQuotaColumn, "30px"); //$NON-NLS-1$
                 quotaClusterTable.asEditor().edit(model.getAllDataCenterClusters());
@@ -498,7 +498,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
 
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
-            if ((Boolean) model.getSpecificStorageQuota().getEntity()) {
+            if (model.getSpecificStorageQuota().getEntity()) {
                 quotaStorageTable.insertColumn(0, isStorageInQuotaColumn);
                 quotaStorageTable.setColumnWidth(isStorageInQuotaColumn, "30px"); //$NON-NLS-1$
                 quotaStorageTable.asEditor().edit(model.getAllDataCenterStorages());
@@ -521,10 +521,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     private void updateSliders() {
-        clusterThresholdSlider.setValue((Integer) model.getThresholdCluster().getEntity());
-        clusterGraceSlider.setValue((Integer) model.getGraceCluster().getEntity() + 100);
-        storageThresholdSlider.setValue((Integer) model.getThresholdStorage().getEntity());
-        storageGraceSlider.setValue((Integer) model.getGraceStorage().getEntity() + 100);
+        clusterThresholdSlider.setValue(model.getThresholdCluster().getEntity());
+        clusterGraceSlider.setValue(model.getGraceCluster().getEntity() + 100);
+        storageThresholdSlider.setValue(model.getThresholdStorage().getEntity());
+        storageGraceSlider.setValue(model.getGraceStorage().getEntity() + 100);
     }
 
     @Override

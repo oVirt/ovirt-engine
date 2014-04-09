@@ -15,14 +15,14 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class MigrateModel extends Model
 {
 
-    private ListModel privateHosts;
+    private ListModel<VDS> privateHosts;
 
-    public ListModel getHosts()
+    public ListModel<VDS> getHosts()
     {
         return privateHosts;
     }
 
-    private void setHosts(ListModel value)
+    private void setHosts(ListModel<VDS> value)
     {
         privateHosts = value;
     }
@@ -130,39 +130,39 @@ public class MigrateModel extends Model
         privatehasSameVdsMessage = value;
     }
 
-    private EntityModel privateSelectHostAutomatically_IsSelected;
+    private EntityModel<Boolean> privateSelectHostAutomatically_IsSelected;
 
-    public EntityModel getSelectHostAutomatically_IsSelected()
+    public EntityModel<Boolean> getSelectHostAutomatically_IsSelected()
     {
         return privateSelectHostAutomatically_IsSelected;
     }
 
-    public void setSelectHostAutomatically_IsSelected(EntityModel value)
+    public void setSelectHostAutomatically_IsSelected(EntityModel<Boolean> value)
     {
         privateSelectHostAutomatically_IsSelected = value;
     }
 
-    private EntityModel privateSelectDestinationHost_IsSelected;
+    private EntityModel<Boolean> privateSelectDestinationHost_IsSelected;
 
-    public EntityModel getSelectDestinationHost_IsSelected()
+    public EntityModel<Boolean> getSelectDestinationHost_IsSelected()
     {
         return privateSelectDestinationHost_IsSelected;
     }
 
-    public void setSelectDestinationHost_IsSelected(EntityModel value)
+    public void setSelectDestinationHost_IsSelected(EntityModel<Boolean> value)
     {
         privateSelectDestinationHost_IsSelected = value;
     }
 
     public MigrateModel()
     {
-        setHosts(new ListModel());
+        setHosts(new ListModel<VDS>());
         getHosts().getSelectedItemChangedEvent().addListener(this);
 
-        setSelectHostAutomatically_IsSelected(new EntityModel());
+        setSelectHostAutomatically_IsSelected(new EntityModel<Boolean>());
         getSelectHostAutomatically_IsSelected().getEntityChangedEvent().addListener(this);
 
-        setSelectDestinationHost_IsSelected(new EntityModel());
+        setSelectDestinationHost_IsSelected(new EntityModel<Boolean>());
         getSelectDestinationHost_IsSelected().getEntityChangedEvent().addListener(this);
     }
 
@@ -172,7 +172,7 @@ public class MigrateModel extends Model
         super.eventRaised(ev, sender, args);
         if (sender == getHosts() && getVmsOnSameCluster())
         {
-            VDS selectedHost = (VDS) getHosts().getSelectedItem();
+            VDS selectedHost = getHosts().getSelectedItem();
             sethasSameVdsMessage(false);
             for (VM vm : getVmList())
             {
@@ -188,11 +188,11 @@ public class MigrateModel extends Model
         {
             if (sender == getSelectHostAutomatically_IsSelected())
             {
-                setIsAutoSelect((Boolean) getSelectHostAutomatically_IsSelected().getEntity());
+                setIsAutoSelect(getSelectHostAutomatically_IsSelected().getEntity());
             }
             else if (sender == getSelectDestinationHost_IsSelected())
             {
-                setIsAutoSelect(!(Boolean) getSelectDestinationHost_IsSelected().getEntity());
+                setIsAutoSelect(!getSelectDestinationHost_IsSelected().getEntity());
             }
         }
     }

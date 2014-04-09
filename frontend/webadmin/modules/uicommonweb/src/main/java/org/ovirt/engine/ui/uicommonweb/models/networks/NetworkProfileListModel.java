@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -101,7 +102,7 @@ public class NetworkProfileListModel extends SearchableListModel
     }
 
     private void initProfileNetwork(VnicProfileModel model) {
-        model.getNetwork().setItems(Arrays.asList(getEntity()));
+        model.getNetwork().setItems(Arrays.<Network>asList(getEntity()));
         model.getNetwork().setSelectedItem(getEntity());
         model.getNetwork().setIsChangable(false);
     }

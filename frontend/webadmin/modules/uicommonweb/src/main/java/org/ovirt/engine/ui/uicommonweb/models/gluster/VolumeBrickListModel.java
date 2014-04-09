@@ -377,7 +377,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         AsyncDataProvider.getClusterById(_asyncQuery, volumeEntity.getClusterId());
 
         // TODO: fetch the mount points to display
-        volumeBrickModel.getBricks().setItems(new ArrayList<EntityModel>());
+        volumeBrickModel.getBricks().setItems(new ArrayList<EntityModel<GlusterBrickEntity>>());
 
         UICommand command = new UICommand("OnAddBricks", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());

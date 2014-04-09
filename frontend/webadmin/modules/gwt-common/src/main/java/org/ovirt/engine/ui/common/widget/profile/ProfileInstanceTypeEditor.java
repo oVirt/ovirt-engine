@@ -76,7 +76,7 @@ public class ProfileInstanceTypeEditor extends AbstractModelBoundPopupWidget<Vni
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                VnicProfileView profile = (VnicProfileView) model.getSelectedItem();
+                VnicProfileView profile = model.getSelectedItem();
                 vnic.setVnicProfileId(profile != null ? profile.getId() : null);
                 vnic.setNetworkName(profile != null ? profile.getNetworkName() : null);
                 ValueChangeEvent.fire(ProfileInstanceTypeEditor.this, model);

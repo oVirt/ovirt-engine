@@ -53,38 +53,38 @@ public class RoleModel extends Model
         privateIsNew = value;
     }
 
-    private EntityModel privateIsAdminRole;
+    private EntityModel<Boolean> privateIsAdminRole;
 
-    public EntityModel getIsAdminRole()
+    public EntityModel<Boolean> getIsAdminRole()
     {
         return privateIsAdminRole;
     }
 
-    public void setIsAdminRole(EntityModel value)
+    public void setIsAdminRole(EntityModel<Boolean> value)
     {
         privateIsAdminRole = value;
     }
 
-    private EntityModel privateName;
+    private EntityModel<String> privateName;
 
-    public EntityModel getName()
+    public EntityModel<String> getName()
     {
         return privateName;
     }
 
-    private void setName(EntityModel value)
+    private void setName(EntityModel<String> value)
     {
         privateName = value;
     }
 
-    private EntityModel privateDescription;
+    private EntityModel<String> privateDescription;
 
-    public EntityModel getDescription()
+    public EntityModel<String> getDescription()
     {
         return privateDescription;
     }
 
-    private void setDescription(EntityModel value)
+    private void setDescription(EntityModel<String> value)
     {
         privateDescription = value;
     }
@@ -110,9 +110,9 @@ public class RoleModel extends Model
         setExpandAllCommand(new UICommand("ExpandAll", this)); //$NON-NLS-1$
         setCollapseAllCommand(new UICommand("CollapseAll", this)); //$NON-NLS-1$
 
-        setName(new EntityModel());
-        setDescription(new EntityModel());
-        setIsAdminRole(new EntityModel());
+        setName(new EntityModel<String>());
+        setDescription(new EntityModel<String>());
+        setIsAdminRole(new EntityModel<Boolean>());
     }
 
     public void expandAll()

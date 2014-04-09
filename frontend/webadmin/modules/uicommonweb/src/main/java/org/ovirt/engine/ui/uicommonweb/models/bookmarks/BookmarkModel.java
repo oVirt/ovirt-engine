@@ -22,34 +22,34 @@ public class BookmarkModel extends Model
         privateIsNew = value;
     }
 
-    private EntityModel privateName;
+    private EntityModel<String> privateName;
 
-    public EntityModel getName()
+    public EntityModel<String> getName()
     {
         return privateName;
     }
 
-    public void setName(EntityModel value)
+    public void setName(EntityModel<String> value)
     {
         privateName = value;
     }
 
-    private EntityModel privateSearchString;
+    private EntityModel<String> privateSearchString;
 
-    public EntityModel getSearchString()
+    public EntityModel<String> getSearchString()
     {
         return privateSearchString;
     }
 
-    public void setSearchString(EntityModel value)
+    public void setSearchString(EntityModel<String> value)
     {
         privateSearchString = value;
     }
 
     public BookmarkModel()
     {
-        setName(new EntityModel());
-        setSearchString(new EntityModel());
+        setName(new EntityModel<String>());
+        setSearchString(new EntityModel<String>());
     }
 
     public boolean validate()

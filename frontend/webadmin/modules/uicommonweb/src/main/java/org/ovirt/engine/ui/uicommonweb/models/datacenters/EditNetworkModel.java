@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -59,19 +58,19 @@ public class EditNetworkModel extends NetworkModel {
     @Override
     protected void initMtu() {
         getHasMtu().setEntity(getNetwork().getMtu() != 0);
-        getMtu().setEntity(getNetwork().getMtu() != 0 ? String.valueOf(getNetwork().getMtu()) : null);
+        getMtu().setEntity(getNetwork().getMtu() != 0 ? getNetwork().getMtu() : null);
     }
 
     @Override
     protected void selectExternalProvider() {
         final Network network = getNetwork();
-        getExternalProviders().setSelectedItem(Linq.firstOrDefault((Iterable<Provider>) getExternalProviders().getItems(),
+        getExternalProviders().setSelectedItem(Linq.firstOrDefault(getExternalProviders().getItems(),
                 new Linq.NetworkSameProviderPredicate(network)));
     }
 
     @Override
     protected void onExportChanged() {
-        if ((Boolean) getExport().getEntity()) {
+        if (getExport().getEntity()) {
             getHasVLanTag().setIsChangable(false);
             getVLanTag().setIsChangable(false);
             getIsVmNetwork().setIsChangable(false);
@@ -100,6 +99,6 @@ public class EditNetworkModel extends NetworkModel {
 
     @Override
     protected void toggleProfilesAvailability() {
-        getProfiles().setIsAvailable((Boolean) getIsVmNetwork().getEntity() && !originallyVmNetwork);
+        getProfiles().setIsAvailable(getIsVmNetwork().getEntity() && !originallyVmNetwork);
     }
 }

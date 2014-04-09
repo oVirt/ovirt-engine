@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MigrateModel;
@@ -44,7 +44,7 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
 
     @UiField(provided = true)
     @Path(value = "hosts.selectedItem")
-    ListModelListBoxEditor<Object> hostsListEditor;
+    ListModelListBoxEditor<VDS> hostsListEditor;
 
     @UiField
     @Ignore
@@ -76,10 +76,10 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
         selectHostAutomaticallyEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         selectDestinationHostEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
 
-        hostsListEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        hostsListEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((VDS) object).getName();
+            public String renderNullSafe(VDS vds) {
+                return vds.getName();
             }
         });
     }

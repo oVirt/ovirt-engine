@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -36,7 +36,7 @@ public class LocalStorageView extends AbstractStorageView<LocalStorageModel> {
     @UiField
     @WithElementId
     @Path(value = "path.entity")
-    EntityModelTextBoxEditor localPathEditor;
+    StringEntityModelTextBoxEditor localPathEditor;
 
     @UiField
     Label message;

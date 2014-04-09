@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.GlusterStorageModel;
@@ -41,7 +41,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     @UiField
     @WithElementId
     @Path(value = "path.entity")
-    EntityModelTextBoxOnlyEditor pathEditor;
+    StringEntityModelTextBoxOnlyEditor pathEditor;
 
     @UiField
     @Ignore
@@ -54,7 +54,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     @UiField
     @WithElementId
     @Path(value = "vfsType.entity")
-    EntityModelTextBoxOnlyEditor vfsTypeEditor;
+    StringEntityModelTextBoxOnlyEditor vfsTypeEditor;
 
     @UiField
     @Ignore
@@ -63,7 +63,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     @UiField
     @WithElementId
     @Path(value = "mountOptions.entity")
-    EntityModelTextBoxOnlyEditor mountOptionsEditor;
+    StringEntityModelTextBoxOnlyEditor mountOptionsEditor;
 
     @UiField
     @Ignore
@@ -108,13 +108,13 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     /*
     Makes a provided editor look like label (enabled, read-only textbox).
      */
-    private void StyleTextBoxEditor(EntityModelTextBoxOnlyEditor editor, EntityModel model) {
+    private void StyleTextBoxEditor(StringEntityModelTextBoxOnlyEditor editor, EntityModel model) {
 
         if (!model.getIsChangable()) {
 
             editor.setEnabled(true);
 
-            ValueBox<Object> valueBox = editor.asValueBox();
+            ValueBox<String> valueBox = editor.asValueBox();
             valueBox.setReadOnly(true);
             valueBox.getElement().getStyle().setBorderWidth(0, Style.Unit.PX);
         }

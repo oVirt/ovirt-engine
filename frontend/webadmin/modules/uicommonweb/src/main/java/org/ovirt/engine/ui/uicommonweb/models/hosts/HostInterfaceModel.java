@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
@@ -34,86 +35,86 @@ public class HostInterfaceModel extends EntityModel
         setupNetworkMode = value;
     }
 
-    private ListModel networkInterface;
+    private ListModel<VdsNetworkInterface> networkInterface;
 
-    public ListModel getInterface()
+    public ListModel<VdsNetworkInterface> getInterface()
     {
         return networkInterface;
     }
 
-    private void setInterface(ListModel value)
+    private void setInterface(ListModel<VdsNetworkInterface> value)
     {
         networkInterface = value;
     }
 
-    private EntityModel address;
+    private EntityModel<String> address;
 
-    public EntityModel getAddress()
+    public EntityModel<String> getAddress()
     {
         return address;
     }
 
-    private void setAddress(EntityModel value)
+    private void setAddress(EntityModel<String> value)
     {
         address = value;
     }
 
-    private EntityModel subnet;
+    private EntityModel<String> subnet;
 
-    public EntityModel getSubnet()
+    public EntityModel<String> getSubnet()
     {
         return subnet;
     }
 
-    private void setSubnet(EntityModel value)
+    private void setSubnet(EntityModel<String> value)
     {
         subnet = value;
     }
 
-    private EntityModel gateway;
+    private EntityModel<String> gateway;
 
-    public EntityModel getGateway()
+    public EntityModel<String> getGateway()
     {
         return gateway;
     }
 
-    private void setGateway(EntityModel value)
+    private void setGateway(EntityModel<String> value)
     {
         gateway = value;
     }
 
-    private ListModel network;
+    private ListModel<Network> network;
 
-    public ListModel getNetwork()
+    public ListModel<Network> getNetwork()
     {
         return network;
     }
 
-    private void setNetwork(ListModel value)
+    private void setNetwork(ListModel<Network> value)
     {
         network = value;
     }
 
-    private EntityModel checkConnectivity;
+    private EntityModel<Boolean> checkConnectivity;
 
-    public EntityModel getCheckConnectivity()
+    public EntityModel<Boolean> getCheckConnectivity()
     {
         return checkConnectivity;
     }
 
-    private void setCheckConnectivity(EntityModel value)
+    private void setCheckConnectivity(EntityModel<Boolean> value)
     {
         checkConnectivity = value;
     }
 
-    private ListModel bondingOptions;
+    private ListModel<Map.Entry<String, EntityModel<String>>> bondingOptions;
 
-    public ListModel getBondingOptions()
+    public ListModel<Map.Entry<String, EntityModel<String>>> getBondingOptions()
     {
         return bondingOptions;
     }
 
-    private void setBondingOptions(ListModel value)
+    private void setBondingOptions(ListModel<Map.Entry<String, EntityModel<String>>> value)
     {
         bondingOptions = value;
     }
@@ -130,26 +131,26 @@ public class HostInterfaceModel extends EntityModel
         networks = value;
     }
 
-    private EntityModel name;
+    private EntityModel<String> name;
 
-    public EntityModel getName()
+    public EntityModel<String> getName()
     {
         return name;
     }
 
-    public void setName(EntityModel value)
+    public void setName(EntityModel<String> value)
     {
         name = value;
     }
 
-    private EntityModel commitChanges;
+    private EntityModel<Boolean> commitChanges;
 
-    public EntityModel getCommitChanges()
+    public EntityModel<Boolean> getCommitChanges()
     {
         return commitChanges;
     }
 
-    public void setCommitChanges(EntityModel value)
+    public void setCommitChanges(EntityModel<Boolean> value)
     {
         commitChanges = value;
     }
@@ -222,13 +223,13 @@ public class HostInterfaceModel extends EntityModel
         onPropertyChanged(new PropertyChangedEventArgs("BondingOptionsOverrideNotification")); //$NON-NLS-1$
     }
 
-    private EntityModel isToSync;
+    private EntityModel<Boolean> isToSync;
 
-    public EntityModel getIsToSync() {
+    public EntityModel<Boolean> getIsToSync() {
         return isToSync;
     }
 
-    public void setIsToSync(EntityModel isToSync) {
+    public void setIsToSync(EntityModel<Boolean> isToSync) {
         this.isToSync = isToSync;
     }
 
@@ -272,27 +273,27 @@ public class HostInterfaceModel extends EntityModel
     public HostInterfaceModel(boolean compactMode)
     {
         setSetupNetworkMode(compactMode);
-        setInterface(new ListModel());
-        setNetwork(new ListModel());
-        setName(new EntityModel());
-        setAddress(new EntityModel());
-        setSubnet(new EntityModel());
-        setGateway(new EntityModel());
-        setCheckConnectivity(new EntityModel());
-        setBondingOptions(new ListModel());
-        setCommitChanges(new EntityModel());
+        setInterface(new ListModel<VdsNetworkInterface>());
+        setNetwork(new ListModel<Network>());
+        setName(new EntityModel<String>());
+        setAddress(new EntityModel<String>());
+        setSubnet(new EntityModel<String>());
+        setGateway(new EntityModel<String>());
+        setCheckConnectivity(new EntityModel<Boolean>());
+        setBondingOptions(new ListModel<Map.Entry<String, EntityModel<String>>>());
+        setCommitChanges(new EntityModel<Boolean>());
         setQosOverridden(new EntityModel<Boolean>());
         setQosModel(new BaseNetworkQosModel());
 
-        setIsToSync(new EntityModel(){
+        setIsToSync(new EntityModel<Boolean>(){
             @Override
-            public void setEntity(Object value) {
+            public void setEntity(Boolean value) {
                 super.setEntity(value);
                 if (getIsToSync().getIsChangable()){
-                    if (!(Boolean)value){
+                    if (!value){
                         revertChanges();
                     }
-                    setBootProtocolsAvailable((Boolean) value);
+                    setBootProtocolsAvailable(value);
                 }
             }
 
@@ -339,7 +340,7 @@ public class HostInterfaceModel extends EntityModel
     {
         updateCanSpecify();
 
-        Network network = (Network) getNetwork().getSelectedItem();
+        Network network = getNetwork().getSelectedItem();
         setBootProtocolsAvailable((network != null && "None".equals(network.getName())) ? false //$NON-NLS-1$
                 : true);
 

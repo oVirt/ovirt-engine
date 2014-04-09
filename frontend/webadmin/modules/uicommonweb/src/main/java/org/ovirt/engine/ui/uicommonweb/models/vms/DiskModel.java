@@ -69,7 +69,7 @@ public class DiskModel extends Model
         this.description = description;
     }
 
-    public EntityModel getSourceStorageDomainName() {
+    public EntityModel<String> getSourceStorageDomainName() {
         return sourceStorageDomainName;
     }
 
@@ -93,7 +93,7 @@ public class DiskModel extends Model
         this.diskInterface = diskInterface;
     }
 
-    public ListModel getSourceStorageDomain() {
+    public ListModel<StorageDomain> getSourceStorageDomain() {
         return sourceStorageDomain;
     }
 

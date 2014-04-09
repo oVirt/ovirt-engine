@@ -22,7 +22,6 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
@@ -116,11 +115,11 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
 
     @UiField
     @Path(value = "formattedStorageName.entity")
-    EntityModelTextBoxEditor storageNameEditor;
+    StringEntityModelTextBoxEditor storageNameEditor;
 
     @UiField
     @Path(value = "storage.path.entity")
-    EntityModelTextBoxEditor pathEditor;
+    StringEntityModelTextBoxEditor pathEditor;
 
     @UiField
     @WithElementId

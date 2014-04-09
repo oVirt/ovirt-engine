@@ -27,86 +27,86 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class HostBondInterfaceModel extends Model
 {
 
-    private SortedListModel privateBond;
+    private SortedListModel<String> privateBond;
 
-    public SortedListModel getBond()
+    public SortedListModel<String> getBond()
     {
         return privateBond;
     }
 
-    protected void setBond(SortedListModel value)
+    protected void setBond(SortedListModel<String> value)
     {
         privateBond = value;
     }
 
-    private EntityModel privateAddress;
+    private EntityModel<String> privateAddress;
 
-    public EntityModel getAddress()
+    public EntityModel<String> getAddress()
     {
         return privateAddress;
     }
 
-    private void setAddress(EntityModel value)
+    private void setAddress(EntityModel<String> value)
     {
         privateAddress = value;
     }
 
-    private EntityModel privateSubnet;
+    private EntityModel<String> privateSubnet;
 
-    public EntityModel getSubnet()
+    public EntityModel<String> getSubnet()
     {
         return privateSubnet;
     }
 
-    private void setSubnet(EntityModel value)
+    private void setSubnet(EntityModel<String> value)
     {
         privateSubnet = value;
     }
 
-    private EntityModel privateGateway;
+    private EntityModel<String> privateGateway;
 
-    public EntityModel getGateway()
+    public EntityModel<String> getGateway()
     {
         return privateGateway;
     }
 
-    private void setGateway(EntityModel value)
+    private void setGateway(EntityModel<String> value)
     {
         privateGateway = value;
     }
 
-    private ListModel privateNetwork;
+    private ListModel<Network> privateNetwork;
 
-    public ListModel getNetwork()
+    public ListModel<Network> getNetwork()
     {
         return privateNetwork;
     }
 
-    private void setNetwork(ListModel value)
+    private void setNetwork(ListModel<Network> value)
     {
         privateNetwork = value;
     }
 
-    private ListModel privateBondingOptions;
+    private ListModel<Map.Entry<String, EntityModel<String>>> privateBondingOptions;
 
-    public ListModel getBondingOptions()
+    public ListModel<Map.Entry<String, EntityModel<String>>> getBondingOptions()
     {
         return privateBondingOptions;
     }
 
-    private void setBondingOptions(ListModel value)
+    private void setBondingOptions(ListModel<Map.Entry<String, EntityModel<String>>> value)
     {
         privateBondingOptions = value;
     }
 
-    private EntityModel privateCheckConnectivity;
+    private EntityModel<Boolean> privateCheckConnectivity;
 
-    public EntityModel getCheckConnectivity()
+    public EntityModel<Boolean> getCheckConnectivity()
     {
         return privateCheckConnectivity;
     }
 
-    private void setCheckConnectivity(EntityModel value)
+    private void setCheckConnectivity(EntityModel<Boolean> value)
     {
         privateCheckConnectivity = value;
     }
@@ -128,14 +128,14 @@ public class HostBondInterfaceModel extends Model
         }
     }
 
-    private EntityModel privateCommitChanges;
+    private EntityModel<Boolean> privateCommitChanges;
 
-    public EntityModel getCommitChanges()
+    public EntityModel<Boolean> getCommitChanges()
     {
         return privateCommitChanges;
     }
 
-    public void setCommitChanges(EntityModel value)
+    public void setCommitChanges(EntityModel<Boolean> value)
     {
         privateCommitChanges = value;
     }
@@ -188,24 +188,24 @@ public class HostBondInterfaceModel extends Model
     }
 
     public HostBondInterfaceModel() {
-        setAddress(new EntityModel());
-        setSubnet(new EntityModel());
-        setGateway(new EntityModel());
-        setBond(new SortedListModel(new LexoNumericComparator()));
-        setNetwork(new ListModel());
+        setAddress(new EntityModel<String>());
+        setSubnet(new EntityModel<String>());
+        setGateway(new EntityModel<String>());
+        setBond(new SortedListModel<String>(new LexoNumericComparator()));
+        setNetwork(new ListModel<Network>());
         setBootProtocolAvailable(true);
-        setBondingOptions(new ListModel());
-        Map.Entry<String, EntityModel> defaultItem = null;
-        RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
-                new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
-        ArrayList<Map.Entry<String, EntityModel>> list =
+        setBondingOptions(new ListModel<Map.Entry<String, EntityModel<String>>>());
+        Map.Entry<String, EntityModel<String>> defaultItem = null;
+        RefObject<Map.Entry<String, EntityModel<String>>> tempRef_defaultItem =
+                new RefObject<Map.Entry<String, EntityModel<String>>>(defaultItem);
+        ArrayList<Map.Entry<String, EntityModel<String>>> list =
                 AsyncDataProvider.getBondingOptionList(tempRef_defaultItem);
         defaultItem = tempRef_defaultItem.argvalue;
         getBondingOptions().setItems(list);
         getBondingOptions().setSelectedItem(defaultItem);
-        setCheckConnectivity(new EntityModel());
+        setCheckConnectivity(new EntityModel<Boolean>());
         getCheckConnectivity().setEntity(false);
-        EntityModel tempVar = new EntityModel();
+        EntityModel<Boolean> tempVar = new EntityModel<Boolean>();
         tempVar.setEntity(false);
         setCommitChanges(tempVar);
 
@@ -242,7 +242,7 @@ public class HostBondInterfaceModel extends Model
 
     private void updateCanSpecify()
     {
-        Network network = (Network) getNetwork().getSelectedItem();
+        Network network = getNetwork().getSelectedItem();
         boolean isChangeble = getIsStaticAddress() && network != null && !network.getId().equals(Guid.Empty);
         getAddress().setIsChangable(isChangeble);
         getSubnet().setIsChangable(isChangeble);

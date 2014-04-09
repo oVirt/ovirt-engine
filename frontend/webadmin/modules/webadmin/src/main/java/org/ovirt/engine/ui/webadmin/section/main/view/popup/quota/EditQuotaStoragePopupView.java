@@ -4,8 +4,8 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.LongEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.quota.EditQuotaStorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -38,7 +38,7 @@ public class EditQuotaStoragePopupView extends AbstractModelBoundPopupView<EditQ
     @UiField
     @Path(value = "specificStorageValue.entity")
     @WithElementId
-    EntityModelTextBoxEditor storageValueEditor;
+    LongEntityModelTextBoxEditor storageValueEditor;
 
     @UiField
     @Ignore

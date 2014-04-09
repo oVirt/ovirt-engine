@@ -38,8 +38,8 @@ public class IscsiBondModel extends Model {
 
     private static final UIConstants CONSTANTS = ConstantsManager.getInstance().getConstants();
 
-    private EntityModel name;
-    private EntityModel description;
+    private EntityModel<String> name;
+    private EntityModel<String> description;
     private ListModel<Network> networks;
     private ListModel<StorageServerConnections> storageTargets;
 
@@ -48,8 +48,8 @@ public class IscsiBondModel extends Model {
     private UICommand cancelCommand;
 
     public IscsiBondModel() {
-        setName(new EntityModel());
-        setDescription(new EntityModel());
+        setName(new EntityModel<String>());
+        setDescription(new EntityModel<String>());
         setNetworks(new ListModel<Network>());
         setStorageTargets(new ListModel<StorageServerConnections>());
         createSaveButon();
@@ -205,19 +205,19 @@ public class IscsiBondModel extends Model {
         return getName().getIsValid() && getDescription().getIsValid() && getIsValid();
     }
 
-    public EntityModel getName() {
+    public EntityModel<String> getName() {
         return name;
     }
 
-    public void setName(EntityModel name) {
+    public void setName(EntityModel<String> name) {
         this.name = name;
     }
 
-    public EntityModel getDescription() {
+    public EntityModel<String> getDescription() {
         return description;
     }
 
-    public void setDescription(EntityModel description) {
+    public void setDescription(EntityModel<String> description) {
         this.description = description;
     }
 
@@ -270,8 +270,8 @@ public class IscsiBondModel extends Model {
         IscsiBond newIscsiBond = new IscsiBond();
 
         newIscsiBond.setStoragePoolId(getStoragePool().getId());
-        newIscsiBond.setName((String) getName().getEntity());
-        newIscsiBond.setDescription((String) getDescription().getEntity());
+        newIscsiBond.setName(getName().getEntity());
+        newIscsiBond.setDescription(getDescription().getEntity());
         newIscsiBond.setNetworkIds(getSelectedNetworks());
         newIscsiBond.setStorageConnectionIds(getSelectedConnections());
 

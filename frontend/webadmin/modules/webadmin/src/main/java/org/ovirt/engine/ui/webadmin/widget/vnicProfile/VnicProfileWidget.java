@@ -4,9 +4,9 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
@@ -46,7 +46,7 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     @UiField
     @Path("name.entity")
     @WithElementId("name")
-    EntityModelTextBoxOnlyEditor nameEditor;
+    StringEntityModelTextBoxOnlyEditor nameEditor;
 
     @UiField(provided = true)
     @Path(value = "publicUse.entity")
@@ -58,7 +58,7 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     @UiField(provided = true)
     @Path(value = "networkQoS.selectedItem")
     @WithElementId("networkQoS")
-    public ListModelListBoxEditor<Object> networkQoSEditor;
+    public ListModelListBoxEditor<NetworkQoS> networkQoSEditor;
 
     @UiField
     WidgetStyle style;
@@ -72,10 +72,10 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     public VnicProfileWidget() {
         publicUseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         publicInfo = new InfoIcon(templates.italicText(constants.profilePublicUseLabel()), resources);
-        networkQoSEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        networkQoSEditor = new ListModelListBoxEditor<NetworkQoS>(new NullSafeRenderer<NetworkQoS>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return (((NetworkQoS)object).getName());
+            public String renderNullSafe(NetworkQoS networkQoS) {
+                return networkQoS.getName();
             }
         });
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -108,9 +108,9 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
                 });
             }
         });
-        nameEditor.asValueBox().addValueChangeHandler(new ValueChangeHandler<Object>() {
+        nameEditor.asValueBox().addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
-            public void onValueChange(ValueChangeEvent<Object> event) {
+            public void onValueChange(ValueChangeEvent<String> event) {
                 ValueChangeEvent.fire(VnicProfileWidget.this, model);
             }
         });

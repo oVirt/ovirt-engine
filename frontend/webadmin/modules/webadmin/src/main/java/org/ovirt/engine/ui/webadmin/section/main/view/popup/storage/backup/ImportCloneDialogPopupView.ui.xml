@@ -3,7 +3,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+  xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 <ui:style>
     .innerPanel {
@@ -15,14 +16,14 @@
         <g:VerticalPanel>
             <g:Label ui:field="dialogLabelEditor"/>
             <g:Label ui:field="selectLabelEditor"/>
-            <e:EntityModelRadioButtonEditor ui:field="noCloneEditor"/>
-            <e:EntityModelRadioButtonEditor ui:field="cloneEditor"/>
+            <ge:EntityModelRadioButtonEditor ui:field="noCloneEditor"/>
+            <ge:EntityModelRadioButtonEditor ui:field="cloneEditor"/>
             <g:FlowPanel addStyleNames="{style.innerPanel}">
-                <e:EntityModelTextBoxEditor ui:field="nameEditor" />
+                <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
             </g:FlowPanel>
-            <e:EntityModelCheckBoxEditor ui:field="applyToAllEditor" />
+            <ge:EntityModelCheckBoxEditor ui:field="applyToAllEditor" />
             <g:FlowPanel addStyleNames="{style.innerPanel}">
-                <e:EntityModelTextBoxEditor ui:field="suffixEditor" />
+                <ge:StringEntityModelTextBoxEditor ui:field="suffixEditor" />
             </g:FlowPanel>
         </g:VerticalPanel>
     </d:content>

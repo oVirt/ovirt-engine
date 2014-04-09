@@ -11,8 +11,8 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.NewClusterPolicyModel;
@@ -55,17 +55,17 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
     @UiField
     @Path(value = "name.entity")
     @WithElementId("name")
-    EntityModelTextBoxEditor nameEditor;
+    StringEntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
     @WithElementId("description")
-    EntityModelTextBoxEditor descriptionEditor;
+    StringEntityModelTextBoxEditor descriptionEditor;
 
     @UiField(provided = true)
     @Path(value = "loadBalanceList.selectedItem")
     @WithElementId("loadBalanceList")
-    public ListModelListBoxOnlyEditor<Object> loadBalanceListEditor;
+    public ListModelListBoxOnlyEditor<PolicyUnit> loadBalanceListEditor;
 
     @UiField
     @Ignore
@@ -136,10 +136,10 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
     }
 
     private void initListBoxEditors() {
-        loadBalanceListEditor = new ListModelListBoxOnlyEditor<Object>(new NullSafeRenderer<Object>() {
+        loadBalanceListEditor = new ListModelListBoxOnlyEditor<PolicyUnit>(new NullSafeRenderer<PolicyUnit>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((PolicyUnit) object).getName();
+            public String renderNullSafe(PolicyUnit policyUnit) {
+                return policyUnit.getName();
             }
         });
     }
