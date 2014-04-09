@@ -408,6 +408,11 @@ public class HostSetupNetworksModel extends EntityModel {
                 Map<String, String> validProperties =
                         KeyValueModel.convertProperties((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.PreDefinedNetworkCustomProperties,
                                 version));
+                // TODO: extract this (and as much surrounding code as possible) into a custom properties utility common
+                // to backend and frontend (lvernia)
+                if (!logicalNetwork.getEntity().isVmNetwork()) {
+                    validProperties.remove("bridge_opts"); //$NON-NLS-1$
+                }
                 validProperties.putAll(KeyValueModel.convertProperties((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.UserDefinedNetworkCustomProperties,
                         version)));
                 customPropertiesModel.setKeyValueMap(validProperties);
