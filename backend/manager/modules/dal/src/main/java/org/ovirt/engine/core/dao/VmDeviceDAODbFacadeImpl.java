@@ -109,6 +109,15 @@ public class VmDeviceDAODbFacadeImpl extends
     }
 
     @Override
+    public List<VmDevice> getVmDeviceByVmIdAndAddress(Guid vmId, String address) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmId)
+                .addValue("address", address);
+        return getCallsHandler().executeReadList("GetVmDeviceByVmIdAndAddress",
+                createEntityRowMapper(), parameterSource);
+    }
+
+    @Override
     public List<VmDevice> getUnmanagedDevicesByVmId(Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmId);

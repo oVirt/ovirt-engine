@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -120,6 +121,8 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     @Override
     protected void executeVmCommand() {
+        clearAddressAlreadyInUse();
+
         if (getVm().getStatus().isUpOrPaused()) {
             updateDisksFromDb();
             performPlugCommand(getPlugAction(), getDisk(), oldVmDevice);
@@ -138,6 +141,24 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
         getVmStaticDAO().incrementDbGeneration(getVm().getId());
         setSucceeded(true);
+    }
+
+    /**
+     * Clear the device address if a device is being hot plugged and its stored address is already in use by another
+     * plugged device
+     **/
+    private void clearAddressAlreadyInUse() {
+        if (oldVmDevice.getIsPlugged() || oldVmDevice.getAddress().isEmpty()) {
+            return;
+        }
+        List<VmDevice> devices = getVmDeviceDao().getVmDeviceByVmIdAndAddress(getVmId(), oldVmDevice.getAddress());
+        for (VmDevice device : devices) {
+            if (!device.getId().equals(oldVmDevice.getId()) && device.getIsPlugged()) {
+                oldVmDevice.setAddress("");
+                getVmDeviceDao().clearDeviceAddress(oldVmDevice.getDeviceId());
+                break;
+            }
+        }
     }
 
     private void updateDeviceIsPluggedProperty() {

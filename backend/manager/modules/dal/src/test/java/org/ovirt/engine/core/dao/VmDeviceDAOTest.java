@@ -29,7 +29,6 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     private static final int TOTAL_DEVICES = 11;
     private static final int TOTAL_DEVICES_FOR_EXISTING_VM = 4;
 
-
     @Override
     protected VmDeviceId generateNonExistingId() {
         return new VmDeviceId(Guid.newGuid(), Guid.newGuid());
@@ -100,6 +99,12 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
                         PRIVILEGED_USER_ID,
                         true);
         assertGetVMDeviceByIdTypeAndDeviceFullResult(devices);
+    }
+
+    @Test
+    public void testGetVmDeviceByVmIdAndAddress() {
+        List<VmDevice> devices = dao.getVmDeviceByVmIdAndAddress(EXISTING_VM_ID, "sample");
+        assertTrue("The list should not be empty", !devices.isEmpty());
     }
 
     @Test
