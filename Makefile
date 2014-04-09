@@ -162,7 +162,6 @@ GENERATED = \
 	packaging/bin/engine-prolog.sh \
 	packaging/bin/ovirt-engine-log-setup-event.sh \
 	packaging/bin/pki-common.sh \
-	packaging/etc/engine-config/log4j.xml \
 	packaging/etc/engine-manage-domains/engine-manage-domains.conf \
 	packaging/etc/engine-manage-domains/log4j.xml \
 	packaging/etc/engine.conf.d/README \

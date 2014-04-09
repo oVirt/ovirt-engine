@@ -27,7 +27,7 @@ public class EngineConfigTest {
         // get the real path of the config file
         final String path = URLDecoder.decode(ClassLoader.getSystemResource("engine-config.conf").getPath(), "UTF-8");
         Assert.assertNotNull(path);
-        EngineConfig.main("-a", "--config=" + path);
+        EngineConfigExecutor.main("-a", "--config=" + path);
     }
 
     @Test

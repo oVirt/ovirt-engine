@@ -258,6 +258,9 @@ public class EngineConfigCLIParser {
         engineConfigMap.setUser(parseOptionKey(OptionKey.OPTION_USER));
         engineConfigMap.setAdminPassFile(parseOptionKey(OptionKey.OPTION_ADMINPASSFILE));
         engineConfigMap.setOnlyReloadable(parseOptionKey(OptionKey.OPTION_ONLY_RELOADABLE));
+        engineConfigMap.setLogFile(parseOptionKey(OptionKey.OPTION_LOG_FILE));
+        engineConfigMap.setLogLevel(parseOptionKey(OptionKey.OPTION_LOG_LEVEL));
+        engineConfigMap.setLog4jConfig(parseOptionKey(OptionKey.OPTION_LOG4J_CONFIG));
     }
 
     public EngineConfigMap getEngineConfigMap() {
