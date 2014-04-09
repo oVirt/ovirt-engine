@@ -14,7 +14,6 @@ import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_CHANGE_PA
 import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_CONFIG_FILE;
 import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_DOMAIN;
 import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_FORCE;
-import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_HELP;
 import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_LDAP_SERVERS;
 import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_PASSWORD_FILE;
 import static org.ovirt.engine.core.domains.ManageDomainsArguments.ARG_PROVIDER;
@@ -50,13 +49,9 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 
-import javax.xml.parsers.FactoryConfigurationError;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.ldap.LdapProviderType;
@@ -151,51 +146,12 @@ public class ManageDomains {
         }
     }
 
-    private static void exitOnError(ManageDomainsResult result) {
+    public static void exitOnError(ManageDomainsResult result) {
         if (!result.isSuccessful()) {
             log.error(result.getDetailedMessage());
             System.out.println(result.getDetailedMessage());
             System.exit(result.getExitCode());
         }
-    }
-
-    /**
-     * Initializes logging configuration
-     */
-    private static void initLogging() {
-        String cfgFile = System.getProperty("log4j.configuration");
-        if (StringUtils.isNotBlank(cfgFile)) {
-            try {
-                URL url = new URL(cfgFile);
-                LogManager.resetConfiguration();
-                DOMConfigurator.configure(url);
-            } catch (FactoryConfigurationError | MalformedURLException ex) {
-                System.out.println("Cannot configure logging: " + ex.getMessage());
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-        initLogging();
-        ManageDomains util;
-        try {
-            ManageDomainsArguments mdArgs = new ManageDomainsArguments();
-            mdArgs.parse(args);
-
-            if (mdArgs.contains(ARG_HELP)) {
-                mdArgs.printHelp();
-                System.exit(0);
-            } else {
-                util = new ManageDomains(mdArgs);
-                util.init();
-                util.createConfigurationProvider();
-                util.runCommand();
-            }
-        } catch (ManageDomainsResult e) {
-            exitOnError(e);
-        }
-        System.out.println(ManageDomainsResultEnum.OK.getDetailedMessage());
-        System.exit(ManageDomainsResultEnum.OK.getExitCode());
     }
 
     private String convertStreamToString(InputStream is) {
@@ -218,7 +174,7 @@ public class ManageDomains {
         }
     }
 
-    private void createConfigurationProvider() throws ManageDomainsResult {
+    public void createConfigurationProvider() throws ManageDomainsResult {
         String engineConfigProperties = createTempPropFile();
         try {
             String engineConfigExecutable = utilityConfiguration.getEngineConfigExecutablePath();
@@ -288,7 +244,7 @@ public class ManageDomains {
         return result != null && result.getNumOfValidAddresses() > 0;
     }
 
-    private void runCommand() throws ManageDomainsResult {
+    public void runCommand() throws ManageDomainsResult {
         String action = args.get(ARG_ACTION);
 
         if (ACTION_ADD.equals(action)) {

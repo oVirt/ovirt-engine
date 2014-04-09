@@ -163,7 +163,6 @@ GENERATED = \
 	packaging/bin/ovirt-engine-log-setup-event.sh \
 	packaging/bin/pki-common.sh \
 	packaging/etc/engine-manage-domains/engine-manage-domains.conf \
-	packaging/etc/engine-manage-domains/log4j.xml \
 	packaging/etc/engine.conf.d/README \
 	packaging/etc/notifier/log4j.xml \
 	packaging/etc/notifier/notifier.conf.d/README \

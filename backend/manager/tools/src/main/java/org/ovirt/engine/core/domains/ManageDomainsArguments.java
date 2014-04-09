@@ -89,6 +89,21 @@ public class ManageDomainsArguments {
     public static final String ARG_LDAP_SERVERS = "--ldap-servers";
 
     /**
+     * Log file
+     */
+    public static final String ARG_LOG_FILE = "--log-file";
+
+    /**
+     * Log level
+     */
+    public static final String ARG_LOG_LEVEL = "--log-level";
+
+    /**
+     * Log4j config file
+     */
+    public static final String ARG_LOG4J_CONFIG = "--log4j-config";
+
+    /**
      * Password file
      */
     public static final String ARG_PASSWORD_FILE = "--password-file";
@@ -174,6 +189,21 @@ public class ManageDomainsArguments {
 
         parser.addArg(new ArgumentBuilder()
                 .longName(ARG_CONFIG_FILE)
+                .valueRequied(true)
+                .build());
+
+        parser.addArg(new ArgumentBuilder()
+                .longName(ARG_LOG_FILE)
+                .valueRequied(true)
+                .build());
+
+        parser.addArg(new ArgumentBuilder()
+                .longName(ARG_LOG_LEVEL)
+                .valueRequied(true)
+                .build());
+
+        parser.addArg(new ArgumentBuilder()
+                .longName(ARG_LOG4J_CONFIG)
                 .valueRequied(true)
                 .build());
 
