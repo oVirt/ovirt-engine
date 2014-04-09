@@ -37,6 +37,15 @@ OPTIONS
        -c CFG_FILE, --config=CFG_FILE
            Use the given alternate configuration file.
 
+       --log-file=LOG_FILE
+           Sets file to write logging into (if not set nothing is logged).
+
+       --log-level=LOG_LEVEL
+           Sets log level, one of DEBUG (default), INFO, WARN, ERROR (case insensitive).
+
+       --log4j-config=XML_FILE
+           Sets log4j.xml file which logging configuration is loaded from.
+
 SETTING PASSWORDS
        Passwords can be set in interactive mode:
 
@@ -98,9 +107,8 @@ parseArgs "$@"
 #
 
 exec "${JAVA_HOME}/bin/java" \
-	-Dlog4j.configuration="file:${ENGINE_ETC}/engine-config/log4j.xml" \
 	-Djboss.modules.write-indexes=false \
 	-jar "${JBOSS_HOME}/jboss-modules.jar" \
 	-dependencies org.ovirt.engine.core.tools \
-	-class org.ovirt.engine.core.config.EngineConfig \
+	-class org.ovirt.engine.core.config.EngineConfigExecutor \
 	"$@"

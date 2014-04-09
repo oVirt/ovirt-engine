@@ -13,7 +13,10 @@ public enum OptionKey {
         OPTION_VERSION(Arrays.asList(new String[] { "--cver" })),
         OPTION_USER(Arrays.asList(new String[] { "-u", "--user" })),
         OPTION_ADMINPASSFILE(Arrays.asList(new String[] { "--admin-pass-file" })),
-        OPTION_ONLY_RELOADABLE(Arrays.asList(new String[] { "-o", "--only-reloadable" }));
+        OPTION_ONLY_RELOADABLE(Arrays.asList(new String[] { "-o", "--only-reloadable" })),
+        OPTION_LOG_FILE(Arrays.asList(new String[] { "--log-file" })),
+        OPTION_LOG_LEVEL(Arrays.asList(new String[] { "--log-level" })),
+        OPTION_LOG4J_CONFIG(Arrays.asList(new String[] { "--log4j-config" }));
 
     private List<String> optionalStrings;
 
