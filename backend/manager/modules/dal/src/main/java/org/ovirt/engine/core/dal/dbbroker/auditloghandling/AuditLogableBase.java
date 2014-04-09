@@ -461,9 +461,10 @@ public class AuditLogableBase extends TimeoutBase {
         }
     }
 
-    public void addCustomValue(final String name, final String value) {
+    public AuditLogableBase addCustomValue(final String name, final String value) {
         allocateCustomValues();
         customValues.put(name.toLowerCase(), value);
+        return this;
     }
 
     public void appendCustomValue(final String name, final String value, final String separator) {
