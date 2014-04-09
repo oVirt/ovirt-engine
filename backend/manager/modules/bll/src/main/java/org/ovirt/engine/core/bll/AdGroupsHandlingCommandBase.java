@@ -47,7 +47,7 @@ public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extend
             if (dbGroup != null) {
                 Directory directory = AuthenticationProfileRepository.getInstance().getDirectory(dbGroup.getDomain());
                 if (directory != null) {
-                    mGroup = directory.findGroup(dbGroup.getExternalId());
+                    mGroup = directory.findGroupById(dbGroup.getExternalId());
                 }
             }
         }
