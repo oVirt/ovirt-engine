@@ -9,7 +9,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.cli.ArgumentBuilder;
@@ -19,8 +18,6 @@ import org.ovirt.engine.core.utils.cli.ExtendedCliParser;
  * Class for command line arguments parsing and validation
  */
 public class ManageDomainsArguments {
-    private final static Logger log = Logger.getLogger(ManageDomainsArguments.class);
-
     /**
      * Path for help properties
      */
@@ -413,7 +410,6 @@ public class ManageDomainsArguments {
         try (InputStream is = getClass().getResourceAsStream(HELP_PROPERTIES)) {
             helpProp.load(is);
         } catch (Exception ex) {
-            log.error("Error reading help properties", ex);
             System.out.println("Error reading help content");
         }
         if (!helpProp.isEmpty()) {
