@@ -277,6 +277,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         updateVirtioScsiAvailability();
         updateOSValues();
         updateTemplate();
+        updateNumOfSockets();
     }
 
     @Override
