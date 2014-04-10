@@ -1,20 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.editor.client.Editor.Ignore;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.IndexedPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.Widget;
+import java.util.Map;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -30,6 +16,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInitModel;
@@ -38,7 +25,20 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-import java.util.Map;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IndexedPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.Widget;
 
 public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitModel> implements IndexedPanel {
 
@@ -112,9 +112,9 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     EntityModelTextBoxEditor hostnameEditor;
 
     @UiField
-    @Path(value = "domain.entity")
+    @Path(value = "sysprepDomain.selectedItem")
     @WithElementId
-    EntityModelTextBoxEditor domainEditor;
+    ListModelSuggestBoxEditor sysprepDomainEditor;
 
     @UiField
     @Path(value = "authorizedKeys.entity")
@@ -323,6 +323,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
     void localize() {
         hostnameEditor.setLabel(constants.cloudInitHostnameLabel());
+        sysprepDomainEditor.setLabel(constants.domainVmPopup());
         authorizedKeysEditor.setLabel(constants.cloudInitAuthorizedKeysLabel());
         passwordSetEditor.setLabel(constants.vmInitPasswordSetLabel());
         regenerateKeysEnabledEditor.setLabel(constants.cloudInitRegenerateKeysLabel());
@@ -334,7 +335,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         rootPasswordVerificationEditor.setLabel(constants.cloudInitRootPasswordVerificationLabel());
 
         networkEnabledEditor.setLabel(constants.cloudInitNetworkLabel());
-        domainEditor.setLabel(constants.domainVmPopup());
 
         String sep = "|"; //$NON-NLS-1$
         // sequence is: <select label> | [+] <add label> | [-] <remove label>
@@ -387,10 +387,10 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         setNetworkStaticDetailsStyle(false);
 
         windowsSyspreptimeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
+        sysprepDomainEditor.addStyleName(customizableStyle.primaryOption());
         windowsSyspreptimeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
         windowsSysprepTimeZoneEditor.addStyleName(customizableStyle.primaryOption());
         hostnameEditor.addStyleName(customizableStyle.primaryOption());
-        domainEditor.addStyleName(customizableStyle.primaryOption());
         timeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
         timeZoneEditor.addStyleName(customizableStyle.primaryOption());
         rootPasswordEditor.addStyleName(customizableStyle.primaryOption());

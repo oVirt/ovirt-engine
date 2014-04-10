@@ -3,6 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
              xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
              xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
@@ -57,6 +58,7 @@
 
 	<g:FlowPanel addStyleNames="{style.verticalPanel}" ui:field="mainPanel">
         <g:FlowPanel ui:field="syspreptOptionsContent">
+            <ge:ListModelSuggestBoxEditor ui:field="sysprepDomainEditor" />
             <e:EntityModelCheckBoxEditor ui:field="windowsSyspreptimeZoneEnabledEditor" />
             <e:ListModelListBoxEditor ui:field="windowsSysprepTimeZoneEditor" />
         </g:FlowPanel>
@@ -64,7 +66,6 @@
         <g:FlowPanel ui:field="cloudInitOptionsContent">
             <g:FlowPanel>
                 <e:EntityModelTextBoxEditor ui:field="hostnameEditor" />
-                <e:EntityModelTextBoxEditor ui:field="domainEditor" />
                 <e:EntityModelCheckBoxEditor ui:field="timeZoneEnabledEditor" />
                 <e:ListModelListBoxEditor ui:field="timeZoneEditor" />
             </g:FlowPanel>

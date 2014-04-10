@@ -15,6 +15,8 @@ import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -34,8 +36,16 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 
 public class VmInitModel extends Model {
 
+    private boolean isWindowsOS = false;
     public boolean getHostnameEnabled() {
         return !StringHelper.isNullOrEmpty((String) getHostname().getEntity());
+    }
+
+    public boolean getDomainEnabled() {
+        if (isWindowsOS) {
+            return !StringHelper.isNullOrEmpty(getSysprepDomain().getSelectedItem());
+        }
+        return false;
     }
 
     private ListModel windowsSysprepTimeZone;
@@ -66,12 +76,13 @@ public class VmInitModel extends Model {
         privateHostname = value;
     }
 
-    private EntityModel privateDomain;
-    public EntityModel getDomain() {
-        return privateDomain;
+    private ListModel<String> privateSysprepDomain;
+    public ListModel<String> getSysprepDomain() {
+        return privateSysprepDomain;
     }
-    private void setDomain(EntityModel value) {
-        privateDomain = value;
+
+    private void setSysprepDomain(ListModel<String> value) {
+        privateSysprepDomain = value;
     }
 
     private EntityModel privateCustomScript;
@@ -331,7 +342,7 @@ public class VmInitModel extends Model {
         setWindowsSysprepTimeZoneEnabled(new EntityModel());
 
         setHostname(new EntityModel());
-        setDomain(new EntityModel());
+        setSysprepDomain(new ListModel<String>());
         setAuthorizedKeys(new EntityModel());
         setCustomScript(new EntityModel());
         setRegenerateKeysEnabled(new EntityModel());
@@ -390,7 +401,6 @@ public class VmInitModel extends Model {
         getPasswordSet().setIsChangable(false);
 
         getHostname().setEntity("");
-        getDomain().setEntity("");
         getRootPassword().setEntity("");
         getRootPasswordVerification().setEntity("");
         getAuthorizedKeys().setEntity("");
@@ -417,16 +427,17 @@ public class VmInitModel extends Model {
                     }
                 }));
 
+        isWindowsOS = vm != null ? AsyncDataProvider.isWindowsOsType(vm.getOsId()) : true;
+
         // if not proven to be hidden, show it
         boolean isWindows = vm != null ? AsyncDataProvider.isWindowsOsType(vm.getOsId()) : true;
-        getDomain().setIsAvailable(isWindows);
 
         VmInit vmInit = (vm != null) ? vm.getVmInit() : null;
         if (vmInit != null) {
             if (!StringHelper.isNullOrEmpty(vmInit.getHostname())) {
                 getHostname().setEntity(vmInit.getHostname());
             }
-            getDomain().setEntity(vmInit.getDomain());
+            updateSysprepDomain(vmInit.getDomain());
             final String tz = vmInit.getTimeZone();
             if (!StringHelper.isNullOrEmpty(tz)) {
                 if (AsyncDataProvider.isWindowsOsType(vm.getOsId())) {
@@ -524,7 +535,7 @@ public class VmInitModel extends Model {
         if (getHostnameEnabled()) {
             getHostname().validateEntity(new IValidation[] { new HostnameValidation() });
         }
-        getDomain().setIsValid(true);
+        getSysprepDomain().setIsValid(true);
 
         getAuthorizedKeys().setIsValid(true);
 
@@ -606,7 +617,7 @@ public class VmInitModel extends Model {
         }
 
         return getHostname().getIsValid()
-                && getDomain().getIsValid()
+                && getSysprepDomain().getIsValid()
                 && getAuthorizedKeys().getIsValid()
                 && getTimeZoneList().getIsValid()
                 && getRootPassword().getIsValid()
@@ -636,7 +647,7 @@ public class VmInitModel extends Model {
 
     public VmInit buildCloudInitParameters(UnitVmModel model) {
         if (model.getVmInitEnabled().getEntity()) {
-            return buildModelSpecificParameters(model.getIsWindowsOS(), model.getDomain().getEntity());
+            return buildModelSpecificParameters(model.getIsWindowsOS());
         } else {
             return null;
         }
@@ -645,13 +656,13 @@ public class VmInitModel extends Model {
     public VmInit buildCloudInitParameters(RunOnceModel model) {
         if ((Boolean) model.getIsSysprepEnabled().getEntity() ||
                 (Boolean) model.getIsCloudInitEnabled().getEntity()) {
-            return buildModelSpecificParameters(model.getIsWindowsOS(), (String) model.getSysPrepSelectedDomainName().getEntity());
+            return buildModelSpecificParameters(model.getIsWindowsOS());
         } else {
             return null;
         }
     }
 
-    private VmInit buildModelSpecificParameters(boolean isWindows, String domainFromModel) {
+    private VmInit buildModelSpecificParameters(boolean isWindows) {
         VmInit vmInit = buildCloudInitParameters();
         if (isWindows && (Boolean) getWindowsSysprepTimeZoneEnabled().getEntity()) {
             Map.Entry<String, String> entry = (Map.Entry<String, String>) getWindowsSysprepTimeZone().getSelectedItem();
@@ -662,11 +673,8 @@ public class VmInitModel extends Model {
         }
 
         if (isWindows) {
-            vmInit.setDomain(domainFromModel);
-        } else {
-            vmInit.setDomain((String) getDomain().getEntity());
+            vmInit.setDomain(getSysprepDomain().getSelectedItem());
         }
-
         return vmInit;
     }
 
@@ -839,6 +847,31 @@ public class VmInitModel extends Model {
     }
 
     public void osTypeChanged(Integer selectedItem) {
-        getDomain().setIsAvailable(selectedItem != null && AsyncDataProvider.isWindowsOsType(selectedItem));
+        isWindowsOS = AsyncDataProvider.isWindowsOsType(selectedItem);
     }
+
+    private String currentDomain = null;
+    protected void updateSysprepDomain(String domain)
+    {
+        // Can't use domain since onSuccess is async call and it have
+        // a different stack call.
+        currentDomain = domain;
+        AsyncDataProvider.getDomainList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        @SuppressWarnings("unchecked")
+                        List<String> domains = (List<String>) returnValue;
+                        getSysprepDomain().setItems(domains);
+                        if (!StringHelper.isNullOrEmpty(currentDomain)) {
+                            if (!domains.contains(currentDomain)) {
+                                domains.add(currentDomain);
+                            }
+                            getSysprepDomain().setSelectedItem(currentDomain);
+                        }
+                    }
+                }),
+                true);
+    }
+
 }

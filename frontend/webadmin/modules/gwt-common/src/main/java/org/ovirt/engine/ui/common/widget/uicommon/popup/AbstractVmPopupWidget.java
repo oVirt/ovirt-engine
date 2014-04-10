@@ -1,6 +1,8 @@
 
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -96,7 +98,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
 
 public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWidget<UnitVmModel> {
 
@@ -372,11 +373,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     // ==Initial run Tab==
     @UiField
     protected DialogTab initialRunTab;
-
-    @UiField(provided = true)
-    @Path(value = "domain.selectedItem")
-    @WithElementId("domain")
-    public ListModelListBoxEditor<String> domainEditor;
 
     @UiField
     @Path(value = "vmInitEnabled.entity")
@@ -951,14 +947,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        // Windows Sysprep
-        domainEditor = new ListModelListBoxEditor<String>(new NullSafeRenderer<String>() {
-            @Override
-            public String renderNullSafe(String object) {
-                return object.toString();
-            }
-        }, new ModeSwitchingVisibilityRenderer());
-
         timeZoneEditor = new ListModelListBoxEditor<TimeZoneModel>(new NullSafeRenderer<TimeZoneModel>() {
             @Override
             public String renderNullSafe(TimeZoneModel timeZone) {
@@ -1087,7 +1075,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         // initial run Tab
         initialRunTab.setLabel(constants.initialRunVmPopup());
-        domainEditor.setLabel(constants.domainVmPopup());
         timeZoneEditor.setLabel(constants.tzVmPopup());
 
         vmInitEnabledEditor.setLabel(constants.cloudInitOrSysprep());
@@ -1288,7 +1275,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 if (object.getSysprepEnabled().getEntity() != null) {
                     boolean sysprepEnabled = object.getSysprepEnabled().getEntity();
                     vmInitEditor.setSyspepContentVisible(object.getSysprepEnabled().getEntity());
-                    domainEditor.setVisible(sysprepEnabled);
                 }
             }
         });
@@ -1322,9 +1308,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).propertyName;
-                if ("IsWindowsOS".equals(propName)) { //$NON-NLS-1$
-                    domainEditor.setEnabled(vm.getIsWindowsOS());
-                } else if ("IsGeneralTabValid".equals(propName)) { //$NON-NLS-1$
+                if ("IsGeneralTabValid".equals(propName)) { //$NON-NLS-1$
                     if (vm.getIsGeneralTabValid()) {
                         generalTab.markAsValid();
                     } else {
@@ -1533,7 +1517,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // ==Initial run Tab==
         nextTabIndex = initialRunTab.setTabIndexes(nextTabIndex);
         timeZoneEditor.setTabIndex(nextTabIndex++);
-        domainEditor.setTabIndex(nextTabIndex++);
 
         // ==Console Tab==
         nextTabIndex = consoleTab.setTabIndexes(nextTabIndex);

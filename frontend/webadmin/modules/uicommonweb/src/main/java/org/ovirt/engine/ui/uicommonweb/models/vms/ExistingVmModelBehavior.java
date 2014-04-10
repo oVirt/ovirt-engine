@@ -249,9 +249,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
         updateTimeZone(vm.getTimeZone());
 
-        // Update domain list
-        updateDomain();
-
         updateHostPinning(vm.getMigrationSupport());
         getModel().getHostCpu().setEntity(vm.isUseHostCpuFlags());
 

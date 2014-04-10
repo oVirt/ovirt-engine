@@ -196,9 +196,6 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
 
         updateTimeZone(template.getTimeZone());
 
-        // Update domain list
-        updateDomain();
-
         // Storage domain and provisioning are not available for an existing VM.
         getModel().getStorageDomain().setIsChangable(false);
         getModel().getProvisioning().setIsAvailable(false);

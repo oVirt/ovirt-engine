@@ -332,30 +332,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 : TimeZoneType.GENERAL_TIMEZONE;
     }
 
-    protected void updateDomain()
-    {
-        AsyncDataProvider.getDomainList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-
-                        VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
-                        List<String> domains = (List<String>) returnValue;
-                        String oldDomain = behavior.getModel().getDomain().getSelectedItem();
-                        if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) //$NON-NLS-1$
-                        {
-                            domains.add(0, oldDomain);
-                        }
-                        behavior.getModel().getDomain().setItems(domains);
-                        behavior.getModel()
-                                .getDomain()
-                                .setSelectedItem((oldDomain != null) ? oldDomain : Linq.firstOrDefault(domains));
-
-                    }
-                }, getModel().getHash()),
-                true);
-    }
-
     private Integer cachedMaxPriority;
 
     protected void initPriority(int priority)

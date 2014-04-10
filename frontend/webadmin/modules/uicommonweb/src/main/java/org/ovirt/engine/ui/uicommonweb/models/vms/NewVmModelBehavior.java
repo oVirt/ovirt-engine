@@ -126,9 +126,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             updateVirtioScsiEnabled(template.getId(), template.getOsId());
             updateTimeZone(template.getTimeZone());
 
-            // Update domain list
-            updateDomain();
-
             // Update display protocol selected item
             EntityModel<DisplayType> displayProtocol = null;
             boolean isFirst = true;

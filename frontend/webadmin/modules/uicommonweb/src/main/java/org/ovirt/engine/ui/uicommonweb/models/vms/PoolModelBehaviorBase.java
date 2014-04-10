@@ -131,9 +131,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             updateConsoleDevice(vmBase.getId());
             updateVirtioScsiEnabled(vmBase.getId(), vmBase.getOsId());
 
-            // Update domain list
-            updateDomain();
-
             // Update display protocol selected item
             EntityModel<DisplayType> displayProtocol = null;
             boolean isFirst = true;
