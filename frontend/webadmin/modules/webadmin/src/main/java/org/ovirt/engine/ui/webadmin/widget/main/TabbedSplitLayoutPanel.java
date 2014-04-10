@@ -11,6 +11,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PushButton;
@@ -41,7 +42,9 @@ public class TabbedSplitLayoutPanel extends SplitLayoutPanel {
     }
 
     private static final String WEST_SPLITTER_KEY = "MAIN_WEST_SPLITTER_WIDTH"; //$NON-NLS-1$
+    private static final String WEST_SPLITTER_OLD_KEY = "MAIN_WEST_SPLITTER_OLD_WIDTH"; //$NON-NLS-1$
     private static final Double DEFAULT_STACK_PANEL_WIDTH = 235.0;
+    private static final int STOP_WAIT_TIME = 250;
 
     /**
      * Tabbed Split Layout panel resources.
@@ -106,10 +109,41 @@ public class TabbedSplitLayoutPanel extends SplitLayoutPanel {
         Widget insertedWidget = child;
         if (direction == Direction.WEST) {
             if (westPanel == null) {
-                westPanel = new LayoutPanel();
+                westPanel = new LayoutPanel() {
+                    @Override
+                    public void onResize() {
+                        super.onResize();
+                        LayoutData layout = (LayoutData) westPanel.getLayoutData();
+                        if (layout.size == 0) {
+                            setStoredSplitterWidth(WEST_SPLITTER_OLD_KEY, layout.oldSize);
+                        } else {
+                            final double currentSize = layout.size;
+                            Timer comparisonTimer = new Timer() {
+                                @Override
+                                public void run() {
+                                    //Check if the size is still the same, if so, then set the old size to be the
+                                    //new size.
+                                    LayoutData layout = (LayoutData) westPanel.getLayoutData();
+                                    if ((int)layout.size == (int)currentSize) { //Cast to int so comparison works.
+                                        layout.oldSize = layout.size;
+                                    }
+                                }
+                            };
+                            comparisonTimer.schedule(STOP_WAIT_TIME); //run in 250ms.
+                        }
+                    }
+                };
                 collapseLeft.setVisible(true);
                 westPanel.add(collapseLeft);
-                size = getStoredStackPanelWidth();
+                size = getStoredStackPanelWidth(WEST_SPLITTER_KEY);
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+
+                    @Override
+                    public void execute() {
+                        LayoutData layout = (LayoutData) westPanel.getLayoutData();
+                        layout.oldSize = getStoredStackPanelWidth(WEST_SPLITTER_OLD_KEY);
+                    }
+                });
             }
             westPanel.add(child);
             insertedWidget = westPanel;
@@ -152,13 +186,14 @@ public class TabbedSplitLayoutPanel extends SplitLayoutPanel {
             double size = layout.oldSize;
             if (size == 0) {
                 //The old size is 0, so we should restore the default size.
-                size = DEFAULT_STACK_PANEL_WIDTH;
+                size = getStoredStackPanelWidth(WEST_SPLITTER_OLD_KEY);
             }
             // Restore the old size.
             setWestPanelSize(size);
         } else {
-             //Collapse to size 0.
+            //Collapse to size 0.
             layout.oldSize = layout.size;
+            setStoredSplitterWidth(WEST_SPLITTER_OLD_KEY, layout.oldSize);
             setWestPanelSize(0);
         }
     }
@@ -208,7 +243,7 @@ public class TabbedSplitLayoutPanel extends SplitLayoutPanel {
     public void onResize() {
         super.onResize();
         double currentWidth = westPanel.getOffsetWidth();
-        setStoredSplitterWidth(currentWidth);
+        setStoredSplitterWidth(WEST_SPLITTER_KEY, currentWidth);
         determineButtonVisiblity();
         positionLeftCollapseButton();
     }
@@ -249,6 +284,16 @@ public class TabbedSplitLayoutPanel extends SplitLayoutPanel {
         return super.getWidgetSize(getActualWidget(widget));
     }
 
+    @Override
+    public void setWidgetMinSize(Widget widget, int minSize) {
+        super.setWidgetMinSize(getActualWidget(widget), minSize);
+    }
+
+    @Override
+    public void setWidgetSnapClosedSize(Widget widget, int snapClosedSize) {
+        super.setWidgetSnapClosedSize(getActualWidget(widget), snapClosedSize);
+    }
+
     /**
      * Determine if the passed in widget is part of the west or center panel, if so return the center or west panel
      * as the widget, so the super class will handle the operation properly.
@@ -269,8 +314,8 @@ public class TabbedSplitLayoutPanel extends SplitLayoutPanel {
      * Retrieve the stored stack panel width.
      * @return The west stack panel width as a {@code double}
      */
-    private double getStoredStackPanelWidth() {
-        String widthString = clientStorage.getLocalItem(WEST_SPLITTER_KEY);
+    private double getStoredStackPanelWidth(String key) {
+        String widthString = clientStorage.getLocalItem(key);
         double width = DEFAULT_STACK_PANEL_WIDTH; //In case there was no stored width, use the default.
         try {
             if (widthString != null) {
@@ -286,8 +331,8 @@ public class TabbedSplitLayoutPanel extends SplitLayoutPanel {
      * Store the current width in the {@code ClientStorage} of the browser so we can recall it when we log in.
      * @param width The current width in pixels.
      */
-    private void setStoredSplitterWidth(Double width) {
-        clientStorage.setLocalItem(WEST_SPLITTER_KEY, width.toString());
+    private void setStoredSplitterWidth(String key, Double width) {
+        clientStorage.setLocalItem(key, width.toString());
     }
 
 
