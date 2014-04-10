@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
+import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -101,6 +102,9 @@ public class VdsUpdateRunTimeInfo {
     private final Map<VmDeviceId, VmDevice> vmDeviceToSave = new HashMap<>();
     private final List<VmDevice> newVmDevices = new ArrayList<>();
     private final List<VmDeviceId> removedDeviceIds = new ArrayList<>();
+    private final Map<Guid, VmJob> vmJobsToUpdate = new HashMap<>();
+    private final List<Guid> vmJobIdsToRemove = new ArrayList<>();
+    private final List<Guid> existingVmJobIds = new ArrayList<>();
     private final Map<VM, VmDynamic> _vmsClientIpChanged = new HashMap<>();
     private final Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics = new HashMap<>();
     private final List<VmDynamic> _poweringUpVms = new ArrayList<>();
@@ -192,6 +196,7 @@ public class VdsUpdateRunTimeInfo {
         getDbFacade().getDiskImageDynamicDao().updateAllInBatch(_vmDiskImageDynamicToSave.values());
         getDbFacade().getLunDao().updateAllInBatch(vmLunDisksToSave);
         saveVmDevicesToDb();
+        saveVmJobsToDb();
         saveVmGuestAgentNetworkDevices();
         getVdsEventListener().addExternallyManagedVms(_externalVmsToAdd);
     }
@@ -339,6 +344,21 @@ public class VdsUpdateRunTimeInfo {
                         @Override
                         public Void runInTransaction() {
                             getDbFacade().getVdsNumaNodeDAO().massUpdateNumaNodeStatistics(vdsNumaNodesToSave);
+                            return null;
+                        }
+                    });
+        }
+    }
+
+    private void saveVmJobsToDb() {
+        getDbFacade().getVmJobDao().updateAllInBatch(vmJobsToUpdate.values());
+
+        if (!vmJobIdsToRemove.isEmpty()) {
+            TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                    new TransactionMethod<Void>() {
+                        @Override
+                        public Void runInTransaction() {
+                            getDbFacade().getVmJobDao().removeAll(vmJobIdsToRemove);
                             return null;
                         }
                     });
@@ -893,6 +913,10 @@ public class VdsUpdateRunTimeInfo {
             log.debug("vds::refreshVmList entered");
         }
 
+        // Retrieve the list of existing jobs and/or job placeholders.  Only these jobs
+        // are allowed to be updated by updateVmJobs()
+        refreshExistingVmJobList();
+
         if (fetchRunningVms()) {
             // refreshCommitedMemory must be called before we modify _runningVms, because
             // we iterate over it there, assuming it is the same as it was received from VDSM
@@ -925,7 +949,14 @@ public class VdsUpdateRunTimeInfo {
             prepareGuestAgentNetworkDevicesForUpdate();
 
             updateLunDisks();
+
+            updateVmJobs();
         }
+    }
+
+    private void refreshExistingVmJobList() {
+        existingVmJobIds.clear();
+        existingVmJobIds.addAll(getDbFacade().getVmJobDao().getAllIds());
     }
 
     /**
@@ -1024,6 +1055,52 @@ public class VdsUpdateRunTimeInfo {
                         lunFromDB.setDeviceSize(lunFromMap.getDeviceSize());
                         vmLunDisksToSave.add(lunFromDB);
                     }
+                }
+            }
+        }
+    }
+
+    protected void updateVmJobs() {
+        // The database vmJob records are synced with the vmJobs returned from each VM.
+        vmJobIdsToRemove.clear();
+        vmJobsToUpdate.clear();
+
+        for (Entry<Guid, VmInternalData> vmInternalData : _runningVms.entrySet()) {
+            Set<Guid> vmJobIdsToIgnore = new HashSet<>();
+            Map<Guid, VmJob> jobsFromDb = new HashMap<>();
+            for (VmJob job : getDbFacade().getVmJobDao().getAllForVm(vmInternalData.getKey())) {
+                // Only jobs that were in the DB before our update may be updated/removed;
+                // others are completely ignored for the time being
+                if (existingVmJobIds.contains(job.getId())) {
+                    jobsFromDb.put(job.getId(), job);
+                }
+            }
+
+            if (vmInternalData.getValue().getVmStatistics().getVmJobs() == null) {
+                // If no vmJobs key was returned, we can't presume anything about the jobs; save them all
+                log.info("No vmJob data returned, preserving existing jobs");
+                continue;
+            }
+
+            for (VmJob jobFromVds : vmInternalData.getValue().getVmStatistics().getVmJobs()) {
+                if (jobsFromDb.containsKey(jobFromVds.getId())) {
+                    if (jobsFromDb.get(jobFromVds.getId()).equals(jobFromVds)) {
+                        // Same data, no update needed.  It would be nice if a caching
+                        // layer would take care of this for us.
+                        vmJobIdsToIgnore.add(jobFromVds.getId());
+                        log.infoFormat("VM job {0}: Preserving (no change)", jobFromVds.getId());
+                    } else {
+                        vmJobsToUpdate.put(jobFromVds.getId(), jobFromVds);
+                        log.infoFormat("VM job {0}: Updating", jobFromVds.getId());
+                    }
+                }
+            }
+
+            // Any existing jobs not saved need to be removed
+            for (Guid id : jobsFromDb.keySet()) {
+                if (!vmJobsToUpdate.containsKey(id) && !vmJobIdsToIgnore.contains(id)) {
+                    vmJobIdsToRemove.add(id);
+                    log.infoFormat("VM job {0}: Deleting", id);
                 }
             }
         }
