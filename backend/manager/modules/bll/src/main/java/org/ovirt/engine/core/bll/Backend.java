@@ -200,6 +200,9 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // Initialize the AuditLogCleanupManager
         AuditLogCleanupManager.getInstance();
 
+        // Initialize the CommandEntityCleanupManager
+        CommandEntityCleanupManager.getInstance();
+
         TagsDirector.getInstance().init();
 
         IsoDomainListSyncronizer.getInstance();

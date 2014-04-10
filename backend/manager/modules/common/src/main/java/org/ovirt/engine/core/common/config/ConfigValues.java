@@ -91,6 +91,13 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     AuditLogAgingThreshold,
+    @TypeConverterAttribute(Date.class)
+    @DefaultValueAttribute("03:35:35")
+    CommandEntityCleanupTime,
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("30")
+    CommandEntityAgingThreshold,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("drac5,ilo,ipmilan,rsa,bladecenter,alom,apc,eps,wti,rsb")
