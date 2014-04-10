@@ -70,6 +70,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     @UnchangeableByVdsm
     private String stopReason;
     private VmExitReason exitReason;
+    private int guestCpuCount;
 
     public static final String APPLICATIONS_LIST_FIELD_NAME = "appList";
     public static final String STATUS_FIELD_NAME = "status";
@@ -497,7 +498,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setPauseStatus(VmPauseStatus pauseStatus) {
         this.pauseStatus = pauseStatus;
-
     }
 
     public VmPauseStatus getPauseStatus() {
@@ -562,5 +562,13 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setExitReason(VmExitReason value) {
         exitReason = value;
+    }
+
+    public void setGuestCpuCount(int guestCpuCount) {
+        this.guestCpuCount = guestCpuCount;
+    }
+
+    public int getGuestCpuCount() {
+        return guestCpuCount;
     }
 }

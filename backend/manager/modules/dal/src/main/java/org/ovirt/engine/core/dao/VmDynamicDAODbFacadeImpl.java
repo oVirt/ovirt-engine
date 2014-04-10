@@ -126,7 +126,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("cpu_name", vm.getCpuName())
                 .addValue("current_cd", vm.getCurrentCd())
                 .addValue("reason", vm.getStopReason())
-                .addValue("exit_reason", vm.getExitReason().getValue());
+                .addValue("exit_reason", vm.getExitReason().getValue())
+                .addValue("guest_cpu_count", vm.getGuestCpuCount());
     }
 
     @Override
@@ -194,6 +195,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 entity.setStopReason(rs.getString("reason"));
                 VmExitReason exitReason = VmExitReason.forValue(rs.getInt("exit_reason"));
                 entity.setExitReason(exitReason);
+                entity.setGuestCpuCount(rs.getInt("guest_cpu_count"));
                 return entity;
             }
         };
@@ -246,7 +248,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                         .addValue("cpu_name", entity.getCpuName())
                         .addValue("current_cd", entity.getCurrentCd())
                         .addValue("reason", entity.getStopReason())
-                        .addValue("exit_reason", entity.getExitReason());
+                        .addValue("exit_reason", entity.getExitReason())
+                        .addValue("guest_cpu_count", entity.getGuestCpuCount());
 
                 return paramValue;
             }

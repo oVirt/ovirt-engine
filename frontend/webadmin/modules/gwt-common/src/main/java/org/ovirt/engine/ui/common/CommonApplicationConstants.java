@@ -1781,4 +1781,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("The field is not attached to any instance type")
     String detachedFromInstanceType();
+
+    @DefaultStringValue("Guest CPU Count")
+    String GuestCpuCount();
 }

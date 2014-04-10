@@ -276,6 +276,20 @@ public class VmGeneralModel extends EntityModel
         }
     }
 
+    private int guestCpuCount;
+
+    public String getGuestCpuCount() {
+        if (guestCpuCount > 0) {
+            return String.valueOf(guestCpuCount);
+        } else {
+            return ConstantsManager.getInstance().getConstants().notAvailableLabel();
+        }
+    }
+
+    public void setGuestCpuCount(int value) {
+        guestCpuCount = value;
+    }
+
     private boolean isHighlyAvailable;
 
     public boolean getIsHighlyAvailable()
@@ -569,6 +583,8 @@ public class VmGeneralModel extends EntityModel
                 vm.getNumOfCpus(),
                 vm.getNumOfSockets(),
                 vm.getCpuPerSocket()));
+
+        setGuestCpuCount(vm.getGuestCpuCount());
 
         setHasDomain(AsyncDataProvider.isWindowsOsType(vm.getVmOsId()));
         if (vm.getVmInit() != null) {

@@ -301,6 +301,10 @@ public class VdsBrokerObjectsBuilder {
             String isoName = Paths.get((String) xmlRpcStruct.get(VdsProperties.CDRom)).getFileName().toString();
             vm.setCurrentCd(isoName);
         }
+
+        if (xmlRpcStruct.containsKey(VdsProperties.GUEST_CPU_COUNT)) {
+            vm.setGuestCpuCount(AssignIntValue(xmlRpcStruct, VdsProperties.GUEST_CPU_COUNT));
+        }
     }
 
     public static void updateVMStatisticsData(VmStatistics vm, Map<String, Object> xmlRpcStruct) {

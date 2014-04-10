@@ -229,6 +229,9 @@ public final class VdsProperties {
     public static final String vm_balloon_min = "balloon_min";
     public static final String vm_balloon_target = "balloon_target";
 
+    // reported by guest-agent
+    public static final String GUEST_CPU_COUNT = "guestCPUCount";
+
     public static final String DriveC = "hda"; // drive C:
     public static final String DriveE = "hdb"; // drive E: (D: is the CD-ROM)
     public static final String DriveF = "hdc"; // drive F:
