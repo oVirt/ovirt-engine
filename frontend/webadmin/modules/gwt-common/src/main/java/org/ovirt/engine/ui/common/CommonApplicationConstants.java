@@ -1714,4 +1714,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Migration downtime (ms)")
     String migrationDowntimeLabel();
+
+    @DefaultStringValue("Guest CPU Count")
+    String GuestCpuCount();
 }

@@ -53,6 +53,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private boolean runOnce;
     private String cpuName;
     private String currentCd;
+    private int guestCpuCount;
 
     @Override
     public int hashCode() {
@@ -472,7 +473,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setPauseStatus(VmPauseStatus pauseStatus) {
         this.pauseStatus = pauseStatus;
-
     }
 
     public VmPauseStatus getPauseStatus() {
@@ -521,5 +521,13 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setCurrentCd(String currentCd) {
         this.currentCd = currentCd;
+    }
+
+    public void setGuestCpuCount(int guestCpuCount) {
+        this.guestCpuCount = guestCpuCount;
+    }
+
+    public int getGuestCpuCount() {
+        return guestCpuCount;
     }
 }

@@ -295,6 +295,10 @@ public class VdsBrokerObjectsBuilder {
         } else {
             vm.setCurrentCd(null);
         }
+
+        if (xmlRpcStruct.containsKey(VdsProperties.GUEST_CPU_COUNT)) {
+            vm.setGuestCpuCount(AssignIntValue(xmlRpcStruct, VdsProperties.GUEST_CPU_COUNT));
+        }
     }
 
     public static void updateVMStatisticsData(VmStatistics vm, Map<String, Object> xmlRpcStruct) {

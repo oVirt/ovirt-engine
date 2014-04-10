@@ -1268,7 +1268,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         setClientIp(vm.getClientIp());
         setVmPauseStatus(vm.getPauseStatus());
         setLastWatchdogEvent(vm.getLastWatchdogEvent());
-
+        setGuestCpuCount(vm.getGuestCpuCount());
         // TODO: check what to do with update disk data
         // updateDisksData(vm);
 
@@ -1704,5 +1704,13 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     public void setVmInit(VmInit vmInit) {
         this.vmStatic.setVmInit(vmInit);
+    }
+
+    public void setGuestCpuCount(int guestCpuCount) {
+        getDynamicData().setGuestCpuCount(guestCpuCount);
+    }
+
+    public int getGuestCpuCount() {
+        return getDynamicData().getGuestCpuCount();
     }
 }

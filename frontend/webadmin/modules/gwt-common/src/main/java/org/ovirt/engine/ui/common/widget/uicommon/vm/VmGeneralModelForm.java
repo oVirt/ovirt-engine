@@ -26,6 +26,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     @Path("OS")
     TextBoxLabel oS = new TextBoxLabel();
     TextBoxLabel cpuInfo = new TextBoxLabel();
+    TextBoxLabel guestCpuCount = new TextBoxLabel();
     TextBoxLabel defaultDisplayType = new TextBoxLabel();
     TextBoxLabel origin = new TextBoxLabel();
     TextBoxLabel priority = new TextBoxLabel();
@@ -60,9 +61,10 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         formBuilder.addFormItem(new FormItem(constants.definedMemoryVm(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.physMemGauranteedVm(), minAllocatedMemory, 1, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfo, 2, 1));
-        formBuilder.addFormItem(new FormItem(constants.highlyAvailableVm(), isHighlyAvailable, 3, 1));
-        formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 4, 1));
-        formBuilder.addFormItem(new FormItem(constants.usbPolicyVm(), usbPolicy, 5, 1));
+        formBuilder.addFormItem(new FormItem(constants.GuestCpuCount(), guestCpuCount, 3, 1));
+        formBuilder.addFormItem(new FormItem(constants.highlyAvailableVm(), isHighlyAvailable, 4, 1));
+        formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 5, 1));
+        formBuilder.addFormItem(new FormItem(constants.usbPolicyVm(), usbPolicy, 6, 1));
 
         formBuilder.addFormItem(new FormItem(constants.originVm(), origin, 0, 2));
         formBuilder.addFormItem(new FormItem(constants.runOnVm(), defaultHost, 1, 2));
