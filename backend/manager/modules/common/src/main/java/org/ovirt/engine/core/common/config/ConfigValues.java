@@ -1647,5 +1647,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     MixedDomainTypesInDataCenter,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    IscsiMultipathingSupported,
+
     Invalid;
 }

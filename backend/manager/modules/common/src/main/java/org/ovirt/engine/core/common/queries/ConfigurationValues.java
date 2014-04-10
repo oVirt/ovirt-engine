@@ -114,7 +114,8 @@ public enum ConfigurationValues {
     SchedulerAllowOverBooking,
     SchedulerOverBookingThreshold,
     UserSessionTimeOutInterval(ConfigAuthType.User),
-    DefaultMaximumMigrationDowntime;
+    DefaultMaximumMigrationDowntime,
+    IscsiMultipathingSupported;
 
     public static enum ConfigAuthType {
         Admin,
