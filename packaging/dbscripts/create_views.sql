@@ -627,7 +627,8 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_static.migration_downtime as migration_downtime, vm_static.template_version_number as template_version_number,
                       vm_static.serial_number_policy as serial_number_policy, vm_static.custom_serial_number as custom_serial_number,
                       vm_static.is_boot_menu_enabled as is_boot_menu_enabled, vm_dynamic.guest_cpu_count as guest_cpu_count,
-                      (snapshots.snapshot_id is not null) as next_run_config_exists
+                      (snapshots.snapshot_id is not null) as next_run_config_exists,
+                      vm_static.numatune_mode as numatune_mode
 FROM         vm_static INNER JOIN
 vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid INNER JOIN
 vm_static AS vm_templates ON vm_static.vmt_guid = vm_templates.vm_guid INNER JOIN
@@ -672,7 +673,8 @@ SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.cpu_shares, vms
             vms.current_cd as current_cd, vms.reason as reason,
             vms.serial_number_policy as serial_number_policy, vms.custom_serial_number as custom_serial_number, vms.exit_reason as exit_reason,
             vms.is_boot_menu_enabled as is_boot_menu_enabled, vms.guest_cpu_count as guest_cpu_count,
-            (snapshots.snapshot_id is not null) as next_run_config_exists
+            (snapshots.snapshot_id is not null) as next_run_config_exists,
+            vms.numatune_mode
 FROM        vms LEFT OUTER JOIN
             tags_vm_map_view ON vms.vm_guid = tags_vm_map_view.vm_id LEFT OUTER JOIN
             vm_device ON vm_device.vm_id = vms.vm_guid LEFT OUTER JOIN
@@ -742,7 +744,8 @@ SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group
                       vds_dynamic.hbas as hbas, vds_dynamic.supported_emulated_machines as supported_emulated_machines, vds_static.ssh_port as ssh_port, vds_static.ssh_username as ssh_username, vds_statistics.ha_score as ha_score,
                       vds_statistics.ha_configured as ha_configured, vds_statistics.ha_active as ha_active, vds_statistics.ha_global_maintenance as ha_global_maintenance,
                       vds_statistics.ha_local_maintenance as ha_local_maintenance, vds_static.disable_auto_pm as disable_auto_pm, vds_dynamic.controlled_by_pm_policy as controlled_by_pm_policy, vds_statistics.boot_time as boot_time,
-                      vds_dynamic.kdump_status as kdump_status, vds_dynamic.selinux_enforce_mode as selinux_enforce_mode
+                      vds_dynamic.kdump_status as kdump_status, vds_dynamic.selinux_enforce_mode as selinux_enforce_mode,
+                      vds_dynamic.auto_numa_balancing as auto_numa_balancing, vds_dynamic.is_numa_supported as is_numa_supported
 FROM         vds_groups INNER JOIN
 vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id INNER JOIN
 vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id INNER JOIN
@@ -786,7 +789,8 @@ spm_status, vds_dynamic.supported_cluster_levels, vds_dynamic.supported_engines,
                       storage_pool_iso_map.storage_id, vds_static.ssh_port, vds_static.ssh_username, vds_statistics.ha_score,
                       vds_statistics.ha_configured, vds_statistics.ha_active, vds_statistics.ha_global_maintenance, vds_statistics.ha_local_maintenance,
                       vds_static.disable_auto_pm as disable_auto_pm, vds_dynamic.controlled_by_pm_policy as controlled_by_pm_policy,
-                      vds_statistics.boot_time, vds_dynamic.kdump_status as kdump_status, vds_dynamic.selinux_enforce_mode as selinux_enforce_mode
+                      vds_statistics.boot_time, vds_dynamic.kdump_status as kdump_status, vds_dynamic.selinux_enforce_mode as selinux_enforce_mode,
+                      vds_dynamic.auto_numa_balancing as auto_numa_balancing, vds_dynamic.is_numa_supported as is_numa_supported
 FROM         vds_groups INNER JOIN
 vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id INNER JOIN
 vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id INNER JOIN
@@ -1673,3 +1677,65 @@ LEFT JOIN vm_static ON vm_static.vm_guid = affinity_group_members.vm_id
 GROUP BY affinity_groups.id, affinity_groups.name, affinity_groups.description,
          affinity_groups.cluster_id, affinity_groups.positive, affinity_groups.enforcing,
          affinity_groups._create_date, affinity_groups._update_date;
+
+-- Numa node cpus view
+CREATE OR REPLACE VIEW numa_node_cpus_view
+AS
+SELECT numa_node.numa_node_id,
+       numa_node.vds_id,
+       numa_node.vm_id,
+       numa_node_cpu_map.cpu_core_id
+FROM numa_node
+INNER JOIN numa_node_cpu_map ON numa_node.numa_node_id = numa_node_cpu_map.numa_node_id;
+
+-- Numa node assignment view
+CREATE OR REPLACE VIEW numa_node_assignment_view
+AS
+SELECT vm_vds_numa_node_map.vm_numa_node_id as assigned_vm_numa_node_id,
+       vm_vds_numa_node_map.is_pinned as is_pinned,
+       vm_vds_numa_node_map.vds_numa_node_index as last_run_in_vds_numa_node_index,
+       vm_numa_node.vm_id as vm_numa_node_vm_id,
+       vm_numa_node.numa_node_index as vm_numa_node_index,
+       vm_numa_node.mem_total as vm_numa_node_mem_total,
+       vm_numa_node.cpu_count as vm_numa_node_cpu_count,
+       vm_numa_node.mem_free as vm_numa_node_mem_free,
+       vm_numa_node.usage_mem_percent as vm_numa_node_usage_mem_percent,
+       vm_numa_node.cpu_sys as vm_numa_node_cpu_sys,
+       vm_numa_node.cpu_user as vm_numa_node_cpu_user,
+       vm_numa_node.cpu_idle as vm_numa_node_cpu_idle,
+       vm_numa_node.usage_cpu_percent as vm_numa_node_usage_cpu_percent,
+       vm_numa_node.distance as vm_numa_node_distance,
+       run_in_vds_numa_node.numa_node_id as run_in_vds_numa_node_id,
+       run_in_vds_numa_node.vds_id as run_in_vds_id,
+       run_in_vds_numa_node.numa_node_index as run_in_vds_numa_node_index,
+       run_in_vds_numa_node.mem_total as run_in_vds_numa_node_mem_total,
+       run_in_vds_numa_node.cpu_count as run_in_vds_numa_node_cpu_count,
+       run_in_vds_numa_node.mem_free as run_in_vds_numa_node_mem_free,
+       run_in_vds_numa_node.usage_mem_percent as run_in_vds_numa_node_usage_mem_percent,
+       run_in_vds_numa_node.cpu_sys as run_in_vds_numa_node_cpu_sys,
+       run_in_vds_numa_node.cpu_user as run_in_vds_numa_node_cpu_user,
+       run_in_vds_numa_node.cpu_idle as run_in_vds_numa_node_cpu_idle,
+       run_in_vds_numa_node.usage_cpu_percent as run_in_vds_numa_node_usage_cpu_percent,
+       run_in_vds_numa_node.distance as run_in_vds_numa_node_distance
+FROM vm_vds_numa_node_map
+LEFT OUTER JOIN numa_node as vm_numa_node on vm_vds_numa_node_map.vm_numa_node_id = vm_numa_node.numa_node_id
+LEFT OUTER JOIN numa_node as run_in_vds_numa_node on vm_vds_numa_node_map.vds_numa_node_id = run_in_vds_numa_node.numa_node_id;
+
+-- Numa node with vds group view
+CREATE OR REPLACE VIEW numa_node_with_vds_group_view
+AS
+SELECT vm_numa_node.numa_node_id as vm_numa_node_id,
+       vm_numa_node.vm_id as vm_numa_node_vm_id,
+       vm_numa_node.numa_node_index as vm_numa_node_index,
+       vm_numa_node.mem_total as vm_numa_node_mem_total,
+       vm_numa_node.cpu_count as vm_numa_node_cpu_count,
+       vm_numa_node.mem_free as vm_numa_node_mem_free,
+       vm_numa_node.usage_mem_percent as vm_numa_node_usage_mem_percent,
+       vm_numa_node.cpu_sys as vm_numa_node_cpu_sys,
+       vm_numa_node.cpu_user as vm_numa_node_cpu_user,
+       vm_numa_node.cpu_idle as vm_numa_node_cpu_idle,
+       vm_numa_node.usage_cpu_percent as vm_numa_node_usage_cpu_percent,
+       vm_numa_node.distance as vm_numa_node_distance,
+       vm_static.vds_group_id
+FROM numa_node as vm_numa_node
+LEFT OUTER JOIN vm_static on vm_numa_node.vm_id = vm_static.vm_guid;

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -100,6 +101,8 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             entity.setPowerManagementControlledByPolicy(rs.getBoolean("controlled_by_pm_policy"));
             entity.setKdumpStatus(KdumpStatus.valueOfNumber(rs.getInt("kdump_status")));
             entity.setSELinuxEnforceMode((Integer) rs.getObject("selinux_enforce_mode"));
+            entity.setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(rs.getInt("auto_numa_balancing")));
+            entity.setNumaSupport(rs.getBoolean("is_numa_supported"));
 
             return entity;
         }
@@ -259,7 +262,9 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                 .addValue("kdump_status", vds.getKdumpStatus().getAsNumber())
                 .addValue("selinux_enforce_mode", (vds.getSELinuxEnforceMode() != null)
                                                   ? vds.getSELinuxEnforceMode().toInt()
-                                                  : null);
+                                                  : null)
+                .addValue("auto_numa_balancing", vds.getAutoNumaBalancing().getValue())
+                .addValue("is_numa_supported", vds.isNumaSupport());
 
         return parameterSource;
     }

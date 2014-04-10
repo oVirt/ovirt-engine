@@ -203,14 +203,16 @@ Create or replace FUNCTION InsertVdsDynamic(v_cpu_cores INTEGER ,
  v_supported_emulated_machines VARCHAR(255),
  v_controlled_by_pm_policy BOOLEAN,
  v_kdump_status SMALLINT,
- v_selinux_enforce_mode INTEGER)
+ v_selinux_enforce_mode INTEGER,
+ v_auto_numa_balancing SMALLINT,
+ v_is_numa_supported BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
 
    BEGIN
-INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, cpu_over_commit_time_stamp, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, gluster_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines, controlled_by_pm_policy, kdump_status, selinux_enforce_mode)
-	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_cpu_over_commit_time_stamp, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_gluster_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines, v_controlled_by_pm_policy, v_kdump_status, v_selinux_enforce_mode);
+INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, cpu_over_commit_time_stamp, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, gluster_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines, controlled_by_pm_policy, kdump_status, selinux_enforce_mode, auto_numa_balancing, is_numa_supported)
+	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_cpu_over_commit_time_stamp, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_gluster_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines, v_controlled_by_pm_policy, v_kdump_status, v_selinux_enforce_mode, v_auto_numa_balancing, v_is_numa_supported);
    END;
 
    RETURN;
@@ -281,7 +283,9 @@ Create or replace FUNCTION UpdateVdsDynamic(v_cpu_cores INTEGER ,
  v_hbas VARCHAR(255),
  v_supported_emulated_machines VARCHAR(255),
  v_kdump_status SMALLINT,
- v_selinux_enforce_mode INTEGER)
+ v_selinux_enforce_mode INTEGER,
+ v_auto_numa_balancing SMALLINT,
+ v_is_numa_supported BOOLEAN)
 RETURNS VOID
 
 	--The [vds_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -313,7 +317,9 @@ BEGIN
       hw_manufacturer = v_hw_manufacturer, hw_product_name = v_hw_product_name,
       hw_version = v_hw_version, hw_serial_number = v_hw_serial_number,
       hw_uuid = v_hw_uuid, hw_family = v_hw_family, hbas = v_hbas, supported_emulated_machines = v_supported_emulated_machines,
-      kdump_status = v_kdump_status, selinux_enforce_mode = v_selinux_enforce_mode
+      kdump_status = v_kdump_status, selinux_enforce_mode = v_selinux_enforce_mode,
+      auto_numa_balancing = v_auto_numa_balancing,
+      is_numa_supported = v_is_numa_supported
       WHERE vds_id = v_vds_id;
    END;
 
@@ -1007,5 +1013,95 @@ BEGIN
       SET
       cpu_flags = v_cpu_flags
       WHERE vds_id = v_vds_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+----------------------------------------------------------------
+-- [vds_cpu_statistics] Table
+--
+
+
+Create or replace FUNCTION InsertVdsCpuStatistics(v_vds_cpu_id UUID,
+ v_vds_id UUID,
+ v_cpu_core_id INTEGER,
+ v_cpu_sys DECIMAL(18,0),
+ v_cpu_user DECIMAL(18,0),
+ v_cpu_idle DECIMAL(18,0),
+ v_usage_cpu_percent INTEGER)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+
+   BEGIN
+      INSERT INTO vds_cpu_statistics(vds_cpu_id, vds_id, cpu_core_id, cpu_sys, cpu_user, cpu_idle, usage_cpu_percent)
+      VALUES(v_vds_cpu_id, v_vds_id, v_cpu_core_id, v_cpu_sys, v_cpu_user, v_cpu_idle, v_usage_cpu_percent);
+   END;
+
+   RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION UpdateVdsCpuStatistics(v_vds_id UUID,
+ v_cpu_core_id INTEGER,
+ v_cpu_sys DECIMAL(18,0),
+ v_cpu_user DECIMAL(18,0),
+ v_cpu_idle DECIMAL(18,0),
+ v_usage_cpu_percent INTEGER)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+
+   BEGIN
+      UPDATE vds_cpu_statistics
+      SET cpu_sys = v_cpu_sys, cpu_user = v_cpu_user, cpu_idle = v_cpu_idle,
+      usage_cpu_percent = v_usage_cpu_percent
+      WHERE vds_id = v_vds_id and cpu_core_id = v_cpu_core_id;
+   END;
+
+   RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION DeleteVdsCpuStatisticsByVdsId(v_vds_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+   BEGIN
+      DELETE FROM vds_cpu_statistics
+      WHERE vds_id = v_vds_id;
+   END;
+
+   RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetVdsCpuStatisticsByVdsId(v_vds_id UUID) RETURNS SETOF vds_cpu_statistics STABLE
+   AS $procedure$
+BEGIN
+   BEGIN
+      RETURN QUERY SELECT vds_cpu_statistics.*
+      FROM vds_cpu_statistics
+      WHERE vds_id = v_vds_id;
+   END;
+
+   RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetAllFromVdsCpuStatistics() RETURNS SETOF vds_cpu_statistics STABLE
+   AS $procedure$
+BEGIN
+   BEGIN
+      RETURN QUERY SELECT vds_cpu_statistics.*
+      FROM vds_cpu_statistics;
+   END;
+
+   RETURN;
 END; $procedure$
 LANGUAGE plpgsql;

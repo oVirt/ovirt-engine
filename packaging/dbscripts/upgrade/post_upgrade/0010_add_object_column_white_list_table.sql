@@ -71,4 +71,6 @@ DROP FUNCTION __temp_add_object_column_white_list_table();
 -----------------------------------------------------
 select fn_db_add_column_to_object_white_list('vds', 'selinux_enforce_mode');
 
-
+-- Add new columns for numa feature
+select fn_db_add_column_to_object_white_list('vds', 'auto_numa_balancing');
+select fn_db_add_column_to_object_white_list('vds', 'is_numa_supported');

@@ -8,6 +8,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -101,7 +102,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                         USE_LATEST_VERSION_NUMBER_INDICATOR : DONT_USE_LATEST_VERSION_NUMBER_INDICATOR)
                 .addValue("serial_number_policy", vm.getSerialNumberPolicy() == null ? null : vm.getSerialNumberPolicy().getValue())
                 .addValue("custom_serial_number", vm.getCustomSerialNumber())
-                .addValue("is_boot_menu_enabled", vm.isBootMenuEnabled());
+                .addValue("is_boot_menu_enabled", vm.isBootMenuEnabled())
+                .addValue("numatune_mode", vm.getNumaTuneMode().getValue());
     }
 
     @Override
@@ -242,6 +244,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             entity.setOriginalTemplateGuid(getGuid(rs, "original_template_id"));
             // if template_version_number is null it means use latest version
             entity.setUseLatestVersion(rs.getObject("template_version_number") == USE_LATEST_VERSION_NUMBER_INDICATOR);
+            entity.setNumaTuneMode(NumaTuneMode.forValue(rs.getString("numatune_mode")));
 
             return entity;
         }

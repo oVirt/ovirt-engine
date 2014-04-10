@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
@@ -28,11 +29,13 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -87,9 +90,11 @@ import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDAO;
 import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.dao.VdcOptionDAO;
+import org.ovirt.engine.core.dao.VdsCpuStatisticsDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsNumaNodeDAO;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDAO;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.VdsStatisticsDAO;
@@ -99,6 +104,7 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
 import org.ovirt.engine.core.dao.VmInitDAO;
+import org.ovirt.engine.core.dao.VmNumaNodeDAO;
 import org.ovirt.engine.core.dao.VmPoolDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.VmStatisticsDAO;
@@ -177,6 +183,9 @@ public class DbFacade {
             put(DwhHistoryTimekeeping.class, DwhHistoryTimekeepingDao.class);
             put(IscsiBond.class, IscsiBondDao.class);
             put(VmInit.class, VmInitDAO.class);
+            put(CpuStatistics.class, VdsCpuStatisticsDAO.class);
+            put(VdsNumaNode.class, VdsNumaNodeDAO.class);
+            put(VmNumaNode.class, VmNumaNodeDAO.class);
         }
     };
 
@@ -1004,5 +1013,32 @@ public class DbFacade {
 
     public IscsiBondDao getIscsiBondDao() {
         return getDao(IscsiBondDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link VdsCpuStatisticsDAO}.
+     *
+     * @return the dao instance
+     */
+    public VdsCpuStatisticsDAO getVdsCpuStatisticsDAO() {
+        return getDao(VdsCpuStatisticsDAO.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link VdsNumaNodeDAO}.
+     *
+     * @return the dao instance
+     */
+    public VdsNumaNodeDAO getVdsNumaNodeDAO() {
+        return getDao(VdsNumaNodeDAO.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link VmNumaNodeDAO}.
+     *
+     * @return the dao instance
+     */
+    public VmNumaNodeDAO getVmNumaNodeDAO() {
+        return getDao(VmNumaNodeDAO.class);
     }
 }

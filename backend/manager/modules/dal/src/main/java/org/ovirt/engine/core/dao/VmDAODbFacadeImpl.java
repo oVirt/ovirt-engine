@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
@@ -437,6 +438,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setBootMenuEnabled(rs.getBoolean("is_boot_menu_enabled"));
             entity.setGuestCpuCount(rs.getInt("guest_cpu_count"));
             entity.setNextRunConfigurationExists(rs.getBoolean("next_run_config_exists"));
+            entity.setNumaTuneMode(NumaTuneMode.forValue(rs.getString("numatune_mode")));
             return entity;
         }
     }

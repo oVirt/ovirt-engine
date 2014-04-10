@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -351,6 +352,8 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.calculateFreeVirtualMemory();
             entity.setBootTime((Long) rs.getObject("boot_time"));
             entity.setSELinuxEnforceMode((Integer) rs.getObject("selinux_enforce_mode"));
+            entity.setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(rs.getInt("auto_numa_balancing")));
+            entity.setNumaSupport(rs.getBoolean("is_numa_supported"));
             return entity;
         }
     }

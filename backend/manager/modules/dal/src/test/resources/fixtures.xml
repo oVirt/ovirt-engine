@@ -1574,6 +1574,7 @@
         <column>serial_number_policy</column>
         <column>custom_serial_number</column>
         <column>is_boot_menu_enabled</column>
+        <column>numatune_mode</column>
 
         <!-- Templates -->
         <row>
@@ -1631,6 +1632,7 @@
             <value>0</value>
             <null />
             <value>false</value>
+            <value>preferred</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -1687,6 +1689,7 @@
             <null />
             <value>Serial number: 123456</value>
             <value>true</value>
+            <value>preferred</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
@@ -1743,6 +1746,7 @@
             <value>2</value>
             <value>RHVSN: 09123</value>
             <value>true</value>
+            <value>preferred</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
@@ -1799,6 +1803,7 @@
             <value>1</value>
             <null />
             <value>false</value>
+            <value>preferred</value>
         </row>
          <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
@@ -1855,6 +1860,7 @@
             <value>1</value>
             <null />
             <value>false</value>
+            <value>preferred</value>
         </row>
          <row>
             <value>99408929-82cf-4dc7-a532-9d998063fa95</value>
@@ -1911,6 +1917,7 @@
             <null />
             <null />
             <value>true</value>
+            <value>preferred</value>
         </row>
          <row>
             <value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
@@ -1967,6 +1974,7 @@
             <null />
             <null />
             <value>false</value>
+            <value>preferred</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b83</value>
@@ -2023,6 +2031,7 @@
             <null />
             <null />
             <value>true</value>
+            <value>preferred</value>
         </row>
 
         <!-- VMS -->
@@ -2081,6 +2090,7 @@
             <value>2</value>
             <null />
             <value>true</value>
+            <value>preferred</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -2137,6 +2147,7 @@
             <null />
             <value>VSN 1234</value>
             <value>true</value>
+            <value>preferred</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
@@ -2193,6 +2204,7 @@
             <value>2</value>
             <value>My very specific serial number</value>
             <value>true</value>
+            <value>preferred</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -2249,6 +2261,7 @@
             <null />
             <value>Custom serial number</value>
             <value>false</value>
+            <value>preferred</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -2305,6 +2318,7 @@
             <value>1</value>
             <null />
             <value>false</value>
+            <value>preferred</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -2361,6 +2375,7 @@
             <null />
             <null />
             <value>false</value>
+            <value>preferred</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5001</value>
@@ -2417,6 +2432,7 @@
             <null />
             <null />
             <value>true</value>
+            <value>preferred</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
@@ -2473,6 +2489,7 @@
             <null />
             <null />
             <value>true</value>
+            <value>preferred</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
@@ -2529,6 +2546,7 @@
             <value>0</value>
             <null />
             <value>false</value>
+            <value>preferred</value>
         </row>
     </table>
 
@@ -2581,6 +2599,8 @@
         <column>supported_emulated_machines</column>
         <column>kdump_status</column>
         <column>selinux_enforce_mode</column>
+        <column>auto_numa_balancing</column>
+        <column>is_numa_supported</column>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>3</value>
@@ -2630,6 +2650,8 @@
             <null />
             <value>-1</value>
             <value>1</value>
+            <value>2</value>
+            <value>true</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
@@ -2680,6 +2702,8 @@
             <value>rhel6.4,rhel6.4,pc-1.1,pc-1.0</value>
             <value>0</value>
             <value>0</value>
+            <value>2</value>
+            <value>true</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e8</value>
@@ -2730,6 +2754,8 @@
             <value>rhel6.4,rhel6.4,pc-1.1,pc-1.0</value>
             <value>1</value>
             <value>-1</value>
+            <value>2</value>
+            <value>true</value>
         </row>
         <row>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
@@ -2780,6 +2806,8 @@
             <value>rhel6.4,rhel6.4,pc-1.1,pc-1.0</value>
             <value>-1</value>
             <value>2</value>
+            <value>2</value>
+            <value>true</value>
         </row>
         <row>
             <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
@@ -2830,6 +2858,8 @@
             <value>rhel6.4,rhel6.4,pc-1.1,pc-1.0</value>
             <value>-1</value>
             <null />
+            <value>2</value>
+            <value>true</value>
         </row>
     </table>
 
@@ -6307,6 +6337,185 @@
             <value>en_US</value>
             <value>ec2</value>
             <value></value>
+        </row>
+    </table>
+
+    <table name="numa_node">
+        <column>numa_node_id</column>
+        <column>vds_id</column>
+        <column>vm_id</column>
+        <column>numa_node_index</column>
+        <column>mem_total</column>
+        <column>cpu_count</column>
+        <column>mem_free</column>
+        <column>usage_mem_percent</column>
+        <column>cpu_sys</column>
+        <column>cpu_user</column>
+        <column>cpu_idle</column>
+        <column>usage_cpu_percent</column>
+        <column>distance</column>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b515</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <null/>
+            <value>0</value>
+            <value>49141</value>
+            <value>2</value>
+            <value>47607</value>
+            <value>4</value>
+            <value>4.66</value>
+            <value>15.34</value>
+            <value>80.00</value>
+            <value>20</value>
+            <value>10,20</value>
+        </row>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b516</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <null/>
+            <value>1</value>
+            <value>49141</value>
+            <value>2</value>
+            <value>47607</value>
+            <value>4</value>
+            <value>4.66</value>
+            <value>15.34</value>
+            <value>80.00</value>
+            <value>20</value>
+            <value>20,10</value>
+        </row>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b517</value>
+            <null/>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>0</value>
+            <value>49141</value>
+            <value>2</value>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b518</value>
+            <null/>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>1</value>
+            <value>49141</value>
+            <value>2</value>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+        </row>
+    </table>
+
+    <table name="vds_cpu_statistics">
+        <column>vds_cpu_id</column>
+        <column>vds_id</column>
+        <column>cpu_core_id</column>
+        <column>cpu_sys</column>
+        <column>cpu_user</column>
+        <column>cpu_idle</column>
+        <column>usage_cpu_percent</column>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b519</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>0</value>
+            <value>4.66</value>
+            <value>15.34</value>
+            <value>80.00</value>
+            <value>20</value>
+        </row>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b51a</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>1</value>
+            <value>4.66</value>
+            <value>15.34</value>
+            <value>80.00</value>
+            <value>20</value>
+        </row>
+    </table>
+
+    <table name="numa_node_cpu_map">
+        <column>id</column>
+        <column>numa_node_id</column>
+        <column>cpu_core_id</column>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b51b</value>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b515</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b51c</value>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b515</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b51d</value>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b516</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b51e</value>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b516</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b521</value>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b517</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b522</value>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b517</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b523</value>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b518</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b524</value>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b518</value>
+            <value>3</value>
+        </row>
+    </table>
+
+    <table name="vm_vds_numa_node_map">
+        <column>id</column>
+        <column>vm_numa_node_id</column>
+        <column>vds_numa_node_id</column>
+        <column>vds_numa_node_index</column>
+        <column>is_pinned</column>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b525</value>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b517</value>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b515</value>
+            <value>0</value>
+            <value>true</value>
+        </row>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b526</value>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b517</value>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b516</value>
+            <value>1</value>
+            <value>true</value>
+        </row>
+        <row>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b527</value>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b518</value>
+            <value>3c2b81e6-5080-4ad1-86a1-cf513b15b515</value>
+            <value>0</value>
+            <value>false</value>
         </row>
     </table>
 </dataset>
