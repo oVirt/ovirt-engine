@@ -250,6 +250,7 @@ public final class Cloner
         obj.setpm_enabled(instance.getpm_enabled());
         obj.setPmSecondaryConcurrent(instance.isPmSecondaryConcurrent());
         obj.setDisablePowerManagementPolicy(instance.isDisablePowerManagementPolicy());
+        obj.setPmKdumpDetection(instance.isPmKdumpDetection());
 
         obj.setPort(instance.getPort());
         obj.setServerSslEnabled(instance.isServerSslEnabled());

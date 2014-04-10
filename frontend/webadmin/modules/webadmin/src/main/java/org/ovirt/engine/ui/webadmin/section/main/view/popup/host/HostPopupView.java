@@ -296,6 +296,11 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     EntityModelCheckBoxEditor disableAutomaticPowerManagementEditor;
 
     @UiField
+    @Path(value = "pmKdumpDetection.entity")
+    @WithElementId("pmKdumpDetection")
+    EntityModelCheckBoxEditor pmKdumpDetectionEditor;
+
+    @UiField
     UiCommandButton testButton;
 
     @UiField
@@ -560,6 +565,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         // Auto PM
         disableAutomaticPowerManagementEditor.setLabel(constants.hostPopupPmDisableAutoPM());
+        pmKdumpDetectionEditor.setLabel(constants.hostPopupPmKdumpDetection());
 
         // SPM tab
         spmTab.setLabel(constants.spmTestButtonLabel());

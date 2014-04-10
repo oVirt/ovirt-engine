@@ -1631,6 +1631,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         host.setpm_enabled(model.getIsPm().getEntity());
         host.setPmSecondaryConcurrent(model.getPmSecondaryConcurrent().getEntity());
         host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
+        host.setPmKdumpDetection(model.getPmKdumpDetection().getEntity());
+
 
         AddVdsActionParameters addVdsParams = new AddVdsActionParameters();
         addVdsParams.setVdsId(host.getId());

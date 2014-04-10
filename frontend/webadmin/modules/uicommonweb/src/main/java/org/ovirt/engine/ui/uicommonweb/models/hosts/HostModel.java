@@ -515,6 +515,18 @@ public abstract class HostModel extends Model
         pmSecondarySecure = value;
     }
 
+    private EntityModel<Boolean> pmKdumpDetection;
+
+    public EntityModel<Boolean> getPmKdumpDetection()
+    {
+        return pmKdumpDetection;
+    }
+
+    private void setPmKdumpDetection(EntityModel<Boolean> value)
+    {
+        pmKdumpDetection = value;
+    }
+
     public HashMap<String, String> getPmSecondaryOptionsMap() {
 
         // For secondary map determine (workarround) if it's was specified
@@ -964,6 +976,8 @@ public abstract class HostModel extends Model
         getPmSecondaryConcurrent().setEntity(false);
         setDisableAutomaticPowerManagement(new EntityModel<Boolean>());
         getDisableAutomaticPowerManagement().setEntity(false);
+        setPmKdumpDetection(new EntityModel<Boolean>());
+        getPmKdumpDetection().setEntity(true);
 
         setPmVariants(new ListModel<String>());
         List<String> pmVariants = new ArrayList<String>();
@@ -1480,6 +1494,7 @@ public abstract class HostModel extends Model
         // Update other PM fields.
         getPmVariants().setIsChangable(isPm);
         getPmSecondaryConcurrent().setIsChangable(isPm);
+        getPmKdumpDetection().setIsChangable(isPm);
         getTestCommand().setIsExecutionAllowed(isPm);
     }
 
@@ -1718,6 +1733,7 @@ public abstract class HostModel extends Model
 
         getPmSecondaryConcurrent().setEntity(vds.isPmSecondaryConcurrent());
         getDisableAutomaticPowerManagement().setEntity(vds.isDisablePowerManagementPolicy());
+        getPmKdumpDetection().setEntity(vds.isPmKdumpDetection());
 
         updateModelDataCenterFromVds(dataCenters, vds);
 

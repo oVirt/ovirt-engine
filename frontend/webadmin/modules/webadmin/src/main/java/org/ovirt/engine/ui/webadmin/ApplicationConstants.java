@@ -542,6 +542,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Disable policy control of power management")
     String hostPopupPmDisableAutoPM();
 
+    @DefaultStringValue("Detect kdump flow")
+    String hostPopupPmKdumpDetection();
+
     @DefaultStringValue("Test")
     String hostPopupTestButtonLabel();
 
