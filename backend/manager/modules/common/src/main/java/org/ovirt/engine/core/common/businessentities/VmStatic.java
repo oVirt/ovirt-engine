@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
@@ -55,6 +58,10 @@ public class VmStatic extends VmBase {
     @EditableField
     private boolean useLatestVersion;
 
+    private NumaTuneMode numaTuneMode;
+
+    private List<VmNumaNode> vNumaNodeList;
+
     public VmStatic() {
         setNumOfMonitors(1);
         initialized = false;
@@ -64,6 +71,8 @@ public class VmStatic extends VmBase {
         setDefaultDisplayType(DisplayType.qxl);
         setVmType(VmType.Desktop);
         vmtGuid = Guid.Empty;
+        setNumaTuneMode(NumaTuneMode.PREFERRED);
+        vNumaNodeList = new ArrayList<VmNumaNode>();
     }
 
     public VmStatic(VmStatic vmStatic) {
@@ -168,6 +177,9 @@ public class VmStatic extends VmBase {
         result = prime * result + ((originalTemplateGuid == null) ? 0 : originalTemplateGuid.hashCode());
         result = prime * result + ((originalTemplateName == null) ? 0 : originalTemplateName.hashCode());
         result = prime * result + (useLatestVersion ? 1249 : 1259);
+        result = prime * result + numaTuneMode.getValue().hashCode();
+        result = prime * result + ((vNumaNodeList == null) ? 0 : vNumaNodeList.hashCode());
+
         return result;
     }
 
@@ -195,6 +207,8 @@ public class VmStatic extends VmBase {
                 && ObjectUtils.objectsEqual(originalTemplateGuid, other.originalTemplateGuid)
                 && ObjectUtils.objectsEqual(originalTemplateName, other.originalTemplateName)
                 && useLatestVersion == other.useLatestVersion
+                && ObjectUtils.objectsEqual(numaTuneMode.getValue(), other.numaTuneMode.getValue())
+                && ObjectUtils.objectsEqual(vNumaNodeList, other.vNumaNodeList)
          );
     }
 
@@ -253,4 +267,21 @@ public class VmStatic extends VmBase {
     public void setUseLatestVersion(boolean useLatestVersion) {
         this.useLatestVersion = useLatestVersion;
     }
+
+    public NumaTuneMode getNumaTuneMode() {
+        return numaTuneMode;
+    }
+
+    public void setNumaTuneMode(NumaTuneMode numaTuneMode) {
+        this.numaTuneMode = numaTuneMode;
+    }
+
+    public List<VmNumaNode> getvNumaNodeList() {
+        return vNumaNodeList;
+    }
+
+    public void setvNumaNodeList(List<VmNumaNode> vNumaNodeList) {
+        this.vNumaNodeList = vNumaNodeList;
+    }
+
 }

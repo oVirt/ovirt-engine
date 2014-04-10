@@ -1348,4 +1348,31 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     public void setSELinuxEnforceMode(Integer value) {
         mVdsDynamic.setSELinuxEnforceMode(value);
     }
+
+    public List<VdsNumaNode> getNumaNodeList() {
+        return mVdsDynamic.getNumaNodeList();
+    }
+
+    /**
+     * If host enables the feature of auto numa balancing.
+     */
+    public AutoNumaBalanceStatus getAutoNumaBalancing() {
+        return mVdsDynamic.getAutoNumaBalancing();
+    }
+
+    public void setAutoNumaBalancing(AutoNumaBalanceStatus autoNumaBalancing) {
+        mVdsDynamic.setAutoNumaBalancing(autoNumaBalancing);
+    }
+
+    /**
+     * If host supports numa.
+     */
+    public boolean isNumaSupport() {
+        return mVdsDynamic.isNumaSupport();
+    }
+
+    public void setNumaSupport(boolean numaSupport) {
+        mVdsDynamic.setNumaSupport(numaSupport);
+    }
+
 }

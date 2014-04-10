@@ -1756,4 +1756,17 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
     public boolean isNextRunConfigurationExists() {
         return nextRunConfigurationExists;
     }
+
+    public NumaTuneMode getNumaTuneMode() {
+        return vmStatic.getNumaTuneMode();
+    }
+
+    public void setNumaTuneMode(NumaTuneMode numaTuneMode) {
+        vmStatic.setNumaTuneMode(numaTuneMode);
+    }
+
+    public List<VmNumaNode> getvNumaNodeList() {
+        return vmStatic.getvNumaNodeList();
+    }
+
 }

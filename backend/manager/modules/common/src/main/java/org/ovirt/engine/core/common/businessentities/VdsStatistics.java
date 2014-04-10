@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -36,6 +38,8 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     private boolean highlyAvailableGlobalMaintenance;
     private boolean highlyAvailableLocalMaintenance;
 
+    private List<CpuStatistics> cpuCoreStatistics;
+
     public VdsStatistics() {
         this.cpu_idle = BigDecimal.ZERO;
         this.cpu_load = BigDecimal.ZERO;
@@ -53,6 +57,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         highlyAvailableIsActive = false;
         highlyAvailableGlobalMaintenance = false;
         highlyAvailableLocalMaintenance = false;
+        cpuCoreStatistics = new ArrayList<CpuStatistics>();
     }
 
     public int getAnonymousHugePages() {
@@ -89,6 +94,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         result = prime * result + (highlyAvailableIsActive ? 1231 : 1237);
         result = prime * result + (highlyAvailableGlobalMaintenance ? 1231 : 1237);
         result = prime * result + (highlyAvailableLocalMaintenance ? 1231 : 1237);
+        result = prime * result + ((cpuCoreStatistics == null) ? 0 : cpuCoreStatistics.hashCode());
         return result;
     }
 
@@ -125,7 +131,8 @@ public class VdsStatistics implements BusinessEntity<Guid> {
                 && (highlyAvailableIsConfigured == other.highlyAvailableIsConfigured)
                 && (highlyAvailableIsActive == other.highlyAvailableIsActive)
                 && (highlyAvailableGlobalMaintenance == other.highlyAvailableGlobalMaintenance)
-                && (highlyAvailableLocalMaintenance == other.highlyAvailableLocalMaintenance));
+                && (highlyAvailableLocalMaintenance == other.highlyAvailableLocalMaintenance)
+                && ObjectUtils.objectsEqual(cpuCoreStatistics, other.cpuCoreStatistics));
     }
 
     public Double getcpu_idle() {
@@ -317,6 +324,14 @@ public class VdsStatistics implements BusinessEntity<Guid> {
 
     public void setHighlyAvailableLocalMaintenance(boolean value) {
         highlyAvailableLocalMaintenance = value;
+    }
+
+    public List<CpuStatistics> getCpuCoreStatistics() {
+        return cpuCoreStatistics;
+    }
+
+    public void setCpuCoreStatistics(List<CpuStatistics> cpuCoreStatistics) {
+        this.cpuCoreStatistics = cpuCoreStatistics;
     }
 
 }

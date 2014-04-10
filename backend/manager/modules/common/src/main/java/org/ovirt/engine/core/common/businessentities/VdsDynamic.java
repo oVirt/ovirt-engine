@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -150,6 +151,12 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
      */
     private String supportedEmulatedMachines;
 
+    private List<VdsNumaNode> numaNodeList;
+
+    private AutoNumaBalanceStatus autoNumaBalancing;
+
+    private boolean numaSupport;
+
     public void setVersion(RpmVersion value) {
         rpmVersion = value;
     }
@@ -184,6 +191,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         guest_overhead = 0;
         powerManagementControlledByPolicy = false;
         kdumpStatus = KdumpStatus.UNKNOWN;
+        numaNodeList = new ArrayList<VdsNumaNode>();
+        autoNumaBalancing = AutoNumaBalanceStatus.UNKNOWN;
     }
 
     public Integer getcpu_cores() {
@@ -605,6 +614,30 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.selinuxEnforceMode = SELinuxMode.fromValue(value);
     }
 
+    public List<VdsNumaNode> getNumaNodeList() {
+        return numaNodeList;
+    }
+
+    public void setNumaNodeList(List<VdsNumaNode> numaNodeList) {
+        this.numaNodeList = numaNodeList;
+    }
+
+    public AutoNumaBalanceStatus getAutoNumaBalancing() {
+        return autoNumaBalancing;
+    }
+
+    public void setAutoNumaBalancing(AutoNumaBalanceStatus autoNumaBalancing) {
+        this.autoNumaBalancing = autoNumaBalancing;
+    }
+
+    public boolean isNumaSupport() {
+        return numaSupport;
+    }
+
+    public void setNumaSupport(boolean numaSupport) {
+        this.numaSupport = numaSupport;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -660,6 +693,9 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + (powerManagementControlledByPolicy ? 0 : 1);
         result = prime * result + ((kdumpStatus == null) ? 0 : kdumpStatus.hashCode());
         result = prime * result + ((selinuxEnforceMode == null) ? 0 : selinuxEnforceMode.hashCode());
+        result = prime * result + ((numaNodeList == null) ? 0 : numaNodeList.hashCode());
+        result = prime * result + autoNumaBalancing.getValue();
+        result = prime * result + (numaSupport ? 0 : 1);
 
         return result;
     }
@@ -724,10 +760,13 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && ObjectUtils.objectsEqual(hwUUID, other.hwUUID)
                 && ObjectUtils.objectsEqual(hwFamily, other.hwFamily)
                 && ObjectUtils.objectsEqual(HBAs, other.HBAs)
-                && ObjectUtils.objectsEqual(supportedEmulatedMachines, other.supportedEmulatedMachines))
+                && ObjectUtils.objectsEqual(supportedEmulatedMachines, other.supportedEmulatedMachines)
                 && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
                 && kdumpStatus == other.kdumpStatus
-                && ObjectUtils.objectsEqual(selinuxEnforceMode, other.selinuxEnforceMode);
+                && ObjectUtils.objectsEqual(selinuxEnforceMode, other.selinuxEnforceMode)
+                && ObjectUtils.objectsEqual(numaNodeList, other.numaNodeList)
+                && autoNumaBalancing.getValue() == other.autoNumaBalancing.getValue()
+                && numaSupport == other.numaSupport);
     }
 
 }

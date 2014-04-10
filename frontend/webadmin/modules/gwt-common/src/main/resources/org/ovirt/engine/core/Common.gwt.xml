@@ -310,6 +310,14 @@
 		<!-- Scheduling -->
 		<include name="common/scheduling/*.java"/>
 		<include name="common/scheduling/parameters/*.java"/>
+
+		<!-- Numa -->
+		<include name="common/businessentities/AutoNumaBalanceStatus.java" />
+		<include name="common/businessentities/CpuStatistics.java" />
+		<include name="common/businessentities/NumaNodeStatistics.java" />
+		<include name="common/businessentities/NumaTuneMode.java" />
+		<include name="common/businessentities/VdsNumaNode.java" />
+		<include name="common/businessentities/VmNumaNode.java" />
 	</source>
 
 	<super-source path="ui/uioverrides" />
