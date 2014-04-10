@@ -67,7 +67,7 @@ public class AsyncTaskUtils {
     }
 
     private static void addOrUpdateTaskInDB(AsyncTasks asyncTask) {
-        getAsyncTaskDao().saveOrUpdate(asyncTask);
+        TaskManagerUtil.addOrUpdateTaskInDB(asyncTask);
     }
 
     private static AsyncTaskDAO getAsyncTaskDao() {

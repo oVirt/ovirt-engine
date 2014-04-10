@@ -110,6 +110,22 @@ public class TaskManagerUtil {
         AsyncTaskManager.removeTaskFromDbByTaskId(taskId);
     }
 
+    public static AsyncTasks getAsyncTaskFromDb(Guid asyncTaskId) {
+         return coco.getAsyncTaskFromDb(asyncTaskId);
+    }
+
+    public static void saveAsyncTaskToDb(AsyncTasks asyncTask) {
+        coco.saveAsyncTaskToDb(asyncTask);
+    }
+
+    public static int callRemoveTaskFromDbByTaskId(Guid taskId) {
+        return coco.removeTaskFromDbByTaskId(taskId);
+    }
+
+    public static void addOrUpdateTaskInDB(AsyncTasks asyncTask) {
+        coco.addOrUpdateTaskInDB(asyncTask);
+    }
+
     public CommandBase<?> retrieveCommand(Guid commandId) {
         return coco.retrieveCommand(commandId);
     }

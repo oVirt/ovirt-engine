@@ -1,9 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -25,9 +22,9 @@ public class CommandEntity implements BusinessEntity<Guid> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((commandId == null) ? 0 : commandId.hashCode());
+        result = prime * result + (Guid.isNullOrEmpty(commandId) ? 0 : commandId.hashCode());
         result = prime * result + ((commandType == null) ? 0 : commandType.hashCode());
-        result = prime * result + ((rootCommandId == null) ? 0 : rootCommandId.hashCode());
+        result = prime * result + (Guid.isNullOrEmpty(rootCommandId) ? 0 : rootCommandId.hashCode());
         return result;
     }
 
@@ -42,18 +39,12 @@ public class CommandEntity implements BusinessEntity<Guid> {
         CommandEntity other = (CommandEntity) obj;
         return ObjectUtils.objectsEqual(commandId, other.commandId)
                 && commandType == other.commandType
-                && ObjectUtils.objectsEqual(rootCommandId, other.rootCommandId);
+                && ObjectUtils.objectsEqual(getGuid(rootCommandId), getGuid(other.rootCommandId));
     }
 
-    public Set<Guid> getChildCommandIds() {
-        return childCommandIds;
+    private Guid getGuid(Guid guid) {
+        return Guid.isNullOrEmpty(guid) ? Guid.Empty : guid;
     }
-
-    public void setChildCommandIds(Set<Guid> childCommandIds) {
-        this.childCommandIds = childCommandIds;
-    }
-
-    private Set<Guid> childCommandIds = Collections.newSetFromMap(new ConcurrentHashMap<Guid, Boolean>());
 
     public Date getCreatedAt() {
         return createdAt;

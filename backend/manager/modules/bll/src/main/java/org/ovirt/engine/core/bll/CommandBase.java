@@ -366,7 +366,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 @Override
                 public Void runInTransaction() {
                     for (Guid asyncTaskId : getReturnValue().getTaskPlaceHolderIdList()) {
-                        AsyncTasks task = getAsyncTaskDao().get(asyncTaskId);
+                        AsyncTasks task = TaskManagerUtil.getAsyncTaskFromDb(asyncTaskId);
                         if (task != null && Guid.isNullOrEmpty(task.getVdsmTaskId())) {
                             TaskManagerUtil.removeTaskFromDbByTaskId(task.getTaskId());
                         }
@@ -1451,7 +1451,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private void saveTaskAndPutInMap(String taskKey, AsyncTasks task) {
-        getAsyncTaskDao().save(task);
+        TaskManagerUtil.saveAsyncTaskToDb(task);
         taskKeyToTaskIdMap.put(taskKey, task.getTaskId());
     }
 

@@ -7,10 +7,22 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AsyncTasks implements Serializable {
     private static final long serialVersionUID = 5913365704117183118L;
+    private CommandEntity cmdEntity;
+    private VdcActionType actionType;
+    private AsyncTaskResultEnum result;
+    private Date startTime;
+    private Guid vdsmTaskId;
+    private Guid storagePoolId;
+    private VdcActionParametersBase taskParameters;
+    private Guid taskId;
+    private Guid commandId;
+    private Guid stepId;
+    private AsyncTaskType taskType;
 
     public AsyncTasks() {
         actionType = VdcActionType.Unknown;
@@ -18,47 +30,50 @@ public class AsyncTasks implements Serializable {
         status = AsyncTaskStatusEnum.unknown;
         vdsmTaskId = Guid.Empty;
         commandId = Guid.Empty;
-        rootCommandId = Guid.Empty;
+        cmdEntity = new CommandEntity();
+        cmdEntity.setId(commandId);
+        cmdEntity.setRootCommandId(Guid.Empty);
+        cmdEntity.setCommandType(VdcActionType.Unknown);
     }
 
-    public AsyncTasks(VdcActionType action_type, AsyncTaskResultEnum result, AsyncTaskStatusEnum status, Guid vdsmTaskId,
-            VdcActionParametersBase parentParameters,
-            VdcActionParametersBase taskParameters,
-            Guid stepId,
-            Guid commandId,
-            Guid rootCommandId,
-            Guid storagePoolId,
-            AsyncTaskType taskType) {
+    public AsyncTasks(VdcActionType action_type,
+                      AsyncTaskResultEnum result,
+                      AsyncTaskStatusEnum status,
+                      Guid vdsmTaskId,
+                      VdcActionParametersBase parentParameters,
+                      VdcActionParametersBase taskParameters,
+                      Guid stepId,
+                      Guid commandId,
+                      Guid rootCommandId,
+                      Guid storagePoolId,
+                      AsyncTaskType taskType,
+                      CommandStatus cmdStatus) {
         this.actionType = action_type;
         this.result = result;
         this.status = status;
         this.vdsmTaskId = vdsmTaskId;
-        this.actionParameters = parentParameters;
         this.taskParameters = taskParameters;
         this.stepId = stepId;
         this.startTime = new Date();
         this.commandId = commandId;
-        this.rootCommandId = rootCommandId;
         this.storagePoolId = storagePoolId;
         this.taskId = Guid.newGuid();
         this.taskType = taskType;
+        cmdEntity = new CommandEntity();
+        cmdEntity.setId(commandId);
+        cmdEntity.setRootCommandId(rootCommandId);
+        cmdEntity.setCommandStatus(cmdStatus);
+        cmdEntity.setActionParameters(parentParameters);
+        cmdEntity.setCommandType(getEndActionType());
     }
 
-    private VdcActionType actionType;
-
     public VdcActionType getaction_type() {
-        return this.actionType;
+        return actionType;
     }
 
     public void setaction_type(VdcActionType value) {
         this.actionType = value;
     }
-
-    private AsyncTaskResultEnum result;
-
-
-    private Date startTime;
-
 
     public Date getStartTime() {
         return startTime;
@@ -86,8 +101,6 @@ public class AsyncTasks implements Serializable {
         this.status = value;
     }
 
-    private Guid vdsmTaskId;
-
     public Guid getVdsmTaskId() {
         return this.vdsmTaskId;
     }
@@ -95,8 +108,6 @@ public class AsyncTasks implements Serializable {
     public void setVdsmTaskId(Guid value) {
         this.vdsmTaskId = value;
     }
-
-    private Guid taskId;
 
     public Guid getTaskId() {
         return this.taskId;
@@ -106,17 +117,13 @@ public class AsyncTasks implements Serializable {
         this.taskId = value;
     }
 
-    private VdcActionParametersBase actionParameters;
-
     public VdcActionParametersBase getActionParameters() {
-        return this.actionParameters;
+        return cmdEntity.getActionParameters();
     }
 
     public void setActionParameters(VdcActionParametersBase value) {
-        this.actionParameters = value;
+        cmdEntity.setActionParameters(value);
     }
-
-    private VdcActionParametersBase taskParameters;
 
     public VdcActionParametersBase getTaskParameters() {
         return taskParameters;
@@ -126,8 +133,6 @@ public class AsyncTasks implements Serializable {
         this.taskParameters = taskParameters;
     }
 
-    private Guid stepId;
-
     public Guid getStepId() {
         return this.stepId;
     }
@@ -136,14 +141,44 @@ public class AsyncTasks implements Serializable {
         this.stepId = stepId;
     }
 
-    private Guid commandId;
+    private VdcActionType getEndActionType() {
+        VdcActionType commandType = getActionParameters().getCommandType();
+        if (!VdcActionType.Unknown.equals(commandType)) {
+            return commandType;
+        }
+        return getaction_type();
+    }
+
+    public CommandStatus getCommandStatus() {
+        return cmdEntity.getCommandStatus();
+    }
+
+    public void setCommandStatus(CommandStatus status) {
+        cmdEntity.setCommandStatus(status);
+    }
+
+    public void setCommandType(VdcActionType cmdType) {
+        cmdEntity.setCommandType(cmdType);
+    }
+
+    public VdcActionType getCommandType() {
+        return cmdEntity.getCommandType();
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        cmdEntity.setCreatedAt(createdAt);
+    }
+
+    public Date getCreatedAt() {
+        return cmdEntity.getCreatedAt();
+    }
 
     public Guid getRootCommandId() {
-        return rootCommandId;
+        return cmdEntity.getRootCommandId();
     }
 
     public void setRootCommandId(Guid rootCommandId) {
-        this.rootCommandId = rootCommandId;
+        cmdEntity.setRootCommandId(rootCommandId);
     }
 
     public Guid getCommandId() {
@@ -152,9 +187,8 @@ public class AsyncTasks implements Serializable {
 
     public void setCommandId(Guid commandId) {
         this.commandId = commandId;
+        this.cmdEntity.setId(commandId);
     }
-
-    private Guid rootCommandId;
 
     public Guid getStoragePoolId() {
         return storagePoolId;
@@ -164,8 +198,6 @@ public class AsyncTasks implements Serializable {
         this.storagePoolId = storagePoolId;
     }
 
-    private Guid storagePoolId;
-
     public AsyncTaskType getTaskType() {
         return taskType;
     }
@@ -174,8 +206,6 @@ public class AsyncTasks implements Serializable {
         this.taskType = taskType;
     }
 
-    private AsyncTaskType taskType;
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -183,7 +213,6 @@ public class AsyncTasks implements Serializable {
         results = prime * results + ((vdsmTaskId == null) ? 0 : vdsmTaskId.hashCode());
         results = prime * results + ((stepId == null) ? 0 : stepId.hashCode());
         results = prime * results + ((commandId == null) ? 0 : commandId.hashCode());
-        results = prime * results + ((rootCommandId == null) ? 0 : rootCommandId.hashCode());
         results = prime * results + ((actionType == null) ? 0 : actionType.hashCode());
         results = prime * results + ((result == null) ? 0 : result.hashCode());
         results = prime * results + ((status == null) ? 0 : status.hashCode());
@@ -209,7 +238,6 @@ public class AsyncTasks implements Serializable {
                 && ObjectUtils.objectsEqual(taskId, other.taskId)
                 && ObjectUtils.objectsEqual(stepId, other.stepId)
                 && ObjectUtils.objectsEqual(commandId, other.commandId)
-                && ObjectUtils.objectsEqual(rootCommandId, other.rootCommandId)
                 && actionType == other.actionType
                 && result == other.result
                 && status == other.status

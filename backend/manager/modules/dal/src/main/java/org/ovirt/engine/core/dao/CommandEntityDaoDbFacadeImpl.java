@@ -49,9 +49,9 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
 
     @Override
     protected MapSqlParameterSource createFullParametersMapper(CommandEntity entity) {
-        return getCustomMapSqlParameterSource().addValue("command_id", entity.getId())
+        return getCustomMapSqlParameterSource().addValue("command_id", Guid.isNullOrEmpty(entity.getId()) ? Guid.Empty : entity.getId())
                 .addValue("command_type", entity.getCommandType().getValue())
-                .addValue("root_command_id", entity.getRootCommandId())
+                .addValue("root_command_id", Guid.isNullOrEmpty(entity.getRootCommandId()) ? Guid.Empty : entity.getRootCommandId())
                 .addValue("action_parameters", serializeParameters(entity.getActionParameters()))
                 .addValue("action_parameters_class", entity.getActionParameters() == null ? null : entity.getActionParameters().getClass().getName())
                 .addValue("status", entity.getCommandStatus().toString());

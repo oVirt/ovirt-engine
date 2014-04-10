@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
+import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -26,8 +26,9 @@ public final class AsyncTaskFactory {
      * @return
      */
     public static SPMAsyncTask construct(CommandCoordinator coco, AsyncTaskCreationInfo creationInfo) {
-        AsyncTasks asyncTask = DbFacade.getInstance().getAsyncTaskDao().getByVdsmTaskId(creationInfo.getVdsmTaskId());
+        AsyncTasks asyncTask = coco.getByVdsmTaskId(creationInfo.getVdsmTaskId());
         if (asyncTask == null || asyncTask.getActionParameters() == null) {
+            CommandStatus cmdStatus = asyncTask == null ? CommandStatus.UNKNOWN : asyncTask.getCommandStatus();
             asyncTask =
                     new AsyncTasks(VdcActionType.Unknown,
                             AsyncTaskResultEnum.success,
@@ -39,7 +40,8 @@ public final class AsyncTaskFactory {
                             asyncTask == null ? Guid.newGuid() : asyncTask.getCommandId(),
                             asyncTask == null ? Guid.newGuid() : asyncTask.getRootCommandId(),
                             creationInfo.getStoragePoolID(),
-                            creationInfo.getTaskType());
+                            creationInfo.getTaskType(),
+                            cmdStatus);
             creationInfo.setTaskType(AsyncTaskType.unknown);
         }
         AsyncTaskParameters asyncTaskParams = new AsyncTaskParameters(creationInfo, asyncTask);

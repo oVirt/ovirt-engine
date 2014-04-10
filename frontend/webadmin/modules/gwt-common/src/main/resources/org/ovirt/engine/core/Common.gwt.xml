@@ -24,6 +24,7 @@
 		<include name="common/businessentities/AuditLog.java" />
 		<include name="common/businessentities/Bookmark.java" />
 		<include name="common/businessentities/BaseDisk.java" />
+		<include name="common/businessentities/CommandEntity.java" />
 		<include name="common/businessentities/DiskLunMap.java" />
 		<include name="common/businessentities/DiskLunMapId.java" />
 		<include name="common/businessentities/Disk.java" />

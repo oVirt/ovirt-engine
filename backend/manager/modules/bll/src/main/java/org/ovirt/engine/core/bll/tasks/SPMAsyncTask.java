@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -246,7 +245,7 @@ public class SPMAsyncTask implements SPMTask {
 
     protected void RemoveTaskFromDB() {
         try {
-            if (DbFacade.getInstance().getAsyncTaskDao().removeByVdsmTaskId(getVdsmTaskId()) != 0) {
+            if (coco.removeByVdsmTaskId(getVdsmTaskId()) != 0) {
                 log.infoFormat("BaseAsyncTask::RemoveTaskFromDB: Removed task {0} from DataBase", getVdsmTaskId());
             }
         }

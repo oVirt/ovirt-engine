@@ -11,6 +11,7 @@
 		<!-- Required by common's entities -->
 		<include name="compat/StringHelper.java" />
 		<include name="compat/Guid.java" />
+		<include name="compat/CommandStatus.java" />
 
 		<!-- Referenced directly by UICommon -->
 		<include name="compat/IntegerCompat.java" />

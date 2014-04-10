@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -108,7 +107,7 @@ public final class AsyncTaskManager {
 
     public void initAsyncTaskManager() {
         tasksInDbAfterRestart = new ConcurrentHashMap();
-        Map<Guid, List<AsyncTasks>> rootCommandIdToTasksMap = groupTasksByRootCommandId(DbFacade.getInstance().getAsyncTaskDao().getAll());
+        Map<Guid, List<AsyncTasks>> rootCommandIdToTasksMap = groupTasksByRootCommandId(coco.getAllAsyncTasksFromDb());
         int numberOfCommandsWithEmptyVdsmId = 0;
         for (Entry<Guid, List<AsyncTasks>> entry : rootCommandIdToTasksMap.entrySet()) {
             if (hasTasksWithoutVdsmId(rootCommandIdToTasksMap.get(entry.getKey()))) {
@@ -319,7 +318,7 @@ public final class AsyncTaskManager {
     }
 
     public void logAndFailTaskOfCommandWithEmptyVdsmId(Guid asyncTaskId, String message) {
-        AsyncTasks task = DbFacade.getInstance().getAsyncTaskDao().get(asyncTaskId);
+        AsyncTasks task = coco.getAsyncTaskFromDb(asyncTaskId);
         logAndFailTaskOfCommandWithEmptyVdsmId(task, message);
     }
 
@@ -363,7 +362,7 @@ public final class AsyncTaskManager {
 
     public static void removeTaskFromDbByTaskId(Guid taskId) {
         try {
-            if (DbFacade.getInstance().getAsyncTaskDao().remove(taskId) != 0) {
+            if (TaskManagerUtil.callRemoveTaskFromDbByTaskId(taskId) != 0) {
                 log.infoFormat("Removed task {0} from DataBase", taskId);
             }
         } catch (RuntimeException e) {
@@ -744,7 +743,7 @@ public final class AsyncTaskManager {
         if (tasksInDForStoragePool != null) {
             for (AsyncTasks task : tasksInDForStoragePool) {
                 if (!_tasks.containsKey(task.getVdsmTaskId())) {
-                    DbFacade.getInstance().getAsyncTaskDao().removeByVdsmTaskId(task.getVdsmTaskId());
+                    coco.removeByVdsmTaskId(task.getVdsmTaskId());
                 }
             }
         }
