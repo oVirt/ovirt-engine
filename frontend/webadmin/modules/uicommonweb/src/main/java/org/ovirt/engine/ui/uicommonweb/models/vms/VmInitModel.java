@@ -47,7 +47,7 @@ public class VmInitModel extends Model {
     }
     public boolean getDomainEnabled() {
         if (isWindowsOS) {
-            return !StringHelper.isNullOrEmpty(getSysprepDomain().getSelectedItem().toString());
+            return !StringHelper.isNullOrEmpty(getSysprepDomain().getSelectedItem());
         }
         return false;
     }
@@ -651,7 +651,7 @@ public class VmInitModel extends Model {
         }
         getSysprepDomain().setIsValid(true);
         if (getDomainEnabled()) {
-            getSysprepDomain().setIsValid(new HostAddressValidation().validate(getSysprepDomain().getSelectedItem().toString()).getSuccess());
+            getSysprepDomain().setIsValid(new HostAddressValidation().validate(getSysprepDomain().getSelectedItem()).getSuccess());
         }
 
         getAuthorizedKeys().setIsValid(true);
