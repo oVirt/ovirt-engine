@@ -1291,7 +1291,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (object.getSysprepEnabled().getEntity() != null) {
-                    boolean sysprepEnabled = object.getSysprepEnabled().getEntity();
                     vmInitEditor.setSyspepContentVisible(object.getSysprepEnabled().getEntity());
                 }
             }
