@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.nio.file.Paths;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,17 +19,21 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
+import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -54,6 +59,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -379,6 +385,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setSupportedClusterLevels(AssignStringValueFromArray(xmlRpcStruct, VdsProperties.supported_cluster_levels));
 
         updateNetworkData(vds, xmlRpcStruct);
+        updateNumaNodesData(vds, xmlRpcStruct);
 
         vds.setCpuThreads(AssignIntValue(xmlRpcStruct, VdsProperties.cpuThreads));
         vds.setCpuCores(AssignIntValue(xmlRpcStruct, VdsProperties.cpu_cores));
@@ -712,6 +719,80 @@ public class VdsBrokerObjectsBuilder {
 
         vds.setBootTime(AssignLongValue(xmlRpcStruct, VdsProperties.bootTime));
 
+        updateNumaStatisticsData(vds, xmlRpcStruct);
+
+    }
+
+    public static void updateNumaStatisticsData(VDS vds, Map<String, Object> xmlRpcStruct) {
+        List<VdsNumaNode> vdsNumaNodes = new ArrayList<>();
+        List<CpuStatistics> cpuStatsData = new ArrayList<>();
+        if (xmlRpcStruct.containsKey(VdsProperties.CPU_STATS)) {
+            Map<String, Map<String, Object>> cpuStats = (Map<String, Map<String, Object>>)
+                    xmlRpcStruct.get(VdsProperties.CPU_STATS);
+            Map<Integer, List<CpuStatistics>> numaNodeCpuStats = new HashMap<>();
+            for (Map.Entry<String, Map<String, Object>> item : cpuStats.entrySet()) {
+                CpuStatistics data = buildVdsCpuStatistics(item);
+                cpuStatsData.add(data);
+                int numaNodeIndex = AssignIntValue(item.getValue(), VdsProperties.NUMA_NODE_INDEX);
+                if (!numaNodeCpuStats.containsKey(numaNodeIndex)) {
+                    numaNodeCpuStats.put(numaNodeIndex, new ArrayList<CpuStatistics>());
+                }
+                numaNodeCpuStats.get(numaNodeIndex).add(data);
+            }
+            DecimalFormat percentageFormatter = new DecimalFormat("#.##");
+            for (Map.Entry<Integer, List<CpuStatistics>> item : numaNodeCpuStats.entrySet()) {
+                VdsNumaNode node = buildVdsNumaNodeStatistics(percentageFormatter, item);
+                vdsNumaNodes.add(node);
+            }
+        }
+        if (xmlRpcStruct.containsKey(VdsProperties.NUMA_NODE_FREE_MEM_STAT)) {
+            Map<String, Map<String, Object>> memStats = (Map<String, Map<String, Object>>)
+                    xmlRpcStruct.get(VdsProperties.NUMA_NODE_FREE_MEM_STAT);
+            for (Map.Entry<String, Map<String, Object>> item : memStats.entrySet()) {
+                VdsNumaNode node = NumaUtils.getVdsNumaNodeByIndex(vdsNumaNodes, Integer.valueOf(item.getKey()));
+                if (node != null) {
+                    node.getNumaNodeStatistics().setMemFree(AssignLongValue(item.getValue(),
+                            VdsProperties.NUMA_NODE_FREE_MEM));
+                    node.getNumaNodeStatistics().setMemUsagePercent(AssignIntValue(item.getValue(),
+                            VdsProperties.NUMA_NODE_MEM_PERCENT));
+                }
+            }
+        }
+        vds.getNumaNodeList().clear();
+        vds.getNumaNodeList().addAll(vdsNumaNodes);
+        vds.getStatisticsData().getCpuCoreStatistics().clear();
+        vds.getStatisticsData().getCpuCoreStatistics().addAll(cpuStatsData);
+    }
+
+    private static VdsNumaNode buildVdsNumaNodeStatistics(DecimalFormat percentageFormatter,
+            Map.Entry<Integer, List<CpuStatistics>> item) {
+        VdsNumaNode node = new VdsNumaNode();
+        NumaNodeStatistics nodeStat = new NumaNodeStatistics();
+        double nodeCpuUser = 0.0;
+        double nodeCpuSys = 0.0;
+        double nodeCpuIdle = 0.0;
+        for (CpuStatistics cpuStat : item.getValue()) {
+            nodeCpuUser += cpuStat.getCpuUser();
+            nodeCpuSys += cpuStat.getCpuSys();
+            nodeCpuIdle += cpuStat.getCpuIdle();
+        }
+        nodeStat.setCpuUser(Double.valueOf(percentageFormatter.format(nodeCpuUser / item.getValue().size())));
+        nodeStat.setCpuSys(Double.valueOf(percentageFormatter.format(nodeCpuSys / item.getValue().size())));
+        nodeStat.setCpuIdle(Double.valueOf(percentageFormatter.format(nodeCpuIdle / item.getValue().size())));
+        nodeStat.setCpuUsagePercent((int) (nodeStat.getCpuSys() + nodeStat.getCpuUser()));
+        node.setIndex(item.getKey());
+        node.setNumaNodeStatistics(nodeStat);
+        return node;
+    }
+
+    private static CpuStatistics buildVdsCpuStatistics(Map.Entry<String, Map<String, Object>> item) {
+        CpuStatistics data = new CpuStatistics();
+        data.setCpuId(Integer.valueOf(item.getKey()));
+        data.setCpuUser(AssignDoubleValue(item.getValue(), VdsProperties.NUMA_CPU_USER));
+        data.setCpuSys(AssignDoubleValue(item.getValue(), VdsProperties.NUMA_CPU_SYS));
+        data.setCpuIdle(AssignDoubleValue(item.getValue(), VdsProperties.NUMA_CPU_IDLE));
+        data.setCpuUsagePercent((int) (data.getCpuSys() + data.getCpuUser()));
+        return data;
     }
 
     /**
@@ -1461,6 +1542,57 @@ public class VdsBrokerObjectsBuilder {
         return macAddress != null ? macAddress.replace('-', ':') : null;
     }
 
+    /**
+     * Build through the received NUMA nodes information
+     * @param vds
+     * @param xmlRpcStruct
+     */
+    private static void updateNumaNodesData(VDS vds, Map<String, Object> xmlRpcStruct) {
+        if (xmlRpcStruct.containsKey(VdsProperties.AUTO_NUMA)) {
+            vds.getDynamicData().setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(
+                    AssignIntValue(xmlRpcStruct, VdsProperties.AUTO_NUMA)));
+        }
+        if (xmlRpcStruct.containsKey(VdsProperties.NUMA_NODES)) {
+            Map<String, Map<String, Object>> numaNodeMap =
+                    (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NUMA_NODES);
+            Map<String, Object> numaNodeDistanceMap =
+                    (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NUMA_NODE_DISTANCE);
+
+            List<VdsNumaNode> newNumaNodeList = new ArrayList<>(numaNodeMap.size());
+
+            for (Map.Entry<String, Map<String, Object>> item : numaNodeMap.entrySet()) {
+                int index = Integer.valueOf(item.getKey());
+                Map<String, Object> itemMap = item.getValue();
+                List<Integer> cpuIds = extractIntegerList(itemMap, VdsProperties.NUMA_NODE_CPU_LIST);
+                long memTotal =  AssignLongValue(itemMap, VdsProperties.NUMA_NODE_TOTAL_MEM);
+                VdsNumaNode numaNode = new VdsNumaNode();
+                numaNode.setIndex(index);
+                if (cpuIds != null) {
+                    numaNode.setCpuIds(cpuIds);
+                }
+                numaNode.setMemTotal(memTotal);
+                newNumaNodeList.add(numaNode);
+            }
+
+            for (Map.Entry<String, Object> item : numaNodeDistanceMap.entrySet()) {
+                int index = Integer.valueOf(item.getKey());
+                List<Integer> distances = extractIntegerList(numaNodeDistanceMap, item.getKey());
+                Map<Integer, Integer> distanceMap = new HashMap<>(distances.size());
+                for (int i = 0; i < distances.size(); i++) {
+                    distanceMap.put(i, distances.get(i));
+                }
+                VdsNumaNode newNumaNode = NumaUtils.getVdsNumaNodeByIndex(newNumaNodeList, index);
+                if (newNumaNode != null) {
+                    newNumaNode.setNumaNodeDistances(distanceMap);
+                }
+            }
+
+            vds.getDynamicData().setNumaNodeList(newNumaNodeList);
+            vds.setNumaSupport(newNumaNodeList.size() > 1);
+        }
+
+    }
+
     private static List<String> extracStringtList(Map<String, Object> xmlRpcStruct, String propertyName) {
         if (!xmlRpcStruct.containsKey(propertyName)){
             return null;
@@ -1474,6 +1606,23 @@ public class VdsBrokerObjectsBuilder {
         List<String> list = new ArrayList<String>();
         for (Object item : items) {
             list.add((String) item);
+        }
+        return list;
+    }
+
+    private static List<Integer> extractIntegerList(Map<String, Object> xmlRpcStruct, String propertyName) {
+        if (!xmlRpcStruct.containsKey(propertyName)){
+            return null;
+        }
+
+        Object[] items = (Object[]) xmlRpcStruct.get(propertyName);
+        if (items.length == 0) {
+            return null;
+        }
+
+        List<Integer> list = new ArrayList<Integer>();
+        for (Object item : items) {
+            list.add((Integer) item);
         }
         return list;
     }

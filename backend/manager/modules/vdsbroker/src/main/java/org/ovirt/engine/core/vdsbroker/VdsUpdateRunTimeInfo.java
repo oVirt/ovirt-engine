@@ -18,6 +18,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -36,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -144,6 +146,9 @@ public class VdsUpdateRunTimeInfo {
     private void saveDataToDb() {
         if (_saveVdsDynamic) {
             _vdsManager.updateDynamicData(_vds.getDynamicData());
+            if (refreshedCapabilities) {
+                _vdsManager.updateNumaData(_vds);
+            }
         }
 
         if (_saveVdsStatistics) {
@@ -169,6 +174,8 @@ public class VdsUpdateRunTimeInfo {
                             }
                         });
             }
+            saveCpuStatisticsDataToDb();
+            saveNumaStatisticsDataToDb();
         }
 
         getDbFacade().getVmDynamicDao().updateAllInBatch(_vmDynamicToSave.values());
@@ -234,6 +241,105 @@ public class VdsUpdateRunTimeInfo {
                         @Override
                         public Void runInTransaction() {
                             getDbFacade().getVmDeviceDao().saveAll(newVmDevices);
+                            return null;
+                        }
+                    });
+        }
+    }
+
+    private void saveCpuStatisticsDataToDb() {
+        final List<CpuStatistics> cpuStatisticsToSave = new ArrayList<>();
+
+        cpuStatisticsToSave.addAll(_vds.getStatisticsData().getCpuCoreStatistics());
+        if (!cpuStatisticsToSave.isEmpty()) {
+            List<CpuStatistics> dbCpuStats = getDbFacade().getVdsCpuStatisticsDAO()
+                    .getAllCpuStatisticsByVdsId(_vds.getId());
+            if (dbCpuStats.isEmpty()) {
+                TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                        new TransactionMethod<Void>() {
+                            @Override
+                            public Void runInTransaction() {
+                                getDbFacade().getVdsCpuStatisticsDAO().massSaveCpuStatistics(
+                                        cpuStatisticsToSave, _vds.getId());
+                                return null;
+                            }
+                        });
+            }
+            else {
+                boolean needRemoveAndSave = isRemvoeAndSaveVdsCpuStatsNeeded(cpuStatisticsToSave, dbCpuStats);
+                if (needRemoveAndSave) {
+                    TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                            new TransactionMethod<Void>() {
+                                @Override
+                                public Void runInTransaction() {
+                                    getDbFacade().getVdsCpuStatisticsDAO().removeAllCpuStatisticsByVdsId(_vds.getId());
+                                    getDbFacade().getVdsCpuStatisticsDAO().massSaveCpuStatistics(
+                                            cpuStatisticsToSave, _vds.getId());
+                                    return null;
+                                }
+                            });
+                }
+                else {
+                    TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                            new TransactionMethod<Void>() {
+                                @Override
+                                public Void runInTransaction() {
+                                    getDbFacade().getVdsCpuStatisticsDAO().massUpdateCpuStatistics(
+                                            cpuStatisticsToSave, _vds.getId());
+                                    return null;
+                                }
+                            });
+                }
+            }
+        }
+    }
+
+    private boolean isRemvoeAndSaveVdsCpuStatsNeeded(final List<CpuStatistics> cpuStatisticsToSave,
+            List<CpuStatistics> dbCpuStats) {
+        boolean needRemoveAndSave = false;
+        if (dbCpuStats.size() != cpuStatisticsToSave.size()) {
+            needRemoveAndSave = true;
+        }
+        else {
+            HashSet<Integer> vdsCpuStats = new HashSet<>();
+            for (CpuStatistics cpuStat : dbCpuStats) {
+                vdsCpuStats.add(cpuStat.getCpuId());
+            }
+            for (CpuStatistics cpuStat : cpuStatisticsToSave) {
+                if (!vdsCpuStats.contains(cpuStat.getCpuId())) {
+                    needRemoveAndSave = true;
+                    break;
+                }
+            }
+        }
+        return needRemoveAndSave;
+    }
+
+    private void saveNumaStatisticsDataToDb() {
+        final List<VdsNumaNode> vdsNumaNodesToSave = new ArrayList<>();
+        List<VdsNumaNode> updateNumaNodes = _vds.getNumaNodeList();
+        if (!updateNumaNodes.isEmpty()) {
+            List<VdsNumaNode> dbVdsNumaNodes = getDbFacade().getVdsNumaNodeDAO()
+                    .getAllVdsNumaNodeByVdsId(_vds.getId());
+            Map<Integer, VdsNumaNode> nodesMap = new HashMap<>();
+            for (VdsNumaNode node : dbVdsNumaNodes) {
+                nodesMap.put(node.getIndex(), node);
+            }
+            for (VdsNumaNode node : updateNumaNodes) {
+                if (nodesMap.containsKey(node.getIndex())) {
+                    node.setId(nodesMap.get(node.getIndex()).getId());
+                    if (node.getNumaNodeStatistics() != null) {
+                        vdsNumaNodesToSave.add(node);
+                    }
+                }
+            }
+        }
+        if (!vdsNumaNodesToSave.isEmpty()) {
+            TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                    new TransactionMethod<Void>() {
+                        @Override
+                        public Void runInTransaction() {
+                            getDbFacade().getVdsNumaNodeDAO().massUpdateNumaNodeStatistics(vdsNumaNodesToSave);
                             return null;
                         }
                     });

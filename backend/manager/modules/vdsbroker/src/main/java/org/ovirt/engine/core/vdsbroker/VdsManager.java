@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -32,10 +34,12 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
@@ -44,6 +48,8 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CollectVdsNetworkDataVDSCommand;
@@ -378,12 +384,60 @@ public class VdsManager {
         DbFacade.getInstance().getVdsStatisticsDao().update(statisticsData);
     }
 
+    /**
+     * Save or update numa data to DB
+     *
+     * @param vds
+     */
+    public void updateNumaData(final VDS vds) {
+        final List<VdsNumaNode> numaNodesToSave = new ArrayList<>();
+        final List<VdsNumaNode> numaNodesToUpdate = new ArrayList<>();
+        final List<Guid> numaNodesToRemove = new ArrayList<>();
+
+        List<VdsNumaNode> dbVdsNumaNodes = DbFacade.getInstance()
+                .getVdsNumaNodeDAO().getAllVdsNumaNodeByVdsId(vds.getId());
+        for (VdsNumaNode node : vds.getNumaNodeList()) {
+            VdsNumaNode searchNode = NumaUtils.getVdsNumaNodeByIndex(dbVdsNumaNodes, node.getIndex());
+            if (searchNode != null) {
+                node.setId(searchNode.getId());
+                numaNodesToUpdate.add(node);
+                dbVdsNumaNodes.remove(searchNode);
+            }
+            else {
+                node.setId(Guid.newGuid());
+                numaNodesToSave.add(node);
+            }
+        }
+        for (VdsNumaNode node : dbVdsNumaNodes) {
+            numaNodesToRemove.add(node.getId());
+        }
+
+        //The database operation should be in one transaction
+        TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                new TransactionMethod<Void>() {
+                    @Override
+                    public Void runInTransaction() {
+                        if (!numaNodesToRemove.isEmpty()){
+                            DbFacade.getInstance().getVdsNumaNodeDAO().massRemoveNumaNodeByNumaNodeId(numaNodesToRemove);
+                        }
+                        if (!numaNodesToUpdate.isEmpty()){
+                            DbFacade.getInstance().getVdsNumaNodeDAO().massUpdateNumaNode(numaNodesToUpdate);
+                        }
+                        if (!numaNodesToSave.isEmpty()){
+                            DbFacade.getInstance().getVdsNumaNodeDAO().massSaveNumaNode(numaNodesToSave, vds.getId(), null);
+                        }
+                        return null;
+                    }
+                });
+    }
+
     public void refreshHost(VDS vds) {
         try {
             refreshCapabilities(new AtomicBoolean(), vds);
         } finally {
             if (vds != null) {
                 updateDynamicData(vds.getDynamicData());
+                updateNumaData(vds);
 
                 // Update VDS after testing special hardware capabilities
                 monitoringStrategy.processHardwareCapabilities(vds);

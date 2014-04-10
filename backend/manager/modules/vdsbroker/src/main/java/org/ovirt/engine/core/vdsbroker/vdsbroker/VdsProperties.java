@@ -82,6 +82,26 @@ public final class VdsProperties {
 
     public static final String INTERFACE = "iface";
 
+    // NUMA related properties
+    public static final String NUMA_NODES = "numaNodes";
+    public static final String NUMA_NODE_DISTANCE = "numaNodeDistance";
+    public static final String AUTO_NUMA = "autoNumaBalancing";
+    public static final String NUMA_NODE_CPU_LIST = "cpus";
+    public static final String NUMA_NODE_TOTAL_MEM = "totalMemory";
+    public static final String NUMA_NODE_FREE_MEM_STAT = "numaNodeMemFree";
+    public static final String CPU_STATS = "cpuStatistics";
+    public static final String NUMA_NODE_FREE_MEM = "memFree";
+    public static final String NUMA_NODE_MEM_PERCENT = "memPercent";
+    public static final String NUMA_NODE_INDEX = "nodeIndex";
+    public static final String NUMA_CPU_SYS = "cpuSys";
+    public static final String NUMA_CPU_USER = "cpuUser";
+    public static final String NUMA_CPU_IDLE = "cpuIdle";
+    public static final String NUMA_TUNE_MODE = "mode";
+    public static final String NUMA_TUNE_NODESET = "nodeset";
+    public static final String VM_NUMA_NODE_MEM = "memory";
+    public static final String NUMA_TUNE = "numaTune";
+    public static final String VM_NUMA_NODES = "guestNumaNodes";
+
     // Network related properties
     public static final String NETWORK = "network";
     public static final String LINK_ACTIVE = "linkActive";
