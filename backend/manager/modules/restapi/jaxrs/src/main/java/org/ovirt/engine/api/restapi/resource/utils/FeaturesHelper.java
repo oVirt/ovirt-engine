@@ -81,6 +81,7 @@ public class FeaturesHelper {
         }
         if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_5)) {
             addBookmarksFeature(features);
+            addNetworkCustomPropertiesFeature(features);
         }
         return features;
     }
@@ -432,6 +433,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Bookmarks");
         feature.setDescription("Add/modify/remove bookmarks.");
+        features.getFeature().add(feature);
+    }
+
+    private void addNetworkCustomPropertiesFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Network Custom Properties");
+        feature.setDescription("Configure custom properties when provisioning networks on hosts.");
         features.getFeature().add(feature);
     }
 }

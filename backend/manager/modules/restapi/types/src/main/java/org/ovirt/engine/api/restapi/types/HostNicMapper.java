@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
+import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
@@ -80,6 +81,9 @@ public class HostNicMapper {
                 entity.setBootProtocol(networkBootProtocol);
             }
         }
+        if (model.isSetProperties()) {
+            entity.setCustomProperties(CustomPropertiesParser.toMap(model.getProperties()));
+        }
         return entity;
     }
 
@@ -145,6 +149,11 @@ public class HostNicMapper {
         if (entity.getNetworkImplementationDetails() != null) {
             model.setCustomConfiguration(!entity.getNetworkImplementationDetails().isInSync());
         }
+
+        if (entity.hasCustomProperties()) {
+            model.setProperties(CustomPropertiesParser.fromMap(entity.getCustomProperties()));
+        }
+
         return model;
     }
 

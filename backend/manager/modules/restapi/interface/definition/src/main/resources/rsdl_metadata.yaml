@@ -2747,7 +2747,9 @@ actions:
             host_nic.boot_protocol: 'xs:string', host_nic.mac: 'xs:string', host_nic.ip.address: 'xs:string', host_nic.ip.netmask: 'xs:string',
             host_nic.bonding.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string', option.type: 'xs:string'},
             bonding.slaves.host_nic--COLLECTION: {host_nic.name|id: 'xs:string'},
-            host_nic.override_configuration: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+            host_nic.override_configuration: 'xs:boolean',
+            host_nic.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'},
+            action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
           action.checkConnectivity: xs:boolean
           action.connectivityTimeout: xs:int
           action.force: xs:boolean
