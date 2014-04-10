@@ -805,6 +805,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Host doesn't support Local Storage configuration")
     String hostDoesntSupportLocalStorageConfigurationMsg();
 
+    @DefaultStringValue("Host must be installed before upgrade.")
+    String hostMustBeInstalledBeforeUpgrade();
+
     @DefaultStringValue("Testing in progress. It will take a few seconds. Please wait...")
     String testingInProgressItWillTakeFewSecondsPleaseWaitMsg();
 

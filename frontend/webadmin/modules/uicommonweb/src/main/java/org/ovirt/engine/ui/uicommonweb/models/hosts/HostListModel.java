@@ -1410,6 +1410,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                                         .thereAreNoISOversionsVompatibleWithHostCurrentVerMsg());
                             }
 
+                            if (host.getHostOs() == null) {
+                               model.setMessage(ConstantsManager.getInstance().getConstants()
+                                        .hostMustBeInstalledBeforeUpgrade());
+                            }
+
                             addUpgradeCommands(model, host, isos.isEmpty());
                             getWindow().stopProgress();
                     }

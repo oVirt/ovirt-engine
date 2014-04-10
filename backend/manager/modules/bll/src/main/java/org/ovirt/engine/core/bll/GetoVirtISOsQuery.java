@@ -43,6 +43,10 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
 
         RpmVersion vdsOsVersion = VdsHandler.getOvirtHostOsVersion(vds);
         String nodeOS = vds.getHostOs();
+        if (nodeOS == null) {
+            getQueryReturnValue().setReturnValue(new ArrayList<RpmVersion>());
+            return;
+        }
         for (OVirtNodeInfo.Entry info : OVirtNodeInfo.getInstance().get()) {
             log.debugFormat(
                 "nodeOS [{0}] | osPattern [{1}] | minimumVersion [{2}]",
