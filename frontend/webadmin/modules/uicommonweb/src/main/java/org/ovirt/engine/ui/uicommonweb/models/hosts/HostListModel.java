@@ -2008,7 +2008,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         getConfigureLocalStorageCommand().setIsExecutionAllowed(items.size() == 1
                 && items.get(0).getStatus() == VDSStatus.Maintenance);
 
-        if (!hasAdminSystemPermission && getConfigureLocalStorageCommand().getIsExecutionAllowed()) {
+        if (!Boolean.TRUE.equals(hasAdminSystemPermission) && getConfigureLocalStorageCommand().getIsExecutionAllowed()) {
 
             getConfigureLocalStorageCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
                     .getConstants()
