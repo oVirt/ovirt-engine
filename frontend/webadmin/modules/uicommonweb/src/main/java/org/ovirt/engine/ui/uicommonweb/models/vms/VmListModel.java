@@ -2086,6 +2086,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 updateVmParams.setBalloonEnabled(balloonEnabled(model));
                                 updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
                                 updateVmParams.setApplyChangesLater(applyCpuChangesLater);
+                                setRngDeviceToParams(model, updateVmParams);
 
                                 Frontend.getInstance().runAction(VdcActionType.UpdateVm,
                                         updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), vmListModel);
@@ -2113,6 +2114,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             updateVmParams.setBalloonEnabled(balloonEnabled(model));
             updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
             updateVmParams.setApplyChangesLater(applyCpuChangesLater);
+            setRngDeviceToParams(model, updateVmParams);
 
             Frontend.getInstance().runAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
         }
@@ -2150,6 +2152,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             parameters.setBalloonEnabled(balloonEnabled(model));
 
             setVmWatchdogToParams(model, parameters);
+            setRngDeviceToParams(model, parameters);
 
             Frontend.getInstance().runAction(VdcActionType.AddVmFromScratch,
                     parameters,
@@ -2201,6 +2204,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
                         param.setBalloonEnabled(balloonEnabled(model));
                         param.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
+                        setRngDeviceToParams(model, param);
 
                         Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
                     }
@@ -2230,6 +2234,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 params.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                 params.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
                 setVmWatchdogToParams(model, params);
+                setRngDeviceToParams(model, params);
 
                 Frontend.getInstance().runAction(VdcActionType.AddVm, params, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
             }
@@ -2257,6 +2262,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             vmWatchdog.setModel(wdModel);
             updateVmParams.setWatchdog(vmWatchdog);
         }
+    }
+
+    private void setRngDeviceToParams(UnitVmModel model, VmManagementParametersBase parameters) {
+        parameters.setUpdateRngDevice(true);
+        parameters.setRngDevice((Boolean) model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
     }
 
     private void retrieveIsoImages()

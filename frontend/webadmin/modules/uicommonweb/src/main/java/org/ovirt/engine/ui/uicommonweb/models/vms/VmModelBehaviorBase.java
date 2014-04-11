@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -108,6 +109,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         } else {
             getModel().getQuota().setIsAvailable(false);
         }
+
+        getModel().getIsRngEnabled().setIsChangable(isRngDeviceSupported(getModel()));
+        getModel().getIsRngEnabled().setMessage(constants.rngNotSupported());
 
         postDataCenterWithClusterSelectedItemChanged();
     }
@@ -451,7 +455,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         behavior.setMaxVmsInPool((Integer) returnValue);
                         behavior.updateMaxNumOfVmCpus();
                     }
-                }));
+                }
+        ));
     }
 
     public void updateMaxNumOfVmCpus() {
@@ -667,7 +672,21 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 .compareTo(VmListModel.BALLOON_DEVICE_MIN_VERSION) >= 0;
         getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(hasMemoryBalloon);
     }
+    private boolean isRngDeviceSupported(UnitVmModel model) {
+        Version clusterVersion = clusterVersionOrNull(model);
+        return clusterVersion == null ? false : (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+                ConfigurationValues.VirtIoRngDeviceSupported, clusterVersion.getValue());
+    }
 
+    private Version clusterVersionOrNull(UnitVmModel model) {
+        VDSGroup vdsGroup = model.getSelectedCluster();
+
+        if (vdsGroup == null || vdsGroup.getcompatibility_version() == null) {
+            return null;
+        }
+
+        return vdsGroup.getcompatibility_version();
+    }
 
     protected void updateCpuSharesAvailability() {
         if (getModel().getSelectedCluster() != null) {
@@ -966,7 +985,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         behavior.maxNumOfSockets = ((Integer) returnValue);
                         behavior.updataMaxVmsInPool();
                     }
-                }, getModel().getHash()), version.toString());
+                }, getModel().getHash()
+        ), version.toString());
     }
 
     /**
@@ -1061,6 +1081,20 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void enableSinglePCI(boolean enabled) {
         getModel().getIsSingleQxlEnabled().setIsChangable(enabled);
         getModel().getIsSingleQxlEnabled().setEntity(enabled);
+    }
+
+    protected void updateRngDevice(Guid templateId) {
+        Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(templateId), new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        @SuppressWarnings("unchecked")
+                        List<VmRngDevice> devs = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        getModel().getIsRngEnabled().setEntity(!devs.isEmpty());
+                        getModel().setRngDevice(devs.isEmpty() ? new VmRngDevice() : devs.get(0));
+                    }
+                }
+        ));
     }
 
     /**

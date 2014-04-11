@@ -1047,8 +1047,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                         boolean isNameUnique = (Boolean) returnValue;
                         String newName = model.getName().getEntity();
                         String currentName = userPortalListModel.gettempVm().getName();
-                        if (!isNameUnique && newName.compareToIgnoreCase(currentName) != 0)
-                        {
+                        if (!isNameUnique && newName.compareToIgnoreCase(currentName) != 0) {
                             UnitVmModel unitModel = (UnitVmModel) userPortalListModel.getWindow();
                             unitModel.getName().getInvalidityReasons().clear();
                             unitModel
@@ -1059,9 +1058,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                             unitModel.setIsValid(false);
                             unitModel.setIsGeneralTabValid(false);
                             stopProgress(target);
-                        }
-                        else
-                        {
+                        } else {
                             userPortalListModel.postVmNameUniqueCheck(userPortalListModel);
                         }
 
@@ -1101,6 +1098,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                 parameters.setMakeCreatorExplicitOwner(true);
                 parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                 parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+                setRngDeviceToParams(model, parameters);
                 Frontend.getInstance().runAction(VdcActionType.AddVmFromScratch, parameters, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
             }
             else
@@ -1146,6 +1144,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
                     param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                     param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+                    setRngDeviceToParams(model, param);
                     Frontend.getInstance().runAction(VdcActionType.AddVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
                 }
             }
@@ -1167,7 +1166,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                             confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
                             confirmModel.setCpuPluggable(selectedItem.getCpuPerSocket() == gettempVm().getCpuPerSocket() &&
                                     selectedItem.getNumOfSockets() != gettempVm().getNumOfSockets());
-
                             confirmModel.getCommands().add(new UICommand("updateExistingVm", UserPortalListModel.this) //$NON-NLS-1$
                             .setTitle(ConstantsManager.getInstance().getConstants().ok())
                             .setIsDefault(true));
@@ -1207,6 +1205,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                             param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                             param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
                             param.setApplyChangesLater(applyCpuChangesLater);
+                            setRngDeviceToParams(model, param);
 
                             Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
                         }
@@ -1218,9 +1217,15 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
             param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
             param.setApplyChangesLater(applyCpuChangesLater);
+            setRngDeviceToParams(model, param);
 
             Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
         }
+    }
+
+    private void setRngDeviceToParams(UnitVmModel model, VmManagementParametersBase parameters) {
+        parameters.setUpdateRngDevice(true);
+        parameters.setRngDevice((Boolean) model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
     }
 
     protected static void buildVmOnSave(UnitVmModel model, VM vm) {

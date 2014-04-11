@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -495,6 +496,42 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId
     public EntityModelCheckBoxOnlyEditor spiceProxyOverrideEnabledEditor;
 
+    // == Rng Tab ==
+    @UiField
+    protected DialogTab rngDeviceTab;
+
+    @Path(value = "isRngEnabled.entity")
+    @WithElementId("isRngEnabled")
+    public EntityModelCheckBoxOnlyEditor isRngEnabledEditor;
+
+    @UiField(provided = true)
+    @WithElementId
+    public EntityModelWidgetWithInfo<String> isRngEnabledCheckboxWithInfoIcon;
+
+    @UiField
+    @Ignore
+    protected FlowPanel rngPanel;
+
+    @UiField(provided = true)
+    @Path(value = "rngPeriod.entity")
+    @WithElementId("rngPeriodEditor")
+    public IntegerEntityModelTextBoxEditor rngPeriodEditor;
+
+    @UiField(provided = true)
+    @Path(value = "rngBytes.entity")
+    @WithElementId("rngBytesEditor")
+    public IntegerEntityModelTextBoxEditor rngBytesEditor;
+
+    @UiField(provided = true)
+    @Path(value = "rngSourceRandom.entity")
+    @WithElementId("rngSourceRandom")
+    public EntityModelRadioButtonEditor rngSourceRandom;
+
+    @UiField(provided = true)
+    @Path(value = "rngSourceHwrng.entity")
+    @WithElementId("rngSourceHwrng")
+    public EntityModelRadioButtonEditor rngSourceHwrng;
+
     // ==Host Tab==
     @UiField
     protected DialogTab hostTab;
@@ -793,6 +830,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isDeleteProtectedEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSmartcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isConsoleDeviceEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer(), true);
+
+        isRngEnabledEditor = new EntityModelCheckBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        StringEntityModelLabel rnglabel = new StringEntityModelLabel();
+        rnglabel.setText(constants.rngDevEnabled());
+        isRngEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo<String>(rnglabel, isRngEnabledEditor);
+        isRngEnabledCheckboxWithInfoIcon.setExplanation(SafeHtmlUtils.fromTrustedString(constants.rngDevExplanation()));
+        rngPeriodEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        rngBytesEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        rngSourceRandom = new EntityModelRadioButtonEditor("rndBackendModel"); //$NON-NLS-1$
+        rngSourceHwrng = new EntityModelRadioButtonEditor("rndBackendModel"); //$NON-NLS-1$
+
         cdAttachedEditor = new EntityModelCheckBoxEditor(Align.LEFT, new ModeSwitchingVisibilityRenderer());
         bootMenuEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         allowConsoleReconnectEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
@@ -1210,6 +1258,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isMemoryBalloonDeviceEnabled.setLabel(constants.memoryBalloonDeviceEnabled());
         isVirtioScsiEnabled.setLabel(constants.isVirtioScsiEnabled());
 
+        // Rng device tab
+        rngDeviceTab.setLabel(constants.rngDeviceTab());
+        isRngEnabledEditor.setLabel(constants.rngDevEnabled());
+        rngPeriodEditor.setLabel(constants.rngPeriod());
+        rngBytesEditor.setLabel(constants.rngBytes());
+        rngSourceRandom.setLabel(constants.rngSourceRandom());
+        rngSourceHwrng.setLabel(constants.rngSourceHwrng());
+
+
         // Pools Tab
         poolTab.setLabel(constants.poolVmPopup());
         poolTypeEditor.setLabel(constants.poolTypeVmPopup());
@@ -1450,6 +1507,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 }
             }
         });
+
+        object.getIsRngEnabled().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                rngPanel.setVisible((Boolean) object.getIsRngEnabled().getEntity());
+            }
+        });
     }
 
     /**
@@ -1457,13 +1521,22 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
      * certain, configurable cluster version.
      */
     protected void updateUsbNativeMessageVisibility(final UnitVmModel object) {
-        VDSGroup vdsGroup = object.getSelectedCluster();
+        Version vdsGroupVersion = clusterVersionOrNull(object);
         changeApplicationLevelVisibility(nativeUsbWarningMessage,
                 object.getUsbPolicy().getSelectedItem() == UsbPolicy.ENABLED_NATIVE
-                        && vdsGroup != null
-                        && vdsGroup.getcompatibility_version() != null
+                        && vdsGroupVersion != null
                         && !(Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MigrationSupportForNativeUsb,
-                                vdsGroup.getcompatibility_version().getValue()));
+                                vdsGroupVersion.getValue()));
+    }
+
+    private Version clusterVersionOrNull(UnitVmModel model) {
+        VDSGroup vdsGroup = model.getSelectedCluster();
+
+        if (vdsGroup == null || vdsGroup.getcompatibility_version() == null) {
+            return null;
+        }
+
+        return vdsGroup.getcompatibility_version();
     }
 
     private void addDiskAllocation(UnitVmModel model) {
@@ -1518,8 +1591,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                     } else {
                         customPropertiesTab.markAsInvalid(null);
                     }
-                }
-                else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
+                } else if ("IsRngTabValid".equals(propName)) { //$NON-NLS-1$
+                    if (vm.isRngTabValid()) {
+                        rngDeviceTab.markAsValid();
+                    } else {
+                        rngDeviceTab.markAsInvalid(null);
+                    }
+                } else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
                     boolean isDisksAvailable = vm.getIsDisksAvailable();
                     changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable);
 
@@ -1531,12 +1609,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                         // Update warning message by disks status
                         updateDisksWarningByImageStatus(vm.getDisks(), ImageStatus.ILLEGAL);
                         updateDisksWarningByImageStatus(vm.getDisks(), ImageStatus.LOCKED);
-                    }
-                    else {
+                    } else {
                         // Clear warning message
                         generalWarningMessage.setText(""); //$NON-NLS-1$
                     }
                 }
+
             }
         });
 
@@ -1561,6 +1639,22 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 defaultHostEditor.setEnabled(specificHost.getValue());
                 ValueChangeEvent.fire(isAutoAssignEditor.asRadioButton(), false);
+            }
+        });
+
+        rngSourceRandom.asRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+                vm.getRngSourceRandom().setEntity(true);
+                vm.getRngSourceHwrng().setEntity(false);
+            }
+        });
+
+        rngSourceHwrng.asRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+                vm.getRngSourceHwrng().setEntity(true);
+                vm.getRngSourceRandom().setEntity(false);
             }
         });
 
@@ -1753,6 +1847,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initrd_pathEditor.setTabIndex(nextTabIndex++);
         kernel_parametersEditor.setTabIndex(nextTabIndex++);
 
+        // ==Rng Tab==
+        nextTabIndex = rngDeviceTab.setTabIndexes(nextTabIndex);
+        isRngEnabledEditor.setTabIndex(nextTabIndex++);
+        rngPeriodEditor.setTabIndex(nextTabIndex++);
+        rngBytesEditor.setTabIndex(nextTabIndex++);
+        rngSourceRandom.setTabIndex(nextTabIndex++);
+        rngSourceHwrng.setTabIndex(nextTabIndex++);
+
         // ==Custom Properties Tab==
         nextTabIndex = customPropertiesTab.setTabIndexes(nextTabIndex);
 
@@ -1809,6 +1911,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 resourceAllocationTab,
                 bootOptionsTab,
                 customPropertiesTab,
+                rngDeviceTab,
                 highAvailabilityTab,
                 poolTab,
                 systemTab);
@@ -1853,6 +1956,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         bootOptionsTab.disableContent();
         customPropertiesTab.disableContent();
         systemTab.disableContent();
+        rngDeviceTab.disableContent();
         oSTypeEditor.setEnabled(false);
         quotaEditor.setEnabled(false);
         dataCenterWithClusterEditor.setEnabled(false);

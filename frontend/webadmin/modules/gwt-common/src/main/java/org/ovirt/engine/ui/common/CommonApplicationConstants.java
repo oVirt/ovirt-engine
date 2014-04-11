@@ -1829,4 +1829,28 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Guest CPU Count")
     String GuestCpuCount();
+
+    @DefaultStringValue("Random Generator enabled")
+    String rngDevEnabled();
+
+    @DefaultStringValue("Period duration (ms)")
+    String rngPeriod();
+
+    @DefaultStringValue("Bytes per period")
+    String rngBytes();
+
+    @DefaultStringValue("Device source")
+    String deviceSource();
+
+    @DefaultStringValue("/dev/random source")
+    String rngSourceRandom();
+
+    @DefaultStringValue("/dev/hwrng source")
+    String rngSourceHwrng();
+
+    @DefaultStringValue("Random Generator")
+    String rngDeviceTab();
+
+    @DefaultStringValue("Enables/disables Random Number Generator device. If 'period' and 'bytes' are empty, libvirt default is used. If you specify 'period' you need to specify 'bytes' as well.")
+    String rngDevExplanation();
 }

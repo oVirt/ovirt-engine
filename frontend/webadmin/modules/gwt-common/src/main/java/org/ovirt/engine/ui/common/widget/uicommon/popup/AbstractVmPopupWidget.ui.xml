@@ -185,9 +185,14 @@
             float: left;
         }
 
-        .expanderContent, .generalExpanderContent {
-            padding-left: 10px;
-        }
+		.expanderContent,.generalExpanderContent {
+			padding-left: 10px;
+		}
+		
+		.monitorsStyles {
+			width: 40px;
+			padding-left: 5px;
+		}
 
         .monitorsStyles {
             width: 40px;
@@ -687,6 +692,22 @@
                 </t:content>
             </t:DialogTab>
         </t:tab>
+        <t:tab>
+			<t:DialogTab ui:field="rngDeviceTab">
+				<t:content>
+					<g:FlowPanel>
+                        <w:EntityModelWidgetWithInfo ui:field="isRngEnabledCheckboxWithInfoIcon" addStyleNames="{style.checkbox}" />
+                        <g:FlowPanel ui:field="rngPanel">
+                            <ge:IntegerEntityModelTextBoxEditor ui:field="rngPeriodEditor"/>
+                            <ge:IntegerEntityModelTextBoxEditor ui:field="rngBytesEditor" />
+                            <g:Label ui:field="rngSourceLabel" text="{constants.deviceSource}" addStyleNames="{style.sectionLabel}" />
+                            <ge:EntityModelRadioButtonEditor ui:field="rngSourceRandom" />
+                            <ge:EntityModelRadioButtonEditor ui:field="rngSourceHwrng" />
+                        </g:FlowPanel>
+                    </g:FlowPanel>
+                </t:content>
+			</t:DialogTab>
+		</t:tab>
         <t:tab>
             <t:DialogTab ui:field="customPropertiesTab">
                 <t:content>

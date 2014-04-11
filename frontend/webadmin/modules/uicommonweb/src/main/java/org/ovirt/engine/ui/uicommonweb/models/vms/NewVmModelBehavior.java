@@ -123,6 +123,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                 getModel().getCopyPermissions().setIsAvailable(true);
                 getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
                 initDisks();
+                updateRngDevice(template.getId());
             }
             else
             {

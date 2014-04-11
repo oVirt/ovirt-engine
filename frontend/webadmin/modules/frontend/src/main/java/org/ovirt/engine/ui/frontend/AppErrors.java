@@ -3182,4 +3182,14 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. ${interface} disks can't be read-only.")
     String ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Trying to manipulate with Random Number Generator device but none is found.")
+    String ACTION_TYPE_FAILED_RNG_NOT_FOUND();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Random Number Generator device already exists.")
+    String ACTION_TYPE_FAILED_RNG_ALREADY_EXISTS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Random Number Generator device is not supported in cluster.")
+    String ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED();
+
 }

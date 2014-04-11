@@ -108,6 +108,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
             }
         }), template.getId());
 
+        updateRngDevice(template.getId());
+
         getModel().getMigrationMode().setSelectedItem(template.getMigrationSupport());
 
         setupBaseTemplate(template.getBaseTemplateId());

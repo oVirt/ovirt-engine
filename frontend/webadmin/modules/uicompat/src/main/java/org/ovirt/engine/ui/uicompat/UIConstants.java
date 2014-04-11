@@ -2283,5 +2283,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("The following VMs are attached to the instance type")
     String vmsAttachedToInstanceTypeWarningMessage();
+
+    @DefaultStringValue("If period is specified, bytes per period must be specified as well.")
+    String rngRateInvalid();
+
+    @DefaultStringValue("Random Number Generator not supported for this cluster level or is disabled in the engine config.")
+    String rngNotSupported();
 }
 

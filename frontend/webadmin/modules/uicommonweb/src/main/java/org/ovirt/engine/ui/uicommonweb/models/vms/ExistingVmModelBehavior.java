@@ -153,6 +153,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
         getModel().getVncKeyboardLayout().setSelectedItem(vm.getDefaultVncKeyboardLayout());
 
+        updateRngDevice(getVm().getId());
         updateTimeZone(vm.getTimeZone());
 
         getModel().getHostCpu().setEntity(vm.isUseHostCpuFlags());

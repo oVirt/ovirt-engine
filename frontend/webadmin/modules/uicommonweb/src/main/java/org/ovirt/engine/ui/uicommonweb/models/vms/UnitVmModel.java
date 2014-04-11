@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -466,6 +467,17 @@ public class UnitVmModel extends Model {
         }
     }
 
+    private boolean isRngTabValid;
+
+    public boolean isRngTabValid() {
+        return isRngTabValid;
+    }
+
+    public void setRngTabValid(boolean rngTabValid) {
+        isRngTabValid = rngTabValid;
+        onPropertyChanged(new PropertyChangedEventArgs("IsRngTabValid")); //$NON-NLS-1$
+    }
+
     private NotChangableForVmInPoolListModel<StorageDomain> privateStorageDomain;
 
     public ListModel<StorageDomain> getStorageDomain()
@@ -739,6 +751,70 @@ public class UnitVmModel extends Model {
     }
 
     private NotChangableForVmInPoolEntityModel<Boolean> isConsoleDeviceEnabled;
+
+    public void setRngDevice(VmRngDevice dev) {
+        rngBytes.setEntity(dev.getBytes() == null ? null : dev.getBytes());
+        rngPeriod.setEntity(dev.getPeriod() == null ? null : dev.getPeriod());
+        rngSourceRandom.setEntity(dev.getSource() == VmRngDevice.Source.RANDOM);
+        rngSourceHwrng.setEntity(dev.getSource() == VmRngDevice.Source.HWRNG);
+    }
+
+    public VmRngDevice generateRngDevice() {
+        VmRngDevice dev = new VmRngDevice();
+        dev.setBytes(rngBytes.getEntity());
+        dev.setPeriod(rngPeriod.getEntity());
+        dev.setSource(Boolean.TRUE.equals(rngSourceRandom.getEntity()) ? VmRngDevice.Source.RANDOM : VmRngDevice.Source.HWRNG);
+        return dev;
+    }
+
+    private NotChangableForVmInPoolEntityModel<Integer> rngPeriod;
+
+    public EntityModel<Integer> getRngPeriod() {
+        return rngPeriod;
+    }
+
+    public void setRngPeriod(NotChangableForVmInPoolEntityModel<Integer> rngPeriod) {
+        this.rngPeriod = rngPeriod;
+    }
+
+    public EntityModel<Integer> getRngBytes() {
+        return rngBytes;
+    }
+
+    public void setRngBytes(NotChangableForVmInPoolEntityModel<Integer> rngBytes) {
+        this.rngBytes = rngBytes;
+    }
+
+    public EntityModel<Boolean> getRngSourceHwrng() {
+        return rngSourceHwrng;
+    }
+
+    public void setRngSourceHwrng(NotChangableForVmInPoolEntityModel<Boolean> rngSourceHwrng) {
+        this.rngSourceHwrng = rngSourceHwrng;
+    }
+
+    public EntityModel<Boolean> getRngSourceRandom() {
+        return rngSourceRandom;
+    }
+
+    public void setRngSourceRandom(NotChangableForVmInPoolEntityModel<Boolean> rngSourceRandom) {
+        this.rngSourceRandom = rngSourceRandom;
+    }
+
+    private NotChangableForVmInPoolEntityModel<Integer> rngBytes;
+
+    private NotChangableForVmInPoolEntityModel<Boolean> rngSourceRandom;
+    private NotChangableForVmInPoolEntityModel<Boolean> rngSourceHwrng;
+
+    private NotChangableForVmInPoolEntityModel<Boolean> isRngEnabled;
+
+    public EntityModel<Boolean> getIsRngEnabled() {
+        return isRngEnabled;
+    }
+
+    public void setIsRngEnabled(NotChangableForVmInPoolEntityModel<Boolean> rngEnabled) {
+        isRngEnabled = rngEnabled;
+    }
 
     public EntityModel<Boolean> getIsConsoleDeviceEnabled() {
         return isConsoleDeviceEnabled;
@@ -1315,6 +1391,15 @@ public class UnitVmModel extends Model {
         setSsoMethodGuestAgent(new NotChangableForVmInPoolEntityModel<Boolean>());
         setConsoleDeviceEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setCopyPermissions(new NotChangableForVmInPoolEntityModel<Boolean>());
+
+        //rng
+        setIsRngEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
+        getIsRngEnabled().getEntityChangedEvent().addListener(this);
+        setRngBytes(new NotChangableForVmInPoolEntityModel<Integer>());
+        setRngPeriod(new NotChangableForVmInPoolEntityModel<Integer>());
+        setRngSourceRandom(new NotChangableForVmInPoolEntityModel<Boolean>());
+        setRngSourceHwrng(new NotChangableForVmInPoolEntityModel<Boolean>());
+
         // by default not available - only for new VM
         getCopyPermissions().setIsAvailable(false);
         getCopyPermissions().setEntity(false);
@@ -1455,6 +1540,7 @@ public class UnitVmModel extends Model {
 
         setIsHostTabValid(true);
         setIsCustomPropertiesTabAvailable(true);
+        setRngTabValid(true);
         setIsCustomPropertiesTabValid(getIsHostTabValid());
         setIsBootSequenceTabValid(getIsCustomPropertiesTabValid());
         setIsAllocationTabValid(getIsBootSequenceTabValid());
@@ -1540,6 +1626,9 @@ public class UnitVmModel extends Model {
         getIsAutoAssign().setEntity(true);
         getIsTemplatePublic().setEntity(true);
         getBehavior().enableSinglePCI(false);
+
+        isRngEnabled.setEntity(false);
+        rngSourceRandom.setEntity(true);
 
         getHostCpu().setEntity(false);
         getMigrationMode().setIsChangable(true);
@@ -2524,6 +2613,10 @@ public class UnitVmModel extends Model {
         setIsHostTabValid(getMigrationDowntime().getIsValid());
         setIsAllocationTabValid(getMinAllocatedMemory().getIsValid());
 
+        getRngBytes().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE), new RngDevValidation()});
+        getRngPeriod().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE)});
+        setRngTabValid(getRngBytes().getIsValid() && getRngPeriod().getIsValid());
+
         setIsSystemTabValid(getMemSize().getIsValid() &&
                             getTotalCPUCores().getIsValid() &&
                             getSerialNumberPolicy().getCustomSerialNumber().getIsValid());
@@ -2537,7 +2630,20 @@ public class UnitVmModel extends Model {
         return behaviorValid && customPropertySheetValid && getName().getIsValid() && getDescription().getIsValid()
                 && getMinAllocatedMemory().getIsValid()
                 && getNumOfMonitors().getIsValid() && getUsbPolicy().getIsValid()
-                && getMigrationDowntime().getIsValid();
+                && getMigrationDowntime().getIsValid()
+                && getRngBytes().getIsValid()
+                && getRngPeriod().getIsValid();
+    }
+
+    private class RngDevValidation implements IValidation {
+
+        @Override
+        public ValidationResult validate(Object value) {
+            ValidationResult res = new ValidationResult();
+            res.setSuccess(!(rngBytes.getEntity() == null && rngPeriod.getEntity() != null));
+            res.setReasons(Arrays.asList(ConstantsManager.getInstance().getConstants().rngRateInvalid()));
+            return res;
+        }
     }
 
     public SsoMethod extractSelectedSsoMethod() {

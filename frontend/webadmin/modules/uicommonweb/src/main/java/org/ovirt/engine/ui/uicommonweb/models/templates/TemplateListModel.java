@@ -610,6 +610,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         setVmWatchdogToParams(model, parameters);
         parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        setVmRngDeviceToParams(model, parameters);
 
         Frontend.getInstance().runAction(VdcActionType.UpdateVmTemplate, parameters,
                 new IFrontendActionAsyncCallback() {
@@ -641,6 +642,10 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         }
     }
 
+    private void setVmRngDeviceToParams(UnitVmModel model, UpdateVmTemplateParameters parameters) {
+        parameters.setUpdateRngDevice(true);
+        parameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
+    }
 
     public void postUpdateVmTemplate(VdcReturnValueBase returnValue)
     {

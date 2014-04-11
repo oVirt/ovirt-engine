@@ -464,6 +464,9 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         param.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
 
                         param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+                        param.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
+
+                        param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                         if (model.getQuota().getSelectedItem() != null) {
                             vm.setQuotaId(model.getQuota().getSelectedItem().getId());
                         }
