@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ListUtils;
@@ -63,6 +64,18 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
             vds.setStatus(VDSStatus.NonOperational);
         }
 
+        if (!hostCompliesWithRngDeviceSources(vds, vdsGroup) && vds.getStatus() != VDSStatus.NonOperational) {
+            Map<String, String> customLogValues = new HashMap<>();
+            customLogValues.put("hostSupportedRngSources", VmRngDevice.sourcesToCsv(vds.getSupportedRngSources()));
+            customLogValues.put("clusterRequiredRngSources", VmRngDevice.sourcesToCsv(vdsGroup.getRequiredRngSources()));
+
+            vdsNonOperational(vds, NonOperationalReason.RNG_SOURCES_INCOMPATIBLE_WITH_CLUSTER, customLogValues);
+            vds.setStatus(VDSStatus.NonOperational);
+        }
+    }
+
+    private boolean hostCompliesWithRngDeviceSources(VDS vds, VDSGroup vdsGroup) {
+        return vds.getSupportedRngSources().containsAll(vdsGroup.getRequiredRngSources());
     }
 
     @Override

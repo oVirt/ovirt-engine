@@ -10,11 +10,11 @@ import static org.mockito.Mockito.spy;
 import java.util.Map;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 
@@ -53,6 +53,7 @@ public class VirtMonitoringStrategyTest {
     public void testProcessSpecialSoftwareCapabilities() {
         VDS vds = new VDS();
         vds.setSupportedEmulatedMachines("pc-1.0");
+        vds.getSupportedRngSources().add(VmRngDevice.Source.RANDOM);
         vds.setStatus(VDSStatus.Up);
         virtStrategy.processSoftwareCapabilities(vds);
         assertTrue(vds.getStatus().equals(VDSStatus.Up));
@@ -60,6 +61,13 @@ public class VirtMonitoringStrategyTest {
         virtStrategy.processSoftwareCapabilities(vds);
         assertTrue(vds.getStatus().equals(VDSStatus.Up));
         vds.setKvmEnabled(Boolean.FALSE);
+        virtStrategy.processSoftwareCapabilities(vds);
+        assertTrue(vds.getStatus().equals(VDSStatus.NonOperational));
+        vds.setKvmEnabled(Boolean.TRUE);
+        vds.setStatus(VDSStatus.Up);
+        virtStrategy.processSoftwareCapabilities(vds);
+        assertTrue(vds.getStatus().equals(VDSStatus.Up));
+        vds.getSupportedRngSources().clear();
         virtStrategy.processSoftwareCapabilities(vds);
         assertTrue(vds.getStatus().equals(VDSStatus.NonOperational));
     }
@@ -89,7 +97,8 @@ public class VirtMonitoringStrategyTest {
         VdsGroupDAO mock = mock(VdsGroupDAO.class);
         VDSGroup value = new VDSGroup();
         value.setEmulatedMachine("pc-1.0");
-        Mockito.when(mock.get(any(Guid.class))).thenReturn(value);
+        value.getRequiredRngSources().add(VmRngDevice.Source.RANDOM);
+        org.mockito.Mockito.when(mock.get(any(Guid.class))).thenReturn(value);
         return mock;
     }
 }

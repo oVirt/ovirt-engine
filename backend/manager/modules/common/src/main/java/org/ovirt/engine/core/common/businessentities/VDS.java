@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -1335,6 +1336,10 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public void setDisablePowerManagementPolicy(boolean disablePowerManagementPolicy) {
         mVdsStatic.setDisablePowerManagementPolicy(disablePowerManagementPolicy);
+    }
+
+    public Set<VmRngDevice.Source> getSupportedRngSources() {
+        return mVdsDynamic.getSupportedRngSources();
     }
 
     public KdumpStatus getKdumpStatus() {

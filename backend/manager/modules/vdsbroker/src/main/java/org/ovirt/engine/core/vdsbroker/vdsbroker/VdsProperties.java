@@ -145,6 +145,7 @@ public final class VdsProperties {
     public static final String supported_engines = "supportedENGINEs";
     public static final String emulatedMachine = "emulatedMachine";
     public static final String emulatedMachines = "emulatedMachines";
+    public static final String rngSources = "rngSources";
     public static final String host_os = "operatingSystem";
     public static final String packages = "packages";
     public static final String packages2 = "packages2";

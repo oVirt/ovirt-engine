@@ -625,6 +625,7 @@
         <column>spice_proxy</column>
         <column>serial_number_policy</column>
         <column>custom_serial_number</column>
+        <column>required_rng_sources</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>rhel6.iscsi</value>
@@ -649,6 +650,7 @@
             <null/>
             <null />
             <null />
+            <value>RANDOM</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
@@ -674,6 +676,7 @@
             <null/>
             <value>0</value>
             <null />
+            <value></value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
@@ -699,6 +702,7 @@
             <null/>
             <value>1</value>
             <null />
+            <value>HWRNG</value>
         </row>
         <row>
             <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
@@ -724,6 +728,7 @@
             <null/>
             <value>2</value>
             <value>my custom serial number</value>
+            <value>HWRNG,RANDOM</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -749,6 +754,7 @@
             <null/>
             <null />
             <null />
+            <value>HWRNG,RANDOM</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7d</value>
@@ -774,6 +780,7 @@
             <null/>
             <null />
             <null />
+            <value>HWRNG,RANDOM</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7e</value>
@@ -799,6 +806,7 @@
             <null/>
             <null />
             <null />
+            <value>RANDOM</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7f</value>
@@ -824,6 +832,7 @@
             <null/>
             <null />
             <null />
+            <value>RANDOM</value>
         </row>
         <row>
             <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
@@ -849,6 +858,7 @@
             <null/>
             <null />
             <null />
+            <value>RANDOM</value>
         </row>
     </table>
 
@@ -2601,6 +2611,7 @@
         <column>selinux_enforce_mode</column>
         <column>auto_numa_balancing</column>
         <column>is_numa_supported</column>
+        <column>supported_rng_sources</column>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>3</value>
@@ -2652,6 +2663,7 @@
             <value>1</value>
             <value>2</value>
             <value>true</value>
+            <value>RANDOM</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
@@ -2704,6 +2716,7 @@
             <value>0</value>
             <value>2</value>
             <value>true</value>
+            <value></value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e8</value>
@@ -2756,6 +2769,7 @@
             <value>-1</value>
             <value>2</value>
             <value>true</value>
+            <value>HWRNG</value>
         </row>
         <row>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
@@ -2808,6 +2822,7 @@
             <value>2</value>
             <value>2</value>
             <value>true</value>
+            <value>RANDOM</value>
         </row>
         <row>
             <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
@@ -2860,6 +2875,7 @@
             <null />
             <value>2</value>
             <value>true</value>
+            <value>RANDOM,HWRNG</value>
         </row>
     </table>
 

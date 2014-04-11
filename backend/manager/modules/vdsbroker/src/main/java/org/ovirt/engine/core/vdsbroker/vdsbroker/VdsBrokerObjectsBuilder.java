@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -409,7 +410,7 @@ public class VdsBrokerObjectsBuilder {
 
         vds.setSupportedEmulatedMachines(AssignStringValueFromArray(xmlRpcStruct, VdsProperties.emulatedMachines));
 
-        // todo process rngSources too (follow up patch with rng sources reporting)
+        setRngSupportedSourcesToVds(vds, xmlRpcStruct);
 
         String hooksStr = ""; // default value if hooks is not in the xml rpc struct
         if (xmlRpcStruct.containsKey(VdsProperties.hooks)) {
@@ -437,6 +438,14 @@ public class VdsBrokerObjectsBuilder {
             vds.setSELinuxEnforceMode(AssignIntValue(selinux, VdsProperties.selinux_mode));
         } else {
             vds.setSELinuxEnforceMode(null);
+        }
+    }
+
+    private static void setRngSupportedSourcesToVds(VDS vds, Map<String, Object> xmlRpcStruct) {
+        vds.getSupportedRngSources().clear();
+        String rngSourcesFromStruct = AssignStringValueFromArray(xmlRpcStruct, VdsProperties.rngSources);
+        if (rngSourcesFromStruct != null) {
+            vds.getSupportedRngSources().addAll(VmRngDevice.csvToSourcesSet(rngSourcesFromStruct.toUpperCase()));
         }
     }
 

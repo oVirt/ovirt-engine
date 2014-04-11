@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -264,7 +265,9 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                                                   ? vds.getSELinuxEnforceMode().toInt()
                                                   : null)
                 .addValue("auto_numa_balancing", vds.getAutoNumaBalancing().getValue())
-                .addValue("is_numa_supported", vds.isNumaSupport());
+                .addValue("is_numa_supported", vds.isNumaSupport())
+                .addValue("supported_rng_sources", VmRngDevice.sourcesToCsv(vds.getSupportedRngSources()))
+                .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines());
 
         return parameterSource;
     }

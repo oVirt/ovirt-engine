@@ -911,6 +911,7 @@ public enum AuditLogType {
     /** Restart of a highly available virtual machine failed. */
     HA_VM_RESTART_FAILED(9603, AuditLogSeverity.ERROR),
     EXCEEDED_MAXIMUM_NUM_OF_RESTART_HA_VM_ATTEMPTS(9605, AuditLogSeverity.ERROR),
+    RNG_SOURCES_INCOMPATIBLE_WITH_CLUSTER(9608, AuditLogSeverity.WARNING, AuditLogTimeInterval.MINUTE.getValue()),
 
     IMPORTEXPORT_SNAPSHOT_VM_INVALID_INTERFACES(9606, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.MINUTE.getValue()),

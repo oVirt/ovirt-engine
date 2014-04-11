@@ -10,8 +10,10 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 /**
@@ -69,9 +71,15 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
         return true;
     }
 
-    protected boolean isRngSupportedByClusterLevel() {
+    protected boolean isRngSupportedByCluster() {
         VDSGroup cluster = getVdsGroup();
-        return cluster != null && FeatureSupported.virtIoRngSupported(cluster.getcompatibility_version());
+        VmRngDevice.Source source = getParameters().getRngDevice().getSource();
+        return cluster != null && isFeatureSupported(cluster.getcompatibility_version())
+                && cluster.getRequiredRngSources().contains(source);
+    }
+
+    boolean isFeatureSupported(Version clusterVersion) {
+        return FeatureSupported.virtIoRngSupported(clusterVersion);
     }
 
     protected List<VmDevice> getRngDevices() {

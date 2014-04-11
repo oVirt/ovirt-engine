@@ -741,7 +741,7 @@ SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group
                       vds_dynamic.transparent_hugepages_state as transparent_hugepages_state, vds_statistics.anonymous_hugepages as anonymous_hugepages, vds_dynamic.non_operational_reason as non_operational_reason,
 			vds_static.recoverable as recoverable, vds_static.sshKeyFingerprint as sshKeyFingerprint, vds_dynamic.hw_manufacturer as hw_manufacturer, vds_dynamic.hw_product_name as hw_product_name, vds_dynamic.hw_version as hw_version,
                       vds_dynamic.hw_serial_number as hw_serial_number, vds_dynamic.hw_uuid as hw_uuid, vds_dynamic.hw_family as hw_family, vds_static.console_address as console_address,
-                      vds_dynamic.hbas as hbas, vds_dynamic.supported_emulated_machines as supported_emulated_machines, vds_static.ssh_port as ssh_port, vds_static.ssh_username as ssh_username, vds_statistics.ha_score as ha_score,
+                      vds_dynamic.hbas as hbas, vds_dynamic.supported_emulated_machines as supported_emulated_machines, vds_dynamic.supported_rng_sources as supported_rng_sources, vds_static.ssh_port as ssh_port, vds_static.ssh_username as ssh_username, vds_statistics.ha_score as ha_score,
                       vds_statistics.ha_configured as ha_configured, vds_statistics.ha_active as ha_active, vds_statistics.ha_global_maintenance as ha_global_maintenance,
                       vds_statistics.ha_local_maintenance as ha_local_maintenance, vds_static.disable_auto_pm as disable_auto_pm, vds_dynamic.controlled_by_pm_policy as controlled_by_pm_policy, vds_statistics.boot_time as boot_time,
                       vds_dynamic.kdump_status as kdump_status, vds_dynamic.selinux_enforce_mode as selinux_enforce_mode,
@@ -790,7 +790,8 @@ spm_status, vds_dynamic.supported_cluster_levels, vds_dynamic.supported_engines,
                       vds_statistics.ha_configured, vds_statistics.ha_active, vds_statistics.ha_global_maintenance, vds_statistics.ha_local_maintenance,
                       vds_static.disable_auto_pm as disable_auto_pm, vds_dynamic.controlled_by_pm_policy as controlled_by_pm_policy,
                       vds_statistics.boot_time, vds_dynamic.kdump_status as kdump_status, vds_dynamic.selinux_enforce_mode as selinux_enforce_mode,
-                      vds_dynamic.auto_numa_balancing as auto_numa_balancing, vds_dynamic.is_numa_supported as is_numa_supported
+                      vds_dynamic.auto_numa_balancing as auto_numa_balancing, vds_dynamic.is_numa_supported as is_numa_supported,
+                      vds_dynamic.supported_rng_sources as supported_rng_sources
 FROM         vds_groups INNER JOIN
 vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id INNER JOIN
 vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id INNER JOIN

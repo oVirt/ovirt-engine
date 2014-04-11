@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import java.util.Set;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -157,6 +158,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private boolean numaSupport;
 
+    private Set<VmRngDevice.Source> supportedRngSources;
+
     public void setVersion(RpmVersion value) {
         rpmVersion = value;
     }
@@ -193,6 +196,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         kdumpStatus = KdumpStatus.UNKNOWN;
         numaNodeList = new ArrayList<VdsNumaNode>();
         autoNumaBalancing = AutoNumaBalanceStatus.UNKNOWN;
+        supportedRngSources = new HashSet<VmRngDevice.Source>();
     }
 
     public Integer getcpu_cores() {
@@ -638,6 +642,10 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.numaSupport = numaSupport;
     }
 
+    public Set<VmRngDevice.Source> getSupportedRngSources() {
+        return supportedRngSources;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -681,6 +689,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + ((versionName == null) ? 0 : versionName.hashCode());
         result = prime * result + ((vm_active == null) ? 0 : vm_active.hashCode());
         result = prime * result + vm_count;
+        result = prime * result + ((supportedRngSources == null) ? 0 : supportedRngSources.hashCode());
         result = prime * result + ((vm_migrating == null) ? 0 : vm_migrating.hashCode());
         result = prime * result + ((vms_cores_count == null) ? 0 : vms_cores_count.hashCode());
         result = prime * result + ((hwManufacturer == null) ? 0 : hwManufacturer.hashCode());
@@ -766,7 +775,10 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && ObjectUtils.objectsEqual(selinuxEnforceMode, other.selinuxEnforceMode)
                 && ObjectUtils.objectsEqual(numaNodeList, other.numaNodeList)
                 && autoNumaBalancing.getValue() == other.autoNumaBalancing.getValue()
-                && numaSupport == other.numaSupport);
+                && numaSupport == other.numaSupport)
+                && ObjectUtils.objectsEqual(supportedEmulatedMachines, other.supportedEmulatedMachines)
+                && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
+                && ObjectUtils.objectsEqual(supportedRngSources, other.supportedRngSources);
     }
 
 }

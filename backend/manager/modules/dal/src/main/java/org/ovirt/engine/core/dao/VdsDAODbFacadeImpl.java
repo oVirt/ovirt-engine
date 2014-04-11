@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
@@ -349,6 +350,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setHighlyAvailableGlobalMaintenance(rs.getBoolean("ha_global_maintenance"));
             entity.setHighlyAvailableLocalMaintenance(rs.getBoolean("ha_local_maintenance"));
             entity.setKdumpStatus(KdumpStatus.valueOfNumber(rs.getInt("kdump_status")));
+            entity.getSupportedRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("supported_rng_sources")));
             entity.calculateFreeVirtualMemory();
             entity.setBootTime((Long) rs.getObject("boot_time"));
             entity.setSELinuxEnforceMode((Integer) rs.getObject("selinux_enforce_mode"));

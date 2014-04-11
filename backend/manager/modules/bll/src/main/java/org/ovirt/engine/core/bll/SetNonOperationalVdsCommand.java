@@ -134,6 +134,8 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
             return AuditLogType.GLUSTER_HOST_UUID_ALREADY_EXISTS;
         case EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER:
             return AuditLogType.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER;
+        case RNG_SOURCES_INCOMPATIBLE_WITH_CLUSTER:
+            return AuditLogType.RNG_SOURCES_INCOMPATIBLE_WITH_CLUSTER;
         case UNTRUSTED:
             return AuditLogType.VDS_UNTRUSTED;
         default:

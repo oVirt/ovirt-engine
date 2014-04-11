@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSGroupHostsAndVMs;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -212,6 +213,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("virt_service", group.supportsVirtService())
                 .addValue("gluster_service", group.supportsGlusterService())
                 .addValue("tunnel_migration", group.isTunnelMigration())
+                .addValue("required_rng_sources", VmRngDevice.sourcesToCsv(group.getRequiredRngSources()))
                 .addValue("emulated_machine", group.getEmulatedMachine())
                 .addValue("detect_emulated_machine", group.isDetectEmulatedMachine())
                 .addValue("trusted_service", group.supportsTrustedService())
@@ -270,6 +272,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setVirtService(rs.getBoolean("virt_service"));
             entity.setGlusterService(rs.getBoolean("gluster_service"));
             entity.setTunnelMigration(rs.getBoolean("tunnel_migration"));
+            entity.getRequiredRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("required_rng_sources")));
             entity.setEmulatedMachine(rs.getString("emulated_machine"));
             entity.setDetectEmulatedMachine(rs.getBoolean("detect_emulated_machine"));
             entity.setTrustedService(rs.getBoolean("trusted_service"));

@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Map;
-
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -98,11 +99,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     @Size(max = BusinessEntitiesDefinitions.VM_SERIAL_NUMBER_SIZE)
     private String customSerialNumber;
 
+    private Set<VmRngDevice.Source> requiredRngSources;
+
     public VDSGroup() {
         migrateOnError = MigrateOnErrorOptions.YES;
         name = "";
         virtService = true;
         optimizationType = OptimizationType.NONE;
+        requiredRngSources = new HashSet<VmRngDevice.Source>();
     }
 
     @Override
@@ -362,6 +366,10 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         this.serialNumberPolicy = serialNumberPolicy;
     }
 
+    public Set<VmRngDevice.Source> getRequiredRngSources() {
+        return requiredRngSources;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -386,6 +394,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (haReservation ? 1231 : 1237);
         result = prime * result + ((clusterPolicyName == null) ? 0 : clusterPolicyName.hashCode());
         result = prime * result + (clusterPolicyProperties == null ? 0 : clusterPolicyProperties.hashCode());
+        result = prime * result + (requiredRngSources == null ? 0 : requiredRngSources.hashCode());
         result = prime * result + (enableKsm ? 1231 : 1237);
         result = prime * result + (enableBallooning ? 1231 : 1237);
         result = prime * result + ((optimizationType == null) ? 0 : optimizationType.hashCode());
@@ -442,7 +451,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && optimizationType == other.optimizationType)
                 && serialNumberPolicy == other.serialNumberPolicy
                 && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber)
-                && ObjectUtils.objectsEqual(groupHostsAndVms, other.groupHostsAndVms);
+                && ObjectUtils.objectsEqual(groupHostsAndVms, other.groupHostsAndVms)
+                && ObjectUtils.objectsEqual(requiredRngSources, other.requiredRngSources);
     }
 
 }

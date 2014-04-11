@@ -16,7 +16,7 @@ public class UpdateRngDeviceCommand extends AbstractRngDeviceCommand<RngDevicePa
             return false;
         }
 
-        if (!isRngSupportedByClusterLevel()) {
+        if (!isRngSupportedByCluster()) {
             return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }
 

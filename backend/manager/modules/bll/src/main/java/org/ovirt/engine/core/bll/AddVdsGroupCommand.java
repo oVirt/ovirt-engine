@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -157,6 +158,13 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         if (result) {
             result = validateClusterPolicy();
         }
+        // non-empty required sources list and rng-unsupported cluster version
+        if (result && !getVdsGroup().getRequiredRngSources().isEmpty()
+                && !FeatureSupported.virtIoRngSupported(getVdsGroup().getcompatibility_version())) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
+            result = false;
+        }
+
         return result;
     }
 

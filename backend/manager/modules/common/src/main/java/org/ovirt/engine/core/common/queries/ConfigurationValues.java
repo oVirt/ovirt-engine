@@ -127,7 +127,8 @@ public enum ConfigurationValues {
     BootMenuSupported(ConfigAuthType.User),
     MixedDomainTypesInDataCenter,
     KeystoneAuthUrl,
-    VirtIoRngDeviceSupported(ConfigAuthType.User);
+    VirtIoRngDeviceSupported(ConfigAuthType.User),
+    ClusterRequiredRngSourcesDefault(ConfigAuthType.User);
 
     public static enum ConfigAuthType {
         Admin,

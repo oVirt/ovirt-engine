@@ -271,6 +271,14 @@ select fn_db_add_config_value('MixedDomainTypesInDataCenter','false','3.3');
 select fn_db_add_config_value('MixedDomainTypesInDataCenter','true','3.4');
 select fn_db_add_config_value('MixedDomainTypesInDataCenter','true','3.5');
 
+-- default requirement for rng sources (comma-separated string of 'RANDOM' and 'HWRNG')
+select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.0');
+select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.1');
+select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.2');
+select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.3');
+select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.4');
+select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','RANDOM','3.5');
+
 -- by default use no proxy
 select fn_db_add_config_value('SpiceProxyDefault','','general');
 
