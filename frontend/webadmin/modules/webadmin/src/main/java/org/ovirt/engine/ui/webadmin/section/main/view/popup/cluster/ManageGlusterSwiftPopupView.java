@@ -4,6 +4,7 @@ import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -100,6 +101,9 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
         swiftStatusEditor = new EntityModelLabelEditor<GlusterServiceStatus>(new EnumRenderer<GlusterServiceStatus>(), new Parser<GlusterServiceStatus>() {
             @Override
             public GlusterServiceStatus parse(CharSequence text) throws ParseException {
+                if (StringHelper.isNullOrEmpty(text.toString())) {
+                    return null;
+                }
                 return GlusterServiceStatus.valueOf(text.toString().toUpperCase());
             }
         });

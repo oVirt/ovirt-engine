@@ -4,6 +4,7 @@ import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClientInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -198,6 +199,9 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
         statusEditor = new EntityModelLabelEditor<GlusterStatus>(new EnumRenderer<GlusterStatus>(), new Parser<GlusterStatus>() {
             @Override
             public GlusterStatus parse(CharSequence text) throws ParseException {
+                if (StringHelper.isNullOrEmpty(text.toString())) {
+                    return null;
+                }
                 return GlusterStatus.valueOf(text.toString().toUpperCase());
             }
         });

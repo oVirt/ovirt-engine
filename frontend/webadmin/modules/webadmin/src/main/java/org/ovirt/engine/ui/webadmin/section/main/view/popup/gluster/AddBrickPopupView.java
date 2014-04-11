@@ -4,6 +4,7 @@ import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -153,6 +154,9 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         volumeTypeEditor = new EntityModelLabelEditor<GlusterVolumeType>(new EnumRenderer<GlusterVolumeType>(), new Parser<GlusterVolumeType>() {
             @Override
             public GlusterVolumeType parse(CharSequence text) throws ParseException {
+                if (StringHelper.isNullOrEmpty(text.toString())) {
+                    return null;
+                }
                 return GlusterVolumeType.valueOf(text.toString().toUpperCase());
             }
         });
