@@ -1273,8 +1273,10 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public void calculateFreeVirtualMemory() {
         if (getMemCommited() != null && getPhysicalMemMb() != null && getReservedMem() != null) {
-            maxSchedulingMemory = (getMaxVdsMemoryOverCommit() * getPhysicalMemMb() / 100.0f) -
-                    (getMemCommited() + getReservedMem());
+            maxSchedulingMemory = (getMaxVdsMemoryOverCommit() * getPhysicalMemMb() / 100.0f)
+                    - getMemCommited()
+                    - getReservedMem()
+                    - getPendingVmemSize();
             // avoid negative values
             maxSchedulingMemory = maxSchedulingMemory > 0 ? maxSchedulingMemory : 0;
         }
