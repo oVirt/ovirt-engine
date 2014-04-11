@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ from otopi import util
 
 @util.export
 class StorageDomainType(object):
-    #See: org.ovirt.engine.core.common.businessentities.StorageDomainType
+    # See: org.ovirt.engine.core.common.businessentities.StorageDomainType
     MASTER = 0
     DATA = 1
     ISO = 2
@@ -38,7 +38,7 @@ class StorageDomainType(object):
 
 @util.export
 class StorageType(object):
-    #See: org.ovirt.engine.core.common.businessentities.StorageType
+    # See: org.ovirt.engine.core.common.businessentities.StorageType
     UNKNOWN = 0
     NFS = 1
     FCP = 2

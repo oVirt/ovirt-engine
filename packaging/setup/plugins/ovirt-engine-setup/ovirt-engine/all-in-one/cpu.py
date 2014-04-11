@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ class Plugin(plugin.PluginBase):
                 state=True,
             )
 
-            #TODO: wait for libvirt to start
+            # TODO: wait for libvirt to start
 
             ret = True
 

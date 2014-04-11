@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -163,7 +163,7 @@ def editConfigContent(
 
     # Add remaining params at the end
     for param, value in params.items():
-        if not param in processed:
+        if param not in processed:
             newline = new_line_tpl.format(
                 spaces='',
                 param=param,

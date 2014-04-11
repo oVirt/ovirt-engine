@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -77,15 +77,15 @@ class Plugin(plugin.PluginBase):
         replace = {}
 
         for c in changes:
-            if not 'removed' in c:
+            if 'removed' not in c:
                 just_remove.append(c['added'])
-            elif not 'added' in c:
+            elif 'added' not in c:
                 just_add.append(c['removed'])
             else:
                 replace[c['added']] = c['removed']
         for line in old_content:
             if line not in just_remove:
-                #should be updated or added
+                # should be updated or added
                 if line in replace:
                     line = replace[line]
                 new_content.append(line)
@@ -174,7 +174,7 @@ class Plugin(plugin.PluginBase):
                     if (
                         not add_group and
                         interactive and
-                        not group in already_asked
+                        group not in already_asked
                     ):
                         already_asked.append(group)
                         add_group = dialog.queryBoolean(
@@ -212,9 +212,9 @@ class Plugin(plugin.PluginBase):
             def getLines(section):
                 associated_lines = {}
                 aggregated_lines = {}
-                #line.{file_index:03}{line_index:03}.name
-                #line.{file_index:03}{line_index:03}.content.added
-                #line.{file_index:03}{line_index:03}.content.removed
+                # line.{file_index:03}{line_index:03}.name
+                # line.{file_index:03}{line_index:03}.content.added
+                # line.{file_index:03}{line_index:03}.content.removed
                 for name, value in config.items(section):
                     comps = name.split('.')
                     if comps[0] == 'line':
@@ -261,8 +261,8 @@ class Plugin(plugin.PluginBase):
                     uninstall_group
                 )
                 if config.has_section(uninstall_section):
-                    #section could be missing in a conf file, for example if
-                    #PKI config was not done because already existing
+                    # section could be missing in a conf file, for example if
+                    # PKI config was not done because already existing
                     self._files.update(
                         getFiles(uninstall_section)
                     )

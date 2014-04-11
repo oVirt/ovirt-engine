@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -160,7 +160,7 @@ class Plugin(plugin.PluginBase):
                 uuid=sdUUID
             )
         )
-        #Create images directory tree
+        # Create images directory tree
         basePath = os.path.join(path, sdUUID)
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
@@ -182,7 +182,7 @@ class Plugin(plugin.PluginBase):
                 modifiedList=uninstall_files,
             )
         )
-        #Create dom_md directory tree
+        # Create dom_md directory tree
         domMdDir = os.path.join(basePath, 'dom_md')
         for name in ('ids', 'inbox', 'outbox'):
             filename = os.path.join(domMdDir, name)

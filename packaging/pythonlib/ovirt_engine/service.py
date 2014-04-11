@@ -1,5 +1,5 @@
 #
-# Copyright 2013 Red Hat
+# Copyright 2013-2014 Red Hat
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -517,7 +517,7 @@ class Daemon(base.Base):
         if len(args) != 1:
             parser.error(_('Action is missing'))
         action = args[0]
-        if not action in ('start'):
+        if action not in ('start'):
             parser.error(
                 _("Invalid action '{action}'").format(
                     action=action
