@@ -13,7 +13,7 @@ public class RangeTest {
     private static final int MAC_FROM_RANGE = 15;
     private static final int MAC_OUTSIDE_OF_RANGE = 25;
     private static final int RANGE_FROM = 10;
-    private static final int RANGE_TO = 20;
+    private static final int RANGE_TO = 19;
     private static final int NUMBER_OF_MACS = 10;
     private Range rangeOf10Macs;
 

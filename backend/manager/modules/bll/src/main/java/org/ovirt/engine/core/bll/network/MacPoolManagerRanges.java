@@ -7,10 +7,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.lang.math.LongRange;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.MacAddressRangeUtils;
@@ -22,16 +20,15 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
 
     private static final Log log = LogFactory.getLog(MacPoolManagerRanges.class);
 
-    private final String rangesString;
-
     private final ReentrantReadWriteLock lockObj = new ReentrantReadWriteLock();
     private final boolean allowDuplicates;
     private boolean initialized;
     private MacsStorage macsStorage;
+    private Collection<LongRange> rangesBoundaries;
 
-    public MacPoolManagerRanges(String rangesString, boolean allowDuplicates) {
-        this.rangesString = rangesString;
+    public MacPoolManagerRanges(Collection<LongRange> rangesBoundaries, boolean allowDuplicates) {
         this.allowDuplicates = allowDuplicates;
+        this.rangesBoundaries = rangesBoundaries;
     }
 
     @Override
@@ -44,15 +41,9 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
 
             log.infoFormat("Start initializing " + getClass().getSimpleName());
 
-            this.macsStorage = createMacsStorage(rangesString);
-            List<VmNic> interfaces = getVmNicInterfacesFromDb();
+            this.macsStorage = createMacsStorage(rangesBoundaries);
 
-            for (VmNic iface : interfaces) {
-                if (iface.getMacAddress() != null) {
-                    forceAddMacWithoutLocking(iface.getMacAddress());
-                }
-            }
-
+            onInit();
             initialized = true;
             log.infoFormat("Finished initializing. Available MACs in pool: {0}", macsStorage.getAvailableMacsCount());
         } catch (Exception ex) {
@@ -60,8 +51,14 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
         }
     }
 
-    private MacsStorage createMacsStorage(String rangesString) {
-        Collection<LongRange> rangesBoundaries = MacAddressRangeUtils.parseRangeString(rangesString);
+
+    /**
+     * create and initialize internal structures to accommodate all macs specified in {@code rangesString} up to {@code
+     * maxMacsInPool}.
+     *
+     * @return initialized {@link MacsStorage} instance.
+     */
+    private MacsStorage createMacsStorage(Collection<LongRange> rangesBoundaries) {
         MacsStorage macsStorage = new MacsStorage(allowDuplicates);
         for (LongRange range : rangesBoundaries) {
             macsStorage.addRange(range.getMinimumLong(), range.getMaximumLong());
@@ -74,8 +71,10 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
         }
     }
 
-    private List<VmNic> getVmNicInterfacesFromDb() {
-        return DbFacade.getInstance().getVmNicDao().getAll();
+    /**
+     *     template method to allow altering initialization process.
+     */
+    protected void onInit() {
     }
 
     private void logWhenMacPoolIsEmpty() {
@@ -137,7 +136,7 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
         }
     }
 
-    private void forceAddMacWithoutLocking(String mac) {
+    protected void forceAddMacWithoutLocking(String mac) {
         macsStorage.useMacNoDuplicityCheck(MacAddressRangeUtils.macToLong(mac));
         logWhenMacPoolIsEmpty();
     }

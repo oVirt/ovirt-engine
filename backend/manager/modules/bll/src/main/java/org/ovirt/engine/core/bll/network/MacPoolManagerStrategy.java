@@ -27,9 +27,8 @@ interface MacPoolManagerStrategy {
     void freeMac(String mac);
 
     /**
-     * Add given MAC address if possible.
-     * Add user define mac address Function return false if the mac is in use
-     *
+     * take specified mac from pool. May be unsuccessful depending on system setting.
+     * @param mac mac to get from pool.
      * @return true if MAC was added successfully, and false if the MAC is in use and
      * {@link org.ovirt.engine.core.common.config.ConfigValues#AllowDuplicateMacAddresses} is set to false
      */

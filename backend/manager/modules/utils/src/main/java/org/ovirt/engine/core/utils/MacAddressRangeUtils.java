@@ -54,7 +54,7 @@ public class MacAddressRangeUtils {
         return clipMultiCastsFromRanges(disjointRanges.getRanges());
     }
 
-    private static Collection<LongRange> clipMultiCastsFromRanges(Collection<LongRange> ranges) {
+    public static Collection<LongRange> clipMultiCastsFromRanges(Collection<LongRange> ranges) {
         final Collection<LongRange> result = new ArrayList<>();
         for (LongRange range : ranges) {
             final LongRange clippedRange = clipRange(range);

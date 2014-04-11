@@ -12,9 +12,13 @@ public class MacPoolManager {
     private static final MacPoolManager INSTANCE = new MacPoolManager();
 
     private MacPoolManager() {
+        macPoolManagerStrategy = createDefaultScopeMacPoolManager();
+    }
+
+    private MacPoolManagerStrategy createDefaultScopeMacPoolManager() {
         final String macPoolRanges = Config.getValue(ConfigValues.MacPoolRanges);
         final Boolean allowDuplicates = Config.getValue(ConfigValues.AllowDuplicateMacAddresses);
-        macPoolManagerStrategy = new MacPoolManagerRanges(macPoolRanges, allowDuplicates);
+        return new MacPoolManagerRangesRegisterAcquiredMacsOnInit(macPoolRanges, allowDuplicates);
     }
 
     public static MacPoolManager getInstance() {
