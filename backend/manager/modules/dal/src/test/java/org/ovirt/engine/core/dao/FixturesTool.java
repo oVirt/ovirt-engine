@@ -615,4 +615,8 @@ public class FixturesTool {
      */
     public static final int NUMBER_OF_VMS_IN_VDS_GROUP_RHEL6_NFS_CLUSTER = 0;
     public static final int NUMBER_OF_VMS_IN_VDS_GROUP_RHEL6_ISCSI = 7;
+
+    public static final Guid NON_DEFAULT_MAC_POOL = new Guid("c248552d-64d4-4a77-ab1d-4c5eea00be6b");
+    public static final Guid NOT_USED_MAC_POOL_ID = new Guid("17baf4e3-4347-4f81-915f-7762a108b81a");
+    public static final Guid DEFAULT_MAC_POOL_ID = new Guid("8c3a60e9-6a66-40db-84e0-c74077991775");
 }

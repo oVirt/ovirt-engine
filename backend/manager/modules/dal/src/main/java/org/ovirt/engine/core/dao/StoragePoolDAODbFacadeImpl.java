@@ -39,16 +39,13 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
             entity.setcompatibility_version(new Version(rs
                     .getString("compatibility_version")));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
-            entity.setStoragePoolFormatType(getStorageFormatTypeForPool(rs));
+            entity.setStoragePoolFormatType(StorageFormatType.forValue(rs.getString("storage_pool_format_type")));
+            entity.setMacPoolId(getGuid(rs, "mac_pool_id"));
             return entity;
         }
     }
 
     private static final RowMapper<StoragePool> mapper = new StoragePoolRawMapper();
-
-    private static StorageFormatType getStorageFormatTypeForPool(ResultSet rs) throws SQLException {
-        return StorageFormatType.forValue(rs.getString("storage_pool_format_type"));
-    }
 
     @Override
     public StoragePool get(Guid id) {
@@ -140,7 +137,8 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("spm_vds_id", pool.getspm_vds_id())
                 .addValue("quota_enforcement_type", pool.getQuotaEnforcementType())
                 .addValue("compatibility_version",
-                        pool.getcompatibility_version());
+                        pool.getcompatibility_version())
+                .addValue("mac_pool_id", pool.getMacPoolId());
 
         getCallsHandler().executeModification("Insertstorage_pool",
                 parameterSource);
@@ -162,7 +160,8 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("compatibility_version",
                         pool.getcompatibility_version())
                 .addValue("quota_enforcement_type",
-                        pool.getQuotaEnforcementType().getValue());
+                        pool.getQuotaEnforcementType().getValue())
+                .addValue("mac_pool_id", pool.getMacPoolId());
 
         getCallsHandler().executeModification("Updatestorage_pool", parameterSource);
     }
@@ -179,7 +178,8 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("compatibility_version",
                         pool.getcompatibility_version())
                 .addValue("quota_enforcement_type",
-                        pool.getQuotaEnforcementType().getValue());
+                        pool.getQuotaEnforcementType().getValue())
+                .addValue("mac_pool_id", pool.getMacPoolId());
 
         getCallsHandler().executeModification("Updatestorage_pool_partial", parameterSource);
     }

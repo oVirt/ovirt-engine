@@ -43,6 +43,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
 
         newPool = new StoragePool();
         newPool.setName("newPoolDude");
+        newPool.setMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID);
         newPool.setcompatibility_version(new Version("3.0"));
 
     }

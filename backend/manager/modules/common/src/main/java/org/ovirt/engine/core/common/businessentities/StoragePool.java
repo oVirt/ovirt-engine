@@ -49,6 +49,8 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
 
     private QuotaEnforcementTypeEnum quotaEnforcementType;
 
+    private Guid macPoolId;
+
     public StoragePool() {
         id = Guid.Empty;
         status = StoragePoolStatus.Uninitialized;
@@ -84,7 +86,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
 
     @Override
     public Guid getId() {
-        return this.id;
+        return id;
     }
 
     @Override
@@ -94,7 +96,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
 
     @Override
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public void setName(String value) {
@@ -131,7 +133,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
     }
 
     public int getmaster_domain_version() {
-        return this.masterDomainVersion;
+        return masterDomainVersion;
     }
 
     public void setmaster_domain_version(int value) {
@@ -234,4 +236,11 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
         this.quotaEnforcementType = quotaEnforcementType;
     }
 
+    public Guid getMacPoolId() {
+        return macPoolId;
+    }
+
+    public void setMacPoolId(Guid macPoolId) {
+        this.macPoolId = macPoolId;
+    }
 }

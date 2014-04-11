@@ -17,9 +17,9 @@ import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
-import org.ovirt.engine.core.common.businessentities.VdsKdumpStatus;
 import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
+import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VdsKdumpStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
@@ -72,7 +73,6 @@ import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.EventDAO;
 import org.ovirt.engine.core.dao.ExternalVariableDao;
-import org.ovirt.engine.core.dao.VdsKdumpStatusDao;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
@@ -80,6 +80,7 @@ import org.ovirt.engine.core.dao.IscsiBondDao;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.LunDAO;
+import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.RepoFileMetaDataDAO;
@@ -102,6 +103,7 @@ import org.ovirt.engine.core.dao.VdsCpuStatisticsDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsKdumpStatusDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDAO;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDAO;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
@@ -199,6 +201,7 @@ public class DbFacade {
             put(ExternalVariable.class, ExternalVariableDao.class);
             put(VdsKdumpStatus.class, VdsKdumpStatusDao.class);
             put(VmJob.class, VmJobDao.class);
+            put(MacPool.class, MacPoolDao.class);
         }
     };
 
@@ -744,6 +747,15 @@ public class DbFacade {
      */
     public StoragePoolDAO getStoragePoolDao() {
         return getDao(StoragePoolDAO.class);
+    }
+
+    /**
+     * Retrieves the singleton instance of {@link MacPoolDao}.
+     *
+     * @return the dao
+     */
+    public MacPoolDao getMacPoolDao() {
+        return getDao(MacPoolDao.class);
     }
 
     /**

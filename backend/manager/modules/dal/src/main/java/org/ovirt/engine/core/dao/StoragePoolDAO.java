@@ -100,8 +100,8 @@ public interface StoragePoolDAO extends GenericDao<StoragePool, Guid>, StatusAwa
     List<StoragePool> getAllForStorageDomain(Guid storageDomain);
 
     /**
-     * The following method should update only part of storage pool. It will update only name, description and
-     * compatibility version fields
+     * The following method should update only part of storage pool. It will update only name, macPoolId, description
+     * and compatibility version fields
      * @param pool
      */
     void updatePartial(StoragePool pool);

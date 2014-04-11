@@ -46,6 +46,61 @@
         </row>
     </table>
 
+    <table name="mac_pools">
+        <column>id</column>
+        <column>name</column>
+        <column>description</column>
+        <column>allow_duplicate_mac_addresses</column>
+        <column>default_pool</column>
+        <row>
+            <value>8c3a60e9-6a66-40db-84e0-c74077991775</value>
+            <value>Default</value>
+            <value>Default MAC pool</value>
+            <value>false</value>
+            <value>true</value>
+        </row>
+        <row>
+            <value>c248552d-64d4-4a77-ab1d-4c5eea00be6b</value>
+            <value>two range pool</value>
+            <value>pool with two ranges</value>
+            <value>false</value>
+            <value>false</value>
+        </row>
+        <row>
+            <value>17baf4e3-4347-4f81-915f-7762a108b81a</value>
+            <value>not used pool</value>
+            <value>not used</value>
+            <value>false</value>
+            <value>false</value>
+        </row>
+    </table>
+
+    <table name="mac_pool_ranges">
+        <column>mac_pool_id</column>
+        <column>from_mac</column>
+        <column>to_mac</column>
+        <row>
+            <value>17baf4e3-4347-4f81-915f-7762a108b81a</value>
+            <value>00:C0:81:21:71:17</value>
+            <value>00:C1:81:21:71:17</value>
+        </row>
+        <row>
+            <value>8c3a60e9-6a66-40db-84e0-c74077991775</value>
+            <value>00:C0:81:21:71:17</value>
+            <value>00:C1:81:21:71:17</value>
+        </row>
+        <row>
+            <value>c248552d-64d4-4a77-ab1d-4c5eea00be6b</value>
+            <value>00:C0:81:21:71:17</value>
+            <value>00:C1:81:21:71:17</value>
+        </row>
+        <row>
+            <value>c248552d-64d4-4a77-ab1d-4c5eea00be6b</value>
+            <value>02:C0:81:21:71:17</value>
+            <value>02:C1:81:21:71:17</value>
+        </row>
+    </table>
+
     <table name="command_entities">
         <column>command_id</column>
         <column>command_type</column>
@@ -496,12 +551,13 @@
         <column>name</column>
         <column>description</column>
         <column>is_local</column>
-	<column>status</column>
+        <column>status</column>
         <column>master_domain_version</column>
         <column>spm_vds_id</column>
         <column>compatibility_version</column>
         <column>_create_date</column>
         <column>_update_date</column>
+        <column>mac_pool_id</column>
         <row>
             <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
             <value>rhel6.iscsi</value>
@@ -513,6 +569,7 @@
             <value>2.3</value>
             <value>2010-10-21 03:38:22</value>
             <value>2010-11-29 15:57:10</value>
+            <value>c248552d-64d4-4a77-ab1d-4c5eea00be6b</value>
         </row>
         <row>
             <value>6d849ebf-755f-4552-ad09-9a090cda105e</value>
@@ -525,6 +582,7 @@
             <value>2.3</value>
             <value>2010-10-21 03:38:22</value>
             <value>2010-11-29 15:57:10</value>
+            <value>8c3a60e9-6a66-40db-84e0-c74077991775</value>
         </row>
         <row>
             <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
@@ -537,6 +595,7 @@
             <value>2.3</value>
             <value>2011-03-21 03:38:22</value>
             <value>2011-03-21 15:57:10</value>
+            <value>8c3a60e9-6a66-40db-84e0-c74077991775</value>
         </row>
         <row>
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
@@ -549,6 +608,7 @@
             <value>2.3</value>
             <value>2011-03-21 03:38:22</value>
             <value>2011-03-21 15:57:10</value>
+            <value>8c3a60e9-6a66-40db-84e0-c74077991775</value>
         </row>
         <row>
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a1</value>
@@ -561,6 +621,7 @@
             <value>2.3</value>
             <value>2011-03-21 03:38:22</value>
             <value>2011-03-21 15:57:10</value>
+            <value>8c3a60e9-6a66-40db-84e0-c74077991775</value>
         </row>
         <row>
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a2</value>
@@ -573,6 +634,7 @@
             <value>2.3</value>
             <value>2011-03-21 03:38:22</value>
             <value>2011-03-21 15:57:10</value>
+            <value>8c3a60e9-6a66-40db-84e0-c74077991775</value>
         </row>
         <row>
             <value>d9220003-8ad8-41d2-8c9e-5ea30b2e88e7</value>
@@ -585,6 +647,7 @@
             <value>3.4</value>
             <value>2014-04-24 12:00:00</value>
             <value>2011-04-24 12:00:00</value>
+            <value>8c3a60e9-6a66-40db-84e0-c74077991775</value>
         </row>
     </table>
 
