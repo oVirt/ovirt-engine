@@ -211,7 +211,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     private boolean containsDeviceWithType(List<VmDevice> devices, VmDeviceGeneralType generalType, VmDeviceType deviceType) {
         for (VmDevice device : devices) {
             if (device.getType() == generalType) {
-                if (deviceType == null || deviceType.equals(device.getDevice())) {
+                if (deviceType == null || (deviceType.getName() != null && deviceType.getName().equals(device.getDevice()))) {
                     return true;
                 }
             }
