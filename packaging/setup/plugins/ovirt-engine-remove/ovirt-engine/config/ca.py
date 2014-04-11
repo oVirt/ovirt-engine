@@ -80,7 +80,7 @@ class Plugin(plugin.PluginBase):
         )
         os.fchmod(fd, 0o600)
         with os.fdopen(fd, 'wb') as fileobj:
-            #fileobj is not closed, when TarFile is closed
+            # fileobj is not closed, when TarFile is closed
             # cannot use with tarfile.open() <python-2.7
             tar = None
             try:

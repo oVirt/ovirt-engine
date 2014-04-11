@@ -164,7 +164,7 @@ class Plugin(plugin.PluginBase):
             with open(authorized_keys_file, 'r') as f:
                 content = f.read().splitlines()
 
-        if not authorized_keys_line in content:
+        if authorized_keys_line not in content:
             self.environment[
                 osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
             ].append(authorized_keys_file)

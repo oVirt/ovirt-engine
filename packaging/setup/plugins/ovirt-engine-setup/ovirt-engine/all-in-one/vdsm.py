@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ class Plugin(plugin.PluginBase):
             try:
                 state = engine_api.hosts.get(host).status.state
             except Exception as exc:
-                #sadly all ovirtsdk errors inherit only from Exception
+                # sadly all ovirtsdk errors inherit only from Exception
                 self.logger.debug(
                     'Error fetching host state: {error}'.format(
                         error=str(exc),
@@ -237,7 +237,7 @@ class Plugin(plugin.PluginBase):
         )
 
         self.logger.debug('Adding the local host to the local cluster')
-        #At this stage sshd is already running
+        # At this stage sshd is already running
         engine_api.hosts.add(
             self._ovirtsdk_xml.params.Host(
                 name=self.environment[osetupcons.AIOEnv.LOCAL_HOST],

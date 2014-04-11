@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -248,7 +248,7 @@ class Plugin(plugin.PluginBase):
         if not os.path.exists(os.path.dirname(output)):
             os.makedirs(os.path.dirname(output))
         if config.sections():
-            #avoid to create empty uninstall files
+            # avoid to create empty uninstall files
             with open(output, 'w') as f:
                 config.write(f)
 

@@ -92,7 +92,7 @@ class Plugin(plugin.PluginBase):
         self._enabled = not self.environment[
             osetupcons.CoreEnv.DEVELOPER_MODE
         ]
-        if not self._distribution in ('redhat', 'fedora', 'centos'):
+        if self._distribution not in ('redhat', 'fedora', 'centos'):
             self.logger.warning(
                 _('Unsupported distribution disabling nfs export')
             )
