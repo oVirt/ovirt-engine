@@ -12,6 +12,8 @@ import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -593,7 +595,7 @@ public class SnapshotsManager {
      *            The user that performs the action
      */
     protected void synchronizeNics(VM vm, CompensationContext compensationContext, DbUser user) {
-        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
+        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(getMacPool(vm.getStoragePoolId()));
         VnicProfileHelper vnicProfileHelper =
                 new VnicProfileHelper(vm.getVdsGroupId(),
                         vm.getStoragePoolId(),
@@ -613,6 +615,10 @@ public class SnapshotsManager {
         }
 
         vnicProfileHelper.auditInvalidInterfaces(vm.getName());
+    }
+
+    private MacPoolManagerStrategy getMacPool(Guid storagePoolId) {
+        return MacPoolPerDcSingleton.getInstance().poolForDataCenter(storagePoolId);
     }
 
     /**

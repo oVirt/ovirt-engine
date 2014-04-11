@@ -23,7 +23,9 @@ import javax.validation.ConstraintViolation;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -155,6 +157,7 @@ public class ImportVmTemplateCommandTest {
         mockGetTemplatesFromExportDomainQuery(volumeFormat, volumeType, command);
         mockStorageDomainStatic(command, storageType);
         doReturn(mock(VmTemplateDAO.class)).when(command).getVmTemplateDAO();
+        doReturn(Mockito.mock(MacPoolManagerStrategy.class)).when(command).getMacPool();
         mockStoragePool(command);
         mockStorageDomains(command);
 

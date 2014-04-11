@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
-import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
@@ -85,7 +84,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         }
 
         removeDataCenter();
-        MacPoolManager.getInstance().freeMacs(macsToRemove);
+
+        getMacPool().freeMacs(macsToRemove);
         setSucceeded(true);
     }
 

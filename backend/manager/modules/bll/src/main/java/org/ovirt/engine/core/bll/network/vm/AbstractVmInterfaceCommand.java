@@ -5,7 +5,6 @@ import java.util.List;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
-import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
@@ -56,7 +55,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
     }
 
     protected boolean addMacToPool(String macAddress) {
-        if (MacPoolManager.getInstance().addMac(macAddress)) {
+        if (getMacPool().addMac(macAddress)) {
             return true;
         } else {
             throw new VdcBLLException(VdcBllErrors.MAC_ADDRESS_IS_IN_USE);
@@ -65,7 +64,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
 
     protected ValidationResult macAvailable() {
         Boolean allowDupMacs = Config.<Boolean> getValue(ConfigValues.AllowDuplicateMacAddresses);
-        return MacPoolManager.getInstance().isMacInUse(getMacAddress()) && !allowDupMacs
+        return getMacPool().isMacInUse(getMacAddress()) && !allowDupMacs
                 ? new ValidationResult(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE)
                 : ValidationResult.VALID;
     }

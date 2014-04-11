@@ -11,7 +11,6 @@ import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -729,9 +728,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected boolean verifyAddVM(List<String> reasons, int vmPriority) {
-        return VmHandler.verifyAddVm(reasons,
-                getVmInterfaces().size(),
-                vmPriority);
+        return VmHandler.verifyAddVm(reasons, getVmInterfaces().size(), vmPriority, getMacPool());
     }
 
     @Override
@@ -887,10 +884,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected void addVmNetwork() {
         List<VmNic> nics = getVmInterfaces();
-        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
+        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(getMacPool());
         vmInterfaceManager.sortVmNics(nics, getVmInterfaceDevices());
 
-        List<String> macAddresses = MacPoolManager.getInstance().allocateMacAddresses(nics.size());
+        List<String> macAddresses = getMacPool().allocateMacAddresses(nics.size());
 
         // Add interfaces from template
         for (int i = 0; i < nics.size(); ++i) {

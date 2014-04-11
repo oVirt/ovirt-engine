@@ -29,6 +29,8 @@ import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.quota.InvalidQuotaParametersException;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParametersWrapper;
@@ -2230,5 +2232,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     public CommandContext cloneContextAndDetachFromParent() {
         return cloneContext().withoutCompensationContext().withoutExecutionContext().withoutLock();
+    }
+
+    protected MacPoolManagerStrategy getMacPool() {
+        return MacPoolPerDcSingleton.getInstance().poolForDataCenter(getStoragePoolId());
     }
 }

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.network;
+package org.ovirt.engine.core.bll.network.macpoolmanager;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +43,6 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
 
             this.macsStorage = createMacsStorage(rangesBoundaries);
 
-            onInit();
             initialized = true;
             log.infoFormat("Finished initializing. Available MACs in pool: {0}", macsStorage.getAvailableMacsCount());
         } catch (Exception ex) {
@@ -69,12 +68,6 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
         } else {
             throw new VdcBLLException(VdcBllErrors.MAC_POOL_INITIALIZATION_FAILED);
         }
-    }
-
-    /**
-     *     template method to allow altering initialization process.
-     */
-    protected void onInit() {
     }
 
     private void logWhenMacPoolIsEmpty() {

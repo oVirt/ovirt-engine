@@ -14,7 +14,6 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
-import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -199,7 +198,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         if (getParameters().isImportAsNewEntity()) {
             initImportClonedVm();
 
-            if (getVm().getInterfaces().size() > MacPoolManager.getInstance().getAvailableMacsCount()) {
+            if (getVm().getInterfaces().size() > getMacPool().getAvailableMacsCount()) {
                 addCanDoActionMessage(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
                 return false;
             }
@@ -675,7 +674,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             // Save Vm Init
             VmHandler.addVmInitToDB(getVm().getStaticData());
         } catch (RuntimeException e) {
-            MacPoolManager.getInstance().freeMacs(macsAdded);
+            getMacPool().freeMacs(macsAdded);
             throw e;
         }
         setSucceeded(true);
@@ -1084,7 +1083,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     protected void addVmInterfaces() {
-        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
+        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(getMacPool());
 
         VnicProfileHelper vnicProfileHelper =
                 new VnicProfileHelper(getVdsGroupId(),
@@ -1098,7 +1097,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
         // If we import it as a new entity, then we allocate all MAC addresses in advance
         if (getParameters().isImportAsNewEntity()) {
-            List<String> macAddresses = MacPoolManager.getInstance().allocateMacAddresses(nics.size());
+            List<String> macAddresses = getMacPool().allocateMacAddresses(nics.size());
             for (int i = 0; i < nics.size(); ++i) {
                 nics.get(i).setMacAddress(macAddresses.get(i));
             }
@@ -1215,7 +1214,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     protected void removeVmNetworkInterfaces() {
-        new VmInterfaceManager().removeAll(getVmId());
+        new VmInterfaceManager(getMacPool()).removeAll(getVmId());
     }
 
     protected void endImportCommand() {

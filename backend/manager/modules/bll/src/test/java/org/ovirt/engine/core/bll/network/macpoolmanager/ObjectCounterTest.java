@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.network;
+package org.ovirt.engine.core.bll.network.macpoolmanager;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -61,14 +62,16 @@ public class ImportVmCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_2.toString(), false)
-            );
+            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_2.toString(), false));
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Mock
     OsRepository osRepository;
+
+    @Mock
+    private MacPoolManagerStrategy macPoolManagerStrategy;
 
     @Before
     public void setUp() {
@@ -117,6 +120,7 @@ public class ImportVmCommandTest {
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
         doReturn(new VDSGroup()).when(cmd).getVdsGroup();
+        doReturn(macPoolManagerStrategy).when(cmd).getMacPool();
 
         return cmd;
     }

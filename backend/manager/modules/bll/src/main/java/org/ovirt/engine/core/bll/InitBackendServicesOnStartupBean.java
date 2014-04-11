@@ -12,7 +12,7 @@ import org.ovirt.engine.core.bll.aaa.DbUserCacheManager;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.network.MacPoolManager;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
 import org.ovirt.engine.core.bll.provider.ExternalTrustStoreInitializer;
 import org.ovirt.engine.core.bll.scheduling.MigrationHandler;
@@ -80,7 +80,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
-                    MacPoolManager.getInstance().initialize();
+                    MacPoolPerDcSingleton.getInstance().initialize();
                 }
             });
             StoragePoolStatusHandler.init();

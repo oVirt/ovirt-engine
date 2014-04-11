@@ -11,6 +11,7 @@ import javax.transaction.Transaction;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.common.predicates.VmNetworkCanBeUpdatedPredicate;
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -41,11 +42,22 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class VmInterfaceManager {
 
     private Log log = LogFactory.getLog(getClass());
+    private MacPoolManagerStrategy macPool;
+
+    public VmInterfaceManager() {
+    }
+
+    public VmInterfaceManager(MacPoolManagerStrategy macPool) {
+        this.macPool = macPool;
+    }
 
     /**
-     * Add a {@link VmNic} to the VM. Allocates a MAC from the {@link MacPoolManager} if necessary, otherwise, if
-     * {@code ConfigValues.HotPlugEnabled} is true, forces adding the MAC address to the {@link MacPoolManager}. If
-     * HotPlug is not enabled tries to add the {@link VmNic}'s MAC address to the {@link MacPoolManager}, and throws a
+     * Add a {@link VmNic} to the VM. Allocates a MAC from the
+     * {@link MacPoolManagerStrategy} if necessary, otherwise, if
+     * {@code ConfigValues.HotPlugEnabled} is true, forces adding the MAC address to the
+     * {@link MacPoolManagerStrategy}. If
+     * HotPlug is not enabled tries to add the {@link VmNic}'s MAC address to the
+     * {@link MacPoolManagerStrategy}, and throws a
      * {@link VdcBllException} if it fails.
      *
      * @param iface
@@ -53,7 +65,7 @@ public class VmInterfaceManager {
      * @param compensationContext
      *            Used to snapshot the saved entities.
      * @param reserveExistingMac
-     *            Used to denote if we want to reserve the NIC's MAC address in the {@link MacPoolManager}
+     *            Used to denote if we want to reserve the NIC's MAC address in the {@link MacPoolManagerStrategy}
      * @param clusterCompatibilityVersion
      *            the compatibility version of the cluster
      * @return <code>true</code> if the MAC wasn't used, <code>false</code> if it was.
@@ -65,10 +77,11 @@ public class VmInterfaceManager {
             Version clusterCompatibilityVersion) {
 
         if (reserveExistingMac) {
+
             if (FeatureSupported.hotPlug(clusterCompatibilityVersion)
                 && getOsRepository().hasNicHotplugSupport(osId, clusterCompatibilityVersion)) {
-                getMacPoolManager().forceAddMac(iface.getMacAddress());
-            } else if (!getMacPoolManager().addMac(iface.getMacAddress())) {
+                macPool.forceAddMac(iface.getMacAddress());
+            } else if (!macPool.addMac(iface.getMacAddress())) {
                 auditLogMacInUse(iface);
                 throw new VdcBLLException(VdcBllErrors.MAC_ADDRESS_IS_IN_USE);
             }
@@ -113,7 +126,7 @@ public class VmInterfaceManager {
     }
 
     /**
-     * Remove all {@link VmNic}s from the VM, and remove the Mac addresses from {@link MacPoolManager}.
+     * Remove all {@link VmNic}s from the VM, and remove the Mac addresses from {@link MacPoolManagerStrategy}.
      *
      * @param vmId
      *            The ID of the VM to remove from.
@@ -124,7 +137,7 @@ public class VmInterfaceManager {
             removeFromExternalNetworks(interfaces);
 
             for (VmNic iface : interfaces) {
-                getMacPoolManager().freeMac(iface.getMacAddress());
+                macPool.freeMac(iface.getMacAddress());
                 getVmNicDao().remove(iface.getId());
                 getVmNetworkStatisticsDao().remove(iface.getId());
             }
@@ -229,10 +242,6 @@ public class VmInterfaceManager {
      */
     protected void log(AuditLogableBase logable, AuditLogType auditLogType) {
         AuditLogDirector.log(logable, auditLogType);
-    }
-
-    protected MacPoolManager getMacPoolManager() {
-        return MacPoolManager.getInstance();
     }
 
     protected VmNetworkStatisticsDao getVmNetworkStatisticsDao() {

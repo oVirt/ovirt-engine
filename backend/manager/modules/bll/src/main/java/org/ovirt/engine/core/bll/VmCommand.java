@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -238,7 +237,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected void removeVmNetwork() {
         if (getInterfaces() != null) {
             for (VmNic iface : getInterfaces()) {
-                MacPoolManager.getInstance().freeMac(iface.getMacAddress());
+                getMacPool().freeMac(iface.getMacAddress());
             }
         }
     }

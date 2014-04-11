@@ -13,7 +13,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
-import org.ovirt.engine.core.bll.network.MacPoolManager;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
@@ -161,10 +161,11 @@ public class VmHandler {
      * @return
      */
     public static boolean verifyAddVm(List<String> reasons,
-                                      int nicsCount,
-                                      int vmPriority) {
+            int nicsCount,
+            int vmPriority,
+            MacPoolManagerStrategy macPool) {
         boolean returnValue = true;
-        if (MacPoolManager.getInstance().getAvailableMacsCount() < nicsCount) {
+        if (macPool.getAvailableMacsCount() < nicsCount) {
             if (reasons != null) {
                 reasons.add(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES.toString());
             }
@@ -740,7 +741,7 @@ public class VmHandler {
         Backend.getInstance()
                .getResourceManager()
                .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                              new UpdateVmDynamicDataVDSCommandParameters(vdsId, vmDynamic));
+                       new UpdateVmDynamicDataVDSCommandParameters(vdsId, vmDynamic));
     }
 
     public static void updateDefaultTimeZone(VmBase vmBase) {

@@ -1,8 +1,8 @@
-package org.ovirt.engine.core.bll.network;
+package org.ovirt.engine.core.bll.network.macpoolmanager;
 
 import java.util.List;
 
-interface MacPoolManagerStrategy {
+public interface MacPoolManagerStrategy {
 
     /**
      * Initialize pool.

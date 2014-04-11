@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
@@ -43,7 +42,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
 
         try {
             if (StringUtils.isEmpty(getMacAddress())) {
-                getInterface().setMacAddress(MacPoolManager.getInstance().allocateNewMac());
+                getInterface().setMacAddress(getMacPool().allocateNewMac());
                 macAddedToPool = true;
             } else {
                 macAddedToPool = addMacToPool(getMacAddress());
@@ -71,7 +70,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         } finally {
             setSucceeded(succeeded);
             if (macAddedToPool && !succeeded) {
-                MacPoolManager.getInstance().freeMac(getMacAddress());
+                getMacPool().freeMac(getMacAddress());
             }
         }
     }
@@ -143,7 +142,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             if (!validate(macAvailable())) {
                 return false;
             }
-        } else if (MacPoolManager.getInstance().getAvailableMacsCount() <= 0) {
+        } else if (getMacPool().getAvailableMacsCount() <= 0) {
             addCanDoActionMessage(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
             return false;
         }

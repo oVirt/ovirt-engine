@@ -302,11 +302,13 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     }
 
     protected boolean verifyAddVM() {
-        return VmHandler.verifyAddVm
-                (getReturnValue().getCanDoActionMessages(),
-                        getParameters().getVmsCount()
-                                * getVmNicDao().getAllForTemplate(getVmTemplateId()).size(),
-                        getParameters().getVmStaticData().getPriority());
+        final List<String> reasons = getReturnValue().getCanDoActionMessages();
+        final int nicsCount = getParameters().getVmsCount()
+                * getVmNicDao().getAllForTemplate(getVmTemplateId()).size();
+        final int priority = getParameters().getVmStaticData().getPriority();
+
+        return VmHandler.verifyAddVm(reasons, nicsCount, priority, getMacPool());
+
     }
 
     protected boolean areTemplateImagesInStorageReady(Guid storageId) {

@@ -20,11 +20,13 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -41,6 +43,7 @@ import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
+@RunWith(MockitoJUnitRunner.class)
 public class VmInterfaceManagerTest {
 
     private final String NETWORK_NAME = "networkName";
@@ -48,19 +51,12 @@ public class VmInterfaceManagerTest {
     private final static Version VERSION_3_2 = new Version(3, 2);
     private final static int OS_ID = 0;
 
-    public static final int MAX_MACS_COUNT_IN_POOL = 100000;
-    public static final boolean ALLOW_DUPLICATES = false;
-    public static final String MAC_POOL_RANGES = "00:1a:4a:15:c0:00-00:1a:4a:15:c0:ff";
-
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.HotPlugEnabled, VERSION_3_2.getValue(), true),
-            mockConfig(ConfigValues.MacPoolRanges, MAC_POOL_RANGES),
-            mockConfig(ConfigValues.MaxMacsCountInPool, MAX_MACS_COUNT_IN_POOL),
-            mockConfig(ConfigValues.AllowDuplicateMacAddresses, ALLOW_DUPLICATES));
+            mockConfig(ConfigValues.HotPlugEnabled, VERSION_3_2.getValue(), true));
 
     @Mock
-    private MacPoolManager macPoolManager;
+    private MacPoolManagerStrategy macPoolManagerStrategy;
 
     @Mock
     private VmNetworkStatisticsDao vmNetworkStatisticsDAO;
@@ -77,8 +73,7 @@ public class VmInterfaceManagerTest {
     @Mock
     private ExternalNetworkManager externalNetworkManager;
 
-    @Spy
-    private VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
+    private VmInterfaceManager vmInterfaceManager;
 
     @Mock
     private Version version;
@@ -86,9 +81,7 @@ public class VmInterfaceManagerTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setupMocks() {
-        MockitoAnnotations.initMocks(this);
-
-        doReturn(macPoolManager).when(vmInterfaceManager).getMacPoolManager();
+        vmInterfaceManager = Mockito.spy(new VmInterfaceManager(macPoolManagerStrategy));
         doReturn(vmNetworkStatisticsDAO).when(vmInterfaceManager).getVmNetworkStatisticsDao();
         doReturn(vmNetworkInterfaceDAO).when(vmInterfaceManager).getVmNetworkInterfaceDao();
         doReturn(vmNicDao).when(vmInterfaceManager).getVmNicDao();
@@ -120,9 +113,9 @@ public class VmInterfaceManagerTest {
         when(osRepository.hasNicHotplugSupport(any(Integer.class), any(Version.class))).thenReturn(true);
         vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), reserveExistingMac, osId, version);
         if (reserveExistingMac) {
-            verify(macPoolManager, times(1)).forceAddMac((iface.getMacAddress()));
+            verify(macPoolManagerStrategy, times(1)).forceAddMac((iface.getMacAddress()));
         } else {
-            verifyZeroInteractions(macPoolManager);
+            verifyZeroInteractions(macPoolManagerStrategy);
         }
         verifyAddDelegatedCorrectly(iface, addMacVerification);
     }
@@ -175,27 +168,27 @@ public class VmInterfaceManagerTest {
     }
 
     /**
-     * Verify that {@link VmInterfaceManager#add} delegated correctly to {@link MacPoolManager} & DAOs.
+     * Verify that {@link VmInterfaceManager#add} delegated correctly to {@link MacPoolManagerStrategy} & DAOs.
      *
      * @param iface
      *            The interface to check for.
      * @param addMacVerification
-     *            Mode to check (times(1), never(), etc) for {@link MacPoolManager#addMac(String)}.
+     *            Mode to check (times(1), never(), etc) for {@link MacPoolManagerStrategy#addMac(String)}.
      */
     protected void verifyAddDelegatedCorrectly(VmNic iface, VerificationMode addMacVerification) {
-        verify(macPoolManager, addMacVerification).forceAddMac(iface.getMacAddress());
+        verify(macPoolManagerStrategy, addMacVerification).forceAddMac(iface.getMacAddress());
         verify(vmNicDao).save(iface);
         verify(vmNetworkStatisticsDAO).save(iface.getStatistics());
     }
 
     /**
-     * Verify that {@link VmInterfaceManager#removeAll} delegated correctly to {@link MacPoolManager} & DAOs.
+     * Verify that {@link VmInterfaceManager#removeAll} delegated correctly to {@link MacPoolManagerStrategy} & DAOs.
      *
      * @param iface
      *            The interface to check for.
      */
     protected void verifyRemoveAllDelegatedCorrectly(VmNic iface) {
-        verify(macPoolManager, times(1)).freeMac(iface.getMacAddress());
+        verify(macPoolManagerStrategy, times(1)).freeMac(iface.getMacAddress());
         verify(vmNicDao).remove(iface.getId());
         verify(vmNetworkStatisticsDAO).remove(iface.getId());
     }
@@ -207,6 +200,7 @@ public class VmInterfaceManagerTest {
         VmNic iface = new VmNic();
         iface.setId(Guid.newGuid());
         iface.setMacAddress(RandomUtils.instance().nextString(10));
+
         return iface;
     }
 

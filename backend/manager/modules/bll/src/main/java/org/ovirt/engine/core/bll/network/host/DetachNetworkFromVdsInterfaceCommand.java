@@ -139,7 +139,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
         }
 
         List<String> vmNames =
-                new VmInterfaceManager().findActiveVmsUsingNetworks(vds.getId(),
+                new VmInterfaceManager(getMacPool()).findActiveVmsUsingNetworks(vds.getId(),
                         Collections.singletonList(getParameters().getNetwork().getName()));
 
         if (!vmNames.isEmpty()) {

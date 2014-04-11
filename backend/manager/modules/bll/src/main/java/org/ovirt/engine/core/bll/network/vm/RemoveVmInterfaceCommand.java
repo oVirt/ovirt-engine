@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.network.vm;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
-import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -45,7 +44,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
             new ExternalNetworkManager(iface).deallocateIfExternal();
 
             // return mac to pool
-            MacPoolManager.getInstance().freeMac(iface.getMacAddress());
+            getMacPool().freeMac(iface.getMacAddress());
         }
 
         // remove from db

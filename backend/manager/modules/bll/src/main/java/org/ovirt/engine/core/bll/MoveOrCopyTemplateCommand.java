@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -394,8 +393,8 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected void fillMacAddressIfMissing(VmNic iface) {
         if (StringUtils.isEmpty(iface.getMacAddress())
-                && (MacPoolManager.getInstance().getAvailableMacsCount() >= 1)) {
-            iface.setMacAddress(MacPoolManager.getInstance().allocateNewMac());
+                && (getMacPool().getAvailableMacsCount() >= 1)) {
+            iface.setMacAddress(getMacPool().allocateNewMac());
         }
     }
 
@@ -414,7 +413,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                 freeMacs++;
             }
         }
-        if (freeMacs > 0 && !(MacPoolManager.getInstance().getAvailableMacsCount() >= freeMacs)) {
+        if (freeMacs > 0 && !(getMacPool().getAvailableMacsCount() >= freeMacs)) {
             addCanDoActionMessage(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
             return false;
         }
