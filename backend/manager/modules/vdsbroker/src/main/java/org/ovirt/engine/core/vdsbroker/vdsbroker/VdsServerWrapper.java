@@ -908,6 +908,19 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc merge(String vmId, Map<String, String> drive,
+            String baseVolUUID, String topVolUUID, String bandwidth, String jobUUID) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.merge(vmId, drive,
+                    baseVolUUID, topVolUUID, bandwidth, jobUUID);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public OneUuidReturnForXmlRpc glusterVolumeCreate(String volumeName,
             String[] brickList,
             int replicaCount,

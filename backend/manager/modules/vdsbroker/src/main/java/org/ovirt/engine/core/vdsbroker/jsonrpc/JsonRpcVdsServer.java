@@ -919,6 +919,21 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc merge(String vmId, Map<String, String> drive,
+            String baseVolUUID, String topVolUUID, String bandwidth, String jobUUID) {
+        JsonRpcRequest request =
+                new RequestBuilder("VM.merge").withParameter("vmID", vmId)
+                        .withParameter("drive", drive)
+                        .withParameter("baseVolUUID", baseVolUUID)
+                        .withParameter("topVolUUID", topVolUUID)
+                        .withParameter("bandwidth", bandwidth)
+                        .withParameter("jobUUID", jobUUID)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
     public OneUuidReturnForXmlRpc glusterVolumeCreate(String volumeName,
             String[] brickList,
             int replicaCount,

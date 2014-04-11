@@ -192,6 +192,9 @@ public interface IVdsServer {
 
     ImageSizeReturnForXmlRpc diskSizeExtend(String vmId, Map<String, String> diskParams, String newSize);
 
+    StatusOnlyReturnForXmlRpc merge(String vmId, Map<String, String> drive,
+            String baseVolUUID, String topVolUUID, String bandwidth, String jobUUID);
+
     // Gluster vdsm Commands
     OneUuidReturnForXmlRpc glusterVolumeCreate(String volumeName,
             String[] brickList,

@@ -173,6 +173,9 @@ public interface VdsServerConnector {
 
     public Map<String, Object> diskSizeExtend(String vmId, Map<String, String> diskParams, String newSize);
 
+    public Map<String, Object> merge(String vmId, Map<String, String> drive,
+            String baseVolUUID, String topVolUUID, String bandwidth, String jobUUID);
+
     // Gluster vdsm commands
     public Map<String, Object> glusterVolumeCreate(String volumeName,
             String[] brickList,
