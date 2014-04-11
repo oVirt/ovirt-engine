@@ -50,6 +50,17 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
+    /** @return Validation result that indicates if the VM is qualified to have its snapshots merged. */
+    public ValidationResult vmQualifiedForSnapshotMerge() {
+        for (VM vm : vms) {
+            if (!vm.isQualifiedForSnapshotMerge()) {
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
+            }
+        }
+
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult vmNotLocked() {
         for (VM vm : vms) {
             if (vm.getStatus() == VMStatus.ImageLocked) {

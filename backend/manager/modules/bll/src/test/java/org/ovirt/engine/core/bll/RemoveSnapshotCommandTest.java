@@ -3,9 +3,11 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -46,7 +49,8 @@ public class RemoveSnapshotCommandTest {
     private RemoveSnapshotCommand<RemoveSnapshotParameters> cmd;
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule();
+    public MockConfigRule mcr =
+            new MockConfigRule(mockConfig(ConfigValues.LiveMergeSupported, Version.v3_5.toString(), true));
 
     @Mock
     private VmTemplateDAO vmTemplateDAO;
@@ -86,6 +90,7 @@ public class RemoveSnapshotCommandTest {
         doReturn(snapshotValidator).when(cmd).createSnapshotValidator();
         mockVm();
         vmValidator = spy(new VmValidator(cmd.getVm()));
+        doReturn(ValidationResult.VALID).when(vmValidator).vmNotHavingDeviceSnapshotsAttachedToOtherVms(anyBoolean());
         doReturn(vmValidator).when(cmd).createVmValidator(any(VM.class));
         doReturn(STORAGE_POOLD_ID).when(cmd).getStoragePoolId();
         mockConfigSizeDefaults();
@@ -96,6 +101,7 @@ public class RemoveSnapshotCommandTest {
         vm.setId(Guid.newGuid());
         vm.setStatus(VMStatus.Down);
         vm.setStoragePoolId(STORAGE_POOLD_ID);
+        vm.setVdsGroupCompatibilityVersion(Version.v3_5);
         doReturn(vm).when(cmd).getVm();
     }
 
@@ -233,9 +239,23 @@ public class RemoveSnapshotCommandTest {
     public void testCanDoActionVmUp() {
         prepareForVmValidatorTests();
         cmd.getVm().setStatus(VMStatus.Up);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
     }
 
+    @Test
+    public void testCanDoActionVmDown() {
+        prepareForVmValidatorTests();
+        cmd.getVm().setStatus(VMStatus.Down);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+    }
+
+    @Test
+    public void testCanDoActionVmMigrating() {
+        prepareForVmValidatorTests();
+        cmd.getVm().setStatus(VMStatus.MigratingTo);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
+    }
     @Test
     public void vmHasPluggedDdeviceSnapshotsAttachedToOtherVms() {
         prepareForVmValidatorTests();

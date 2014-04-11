@@ -149,6 +149,10 @@ public enum VdcActionType {
     RemoveVmHibernationVolumes(233, QuotaDependency.NONE),
     RemoveMemoryVolumes(234, QuotaDependency.NONE),
     RemoveDiskSnapshots(235, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.NONE),
+    RemoveSnapshotSingleDiskLive(236, QuotaDependency.STORAGE),
+    Merge(237, QuotaDependency.STORAGE),
+    MergeStatus(238, QuotaDependency.NONE),
+    DestroyImage(239, QuotaDependency.STORAGE),
     // VmPoolCommands
     AddVmPool(301, QuotaDependency.NONE),
     AddVmPoolWithVms(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),

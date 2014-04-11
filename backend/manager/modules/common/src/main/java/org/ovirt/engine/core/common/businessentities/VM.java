@@ -1612,6 +1612,10 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         return getStatus().isQualifyToMigrate();
     }
 
+    public boolean isQualifiedForSnapshotMerge() {
+        return getStatus().isQualifiedForSnapshotMerge();
+    }
+
     public boolean isRunningAndQualifyForDisksMigration() {
         return getStatus().isUpOrPaused() && getRunOnVds() != null && !getRunOnVds().equals(Guid.Empty);
     }

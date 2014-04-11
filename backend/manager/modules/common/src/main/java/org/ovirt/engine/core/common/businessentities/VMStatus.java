@@ -66,6 +66,17 @@ public enum VMStatus implements Identifiable {
     }
 
     /**
+     * This method reflects whether the VM is qualified to have its snapshots merged.  For
+     * this to be true, the VM must up with qemu in a non-transient state, or down.
+     *
+     * @return true if this status indicates that the VM status indicates that snapshot merge
+     * may be possible, otherwise false
+     */
+    public boolean isQualifiedForSnapshotMerge() {
+        return this == Up || this == PoweringUp || this == Paused || this == RebootInProgress || this == Down;
+    }
+
+    /**
      * This method reflects whether the VM is surely running or paused in this status
      *
      * @see #isRunning()

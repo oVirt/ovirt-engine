@@ -14,13 +14,17 @@ import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
+import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -30,12 +34,12 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -43,11 +47,13 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+/**
+ * Merges snapshots either live or non-live based on VM status
+ */
 @DisableInPrepareMode
 @LockIdNameAttribute
 public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends VmCommand<T>
         implements QuotaStorageDependent {
-
     private List<DiskImage> _sourceImages = null;
 
     public RemoveSnapshotCommand(T parameters) {
@@ -87,8 +93,13 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     @Override
     protected void executeCommand() {
-        if (getVm().getStatus() != VMStatus.Down) {
-            log.error("Cannot remove VM snapshot. Vm is not Down");
+        if (FeatureSupported.liveMerge(getVm().getVdsGroupCompatibilityVersion())) {
+            if (!getVm().isQualifiedForSnapshotMerge()) {
+                log.error("Cannot remove VM snapshot. Vm is not Down, Up or Paused");
+                throw new VdcBLLException(VdcBllErrors.VM_NOT_QUALIFIED_FOR_SNAPSHOT_MERGE);
+            }
+        } else if (!getVm().isDown()) {
+            log.error("Cannot remove VM snapshot. Vm is not Down and cluster version does not support Live Merge");
             throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
         }
 
@@ -111,6 +122,12 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
         if (snapshotHasImages) {
             removeImages();
+
+            if (getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDiskLive) {
+                // Enable callbacks in order to monitor for new-style child completion
+                setCommandStatus(CommandStatus.ACTIVE_ASYNC);
+                persistCommand(getParameters().getParentCommand(), true);
+            }
         }
 
         if (removeSnapshotMemory) {
@@ -144,13 +161,18 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             // this is not the active snapshot.
             DiskImage dest = getDiskImageDao().getAllSnapshotsForParent(source.getImageId()).get(0);
 
-            VdcReturnValueBase vdcReturnValue = getBackend().runInternalAction(
-                    VdcActionType.RemoveSnapshotSingleDisk,
-                    buildRemoveSnapshotSingleDiskParameters(source, dest),
-                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-
-            if (vdcReturnValue != null && vdcReturnValue.getInternalVdsmTaskIdList() != null) {
-                getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
+            if (getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDisk) {
+                VdcReturnValueBase vdcReturnValue = getBackend().runInternalAction(
+                        getSnapshotActionType(),
+                        buildRemoveSnapshotSingleDiskParameters(source, dest),
+                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                if (vdcReturnValue != null && vdcReturnValue.getInternalVdsmTaskIdList() != null) {
+                    getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
+                }
+            } else {
+                TaskManagerUtil.executeAsyncCommand(
+                        getSnapshotActionType(),
+                        buildRemoveSnapshotSingleDiskParameters(source, dest));
             }
 
             List<Guid> quotasToRemoveFromCache = new ArrayList<Guid>();
@@ -174,14 +196,16 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         });
     }
 
-    private ImagesContainterParametersBase buildRemoveSnapshotSingleDiskParameters(final DiskImage source,
+    private RemoveSnapshotSingleDiskParameters buildRemoveSnapshotSingleDiskParameters(final DiskImage source,
             DiskImage dest) {
-        ImagesContainterParametersBase parameters =
-                new ImagesContainterParametersBase(source.getImageId(), getVmId());
+        RemoveSnapshotSingleDiskParameters parameters =
+                new RemoveSnapshotSingleDiskParameters(source.getImageId(), getVmId());
         parameters.setDestinationImageId(dest.getImageId());
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setParentParameters(getParameters());
         parameters.setParentCommand(getActionType());
+        parameters.setCommandType(getSnapshotActionType());
+        parameters.setVdsId(getVm().getRunOnVds());
         return parameters;
     }
 
@@ -259,7 +283,9 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 !validateVmNotDuringSnapshot() ||
                 !validateVmNotInPreview() ||
                 !validateSnapshotExists() ||
-                !validate(vmValidator.vmDown()) ||
+                !(FeatureSupported.liveMerge(getVm().getVdsGroupCompatibilityVersion())
+                        ? validate(vmValidator.vmQualifiedForSnapshotMerge())
+                        : validate(vmValidator.vmDown())) ||
                 !validate(vmValidator.vmNotHavingDeviceSnapshotsAttachedToOtherVms(false))) {
             return false;
         }
@@ -376,10 +402,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     protected SnapshotsValidator createSnapshotValidator() {
         return new SnapshotsValidator();
     }
+
     protected VmValidator createVmValidator(VM vm) {
         return new VmValidator(vm);
     }
-
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
@@ -396,9 +422,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         }
     }
 
-    @Override
-    protected VdcActionType getChildActionType() {
-        return VdcActionType.RemoveSnapshotSingleDisk;
+    private VdcActionType getSnapshotActionType() {
+        return getVm().isDown() ? VdcActionType.RemoveSnapshotSingleDisk : VdcActionType.RemoveSnapshotSingleDiskLive;
     }
 
     @Override
@@ -415,5 +440,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         //return empty list - the command only release quota so it could never fail the quota check
         return new ArrayList<QuotaConsumptionParameter>();
+    }
+
+    @Override
+    public CommandCallBack getCallBack() {
+        return new RemoveSnapshotCommandCallback();
     }
 }

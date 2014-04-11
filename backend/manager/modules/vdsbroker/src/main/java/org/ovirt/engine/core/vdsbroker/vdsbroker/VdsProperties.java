@@ -321,6 +321,7 @@ public final class VdsProperties {
     public static final String Ide = "ide";
     public static final String Fdc = "fdc";
     public static final String Guid = "GUID";
+    public static final String Disk = "disk";
     // USB controller
     public static final String Model = "model";
     // USB slot
