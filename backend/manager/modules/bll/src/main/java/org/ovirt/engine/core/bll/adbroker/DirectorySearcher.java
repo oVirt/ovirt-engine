@@ -83,16 +83,24 @@ public class DirectorySearcher {
 
         for (Iterator<URI> iterator = ldapServerURIs.iterator(); iterator.hasNext();) {
             URI ldapURI = iterator.next();
-            response = findAndOrderServers(queryData, ldapURI, domainName, resultCount, editableLdapServerURIs);
-            if (response != null) {
-                break;
+            try {
+                response = findAndOrderServers(queryData, ldapURI, domainName, resultCount, editableLdapServerURIs);
+                if (response != null) {
+                    break;
+                }
+            } catch (Exception ex) {
+                return null;
             }
         }
         domain.setLdapServers(editableLdapServerURIs);
         return response;
     }
 
-    private List<?> findAndOrderServers(LdapQueryData queryData, URI ldapURI, String domainName, long resultCount, List<URI> modifiedLdapServersURIs) {
+    private List<?> findAndOrderServers(LdapQueryData queryData,
+            URI ldapURI,
+            String domainName,
+            long resultCount,
+            List<URI> modifiedLdapServersURIs) throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("Using Ldap server " + ldapURI);
         }
@@ -134,7 +142,7 @@ public class DirectorySearcher {
                     translatedException,
                     handlingResponse.isTryNextServer() ? "should" : "should not");
             if (!handlingResponse.isTryNextServer()) {
-                return null;
+                throw new Exception();
             }
         }
         return null;
