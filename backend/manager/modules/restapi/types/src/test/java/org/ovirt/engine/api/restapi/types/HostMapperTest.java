@@ -202,6 +202,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         powerMgmt.setPassword("passwd");
         powerMgmt.setType("apc");
         powerMgmt.setUsername("user");
+        powerMgmt.setKdumpDetection(true);
 
         VdsStatic vdsStatic = new VdsStatic();
         vdsStatic.setManagementIp(ip[0]);
@@ -210,6 +211,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vdsStatic.setPmPort(123);
         vdsStatic.setPmType("apc");
         vdsStatic.setPmUser("user");
+        vdsStatic.setPmKdumpDetection(false);
 
         VdsStatic mappedVdsStatic = HostMapper.map(powerMgmt, vdsStatic);
         assertEquals(mappedVdsStatic.getManagementIp(), ip[1]);
@@ -217,6 +219,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         assertEquals(mappedVdsStatic.getPmPassword(), "passwd");
         assertEquals(mappedVdsStatic.getPmType(), "apc");
         assertEquals(mappedVdsStatic.getPmUser(), "user");
+        assertTrue(mappedVdsStatic.isPmKdumpDetection());
     }
 
     @Test
@@ -247,6 +250,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         powerMgmt.setPassword("passwd");
         powerMgmt.setType("apc");
         powerMgmt.setUsername("user");
+        powerMgmt.setKdumpDetection(true);
 
         Agent agent = new Agent();
         agent.setOrder(1);
@@ -262,6 +266,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vdsStatic.setPmPort(123);
         vdsStatic.setPmType("apc");
         vdsStatic.setPmUser("user");
+        vdsStatic.setPmKdumpDetection(false);
 
         VdsStatic mappedVdsStatic = HostMapper.map(powerMgmt, vdsStatic);
         assertEquals(mappedVdsStatic.getManagementIp(), ip[1]);
@@ -269,6 +274,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         assertEquals(mappedVdsStatic.getPmPassword(), "passwd");
         assertEquals(mappedVdsStatic.getPmType(), "apc");
         assertEquals(mappedVdsStatic.getPmUser(), "user");
+        assertTrue(mappedVdsStatic.isPmKdumpDetection());
     }
 
     @Test

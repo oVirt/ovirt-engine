@@ -166,6 +166,9 @@ public class HostMapper {
                 }
             }
         }
+        if (model.isSetKdumpDetection()) {
+            entity.setPmKdumpDetection(model.isKdumpDetection());
+        }
         return entity;
     }
 
@@ -515,6 +518,7 @@ public class HostMapper {
                 model.getAgents().getAgents().add(agent);
             }
         }
+        model.setKdumpDetection(entity.isPmKdumpDetection());
         return model;
     }
 

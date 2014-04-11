@@ -2482,7 +2482,8 @@ actions:
           host.power_management.username: 'xs:string', host.power_management.password: 'xs:string', host.power_management.automatic_pm_enabled: 'xs:boolean',
           host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'},
           host.power_management.pm_proxy--COLLECTION: {propietary : 'xs:string'}, host.power_management.agents.agent--COLLECTION:{type: 'xs:string',
-          address: 'xs:string', username: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}}
+          address: 'xs:string', username: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}},
+          host.power_management.kdump_detection: 'xs:boolean'}
         description: update the specified host in the system. This is deprecated and is provided only for backwards compatibility
       - mandatoryArguments: {}
         optionalArguments: {host.name: 'xs:string', host.comment: 'xs:string', host.address: 'xs:string',
@@ -2493,7 +2494,8 @@ actions:
           host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {option.name: 'xs:string',
           option.value: 'xs:string'},  host.power_management.pm_proxy--COLLECTION: {propietary : 'xs:string'},
           host.power_management.agents.agent--COLLECTION:{type: 'xs:string', address: 'xs:string', username: 'xs:string', password: 'xs:string',
-          options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}}
+          options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}},
+          host.power_management.kdump_detection: 'xs:boolean'}
         description: update the specified host in the system
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -2512,7 +2514,8 @@ actions:
           host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string', host.power_management.username: 'xs:string', host.power_management.automatic_pm_enabled: 'xs:boolean',
           host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'},
           host.power_management.pm_proxy--COLLECTION: {propietary : 'xs:string'}, host.power_management.agents.agent--COLLECTION:{type: 'xs:string',
-          address: 'xs:string', username: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}, host.reboot_after_installation: 'xs:boolean', host.override_iptables: 'xs:boolean'}
+          address: 'xs:string', username: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}, host.reboot_after_installation: 'xs:boolean', host.override_iptables: 'xs:boolean',
+          host.power_management.kdump_detection: 'xs:boolean'}
         description: add a new host to the system providing the host root password. This has been deprecated and provided for backwards compatibility
       - mandatoryArguments: {host.name: 'xs:string', host.address: 'xs:string', host.cluster.id|name: 'xs:string'}
         optionalArguments: {host.comment: 'xs:string', host.ssh.port: 'xs:int', host.ssh.fingerprint: 'xs:string', host.ssh.authentication_method: 'xs:string',
@@ -2521,7 +2524,8 @@ actions:
           host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string', host.power_management.username: 'xs:string',
           host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'},
           host.power_management.pm_proxy--COLLECTION: {propietary : 'xs:string'}, host.power_management.agents.agent--COLLECTION:{type: 'xs:string', address: 'xs:string',
-          username: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}, host.reboot_after_installation: 'xs:boolean', host.override_iptables: 'xs:boolean'}
+          username: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}, host.reboot_after_installation: 'xs:boolean', host.override_iptables: 'xs:boolean',
+          host.power_management.kdump_detection: 'xs:boolean'}
         description: add a new host to the system providing the ssh password or fingerprint
     urlparams: {}
     headers:
