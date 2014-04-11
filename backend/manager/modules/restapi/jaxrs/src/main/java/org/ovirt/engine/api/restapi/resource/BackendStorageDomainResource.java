@@ -17,6 +17,7 @@ import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
+import org.ovirt.engine.api.resource.DiskSnapshotsResource;
 import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.api.resource.ImagesResource;
@@ -282,5 +283,10 @@ public class BackendStorageDomainResource extends
 
     public ImagesResource getImagesResource() {
         return inject(new BackendStorageDomainImagesResource(guid));
+    }
+
+    @Override
+    public DiskSnapshotsResource getDiskSnapshotsResource() {
+        return inject(new BackendStorageDomainDiskSnapshotsResource(guid));
     }
 }

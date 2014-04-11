@@ -3021,6 +3021,10 @@
 
   <xs:element name="disks" type="Disks"/>
 
+  <xs:element name="disk_snapshot" type="DiskSnapshot"/>
+
+  <xs:element name="disk_snapshots" type="DiskSnapshots"/>
+
   <xs:element name="nic" type="NIC"/>
 
   <xs:element name="nics" type="Nics"/>
@@ -3154,6 +3158,32 @@
           </xs:element>
           <xs:element name="clone" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="detach_only" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DiskSnapshot">
+    <xs:complexContent>
+      <xs:extension base="Disk">
+        <xs:sequence>
+          <xs:element ref="disk" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DiskSnapshots">
+    <xs:complexContent>
+      <xs:extension base="BaseDevices">
+        <xs:sequence>
+          <xs:element ref="disk_snapshot" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="DiskSnapshots"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

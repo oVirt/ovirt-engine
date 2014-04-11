@@ -1581,6 +1581,33 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /storagedomains/{storagedomain:id}/disksnapshots|rel=get
+  description: get the list of disk snapshots in the storage domain
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /storagedomains/{storagedomain:id}/disksnapshots/{disksnapshot:id}|rel=delete
+  description: delete the specified disk snapshot from the storage domain
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /storagedomains/{storagedomain:id}/disksnapshots/{disksnapshot:id}|rel=get
+  description: get the details of the specified disk snapshot in the storage domain
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
 - name: /clusters|rel=get
   description: get the list of clusters in the system
   request:

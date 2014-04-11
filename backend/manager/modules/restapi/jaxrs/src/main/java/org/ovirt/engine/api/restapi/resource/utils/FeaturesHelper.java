@@ -83,8 +83,16 @@ public class FeaturesHelper {
             addBookmarksFeature(features);
             addNetworkCustomPropertiesFeature(features);
             addFeatureRemoveDiskFromVmSnapshot(features);
+            addFeatureDiskSnapshotsResourceInStorageDomainContext(features);
         }
         return features;
+    }
+
+    private void addFeatureDiskSnapshotsResourceInStorageDomainContext(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Disk Snapshots list in Storage Domain context");
+        feature.setDescription("Ability to get a list of Disk Snapshots by a Storage Domain");
+        features.getFeature().add(feature);
     }
 
     private void addFeatureRemoveDiskFromVmSnapshot(Features features) {

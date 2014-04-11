@@ -39,6 +39,7 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.File;
@@ -101,6 +102,8 @@ import org.ovirt.engine.api.resource.DataCentersResource;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.DiskResource;
+import org.ovirt.engine.api.resource.DiskSnapshotResource;
+import org.ovirt.engine.api.resource.DiskSnapshotsResource;
 import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.DomainGroupResource;
 import org.ovirt.engine.api.resource.DomainGroupsResource;
@@ -248,6 +251,9 @@ public class LinkHelper {
         map.add(TemplateDiskResource.class, TemplateDisksResource.class, Template.class);
         map.add(DiskResource.class, DisksResource.class, StorageDomain.class);
         TYPES.put(Disk.class, map);
+
+        map = new ParentToCollectionMap(DiskSnapshotResource.class, DiskSnapshotsResource.class, StorageDomain.class);
+        TYPES.put(DiskSnapshot.class, map);
 
         map = new ParentToCollectionMap(HostResource.class, HostsResource.class);
         TYPES.put(Host.class, map);
