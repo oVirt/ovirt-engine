@@ -167,6 +167,8 @@ public enum VdcQueryType implements Serializable {
 
     // Bookmarks
     GetAllBookmarks,
+    GetBookmarkByBookmarkId,
+    GetBookmarkByBookmarkName,
 
     // Configuration values
     GetConfigurationValue(VdcQueryAuthType.User),

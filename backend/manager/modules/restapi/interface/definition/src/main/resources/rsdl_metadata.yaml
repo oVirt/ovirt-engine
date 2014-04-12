@@ -3317,6 +3317,51 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /bookmarks|rel=get
+  description: get the list of bookmarks in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /bookmarks/{bookmark:id}|rel=get
+  description: get the details of the specified bookmark in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /bookmarks/{tag:id}|rel=delete
+  description: delete the specified bookmark from the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /bookmarks/{tag:id}|rel=update
+  description: update the specified bookmark in the system
+  request:
+    body:
+      parameterType: Bookmark
+      signatures:
+      - mandatoryArguments: {bookmark.name: 'xs:string', bookmark.value: 'xs:string'}
+        description: update the name, value of the specified bookmark in the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+- name: /bookmarks|rel=add
+  description: add a new bookmark to the system
+  request:
+    body:
+      parameterType: Bookmark
+      signatures:
+      - mandatoryArguments: {bookmark.name: 'xs:string', bookmark.value: 'xs:string'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
 - name: /tags|rel=get
   description: get the list of tags in the system
   request:

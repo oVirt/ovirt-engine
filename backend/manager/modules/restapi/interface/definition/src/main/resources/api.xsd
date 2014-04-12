@@ -3338,6 +3338,36 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <!-- Bookmarks -->
+  <xs:element name="bookmark" type="Bookmark" />
+
+  <xs:element name="bookmarks" type="Bookmarks" />
+
+  <xs:complexType name="Bookmark">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Bookmarks">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="Bookmarks"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="bookmark" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- Tags -->
 
   <xs:element name="tag" type="Tag"/>

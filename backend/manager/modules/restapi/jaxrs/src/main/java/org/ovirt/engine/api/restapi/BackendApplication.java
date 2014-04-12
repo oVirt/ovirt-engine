@@ -37,6 +37,7 @@ import org.ovirt.engine.api.restapi.logging.ResponsePayloadLogger;
 import org.ovirt.engine.api.restapi.logging.ResponseStatusLogger;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendResource;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
+import org.ovirt.engine.api.restapi.resource.BackendBookmarksResource;
 import org.ovirt.engine.api.restapi.resource.BackendCapabilitiesResource;
 import org.ovirt.engine.api.restapi.resource.BackendClustersResource;
 import org.ovirt.engine.api.restapi.resource.BackendDataCentersResource;
@@ -77,16 +78,16 @@ public class BackendApplication extends Application {
     private static final Logger logger = Logger.getLogger(BackendApplication.class);
 
     // The messages bundle:
-    private MessageBundle messageBundle;
-    private MappingLocator mappingLocator;
-    private ValidatorLocator validatorLocator;
-    private SessionHelper sessionHelper;
+    private final MessageBundle messageBundle;
+    private final MappingLocator mappingLocator;
+    private final ValidatorLocator validatorLocator;
+    private final SessionHelper sessionHelper;
 
     // The reference to the backend bean:
     private BackendLocal backend;
 
     // The set of singletons:
-    private Set<Object> singletons = new HashSet<Object>();
+    private final Set<Object> singletons = new HashSet<Object>();
 
     public BackendApplication() throws Exception {
         // Create and load the message bundle:
@@ -134,6 +135,7 @@ public class BackendApplication extends Application {
         addResource(new BackendVmPoolsResource());
         addResource(new BackendDisksResource());
         addResource(new BackendTagsResource());
+        addResource(new BackendBookmarksResource());
         addResource(new BackendRolesResource());
         addResource(new BackendUsersResource());
         addResource(new BackendGroupsResource());

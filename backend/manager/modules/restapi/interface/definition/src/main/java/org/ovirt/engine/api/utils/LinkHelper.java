@@ -32,6 +32,7 @@ import org.ovirt.engine.api.model.ActionsBuilder;
 import org.ovirt.engine.api.model.AffinityGroup;
 import org.ovirt.engine.api.model.Application;
 import org.ovirt.engine.api.model.BaseResource;
+import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
@@ -88,6 +89,8 @@ import org.ovirt.engine.api.resource.AssignedTagResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
+import org.ovirt.engine.api.resource.BookmarkResource;
+import org.ovirt.engine.api.resource.BookmarksResource;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.CapabiliyResource;
 import org.ovirt.engine.api.resource.ClusterResource;
@@ -312,6 +315,9 @@ public class LinkHelper {
         map.add(AssignedTagResource.class, AssignedTagsResource.class, Template.class);
         map.add(AssignedTagResource.class, AssignedTagsResource.class, Group.class);
         TYPES.put(Tag.class, map);
+
+        map = new ParentToCollectionMap(BookmarkResource.class, BookmarksResource.class);
+        TYPES.put(Bookmark.class, map);
 
         map = new ParentToCollectionMap(TemplateResource.class, TemplatesResource.class);
         map.add(StorageDomainContentResource.class, StorageDomainContentsResource.class, StorageDomain.class);

@@ -73,6 +73,7 @@ transfers:
   tag: org.ovirt.engine.api.model.Tag
   parent: org.ovirt.engine.api.model.TagParent
   tags: org.ovirt.engine.api.model.Tags
+  bookmarks: org.ovirt.engine.api.models.Bookmarks
   template: org.ovirt.engine.api.model.Template
   templates: org.ovirt.engine.api.model.Templates
   ticket: org.ovirt.engine.api.model.Ticket
@@ -160,6 +161,8 @@ handlers:
   org.ovirt.engine.api.model.Storage: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.SupportedVersions: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.SystemVersion: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.Bookmark: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.Bookmarks: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Tag: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.TagParent: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Tags: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper

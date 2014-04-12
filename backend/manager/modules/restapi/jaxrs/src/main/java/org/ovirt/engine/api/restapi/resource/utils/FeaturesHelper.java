@@ -79,6 +79,9 @@ public class FeaturesHelper {
             addRebootFeature(features);
             addMaintenanceFeature(features);
         }
+        if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_5)) {
+            addBookmarksFeature(features);
+        }
         return features;
     }
 
@@ -422,6 +425,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Maintenance");
         feature.setDescription("Enable or disable VM maintenance mode.");
+        features.getFeature().add(feature);
+    }
+
+    private void addBookmarksFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Bookmarks");
+        feature.setDescription("Add/modify/remove bookmarks.");
         features.getFeature().add(feature);
     }
 }
