@@ -152,6 +152,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionGroup___TAG_MANAGEMENT();
 
+    String ActionGroup___AUDIT_LOG_MANAGEMENT();
+
     String ActionGroup___BOOKMARK_MANAGEMENT();
 
     String ActionGroup___EVENT_NOTIFICATION_MANAGEMENT();

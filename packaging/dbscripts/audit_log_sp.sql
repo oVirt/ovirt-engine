@@ -117,6 +117,14 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION ClearAllDismissedAuditLogs()
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      UPDATE audit_log SET deleted = false;
+END; $procedure$
+LANGUAGE plpgsql;
+
 -- Returns the events for which the user has direct permissions on
 -- If the user has permissions only on a VM, the user will see only events for this VM
 -- If the user has permissions on a cluster, he will see events from the cluster, the hosts and the VMS in the cluster

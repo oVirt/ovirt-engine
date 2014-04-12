@@ -196,6 +196,11 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
         return dbResults.get(resultKey) != null ? ((Integer) dbResults.get(resultKey)).intValue() : 0;
     }
 
+    @Override
+    public void clearAllDismissed() {
+        getCallsHandler().executeModification("ClearAllDismissedAuditLogs", getCustomMapSqlParameterSource());
+    }
+
     private static class AuditLogRowMapper implements RowMapper<AuditLog> {
 
         @Override

@@ -8,15 +8,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.action.RemoveExternalEventParameters;
+import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RemoveExternalEventCommandTest {
+public class RemoveAuditLogByIdCommandTest {
 
-    RemoveExternalEventCommand<RemoveExternalEventParameters> command;
+    RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters> command;
 
     @Mock
     private AuditLogDAO auditLogDAO;
@@ -28,7 +28,7 @@ public class RemoveExternalEventCommandTest {
     private static final long EVENT_ID_2 = 102;
     private static final long EVENT_ID_3 = 103;
 
-    private void prepareMocks(RemoveExternalEventCommand<RemoveExternalEventParameters> command) {
+    private void prepareMocks(RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters> command) {
         doReturn(auditLogDAO).when(command).getAuditLogDao();
         doReturn(null).when(auditLogDAO).get(EVENT_ID_1);
         doReturn(getEventWithOvirtOrigin()).when(auditLogDAO).get(EVENT_ID_2);
@@ -52,16 +52,16 @@ public class RemoveExternalEventCommandTest {
     @Test
     public void canDoActionFailsOnNonExistingEvent() {
         command =
-                spy(new RemoveExternalEventCommand<RemoveExternalEventParameters>(new RemoveExternalEventParameters(EVENT_ID_1)));
+                spy(new RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters>(new RemoveAuditLogByIdParameters(EVENT_ID_1)));
         prepareMocks(command);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_NOT_FOUND);
+                VdcBllMessages.AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST);
     }
 
     @Test
     public void canDoActionFailsOnRemovingEventWithOvirtOrigin() {
         command =
-                spy(new RemoveExternalEventCommand<RemoveExternalEventParameters>(new RemoveExternalEventParameters(EVENT_ID_2)));
+                spy(new RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters>(new RemoveAuditLogByIdParameters(EVENT_ID_2)));
         prepareMocks(command);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
@@ -70,7 +70,7 @@ public class RemoveExternalEventCommandTest {
     @Test
     public void canDoActionSucceeds() {
         command =
-                spy(new RemoveExternalEventCommand<RemoveExternalEventParameters>(new RemoveExternalEventParameters(EVENT_ID_3)));
+                spy(new RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters>(new RemoveAuditLogByIdParameters(EVENT_ID_3)));
         prepareMocks(command);
         assertTrue(command.canDoAction());
     }

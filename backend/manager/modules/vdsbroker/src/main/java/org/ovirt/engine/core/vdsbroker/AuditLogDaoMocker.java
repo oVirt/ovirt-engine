@@ -104,4 +104,8 @@ public class AuditLogDaoMocker implements AuditLogDAO {
         return null;
     }
 
+    @Override
+    public void clearAllDismissed() {
+    }
+
 }

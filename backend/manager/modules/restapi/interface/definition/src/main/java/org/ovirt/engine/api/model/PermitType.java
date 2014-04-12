@@ -113,6 +113,7 @@ public enum PermitType {
     TAG_MANAGEMENT,
     BOOKMARK_MANAGEMENT,
     EVENT_NOTIFICATION_MANAGEMENT,
+    AUDIT_LOG_MANAGEMENT,
     // affinity groups CRUD commands
     MANIPULATE_AFFINITY_GROUPS;
 

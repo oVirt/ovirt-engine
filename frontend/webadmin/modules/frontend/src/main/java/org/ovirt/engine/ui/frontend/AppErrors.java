@@ -2283,6 +2283,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot remove tag. Tag does not exist.")
     String TAGS_CANNOT_REMOVE_TAG_NOT_EXIST();
 
+    @DefaultStringValue("Cannot remove audit log. Audit Log does not exist.")
+    String AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST();
+
     @DefaultStringValue("${type} VM Cluster.")
     String VAR__TYPE__VM__CLUSTER();
 

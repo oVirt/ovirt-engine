@@ -988,7 +988,13 @@ public enum AuditLogType {
 
     // External scheduler
     EXTERNAL_SCHEDULER_PLUGIN_ERROR(10500, AuditLogSeverity.ERROR),
-    EXTERNAL_SCHEDULER_ERROR(10501, AuditLogSeverity.ERROR);
+    EXTERNAL_SCHEDULER_ERROR(10501, AuditLogSeverity.ERROR),
+
+    // Audit Log
+    USER_REMOVE_AUDIT_LOG(10600),
+    USER_REMOVE_AUDIT_LOG_FAILED(10601, AuditLogSeverity.ERROR),
+    USER_CLEAR_ALL_DISMISSED_AUDIT_LOG(10602),
+    USER_CLEAR_ALL_DISMISSED_AUDIT_LOG_FAILED(10603, AuditLogSeverity.ERROR);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are suppressed.

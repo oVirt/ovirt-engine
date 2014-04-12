@@ -294,6 +294,7 @@ public class RoleTreeView
                                 new RoleNode(ActionGroup.TAG_MANAGEMENT, getConstants().allowToManageTags()),
                                 new RoleNode(ActionGroup.BOOKMARK_MANAGEMENT, getConstants().allowToManageBookmarks()),
                                 new RoleNode(ActionGroup.EVENT_NOTIFICATION_MANAGEMENT, getConstants().allowToManageEventNotifications()),
+                                new RoleNode(ActionGroup.AUDIT_LOG_MANAGEMENT, getConstants().allowToManageAuditLogs()),
                                 new RoleNode(ActionGroup.CONFIGURE_ENGINE,
                                         getConstants().allowToGetOrSetSystemConfigurationRoleTreeTooltip()) }));
     }

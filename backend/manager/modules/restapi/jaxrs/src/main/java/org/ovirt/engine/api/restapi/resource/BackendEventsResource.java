@@ -4,12 +4,14 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.Events;
 import org.ovirt.engine.api.resource.EventResource;
 import org.ovirt.engine.api.resource.EventsResource;
 import org.ovirt.engine.core.common.action.AddExternalEventParameters;
-import org.ovirt.engine.core.common.action.RemoveExternalEventParameters;
+import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -35,6 +37,11 @@ EventsResource {
             collection.getEvent().add(addLinks(map(entity)));
         }
         return collection;
+    }
+
+    @Override
+    public Response undelete(Action action) {
+        return performAction(VdcActionType.ClearAllDismissedAuditLogs, new VdcActionParametersBase(), action, false);
     }
 
     @Override
@@ -75,7 +82,7 @@ EventsResource {
 
     @Override
     protected Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveExternalEvent, new RemoveExternalEventParameters(asLong(id)));
+        return performAction(VdcActionType.RemoveAuditLogById, new RemoveAuditLogByIdParameters(asLong(id)));
     }
 
     @Override

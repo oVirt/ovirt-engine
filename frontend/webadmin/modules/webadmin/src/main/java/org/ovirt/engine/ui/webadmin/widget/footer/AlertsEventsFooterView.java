@@ -1,16 +1,22 @@
 package org.ovirt.engine.ui.webadmin.widget.footer;
 
 import java.util.Date;
+import java.util.List;
 
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
+import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.ImageButtonCell;
 import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -24,6 +30,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider.TaskHandler;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TaskStatusColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -131,7 +138,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
 
         alertsTable = createActionTable(alertModelProvider);
         alertsTable.setBarStyle(style.barStyle());
-        initTable(alertsTable);
+        initAlertTable(alertsTable, alertModelProvider);
 
         _alertsTable = createActionTable(alertFirstRowModelProvider);
         _alertsTable.setBarStyle(style.barStyle());
@@ -374,6 +381,54 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         table.addColumn(messageColumn, constants.messageEvent());
     }
 
+    void initAlertTable(final SimpleActionTable<AuditLog> table, final AlertModelProvider alertModelProvider) {
+        table.addColumn(new AuditLogSeverityColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
+            @Override
+            protected Date getRawValue(AuditLog object) {
+                return object.getlog_time();
+            }
+        };
+        table.addColumn(logTimeColumn, constants.timeEvent(), "160px"); //$NON-NLS-1$
+
+        table.addColumn(new DismissColumn(alertModelProvider), constants.empty(), "30px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
+            @Override
+            public String getValue(AuditLog object) {
+                return object.getmessage();
+            }
+        };
+        table.addColumn(messageColumn, constants.messageEvent());
+
+
+        table.getSelectionModel().setMultiSelectEnabled(false);
+
+        table.addActionButton(new WebAdminButtonDefinition<AuditLog>(constants.dismissAlert(), CommandLocation.OnlyFromContext) {
+            @Override
+            protected UICommand resolveCommand() {
+                return alertModelProvider.getModel().getDismissCommand();
+            }
+        });
+
+        table.addActionButton(new WebAdminButtonDefinition<AuditLog>(constants.clearAllDismissedAlerts(), CommandLocation.OnlyFromContext) {
+            @Override
+            protected UICommand resolveCommand() {
+                return alertModelProvider.getModel().getClearAllCommand();
+            }
+        });
+
+        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                List<AuditLog> selectedItems = table.getSelectionModel().getSelectedList();
+                AuditLog selectedItem = selectedItems != null && selectedItems.size() > 0 ? selectedItems.get(0) : null;
+                alertModelProvider.getModel().setSelectedItem(selectedItem);
+            }
+        });
+    }
+
     void initTaskTable(SimpleActionTable<Job> taskTable) {
         ImageResourceColumn<Job> taskStatusColumn = new ImageResourceColumn<Job>() {
             @Override
@@ -438,4 +493,38 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     public void updateTree() {
         tasksTree.updateTree(taskModelProvider.getModel());
     }
+
+    class DismissColumn extends Column<AuditLog, AuditLog> {
+
+        DismissColumn(AlertModelProvider alertModelProvider) {
+            super(new DismissAuditLogImageButtonCell(alertModelProvider));
+        }
+
+        @Override
+        public AuditLog getValue(AuditLog object) {
+            return object;
+        }
+    }
+
+    class DismissAuditLogImageButtonCell extends ImageButtonCell<AuditLog> {
+
+        AlertModelProvider alertModelProvider;
+
+        public DismissAuditLogImageButtonCell(AlertModelProvider alertModelProvider) {
+            super(resources.dialogIconClose());
+            this.alertModelProvider = alertModelProvider;
+        }
+
+        @Override
+        protected String getTitle(AuditLog value) {
+            return constants.dismissAlert();
+        }
+
+        @Override
+        protected UICommand resolveCommand(AuditLog value) {
+            alertModelProvider.getModel().setSelectedItem(value);
+            return alertModelProvider.getModel().getDismissCommand();
+        }
+    }
+
 }

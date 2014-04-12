@@ -2203,6 +2203,19 @@ actions:
       from: {context: matrix, type: 'xs:string', value: event_id, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
+- name: /events/undelete|rel=undelete
+  description: undoes the delete operation performed on the events
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: undoes the delete operation performed on the events
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /events/{event:id}|rel=get
   description: get the details of the specified event in the system
   request:

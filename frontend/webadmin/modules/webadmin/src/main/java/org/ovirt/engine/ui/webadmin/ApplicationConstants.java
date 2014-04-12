@@ -2355,6 +2355,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Last Task:")
     String lastTaskEventFooter();
 
+    @DefaultStringValue("Clear All")
+    String clearAllDismissedAlerts();
+
+    @DefaultStringValue("Dismiss Alert")
+    String dismissAlert();
+
     // Network popup
 
     // Header

@@ -127,6 +127,10 @@ public enum ActionGroup {
 
     // Event notification management action group
     EVENT_NOTIFICATION_MANAGEMENT(1303, RoleType.ADMIN, false),
+
+    // audit log management action group
+    AUDIT_LOG_MANAGEMENT(1304, RoleType.ADMIN, false),
+
     // affinity group CRUD commands
     MANIPULATE_AFFINITY_GROUPS(1550, RoleType.ADMIN, true, ApplicationMode.VirtOnly);
 

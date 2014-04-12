@@ -182,6 +182,8 @@ public class PermitMapper {
             return PermitType.ACCESS_IMAGE_STORAGE;
         case TAG_MANAGEMENT:
             return PermitType.TAG_MANAGEMENT;
+        case AUDIT_LOG_MANAGEMENT:
+                return PermitType.AUDIT_LOG_MANAGEMENT;
         case BOOKMARK_MANAGEMENT:
             return PermitType.BOOKMARK_MANAGEMENT;
         case EVENT_NOTIFICATION_MANAGEMENT:
@@ -336,6 +338,8 @@ public class PermitMapper {
             return ActionGroup.ACCESS_IMAGE_STORAGE;
         case TAG_MANAGEMENT:
             return ActionGroup.TAG_MANAGEMENT;
+        case AUDIT_LOG_MANAGEMENT:
+            return ActionGroup.AUDIT_LOG_MANAGEMENT;
         case BOOKMARK_MANAGEMENT:
             return ActionGroup.BOOKMARK_MANAGEMENT;
         case EVENT_NOTIFICATION_MANAGEMENT:

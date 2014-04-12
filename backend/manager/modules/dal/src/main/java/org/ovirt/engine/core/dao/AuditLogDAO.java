@@ -150,4 +150,10 @@ public interface AuditLogDAO extends DAO, SearchDAO<AuditLog> {
      * @return number of seconds (0 or negative value if we can perform operation immediately)
      */
     public int getTimeToWaitForNextPmOp(String vdsName, String event);
+
+    /**
+     * Clears all previously dismissed audit log entries. All audit logs
+     * delete flag will be set back to false.
+     */
+    void clearAllDismissed();
 }

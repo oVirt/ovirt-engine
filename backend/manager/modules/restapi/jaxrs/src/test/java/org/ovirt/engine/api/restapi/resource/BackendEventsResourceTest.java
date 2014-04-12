@@ -9,12 +9,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.LogSeverity;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddExternalEventParameters;
-import org.ovirt.engine.core.common.action.RemoveExternalEventParameters;
+import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -77,8 +79,8 @@ public class BackendEventsResourceTest extends AbstractBackendCollectionResource
     @Test
     public void testRemove() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpActionExpectations(VdcActionType.RemoveExternalEvent, RemoveExternalEventParameters.class, new String[] {
-                "Id" }, new Object[] { LOG_IDS[0] }, true, true, false);
+        setUpActionExpectations(VdcActionType.RemoveAuditLogById, RemoveAuditLogByIdParameters.class, new String[] {
+                "AuditLogId" }, new Object[] { LOG_IDS[0] }, true, true, false);
         setUpQueryExpectations("");
         verifyRemove(collection.remove(String.valueOf(LOG_IDS[0])));
     }
@@ -103,6 +105,19 @@ public class BackendEventsResourceTest extends AbstractBackendCollectionResource
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
+    }
+
+    @Test
+    public void testUndelete() throws Exception {
+
+        setUriInfo(setUpActionExpectations(VdcActionType.ClearAllDismissedAuditLogs,
+                VdcActionParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                true,
+                true));
+
+        collection.undelete(new Action());
     }
 
     @Test

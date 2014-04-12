@@ -294,7 +294,6 @@ public enum VdcActionType {
     RemoveExternalPolicyUnit(1453, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
     // External events
     AddExternalEvent(1500, ActionGroup.INJECT_EXTERNAL_EVENTS, QuotaDependency.NONE),
-    RemoveExternalEvent(1501, ActionGroup.INJECT_EXTERNAL_EVENTS, QuotaDependency.NONE),
 
     // Providers
     AddProvider(1600, false, QuotaDependency.NONE),
@@ -341,7 +340,11 @@ public enum VdcActionType {
     EditIscsiBond(2001, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
     RemoveIscsiBond(2002, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
 
-    SetHaMaintenance(2050, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE);
+    SetHaMaintenance(2050, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
+
+    // Audit Log
+    RemoveAuditLogById(2100, false, QuotaDependency.NONE),
+    ClearAllDismissedAuditLogs(2101, false, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;
