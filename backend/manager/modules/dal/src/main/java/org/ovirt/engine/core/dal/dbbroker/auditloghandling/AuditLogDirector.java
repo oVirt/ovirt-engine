@@ -347,8 +347,11 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.IRS_HOSTED_ON_VDS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VDS_ALREADY_IN_REQUESTED_STATUS, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VDS_MANUAL_FENCE_STATUS, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.VDS_AUTO_FENCE_STATUS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VDS_MANUAL_FENCE_STATUS_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.VDS_AUTO_FENCE_STATUS_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_MANUAL_FENCE_FAILED_CALL_FENCE_SPM, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.VDS_AUTO_FENCE_FAILED_CALL_FENCE_SPM, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.USER_VDS_MAINTENANCE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VDS_LOW_MEM, AuditLogSeverity.WARNING);
