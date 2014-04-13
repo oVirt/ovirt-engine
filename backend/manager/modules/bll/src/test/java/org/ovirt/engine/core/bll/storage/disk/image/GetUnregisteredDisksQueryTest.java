@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -89,7 +90,7 @@ public class GetUnregisteredDisksQueryTest
 
         DiskImage existingDiskImage = mock(DiskImage.class);
         when(existingDiskImage.getId()).thenReturn(existingDiskId);
-        List<DiskImage> existingDiskImages = Arrays.asList(existingDiskImage);
+        List<DiskImage> existingDiskImages = Collections.singletonList(existingDiskImage);
 
         // Mock the get images List VDS command
         VDSReturnValue volListReturnValue = new VDSReturnValue();
