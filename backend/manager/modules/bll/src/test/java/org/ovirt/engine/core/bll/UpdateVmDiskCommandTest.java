@@ -136,7 +136,7 @@ public class UpdateVmDiskCommandTest {
         DiskImage otherDisk = new DiskImage();
         otherDisk.setId(Guid.newGuid());
         otherDisk.setActive(true);
-        when(diskDao.getAllForVm(vmId)).thenReturn(new LinkedList<Disk>(Arrays.asList(parameters.getDiskInfo(),
+        when(diskDao.getAllForVm(vmId)).thenReturn(new LinkedList<>(Arrays.asList(parameters.getDiskInfo(),
                 otherDisk)));
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
         initializeCommand(parameters);
@@ -595,7 +595,7 @@ public class UpdateVmDiskCommandTest {
     }
 
     protected void mockInterfaceList() {
-        ArrayList<String> diskInterfaces = new ArrayList<String>(
+        ArrayList<String> diskInterfaces = new ArrayList<>(
                 Arrays.asList(new String[] {
                         "IDE",
                         "VirtIO",
@@ -635,7 +635,7 @@ public class UpdateVmDiskCommandTest {
     }
 
     private void mockGetForDisk(List<VM> vms) {
-        Map<Boolean, List<VM>> vmsMap = new HashMap<Boolean, List<VM>>();
+        Map<Boolean, List<VM>> vmsMap = new HashMap<>();
         vmsMap.put(Boolean.TRUE, vms);
         when(vmDAO.getForDisk(diskImageGuid, true)).thenReturn(vmsMap);
     }
@@ -725,7 +725,7 @@ public class UpdateVmDiskCommandTest {
         StorageDomain storage = new StorageDomain();
         storage.setId(Guid.newGuid());
         storage.setStorageType(storageType);
-        diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(storage.getId())));
+        diskImage.setStorageIds(new ArrayList<>(Arrays.asList(storage.getId())));
         return storage;
     }
 
