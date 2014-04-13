@@ -114,7 +114,7 @@ public class UpdateVmDiskCommandTest {
     private DiskValidator diskValidator;
 
     @Mock
-    OsRepository osRepository;
+    private OsRepository osRepository;
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
@@ -127,7 +127,7 @@ public class UpdateVmDiskCommandTest {
     /**
      * The command under test.
      */
-    protected UpdateVmDiskCommand<UpdateVmDiskParameters> command;
+    private UpdateVmDiskCommand<UpdateVmDiskParameters> command;
 
     @Test
     public void getOtherVmDisks() {
