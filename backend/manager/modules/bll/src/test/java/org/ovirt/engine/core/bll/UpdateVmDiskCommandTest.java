@@ -197,7 +197,7 @@ public class UpdateVmDiskCommandTest {
 
         UpdateVmDiskParameters parameters = createParameters();
         parameters.getDiskInfo().setReadOnly(true);
-        initializeCommand(parameters, Arrays.asList(createVm(VMStatus.Up)));
+        initializeCommand(parameters, Collections.singletonList(createVm(VMStatus.Up)));
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }
@@ -326,7 +326,7 @@ public class UpdateVmDiskCommandTest {
         UpdateVmDiskParameters parameters = createParameters();
         parameters.getDiskInfo().setReadOnly(false);
         parameters.getDiskInfo().setWipeAfterDelete(true);
-        initializeCommand(parameters, Arrays.asList(createVm(status)));
+        initializeCommand(parameters, Collections.singletonList(createVm(status)));
 
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
@@ -725,7 +725,7 @@ public class UpdateVmDiskCommandTest {
         StorageDomain storage = new StorageDomain();
         storage.setId(Guid.newGuid());
         storage.setStorageType(storageType);
-        diskImage.setStorageIds(new ArrayList<>(Arrays.asList(storage.getId())));
+        diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(storage.getId())));
         return storage;
     }
 
