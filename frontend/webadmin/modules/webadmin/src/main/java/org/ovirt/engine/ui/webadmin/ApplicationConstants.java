@@ -1476,6 +1476,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Kdump Status")
     String kdumpStatus();
 
+    @DefaultStringValue("SELinux mode")
+    String selinuxModeGeneral();
+
     // Storage
     @DefaultStringValue("Domain Name")
     String domainNameStorage();

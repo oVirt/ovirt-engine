@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.core.common.businessentities.SELinuxMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -822,6 +823,19 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
+    private String selinuxEnforceMode;
+
+    public String getSelinuxEnforceMode() {
+        return selinuxEnforceMode;
+    }
+
+    public void setSelinuxEnforceMode(String newMode) {
+        if (!ObjectUtils.objectsEqual(selinuxEnforceMode, newMode)) {
+            selinuxEnforceMode = newMode;
+            onPropertyChanged(new PropertyChangedEventArgs("selinuxEnforceMode")); //$NON-NLS-1$
+        }
+    }
+
     static
     {
         requestEditEventDefinition = new EventDefinition("RequestEditEvent", HostGeneralModel.class); //$NON-NLS-1$
@@ -927,6 +941,7 @@ public class HostGeneralModel extends EntityModel
         setBootTime(vds.getBootTime());
 
         setKdumpStatus(EnumTranslator.create(KdumpStatus.class).get(vds.getKdumpStatus()));
+        setSelinuxEnforceMode(EnumTranslator.create(SELinuxMode.class).get(vds.getSELinuxEnforceMode()));
 
         if (!vds.getHighlyAvailableIsConfigured()) {
             setHostedEngineHaIsConfigured(false);

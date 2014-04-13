@@ -934,4 +934,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String KdumpStatus___ENABLED();
 
+    String SELinuxMode___ENFORCING();
+
+    String SELinuxMode___PERMISSIVE();
+
+    String SELinuxMode___DISABLED();
+
 }
