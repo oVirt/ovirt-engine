@@ -155,7 +155,7 @@ public class NetworkClusterDaoTest extends BaseDAOTestCase {
                     (thiscluster.getStatus() == existingNetworkCluster.getStatus());
         }
 
-        assert (itworked);
+        assertTrue(itworked);
     }
 
     /**
@@ -176,7 +176,7 @@ public class NetworkClusterDaoTest extends BaseDAOTestCase {
                     (thiscluster.getStatus() == existingNetworkCluster.getStatus());
         }
 
-        assert (itworked);
+        assertTrue (itworked);
     }
 
     /**
