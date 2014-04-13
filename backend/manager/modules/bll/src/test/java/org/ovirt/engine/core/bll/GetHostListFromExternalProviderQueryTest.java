@@ -50,7 +50,7 @@ public class GetHostListFromExternalProviderQueryTest extends AbstractQueryTest<
         doReturn(allHosts).when(getQuery()).getProviderHosts(hostProvider, null);
         doReturn(existingHosts).when(getQuery()).getExistingHosts();
         getQuery().executeQueryCommand();
-        assert(getQuery().getQueryReturnValue().getReturnValue().equals(allHosts));
+        assertEquals(allHosts, getQuery().getQueryReturnValue().getReturnValue());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class GetHostListFromExternalProviderQueryTest extends AbstractQueryTest<
         doReturn(allHosts).when(getQuery()).getProviderHosts(hostProvider, null);
         doReturn(existingHosts).when(getQuery()).getExistingHosts();
         getQuery().executeQueryCommand();
-        assert(getQuery().getQueryReturnValue().getReturnValue().equals(allHosts));
+        assertEquals(allHosts, getQuery().getQueryReturnValue().getReturnValue());
     }
 
     @Test
