@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeast;
@@ -344,7 +345,7 @@ public class UpdateVmDiskCommandTest {
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
                 final DiskImage oldDisk = createDiskImage();
                 oldDisk.setDiskInterface(DiskInterface.VirtIO);
-                assert (oldDisk.getDiskInterface() != parameters.getDiskInfo().getDiskInterface());
+                assertNotSame (oldDisk.getDiskInterface(), parameters.getDiskInfo().getDiskInterface());
                 return oldDisk;
             }
         });
@@ -387,7 +388,7 @@ public class UpdateVmDiskCommandTest {
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
             final DiskImage oldDisk = createDiskImage();
             oldDisk.setDiskInterface(DiskInterface.VirtIO);
-            assert(oldDisk.getDiskInterface() != parameters.getDiskInfo().getDiskInterface());
+            assertNotSame (oldDisk.getDiskInterface(), parameters.getDiskInfo().getDiskInterface());
             return oldDisk;
             }
         });
