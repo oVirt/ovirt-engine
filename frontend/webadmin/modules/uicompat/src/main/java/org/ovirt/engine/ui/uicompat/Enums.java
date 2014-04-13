@@ -19,6 +19,8 @@ public interface Enums extends LocalizedEnums {
 
     String StorageDomainStatus___Maintenance();
 
+    String StorageDomainStatus___PreparingForMaintenance();
+
     String StorageDomainSharedStatus___Active();
 
     String StorageDomainSharedStatus___InActive();
