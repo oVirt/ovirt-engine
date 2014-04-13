@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.junit.Before;
 import static org.junit.Assert.assertEquals;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
 
@@ -30,11 +29,6 @@ public class GetHostListFromExternalProviderQueryTest extends AbstractQueryTest<
         host2.setHostName("host2");
         existingHost1.setHostName("existingHost1");
         existingHost2.setHostName("existingHost2");
-        Provider hostProvider = new Provider();
-        hostProvider.setUsername("admin");
-        hostProvider.setPassword("password");
-        hostProvider.setUrl("http://provider.com");
-        hostProvider.setType(ProviderType.FOREMAN);
     }
 
     @Test
@@ -65,7 +59,7 @@ public class GetHostListFromExternalProviderQueryTest extends AbstractQueryTest<
         doReturn(allHosts).when(getQuery()).getProviderHosts(hostProvider, null);
         doReturn(existingHosts).when(getQuery()).getExistingHosts();
         getQuery().executeQueryCommand();
-        assertEquals(1, ((List<VDS>)(getQuery().getQueryReturnValue().getReturnValue())).size());
+        assertEquals(1, ((List<VDS>) getQuery().getQueryReturnValue().getReturnValue()).size());
     }
 
     @Test
@@ -96,7 +90,7 @@ public class GetHostListFromExternalProviderQueryTest extends AbstractQueryTest<
         doReturn(allHosts).when(getQuery()).getProviderHosts(hostProvider, null);
         doReturn(existingHosts).when(getQuery()).getExistingHosts();
         getQuery().executeQueryCommand();
-        assertEquals(2, ((List<VDS>)(getQuery().getQueryReturnValue().getReturnValue())).size());
+        assertEquals(2, ((List<VDS>) getQuery().getQueryReturnValue().getReturnValue()).size());
     }
 
 }
