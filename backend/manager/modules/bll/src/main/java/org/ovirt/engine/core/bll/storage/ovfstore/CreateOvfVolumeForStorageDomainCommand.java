@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.ovfstore;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -82,7 +82,7 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
         createdDiskImage.setDiskAlias(OvfInfoFileConstants.OvfStoreDescriptionLabel);
         createdDiskImage.setDiskDescription(OvfInfoFileConstants.OvfStoreDescriptionLabel);
         createdDiskImage.setShareable(shouldOvfStoreBeShareable());
-        createdDiskImage.setStorageIds(new ArrayList<>(Arrays.asList(domainId)));
+        createdDiskImage.setStorageIds(new ArrayList<>(Collections.singletonList(domainId)));
         createdDiskImage.setSize(SizeConverter.BYTES_IN_MB * 128);
         createdDiskImage.setvolumeFormat(VolumeFormat.RAW);
         createdDiskImage.setVolumeType(VolumeType.Preallocated);
