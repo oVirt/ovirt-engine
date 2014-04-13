@@ -15,6 +15,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.core.common.businessentities.SELinuxMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -526,6 +527,15 @@ public class VdsManager {
                     AuditLogableBase logable = new AuditLogableBase(vds.getId());
                     logable.updateCallStackFromThrowable(ret.getExceptionObject());
                     AuditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_GET_HOST_HARDWARE_INFO);
+                }
+            }
+
+            if (vds.getSELinuxEnforceMode() == null || vds.getSELinuxEnforceMode().equals(SELinuxMode.DISABLED)) {
+                AuditLogDirector.log(new AuditLogableBase(vds.getId()), AuditLogType.VDS_NO_SELINUX_ENFORCEMENT);
+                if (vds.getSELinuxEnforceMode() != null) {
+                    log.warnFormat("Host {0} is running with disabled SELinux.", vds.getName());
+                } else {
+                    log.warnFormat("Host {0} does not report SELinux enforcement information.", vds.getName());
                 }
             }
 

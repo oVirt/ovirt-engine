@@ -422,6 +422,13 @@ public class VdsBrokerObjectsBuilder {
         vds.setHBAs(hbas);
         vds.setBootTime(AssignLongValue(xmlRpcStruct, VdsProperties.bootTime));
         vds.setKdumpStatus(KdumpStatus.valueOfNumber(AssignIntValue(xmlRpcStruct, VdsProperties.KDUMP_STATUS)));
+
+        Map<String, Object> selinux = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.selinux);
+        if (selinux != null) {
+            vds.setSELinuxEnforceMode(AssignIntValue(selinux, VdsProperties.selinux_mode));
+        } else {
+            vds.setSELinuxEnforceMode(null);
+        }
     }
 
     public static void checkTimeDrift(VDS vds, Map<String, Object> xmlRpcStruct) {

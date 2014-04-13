@@ -35,6 +35,7 @@ import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.model.VmSummary;
+import org.ovirt.engine.api.model.SELinux;
 import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
@@ -393,6 +394,7 @@ public class HostMapper {
         }
 
         model.setKdumpStatus(map(entity.getKdumpStatus(), null));
+        model.setSelinux(map(entity, (SELinux) null));
 
         return model;
     }
@@ -674,6 +676,18 @@ public class HostMapper {
             }
         }
         return params;
+    }
+
+    @Mapping(from = VDS.class, to = SELinux.class)
+    public static SELinux map(VDS entity, SELinux template) {
+        SELinux model = template != null ? template : new SELinux();
+        if (entity.getSELinuxEnforceMode() == null) {
+            return model;
+        }
+
+        model.setMode(entity.getSELinuxEnforceMode().toString());
+
+        return model;
     }
 
     private static Hook createHook(Map.Entry<String, HashMap<String, HashMap<String, String>>> keyValuePair,

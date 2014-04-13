@@ -1340,4 +1340,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     public void setKdumpStatus(KdumpStatus kdumpStatus) {
         mVdsDynamic.setKdumpStatus(kdumpStatus);
     }
+
+    public SELinuxMode getSELinuxEnforceMode() {
+        return mVdsDynamic.getSELinuxEnforceMode();
+    }
+
+    public void setSELinuxEnforceMode(Integer value) {
+        mVdsDynamic.setSELinuxEnforceMode(value);
+    }
 }

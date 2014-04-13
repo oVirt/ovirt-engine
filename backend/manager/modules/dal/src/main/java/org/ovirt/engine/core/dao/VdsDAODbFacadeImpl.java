@@ -350,6 +350,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setKdumpStatus(KdumpStatus.valueOfNumber(rs.getInt("kdump_status")));
             entity.calculateFreeVirtualMemory();
             entity.setBootTime((Long) rs.getObject("boot_time"));
+            entity.setSELinuxEnforceMode((Integer) rs.getObject("selinux_enforce_mode"));
             return entity;
         }
     }

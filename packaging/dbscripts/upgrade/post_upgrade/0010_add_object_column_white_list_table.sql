@@ -69,5 +69,6 @@ DROP FUNCTION __temp_add_object_column_white_list_table();
 -- to add new object columns to the white list
 -- since this script must remain reentrant
 -----------------------------------------------------
+select fn_db_add_column_to_object_white_list('vds', 'selinux_enforce_mode');
 
 

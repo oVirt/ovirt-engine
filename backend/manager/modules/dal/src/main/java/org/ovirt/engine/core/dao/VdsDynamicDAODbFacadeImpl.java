@@ -99,6 +99,7 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             entity.setHBAs(new JsonObjectDeserializer().deserialize(rs.getString("hbas"), HashMap.class));
             entity.setPowerManagementControlledByPolicy(rs.getBoolean("controlled_by_pm_policy"));
             entity.setKdumpStatus(KdumpStatus.valueOfNumber(rs.getInt("kdump_status")));
+            entity.setSELinuxEnforceMode((Integer) rs.getObject("selinux_enforce_mode"));
 
             return entity;
         }
@@ -255,7 +256,10 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                 .addValue("hw_family", vds.getHardwareFamily())
                 .addValue("hbas", new JsonObjectSerializer().serialize(vds.getHBAs()))
                 .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines())
-                .addValue("kdump_status", vds.getKdumpStatus().getAsNumber());
+                .addValue("kdump_status", vds.getKdumpStatus().getAsNumber())
+                .addValue("selinux_enforce_mode", (vds.getSELinuxEnforceMode() != null)
+                                                  ? vds.getSELinuxEnforceMode().toInt()
+                                                  : null);
 
         return parameterSource;
     }

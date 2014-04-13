@@ -130,6 +130,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private HashSet<Version> _supportedENGINESVersionsSet;
 
+    private SELinuxMode selinuxEnforceMode;
+
     /**
      * This flag is set to true if the host PM can be controlled
      * by policy. If a user triggered action puts the host
@@ -595,6 +597,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.kdumpStatus = kdumpStatus;
     }
 
+    public SELinuxMode getSELinuxEnforceMode() {
+        return this.selinuxEnforceMode;
+    }
+
+    public void setSELinuxEnforceMode(Integer value) {
+        this.selinuxEnforceMode = SELinuxMode.fromValue(value);
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -649,6 +659,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + ((HBAs == null) ? 0 : HBAs.hashCode());
         result = prime * result + (powerManagementControlledByPolicy ? 0 : 1);
         result = prime * result + ((kdumpStatus == null) ? 0 : kdumpStatus.hashCode());
+        result = prime * result + ((selinuxEnforceMode == null) ? 0 : selinuxEnforceMode.hashCode());
 
         return result;
     }
@@ -715,7 +726,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && ObjectUtils.objectsEqual(HBAs, other.HBAs)
                 && ObjectUtils.objectsEqual(supportedEmulatedMachines, other.supportedEmulatedMachines))
                 && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
-                && kdumpStatus == other.kdumpStatus;
+                && kdumpStatus == other.kdumpStatus
+                && ObjectUtils.objectsEqual(selinuxEnforceMode, other.selinuxEnforceMode);
     }
 
 }

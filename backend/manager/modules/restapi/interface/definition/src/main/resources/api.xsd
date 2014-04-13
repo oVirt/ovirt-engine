@@ -649,6 +649,7 @@
           <xs:element ref="sso_methods" minOccurs="0"/>
           <xs:element ref="architecture_capabilities" minOccurs="0"/>
           <xs:element ref="serial_number_policies" minOccurs="0" />
+          <xs:element ref="selinux_modes" minOccurs="0" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1121,6 +1122,21 @@
     </xs:sequence>
   </xs:complexType>
 
+
+  <xs:element name="selinux_modes" type="SELinuxModes" />
+
+  <xs:complexType name="SELinuxModes">
+    <xs:sequence>
+      <xs:element name="selinux_mode" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="SELinuxModes" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
   <!-- Common to all resources -->
 
   <xs:complexType name="ActionableResource">
@@ -1494,6 +1510,14 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="selinux" type="SELinux" />
+
+  <xs:complexType name="SELinux">
+      <xs:sequence>
+        <xs:element name="mode" type="xs:string" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+  </xs:complexType>
+
   <xs:element name="host" type="Host"/>
 
   <xs:element name="hosts" type="Hosts"/>
@@ -1536,6 +1560,7 @@
           <xs:element ref="display" minOccurs="0"/>
           <xs:element name="hosted_engine" type="HostedEngine" minOccurs="0" maxOccurs="1"/>
           <xs:element name="kdump_status" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="selinux" type="SELinux" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

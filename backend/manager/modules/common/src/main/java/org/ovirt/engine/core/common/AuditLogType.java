@@ -90,6 +90,7 @@ public enum AuditLogType {
             AuditLogTimeInterval.HOUR.getValue() * 12),
     VDS_LOW_DISK_SPACE_ERROR(24, AuditLogSeverity.ERROR,
             AuditLogTimeInterval.MINUTE.getValue() * 15),
+    VDS_NO_SELINUX_ENFORCEMENT(25, AuditLogSeverity.WARNING, AuditLogTimeInterval.HOUR.getValue()),
     USER_VDS_MAINTENANCE(600), // When VDS is transferred to
     CPU_FLAGS_NX_IS_MISSING(601, AuditLogSeverity.WARNING),
     // maintenance mode
