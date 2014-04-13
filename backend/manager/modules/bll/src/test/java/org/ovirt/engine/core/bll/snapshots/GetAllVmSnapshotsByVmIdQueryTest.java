@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -53,7 +53,7 @@ public class GetAllVmSnapshotsByVmIdQueryTest
         SnapshotDao snapshotDaoMock = mock(SnapshotDao.class);
         when(dbFacadeMock.getSnapshotDao()).thenReturn(snapshotDaoMock);
         when(snapshotDaoMock.getAll(vmId, getUser().getId(), getQueryParameters().isFiltered()))
-                .thenReturn(Arrays.asList(snapshot));
+                .thenReturn(Collections.singletonList(snapshot));
     }
 
     @Test
