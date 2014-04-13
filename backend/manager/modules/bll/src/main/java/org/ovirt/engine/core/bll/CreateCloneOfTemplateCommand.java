@@ -17,7 +17,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 /**
  * This command responsible to creating a copy of template image. Usually it
- * will be called during Create Vm From Template.
+ * will be called during Add Vm From Template.
  */
 @InternalCommandAttribute
 public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParameters> extends
