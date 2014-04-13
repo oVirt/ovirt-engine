@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -245,7 +244,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     private DiskImagesValidator createDiskImagesValidator(DiskImage disk) {
-      return new DiskImagesValidator(Arrays.asList(disk));
+      return new DiskImagesValidator(Collections.singletonList(disk));
     }
 
     protected boolean checkDerivedDisksFromDiskNotExist(DiskImage diskImage) {
@@ -278,7 +277,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 return false;
             }
 
-            List<DiskImage> diskList = ImagesHandler.filterImageDisks(Arrays.asList(getDisk()), true, false, true);
+            List<DiskImage> diskList = ImagesHandler.filterImageDisks(Collections.singletonList(getDisk()), true, false, true);
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskList);
             if (!validate(diskImagesValidator.diskImagesNotLocked())) {
                 return false;
