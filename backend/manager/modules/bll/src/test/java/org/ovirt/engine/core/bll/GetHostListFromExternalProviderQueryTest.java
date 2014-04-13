@@ -19,7 +19,7 @@ public class GetHostListFromExternalProviderQueryTest extends AbstractQueryTest<
     private final VDS host2 = new VDS();
     private final VDS existingHost1 = new VDS();
     private final VDS existingHost2 = new VDS();
-    private final Provider hostProvider = new Provider();
+    private final Provider<?> hostProvider = new Provider();
 
     @Before
     @Override
@@ -35,10 +35,10 @@ public class GetHostListFromExternalProviderQueryTest extends AbstractQueryTest<
     public void testAllHosts() {
         when(getQueryParameters().isFilterOutExistingHosts()).thenReturn(true);
         doReturn(hostProvider).when(getQuery()).getProvider();
-        List<VDS> allHosts = new ArrayList<VDS>();
+        List<VDS> allHosts = new ArrayList<>();
         allHosts.add(host1);
         allHosts.add(host2);
-        List<VDS> existingHosts = new ArrayList<VDS>();
+        List<VDS> existingHosts = new ArrayList<>();
         existingHosts.add(existingHost1);
         existingHosts.add(existingHost2);
         doReturn(allHosts).when(getQuery()).getProviderHosts(hostProvider, null);
@@ -51,10 +51,10 @@ public class GetHostListFromExternalProviderQueryTest extends AbstractQueryTest<
     public void testHostsContainExistingHosts() {
         when(getQueryParameters().isFilterOutExistingHosts()).thenReturn(true);
         doReturn(hostProvider).when(getQuery()).getProvider();
-        List<VDS> allHosts = new ArrayList<VDS>();
+        List<VDS> allHosts = new ArrayList<>();
         allHosts.add(host1);
         allHosts.add(host2);
-        List<VDS> existingHosts = new ArrayList<VDS>();
+        List<VDS> existingHosts = new ArrayList<>();
         existingHosts.add(host1);
         doReturn(allHosts).when(getQuery()).getProviderHosts(hostProvider, null);
         doReturn(existingHosts).when(getQuery()).getExistingHosts();
@@ -66,10 +66,10 @@ public class GetHostListFromExternalProviderQueryTest extends AbstractQueryTest<
     public void testAllHostsNonFiltered() {
         when(getQueryParameters().isFilterOutExistingHosts()).thenReturn(false);
         doReturn(hostProvider).when(getQuery()).getProvider();
-        List<VDS> allHosts = new ArrayList<VDS>();
+        List<VDS> allHosts = new ArrayList<>();
         allHosts.add(host1);
         allHosts.add(host2);
-        List<VDS> existingHosts = new ArrayList<VDS>();
+        List<VDS> existingHosts = new ArrayList<>();
         existingHosts.add(existingHost1);
         existingHosts.add(existingHost2);
         doReturn(allHosts).when(getQuery()).getProviderHosts(hostProvider, null);
@@ -82,10 +82,10 @@ public class GetHostListFromExternalProviderQueryTest extends AbstractQueryTest<
     public void testHostsContainExistingHostsNonFiltered() {
         when(getQueryParameters().isFilterOutExistingHosts()).thenReturn(false);
         doReturn(hostProvider).when(getQuery()).getProvider();
-        List<VDS> allHosts = new ArrayList<VDS>();
+        List<VDS> allHosts = new ArrayList<>();
         allHosts.add(host1);
         allHosts.add(host2);
-        List<VDS> existingHosts = new ArrayList<VDS>();
+        List<VDS> existingHosts = new ArrayList<>();
         existingHosts.add(host1);
         doReturn(allHosts).when(getQuery()).getProviderHosts(hostProvider, null);
         doReturn(existingHosts).when(getQuery()).getExistingHosts();
