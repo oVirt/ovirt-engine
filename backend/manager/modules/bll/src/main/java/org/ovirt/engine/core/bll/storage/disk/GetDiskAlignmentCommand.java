@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -112,7 +111,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         }
 
         if (getDiskStorageType() == DiskStorageType.IMAGE) {
-            DiskImagesValidator diskImagesValidator = new DiskImagesValidator(Arrays.asList((DiskImage) getDisk()));
+            DiskImagesValidator diskImagesValidator = new DiskImagesValidator(Collections.singletonList((DiskImage) getDisk()));
             if (!validate(diskImagesValidator.diskImagesNotLocked()) ||
                     !validate(diskImagesValidator.diskImagesNotIllegal())) {
                 return false;
