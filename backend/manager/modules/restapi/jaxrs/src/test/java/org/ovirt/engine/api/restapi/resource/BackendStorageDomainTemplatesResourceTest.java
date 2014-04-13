@@ -84,7 +84,7 @@ public class BackendStorageDomainTemplatesResourceTest
     }
 
     protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType, boolean replay) throws Exception {
-        assert(query.equals(""));
+        assertEquals("", query);
 
         setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
                                      IdQueryParameters.class,

@@ -253,7 +253,7 @@ public class BackendTagsResourceTest
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        assert(query.equals(""));
+        assertEquals("", query);
 
         setUpEntityQueryExpectations(VdcQueryType.GetAllTags,
                                      VdcQueryParametersBase.class,

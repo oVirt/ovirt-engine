@@ -162,7 +162,7 @@ public class BackendHostNicLabelsResourceTest extends AbstractBackendCollectionR
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        assert (query.equals(""));
+        assertEquals("", query);
 
         setUpEntityQueryExpectations(VdcQueryType.GetNetworkLabelsByHostNicId,
                 IdQueryParameters.class,

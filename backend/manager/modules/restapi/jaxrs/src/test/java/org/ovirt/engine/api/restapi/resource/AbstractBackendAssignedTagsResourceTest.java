@@ -215,7 +215,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        assert(query.equals(""));
+        assertEquals("", query);
 
         setUpEntityQueryExpectations(queryType,
                                      queryParams,

@@ -24,7 +24,7 @@ public class BackendAffinityGroupVmsResourceTest
 
     @Override
     protected void setUpQueryExpectations(String query) throws Exception {
-        assert (query.equals(""));
+        assertEquals("", query);
 
         setUpGetEntityExpectations(true);
         control.replay();

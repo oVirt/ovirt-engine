@@ -202,7 +202,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        assert(query.equals(""));
+        assertEquals("", query);
 
         List<Permissions> perms = setUpPermissions();
         setUpEntityQueryExpectations(queryType,
@@ -216,7 +216,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     }
 
     protected void setUpQueryExpectations(String query, Object failure, Guid adElementId) throws Exception {
-        assert(query.equals(""));
+        assertEquals("", query);
 
         setUpEntityQueryExpectations(queryType,
                                      queryParams.getClass(),

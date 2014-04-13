@@ -36,7 +36,7 @@ public class BackendStepsResourceTest extends AbstractBackendCollectionResourceT
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        assert(query.equals(""));
+        assertEquals("", query);
 
         setUpEntityQueryExpectations(VdcQueryType.GetStepsByJobId,
                 GetStepsByJobIdQueryParameters.class,

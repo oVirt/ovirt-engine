@@ -76,7 +76,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        assert (query.equals(""));
+        assertEquals("", query);
 
         setUpEntityQueryExpectations(VdcQueryType.GetAllStorageServerConnections,
                 VdcQueryParametersBase.class,

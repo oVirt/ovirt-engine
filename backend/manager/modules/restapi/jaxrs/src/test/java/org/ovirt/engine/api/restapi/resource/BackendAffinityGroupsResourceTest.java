@@ -25,7 +25,7 @@ public class BackendAffinityGroupsResourceTest extends AbstractBackendCollection
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        assert (query.equals(""));
+        assertEquals("", query);
 
         setUpEntityQueryExpectations(VdcQueryType.GetAffinityGroupsByClusterId,
                 IdQueryParameters.class,

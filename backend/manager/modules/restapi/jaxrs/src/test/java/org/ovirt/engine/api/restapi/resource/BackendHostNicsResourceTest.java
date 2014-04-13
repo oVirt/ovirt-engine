@@ -347,7 +347,7 @@ public class BackendHostNicsResourceTest
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        assert(query.equals(""));
+        assertEquals("", query);
 
         setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
                                      IdQueryParameters.class,

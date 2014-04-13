@@ -73,7 +73,7 @@ public class BackendHostStorageResourceTest
     }
 
     protected void setUpQueryExpectations(String query, Object failure, boolean vgs_query) throws Exception {
-        assert(query.equals(""));
+        assertEquals("", query);
 
         setUpEntityQueryExpectations(VdcQueryType.GetDeviceList,
                                      GetDeviceListQueryParameters.class,

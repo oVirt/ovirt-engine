@@ -179,7 +179,7 @@ public class BackendFilesResourceTest
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        assert(query.equals(""));
+        assertEquals("", query);
 
         setUpEntityQueryExpectations(VdcQueryType.GetImagesList,
                                      GetImagesListParameters.class,
