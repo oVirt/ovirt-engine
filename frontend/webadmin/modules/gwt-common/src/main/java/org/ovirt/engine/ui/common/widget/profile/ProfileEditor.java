@@ -40,7 +40,7 @@ public class ProfileEditor extends ListModelTypeAheadListBoxEditor<Object> {
                                 profileDescription != null ? profileDescription : "").asString(); //$NON-NLS-1$
                     }
 
-                });
+                }, false);
     }
 
 }
