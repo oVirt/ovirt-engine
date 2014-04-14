@@ -107,6 +107,11 @@ public enum VdcActionType {
     LabelNic(165, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
     UnlabelNic(166, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
 
+    // NUMA
+    AddVmNumaNodes(170, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+    UpdateVmNumaNodes(171, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+    RemoveVmNumaNodes(172, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+
     // VmTemplatesCommand
     AddVmTemplate(201, ActionGroup.CREATE_TEMPLATE, QuotaDependency.BOTH),
     UpdateVmTemplate(202, ActionGroup.EDIT_TEMPLATE_PROPERTIES, QuotaDependency.VDS_GROUP),

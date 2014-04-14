@@ -45,6 +45,7 @@ public enum VdcQueryType implements Serializable {
     GetHostsForStorageOperation,
     GetServerSSHPublicKey,
     GetServerSSHKeyFingerprint,
+    GetCpuStatisticsByVdsId,
 
     // VdsStatic Queries
     GetVdsStaticByName,
@@ -87,6 +88,11 @@ public enum VdcQueryType implements Serializable {
     GetNetworkLabelsByNetworkId,
     GetNetworkLabelsByDataCenterId,
     GetNetworkLabelsByHostNicId,
+
+    // NUMA
+    GetVdsNumaNodesByVdsId(VdcQueryAuthType.User),
+    GetVmNumaNodesByVmId(VdcQueryAuthType.User),
+    GetAllVmsWithNumaByVdsGroupId(VdcQueryAuthType.User),
 
     // VdsGroups
     GetVdsCertificateSubjectByVdsId(VdcQueryAuthType.User),
