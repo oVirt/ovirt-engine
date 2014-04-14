@@ -38,7 +38,7 @@ public class ProfileEditor extends ListModelTypeAheadListBoxEditor<VnicProfileVi
                                 profileDescription != null ? profileDescription : "").asString(); //$NON-NLS-1$
                     }
 
-                });
+                }, false);
     }
 
 }

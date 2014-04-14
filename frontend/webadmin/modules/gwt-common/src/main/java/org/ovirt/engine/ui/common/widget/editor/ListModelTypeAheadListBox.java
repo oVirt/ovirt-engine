@@ -57,6 +57,13 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
 
     private final SuggestBoxRenderer<T> renderer;
 
+    /**
+     * This is used to decide whether, when setting the value of the widget to one that doesn't exist among the list of
+     * suggested items {@link #acceptableValues}, the new value should be added to it; see usage in
+     * {@link #addToValidValuesIfNeeded(Object)}.
+     */
+    private final boolean autoAddToValidValues;
+
     private Collection<T> acceptableValues = new ArrayList<T>();
 
     private HandlerRegistration eventHandler;
@@ -73,8 +80,13 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     }
 
     public ListModelTypeAheadListBox(SuggestBoxRenderer<T> renderer) {
+        this(renderer, true);
+    }
+
+    public ListModelTypeAheadListBox(SuggestBoxRenderer<T> renderer, boolean autoAddToValidValues) {
         super(new RenderableSuggestOracle<T>(renderer));
         this.renderer = renderer;
+        this.autoAddToValidValues = autoAddToValidValues;
 
         suggestBox = asSuggestBox();
 
@@ -266,7 +278,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     }
 
     private void addToValidValuesIfNeeded(T value) {
-        if (!acceptableValues.contains(value)) {
+        if (!acceptableValues.contains(value) && autoAddToValidValues) {
             acceptableValues.add(value);
         }
 
