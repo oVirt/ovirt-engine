@@ -214,9 +214,16 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
 
     @Override
     public Snapshot get(Guid vmId, SnapshotType type) {
+        return get(vmId, type, null, false);
+    }
+
+    @Override
+    public Snapshot get(Guid vmId, SnapshotType type, Guid userId, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmId)
-                .addValue("snapshot_type", EnumUtils.nameOrNull(type));
+                .addValue("snapshot_type", EnumUtils.nameOrNull(type))
+                .addValue("user_id", userId)
+                .addValue("is_filtered", isFiltered);
 
         return getCallsHandler().executeRead("GetSnapshotByVmIdAndType",
                 createEntityRowMapper(),

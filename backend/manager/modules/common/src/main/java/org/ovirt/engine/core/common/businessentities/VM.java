@@ -44,6 +44,8 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     private ArchitectureType clusterArch;
 
+    private boolean nextRunConfigurationExists;
+
     public String getUserDefinedProperties() {
         return vmStatic.getUserDefinedProperties();
     }
@@ -1745,5 +1747,13 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     public int getGuestCpuCount() {
         return getDynamicData().getGuestCpuCount();
+    }
+
+    public void setNextRunConfigurationExists(boolean nextRunConfigurationExists) {
+        this.nextRunConfigurationExists = nextRunConfigurationExists;
+    }
+
+    public boolean isNextRunConfigurationExists() {
+        return nextRunConfigurationExists;
     }
 }

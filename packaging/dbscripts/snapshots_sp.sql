@@ -152,7 +152,9 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetSnapshotByVmIdAndType(
     v_vm_id UUID,
-    v_snapshot_type VARCHAR(32))
+    v_snapshot_type VARCHAR(32),
+    v_user_id UUID,
+    v_is_filtered BOOLEAN)
 RETURNS SETOF snapshots STABLE
 AS $procedure$
 BEGIN
@@ -161,6 +163,10 @@ BEGIN
     FROM   snapshots
     WHERE  vm_id = v_vm_id
     AND    snapshot_type = v_snapshot_type
+    AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                      FROM   user_vm_permissions_view
+                                      WHERE  user_id = v_user_id AND entity_id = v_vm_id))
+
     ORDER BY creation_date ASC
     LIMIT 1;
 END; $procedure$

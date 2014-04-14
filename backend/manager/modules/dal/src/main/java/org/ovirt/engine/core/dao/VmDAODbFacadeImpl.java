@@ -436,6 +436,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setExitReason(VmExitReason.forValue(rs.getInt("exit_reason")));
             entity.setBootMenuEnabled(rs.getBoolean("is_boot_menu_enabled"));
             entity.setGuestCpuCount(rs.getInt("guest_cpu_count"));
+            entity.setNextRunConfigurationExists(rs.getBoolean("next_run_config_exists"));
             return entity;
         }
     }

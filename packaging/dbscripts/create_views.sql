@@ -626,7 +626,8 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_static.instance_type_id as instance_type_id, vm_static.image_type_id as image_type_id, vds_groups.architecture as architecture, vm_static.original_template_id as original_template_id, vm_static.original_template_name as original_template_name, vm_dynamic.last_stop_time as last_stop_time,
                       vm_static.migration_downtime as migration_downtime, vm_static.template_version_number as template_version_number,
                       vm_static.serial_number_policy as serial_number_policy, vm_static.custom_serial_number as custom_serial_number,
-                      vm_static.is_boot_menu_enabled as is_boot_menu_enabled, vm_dynamic.guest_cpu_count as guest_cpu_count
+                      vm_static.is_boot_menu_enabled as is_boot_menu_enabled, vm_dynamic.guest_cpu_count as guest_cpu_count,
+                      (snapshots.snapshot_id is not null) as next_run_config_exists
 FROM         vm_static INNER JOIN
 vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid INNER JOIN
 vm_static AS vm_templates ON vm_static.vmt_guid = vm_templates.vm_guid INNER JOIN
@@ -637,6 +638,7 @@ and vds_groups.storage_pool_id = storage_pool.id LEFT OUTER JOIN
 quota ON vm_static.quota_id = quota.id LEFT OUTER JOIN
 vds_static ON vm_dynamic.run_on_vds = vds_static.vds_id LEFT OUTER JOIN
 vm_pool_map_view ON vm_static.vm_guid = vm_pool_map_view.vm_guid
+left outer join snapshots on vm_static.vm_guid = snapshots.vm_id and snapshot_type='NEXT_RUN'
 WHERE vm_static.entity_type = 'VM';
 
 
@@ -669,13 +671,15 @@ SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.cpu_shares, vms
             vms.migration_downtime as migration_downtime, vms.template_version_number as template_version_number,
             vms.current_cd as current_cd, vms.reason as reason,
             vms.serial_number_policy as serial_number_policy, vms.custom_serial_number as custom_serial_number, vms.exit_reason as exit_reason,
-            vms.is_boot_menu_enabled as is_boot_menu_enabled, vms.guest_cpu_count as guest_cpu_count
+            vms.is_boot_menu_enabled as is_boot_menu_enabled, vms.guest_cpu_count as guest_cpu_count,
+            (snapshots.snapshot_id is not null) as next_run_config_exists
 FROM        vms LEFT OUTER JOIN
             tags_vm_map_view ON vms.vm_guid = tags_vm_map_view.vm_id LEFT OUTER JOIN
             vm_device ON vm_device.vm_id = vms.vm_guid LEFT OUTER JOIN
             images ON images.image_group_id = vm_device.device_id LEFT OUTER JOIN
             image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid LEFT OUTER JOIN
             storage_domain_static ON storage_domain_static.id = image_storage_domain_map.storage_domain_id
+            left outer join snapshots on vms.vm_guid = snapshots.vm_id and snapshot_type='NEXT_RUN'
 WHERE       images.active IS NULL OR images.active = TRUE;
 
 CREATE OR REPLACE VIEW server_vms

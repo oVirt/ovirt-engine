@@ -275,7 +275,8 @@ public class Snapshot extends IVdcQueryable implements BusinessEntityWithStatus<
         REGULAR("Regular"),
         ACTIVE("Active"),
         STATELESS("Stateless"),
-        PREVIEW("In Preview");
+        PREVIEW("In Preview"),
+        NEXT_RUN("Next Run");
 
         private String typeName;
 
