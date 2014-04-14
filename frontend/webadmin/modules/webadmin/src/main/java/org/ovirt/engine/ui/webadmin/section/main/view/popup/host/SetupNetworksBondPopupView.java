@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
 
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
@@ -29,7 +30,8 @@ public class SetupNetworksBondPopupView extends HostBondPopupView implements Set
         message.setVisible(false);
         // resize
         layoutPanel.remove(infoPanel);
-        asPopupPanel().setPixelSize(400, 400);
+        layoutPanel.getElement().getStyle().setOverflow(Overflow.HIDDEN);
+        asPopupPanel().setPixelSize(400, 275);
     }
 
     @Override

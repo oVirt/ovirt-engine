@@ -28,7 +28,7 @@
 
 	<g:FlowPanel addStyleNames="{style.mainPanel}" >
 		<g:Label text="{constants.labelsHostPopup}" addStyleNames="{style.labelStyle}" />
-		<g:ScrollPanel height="249px">
+		<g:ScrollPanel height="124px">
 			<g:FlowPanel ui:field="contentPanel" />
 		</g:ScrollPanel>
 	</g:FlowPanel>
