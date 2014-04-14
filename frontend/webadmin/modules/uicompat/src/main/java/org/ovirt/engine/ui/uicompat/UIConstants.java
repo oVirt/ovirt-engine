@@ -859,7 +859,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("This field must contain a subnet in format xxx.xxx.xxx.xxx")
     String thisFieldMustContainSubnetInFormatMsg();
 
-    @DefaultStringValue("This field must contain a CIDR in format xxx.xxx.xxx.xxx/yy")
+    @DefaultStringValue("This field must contain a CIDR in format xxx.xxx.xxx.xxx/yy, where xxx is between 0 and 255 and yy is between 0 and 32.")
     String thisFieldMustContainCidrInFormatMsg();
 
     @DefaultStringValue("This field can't contain spaces.")
