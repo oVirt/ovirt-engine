@@ -18,6 +18,16 @@ public class VmWatchdog extends IVdcQueryable implements Serializable {
     VmWatchdogAction action;
     VmWatchdogType model;
 
+    public VmWatchdog() {
+    }
+
+    public VmWatchdog(VmDevice device) {
+        setId(device.getDeviceId());
+        setVmId(device.getVmId());
+        setAction(VmWatchdogAction.getByName((String) device.getSpecParams().get("action")));
+        setModel(VmWatchdogType.getByName((String) device.getSpecParams().get("model")));
+    }
+
     public Guid getVmId() {
         return vmId;
     }
