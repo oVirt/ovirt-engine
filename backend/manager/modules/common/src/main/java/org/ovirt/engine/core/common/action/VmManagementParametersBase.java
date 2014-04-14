@@ -26,6 +26,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private VM vm;
     private VmWatchdog watchdog;
     private boolean copyTemplatePermissions;
+    private boolean applyChangesLater;
 
     /*
      * This parameter is needed at update to make sure that when we get a null watchdog from rest-api it is not meant to
@@ -196,5 +197,13 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
 
     public void setVirtioScsiEnabled(Boolean virtioScsiEnabled) {
         this.virtioScsiEnabled = virtioScsiEnabled;
+    }
+
+    public boolean isApplyChangesLater() {
+        return applyChangesLater;
+    }
+
+    public void setApplyChangesLater(boolean applyChangesLater) {
+        this.applyChangesLater = applyChangesLater;
     }
 }

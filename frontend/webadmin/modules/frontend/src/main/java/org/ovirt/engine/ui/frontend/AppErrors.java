@@ -430,6 +430,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is being cloned.")
     String ACTION_TYPE_FAILED_VM_IS_BEING_CLONED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. VM is being updated.")
+    String ACTION_TYPE_FAILED_VM_IS_BEING_UPDATED();
+
     @DefaultStringValue("Cannot ${action} ${type}. VM is not running.")
     String ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING();
 

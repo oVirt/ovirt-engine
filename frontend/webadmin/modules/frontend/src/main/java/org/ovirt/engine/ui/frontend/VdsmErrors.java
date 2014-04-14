@@ -651,6 +651,8 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String PROVIDER_SSL_FAILURE();
 
+    String FAILED_UPDATE_RUNNING_VM();
+
     String PROVIDER_IMPORT_CERTIFICATE_CHAIN_ERROR();
 
     String MIGRATION_DEST_INVALID_HOSTNAME();

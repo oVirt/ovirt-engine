@@ -135,6 +135,10 @@ public class VmHandler {
         return mUpdateVmsStatic.IsUpdateValid(source, destination);
     }
 
+    public static boolean copyNonEditableFieldsToDestination(VmStatic source, VmStatic destination) {
+        return mUpdateVmsStatic.copyNonEditableFieldsToDestination(source, destination);
+    }
+
     /**
      * Verifies the add vm command .
      *

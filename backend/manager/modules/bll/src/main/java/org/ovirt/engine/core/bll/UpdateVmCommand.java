@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -41,6 +43,8 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -54,8 +58,10 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils.VMCustomP
 import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -87,30 +93,80 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     protected void executeVmCommand() {
+        if (isRunningConfigurationNeeded()) {
+            createNextRunSnapshot();
+        }
+
         oldVm = getVm();
         VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getVdsGroup().getcompatibility_version());
         getVmStaticDAO().incrementDbGeneration(getVm().getId());
         newVmStatic = getParameters().getVmStaticData();
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
+
+        // save user selected value for hotplug before overriding with db values (when updating running vm)
+        int cpuPerSocket = newVmStatic.getCpuPerSocket();
+
         if (newVmStatic.getCreationDate().equals(DateTime.getMinValue())) {
             newVmStatic.setCreationDate(new Date());
         }
+
+        if (getVm().isRunningOrPaused()) {
+            if (!VmHandler.copyNonEditableFieldsToDestination(oldVm.getStaticData(), newVmStatic)) {
+                // fail update vm if some fields could not be copied
+                throw new VdcBLLException(VdcBllErrors.FAILED_UPDATE_RUNNING_VM);
+            }
+
+        }
+
         UpdateVmNetworks();
-        hotSetCpus();
+        if (!getParameters().isApplyChangesLater()) {
+            hotSetCpus(cpuPerSocket);
+        }
         getVmStaticDAO().update(newVmStatic);
-        updateVmPayload();
-        VmDeviceUtils.updateVmDevices(getParameters(), oldVm);
-        updateWatchdog();
-        checkTrustedService();
+        if (getVm().isNotRunning()) {
+            updateVmPayload();
+            VmDeviceUtils.updateVmDevices(getParameters(), oldVm);
+            updateWatchdog();
+        }
         VmHandler.updateVmInitToDB(getParameters().getVmStaticData());
+
+        checkTrustedService();
         setSucceeded(true);
     }
 
-    private void hotSetCpus() {
+    private void createNextRunSnapshot() {
+        // first remove existing snapshot
+        Snapshot runSnap = getSnapshotDao().get(getVmId(), Snapshot.SnapshotType.NEXT_RUN);
+        if (runSnap != null) {
+            getSnapshotDao().remove(runSnap.getId());
+        }
+
+        VM vm = new VM();
+        vm.setStaticData(getParameters().getVmStaticData());
+        // create new snapshot with new configuration
+        new SnapshotsManager().addSnapshot(Guid.newGuid(),
+                "Next Run configuration snapshot",
+                Snapshot.SnapshotStatus.OK,
+                Snapshot.SnapshotType.NEXT_RUN,
+                vm,
+                true,
+                StringUtils.EMPTY,
+                Collections.EMPTY_LIST,
+                getCompensationContext());
+    }
+
+    protected SnapshotDao getSnapshotDao() {
+        return DbFacade.getInstance().getSnapshotDao();
+    }
+
+    private void hotSetCpus(int cpuPerSocket) {
         int currentSockets = getVm().getNumOfSockets();
         int newSockets = newVmStatic.getNumOfSockets();
+        int currentCpuPerSocket = getVm().getCpuPerSocket();
 
-        if (getVm().getStatus() == VMStatus.Up && currentSockets != newSockets) {
+        // try hotplug only if topology (cpuPerSocket) hasn't changed
+        if (getVm().getStatus() == VMStatus.Up && currentSockets != newSockets
+                && currentCpuPerSocket == cpuPerSocket) {
             HotSetNumerOfCpusParameters params =
                     new HotSetNumerOfCpusParameters(
                             newVmStatic,
@@ -501,6 +557,18 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     protected boolean areUpdatedFieldsLegal() {
         return VmHandler.isUpdateValid(getVm().getStaticData(),
                 getParameters().getVmStaticData(),
+                VMStatus.Down);
+    }
+
+    /**
+     * check if we need to use running-configuration
+     * @return true if vm is running and we change field that has @EditableOnVmStatusField annotation
+     *          or runningConfiguration already exist
+     */
+    private boolean isRunningConfigurationNeeded() {
+        return getVm().isNextRunConfigurationExists() ||
+                !VmHandler.isUpdateValid(getVm().getStaticData(),
+                getParameters().getVmStaticData(),
                 getVm().getStatus());
     }
 
@@ -565,9 +633,18 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (!StringUtils.isBlank(getParameters().getVm().getName())) {
             return Collections.singletonMap(getParameters().getVm().getName(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_BEING_UPDATED));
         }
         return null;
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        return Collections.singletonMap(
+                getVmId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(
+                        LockingGroup.VM,
+                        VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_BEING_UPDATED));
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.utils;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -100,6 +102,36 @@ public class ObjectIdentityChecker {
             }
         }
         return returnValue;
+    }
+
+    /**
+     * This method will copy all fields that are not @editable from source obj to dest obj
+     *
+     * @param source object that has values of non editable fields
+     * @param destination object to copy the non editable to it
+     */
+    public boolean copyNonEditableFieldsToDestination(Object source, Object destination) {
+        Class<?> cls = source.getClass();
+        while (!cls.equals(Object.class)) {
+            for (Field srcFld : cls.getDeclaredFields()) {
+                try {
+                    if (!Modifier.isFinal(srcFld.getModifiers()) && !IsFieldUpdatable(srcFld.getName())) {
+                        srcFld.setAccessible(true);
+
+                        Field dstFld = cls.getDeclaredField(srcFld.getName());
+                        dstFld.setAccessible(true);
+                        dstFld.set(destination, srcFld.get(source));
+                    }
+                } catch (Exception exp) {
+                    log.errorFormat("Failed to copy non editable field {0}, error: {1}",
+                            srcFld.getName(),
+                            exp.getMessage());
+                    return false;
+                }
+            }
+            cls = cls.getSuperclass();
+        }
+        return true;
     }
 
     public final boolean IsUpdateValid(Object source, Object destination) {

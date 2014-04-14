@@ -72,9 +72,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableOnTemplate
     private int memSizeMb;
 
-    @EditableOnVmStatusField(statuses = {VMStatus.Down, VMStatus.Up} )
+    @EditableField
     @CopyOnNewVersion
-    @EditableOnTemplate
     private int numOfSockets;
 
     @CopyOnNewVersion
@@ -113,7 +112,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private boolean failBack;
 
     @CopyOnNewVersion
-    @EditableField
+    @EditableOnVmStatusField
+    @EditableOnTemplate
     private BootSequence defaultBootSequence;
 
     @CopyOnNewVersion
@@ -161,7 +161,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private OriginType origin;
 
     @CopyOnNewVersion
-    @EditableField
+    @EditableOnVmStatusField
+    @EditableOnTemplate
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
             message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
@@ -169,7 +170,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private String kernelUrl;
 
     @CopyOnNewVersion
-    @EditableField
+    @EditableOnVmStatusField
+    @EditableOnTemplate
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
             message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
@@ -177,7 +179,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private String kernelParams;
 
     @CopyOnNewVersion
-    @EditableField
+    @EditableOnVmStatusField
+    @EditableOnTemplate
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
             message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
@@ -276,11 +279,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private String vncKeyboardLayout;
 
     @CopyOnNewVersion
-    @EditableField
+    @EditableOnVmStatusField
+    @EditableOnTemplate
     private int minAllocatedMem;
 
     @CopyOnNewVersion
-    @EditableField
+    @EditableOnVmStatusField
+    @EditableOnTemplate
     private boolean runAndPause;
 
     private Guid createdByUserId;
