@@ -139,6 +139,8 @@
 		<include name="common/businessentities/VM.java" />
 		<include name="common/businessentities/VmPayload.java" />
 		<include name="common/businessentities/VmBase.java" />
+		<include name="common/businessentities/VmBlockJob.java" />
+		<include name="common/businessentities/VmBlockJobType.java" />
 		<include name="common/businessentities/VmInit.java" />
 		<include name="common/businessentities/VmInitNetwork.java" />
 		<include name="common/businessentities/VmDynamic.java" />
@@ -147,6 +149,9 @@
 		<include name="common/businessentities/VmDeviceId.java" />
 		<include name="common/businessentities/VmExitReason.java" />
 		<include name="common/businessentities/VmExitStatus.java" />
+		<include name="common/businessentities/VmJob.java" />
+		<include name="common/businessentities/VmJobState.java" />
+		<include name="common/businessentities/VmJobType.java" />
 		<include name="common/businessentities/VmOsType.java" />
 		<include name="common/businessentities/OsType.java" />
 		<include name="common/businessentities/VmPoolType.java" />

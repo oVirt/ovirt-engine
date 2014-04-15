@@ -264,6 +264,23 @@ public class FixturesTool {
     public static final Guid VM_TEMPLATE_RHEL5_V2 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b83");
 
     /**
+     * Predefined vm job for testing with the following properties :
+     * <ul>
+     * <li>vm_id: VM_RHEL5_POOL_57 (77296e00-0cad-4e5a-9299-008a7b6f4355)</li>
+     * </ul>
+     */
+    public static final Guid EXISTING_VM_JOB = new Guid("f062f24a-f24c-11e3-94a8-8bd00dba5830");
+
+    /**
+     * Predefined vm block job for testing with the following properties :
+     * <ul>
+     * <li>vm_id: VM_RHEL5_POOL_59 (77296e00-0cad-4e5a-9299-008a7b6f4359)</li>
+     * <li>image_group_id: IMAGE_GROUP_ID (1b26a52b-b60f-44cb-9f46-3ef333b04a35)</li>
+     * </ul>
+     */
+    public static final Guid EXISTING_VM_BLOCK_JOB = new Guid("59c24eb6-f24d-11e3-b030-df3b57f3e299");
+
+    /**
      * Predefined user for testing with the following properties :
      * <ul>
      * <li>Ad group id : 9bf7c640-b620-456f-a550-0348f366544b</li>

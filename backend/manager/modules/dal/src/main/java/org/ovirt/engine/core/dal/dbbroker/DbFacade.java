@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
+import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -111,6 +112,7 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
 import org.ovirt.engine.core.dao.VmInitDAO;
+import org.ovirt.engine.core.dao.VmJobDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDAO;
 import org.ovirt.engine.core.dao.VmPoolDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
@@ -196,6 +198,7 @@ public class DbFacade {
             put(CommandEntity.class, CommandEntityDao.class);
             put(ExternalVariable.class, ExternalVariableDao.class);
             put(VdsKdumpStatus.class, VdsKdumpStatusDao.class);
+            put(VmJob.class, VmJobDao.class);
         }
     };
 
@@ -821,6 +824,15 @@ public class DbFacade {
 
     public VmDeviceDAO getVmDeviceDao() {
         return getDao(VmDeviceDAO.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link VmJobDao}.
+     *
+     * @return the dao
+     */
+    public VmJobDao getVmJobDao() {
+        return getDao(VmJobDao.class);
     }
 
     /**

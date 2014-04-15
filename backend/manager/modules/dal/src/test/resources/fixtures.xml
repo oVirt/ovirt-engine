@@ -3537,6 +3537,41 @@
         </row>
     </table>
 
+    <table name="vm_jobs">
+        <column>vm_job_id</column>
+        <column>vm_id</column>
+        <column>job_state</column>
+        <column>job_type</column>
+        <column>block_job_type</column>
+        <column>bandwidth</column>
+        <column>cursor_cur</column>
+        <column>cursor_end</column>
+        <column>image_group_id</column>
+
+        <row>
+            <value>f062f24a-f24c-11e3-94a8-8bd00dba5830</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>1</value>
+            <value>0</value>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>59c24eb6-f24d-11e3-b030-df3b57f3e299</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
+            <value>1</value>
+            <value>1</value>
+            <value>3</value>
+            <value>10</value>
+            <value>100</value>
+            <value>200</value>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
+        </row>
+    </table>
+
     <table name="storage_domain_static">
         <column>id</column>
         <column>storage</column>

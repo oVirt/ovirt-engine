@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityGuidComparator;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -11,6 +12,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     private static final long serialVersionUID = -7480866662740734452L;
 
     private Double cpu_sysField;
+    private List<VmJob> vmJobs;
     // NOT PERSISTED
     private VmBalloonInfo vmBalloonInfo;
 
@@ -202,6 +204,14 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         return BusinessEntityGuidComparator.<VmStatistics>newInstance().compare(this, o);
     }
 
+    public List<VmJob> getVmJobs() {
+        return vmJobs;
+    }
+
+    public void setVmJobs(List<VmJob> vmJobs) {
+        this.vmJobs = vmJobs;
+    }
+
     public VmBalloonInfo getVmBalloonInfo() {
         return vmBalloonInfo;
     }
@@ -209,4 +219,5 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     public void setVmBalloonInfo(VmBalloonInfo vmBalloonInfo) {
         this.vmBalloonInfo = vmBalloonInfo;
     }
+
 }
