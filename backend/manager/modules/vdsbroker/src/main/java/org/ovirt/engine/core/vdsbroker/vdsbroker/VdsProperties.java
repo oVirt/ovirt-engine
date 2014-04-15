@@ -382,4 +382,15 @@ public final class VdsProperties {
     // properties for ServerConnectionListReturnForXmlRpc
     public static final String serverType = "serverType";
     public static final String target = "target";
+
+    // VM Jobs
+    public static final String vmJobs = "vmJobs";
+    public static final String vmJobId = "id";
+    public static final String vmJobType = "jobType";
+    public static final String vmBlockJobType = "blockJobType";
+    public static final String vmJobCursorCur = "cur";
+    public static final String vmJobCursorEnd = "end";
+    public static final String vmJobBandwidth = "bandwidth";
+    public static final String vmJobImageUUID = "imgUUID";
+
 }

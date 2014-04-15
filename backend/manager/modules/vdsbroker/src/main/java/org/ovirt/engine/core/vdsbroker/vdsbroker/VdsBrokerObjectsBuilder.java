@@ -36,10 +36,15 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
+import org.ovirt.engine.core.common.businessentities.VmBlockJob;
+import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
+import org.ovirt.engine.core.common.businessentities.VmJob;
+import org.ovirt.engine.core.common.businessentities.VmJobState;
+import org.ovirt.engine.core.common.businessentities.VmJobType;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -363,6 +368,9 @@ public class VdsBrokerObjectsBuilder {
         // ------------- vm migration statistics -----------------------
         Integer migrationProgress = AssignIntValue(xmlRpcStruct, VdsProperties.vm_migration_progress_percent);
         vm.setMigrationProgressPercent(migrationProgress != null ? migrationProgress : 0);
+
+        // ------------- vm jobs -------------
+        vm.setVmJobs(getVmJobs(vm.getId(), xmlRpcStruct));
     }
 
     private static VmBalloonInfo getBalloonInfo(Map<String, Object> xmlRpcStruct) {
@@ -380,6 +388,44 @@ public class VdsBrokerObjectsBuilder {
             vmBalloonInfo.setBalloonDeviceEnabled(false);
         }
         return vmBalloonInfo;
+    }
+
+    private static List<VmJob> getVmJobs(Guid vmId, Map<String, Object> xmlRpcStruct) {
+        if (!xmlRpcStruct.containsKey(VdsProperties.vmJobs)) {
+            return null;
+        }
+        List<VmJob> vmJobs = new ArrayList<VmJob>();
+        for (Object jobMap : ((Map<String, Object>) xmlRpcStruct.get(VdsProperties.vmJobs)).values()) {
+            VmJob job = buildVmJobData(vmId, (Map<String, Object>) jobMap);
+            vmJobs.add(job);
+        }
+        return vmJobs;
+    }
+
+    private static VmJob buildVmJobData(Guid vmId, Map<String, Object> xmlRpcStruct) {
+        VmJob ret;
+        VmJobType jobType = VmJobType.getByName(AssignStringValue(xmlRpcStruct, VdsProperties.vmJobType));
+
+        switch (jobType) {
+        case BLOCK:
+            VmBlockJob blockJob = new VmBlockJob();
+            blockJob.setBlockJobType(VmBlockJobType.getByName(AssignStringValue(xmlRpcStruct, VdsProperties.vmBlockJobType)));
+            blockJob.setCursorCur(AssignLongValue(xmlRpcStruct, VdsProperties.vmJobCursorCur));
+            blockJob.setCursorEnd(AssignLongValue(xmlRpcStruct, VdsProperties.vmJobCursorEnd));
+            blockJob.setBandwidth(AssignLongValue(xmlRpcStruct, VdsProperties.vmJobBandwidth));
+            blockJob.setImageGroupId(new Guid(AssignStringValue(xmlRpcStruct, VdsProperties.vmJobImageUUID)));
+            ret = blockJob;
+            break;
+        default:
+            ret = new VmJob();
+            break;
+        }
+
+        ret.setVmId(vmId);
+        ret.setId(new Guid(AssignStringValue(xmlRpcStruct, VdsProperties.vmJobId)));
+        ret.setJobState(VmJobState.NORMAL);
+        ret.setJobType(jobType);
+        return ret;
     }
 
     public static void updateVDSDynamicData(VDS vds, Map<String, Object> xmlRpcStruct) {
