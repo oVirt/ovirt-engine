@@ -211,6 +211,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network Label")
     String networkLabel();
 
+    @DefaultStringValue("For a Neutron external network, this maps to the name of the physical network.")
+    String networkLabelInfo();
+
     @DefaultStringValue("Label")
     String networkLabelNetworksTab();
 

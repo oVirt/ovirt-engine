@@ -8,15 +8,17 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelSuggestBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
@@ -115,9 +117,14 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Path(value = "mtu.entity")
     public IntegerEntityModelTextBoxOnlyEditor mtuEditor;
 
-    @UiField
     @Path(value = "networkLabel.selectedItem")
-    public ListModelSuggestBoxEditor networkLabel;
+    public ListModelSuggestBoxOnlyEditor networkLabel;
+
+    @Ignore
+    public StringEntityModelLabel networkLabelLabel;
+
+    @UiField(provided = true)
+    public EntityModelWidgetWithInfo<String> networkLabelWithInfo;
 
     @UiField(provided = true)
     @Path(value = "qos.selectedItem")
@@ -208,6 +215,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         hasMtuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         createSubnetEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        networkLabelLabel = new StringEntityModelLabel();
+        networkLabel = new ListModelSuggestBoxOnlyEditor();
+        networkLabelWithInfo = new EntityModelWidgetWithInfo<String>(networkLabelLabel, networkLabel);
+        networkLabelWithInfo.setExplanation(templates.italicText(constants.networkLabelInfo()));
         this.clustersTable = new EntityModelCellTable<ListModel<NetworkClusterModel>>(SelectionMode.NONE, true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTable(constants, templates);
@@ -228,7 +239,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         exportLabel.setText(constants.exportLabel());
         exportEditor.setLabel(constants.exportCheckboxLabel());
         externalProviderEditor.setLabel(constants.externalProviderLabel());
-        networkLabel.setLabel(constants.networkLabel());
+        networkLabelLabel.setText(constants.networkLabel());
         commentEditor.setLabel(constants.commentLabel());
         isVmNetworkEditor.setLabel(constants.vmNetworkLabel());
         vlanTagging.setLabel(constants.enableVlanTagLabel());
@@ -250,8 +261,8 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         vlanTagging.asCheckBox().addStyleName(style.checkBox());
         hasMtuEditor.addContentWidgetStyleName(style.checkBox());
         hasMtuEditor.asCheckBox().addStyleName(style.checkBox());
-        networkLabel.addLabelStyleName(style.checkBox());
-        networkLabel.addLabelStyleName(style.inlineLabel());
+        networkLabelLabel.addStyleName(style.checkBox());
+        networkLabelLabel.addStyleName(style.inlineLabel());
         qosEditor.addLabelStyleName(style.checkBox());
         qosEditor.addLabelStyleName(style.inlineLabel());
     }

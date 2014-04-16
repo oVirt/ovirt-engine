@@ -112,7 +112,7 @@
 										<ge:EntityModelCheckBoxEditor ui:field="hasMtuEditor"/>
 										<ge:IntegerEntityModelTextBoxOnlyEditor ui:field="mtuEditor" />
 									</g:HorizontalPanel>
-									<ge:ListModelSuggestBoxEditor ui:field="networkLabel" addStyleNames="{style.dependentField} {style.propertyWidth}" />
+									<w:EntityModelWidgetWithInfo ui:field="networkLabelWithInfo" addStyleNames="{style.dependentField} {style.propertyWidth}" width="470px" />
 									<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" visible="false">
 										<e:ListModelListBoxEditor ui:field="qosEditor" addStyleNames="{style.dependentField} {style.propertyWidth}" />
 										<w:UiCommandButton ui:field="addQosButton" addStyleNames="{style.qosStyle}" />
