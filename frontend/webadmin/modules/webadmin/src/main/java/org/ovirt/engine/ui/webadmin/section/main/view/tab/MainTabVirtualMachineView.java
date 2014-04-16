@@ -24,7 +24,9 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.OneColorPercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.ProgressBarColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
@@ -139,6 +141,14 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         };
         getTable().addColumn(networkColumn, constants.networkVm(), "60px"); //$NON-NLS-1$
+
+        PercentColumn<VM> migrationProgressColumn = new OneColorPercentColumn<VM>(ProgressBarColumn.ProgressBarColors.GREEN) {
+            @Override
+            public Integer getProgressValue(VM object) {
+                return object.getMigrationProgressPercent();
+            }
+        };
+        getTable().addColumn(migrationProgressColumn, constants.migrationProgress(), "60px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> displayColumn = new EnumColumn<VM, DisplayType>() {
             @Override

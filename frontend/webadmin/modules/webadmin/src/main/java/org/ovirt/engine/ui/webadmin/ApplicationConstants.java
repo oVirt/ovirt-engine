@@ -1590,6 +1590,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network")
     String networkVm();
 
+    @DefaultStringValue("Migration")
+    String migrationProgress();
+
     @DefaultStringValue("Display")
     String displayVm();
 

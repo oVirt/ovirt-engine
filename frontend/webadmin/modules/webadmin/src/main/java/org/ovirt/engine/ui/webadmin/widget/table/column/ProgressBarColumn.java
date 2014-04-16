@@ -13,6 +13,22 @@ import com.google.gwt.safehtml.shared.SafeHtml;
  */
 public abstract class ProgressBarColumn<T> extends SafeHtmlColumn<T> {
 
+    public static enum ProgressBarColors {
+        GREEN("#669966"), //$NON-NLS-1$
+        ORANGE("#FF9900"), //$NON-NLS-1$
+        RED("#FF0000"); //$NON-NLS-1$
+
+        private String colorCode;
+
+        private ProgressBarColors(String colorCode) {
+            this.colorCode = colorCode;
+        }
+
+        public String asCode() {
+            return colorCode;
+        }
+    }
+
     @Override
     public final SafeHtml getValue(T object) {
         Integer progressValue = getProgressValue(object);
@@ -21,9 +37,22 @@ public abstract class ProgressBarColumn<T> extends SafeHtmlColumn<T> {
         String text = getProgressText(object);
 
         // Choose color by progress
-        String color = progress < 70 ? "#669966" : progress < 95 ? "#FF9900" : "#FF0000"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        String color = getColorByProgress(progress);
 
         return ClientGinjectorProvider.getApplicationTemplates().progressBar(progress, text, color);
+    }
+
+    /**
+     * Default color scheme for the progress bar - override if other colors are needed
+     */
+    protected String getColorByProgress(int progress) {
+        if (progress < 70) {
+            return ProgressBarColors.GREEN.asCode();
+        } else if (progress < 95) {
+            return ProgressBarColors.ORANGE.asCode();
+        } else {
+            return ProgressBarColors.RED.asCode();
+        }
     }
 
     /**
