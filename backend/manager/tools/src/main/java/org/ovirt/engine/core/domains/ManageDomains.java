@@ -500,7 +500,9 @@ public class ManageDomains {
         adUserPasswordEntry.setValueForDomain(domainName, getPasswordInput());
         authModeEntry.setValueForDomain(domainName, authMode);
         ldapProviderTypesEntry.setValueForDomain(domainName, ldapProviderType.name());
-        setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
+        if (args.contains(ARG_LDAP_SERVERS)) {
+            setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
+        }
         handleChangePasswordMsg(domainName, changePasswordUrlEntry, false);
         testConfiguration(domainName,
                 domainNameEntry,
