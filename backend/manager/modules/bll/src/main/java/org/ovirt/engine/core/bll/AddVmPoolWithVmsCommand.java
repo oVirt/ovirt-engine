@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -79,7 +80,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
                 VdcObjectType.VdsGroups,
                 getActionType().getActionGroup()));
         permissionList.add(new PermissionSubject(getVmTemplateId(), VdcObjectType.VmTemplate,
-                getActionType().getActionGroup()));
+                                                 ActionGroup.CREATE_VM));
 
         return permissionList;
     }
