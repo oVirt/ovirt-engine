@@ -39,6 +39,7 @@ class Plugin(plugin.PluginBase):
         'fc': 2,
         'iscsi': 3,
         'posixfs': 6,
+        'glusterfs': 7,
     }
 
     def __init__(self, context):
@@ -88,7 +89,8 @@ class Plugin(plugin.PluginBase):
                     'NFS',
                     'FC',
                     'ISCSI',
-                    'POSIXFS'
+                    'POSIXFS',
+                    'GLUSTERFS',
                 ),
                 caseSensitive=False,
                 default=osetupcons.Defaults.DEFAULT_CONFIG_STORAGE_TYPE,
