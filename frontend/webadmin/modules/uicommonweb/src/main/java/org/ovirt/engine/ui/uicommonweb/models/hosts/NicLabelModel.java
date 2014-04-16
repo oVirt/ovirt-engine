@@ -57,6 +57,7 @@ public class NicLabelModel extends ListModel<ListModel<String>> {
     }
 
     public boolean validate() {
+        Set<String> editedLabels = new HashSet<String>();
         boolean res = true;
         for (ListModel<String> labelModel : getItems()) {
             labelModel.validateSelectedItem(new IValidation[] { new AsciiNameValidation() });
@@ -69,6 +70,13 @@ public class NicLabelModel extends ListModel<ListModel<String>> {
                         .labelInUse(label, usingIface));
                 labelModel.setIsValid(false);
             }
+
+            if (editedLabels.contains(label)) {
+                labelModel.getInvalidityReasons().add(ConstantsManager.getInstance().getConstants().duplicateLabel());
+                labelModel.setIsValid(false);
+            }
+            editedLabels.add(label);
+
             res &= labelModel.getIsValid();
         }
         return res;

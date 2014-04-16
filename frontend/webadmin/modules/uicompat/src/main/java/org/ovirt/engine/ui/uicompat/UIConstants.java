@@ -1491,6 +1491,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Subnet Mask is not Valid")
     String subnetMaskIsNotValid();
 
+    @DefaultStringValue("This label has already been specified in another entry.")
+    String duplicateLabel();
+
     // Fronted
     @DefaultStringValue("A Request to the Server failed with the following Status Code")
     String requestToServerFailedWithCode();
