@@ -115,8 +115,8 @@ public class BackendVmPoolResource
                 final VM existing = currentVmCount > 0
                                 ? getEntity(VM.class,
                                         VdcQueryType.GetVmDataByPoolName,
-                                        new NameQueryParameters(incoming.getName()),
-                                        "Vms: pool=" + incoming.getName())
+                                        new NameQueryParameters(current.getName()),
+                                        "Vms: pool=" + current.getName())
                               : null;
                 if (existing != null) {
                     vm.setVmtGuid(existing.getVmtGuid());
