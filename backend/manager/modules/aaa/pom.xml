@@ -14,7 +14,7 @@
   <artifactId>aaa</artifactId>
   <packaging>jar</packaging>
 
-  <name>Backend Authentication, Auhtorization and Accounting</name>
+  <name>Backend Authentication, Authorization and Accounting</name>
 
   <dependencies>
 
