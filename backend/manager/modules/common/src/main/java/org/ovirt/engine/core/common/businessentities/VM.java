@@ -770,6 +770,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.vmStatistics.setusage_mem_percent(value);
     }
 
+    public Integer getMigrationProgressPercent() {
+        return this.vmStatistics.getMigrationProgressPercent();
+    }
+
+    public void setMigrationProgressPercent(Integer value) {
+        this.vmStatistics.setMigrationProgressPercent(value);
+    }
+
     public Integer getUsageCpuPercent() {
         return this.vmStatistics.getusage_cpu_percent();
     }
@@ -1296,6 +1304,9 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         }
         // -------- memory --------------
         setUsageMemPercent(vmStatistics.getusage_mem_percent());
+
+        // -------- migration --------------
+        setMigrationProgressPercent(vmStatistics.getMigrationProgressPercent());
     }
 
     /**

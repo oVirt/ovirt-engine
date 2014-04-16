@@ -348,6 +348,10 @@ public class VdsBrokerObjectsBuilder {
         // ------------- vm memory statistics -----------------------
         vm.setusage_mem_percent(AssignIntValue(xmlRpcStruct, VdsProperties.vm_usage_mem_percent));
         vm.setVmBalloonInfo(getBalloonInfo(xmlRpcStruct));
+
+        // ------------- vm migration statistics -----------------------
+        Integer migrationProgress = AssignIntValue(xmlRpcStruct, VdsProperties.vm_migration_progress_percent);
+        vm.setMigrationProgressPercent(migrationProgress != null ? migrationProgress : 0);
     }
 
     private static VmBalloonInfo getBalloonInfo(Map<String, Object> xmlRpcStruct) {

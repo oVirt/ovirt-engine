@@ -34,6 +34,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         result = prime * result + ((usage_cpu_percentField == null) ? 0 : usage_cpu_percentField.hashCode());
         result = prime * result + ((usage_mem_percentField == null) ? 0 : usage_mem_percentField.hashCode());
         result = prime * result + ((usage_network_percentField == null) ? 0 : usage_network_percentField.hashCode());
+        result = prime * result + ((migrationProgressPercent == null) ? 0 : migrationProgressPercent.hashCode());
         result = prime * result + ((disksUsage == null) ? 0 : disksUsage.hashCode());
         result = prime * result + ((vm_guidField == null) ? 0 : vm_guidField.hashCode());
         return result;
@@ -58,6 +59,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
                 && ObjectUtils.objectsEqual(roundedElapsedTimeField, other.roundedElapsedTimeField)
                 && ObjectUtils.objectsEqual(usage_cpu_percentField, other.usage_cpu_percentField)
                 && ObjectUtils.objectsEqual(usage_mem_percentField, other.usage_mem_percentField)
+                && ObjectUtils.objectsEqual(migrationProgressPercent, other.migrationProgressPercent)
                 && ObjectUtils.objectsEqual(usage_network_percentField, other.usage_network_percentField)
                 && ObjectUtils.objectsEqual(disksUsage, other.disksUsage)
                 && ObjectUtils.objectsEqual(vm_guidField, other.vm_guidField));
@@ -138,6 +140,16 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
 
     public void setusage_mem_percent(Integer value) {
         this.usage_mem_percentField = value;
+    }
+
+    private Integer migrationProgressPercent;
+
+    public Integer getMigrationProgressPercent() {
+        return migrationProgressPercent;
+    }
+
+    public void setMigrationProgressPercent(Integer migrationProgressPercent) {
+        this.migrationProgressPercent = migrationProgressPercent;
     }
 
     private String disksUsage;

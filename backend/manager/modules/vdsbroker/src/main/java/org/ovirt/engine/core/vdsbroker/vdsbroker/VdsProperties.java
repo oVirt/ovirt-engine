@@ -203,6 +203,7 @@ public final class VdsProperties {
     public static final String VM_IP = "guestIPs";
     public static final String VM_FQDN = "guestFQDN";
     public static final String vm_usage_mem_percent = "memUsage";
+    public static final String vm_migration_progress_percent = "migrationProgress";
     public static final String vm_host = "guestName";
     public static final String app_list = "appsList";
     public static final String guest_os = "guestOs";

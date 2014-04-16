@@ -54,6 +54,7 @@ public class VmStatisticsDAOTest extends BaseDAOTestCase {
     @Test
     public void testSave() {
         newVmStatistics.setId(newVmStatic.getId());
+        newVmStatistics.setMigrationProgressPercent(0);
         dao.save(newVmStatistics);
 
         VmStatistics stats = dao.get(newVmStatic.getId());

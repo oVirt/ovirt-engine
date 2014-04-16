@@ -3295,6 +3295,7 @@
         <column>usage_network_percent</column>
         <column>usage_mem_percent</column>
         <column>usage_cpu_percent</column>
+        <column>migration_progress_percent</column>
         <column>_update_date</column>
 
         <row>
@@ -3305,6 +3306,7 @@
             <value>0</value>
             <value>0</value>
             <value>17</value>
+            <value>60</value>
             <null />
         </row>
         <row>
@@ -3315,6 +3317,7 @@
             <value>0</value>
             <value>0</value>
             <value>17</value>
+            <value>60</value>
             <null />
         </row>
         <row>
@@ -3325,6 +3328,7 @@
             <value>0</value>
             <value>0</value>
             <value>17</value>
+            <value>60</value>
             <null />
         </row>
         <row>
@@ -3335,6 +3339,7 @@
             <value>0</value>
             <value>0</value>
             <value>17</value>
+            <value>60</value>
             <null />
         </row>
         <row>
@@ -3345,6 +3350,7 @@
             <value>0</value>
             <value>0</value>
             <value>17</value>
+            <value>60</value>
             <null />
         </row>
         <row>
@@ -3355,6 +3361,7 @@
             <value>0</value>
             <value>0</value>
             <value>17</value>
+            <value>60</value>
             <null />
         </row>
         <row>
@@ -3365,6 +3372,7 @@
             <value>0</value>
             <value>0</value>
             <value>17</value>
+            <value>60</value>
             <null />
         </row>
     </table>

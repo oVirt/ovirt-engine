@@ -336,6 +336,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setUsageNetworkPercent((Integer) rs.getObject("usage_network_percent"));
             entity.setUsageMemPercent((Integer) rs.getObject("usage_mem_percent"));
             entity.setUsageCpuPercent((Integer) rs.getObject("usage_cpu_percent"));
+            entity.setMigrationProgressPercent((Integer) rs.getObject("migration_progress_percent"));
             entity.setRunOnVds(getGuid(rs, "run_on_vds"));
             entity.setMigratingToVds(getGuid(rs, "migrating_to_vds"));
             entity.setAppList(rs.getString("app_list"));

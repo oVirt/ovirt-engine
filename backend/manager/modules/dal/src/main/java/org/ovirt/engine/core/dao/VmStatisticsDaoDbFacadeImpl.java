@@ -39,6 +39,8 @@ public class VmStatisticsDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                         statistics.getusage_cpu_percent())
                 .addValue("usage_mem_percent",
                         statistics.getusage_mem_percent())
+                .addValue("migration_progress_percent",
+                        statistics.getMigrationProgressPercent())
                 .addValue("usage_network_percent",
                         statistics.getusage_network_percent())
                 .addValue("disks_usage",
@@ -59,6 +61,8 @@ public class VmStatisticsDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                         .getObject("usage_cpu_percent"));
                 entity.setusage_mem_percent((Integer) rs
                         .getObject("usage_mem_percent"));
+                entity.setMigrationProgressPercent(rs
+                        .getInt("migration_progress_percent"));
                 entity.setusage_network_percent((Integer) rs
                         .getObject("usage_network_percent"));
                 entity.setDisksUsage((String) rs
@@ -80,6 +84,7 @@ public class VmStatisticsDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                         .addValue("elapsed_time", entity.getelapsed_time())
                         .addValue("usage_cpu_percent", entity.getusage_cpu_percent())
                         .addValue("usage_mem_percent", entity.getusage_mem_percent())
+                        .addValue("migration_progress_percent", entity.getMigrationProgressPercent())
                         .addValue("usage_network_percent", entity.getusage_network_percent())
                         .addValue("disks_usage", entity.getDisksUsage())
                         .addValue("vm_guid", entity.getId());
