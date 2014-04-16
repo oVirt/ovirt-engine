@@ -28,7 +28,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class NewNetworkModel extends NetworkModel {
 
-    private ListModel privateNetworkClusterList;
+    private ListModel<NetworkClusterModel> privateNetworkClusterList;
 
     public NewNetworkModel(ListModel sourceListModel) {
         super(sourceListModel);
@@ -36,12 +36,12 @@ public class NewNetworkModel extends NetworkModel {
         init();
     }
 
-    public ListModel getNetworkClusterList()
+    public ListModel<NetworkClusterModel> getNetworkClusterList()
     {
         return privateNetworkClusterList;
     }
 
-    public void setNetworkClusterList(ListModel value)
+    public void setNetworkClusterList(ListModel<NetworkClusterModel> value)
     {
         privateNetworkClusterList = value;
     }
@@ -192,11 +192,8 @@ public class NewNetworkModel extends NetworkModel {
     {
         ArrayList<NetworkClusterModel> clusterToAttach = new ArrayList<NetworkClusterModel>();
 
-        for (Object item : getNetworkClusterList().getItems())
-        {
-            NetworkClusterModel networkClusterModel = (NetworkClusterModel) item;
-            if (networkClusterModel.isAttached())
-            {
+        for (NetworkClusterModel networkClusterModel : getNetworkClusterList().getItems()) {
+            if (networkClusterModel.isAttached()) {
                 clusterToAttach.add(networkClusterModel);
             }
         }

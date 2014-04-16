@@ -22,7 +22,6 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
@@ -129,7 +128,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @UiField(provided = true)
     @Ignore
-    public final EntityModelCellTable<ListModel> clustersTable;
+    public final EntityModelCellTable<ListModel<NetworkClusterModel>> clustersTable;
 
     @UiField
     public VerticalPanel attachPanel;
@@ -212,7 +211,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         hasMtuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         createSubnetEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        this.clustersTable = new EntityModelCellTable<ListModel>(SelectionMode.NONE, true);
+        this.clustersTable = new EntityModelCellTable<ListModel<NetworkClusterModel>>(SelectionMode.NONE, true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTable(constants, templates);
         localize(constants);
@@ -270,9 +269,8 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         messageLabel.setHTML(label);
     }
 
-    @SuppressWarnings("unchecked")
     Iterable<NetworkClusterModel> getClustersTableItems() {
-        ListModel tableModel = clustersTable.asEditor().flush();
+        ListModel<NetworkClusterModel> tableModel = clustersTable.asEditor().flush();
         return tableModel != null && tableModel.getItems() != null ? tableModel.getItems()
                 : new ArrayList<NetworkClusterModel>();
     }
@@ -338,58 +336,56 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             }
         };
 
-        clustersTable.addEntityModelColumn(new TextColumnWithTooltip<EntityModel>() {
+        clustersTable.addColumn(new TextColumnWithTooltip<NetworkClusterModel>() {
             @Override
-            public String getValue(EntityModel model) {
-                return ((NetworkClusterModel) model).getName();
+            public String getValue(NetworkClusterModel model) {
+                return model.getName();
             }
         }, constants.nameClusterHeader());
 
-        clustersTable.addColumn(new CheckboxColumn<EntityModel>(new FieldUpdater<EntityModel, Boolean>() {
+        clustersTable.addColumn(new CheckboxColumn<NetworkClusterModel>(new FieldUpdater<NetworkClusterModel, Boolean>() {
             @Override
-            public void update(int index, EntityModel model, Boolean value) {
-                NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
-                networkClusterModel.setAttached(value);
+            public void update(int index, NetworkClusterModel model, Boolean value) {
+                model.setAttached(value);
                 refreshClustersTable();
             }
         }) {
             @Override
-            public Boolean getValue(EntityModel model) {
-                return ((NetworkClusterModel) model).isAttached();
+            public Boolean getValue(NetworkClusterModel model) {
+                return model.isAttached();
             }
 
             @Override
-            protected boolean canEdit(EntityModel model) {
+            protected boolean canEdit(NetworkClusterModel model) {
                 return model.getIsChangable();
             }
 
             @Override
-            public void render(Context context, EntityModel object, SafeHtmlBuilder sb) {
+            public void render(Context context, NetworkClusterModel object, SafeHtmlBuilder sb) {
                 super.render(context, object, sb);
                 sb.append(templates.textForCheckBox(constants.attach()));
             }
 
         }, assignAllHeader, "80px"); //$NON-NLS-1$
-        clustersTable.addColumn(new CheckboxColumn<EntityModel>(new FieldUpdater<EntityModel, Boolean>() {
+        clustersTable.addColumn(new CheckboxColumn<NetworkClusterModel>(new FieldUpdater<NetworkClusterModel, Boolean>() {
             @Override
-            public void update(int index, EntityModel model, Boolean value) {
-                NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
-                networkClusterModel.setRequired(value);
+            public void update(int index, NetworkClusterModel model, Boolean value) {
+                model.setRequired(value);
                 refreshClustersTable();
             }
         }) {
             @Override
-            public Boolean getValue(EntityModel model) {
-                return ((NetworkClusterModel) model).isRequired();
+            public Boolean getValue(NetworkClusterModel model) {
+                return model.isRequired();
             }
 
             @Override
-            protected boolean canEdit(EntityModel model) {
+            protected boolean canEdit(NetworkClusterModel model) {
                 return isRequiredChangeable();
             }
 
             @Override
-            public void render(Context context, EntityModel object, SafeHtmlBuilder sb) {
+            public void render(Context context, NetworkClusterModel object, SafeHtmlBuilder sb) {
                 super.render(context, object, sb);
                 sb.append(templates.textForCheckBox(constants.required()));
             }
