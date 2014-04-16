@@ -47,6 +47,8 @@ import org.ovirt.engine.api.model.HostNonOperationalDetails;
 import org.ovirt.engine.api.model.HostStates;
 import org.ovirt.engine.api.model.HostStatus;
 import org.ovirt.engine.api.model.IpVersions;
+import org.ovirt.engine.api.model.KdumpStatus;
+import org.ovirt.engine.api.model.KdumpStates;
 import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.NetworkStates;
 import org.ovirt.engine.api.model.NetworkStatus;
@@ -225,6 +227,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addStorageFormatOptions(version, StorageFormat.values());
         addOsTypes(version);
         addNfsVersions(version, NfsVersion.values());
+        addKdumpStates(version, KdumpStatus.values());
 
         addGlusterTypesAndStates(version);
 
@@ -819,6 +822,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             version.setSerialNumberPolicies(new SerialNumberPolicies());
             for (SerialNumberPolicy mode : values) {
                 version.getSerialNumberPolicies().getSerialNumberPolicies().add(mode.value());
+            }
+        }
+    }
+
+    private void addKdumpStates(VersionCaps version, KdumpStatus... values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_5)) {
+            version.setKdumpStates(new KdumpStates());
+            for (KdumpStatus status : values) {
+                version.getKdumpStates().getKdumpStates().add(status.value());
             }
         }
     }

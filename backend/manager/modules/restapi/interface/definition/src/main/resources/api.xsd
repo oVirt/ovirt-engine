@@ -631,6 +631,7 @@
           <xs:element ref="watchdog_models" minOccurs="0"/>
           <xs:element ref="watchdog_actions" minOccurs="0"/>
           <xs:element ref="authentication_methods" minOccurs="0"/>
+          <xs:element ref="kdump_states" minOccurs="0"/>
           <!--  External tasks -->
           <xs:element ref="step_types" minOccurs="0"/>
           <xs:element ref="payload_encodings" minOccurs="0"/>
@@ -1055,6 +1056,20 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="SsoMethods"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="kdump_states" type="KdumpStates"/>
+
+  <xs:complexType name="KdumpStates">
+    <xs:sequence>
+      <xs:element name="kdump_status" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="KdumpStates"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
@@ -1520,6 +1535,7 @@
 <!--           Optionally  specify the display address of this host explicitly -->
           <xs:element ref="display" minOccurs="0"/>
           <xs:element name="hosted_engine" type="HostedEngine" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="kdump_status" type="xs:string" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

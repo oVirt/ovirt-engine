@@ -21,6 +21,7 @@ import org.ovirt.engine.api.model.HostStatus;
 import org.ovirt.engine.api.model.HostType;
 import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.IscsiDetails;
+import org.ovirt.engine.api.model.KdumpStatus;
 import org.ovirt.engine.api.model.KSM;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.Option;
@@ -391,6 +392,8 @@ public class HostMapper {
             model.getDisplay().setAddress(entity.getConsoleAddress());
         }
 
+        model.setKdumpStatus(map(entity.getKdumpStatus(), null));
+
         return model;
     }
 
@@ -689,5 +692,26 @@ public class HostMapper {
     private static void setHookId(Hook hook, String hookName, String eventName, String md5) {
         Guid guid = GuidUtils.generateGuidUsingMd5(eventName, hookName, md5);
         hook.setId(guid.toString());
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.KdumpStatus.class, to = String.class)
+    public static String map(org.ovirt.engine.core.common.businessentities.KdumpStatus kdumpStatus, String template) {
+        String result = null;
+        if (kdumpStatus != null) {
+            switch (kdumpStatus) {
+                case UNKNOWN:
+                    result = KdumpStatus.UNKNOWN.value();
+                    break;
+                case DISABLED:
+                    result = KdumpStatus.DISABLED.value();
+                    break;
+                case ENABLED:
+                    result = KdumpStatus.ENABLED.value();
+                    break;
+                default:
+                    break;
+            }
+        }
+        return result;
     }
 }
