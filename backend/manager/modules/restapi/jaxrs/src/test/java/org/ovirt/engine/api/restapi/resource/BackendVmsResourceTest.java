@@ -99,6 +99,7 @@ public class BackendVmsResourceTest
             vmStatistics.setusage_mem_percent(0);
             vmStatistics.setusage_network_percent(0);
             vm.setStatisticsData(vmStatistics);
+            vm.setMigrationProgressPercent(50);
             for (int i=0; i<GUIDS.length-1; i++) {
                 setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                         IdQueryParameters.class,
@@ -1351,6 +1352,7 @@ public class BackendVmsResourceTest
         expect(statistics.getcpu_user()).andReturn(Double.valueOf(30L)).anyTimes();
         expect(statistics.getcpu_sys()).andReturn(Double.valueOf(40L)).anyTimes();
         expect(statistics.getusage_cpu_percent()).andReturn(50).anyTimes();
+        expect(entity.getMigrationProgressPercent()).andReturn(50).anyTimes();
         return entity;
     }
 

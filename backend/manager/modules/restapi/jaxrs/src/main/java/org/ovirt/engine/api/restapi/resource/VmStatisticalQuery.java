@@ -15,6 +15,7 @@ public class VmStatisticalQuery extends AbstractStatisticalQuery<VM, org.ovirt.e
     private static final Statistic CPU_GUEST    = create("cpu.current.guest",      "CPU used by guest",    GAUGE, PERCENT, DECIMAL);
     private static final Statistic CPU_OVERHEAD = create("cpu.current.hypervisor", "CPU overhead",         GAUGE, PERCENT, DECIMAL);
     private static final Statistic CPU_TOTAL    = create("cpu.current.total",      "Total CPU used",       GAUGE, PERCENT, DECIMAL);
+    private static final Statistic MIGRATION_PROGRESS = create("migration.progress",      "Migration Progress",       GAUGE, PERCENT, DECIMAL);
 
     protected VmStatisticalQuery(VM parent) {
         this(null, parent);
@@ -35,7 +36,8 @@ public class VmStatisticalQuery extends AbstractStatisticalQuery<VM, org.ovirt.e
                       setDatum(clone(MEM_USED),     memUsedByCent/100),
                       setDatum(clone(CPU_GUEST),    cpuUser),
                       setDatum(clone(CPU_OVERHEAD), cpuSys),
-                      setDatum(clone(CPU_TOTAL),    cpuUser + cpuSys));
+                      setDatum(clone(CPU_TOTAL),    cpuUser + cpuSys),
+                      setDatum(clone(MIGRATION_PROGRESS),    entity.getMigrationProgressPercent()));
     }
 
     public Statistic adopt(Statistic statistic) {
