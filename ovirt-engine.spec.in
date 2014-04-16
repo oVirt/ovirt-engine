@@ -516,7 +516,7 @@ Setup and upgrade specific plugins for websocket-proxy
 %package setup-plugin-allinone
 Summary:	All-in-one plugin for %{ovirt_product_name_short}'s setup
 Group:		%{ovirt_product_group}
-Requires:	%{name}-sdk >= 3.3.0.5
+Requires:	%{name}-sdk-python >= 3.4.0.7
 Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
 Requires:	openssh-server
 Requires:	ovirt-host-deploy >= 1.2.0-1
