@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -110,6 +111,19 @@ public class NewNetworkModel extends NetworkModel {
             getIsVmNetwork().setEntity(true);
             getHasMtu().setEntity(false);
         }
+
+        Iterable<NetworkClusterModel> networkClusters = getNetworkClusterList().getItems();
+        if (networkClusters != null) {
+            for (NetworkClusterModel networkCluster : networkClusters) {
+                if (!(Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
+                        networkCluster.getEntity().getcompatibility_version().getValue())) {
+                    networkCluster.setIsChangable(!externalNetwork);
+                    networkCluster.setAttached(!externalNetwork);
+                }
+                networkCluster.setRequired(!externalNetwork);
+            }
+        }
+
         super.onExportChanged();
     }
 

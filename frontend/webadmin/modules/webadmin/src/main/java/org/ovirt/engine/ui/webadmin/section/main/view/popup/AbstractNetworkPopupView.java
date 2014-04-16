@@ -201,10 +201,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
-                for (NetworkClusterModel networkClusterModel : getClustersTableItems()) {
-                    networkClusterModel.setRequired(!event.getValue());
-                    refreshClustersTable();
-                }
+                refreshClustersTable();
             }
         });
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
