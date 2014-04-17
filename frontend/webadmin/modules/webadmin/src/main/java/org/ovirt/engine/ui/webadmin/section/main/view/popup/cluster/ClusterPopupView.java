@@ -497,6 +497,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         EntityModelLabel label = new EntityModelLabel();
         label.setText(constants.clusterSpiceProxyEnable());
+        label.setWidth("250px"); //$NON-NLS-1$
         spiceProxyOverrideEnabled = new EntityModelCheckBoxOnlyEditor();
         spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo(label, spiceProxyOverrideEnabled);
     }
