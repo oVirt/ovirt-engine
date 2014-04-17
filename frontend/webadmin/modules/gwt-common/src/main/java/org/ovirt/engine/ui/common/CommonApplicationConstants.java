@@ -1756,4 +1756,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Enable boot menu")
     String bootMenuEnabled();
+
+    @DefaultStringValue("This option sets the time zone offset of the guest hardware clock. " +
+                        "For Windows OS this should correspond to the time zone set in the guest (during installation or afterwards). " +
+                        "Most default Linux installations expect hardware clock to be GMT+00:00.")
+    String timeZoneInfo();
 }

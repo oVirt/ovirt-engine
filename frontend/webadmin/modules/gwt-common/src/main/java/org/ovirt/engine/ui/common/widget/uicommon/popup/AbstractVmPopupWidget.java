@@ -372,10 +372,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path("assignedVms.entity")
     public ValueLabel<Integer> outOfxInPool;
 
-    @UiField(provided = true)
     @Path(value = "timeZone.selectedItem")
     @WithElementId("timeZone")
-    public ListModelListBoxEditor<TimeZoneModel> timeZoneEditor;
+    public ListModelListBoxOnlyEditor<TimeZoneModel> timeZoneEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    public EntityModelWidgetWithInfo<String> timeZoneEditorWithInfo;
 
     // ==Initial run Tab==
     @UiField
@@ -970,7 +973,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        timeZoneEditor = new ListModelListBoxEditor<TimeZoneModel>(new NullSafeRenderer<TimeZoneModel>() {
+        timeZoneEditor = new ListModelListBoxOnlyEditor<TimeZoneModel>(new NullSafeRenderer<TimeZoneModel>() {
             @Override
             public String renderNullSafe(TimeZoneModel timeZone) {
                 if (timeZone.isDefault()) {
@@ -980,6 +983,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 }
             }
         }, new ModeSwitchingVisibilityRenderer());
+
+        StringEntityModelLabel label = new StringEntityModelLabel();
+        label.setText(constants.tzVmPopup());
+        timeZoneEditorWithInfo = new EntityModelWidgetWithInfo<String>(label, timeZoneEditor);
+        timeZoneEditorWithInfo.setExplanation(applicationTemplates.italicText(constants.timeZoneInfo()));
 
         // Console tab
         displayProtocolEditor = new ListModelListBoxEditor<EntityModel<DisplayType>>(new NullSafeRenderer<EntityModel<DisplayType>>() {
@@ -1098,7 +1106,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         // initial run Tab
         initialRunTab.setLabel(constants.initialRunVmPopup());
-        timeZoneEditor.setLabel(constants.tzVmPopup());
 
         vmInitEnabledEditor.setLabel(constants.cloudInitOrSysprep());
 
