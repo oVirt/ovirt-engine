@@ -48,6 +48,8 @@ public class DBConfigUtils extends ConfigUtilsBase {
         try {
             if (fieldType == Integer.class) {
                 return Integer.parseInt(value);
+            } else if (fieldType == Long.class) {
+                return Long.parseLong(value);
             } else if (fieldType == Boolean.class) {
                 return Boolean.parseBoolean(value);
             } else if (fieldType == Version.class) {
