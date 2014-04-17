@@ -149,10 +149,8 @@ public abstract class NetworkModel extends Model
         publicUse.setEntity(true);
 
         setProfiles(new NetworkProfilesModel());
-        VnicProfileModel defaultProfile = createDefaultProfile();
         List<VnicProfileModel> profiles = new LinkedList<VnicProfileModel>();
-        profiles.add(defaultProfile);
-        getProfiles().setDefaultProfile(defaultProfile);
+        profiles.add(createDefaultProfile());
         getProfiles().setItems(profiles);
 
         setQos(new ListModel<NetworkQoS>());

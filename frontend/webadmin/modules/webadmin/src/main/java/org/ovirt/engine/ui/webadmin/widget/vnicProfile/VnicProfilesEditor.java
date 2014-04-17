@@ -20,7 +20,6 @@ public class VnicProfilesEditor extends AddRemoveRowWidget<NetworkProfilesModel,
     }
 
     private Guid dcId;
-    private VnicProfileModel defaultProfile;
 
     public VnicProfilesEditor() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -28,7 +27,6 @@ public class VnicProfilesEditor extends AddRemoveRowWidget<NetworkProfilesModel,
 
     @Override
     public void edit(final NetworkProfilesModel model) {
-        defaultProfile = model.getDefaultProfile();
         super.edit(model);
         model.getDcId().getEntityChangedEvent().addListener(new IEventListener() {
 
@@ -55,11 +53,8 @@ public class VnicProfilesEditor extends AddRemoveRowWidget<NetworkProfilesModel,
 
     @Override
     protected boolean isGhost(VnicProfileModel value) {
-        if (value != defaultProfile) {
-            String name = (String) value.getName().getEntity();
-            return (name == null || name.isEmpty());
-        }
-        return false;
+        String name = (String) value.getName().getEntity();
+        return (name == null || name.isEmpty());
     }
 
     @Override
