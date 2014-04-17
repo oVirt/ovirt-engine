@@ -88,7 +88,7 @@ public class KeyValueWidget<T extends BaseKeyModel> extends AddRemoveRowWidget<T
     protected void toggleGhost(KeyValueLineModel value, KeyValueLineWidget widget, boolean becomingGhost) {
         widget.setEnabled(!becomingGhost && enabled);
         widget.keyField.setEnabled(enabled);
-        setButtonEnabled(widget, !becomingGhost && enabled);
+        setButtonsEnabled(widget, !becomingGhost && enabled);
     }
 
     @Override

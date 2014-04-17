@@ -30,6 +30,7 @@ public class NicLabelEditor extends AbstractModelBoundPopupWidget<ListModel<Stri
         initWidget(suggestBoxEditor);
         getElement().getStyle().setMarginTop(5, Unit.PX);
         getElement().getStyle().setMarginBottom(5, Unit.PX);
+        getElement().getStyle().setMarginRight(15, Unit.PX);
         driver.initialize(this);
     }
 

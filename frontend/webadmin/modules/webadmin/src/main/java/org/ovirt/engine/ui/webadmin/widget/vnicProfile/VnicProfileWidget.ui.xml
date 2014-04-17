@@ -32,8 +32,12 @@
 			width: 185px;
 			margin-left: 20px;
 		}
+
+		.containerStyle {
+			margin-right: 10px;
+		}
     </ui:style>
-	<g:HorizontalPanel>
+	<g:HorizontalPanel addStyleNames="{style.containerStyle}">
 		<ge:StringEntityModelTextBoxOnlyEditor ui:field="nameEditor" />
 		<g:FlowPanel addStyleNames="{style.publicUsePanel}">
 			<ge:EntityModelCheckBoxEditor ui:field="publicUseEditor" addStyleNames="{style.publicUseElement}"/>

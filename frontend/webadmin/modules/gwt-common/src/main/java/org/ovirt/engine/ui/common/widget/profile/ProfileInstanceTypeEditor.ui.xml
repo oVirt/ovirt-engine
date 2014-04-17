@@ -14,10 +14,15 @@
 		.contentStyle {
 			float: left;
 		}
+
+		.containerStyle {
+			width: 300px;
+			margin-right: 20px;
+		}
 	</ui:style>
 
 	<g:FlowPanel>
-		<p:ProfileEditor ui:field="profileEditor" width="300px" />
+		<p:ProfileEditor ui:field="profileEditor" addStyleNames="{style.containerStyle}" />
 	</g:FlowPanel>
 
 </ui:UiBinder>
