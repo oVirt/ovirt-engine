@@ -26,6 +26,8 @@ select fn_db_rename_config_key('PowerClientAutoApprovePatterns','AutoApprovePatt
 select fn_db_rename_config_key('PowerClientAutoRegistrationDefaultVdsGroupID','AutoRegistrationDefaultVdsGroupID','general');
 select fn_db_rename_config_key('PowerClientAutoInstallCertificateOnApprove','AutoInstallCertificateOnApprove','general');
 select fn_db_rename_config_key('UseSecureConnectionWithServers', 'EncryptHostCommunication', 'general');
+select fn_db_rename_config_key('SpiceReleaseCursorKeys', 'ConsoleReleaseCursorKeys', 'general');
+select fn_db_rename_config_key('SpiceToggleFullScreenKeys', 'ConsoleToggleFullScreenKeys', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -473,8 +475,8 @@ select fn_db_add_config_value('ShareableDiskEnabled','false','3.0');
 select fn_db_add_config_value('SignCertTimeoutInSeconds','30','general');
 --Handling Script name for signing
 select fn_db_add_config_value('SpiceDriverNameInGuest','RHEV-Spice','general');
-select fn_db_add_config_value('SpiceReleaseCursorKeys','shift+f12','general');
-select fn_db_add_config_value('SpiceToggleFullScreenKeys','shift+f11','general');
+select fn_db_add_config_value('ConsoleReleaseCursorKeys','shift+f12','general');
+select fn_db_add_config_value('ConsoleToggleFullScreenKeys','shift+f11','general');
 --Handling Enable USB devices sharing by default in SPICE
 select fn_db_add_config_value('SpiceUsbAutoShare','true','general');
 select fn_db_add_config_value('WANDisableEffects','animation','general');

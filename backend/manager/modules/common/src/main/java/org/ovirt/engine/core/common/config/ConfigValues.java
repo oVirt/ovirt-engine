@@ -333,11 +333,11 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("shift+f12")
-    SpiceReleaseCursorKeys,
+    ConsoleReleaseCursorKeys,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("shift+f11")
-    SpiceToggleFullScreenKeys,
+    ConsoleToggleFullScreenKeys,
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")

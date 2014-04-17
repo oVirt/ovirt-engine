@@ -312,8 +312,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation, AsyncDataProvider.getDefaultConfigurationVersion()));
                 parametersList.add(new IdQueryParameters(thisVm.getId()));
                 parametersList.add(new VdcQueryParametersBase());
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceToggleFullScreenKeys, AsyncDataProvider.getDefaultConfigurationVersion()));
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceReleaseCursorKeys,
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.ConsoleToggleFullScreenKeys, AsyncDataProvider.getDefaultConfigurationVersion()));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.ConsoleReleaseCursorKeys,
                         AsyncDataProvider.getDefaultConfigurationVersion()));
 
                 if (isoDomain != null) {
