@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -136,9 +137,11 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         final V widget = createWidget(value);
         Pair<T, V> item = new Pair<T, V>(value, widget);
         items.add(item);
-        PushButton button = createButton(item, lastItem);
 
-        AddRemoveRowPanel entry = new AddRemoveRowPanel(widget, button);
+        PushButton removeButton = createButton(item, false);
+        AddRemoveRowPanel entry =
+                lastItem ? new AddRemoveRowPanel(widget, removeButton, createButton(item, true))
+                        : new AddRemoveRowPanel(widget, removeButton);
         contentPanel.add(entry);
 
         final boolean ghost = isGhost(value);
@@ -152,7 +155,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
                 T value = event.getValue();
                 boolean becomingGhost = isGhost(value);
                 if (becomingGhost != wasGhost) {
-                    setButtonEnabled(widget, !becomingGhost);
+                    setButtonsEnabled(widget, !becomingGhost);
                     toggleGhost(value, widget, becomingGhost);
                     wasGhost = becomingGhost;
                 }
@@ -181,7 +184,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
                     @Override
                     public void onClick(ClickEvent event) {
-                        getEntry(widget).swapButton(createButton(item, false));
+                        getEntry(widget).removeLastButton();
                         Pair<T, V> item = addGhostEntry();
                         onAdd(item.getFirst(), item.getSecond());
                     }
@@ -190,8 +193,23 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
                     @Override
                     public void onClick(ClickEvent event) {
+                        ListIterator<Pair<T, V>> last = items.listIterator(items.size());
+                        if (!last.hasPrevious()) { // just a precaution; if there's no item, there should be no button
+                            return;
+                        }
+
+                        if (item == last.previous() && last.hasPrevious()) { // add plus button to previous item
+                            Pair<T, V> previousItem = last.previous();
+                            getEntry(previousItem.getSecond()).appendButton(createButton(previousItem, true));
+                        }
+
                         removeEntry(item);
                         onRemove(value, widget);
+
+                        if (items.isEmpty()) {
+                            Pair<T, V> item = addGhostEntry();
+                            onAdd(item.getFirst(), item.getSecond());
+                        }
                     }
                 });
 
@@ -207,18 +225,21 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         contentPanel.remove(getEntry(widget));
     }
 
-    protected void setButtonEnabled(V widget, boolean enabled) {
-        getEntry(widget).setButtonEnabled(enabled);
+    protected void setButtonsEnabled(V widget, boolean enabled) {
+        getEntry(widget).setButtonsEnabled(enabled);
     }
 
     private class AddRemoveRowPanel extends FlowPanel {
 
-        private PushButton button;
+        private List<PushButton> buttons = new LinkedList<PushButton>();
 
-        public AddRemoveRowPanel(Widget widget, PushButton button) {
+        public AddRemoveRowPanel(Widget widget, PushButton... buttons) {
             append(widget);
-            append(button);
-            this.button = button;
+            this.buttons.clear();
+            for (PushButton button : buttons) {
+                append(button);
+                this.buttons.add(button);
+            }
         }
 
         private void append(Widget widget) {
@@ -226,14 +247,19 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
             add(widget);
         }
 
-        public void setButtonEnabled(boolean enabled) {
-            button.setEnabled(enabled);
+        public void setButtonsEnabled(boolean enabled) {
+            for (PushButton button : buttons) {
+                button.setEnabled(enabled);
+            }
         }
 
-        public void swapButton(PushButton newButton) {
-            remove(button);
-            append(newButton);
-            button = newButton;
+        public void removeLastButton() {
+            remove(buttons.remove(buttons.size() - 1));
+        }
+
+        public void appendButton(PushButton button) {
+            buttons.add(button);
+            append(button);
         }
 
     }
