@@ -300,8 +300,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 queryTypeList.add(VdcQueryType.GetConfigurationValue);
                 queryTypeList.add(VdcQueryType.GetVdsCertificateSubjectByVmId);
                 queryTypeList.add(VdcQueryType.GetCACertificate);
-                queryTypeList.add(VdcQueryType.GetConfigurationValue);
-                queryTypeList.add(VdcQueryType.GetConfigurationValue);
 
                 ArrayList<VdcQueryParametersBase> parametersList =
                         new ArrayList<VdcQueryParametersBase>();
@@ -312,9 +310,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation, AsyncDataProvider.getDefaultConfigurationVersion()));
                 parametersList.add(new IdQueryParameters(thisVm.getId()));
                 parametersList.add(new VdcQueryParametersBase());
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.ConsoleToggleFullScreenKeys, AsyncDataProvider.getDefaultConfigurationVersion()));
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.ConsoleReleaseCursorKeys,
-                        AsyncDataProvider.getDefaultConfigurationVersion()));
 
                 if (isoDomain != null) {
                     queryTypeList.add(VdcQueryType.GetImagesListByStoragePoolId);
@@ -399,18 +394,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         getspice().setHostSubject(certificateSubject);
         getspice().setTrustStore(caCertificate);
 
-        String toggleFullScreenKeys = (String) returnValues.get(6).getReturnValue();
-        String releaseCursorKeys = (String) returnValues.get(7).getReturnValue();
-        String releaseCursorKeysTranslated =
-                AsyncDataProvider.getComplexValueFromSpiceRedKeysResource((releaseCursorKeys != null) ? releaseCursorKeys
-                        : "shift+f12"); //$NON-NLS-1$
-
-        getspice().setTitle(getEntity().getName()
-                + ":%d" //$NON-NLS-1$
-                + (StringHelper.isNullOrEmpty(releaseCursorKeysTranslated) ? "" : (" - " + //$NON-NLS-1$ //$NON-NLS-2$
-                        ConstantsManager.getInstance()
-                                .getMessages()
-                                .pressKeyToReleaseCursor(releaseCursorKeysTranslated))));
+        getspice().setTitle(getClientTitle());
 
         getspice().setSpiceProxy(determineSpiceProxy());
 
@@ -423,8 +407,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 && getEntity().getUsbPolicy() == UsbPolicy.ENABLED_LEGACY ? getConfigurator().getSpiceDefaultUsbPort()
                 : getConfigurator().getSpiceDisableUsbListenPort());
 
-        getspice().setToggleFullscreenHotKey(toggleFullScreenKeys);
-        getspice().setReleaseCursorHotKey(releaseCursorKeys);
+        getspice().setToggleFullscreenHotKey(getToggleFullScreenKeys());
+        getspice().setReleaseCursorHotKey(getReleaseCursorKeys());
 
         getspice().setLocalizedStrings(new String[] {
                 ConstantsManager.getInstance().getConstants().usb(),
@@ -442,9 +426,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         ArrayList<String> isos = new ArrayList<String>();
 
-        if (returnValues.size() > 8) {
-            ArrayList<RepoImage> repoList =
-                    (ArrayList<RepoImage>) returnValues.get(8).getReturnValue();
+        if (returnValues.size() > 6) {
+            ArrayList<RepoImage> repoList = returnValues.get(6).getReturnValue();
             for (RepoImage repoImage : repoList) {
                 isos.add(repoImage.getRepoImageId());
             }

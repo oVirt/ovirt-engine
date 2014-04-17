@@ -13,6 +13,8 @@ public class AbstractVnc {
 
     private final ConsoleUtils consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
     private int ticketValiditySeconds;
+    private String toggleFullscreenHotKey;
+    private String releaseCursorHotKey;
 
     public AbstractVnc() {
         setRemapCtrlAltDelete(true);
@@ -68,4 +70,22 @@ public class AbstractVnc {
 
     public void setTicketValiditySeconds(int ticketValiditySeconds) {
         this.ticketValiditySeconds = ticketValiditySeconds;
-    }}
+    }
+
+    public String getToggleFullscreenHotKey() {
+        return toggleFullscreenHotKey;
+    }
+
+    public void setToggleFullscreenHotKey(String toggleFullscreenHotKey) {
+        this.toggleFullscreenHotKey = toggleFullscreenHotKey;
+    }
+
+    public String getReleaseCursorHotKey() {
+        return releaseCursorHotKey;
+    }
+
+    public void setReleaseCursorHotKey(String releaseCursorHotKey) {
+        this.releaseCursorHotKey = releaseCursorHotKey;
+    }
+
+}

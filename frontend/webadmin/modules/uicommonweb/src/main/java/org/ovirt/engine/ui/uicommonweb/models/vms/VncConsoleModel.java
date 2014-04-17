@@ -91,8 +91,7 @@ public class VncConsoleModel extends ConsoleModel {
     }
 
     @Override
-    protected void connect()
-    {
+    protected void connect() {
         if (getEntity() == null || getEntity().getRunOnVds() == null) {
             return;
         }
@@ -161,7 +160,9 @@ public class VncConsoleModel extends ConsoleModel {
         vncImpl.setVncHost(getHost());
         vncImpl.setVncPort(getPort());
         vncImpl.setTicket(getOtp64());
-        vncImpl.setTitle(getTitle());
+        vncImpl.setTitle(getClientTitle());
+        vncImpl.setToggleFullscreenHotKey(getToggleFullScreenKeys());
+        vncImpl.setReleaseCursorHotKey(getReleaseCursorKeys());
         vncImpl.setTicketValiditySeconds(TICKET_VALIDITY_SECONDS);
 
         vncImpl.invokeClient();

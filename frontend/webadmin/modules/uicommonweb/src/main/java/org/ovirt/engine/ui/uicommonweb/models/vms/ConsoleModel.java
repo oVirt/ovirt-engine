@@ -9,15 +9,18 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.HasAdElementReconnectPermissionParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -288,6 +291,30 @@ public abstract class ConsoleModel extends EntityModel {
         textArea.setValue(value);
 
         return textArea;
+    }
+
+    protected String getToggleFullScreenKeys() {
+        return (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ConsoleToggleFullScreenKeys);
+    }
+
+    protected String getReleaseCursorKeys() {
+        return (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ConsoleReleaseCursorKeys);
+    }
+
+    protected String getClientTitle() {
+        String releaseCursorKeys = getReleaseCursorKeys();
+        String releaseCursorKeysTranslated =
+                AsyncDataProvider.getComplexValueFromSpiceRedKeysResource((releaseCursorKeys != null) ? releaseCursorKeys
+                        : "shift+f12"); //$NON-NLS-1$
+
+        String releaseCursorMsg = ""; //$NON-NLS-1$
+
+        if (!StringHelper.isNullOrEmpty(releaseCursorKeysTranslated)) {
+            releaseCursorMsg = " - " + ConstantsManager.getInstance() //$NON-NLS-1$
+                    .getMessages().pressKeyToReleaseCursor(releaseCursorKeysTranslated);
+        }
+
+        return getEntity().getName() + ":%d" + releaseCursorMsg; //$NON-NLS-1$
     }
 
 }

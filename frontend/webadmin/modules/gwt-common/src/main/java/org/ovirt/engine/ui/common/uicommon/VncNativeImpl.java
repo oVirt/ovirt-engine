@@ -17,6 +17,14 @@ public class VncNativeImpl extends AbstractVnc implements IVnc {
                 .append("\ndelete-this-file=1") //$NON-NLS-1$
                 .append("\ntitle=").append(getTitle()); //$NON-NLS-1$
 
+        if (!StringHelper.isNullOrEmpty(getToggleFullscreenHotKey())) {
+            configBuilder.append("\ntoggle-fullscreen=").append(getToggleFullscreenHotKey()); //$NON-NLS-1$
+        }
+
+        if (!StringHelper.isNullOrEmpty(getReleaseCursorHotKey())) {
+            configBuilder.append("\nrelease-cursor=").append(getReleaseCursorHotKey()); //$NON-NLS-1$
+        }
+
         if (isRemapCtrlAltDelete() && !StringHelper.isNullOrEmpty(getSecureAttentionMapping())) {
             configBuilder.append("\nsecure-attention=").append(getSecureAttentionMapping()); //$NON-NLS-1$
         }

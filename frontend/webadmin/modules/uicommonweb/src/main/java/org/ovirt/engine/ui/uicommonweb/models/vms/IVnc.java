@@ -10,7 +10,8 @@ public interface IVnc {
     void setRemapCtrlAltDelete(boolean remapCtrlAltDelete);
     void setTicketValiditySeconds(int seconds);
     int getTicketValiditySeconds();
-
+    void setToggleFullscreenHotKey(String toggleFullscreenHotKey);
+    void setReleaseCursorHotKey(String releaseCursorHotKey);
 
     void invokeClient();
 
