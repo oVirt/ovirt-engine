@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -17,7 +18,8 @@ public class EditTextCellWithTooltip extends TextCellWithTooltip implements Even
     private EditTextCell delegate;
 
     public EditTextCellWithTooltip(int maxTextLength) {
-        super(maxTextLength, "mouseover", "click", "keyup", "keydown", "blur"); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$ $NON-NLS-4$ $NON-NLS-5$
+        super(maxTextLength, BrowserEvents.MOUSEOVER, BrowserEvents.CLICK,
+                BrowserEvents.KEYUP, BrowserEvents.KEYDOWN, BrowserEvents.BLUR);
         delegate = new EditTextCell();
     }
 

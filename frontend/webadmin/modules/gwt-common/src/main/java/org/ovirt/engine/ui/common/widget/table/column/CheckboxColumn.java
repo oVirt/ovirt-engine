@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -46,7 +47,7 @@ public abstract class CheckboxColumn<T> extends Column<T, Boolean> {
 
     private static boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
         NativeEvent nativeEvent = event.getNativeEvent();
-        if (!"click".equals(nativeEvent.getType().toLowerCase())) { //$NON-NLS-1$
+        if (!BrowserEvents.CLICK.equals(nativeEvent.getType())) {
             return false;
         }
         Element target = nativeEvent.getEventTarget().cast();

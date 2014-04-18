@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -287,7 +288,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                         return;
                     }
 
-                    if ("click".equals(event.getNativeEvent().getType()) //$NON-NLS-1$
+                    if (BrowserEvents.CLICK.equals(event.getNativeEvent().getType())
                             && !(getSelectionModel() instanceof NoSelectionModel)) {
                         // Let the selection column deal with this
                         if (event.getColumn() == 0) {

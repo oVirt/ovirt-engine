@@ -165,7 +165,6 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     /**
      * Removes a column.
-     *
      */
     @Override
     public void removeColumn(int index) {
@@ -194,6 +193,11 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         };
     }
 
+    /**
+     * Wraps the given {@code header} passed from user code, if necessary.
+     * <p>
+     * This method is called whenever a column is added to the table.
+     */
     Header<?> wrapHeader(Header<?> header, Column<T, ?> column) {
         return (columnResizingEnabled && header instanceof CheckboxHeader)
                 ? new ResizeableCheckboxHeader<T>((CheckboxHeader) header, column, this) : header;

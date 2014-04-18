@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import org.ovirt.engine.core.compat.StringHelper;
 
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -16,7 +17,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 public class LinkCellWithTooltip extends TextCellWithTooltip {
 
     public LinkCellWithTooltip(int maxTextLength) {
-        super(maxTextLength, "mouseover", "click"); //$NON-NLS-1$ $NON-NLS-2$
+        super(maxTextLength, BrowserEvents.MOUSEOVER, BrowserEvents.CLICK);
     }
 
     @Override
@@ -36,7 +37,7 @@ public class LinkCellWithTooltip extends TextCellWithTooltip {
             ValueUpdater<String> valueUpdater) {
 
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
-        if (!"click".equals(event.getType())) { //$NON-NLS-1$
+        if (!BrowserEvents.CLICK.equals(event.getType())) {
             return;
         }
         if (valueUpdater != null && !StringHelper.isNullOrEmpty(value)) {

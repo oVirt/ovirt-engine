@@ -12,6 +12,7 @@ import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Visibility;
@@ -24,17 +25,13 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class TagItemCell extends CompositeCell<TagModel> {
 
-    private static final String CLICK = "click"; //$NON-NLS-1$
-    private static final String MOUSEOVER = "mouseover"; //$NON-NLS-1$
-    private static final String MOUSEOUT = "mouseout"; //$NON-NLS-1$
-
     private static class TagItemTextCell extends Column<TagModel, SafeHtml> {
 
         private final ApplicationResources resources;
         private final ApplicationTemplates templates;
 
         private TagItemTextCell(ApplicationResources resources, ApplicationTemplates templates) {
-            super(new AbstractCell<SafeHtml>(CLICK, MOUSEOVER, MOUSEOUT) {
+            super(new AbstractCell<SafeHtml>(BrowserEvents.CLICK, BrowserEvents.MOUSEOVER, BrowserEvents.MOUSEOUT) {
                 @Override
                 public void render(Context context, SafeHtml value, SafeHtmlBuilder sb) {
                     TagModel tagModel = (TagModel) context.getKey();
@@ -59,10 +56,10 @@ public class TagItemCell extends CompositeCell<TagModel> {
                     Element tagButtonElement = parent.getNextSiblingElement().getFirstChildElement();
 
                     // Update tag item and button on mouse over and mouse out
-                    if (event.getType().equals(MOUSEOVER) && tagModel.getType() != TagModelType.Root) {
+                    if (BrowserEvents.MOUSEOVER.equals(event.getType()) && tagModel.getType() != TagModelType.Root) {
                         updateTagElement(true, tagItemElement, tagButtonElement);
                     }
-                    else if (event.getType().equals(MOUSEOUT) && !tagModel.getSelection()) {
+                    else if (BrowserEvents.MOUSEOUT.equals(event.getType()) && !tagModel.getSelection()) {
                         updateTagElement(false, tagItemElement, tagButtonElement);
                     }
                 }
@@ -93,7 +90,7 @@ public class TagItemCell extends CompositeCell<TagModel> {
     private static class TagItemButtonCell extends Column<TagModel, Boolean> {
 
         private TagItemButtonCell(final ApplicationResources resources, final ApplicationTemplates templates) {
-            super(new AbstractCell<Boolean>(CLICK, MOUSEOVER, MOUSEOUT) {
+            super(new AbstractCell<Boolean>(BrowserEvents.CLICK, BrowserEvents.MOUSEOVER, BrowserEvents.MOUSEOUT) {
                 @Override
                 public void render(Context context, Boolean value, SafeHtmlBuilder sb) {
                     String tagPin = AbstractImagePrototype.create(resources.tagPinImage()).getHTML();
@@ -128,7 +125,7 @@ public class TagItemCell extends CompositeCell<TagModel> {
                     boolean isSelected = !value;
 
                     // Update tag item and button on click, mouse over and mouse out
-                    if (event.getType().equals(CLICK)) {
+                    if (BrowserEvents.CLICK.equals(event.getType())) {
                         if (tagModel.getType() != TagModelType.Root) {
                             // Update model selection
                             tagModel.setSelection(isSelected);
@@ -141,10 +138,10 @@ public class TagItemCell extends CompositeCell<TagModel> {
                                     isSelected ? TAG_BG_COLOR_SELECTED : TAG_BG_COLOR_UNSELECTED);
                         }
                     }
-                    else if (event.getType().equals(MOUSEOVER) && tagModel.getType() != TagModelType.Root) {
+                    else if (BrowserEvents.MOUSEOVER.equals(event.getType()) && tagModel.getType() != TagModelType.Root) {
                         updateTagElement(true, tagItem, tagButton);
                     }
-                    else if (event.getType().equals(MOUSEOUT) && !tagModel.getSelection()) {
+                    else if (BrowserEvents.MOUSEOUT.equals(event.getType()) && !tagModel.getSelection()) {
                         updateTagElement(false, tagItem, tagButton);
                     }
                 }

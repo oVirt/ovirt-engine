@@ -6,6 +6,7 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
@@ -15,6 +16,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.DOM;
+
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 
@@ -50,7 +52,7 @@ public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalI
 
     public AbstractConsoleButtonCell(String enabledCss, String disabledCss,
             String title, ConsoleButtonCommand command) {
-        super("click"); //$NON-NLS-1$
+        super(BrowserEvents.CLICK);
         this.enabledCss = SafeHtmlUtils.htmlEscape(enabledCss);
         this.disabledCss = SafeHtmlUtils.htmlEscape(disabledCss);
         this.title = SafeHtmlUtils.htmlEscape(title);
@@ -79,7 +81,7 @@ public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalI
         EventTarget eventTarget = event.getEventTarget();
 
         // Skip events other than 'click'
-        if (!"click".equals(event.getType())) { //$NON-NLS-1$
+        if (!BrowserEvents.CLICK.equals(event.getType())) {
             return;
         }
 

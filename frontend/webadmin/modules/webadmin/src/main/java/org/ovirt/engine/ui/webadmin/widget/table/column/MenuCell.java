@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
@@ -30,7 +31,7 @@ public class MenuCell<T> extends AbstractCell<T> {
     private MenuPanelPopup menuPanelPopup;
 
     public MenuCell() {
-        super("click" , "mouseover" , "mouseout"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+        super(BrowserEvents.CLICK, BrowserEvents.MOUSEOVER, BrowserEvents.MOUSEOUT);
         this.menuPanelPopup = new MenuPanelPopup(true);
     }
 
@@ -49,6 +50,7 @@ public class MenuCell<T> extends AbstractCell<T> {
         return true;
     }
 
+    @Override
     public void onBrowserEvent(Context context,
             Element parent,
             T value,
@@ -59,14 +61,14 @@ public class MenuCell<T> extends AbstractCell<T> {
         int eventY = event.getClientY();
 
         // Handle the click event.
-        if ("click".equals(event.getType())) { //$NON-NLS-1$
+        if (BrowserEvents.CLICK.equals(event.getType())) {
             // Ignore clicks that occur outside of the outermost element.
             EventTarget eventTarget = event.getEventTarget();
             if (parent.getFirstChildElement().isOrHasChild(Element.as(eventTarget))) {
                 menuPanelPopup.asPopupPanel().showAndFitToScreen(eventX, eventY);
             }
         }
-        else if("mouseover".equals(event.getType())) {//$NON-NLS-1$
+        else if(BrowserEvents.MOUSEOVER.equals(event.getType())) {
             if (isVisible(value)) {
                 parent.getFirstChildElement().getStyle().setBorderColor("#96B7D6"); //$NON-NLS-1$
             }

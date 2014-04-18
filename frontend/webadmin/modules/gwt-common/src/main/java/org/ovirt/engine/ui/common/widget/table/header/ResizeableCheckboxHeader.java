@@ -13,20 +13,18 @@ import com.google.gwt.user.cellview.client.Column;
 
 public class ResizeableCheckboxHeader<T> extends ResizableHeader<T> {
 
-    CheckboxHeader checkboxHeaderDelegate;
+    private final CheckboxHeader checkboxHeaderDelegate;
 
     public ResizeableCheckboxHeader(CheckboxHeader checkboxHeader,
-            Column<T, ?> column,
-            HasResizableColumns<T> table) {
-
-        super(checkboxHeader.getTitle(), column, table, new SafeHtmlCellWithTooltip(BrowserEvents.CLICK,
+            Column<T, ?> column, HasResizableColumns<T> table) {
+        super(checkboxHeader.getTitle(), column, table, new SafeHtmlCellWithTooltip(
+                BrowserEvents.CLICK,
                 BrowserEvents.MOUSEDOWN,
                 BrowserEvents.MOUSEMOVE,
                 BrowserEvents.MOUSEOVER,
                 BrowserEvents.CHANGE,
                 BrowserEvents.KEYDOWN));
-
-        checkboxHeaderDelegate = checkboxHeader;
+        this.checkboxHeaderDelegate = checkboxHeader;
     }
 
     @Override

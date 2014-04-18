@@ -7,6 +7,7 @@ import java.util.List;
 import com.google.gwt.cell.client.AbstractInputCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.SelectElement;
@@ -46,7 +47,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
      *            the options in the cell
      */
     public CustomSelectionCell(List<String> options) {
-        super("change"); //$NON-NLS-1$
+        super(BrowserEvents.CHANGE);
         if (template == null) {
             template = GWT.create(CellTemplate.class);
         }
@@ -62,7 +63,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
             NativeEvent event, ValueUpdater<String> valueUpdater) {
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
         String type = event.getType();
-        if ("change".equals(type)) { //$NON-NLS-1$
+        if (BrowserEvents.CHANGE.equals(type)) {
             Object key = context.getKey();
             SelectElement select = parent.getFirstChild().cast();
             String newValue = options.get(select.getSelectedIndex());

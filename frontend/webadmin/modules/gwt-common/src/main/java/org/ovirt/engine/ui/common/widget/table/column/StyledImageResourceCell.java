@@ -9,9 +9,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
- * ImageResourceCell that supports setting a style and displaying a tooltip in a
- * DecoratedPopupPanel.
- *
+ * ImageResourceCell that supports setting a style and displaying a tooltip in a DecoratedPopupPanel.
  */
 public class StyledImageResourceCell extends TitlePanelCell<ImageResource> implements HasStyleClass {
 
@@ -48,7 +46,9 @@ public class StyledImageResourceCell extends TitlePanelCell<ImageResource> imple
         this.style = style;
     }
 
+    @Override
     public void setStyleClass(String styleClass) {
         this.styleClass = styleClass == null ? "" : styleClass; //$NON-NLS-1$
     }
+
 }

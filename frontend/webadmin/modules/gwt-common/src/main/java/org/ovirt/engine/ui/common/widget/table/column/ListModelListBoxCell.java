@@ -7,9 +7,11 @@ import java.util.Map;
 
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+
 import com.google.gwt.cell.client.AbstractInputCell;
 import com.google.gwt.cell.client.SelectionCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -35,7 +37,7 @@ public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String
     private final Renderer<T> renderer;
 
     public ListModelListBoxCell(final Renderer<T> renderer) {
-        super("change"); //$NON-NLS-1$
+        super(BrowserEvents.CHANGE);
         this.renderer = renderer;
         delegate = new SelectionCell(new ArrayList<String>()); // just to avoid null pointer in setSelection()
     }
@@ -96,7 +98,7 @@ public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String
     @Override
     public boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
         NativeEvent nativeEvent = event.getNativeEvent();
-        if (!"click".equals(nativeEvent.getType().toLowerCase())) { //$NON-NLS-1$
+        if (!BrowserEvents.CLICK.equals(nativeEvent.getType())) {
             return false;
         }
         Element target = nativeEvent.getEventTarget().cast();

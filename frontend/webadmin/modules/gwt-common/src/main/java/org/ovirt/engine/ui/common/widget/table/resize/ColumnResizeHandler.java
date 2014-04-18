@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table.resize;
 
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -39,7 +40,7 @@ public class ColumnResizeHandler<T> implements NativePreviewHandler {
         nativeEvent.preventDefault();
         nativeEvent.stopPropagation();
 
-        if ("mousemove".equals(nativeEvent.getType())) { //$NON-NLS-1$
+        if (BrowserEvents.MOUSEMOVE.equals(nativeEvent.getType())) {
             // Calculate display-relative column width
             int absoluteLeft = headerElement.getAbsoluteLeft();
             int clientX = nativeEvent.getClientX();
@@ -53,7 +54,7 @@ public class ColumnResizeHandler<T> implements NativePreviewHandler {
             table.resizeColumn(column, displayColumnWidth);
         }
 
-        else if ("mouseup".equals(nativeEvent.getType())) { //$NON-NLS-1$
+        else if (BrowserEvents.MOUSEUP.equals(nativeEvent.getType())) {
             // Release native event handler
             eventHandler.removeHandler();
 

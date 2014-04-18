@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -15,7 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class SafeHtmlWithSafeHtmlTooltipColumn<T> extends Column<T, SafeHtml>{
 
     public SafeHtmlWithSafeHtmlTooltipColumn() {
-        super(new AbstractCell<SafeHtml>("mouseover", "mouseout"){ //$NON-NLS-1$ //$NON-NLS-2$
+        super(new AbstractCell<SafeHtml>(BrowserEvents.MOUSEOVER, BrowserEvents.MOUSEOUT) {
 
             @Override
             public void onBrowserEvent(com.google.gwt.cell.client.Cell.Context context,
@@ -53,7 +54,7 @@ public abstract class SafeHtmlWithSafeHtmlTooltipColumn<T> extends Column<T, Saf
     public void onBrowserEvent(Context context, final Element elem, T object, NativeEvent event) {
         super.onBrowserEvent(context, elem, object, event);
 
-        if (event.getType().equals("mouseover")) { //$NON-NLS-1$
+        if (BrowserEvents.MOUSEOVER.equals(event.getType())) {
             Widget widget = new Widget(){
                 @Override
                 public com.google.gwt.user.client.Element getElement() {
@@ -67,7 +68,7 @@ public abstract class SafeHtmlWithSafeHtmlTooltipColumn<T> extends Column<T, Saf
                 tooltipPanel.showRelativeTo(widget);
             }
         }
-        else if (event.getType().equals("mouseout")) { //$NON-NLS-1$
+        else if (BrowserEvents.MOUSEOUT.equals(event.getType())) {
             tooltipPanel.hide(true);
         }
 

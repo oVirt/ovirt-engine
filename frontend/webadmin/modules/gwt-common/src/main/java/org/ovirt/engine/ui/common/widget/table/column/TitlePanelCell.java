@@ -27,8 +27,8 @@ public abstract class TitlePanelCell<T> extends AbstractCell<T> {
         super();
 
         consumedEvents = new HashSet<String>();
-        consumedEvents.add("mouseover"); //$NON-NLS-1$
-        consumedEvents.add("mouseout"); //$NON-NLS-1$
+        consumedEvents.add(BrowserEvents.MOUSEOVER);
+        consumedEvents.add(BrowserEvents.MOUSEOUT);
     }
 
     /**
@@ -60,4 +60,5 @@ public abstract class TitlePanelCell<T> extends AbstractCell<T> {
             titlePanel.hide();
         }
     }
+
 }

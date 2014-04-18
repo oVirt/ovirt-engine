@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.table.column;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 
@@ -25,7 +26,7 @@ public abstract class AbstractCellWithTooltip<C> extends AbstractCell<C> {
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
 
         // Skip events other than 'mouseover'
-        if (!"mouseover".equals(event.getType())) { //$NON-NLS-1$
+        if (!BrowserEvents.MOUSEOVER.equals(event.getType())) {
             return;
         }
 

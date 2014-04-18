@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
@@ -35,7 +36,7 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
 
     public ImageButtonCell(ImageResource enabledImage, String enabledCss,
             ImageResource disabledImage, String disabledCss) {
-        super("click"); //$NON-NLS-1$
+        super(BrowserEvents.CLICK);
         this.enabledHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(enabledImage).getHTML());
         this.enabledCss = enabledCss;
         this.disabledHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(disabledImage).getHTML());
@@ -59,7 +60,7 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
             return;
         }
 
-        if ("click".equals(event.getType()) && isEnabled(value)) { //$NON-NLS-1$
+        if (BrowserEvents.CLICK.equals(event.getType()) && isEnabled(value)) {
             onClick(value);
         }
         // TODO change the image while the mouse is down (simulate click)

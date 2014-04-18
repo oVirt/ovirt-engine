@@ -1,9 +1,11 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
 import com.google.gwt.user.client.ui.HTML;
+
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -39,7 +41,7 @@ public class TextCellWithTooltip extends AbstractCellWithTooltip<String> impleme
     private static CellTemplate template;
 
     public TextCellWithTooltip(int maxTextLength) {
-        this(maxTextLength, "mouseover"); //$NON-NLS-1$
+        this(maxTextLength, BrowserEvents.MOUSEOVER);
     }
 
     public TextCellWithTooltip(int maxTextLength, String... consumedEvents) {

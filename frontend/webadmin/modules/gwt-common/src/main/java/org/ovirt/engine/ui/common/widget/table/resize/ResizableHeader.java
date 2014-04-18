@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlCellWithTooltip;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Cursor;
@@ -105,7 +106,10 @@ public class ResizableHeader<T> extends Header<SafeHtml> {
      */
     public ResizableHeader(SafeHtml text, Column<T, ?> column, HasResizableColumns<T> table) {
         this(text, column, table, new SafeHtmlCellWithTooltip(
-            "click", "mousedown", "mousemove", "mouseover")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                BrowserEvents.CLICK,
+                BrowserEvents.MOUSEDOWN,
+                BrowserEvents.MOUSEMOVE,
+                BrowserEvents.MOUSEOVER));
     }
 
     /**
@@ -154,7 +158,7 @@ public class ResizableHeader<T> extends Header<SafeHtml> {
 
         // On mouse down event, which initiates the column resize operation,
         // register a column resize handler that listens to mouse move events
-        if ("mousedown".equals(event.getType())) { //$NON-NLS-1$
+        if (BrowserEvents.MOUSEDOWN.equals(event.getType())) {
             if (mouseOverResizeBarArea) {
                 new ColumnResizeHandler<T>(headerElement, column, table);
             }
