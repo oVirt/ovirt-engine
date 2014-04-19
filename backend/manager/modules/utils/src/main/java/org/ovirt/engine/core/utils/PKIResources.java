@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 
 import org.apache.commons.codec.binary.Base64;
 
-import org.ovirt.engine.core.utils.crypt.OpenSSHUtils;
+import org.ovirt.engine.core.uutils.ssh.OpenSSHUtils;
 
 public class PKIResources {
 

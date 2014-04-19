@@ -16,6 +16,7 @@
 
   <modules>
     <module>extensions-api-root</module>
+    <module>uutils</module>
     <module>compat</module>
     <module>utils</module>
     <module>common</module>

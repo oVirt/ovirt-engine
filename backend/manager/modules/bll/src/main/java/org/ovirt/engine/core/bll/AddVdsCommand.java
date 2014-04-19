@@ -50,11 +50,11 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
-import org.ovirt.engine.core.utils.ssh.ConstraintByteArrayOutputStream;
-import org.ovirt.engine.core.utils.ssh.SSHClient;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.uutils.ssh.ConstraintByteArrayOutputStream;
+import org.ovirt.engine.core.uutils.ssh.SSHClient;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<T> {

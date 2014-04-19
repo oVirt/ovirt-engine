@@ -11,8 +11,8 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.cli.ArgumentBuilder;
-import org.ovirt.engine.core.utils.cli.ExtendedCliParser;
+import org.ovirt.engine.core.uutils.cli.ArgumentBuilder;
+import org.ovirt.engine.core.uutils.cli.ExtendedCliParser;
 
 /**
  * Class for command line arguments parsing and validation

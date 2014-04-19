@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
-import org.ovirt.engine.core.utils.crypt.OpenSSHUtils;
-import org.ovirt.engine.core.utils.ssh.SSHClient;
+import org.ovirt.engine.core.uutils.ssh.OpenSSHUtils;
+import org.ovirt.engine.core.uutils.ssh.SSHClient;
 
 /**
  * SSH client to be used with engine defaults

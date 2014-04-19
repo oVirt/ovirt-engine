@@ -3,12 +3,12 @@ package org.ovirt.engine.core.notifier.utils;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.utils.LocalConfig;
+import org.ovirt.engine.core.uutils.config.ShellLikeConfd;
 
 /**
  * Defines properties uses by the event notification service
  */
-public class NotificationProperties extends LocalConfig {
+public class NotificationProperties extends ShellLikeConfd {
 
     /**
      * Service parameters

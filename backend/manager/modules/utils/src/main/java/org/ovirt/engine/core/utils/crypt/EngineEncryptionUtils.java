@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
+import org.ovirt.engine.core.uutils.ssh.OpenSSHUtils;
 
 public class EngineEncryptionUtils {
 

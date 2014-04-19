@@ -11,13 +11,15 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import org.ovirt.engine.core.uutils.config.ShellLikeConfd;
+
 /**
  * This class stores the local configuration (understanding local as the
  * configuration of the local machine, as opposed to the global configuration
  * stored in the database) of the engine loaded from the file specified by the
  * <code>ENGINE_VARS</code> environment variable.
  */
-public class EngineLocalConfig extends LocalConfig {
+public class EngineLocalConfig extends ShellLikeConfd {
     // The log:
     private static final Logger log = Logger.getLogger(EngineLocalConfig.class);
 

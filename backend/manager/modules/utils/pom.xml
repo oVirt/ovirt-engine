@@ -30,18 +30,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.mina</groupId>
-      <artifactId>mina-core</artifactId>
-      <version>${mina-core.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.sshd</groupId>
-      <artifactId>sshd-core</artifactId>
-      <version>${sshd-core.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.ovirt.otopi</groupId>
       <artifactId>otopi</artifactId>
       <version>${otopi.version}</version>
@@ -56,6 +44,12 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>uutils</artifactId>
+      <version>${engine.version}</version>
     </dependency>
 
     <dependency>
@@ -172,9 +166,6 @@
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/src/test/java</additionalClasspathElement>
           </additionalClasspathElements>
-          <excludes>
-            <exclude>**/ssh/*.java</exclude>
-          </excludes>
         </configuration>
       </plugin>
 
@@ -186,13 +177,6 @@
     </plugins>
   </build>
   <profiles>
-    <profile>
-      <id>enable-ssh-tests</id>
-      <properties>
-        <test>**/ssh/*.java</test>
-      </properties>
-    </profile>
-
     <profile>
         <id>findbugs</id>
         <activation>

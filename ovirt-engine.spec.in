@@ -601,6 +601,7 @@ done << __EOF__
 %{engine_jboss_modules}/org/ovirt/engine/core/searchbackend/main/searchbackend.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/tools/main/tools.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/utils/main/utils.jar
+%{engine_jboss_modules}/org/ovirt/engine/core/uutils/main/uutils.jar
 %{engine_jboss_modules}/org/ovirt/engine/extensions/builtin/main/builtin.jar
 %{engine_legacy_restapi_war}/WEB-INF/lib/interface-common-jaxrs.jar
 %{engine_legacy_restapi_war}/WEB-INF/lib/restapi-definition.jar
@@ -650,6 +651,7 @@ base %{name}-compat.pom
 base %{name}-extensions-manager.pom
 base %{name}-root.pom
 base %{name}-utils.pom
+base %{name}-uutils.pom
 extensions-api %{name}-ovirt-engine-extensions-api-root.pom
 extensions-api %{name}-ovirt-engine-extensions-api.pom
 restapi %{name}-interface-common-jaxrs.pom

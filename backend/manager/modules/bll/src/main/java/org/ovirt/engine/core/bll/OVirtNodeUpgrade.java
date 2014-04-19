@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.ssh.SSHDialog;
+import org.ovirt.engine.core.uutils.ssh.SSHDialog;
 
 /**
  * ovirt-node upgrade.

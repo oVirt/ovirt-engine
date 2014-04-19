@@ -7,10 +7,10 @@ import java.security.KeyStore;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
-import org.ovirt.engine.core.utils.ssh.SSHClient;
-import org.ovirt.engine.core.utils.ssh.SSHDialog;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
+import org.ovirt.engine.core.uutils.ssh.SSHClient;
+import org.ovirt.engine.core.uutils.ssh.SSHDialog;
 
 /**
  * SSH dialog to be used with engine defaults

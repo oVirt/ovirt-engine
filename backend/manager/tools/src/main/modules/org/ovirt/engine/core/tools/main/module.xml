@@ -17,6 +17,7 @@
     <module name="org.ovirt.engine.core.common"/>
     <module name="org.ovirt.engine.core.compat"/>
     <module name="org.ovirt.engine.core.utils"/>
+    <module name="org.ovirt.engine.core.uutils"/>
     <module name="org.postgresql"/>
     <module name="org.snmp4j"/>
     <module name="sun.jdk"/>
