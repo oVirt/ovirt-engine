@@ -9,7 +9,6 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.db.StandaloneDataSource;
-import org.ovirt.engine.core.utils.db.DbUtils;
 
 public class ManageDomainsDAOImpl implements ManageDomainsDAO {
 
@@ -25,42 +24,33 @@ public class ManageDomainsDAOImpl implements ManageDomainsDAO {
 
     @Override
     public boolean updatePermissionsTable(String userId, String userName, String domain) throws SQLException {
-        Connection connection = null;
-        PreparedStatement prepareStatement = null;
         boolean result = false;
-        try {
+        try (Connection connection = ds.getConnection();
+                PreparedStatement prepareStatement = connection.prepareStatement(actionQuery);
+            ) {
             log.info("uuid: " + userId + " username: " + userName + " domain: " + domain);
-            connection = ds.getConnection();
-            prepareStatement = connection.prepareStatement(actionQuery);
             prepareStatement.setString(1, userId);
             prepareStatement.setString(2, userName);
             prepareStatement.setString(3, domain);
             prepareStatement.setString(4, SUPER_USER);
             result = prepareStatement.execute();
-        } finally {
-            DbUtils.closeQuietly(prepareStatement, connection);
         }
         return result;
     }
 
     @Override
     public boolean getUserHasPermissions(String userName, String domain) throws SQLException {
-        Connection connection = null;
-        PreparedStatement prepareStatement = null;
-        ResultSet resultSet = null;
-        try {
+        boolean result = false;
+        try (Connection connection = ds.getConnection();
+                PreparedStatement prepareStatement = connection.prepareStatement(selectQuery);) {
             log.info("getPermissionsForUser  username: " + userName + " domain: " + domain);
-            connection = ds.getConnection();
-            prepareStatement = connection.prepareStatement(selectQuery);
             prepareStatement.setString(1, userName);
             prepareStatement.setString(2, domain);
-            resultSet = prepareStatement.executeQuery();
-            if (resultSet.next()) {
-                return true;
+
+            try (ResultSet resultSet = prepareStatement.executeQuery()) {
+                result = resultSet.next();
             }
-        } finally {
-            DbUtils.closeQuietly(resultSet, prepareStatement, connection);
         }
-        return false;
+        return result;
     }
 }
