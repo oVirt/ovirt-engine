@@ -6,6 +6,7 @@
 		.tab {
 			padding: 5px;
 			cursor: pointer;
+			word-break: keep-all;
 		}
 
         @external obrand_active;
