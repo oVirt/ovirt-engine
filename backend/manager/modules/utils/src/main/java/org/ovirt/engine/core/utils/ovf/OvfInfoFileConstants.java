@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.utils.ovf;
 
 public class OvfInfoFileConstants {
-    public OvfInfoFileConstants() {
+    private OvfInfoFileConstants() {
     }
 
     public static final String LastUpdated = "Last Updated";
