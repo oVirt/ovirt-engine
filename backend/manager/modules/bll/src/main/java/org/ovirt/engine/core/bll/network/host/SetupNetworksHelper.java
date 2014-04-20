@@ -38,7 +38,7 @@ public class SetupNetworksHelper {
     private List<Network> modifiedNetworks = new ArrayList<Network>();
     private List<String> removedNetworks = new ArrayList<String>();
     private Map<String, VdsNetworkInterface> modifiedBonds = new HashMap<String, VdsNetworkInterface>();
-    private Set<String> removedBonds = new HashSet<String>();
+    private Map<String, VdsNetworkInterface> removedBonds = new HashMap<String, VdsNetworkInterface>();
     private List<VdsNetworkInterface> modifiedInterfaces = new ArrayList<>();
 
     /** All interface`s names that were processed by the helper. */
@@ -294,7 +294,7 @@ public class SetupNetworksHelper {
                     }
 
                     if (bondNameInOldIface != null && !modifiedBonds.containsKey(bondNameInNewIface)
-                            && !removedBonds.contains(bondNameInOldIface)) {
+                            && !removedBonds.containsKey(bondNameInOldIface)) {
                         modifiedBonds.put(bondNameInOldIface, getExistingIfaces().get(bondNameInOldIface));
                     }
                 }
@@ -593,13 +593,15 @@ public class SetupNetworksHelper {
     /**
      * Extract the bonds to be removed. If a bond was attached to slaves but it's not attached to anything then it
      * should be removed. Otherwise, no point in removing it: Either it is still a bond, or it isn't attached to any
-     * slaves either way so no need to touch it.
+     * slaves either way so no need to touch it. If a bond is removed, its labels are also cleared.
      */
     private void extractRemovedBonds() {
         for (VdsNetworkInterface iface : getExistingIfaces().values()) {
             String bondName = iface.getBondName();
             if (StringUtils.isNotBlank(bondName) && !bonds.containsKey(bondName)) {
-                removedBonds.add(bondName);
+                VdsNetworkInterface existingBond = getExistingIfaces().get(bondName);
+                existingBond.setLabels(null);
+                removedBonds.put(bondName, existingBond);
             }
         }
     }
@@ -664,7 +666,7 @@ public class SetupNetworksHelper {
         return new ArrayList<VdsNetworkInterface>(modifiedBonds.values());
     }
 
-    public Set<String> getRemovedBonds() {
+    public Map<String, VdsNetworkInterface> getRemovedBonds() {
         return removedBonds;
     }
 

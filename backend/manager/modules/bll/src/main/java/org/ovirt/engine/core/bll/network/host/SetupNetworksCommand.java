@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -107,17 +106,13 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
             return;
         }
 
-        if (!getRemovedBonds().isEmpty()) {
-            unlabelRemovedBonds();
-        }
-
         T bckndCmdParams = getParameters();
         final SetupNetworksVdsCommandParameters vdsCmdParams = new SetupNetworksVdsCommandParameters(
                 getVdsId(),
                 getNetworks(),
                 getRemovedNetworks(),
                 getBonds(),
-                getRemovedBonds(),
+                getRemovedBonds().keySet(),
                 getInterfaces());
         vdsCmdParams.setForce(bckndCmdParams.isForce());
         vdsCmdParams.setCheckConnectivity(bckndCmdParams.isCheckConnectivity());
@@ -151,15 +146,6 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         }
     }
 
-    private void unlabelRemovedBonds() {
-        Map<String, VdsNetworkInterface> nicsByName = Entities.entitiesByName(getInterfaces());
-        for (String bond : getRemovedBonds()) {
-            if (nicsByName.containsKey(bond)) {
-                nicsByName.get(bond).setLabels(null);
-            }
-        }
-    }
-
     private void updateModifiedInterfaces() {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<T>() {
 
@@ -180,7 +166,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         return getParameters().getInterfaces();
     }
 
-    private Set<String> getRemovedBonds() {
+    private Map<String, VdsNetworkInterface> getRemovedBonds() {
         return helper.getRemovedBonds();
     }
 
@@ -225,9 +211,11 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
             @Override
             public Boolean runInTransaction() {
                 // save the new network topology to DB
+                List<VdsNetworkInterface> ifaces = new ArrayList<>(getInterfaces());
+                ifaces.addAll(getRemovedBonds().values());
                 Backend.getInstance().getResourceManager()
                         .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                                new CollectHostNetworkDataVdsCommandParameters(getVds(), getInterfaces()));
+                                new CollectHostNetworkDataVdsCommandParameters(getVds(), ifaces));
 
                 // Update cluster networks (i.e. check if need to activate each new network)
                 for (Network net : getNetworks()) {

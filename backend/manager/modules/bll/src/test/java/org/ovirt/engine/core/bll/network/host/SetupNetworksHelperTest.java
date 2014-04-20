@@ -1432,7 +1432,7 @@ public class SetupNetworksHelperTest {
     private void assertBondRemoved(SetupNetworksHelper helper, String expectedBondName) {
         assertTrue(MessageFormat.format("Expected bond ''{0}'' to be removed but it wasn''t. Removed bonds: {1}",
                 expectedBondName, helper.getRemovedBonds()),
-                helper.getRemovedBonds().contains(expectedBondName));
+                helper.getRemovedBonds().containsKey(expectedBondName));
     }
 
     private void assertNetworkRemoved(SetupNetworksHelper helper, String expectedNetworkName) {
