@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -22,6 +24,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class VmInterfaceCreatingManager {
 
+    private VmInterfaceType defaultType;
     private PostVnicCreatedCallback callback;
 
     public VmInterfaceCreatingManager(PostVnicCreatedCallback callback) {
@@ -38,8 +41,11 @@ public class VmInterfaceCreatingManager {
         void queryFailed();
     }
 
-    public void updateVnics(final Guid vmId, final Iterable<VnicInstanceType> vnicsWithProfiles, final boolean isAddingNewVm) {
-        AsyncQuery getVmNicsQuery = new AsyncQuery();
+    public void updateVnics(final Guid vmId,
+            final Iterable<VnicInstanceType> vnicsWithProfiles,
+            final UnitVmModel unitVmModel) {
+
+        final AsyncQuery getVmNicsQuery = new AsyncQuery();
         getVmNicsQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object result) {
@@ -67,6 +73,7 @@ public class VmInterfaceCreatingManager {
                     String vnicName = editedVnic.getName();
                     VmNetworkInterface existingVnic = existingVnicForName.get(vnicName);
                     if (existingVnic == null) {
+                        editedVnic.setType(defaultType == null ? null : defaultType.getValue());
                         createVnicParameters.add(new AddVmInterfaceParameters(vmId, editedVnic));
                     } else {
                         vnicsEncountered.add(vnicName);
@@ -106,7 +113,7 @@ public class VmInterfaceCreatingManager {
 
                                     @Override
                                     public void executed(FrontendActionAsyncResult result) {
-                                        if (isAddingNewVm) {
+                                        if (unitVmModel.getIsNew()) {
                                             VmOperationParameterBase reorderParams = new VmOperationParameterBase(vmId);
                                             Frontend.getInstance().runAction(VdcActionType.ReorderVmNics, reorderParams, new IFrontendActionAsyncCallback() {
                                                 public void executed(FrontendActionAsyncResult result) {
@@ -124,7 +131,17 @@ public class VmInterfaceCreatingManager {
                 }, this);
             }
         };
-        AsyncDataProvider.getVmNicList(getVmNicsQuery, vmId);
+
+        AsyncQuery osInfoQuery = new AsyncQuery(new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                defaultType = AsyncDataProvider.getDefaultNicType((Collection<VmInterfaceType>) returnValue);
+                AsyncDataProvider.getVmNicList(getVmNicsQuery, vmId);
+            }
+        });
+        AsyncDataProvider.getNicTypeList(unitVmModel.getOSType().getSelectedItem(),
+                unitVmModel.getDataCenterWithClustersList().getSelectedItem().getCluster().getcompatibility_version(),
+                osInfoQuery);
     }
 
 }

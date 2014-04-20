@@ -102,7 +102,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void initSelectedType() {
-        getNicType().setSelectedItem(AsyncDataProvider.getDefaultNicType());
+        getNicType().setSelectedItem(AsyncDataProvider.getDefaultNicType(getNicType().getItems()));
     }
 
     @Override

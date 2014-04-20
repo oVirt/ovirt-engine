@@ -3108,9 +3108,15 @@ public final class AsyncDataProvider {
                 asyncQuery);
     }
 
-    public static VmInterfaceType getDefaultNicType()
+    public static VmInterfaceType getDefaultNicType(Collection<VmInterfaceType> items)
     {
-        return VmInterfaceType.pv;
+        if (items == null || items.isEmpty()) {
+            return null;
+        } else if (items.contains(VmInterfaceType.pv)) {
+            return VmInterfaceType.pv;
+        } else {
+            return items.iterator().next();
+        }
     }
 
     public static boolean isVersionMatchStorageType(Version version, boolean isLocalType) {
