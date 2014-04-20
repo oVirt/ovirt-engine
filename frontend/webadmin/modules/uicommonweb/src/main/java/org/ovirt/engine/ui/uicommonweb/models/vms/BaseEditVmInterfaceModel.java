@@ -101,16 +101,16 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void initSelectedType() {
-        Integer selectedNicType = getNic().getType();
+        VmInterfaceType selectedNicType = VmInterfaceType.forValue(getNic().getType());
         ArrayList<VmInterfaceType> nicTypes = (ArrayList<VmInterfaceType>) getNicType().getItems();
         nicTypes = nicTypes == null ? new ArrayList<VmInterfaceType>() : nicTypes;
 
-        if (selectedNicType == null || !nicTypes.contains(VmInterfaceType.forValue(selectedNicType)))
+        if (selectedNicType == null || !nicTypes.contains(selectedNicType))
         {
-            selectedNicType = AsyncDataProvider.getDefaultNicType().getValue();
+            selectedNicType = AsyncDataProvider.getDefaultNicType(nicTypes);
         }
 
-        getNicType().setSelectedItem(VmInterfaceType.forValue(selectedNicType));
+        getNicType().setSelectedItem(selectedNicType);
     }
 
     @Override
