@@ -27,11 +27,16 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDAO;
 import org.ovirt.engine.core.utils.JsonHelper;
@@ -45,6 +50,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
     private LinkedList<Pair<StorageDomainOvfInfo, DiskImage>> domainOvfStoresInfoForUpdate = new LinkedList<>();
     private StorageDomain storageDomain;
     private int ovfDiskCount;
+    private String postUpdateDescription;
 
     public ProcessOvfUpdateForStorageDomainCommand(T parameters) {
         super(parameters);
@@ -103,19 +109,46 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
                         getParameters().getStoragePoolId());
     }
 
-    private Map<String, Object> buildOvfGeneralInfo(List<Guid> vmAndTemplatesIds, Date updateDate) throws IOException {
-        Map<String, Object> map = new HashMap<>();
-        map.put(OvfInfoFileConstants.LastUpdated, updateDate.toString());
-        map.put(OvfInfoFileConstants.Domains, Arrays.asList(getParameters().getStorageDomainId()));
-        map.put(OvfInfoFileConstants.ContainedOvfIds, vmAndTemplatesIds);
-        return map;
+    private String getPostUpdateOvfStoreDescription(Date updateDate, long size) {
+        if (postUpdateDescription == null) {
+            postUpdateDescription = generateOvfStoreDescription(updateDate, true, size);
+        }
+
+        return postUpdateDescription;
+    }
+
+    private String generateOvfStoreDescription(Date updateDate, boolean isUpdated, Long size) {
+        Map<String, Object> description = new HashMap<>();
+        description.put(OvfInfoFileConstants.DiskDescription, OvfInfoFileConstants.OvfStoreDescriptionLabel);
+        description.put(OvfInfoFileConstants.Domains, Arrays.asList(getParameters().getStorageDomainId()));
+        description.put(OvfInfoFileConstants.IsUpdated, isUpdated);
+        description.put(OvfInfoFileConstants.LastUpdated, updateDate.toString());
+        if (size != null) {
+            description.put(OvfInfoFileConstants.Size, size);
+        }
+        return buildJson(description, false);
+    }
+
+    private String generateInfoFileData(Date updateDate) {
+        Map<String, Object> data = new HashMap<>();
+        data.put(OvfInfoFileConstants.LastUpdated, updateDate.toString());
+        data.put(OvfInfoFileConstants.Domains, Arrays.asList(getParameters().getStorageDomainId()));
+        return buildJson(data, true);
+    }
+
+    private String buildJson(Map<String, Object> map, boolean prettyPrint) {
+        try {
+            return JsonHelper.mapToJson(map, prettyPrint);
+        } catch (IOException e) {
+            throw new RuntimeException("Exception while generating json containing ovf store info", e);
+        }
     }
 
     private byte[] buildOvfInfoFileByteArray(List<Guid> vmAndTemplatesIds, Date updateDate) {
         ByteArrayOutputStream bufferedOutputStream = new ByteArrayOutputStream();
 
         try (InMemoryTar inMemoryTar = new InMemoryTar(bufferedOutputStream)) {
-            inMemoryTar.addTarEntry(JsonHelper.mapToJson(buildOvfGeneralInfo(vmAndTemplatesIds, updateDate)).getBytes(),
+            inMemoryTar.addTarEntry(generateInfoFileData(updateDate).getBytes(),
                     "info.json");
             int i = 0;
             while (i < vmAndTemplatesIds.size()) {
@@ -186,35 +219,76 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
         }
     }
 
+    private void setOvfVolumeDescription(Guid storagePoolId,
+            Guid storageDomainId,
+            Guid diskId,
+            Guid volumeId,
+            String description) {
+
+            SetVolumeDescriptionVDSCommandParameters vdsCommandParameters =
+                    new SetVolumeDescriptionVDSCommandParameters(storagePoolId, storageDomainId,
+                            diskId, volumeId, description);
+        try {
+            runVdsCommand(VDSCommandType.SetVolumeDescription, vdsCommandParameters);
+        } catch (VdcBLLException e) {
+            AuditLogableBase auditLogableBase = new AuditLogableBase();
+            auditLogableBase.addCustomValue("DataCenterName", getStoragePool().getName());
+            auditLogableBase.addCustomValue("StorageDomainName", storageDomain.getName());
+            auditLogableBase.addCustomValue("DiskId", diskId.toString());
+            AuditLogDirector.log(auditLogableBase, AuditLogType.UPDATE_DESCRIPTION_FOR_OVF_STORE_FAILED);
+            throw e;
+        }
+    }
+
     private boolean performOvfUpdateForDomain(byte[] ovfData,
             Date updateDate,
             StorageDomainOvfInfo storageDomainOvfInfo,
             DiskImage ovfDisk,
             List<Guid> vmAndTemplatesIds) {
-        ByteArrayInputStream byteArrayInputStream =
-                new ByteArrayInputStream(ovfData);
-
-        UploadStreamParameters uploadStreamParameters =
-                new UploadStreamParameters(ovfDisk.getStoragePoolId(), ovfDisk.getStorageIds().get(0),
-                        ovfDisk.getId(), ovfDisk.getImageId(), byteArrayInputStream,
-                        Long.valueOf(ovfData.length));
-        uploadStreamParameters.setParentCommand(getActionType());
-        uploadStreamParameters.setParentParameters(getParameters());
+        Guid storagePoolId = ovfDisk.getStoragePoolId();
+        Guid storageDomainId = ovfDisk.getStorageIds().get(0);
+        Guid diskId = ovfDisk.getId();
+        Guid volumeId = ovfDisk.getImageId();
 
         storageDomainOvfInfo.setStoredOvfIds(null);
-        getStorageDomainOvfInfoDao().update(storageDomainOvfInfo);
 
-        VdcReturnValueBase vdcReturnValueBase =
-                Backend.getInstance().runInternalAction(VdcActionType.UploadStream, uploadStreamParameters);
-        if (vdcReturnValueBase.getSucceeded()) {
-            storageDomainOvfInfo.setStatus(StorageDomainOvfInfoStatus.UPDATED);
-            storageDomainOvfInfo.setStoredOvfIds(vmAndTemplatesIds);
-            storageDomainOvfInfo.setLastUpdated(updateDate);
+        try {
+            setOvfVolumeDescription(storagePoolId,
+                    storageDomainId,
+                    diskId,
+                    volumeId,
+                    generateOvfStoreDescription(storageDomainOvfInfo.getLastUpdated(), false, null));
+
             getStorageDomainOvfInfoDao().update(storageDomainOvfInfo);
-            getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValueBase.getInternalVdsmTaskIdList());
+
+            ByteArrayInputStream byteArrayInputStream =
+                    new ByteArrayInputStream(ovfData);
+
+            Long size = Long.valueOf(ovfData.length);
+            UploadStreamParameters uploadStreamParameters =
+                    new UploadStreamParameters(storagePoolId, storageDomainId,
+                            diskId, volumeId, byteArrayInputStream,
+                            size);
+            uploadStreamParameters.setParentCommand(getActionType());
+            uploadStreamParameters.setParentParameters(getParameters());
+
+            VdcReturnValueBase vdcReturnValueBase =
+                    Backend.getInstance().runInternalAction(VdcActionType.UploadStream, uploadStreamParameters);
+            if (vdcReturnValueBase.getSucceeded()) {
+                storageDomainOvfInfo.setStatus(StorageDomainOvfInfoStatus.UPDATED);
+                storageDomainOvfInfo.setStoredOvfIds(vmAndTemplatesIds);
+                storageDomainOvfInfo.setLastUpdated(updateDate);
+                setOvfVolumeDescription(storagePoolId, storageDomainId,
+                        diskId, volumeId, getPostUpdateOvfStoreDescription(updateDate, size));
+                getStorageDomainOvfInfoDao().update(storageDomainOvfInfo);
+                getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValueBase.getInternalVdsmTaskIdList());
+                return true;
+            }
+        } catch (VdcBLLException e) {
+            log.warnFormat("failed to update domain {0} ovf store disk {1}", storageDomainId, diskId);
         }
 
-        return vdcReturnValueBase.getSucceeded();
+        return false;
     }
 
     @Override

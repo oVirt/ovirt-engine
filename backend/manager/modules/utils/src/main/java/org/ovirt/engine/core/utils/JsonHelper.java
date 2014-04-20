@@ -12,14 +12,21 @@ public class JsonHelper {
     private JsonHelper() {
     }
 
-    public static String mapToJson(Map<String, Object> input)
+    public static String mapToJson(Map<String, Object> input, boolean prettyPrint)
             throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = new JsonFactory();
         StringWriter writer = new StringWriter();
         JsonGenerator generator = factory.createJsonGenerator(writer);
-        generator.useDefaultPrettyPrinter();
+        if (prettyPrint) {
+            generator.useDefaultPrettyPrinter();
+        }
         mapper.writeValue(generator, input);
         return writer.toString();
+    }
+
+    public static String mapToJson(Map<String, Object> input)
+            throws IOException {
+        return mapToJson(input, true);
     }
 }

@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
+import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -70,8 +71,8 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends StorageDomainParam
         DiskImage mNewCreatedDiskImage = new DiskImage();
         mNewCreatedDiskImage.setDiskInterface(DiskInterface.IDE);
         mNewCreatedDiskImage.setWipeAfterDelete(false);
-        mNewCreatedDiskImage.setDiskAlias("OVF_STORE");
-        mNewCreatedDiskImage.setDiskDescription("OVF_STORE");
+        mNewCreatedDiskImage.setDiskAlias(OvfInfoFileConstants.OvfStoreDescriptionLabel);
+        mNewCreatedDiskImage.setDiskDescription(OvfInfoFileConstants.OvfStoreDescriptionLabel);
         mNewCreatedDiskImage.setShareable(true);
         mNewCreatedDiskImage.setStorageIds(new ArrayList<>(Arrays.asList(domainId)));
         mNewCreatedDiskImage.setSize(SizeConverter.BYTES_IN_MB * 128);
