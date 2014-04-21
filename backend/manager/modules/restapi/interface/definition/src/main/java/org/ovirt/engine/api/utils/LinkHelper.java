@@ -27,6 +27,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.ActionsBuilder;
 import org.ovirt.engine.api.model.AffinityGroup;
@@ -926,13 +927,7 @@ public class LinkHelper {
      * @return the combined head and tail
      */
     public static String combine(String head, String tail) {
-        if (head.endsWith("/")) {
-            head = head.substring(0, head.length() - 1);
-        }
-        if (tail.startsWith("/")) {
-            tail = tail.substring(1);
-        }
-        return head + "/" + tail;
+        return StringUtils.removeEnd(head, "/") + "/" + StringUtils.removeStart(tail, "/");
     }
 
     /**
