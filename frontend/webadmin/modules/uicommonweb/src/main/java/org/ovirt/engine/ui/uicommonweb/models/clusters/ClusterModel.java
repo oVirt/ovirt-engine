@@ -47,7 +47,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class ClusterModel extends EntityModel
+public class ClusterModel extends EntityModel<VDSGroup>
 {
     private Map<Guid, PolicyUnit> policyUnitMap;
     private ListModel<ClusterPolicy> clusterPolicy;
@@ -104,19 +104,6 @@ public class ClusterModel extends EntityModel
     public void setDefaultMemoryOvercommit(int value)
     {
         privateDefaultMemoryOvercommit = value;
-    }
-
-    private VDSGroup privateEntity;
-
-    @Override
-    public VDSGroup getEntity()
-    {
-        return privateEntity;
-    }
-
-    public void setEntity(VDSGroup value)
-    {
-        privateEntity = value;
     }
 
     private boolean privateIsEdit;
@@ -1396,9 +1383,9 @@ public class ClusterModel extends EntityModel
     }
 
     private void updateMigrateOnError() {
-        ServerCpu cpu = (ServerCpu) getCPU().getSelectedItem();
+        ServerCpu cpu = getCPU().getSelectedItem();
 
-        Version version = (Version) getVersion().getSelectedItem();
+        Version version = getVersion().getSelectedItem();
 
         if (version == null) {
             return;
@@ -1443,7 +1430,7 @@ public class ClusterModel extends EntityModel
             }
 
             ArchitectureType oldSelectedArch =
-                    (ArchitectureType) clusterModel.getArchitecture().getSelectedItem();
+                    clusterModel.getArchitecture().getSelectedItem();
 
             if (oldSelectedArch != null) {
                 getArchitecture().setSelectedItem(oldSelectedArch);

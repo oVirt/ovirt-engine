@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -33,11 +38,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 public abstract class RunOnceModel extends Model
 {
@@ -739,7 +739,7 @@ public abstract class RunOnceModel extends Model
             params.setVmInit(getVmInit().buildCloudInitParameters(this));
         }
 
-        EntityModel<? extends DisplayType> displayProtocolSelectedItem = (EntityModel<? extends DisplayType>) getDisplayProtocol().getSelectedItem();
+        EntityModel<? extends DisplayType> displayProtocolSelectedItem = getDisplayProtocol().getSelectedItem();
         params.setUseVnc(displayProtocolSelectedItem.getEntity() == DisplayType.vnc);
         if (getDisplayConsole_Vnc_IsSelected().getEntity()
                 || getDisplayConsole_Spice_IsSelected().getEntity())
@@ -1080,6 +1080,7 @@ public abstract class RunOnceModel extends Model
     @Override
     public void executeCommand(UICommand command)
     {
+        super.executeCommand(command);
         if (command == runOnceCommand)
         {
             if (validate()) {

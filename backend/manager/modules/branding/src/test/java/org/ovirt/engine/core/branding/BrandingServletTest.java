@@ -42,7 +42,6 @@ public class BrandingServletTest {
     ServletOutputStream mockResponseOutputStream;
 
     BrandingServlet testServlet;
-    File testFile;
 
     @Before
     public void setUp() throws Exception {
@@ -52,9 +51,6 @@ public class BrandingServletTest {
         when(mockFile.getAbsolutePath()).thenReturn("/abs/test"); //$NON-NLS-1$
         when(mockRequest.getPathInfo()).thenReturn("/test/something.txt"); //$NON-NLS-1$
         when(mockResponse.getOutputStream()).thenReturn(mockResponseOutputStream);
-        testFile = new File(this.getClass().getClassLoader().
-                getResource("./org/ovirt/engine/core/branding/BrandingServletTest.class") //$NON-NLS-1$
-                .toURI().getPath());
     }
 
     @Test

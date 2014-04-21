@@ -54,7 +54,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private TModel privateModel;
-    private HashMap<Guid, List<VmTemplate>> baseTemplateToSubTemplates = new HashMap<Guid, List<VmTemplate>>();
+    private final HashMap<Guid, List<VmTemplate>> baseTemplateToSubTemplates = new HashMap<Guid, List<VmTemplate>>();
 
     public TModel getModel() {
         return privateModel;
@@ -147,7 +147,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             }
         }
 
-        for (List<VmTemplate> subversions : (Collection<List<VmTemplate>>) baseTemplateToSubTemplates.values()) {
+        for (List<VmTemplate> subversions : baseTemplateToSubTemplates.values()) {
             Collections.sort(subversions, new Comparator<VmTemplate>() {
                 @Override
                 public int compare(VmTemplate o1, VmTemplate o2) {
@@ -928,7 +928,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         int numOfSockets = extractIntFromListModel(getModel().getNumOfSockets());
         int totalCpuCores = getTotalCpuCores();
 
-        if (numOfSockets == 0 || numOfSockets == 0) {
+        if (numOfSockets == 0) {
             return;
         }
 
