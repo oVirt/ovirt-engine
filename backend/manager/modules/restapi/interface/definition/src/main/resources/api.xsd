@@ -335,6 +335,7 @@
           <xs:element ref="disk" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="host_nic" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="host_numa_node" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="nic" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="brick" minOccurs="0" maxOccurs="1"/>
@@ -469,6 +470,7 @@
       <xs:element name="cpu_tune" type="CpuTune" minOccurs="0" maxOccurs="1"/>
       <xs:element name="mode" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="architecture" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="cores" type="Cores" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
     <xs:attribute name="id" type="xs:string"/>
   </xs:complexType>
@@ -1564,6 +1566,8 @@
           <xs:element name="hosted_engine" type="HostedEngine" minOccurs="0" maxOccurs="1"/>
           <xs:element name="kdump_status" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="selinux" type="SELinux" minOccurs="0" maxOccurs="1" />
+	  <xs:element name="auto_numa_status" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="numa_supported" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2896,6 +2900,7 @@
           <xs:element name="use_latest_template_version" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="serial_number" minOccurs="0" maxOccurs="1" />
           <xs:element name="next_run_configuration_exists" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="numa_tune_mode" type="xs:string" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -4338,4 +4343,112 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
+  <!-- NumaNodes -->
+
+  <xs:element name="host_numa_node" type="NumaNode"/>
+
+  <xs:element name="host_numa_nodes" type="NumaNodes"/>
+
+  <xs:element name="vm_numa_node" type="VirtualNumaNode"/>
+
+  <xs:element name="vm_numa_nodes" type="VirtualNumaNodes"/>
+
+  <xs:complexType name="NumaNode">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="index" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="memory" type="xs:long" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="cpu" type="CPU" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="node_distance" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="NumaNodes">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="host_numa_node" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="NumaNodes"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="VirtualNumaNode">
+    <xs:complexContent>
+      <xs:extension base="NumaNode">
+        <xs:sequence>
+          <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="numa_node_pins" type="NumaNodePins" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="VirtualNumaNodes">
+    <xs:complexContent>
+      <xs:extension base="NumaNodes">
+        <xs:sequence>
+          <xs:element ref="vm_numa_node" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="VirtualNumaNodes"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="numa_node_pins" type="NumaNodePins"/>
+
+  <xs:element name="numa_node_pin" type="NumaNodePin"/>
+
+  <xs:element name="cores" type="Cores"/>
+
+  <xs:element name="core" type="Core"/>
+
+  <xs:complexType name="NumaNodePins">
+    <xs:sequence>
+      <xs:element ref="numa_node_pin" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="NumaNodePin">
+    <xs:sequence>
+      <xs:element ref="host_numa_node" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute name="pinned" type="xs:boolean" use="optional">
+      <xs:annotation>
+        <xs:appinfo>
+          <jaxb:property generateIsSetMethod="false"/>
+        </xs:appinfo>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="index" type="xs:int" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="Cores">
+    <xs:sequence>
+      <xs:element ref="core" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Core">
+    <xs:attribute name="index" type="xs:int" use="required"/>
+    <xs:attribute name="socket" type="xs:int" use="optional"/>
+  </xs:complexType>
+
 </xs:schema>

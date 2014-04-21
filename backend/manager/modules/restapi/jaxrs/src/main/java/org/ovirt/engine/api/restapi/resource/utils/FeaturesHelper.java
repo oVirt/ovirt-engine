@@ -85,6 +85,7 @@ public class FeaturesHelper {
             addFeatureRemoveDiskFromVmSnapshot(features);
             addFeatureDiskSnapshotsResourceInStorageDomainContext(features);
             addInstanceTypesFeature(features);
+            addNumaNodesFeature(features);
         }
         return features;
     }
@@ -464,6 +465,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Instance Types");
         feature.setDescription("Add/modify/remove instance types.");
+        features.getFeature().add(feature);
+    }
+
+    private void addNumaNodesFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("NumaNodes");
+        feature.setDescription("Add/modify/remove numanodes.");
         features.getFeature().add(feature);
     }
 }

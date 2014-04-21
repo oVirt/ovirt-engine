@@ -9,6 +9,7 @@ import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Agents;
+import org.ovirt.engine.api.model.AutoNumaStatus;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuTopology;
@@ -40,6 +41,7 @@ import org.ovirt.engine.api.model.SELinux;
 import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
+import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -427,6 +429,8 @@ public class HostMapper {
 
         model.setKdumpStatus(map(entity.getKdumpStatus(), null));
         model.setSelinux(map(entity, (SELinux) null));
+        model.setAutoNumaStatus(map(entity.getAutoNumaBalancing(), null));
+        model.setNumaSupported(entity.isNumaSupport());
 
         return model;
     }
@@ -768,6 +772,27 @@ public class HostMapper {
                     break;
                 default:
                     break;
+            }
+        }
+        return result;
+    }
+
+    @Mapping(from = AutoNumaBalanceStatus.class, to = String.class)
+    public static String map(AutoNumaBalanceStatus autoNumaStatus, String template) {
+        String result = null;
+        if (autoNumaStatus != null) {
+            switch (autoNumaStatus) {
+            case DISABLE:
+                result = AutoNumaStatus.DISABLE.value();
+                break;
+            case ENABLE:
+                result = AutoNumaStatus.ENABLE.value();
+                break;
+            case UNKNOWN:
+                result = AutoNumaStatus.UNKNOWN.value();
+                break;
+            default:
+                break;
             }
         }
         return result;

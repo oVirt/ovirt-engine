@@ -162,6 +162,9 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
     @Path("disks")
     public VmDisksResource getDisksResource();
 
+    @Path("numanodes")
+    public VmNumaNodesResource getVirtualNumaNodesResource();
+
     @Path("nics")
     public VmNicsResource getNicsResource();
 

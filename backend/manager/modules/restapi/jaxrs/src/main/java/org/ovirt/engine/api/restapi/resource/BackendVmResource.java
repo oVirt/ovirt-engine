@@ -37,6 +37,7 @@ import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
+import org.ovirt.engine.api.resource.VmNumaNodesResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmSessionsResource;
@@ -603,5 +604,10 @@ public class BackendVmResource extends
                         new SetHaMaintenanceParameters(entity.getRunOnVds(),
                                 HaMaintenanceMode.GLOBAL, action.isMaintenanceEnabled()),
                         action);
+    }
+
+    @Override
+    public VmNumaNodesResource getVirtualNumaNodesResource() {
+        return inject(new BackendVmNumaNodesResource(guid));
     }
 }

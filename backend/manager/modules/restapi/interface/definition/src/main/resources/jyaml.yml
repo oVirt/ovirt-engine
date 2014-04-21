@@ -92,6 +92,14 @@ transfers:
   vmpools: org.ovirt.engine.api.model.VmPools
   vms: org.ovirt.engine.api.model.VMs
   volume_group: org.ovirt.engine.api.model.VolumeGroup
+  numanode: org.ovirt.engine.api.model.NumaNode
+  numanodes: org.ovirt.engine.api.model.NumaNodes
+  virtual_numanode: org.ovirt.engine.api.model.VirtualNumaNode
+  virtual_numanodes: org.ovirt.engine.api.model.VirtualNumaNodes
+  numa_node_pin: org.ovirt.engine.api.model.NumaNodePin
+  numa_node_pins: org.ovirt.engine.api.model.NumaNodePins
+  core: org.ovirt.engine.api.model.Core
+  cores: org.ovirt.engine.api.model.Cores
 
 handlers:
   org.ovirt.engine.api.model.Action: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
@@ -127,6 +135,14 @@ handlers:
   org.ovirt.engine.api.model.Host: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.HostNIC: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.HostNics: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.NumaNode: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.NumaNodes: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.VirtualNumaNode: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.VirtualNumaNodes: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.NumaNodePin: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.NumaNodePins: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.Core: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.Cores: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Hosts: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.HostStorage: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.IP: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper

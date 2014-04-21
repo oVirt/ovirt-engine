@@ -101,6 +101,7 @@ actions:
           vm.serial_number.policy: xs:string
           vm.serial_number.value: xs:string
           vm.bios.boot_menu.enabled: xs:boolean
+          vm.numa_tune_mode: xs:string
         description: update the virtual machine in the system for the given virtual machine id with the values specified in the request
     urlparams: {}
     headers:
@@ -187,6 +188,7 @@ actions:
           vm.serial_number.policy: xs:string
           vm.serial_number.value: xs:string
           vm.bios.boot_menu.enabled: xs:boolean
+          vm.numa_tune_mode: xs:string
         description: add a virtual machine to the system from scratch
       # the following signature is for clone VM from a Snapshot - requires the Snapshot ID
       - mandatoryArguments: {vm.name: 'xs:string', vm.template.id|name: 'xs:string', vm.cluster.id|name: 'xs:string',
@@ -240,6 +242,7 @@ actions:
           vm.serial_number.policy: xs:string
           vm.serial_number.value: xs:string
           vm.bios.boot_menu.enabled: xs:boolean
+          vm.numa_tune_mode: xs:string
         description: add a virtual machine to the system by cloning from a snapshot
       # the following signature is for adding VM from a configuration - requires the configuration type and the configuration data
       - mandatoryArguments: {vm.initialization.configuration.type: 'xs:string', vm.initialization.configuration.data: 'xs:string'}
@@ -295,6 +298,7 @@ actions:
                 vm.serial_number.policy: xs:string
                 vm.serial_number.value: xs:string
                 vm.bios.boot_menu.enabled: xs:boolean
+                vm.numa_tune_mode: xs:string
         description: add a virtual machine to the system from a configuration - requires the configuration type and the configuration data
     urlparams: {}
     headers:
@@ -5117,4 +5121,98 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
+- name: /hosts/{host:id}/numanodes|rel=get
+  description: get the list of NUMA nodes for the host
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /hosts/{host:id}/numanodes/{numanode:id}|rel=get
+  description: get the details of the specified NUMA node for the host
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /hosts/{host:id}/numanodes/{numanode:id}/statistics|rel=get
+  description: get the statistics for the specified NUMA node of the host
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /hosts/{host:id}/numanodes/{numanode:id}/statistics/{statistic:id}|rel=get
+  description: get the details of the specified statistics for the specified NUMA node of the host
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /vms/{vm:id}/numanodes|rel=get
+  description: get the list of virtual NUMA nodes for the vm
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /vms/{vm:id}/numanodes/{numanode:id}|rel=get
+  description: get the details of the specified virtual NUMA node for the vm
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /vms/{vm:id}/numanodes/{numanode:id}|rel=delete
+  description: delete the specified virtual NUMA node for the vm
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /vms/{vm:id}/numanodes/{numanode:id}|rel=update
+  description: update the specified virtual NUMA node for the vm
+  request:
+    body:
+      parameterType: VirtualNumaNode
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:
+          vm_numa_node.index: xs:int
+          vm_numa_node.memory: xs:string
+          vm_numa_node.cpu.cores.core--COLLECTION: {core.index: 'xs:int'}
+          vm_numa_node.numa_node_pins.numa_node_pin--COLLECTION: {numa_node_pin.index: 'xs:int'}
+        description: update the specified virtual NUMA node for the vm
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /vms/{vm:id}/numanodes|rel=add
+  description: add a new virtual NUMA node for the vm
+  request:
+    body:
+      parameterType: VirtualNumaNode
+      signatures:
+      - mandatoryArguments: {vm_numa_node.index: 'xs:int', vm_numa_node.memory: 'xs:string', vm_numa_node.cpu.cores.core--COLLECTION: {core.index: 'xs:int'}}
+        optionalArguments:
+          vm_numa_node.numa_node_pins.numa_node_pin--COLLECTION: {numa_node_pin.index: 'xs:int'}
+        description: add a new virtual NUMA node for the vm
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
 

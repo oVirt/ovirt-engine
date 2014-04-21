@@ -44,6 +44,7 @@ import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.NumaTuneMode;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.Payload;
@@ -323,6 +324,13 @@ public class VmMapper {
             SerialNumberMapper.copySerialNumber(vm.getSerialNumber(), staticVm);
         }
 
+        if (vm.isSetNumaTuneMode()) {
+            NumaTuneMode mode = NumaTuneMode.fromValue(vm.getNumaTuneMode());
+            if (mode != null) {
+                staticVm.setNumaTuneMode(map(mode, null));
+            }
+        }
+
         return staticVm;
     }
 
@@ -567,6 +575,7 @@ public class VmMapper {
             model.setSerialNumber(SerialNumberMapper.map(entity.getStaticData(), null));
         }
         model.setNextRunConfigurationExists(entity.isNextRunConfigurationExists());
+        model.setNumaTuneMode(map(entity.getNumaTuneMode(), null));
         return model;
     }
 
@@ -1501,5 +1510,37 @@ public class VmMapper {
             sessions.getSessions().add(guestSession);
         }
         return sessions;
+    }
+
+    @Mapping(from = NumaTuneMode.class, to = org.ovirt.engine.core.common.businessentities.NumaTuneMode.class)
+    public static org.ovirt.engine.core.common.businessentities.NumaTuneMode map(NumaTuneMode mode,
+                                      org.ovirt.engine.core.common.businessentities.NumaTuneMode incoming) {
+        switch (mode) {
+        case STRICT:
+            return org.ovirt.engine.core.common.businessentities.NumaTuneMode.STRICT;
+        case INTERLEAVE:
+            return org.ovirt.engine.core.common.businessentities.NumaTuneMode.INTERLEAVE;
+        case PREFERRED:
+            return org.ovirt.engine.core.common.businessentities.NumaTuneMode.PREFERRED;
+        default:
+            return null;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.NumaTuneMode.class, to = String.class)
+    public static String map(org.ovirt.engine.core.common.businessentities.NumaTuneMode mode, String incoming) {
+        if (mode == null) {
+            return null;
+        }
+        switch (mode) {
+        case STRICT:
+            return NumaTuneMode.STRICT.value();
+        case INTERLEAVE:
+            return NumaTuneMode.INTERLEAVE.value();
+        case PREFERRED:
+            return NumaTuneMode.PREFERRED.value();
+        default:
+            return null;
+        }
     }
 }

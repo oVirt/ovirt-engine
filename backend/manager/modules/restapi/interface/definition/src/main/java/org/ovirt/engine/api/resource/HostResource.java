@@ -88,6 +88,9 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     @Path("forceselectspm")
     public Response forceSelectSPM(Action action);
 
+    @Path("numanodes")
+    public HostNumaNodesResource getHostNumaNodesResource();
+
     @Path("nics")
     public HostNicsResource getHostNicsResource();
 

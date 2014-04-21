@@ -22,6 +22,7 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
+import org.ovirt.engine.api.resource.HostNumaNodesResource;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostStorageResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
@@ -324,6 +325,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         params.setVdsId(guid);
         params.setStoragePoolId(getEntity().getStoragePoolId());
         return doAction(VdcActionType.FenceVdsManualy, params, action);
+    }
+
+    @Override
+    public HostNumaNodesResource getHostNumaNodesResource() {
+        return inject(new BackendHostNumaNodesResource(id));
     }
 
     @Override

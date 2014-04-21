@@ -59,6 +59,7 @@ import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.LinkCapabilities;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.model.NumaNode;
 import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.Permission;
@@ -80,6 +81,7 @@ import org.ovirt.engine.api.model.Url;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VersionCaps;
+import org.ovirt.engine.api.model.VirtualNumaNode;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.model.WatchDog;
@@ -123,6 +125,8 @@ import org.ovirt.engine.api.resource.HostHookResource;
 import org.ovirt.engine.api.resource.HostHooksResource;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
+import org.ovirt.engine.api.resource.HostNumaNodeResource;
+import org.ovirt.engine.api.resource.HostNumaNodesResource;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostStorageResource;
 import org.ovirt.engine.api.resource.HostsResource;
@@ -173,6 +177,8 @@ import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmNicResource;
+import org.ovirt.engine.api.resource.VmNumaNodeResource;
+import org.ovirt.engine.api.resource.VmNumaNodesResource;
 import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.api.resource.VmPoolsResource;
 import org.ovirt.engine.api.resource.VmReportedDeviceResource;
@@ -265,6 +271,9 @@ public class LinkHelper {
         map = new ParentToCollectionMap(HostNicResource.class, HostNicsResource.class, Host.class);
         TYPES.put(HostNIC.class, map);
 
+        map = new ParentToCollectionMap(HostNumaNodeResource.class, HostNumaNodesResource.class, Host.class);
+        TYPES.put(NumaNode.class, map);
+
         map = new ParentToCollectionMap(HostHookResource.class, HostHooksResource.class, Host.class);
         TYPES.put(Hook.class, map);
 
@@ -298,6 +307,9 @@ public class LinkHelper {
         map.add(ReadOnlyDeviceResource.class, ReadOnlyDevicesResource.class, Template.class);
         map.add(VmNicResource.class, DevicesResource.class, VM.class);
         TYPES.put(NIC.class, map);
+
+        map = new ParentToCollectionMap(VmNumaNodeResource.class, VmNumaNodesResource.class, VM.class);
+        TYPES.put(VirtualNumaNode.class, map);
 
         map = new ParentToCollectionMap(PermitResource.class, PermitsResource.class, Role.class);
         TYPES.put(Permit.class, map);
@@ -358,6 +370,7 @@ public class LinkHelper {
         map = new ParentToCollectionMap(StatisticResource.class, StatisticsResource.class, Disk.class);
         map.add(StatisticResource.class, StatisticsResource.class, Host.class);
         map.add(StatisticResource.class, StatisticsResource.class, HostNIC.class);
+        map.add(StatisticResource.class, StatisticsResource.class, NumaNode.class);
         map.add(StatisticResource.class, StatisticsResource.class, NIC.class);
         map.add(StatisticResource.class, StatisticsResource.class, VM.class);
         map.add(StatisticResource.class, StatisticsResource.class, GlusterBrick.class);

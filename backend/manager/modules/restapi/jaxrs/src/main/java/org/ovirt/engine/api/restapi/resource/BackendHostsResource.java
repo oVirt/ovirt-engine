@@ -38,7 +38,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         HostsResource {
 
     private static final String DEFAULT_NAME = "Default";
-    static final String[] SUB_COLLECTIONS = { "storage", "nics", "tags", "permissions", "statistics", "hooks" };
+    static final String[] SUB_COLLECTIONS = { "storage", "nics", "numanodes", "tags", "permissions", "statistics", "hooks" };
     static final String GLUSTERONLY_MODE_COLLECTIONS_TO_HIDE = "storage";
 
     public BackendHostsResource() {
