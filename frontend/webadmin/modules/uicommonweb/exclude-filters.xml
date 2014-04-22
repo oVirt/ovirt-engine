@@ -43,4 +43,12 @@
         <Bug pattern="BC_BAD_CAST_TO_ABSTRACT_COLLECTION"/>
     </Match>
 
+    <!--
+      findbugs complains about an unusual equals, which is correct, I have a special equals that can take
+      a flag to make it behave differently. So the normal equal calls the special one with the default flag.
+    -->
+    <Match>
+        <Class name="org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel" />
+        <Bug pattern="EQ_UNUSUAL"/>
+    </Match>
 </FindBugsFilter>
