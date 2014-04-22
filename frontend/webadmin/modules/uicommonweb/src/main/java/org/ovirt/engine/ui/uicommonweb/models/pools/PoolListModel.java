@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.pools;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -23,7 +22,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -101,16 +99,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         privateRemoveCommand = value;
     }
 
-    private HashMap<Version, ArrayList<String>> privateCustomPropertiesKeysList;
-
-    private HashMap<Version, ArrayList<String>> getCustomPropertiesKeysList() {
-        return privateCustomPropertiesKeysList;
-    }
-
-    private void setCustomPropertiesKeysList(HashMap<Version, ArrayList<String>> value) {
-        privateCustomPropertiesKeysList = value;
-    }
-
     private SystemTreeItemModel systemTreeSelectedItem;
 
     @Override
@@ -159,18 +147,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
-        if (getCustomPropertiesKeysList() == null) {
-            AsyncDataProvider.getCustomPropertiesList(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-                            PoolListModel model = (PoolListModel) target;
-                            if (returnValue != null) {
-                                model.setCustomPropertiesKeysList((HashMap<Version, ArrayList<String>>) returnValue);
-                            }
-                        }
-                    }));
-        }
     }
 
     @Override
@@ -214,7 +190,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
         PoolModel model = new PoolModel(new NewPoolModelBehavior());
         model.setIsNew(true);
-        model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
+        model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
         model.setIsAdvancedModeLocalStorageKey("wa_pool_dialog");  //$NON-NLS-1$
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newPoolTitle());
@@ -304,7 +280,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         });
 
                         PoolModel model = new PoolModel(behavior);
-                        model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
+                        model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
                         model.startProgress("");
                         model.setIsAdvancedModeLocalStorageKey("wa_pool_dialog");  //$NON-NLS-1$
                         setWindow(model);

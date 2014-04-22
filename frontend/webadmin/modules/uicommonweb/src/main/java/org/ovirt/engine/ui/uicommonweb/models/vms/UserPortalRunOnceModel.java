@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -10,8 +9,8 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class UserPortalRunOnceModel extends RunOnceModel {
 
-   public UserPortalRunOnceModel(VM vm, ArrayList<String> customPropertiesKeysList, ICommandTarget commandTarget) {
-       super(vm, customPropertiesKeysList, commandTarget);
+   public UserPortalRunOnceModel(VM vm, ICommandTarget commandTarget) {
+       super(vm, commandTarget);
    }
 
    @Override

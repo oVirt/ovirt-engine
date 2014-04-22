@@ -15,8 +15,8 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
 public class WebadminRunOnceModel extends RunOnceModel {
 
-    public WebadminRunOnceModel(VM vm, ArrayList<String> customPropertiesKeysList, ICommandTarget commandTarget) {
-        super(vm, customPropertiesKeysList, commandTarget);
+    public WebadminRunOnceModel(VM vm, ICommandTarget commandTarget) {
+        super(vm, commandTarget);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class WebadminRunOnceModel extends RunOnceModel {
         getIsAutoAssign().setEntity(true);
 
         // Custom Properties
-        getCustomPropertySheet().setKeyValueString(customPropertiesKeysList);
+        getCustomPropertySheet().setKeyValueString(AsyncDataProvider.getCustomPropertiesList().get(vm.getVdsGroupCompatibilityVersion()));
         getCustomPropertySheet().deserialize(vm.getCustomProperties());
 
         loadHosts();

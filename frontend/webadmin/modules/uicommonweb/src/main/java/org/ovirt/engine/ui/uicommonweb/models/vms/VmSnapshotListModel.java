@@ -157,18 +157,6 @@ public class VmSnapshotListModel extends SearchableListModel
         onPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }
 
-    private HashMap<Version, ArrayList<String>> privateCustomPropertiesKeysList;
-
-    private HashMap<Version, ArrayList<String>> getCustomPropertiesKeysList()
-    {
-        return privateCustomPropertiesKeysList;
-    }
-
-    private void setCustomPropertiesKeysList(HashMap<Version, ArrayList<String>> value)
-    {
-        privateCustomPropertiesKeysList = value;
-    }
-
     private HashMap<Guid, SnapshotModel> snapshotsMap;
 
     public HashMap<Guid, SnapshotModel> getSnapshotsMap()
@@ -232,19 +220,6 @@ public class VmSnapshotListModel extends SearchableListModel
         getCanSelectSnapshot().setEntity(true);
 
         setSnapshotsMap(new HashMap<Guid, SnapshotModel>());
-
-        if (getCustomPropertiesKeysList() == null) {
-            AsyncDataProvider.getCustomPropertiesList(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-                            VmSnapshotListModel model = (VmSnapshotListModel) target;
-                            if (returnValue != null) {
-                                model.setCustomPropertiesKeysList((HashMap<Version, ArrayList<String>>) returnValue);
-                            }
-                        }
-                    }));
-        }
     }
 
     @Override
@@ -570,7 +545,7 @@ public class VmSnapshotListModel extends SearchableListModel
                 model.setTitle(ConstantsManager.getInstance().getConstants().cloneVmFromSnapshotTitle());
                 model.setHelpTag(HelpTag.clone_vm_from_snapshot);
                 model.setHashName("clone_vm_from_snapshot"); //$NON-NLS-1$
-                model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
+                model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
                 model.initialize(vmSnapshotListModel.getSystemTreeSelectedItem());
 
                 VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();

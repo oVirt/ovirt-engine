@@ -420,10 +420,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private HashMap<Version, ArrayList<String>> privateCustomPropertiesKeysList;
 
-    private HashMap<Version, ArrayList<String>> getCustomPropertiesKeysList() {
-        return privateCustomPropertiesKeysList;
-    }
-
     private void setCustomPropertiesKeysList(HashMap<Version, ArrayList<String>> value) {
         privateCustomPropertiesKeysList = value;
     }
@@ -477,18 +473,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
-        if (getCustomPropertiesKeysList() == null) {
-            AsyncDataProvider.getCustomPropertiesList(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-                            VmListModel model = (VmListModel) target;
-                            if (returnValue != null) {
-                                model.setCustomPropertiesKeysList((HashMap<Version, ArrayList<String>>) returnValue);
-                            }
-                        }
-                    }));
-        }
 
         // Call 'IsCommandCompatible' for precaching
         AsyncDataProvider.isCommandCompatible(new AsyncQuery(this,
@@ -721,7 +705,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setHashName("new_vm"); //$NON-NLS-1$
         model.setIsNew(true);
         model.getVmType().setSelectedItem(VmType.Server);
-        model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
+        model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
         model.setIsAdvancedModeLocalStorageKey("wa_vm_dialog");  //$NON-NLS-1$
 
         setWindow(model);
@@ -801,7 +785,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 .getConstants().editVmTitle());
         model.setHelpTag(HelpTag.edit_vm);
         model.setHashName("edit_vm"); //$NON-NLS-1$
-        model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
+        model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
 
         model.initialize(this.getSystemTreeSelectedItem());
 
@@ -1280,7 +1264,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             @Override
             public void onSuccess(Object model, Object result) {
                 RunOnceModel runOnceModel = new WebadminRunOnceModel((VM) result,
-                        getCustomPropertiesKeysList().get(((VM) result).getVdsGroupCompatibilityVersion()),
                         VmListModel.this);
                 setWindow(runOnceModel);
                 runOnceModel.init();

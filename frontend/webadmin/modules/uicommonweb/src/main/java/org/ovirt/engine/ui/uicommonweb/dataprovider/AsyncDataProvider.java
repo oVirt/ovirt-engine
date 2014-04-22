@@ -214,6 +214,9 @@ public final class AsyncDataProvider {
     // cached architecture support for VM suspend
     private static Map<ArchitectureType, Map<Version, Boolean>> suspendSupport;
 
+    // cached custom properties
+    private static Map<Version, List<String>> customPropertiesList;
+
     public static String getDefaultConfigurationVersion() {
         return _defaultConfigurationVersion;
     }
@@ -258,6 +261,45 @@ public final class AsyncDataProvider {
         initMigrationSupportMap();
         initMemorySnapshotSupportMap();
         initSuspendSupportMap();
+        initCustomPropertiesList();
+    }
+
+    private static void initCustomPropertiesList() {
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                customPropertiesList = (Map<Version, List<String>>) returnValue;
+            }
+        };
+
+        callback.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                Map<Version, String> map =
+                        source != null ? (HashMap<Version, String>) source : new HashMap<Version, String>();
+                Map<Version, ArrayList<String>> retMap = new HashMap<Version, ArrayList<String>>();
+
+                for (Map.Entry<Version, String> keyValuePair : map.entrySet()) {
+                    String[] split = keyValuePair.getValue().split("[;]", -1); //$NON-NLS-1$
+                    if (split.length == 1 && (split[0] == null || split[0].isEmpty())) {
+                        retMap.put(keyValuePair.getKey(),
+                                null);
+                    } else {
+                        retMap.put(keyValuePair.getKey(),
+                                new ArrayList<String>());
+                        for (String s : split) {
+                            retMap.get(keyValuePair.getKey()).add(s);
+                        }
+                    }
+                }
+                return retMap;
+            }
+
+
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmCustomProperties,
+                new VdcQueryParametersBase().withoutRefresh(), callback);
     }
 
     public static void initDefaultOSes() {
@@ -1646,33 +1688,8 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void getCustomPropertiesList(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                Map<Version, String> map =
-                        source != null ? (HashMap<Version, String>) source : new HashMap<Version, String>();
-                Map<Version, ArrayList<String>> retMap = new HashMap<Version, ArrayList<String>>();
-
-                for (Map.Entry<Version, String> keyValuePair : map.entrySet()) {
-                    String[] split = keyValuePair.getValue().split("[;]", -1); //$NON-NLS-1$
-                    if (split.length == 1 && (split[0] == null || split[0].isEmpty())) {
-                        retMap.put(keyValuePair.getKey(),
-                                null);
-                    } else {
-                        retMap.put(keyValuePair.getKey(),
-                                new ArrayList<String>());
-                        for (String s : split) {
-                            retMap.get(keyValuePair.getKey()).add(s);
-                        }
-                    }
-                }
-                return retMap;
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmCustomProperties,
-                new VdcQueryParametersBase().withoutRefresh(), aQuery);
+    public static Map<Version, List<String>> getCustomPropertiesList() {
+        return customPropertiesList;
     }
 
     public static void getPermissionsByAdElementId(AsyncQuery aQuery, Guid userId) {

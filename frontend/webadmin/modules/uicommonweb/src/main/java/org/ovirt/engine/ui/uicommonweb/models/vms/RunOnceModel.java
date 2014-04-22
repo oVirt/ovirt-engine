@@ -47,8 +47,7 @@ public abstract class RunOnceModel extends Model
 
     /** The VM that is about to run */
     protected final VM vm;
-    /** Custom properties for the running */
-    protected final ArrayList<String> customPropertiesKeysList;
+
     /** Listener for events that are triggered by this model */
     protected ICommandTarget commandTarget;
 
@@ -537,22 +536,9 @@ public abstract class RunOnceModel extends Model
         }
     }
 
-    private ArrayList<String> privateCustomPropertiesKeysList;
-
-    public ArrayList<String> getCustomPropertiesKeysList()
-    {
-        return privateCustomPropertiesKeysList;
-    }
-
-    public void setCustomPropertiesKeysList(ArrayList<String> value)
-    {
-        privateCustomPropertiesKeysList = value;
-    }
-
-    public RunOnceModel(VM vm, ArrayList<String> customPropertiesKeysList, ICommandTarget commandTarget)
+    public RunOnceModel(VM vm, ICommandTarget commandTarget)
     {
         this.vm = vm;
-        this.customPropertiesKeysList = customPropertiesKeysList;
         this.commandTarget = commandTarget;
 
         // Boot Options tab
@@ -664,8 +650,6 @@ public abstract class RunOnceModel extends Model
 
         initVmInitEnabled(vm.getVmInit(), vm.isInitialized());
         getVmInit().init(vm.getStaticData());
-
-        setCustomPropertiesKeysList(customPropertiesKeysList);
 
         updateDomainList();
         updateIsoList();

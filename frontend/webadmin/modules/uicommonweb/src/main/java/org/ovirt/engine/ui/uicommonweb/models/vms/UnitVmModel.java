@@ -1036,14 +1036,14 @@ public class UnitVmModel extends Model {
         this.customPropertySheet = customPropertySheet;
     }
 
-    private HashMap<Version, ArrayList<String>> privateCustomPropertiesKeysList;
+    private Map<Version, List<String>> privateCustomPropertiesKeysList;
 
-    public HashMap<Version, ArrayList<String>> getCustomPropertiesKeysList()
+    public Map<Version, List<String>> getCustomPropertiesKeysList()
     {
         return privateCustomPropertiesKeysList;
     }
 
-    public void setCustomPropertiesKeysList(HashMap<Version, ArrayList<String>> value)
+    public void setCustomPropertiesKeysList(Map<Version, List<String>> value)
     {
         privateCustomPropertiesKeysList = value;
     }

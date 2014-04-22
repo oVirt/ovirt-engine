@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -89,7 +88,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -264,16 +262,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         privatestorageDomain = value;
     }
 
-    private HashMap<Version, ArrayList<String>> CustomPropertiesKeysList;
-
-    public HashMap<Version, ArrayList<String>> getCustomPropertiesKeysList() {
-        return CustomPropertiesKeysList;
-    }
-
-    public void setCustomPropertiesKeysList(HashMap<Version, ArrayList<String>> customPropertiesKeysList) {
-        CustomPropertiesKeysList = customPropertiesKeysList;
-    }
-
     static
     {
         searchCompletedEventDefinition = new EventDefinition("SearchCompleted", UserPortalListModel.class); //$NON-NLS-1$
@@ -296,19 +284,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         updateActionAvailability();
 
         consoleModelsCache = new ConsoleModelsCache(ConsoleContext.UP_EXTENDED, this);
-
-        if (getCustomPropertiesKeysList() == null) {
-            AsyncDataProvider.getCustomPropertiesList(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-                            UserPortalListModel model = (UserPortalListModel) target;
-                            if (returnValue != null) {
-                                model.setCustomPropertiesKeysList((HashMap<Version, ArrayList<String>>) returnValue);
-                            }
-                        }
-                    }));
-        }
     }
 
     @Override
@@ -720,7 +695,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             @Override
             public void onSuccess(Object model, Object result) {
                 RunOnceModel runOnceModel = new UserPortalRunOnceModel((VM) result,
-                        getCustomPropertiesKeysList().get(((VM) result).getVdsGroupCompatibilityVersion()),
                         UserPortalListModel.this);
                 setWindow(runOnceModel);
                 runOnceModel.init();
@@ -776,7 +750,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         model.setHelpTag(HelpTag.new_vm);
         model.setHashName("new_vm"); //$NON-NLS-1$
         model.setIsNew(true);
-        model.setCustomPropertiesKeysList(CustomPropertiesKeysList);
+        model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
         model.setIsAdvancedModeLocalStorageKey("up_vm_dialog");  //$NON-NLS-1$
         setWindow(model);
 
@@ -832,7 +806,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         model.setHelpTag(HelpTag.edit_vm);
         model.setHashName("edit_vm"); //$NON-NLS-1$
         model.getVmType().setSelectedItem(vm.getVmType());
-        model.setCustomPropertiesKeysList(CustomPropertiesKeysList);
+        model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
         model.setIsAdvancedModeLocalStorageKey("up_vm_dialog");  //$NON-NLS-1$
 
         setWindow(model);
