@@ -38,7 +38,7 @@ public class BackendStorageDomainVmResource
 
     @Override
     public Response doImport(Action action) {
-        validateParameters(action, "cluster.id|name");
+        validateParameters(action, "cluster.id|name", "storageDomain.id|name");
 
         Guid destStorageDomainId = getDestStorageDomainId(action);
 
