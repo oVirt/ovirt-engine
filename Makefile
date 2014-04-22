@@ -340,6 +340,13 @@ install_artifacts:
 	install -dm 0755 "$(DESTDIR)$(PKG_EAR_DIR)"
 	find "$(MAVEN_OUTPUT_DIR)" -name '*.ear' -type f | grep -v tmp.repos | xargs -n 1 unzip -q -o -d "$(DESTDIR)$(PKG_EAR_DIR)"
 
+	# extract embedded artifacts as doc
+	# no need to relay on source tree for these
+	install -d -m 755 "$(DESTDIR)$(PKG_DOC_DIR)"
+	unzip -q -c "$(DESTDIR)$(PKG_JBOSS_MODULES)/org/ovirt/engine/core/dal/main/dal.jar" bundles/AuditLogMessages.properties > \
+		"$(DESTDIR)$(PKG_DOC_DIR)/AuditLogMessages.properties"
+	chmod 0644 "$(DESTDIR)$(PKG_DOC_DIR)/AuditLogMessages.properties"
+
 install_poms:
 	install -dm 755 "$(DESTDIR)$(MAVENPOM_DIR)"
 	install -m 644 backend/manager/modules/bll/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-bll.pom"

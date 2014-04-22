@@ -87,6 +87,9 @@ DAYS_TO_SEND_ON_STARTUP=0
 # * = all messages/all subscribers.
 # * as a subscriber should be used only for exclude.
 #
+# Message constants can be found at:
+# @ENGINE_DOC@/AuditLogMessages.properties
+#
 # examples:
 # FILTER="include:VDC_START(smtp:mail@example.com) ${FILTER}"
 # FILTER="exclude:VDC_START include:*(smtp:mail1@gmail.com) ${FILTER}"
