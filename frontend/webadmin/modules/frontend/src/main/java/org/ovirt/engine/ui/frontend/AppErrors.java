@@ -1759,6 +1759,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot decrease data center compatibility version.")
     String ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION();
 
+    @DefaultStringValue("Cannot decrease cluster compatibility version beneath data center compatibility version.")
+    String ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC();
+
     @DefaultStringValue("Cannot ${action} ${type}. Selected Compatibility Version is not supported.")
     String ACTION_TYPE_FAILED_GIVEN_VERSION_NOT_SUPPORTED();
 

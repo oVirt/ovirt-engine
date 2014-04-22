@@ -173,13 +173,26 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
             result = false;
         }
-        // decreasing of compatibility version is not allowed
+
+        if (result) {
+            allForVdsGroup = getVdsDAO().getAllForVdsGroup(oldGroup.getId());
+        }
+        // decreasing of compatibility version is only allowed when no hosts exists, and not beneath the DC version
         if (result && getVdsGroup().getcompatibility_version().compareTo(oldGroup.getcompatibility_version()) < 0) {
-            result = false;
-            getReturnValue()
-                    .getCanDoActionMessages()
-                    .add(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION
-                            .toString());
+            if (!allForVdsGroup.isEmpty()) {
+                result = false;
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+            }
+
+            if (oldGroup.getStoragePoolId() != null) {
+                StoragePool storagePool = getStoragePoolDAO().get(oldGroup.getStoragePoolId());
+                if (storagePool != null && getVdsGroup().getcompatibility_version()
+                    .compareTo(storagePool.getcompatibility_version()) < 0) {
+                    result = false;
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
+                }
+            }
+
         }
         if (result && oldGroup.getStoragePoolId() != null
                 && !oldGroup.getStoragePoolId().equals(getVdsGroup().getStoragePoolId())) {
@@ -188,7 +201,6 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         }
         // If both original Cpu and new Cpu are null, don't check Cpu validity
         if (result) {
-            allForVdsGroup = getVdsDAO().getAllForVdsGroup(oldGroup.getId());
             allVdssInMaintenance = areAllVdssInMaintenance(allForVdsGroup);
         }
         // Validate the cpu only if the cluster supports Virt
