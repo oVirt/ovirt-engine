@@ -284,6 +284,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     vdsGroupId, Guid.Empty,
                     getParameters().getVdsName(), Config.<Boolean> getValue(ConfigValues.SSLEnabled),
                     VDSType.VDS);
+        vds.setSshKeyFingerprint(getParameters().getSSHFingerprint());
 
                 log.debugFormat(
                         "RegisterVdsQuery::Register - Will try now to add VDS from scratch; Name: {0}, Hostname: {1}, Unique: {2}, VdsPort: {3},Subnet mask: {4}, IsPending: {5} with force synchronize",

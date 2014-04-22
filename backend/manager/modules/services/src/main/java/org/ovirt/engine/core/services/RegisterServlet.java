@@ -84,6 +84,7 @@ public class RegisterServlet extends HttpServlet {
     protected void doRegister(
         String hostAddress,
         int hostSSHPort,
+        String hostSSHKeyFingerprint,
         String hostSSHUser,
         int hostVdsPort,
         String hostName,
@@ -108,6 +109,7 @@ public class RegisterServlet extends HttpServlet {
                 Guid.Empty,
                 hostAddress,
                 hostSSHPort,
+                hostSSHKeyFingerprint,
                 hostSSHUser,
                 hostName,
                 hostUniqueId,
@@ -167,6 +169,7 @@ public class RegisterServlet extends HttpServlet {
             hostAddress,
             SSH_PORT,
             null,
+            null,
             hostVdsPort,
             hostName,
             hostUniqueId
@@ -184,6 +187,7 @@ public class RegisterServlet extends HttpServlet {
 
         String hostAddress = request.getParameter("address");
         String hostSSHPortString = request.getParameter("sshPort");
+        String hostSSHKeyFingerprint = request.getParameter("sshKeyFingerprint");
         String hostSSHUser = request.getParameter("sshUser");
         String hostVdsPortString = request.getParameter("vdsPort");
         String hostName = request.getParameter("name");
@@ -205,12 +209,13 @@ public class RegisterServlet extends HttpServlet {
 
         log.info(
             String.format(
-                "Registration request: source='%s', secured='%s', address='%s%s:%s', vdsPort=%s, name='%s', uniqueId='%s'",
+                "Registration request: source='%s', secured='%s', address='%s%s:%s', sshKeyFingerprint=%s, vdsPort=%s, name='%s', uniqueId='%s'",
                 request.getRemoteHost(),
                 request.isSecure(),
                 hostSSHUser != null ? hostSSHUser + "@" : "",
                 hostAddress,
                 hostSSHPort,
+                hostSSHKeyFingerprint,
                 hostVdsPort,
                 hostName,
                 hostUniqueId
@@ -220,6 +225,7 @@ public class RegisterServlet extends HttpServlet {
         doRegister(
             hostAddress,
             hostSSHPort,
+            hostSSHKeyFingerprint,
             hostSSHUser,
             hostVdsPort,
             hostName,
