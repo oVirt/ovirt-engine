@@ -208,4 +208,12 @@ public class NetworkValidator {
 
         return templates;
     }
+
+    public boolean canNetworkCompatabilityBeDecreased() {
+        return vmNetworkSetCorrectly().isValid() && mtuValid().isValid();
+    }
+
+    public void setDataCenter(StoragePool dataCenter) {
+        this.dataCenter = dataCenter;
+    }
 }

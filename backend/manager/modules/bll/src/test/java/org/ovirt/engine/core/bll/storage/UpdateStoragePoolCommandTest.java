@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.storage;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -19,19 +19,26 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
+import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -45,6 +52,7 @@ public class UpdateStoragePoolCommandTest {
     private static final Version VERSION_1_2 = new Version(1, 2);
     private static final Version VERSION_2_0 = new Version(2, 0);
     private static final Guid DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
+    private static final Guid NON_DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA96");
 
     private UpdateStoragePoolCommand<StoragePoolManagementParameter> cmd;
 
@@ -55,13 +63,17 @@ public class UpdateStoragePoolCommandTest {
     @Mock
     private List<StorageDomainStatic> sdList;
     @Mock
-    private VdsGroupDAO vdsDao;
+    private VdsGroupDAO vdsGroupDao;
+    @Mock
+    private VdsDAO vdsDao;
+    @Mock
+    private NetworkDao networkDao;
 
     @Before
     public void setUp() {
         when(spDao.get(any(Guid.class))).thenReturn(createDefaultStoragePool());
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(sdList);
-        when(vdsDao.getAllForStoragePool(any(Guid.class))).thenReturn(createClusterList());
+        when(vdsGroupDao.getAllForStoragePool(any(Guid.class))).thenReturn(createClusterList());
 
         spyCommand(new StoragePoolManagementParameter(createNewStoragePool()));
     }
@@ -71,7 +83,7 @@ public class UpdateStoragePoolCommandTest {
                 new UpdateStoragePoolCommand<StoragePoolManagementParameter>(params);
 
         StoragePoolValidator validator = spy(realCommand.createStoragePoolValidator());
-        doReturn(vdsDao).when(validator).getVdsGroupDao();
+        doReturn(vdsGroupDao).when(validator).getVdsGroupDao();
 
         cmd = spy(realCommand);
         doReturn(10).when(cmd).getStoragePoolNameSizeLimit();
@@ -79,8 +91,15 @@ public class UpdateStoragePoolCommandTest {
                 .isStoragePoolVersionSupported();
         doReturn(spDao).when(cmd).getStoragePoolDAO();
         doReturn(sdDao).when(cmd).getStorageDomainStaticDAO();
-        doReturn(vdsDao).when(cmd).getVdsGroupDAO();
+        doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
+        doReturn(vdsDao).when(cmd).getVdsDAO();
+        doReturn(networkDao).when(cmd).getNetworkDAO();
         doReturn(validator).when(cmd).createStoragePoolValidator();
+
+        mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultVdsGroupID, DEFAULT_VDS_GROUP_ID);
+        mcr.mockConfigValue(ConfigValues.ManagementNetwork, "test_mgmt");
+        mcr.mockConfigValue(ConfigValues.NonVmNetworkSupported, false);
+        mcr.mockConfigValue(ConfigValues.MTUOverrideSupported, false);
     }
 
     @Test
@@ -107,8 +126,53 @@ public class UpdateStoragePoolCommandTest {
     }
 
     @Test
-    public void lowerVersion() {
+    public void lowerVersionNoHostsNoNetwork() {
         storagePoolWithLowerVersion();
+        addNonDefaultClusterToPool();
+        assertTrue(cmd.canDoAction());
+    }
+
+    @Test
+    public void lowerVersionHostsNoNetwork() {
+        storagePoolWithLowerVersion();
+        addNonDefaultClusterToPool();
+        addHostsToCluster();
+        assertTrue(cmd.canDoAction());
+    }
+
+    @Test
+    public void lowerVersionNoHostsWithNetwork() {
+        storagePoolWithLowerVersion();
+        addNonDefaultClusterToPool();
+        addNetworkToPool();
+        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION.toString());
+    }
+
+    @Test
+    public void lowerVersionHostsAndNetwork() {
+        storagePoolWithLowerVersion();
+        addNonDefaultClusterToPool();
+        addHostsToCluster();
+        addNetworkToPool();
+        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION.toString());
+    }
+
+    @Test
+    public void lowerVersionMgmtNetworkSupportedFeatures() {
+        storagePoolWithLowerVersion();
+        addNonDefaultClusterToPool();
+        addManagementNetworkToPool();
+        setupNetworkValidator(true);
+        assertTrue(cmd.canDoAction());
+    }
+
+    // TODO:
+    @Test
+    public void lowerVersionMgmtNetworkNonSupportedFeatures() {
+        storagePoolWithLowerVersion();
+        addNonDefaultClusterToPool();
+        addManagementNetworkToPool();
+        setupNetworkValidator(false);
         canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION.toString());
     }
 
@@ -135,7 +199,7 @@ public class UpdateStoragePoolCommandTest {
         clusterList.add(thirdCluster);
 
         // Test upgrade
-        when(vdsDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusterList);
+        when(vdsGroupDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusterList);
         assertFalse(cmd.checkAllClustersLevel());
         List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
         assertTrue(messages.contains(VdcBllMessages.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS.toString()));
@@ -244,7 +308,45 @@ public class UpdateStoragePoolCommandTest {
         defaultCluster.setId(DEFAULT_VDS_GROUP_ID);
         List<VDSGroup> clusters = new ArrayList<VDSGroup>();
         clusters.add(defaultCluster);
-        when(vdsDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusters);
+        when(vdsGroupDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusters);
+    }
+
+    private void addNonDefaultClusterToPool() {
+        VDSGroup defaultCluster = new VDSGroup();
+        defaultCluster.setcompatibility_version(VERSION_1_1);
+        defaultCluster.setId(NON_DEFAULT_VDS_GROUP_ID);
+        List<VDSGroup> clusters = new ArrayList<VDSGroup>();
+        clusters.add(defaultCluster);
+        when(vdsGroupDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusters);
+    }
+
+    private void addHostsToCluster() {
+        VDS host = new VDS();
+        List<VDS> hosts = new ArrayList<>();
+        hosts.add(host);
+        when(vdsDao.getAllForStoragePool(any(Guid.class))).thenReturn(hosts);
+    }
+
+    private void addManagementNetworkToPool() {
+        Network network = new Network();
+        network.setName(Config.<String> getValue(ConfigValues.ManagementNetwork));
+        List<Network> networks = new ArrayList<>();
+        networks.add(network);
+        when(networkDao.getAllForDataCenter(any(Guid.class))).thenReturn(networks);
+    }
+
+    private void setupNetworkValidator(boolean valid) {
+        NetworkValidator validator = Mockito.mock(NetworkValidator.class);
+        when(validator.canNetworkCompatabilityBeDecreased()).thenReturn(valid);
+        when(cmd.getNetworkValidator(any(Network.class))).thenReturn(validator);
+    }
+
+    private void addNetworkToPool() {
+        Network network = new Network();
+        network.setName(Config.<String> getValue(ConfigValues.ManagementNetwork) + "2");
+        List<Network> networks = new ArrayList<>();
+        networks.add(network);
+        when(networkDao.getAllForDataCenter(any(Guid.class))).thenReturn(networks);
     }
 
     private void canDoActionFailed(final String reason) {

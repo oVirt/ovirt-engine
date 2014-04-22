@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
+import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -15,9 +16,10 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
@@ -31,6 +33,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
+import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -184,10 +188,19 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
                 returnValue = false;
             }
-            // decreasing of compatibility version is not allowed
+            // decreasing of compatibility version is allowed under conditions
             else if (getStoragePool().getcompatibility_version().compareTo(_oldStoragePool.getcompatibility_version()) < 0) {
-                // Enable to reduce compatibility version if DC has no clusters
-                if (getVdsGroupDAO().getAllForStoragePool(getStoragePoolId()).size() > 0) {
+                List<Network> networks = getNetworkDAO().getAllForDataCenter(getStoragePoolId());
+                if (networks.size() == 1) {
+                    Network network = networks.get(0);
+                    NetworkValidator validator = getNetworkValidator(network);
+                    validator.setDataCenter(getStoragePool());
+                    if (!NetworkUtils.isManagementNetwork(network)
+                            || !validator.canNetworkCompatabilityBeDecreased()) {
+                        returnValue = false;
+                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+                    }
+                } else if (networks.size() > 1) {
                     returnValue = false;
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
                 }
@@ -233,6 +246,15 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             }
         }
         return masterDomainForPool;
+    }
+
+    @Override
+    protected NetworkDao getNetworkDAO() {
+        return getDbFacade().getNetworkDao();
+    }
+
+    protected NetworkValidator getNetworkValidator(Network network) {
+        return new NetworkValidator(network);
     }
 
     protected StoragePoolValidator createStoragePoolValidator() {
