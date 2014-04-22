@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasLabel;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
@@ -22,10 +22,10 @@ import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
@@ -36,6 +36,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -74,7 +75,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
-public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implements HostPopupPresenterWidget.ViewDef {
+public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> implements HostPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<HostModel, HostPopupView> {
     }
@@ -90,10 +91,10 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     }
 
     @UiField
-    Style style;
+    DialogTabPanel tabPanel;
 
     @UiField
-    DialogTabPanel tabPanel;
+    Style style;
 
     @UiField
     @WithElementId
@@ -691,32 +692,10 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         driver.edit(object);
         setTabIndexes(0);
 
-        // TODO should be handled in a more generic way
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
-
-                if ("IsGeneralTabValid".equals(propName)) { //$NON-NLS-1$
-                    if (object.getIsGeneralTabValid()) {
-                        generalTab.markAsValid();
-                    } else {
-                        generalTab.markAsInvalid(null);
-                    }
-                } else if ("IsPowerManagementTabValid".equals(propName)) { //$NON-NLS-1$
-                    if (object.getIsPowerManagementTabValid()) {
-                        powerManagementTab.markAsValid();
-                    } else {
-                        powerManagementTab.markAsInvalid(null);
-                    }
-                }
-            }
-        });
-
         object.getFetchResult().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                fetchResult.setText((String) object.getFetchResult().getEntity());
+                fetchResult.setText(object.getFetchResult().getEntity());
             }
         });
 
@@ -1026,7 +1005,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
     @Override
     public void showPowerManagement() {
-        tabPanel.switchTab(powerManagementTab);
+        getTabPanel().switchTab(powerManagementTab);
     }
 
     /**
@@ -1156,4 +1135,17 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         widget.setLabel(ciscoUcsSelected ? constants.hostPopupPmCiscoUcsSlotLabel() : constants.hostPopupPmSlotLabel());
     }
 
+    @Override
+    protected void populateTabMap() {
+        getTabNameMapping().put(TabName.GENERAL_TAB, this.generalTab);
+        getTabNameMapping().put(TabName.POWER_MANAGEMENT_TAB, this.powerManagementTab);
+        getTabNameMapping().put(TabName.NETWORK_PROVIDER_TAB, this.networkProviderTab);
+        getTabNameMapping().put(TabName.CONSOLE_TAB, this.consoleTab);
+        getTabNameMapping().put(TabName.SPM_TAB, this.spmTab);
+    }
+
+    @Override
+    public DialogTabPanel getTabPanel() {
+        return tabPanel;
+    }
 }

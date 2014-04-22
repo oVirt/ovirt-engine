@@ -6,11 +6,12 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -24,6 +25,7 @@ import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel.MtuSelector;
@@ -51,7 +53,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
-public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends AbstractModelBoundPopupView<T> implements AbstractNetworkPopupPresenterWidget.ViewDef<T> {
+public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends AbstractTabbedModelBoundPopupView<T>
+    implements AbstractNetworkPopupPresenterWidget.ViewDef<T> {
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AbstractNetworkPopupView<?>> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -163,19 +166,22 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @UiField
     @Ignore
-    public DialogTab generalTab;
+    protected DialogTab generalTab;
 
     @UiField
     @Ignore
-    public DialogTab clusterTab;
+    protected DialogTab clusterTab;
 
     @UiField
     @Ignore
-    public DialogTab profilesTab;
+    protected DialogTab profilesTab;
 
     @UiField
     @Ignore
-    public DialogTab subnetTab;
+    protected DialogTab subnetTab;
+
+    @UiField
+    DialogTabPanel tabPanel;
 
     @UiField
     @Ignore
@@ -438,36 +444,23 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         return addQosButton;
     }
 
+    @Override
     public void addMtuEditor() {
         FlowPanel panel = mtuSelectorEditor.asRadioGroup().getPanel(MtuSelector.customMtu);
         panel.add(mtuEditor);
     }
 
     @Override
-    public void updateGeneralTabValidity(boolean isValid) {
-        if (isValid) {
-            generalTab.markAsValid();
-        } else {
-            generalTab.markAsInvalid(null);
-        }
+    protected void populateTabMap() {
+        getTabNameMapping().put(TabName.GENERAL_TAB, this.generalTab);
+        getTabNameMapping().put(TabName.CLUSTERS_TAB, this.clusterTab);
+        getTabNameMapping().put(TabName.PROFILES_TAB, this.profilesTab);
+        getTabNameMapping().put(TabName.SUBNET_TAB, this.subnetTab);
     }
 
     @Override
-    public void updateVnicProfileTabValidity(boolean isValid) {
-        if (isValid) {
-            profilesTab.markAsValid();
-        } else {
-            profilesTab.markAsInvalid(null);
-        }
-    }
-
-    @Override
-    public void updateSubnetTabValidity(boolean isValid) {
-        if (isValid) {
-            subnetTab.markAsValid();
-        } else {
-            subnetTab.markAsInvalid(null);
-        }
+    public DialogTabPanel getTabPanel() {
+        return tabPanel;
     }
 
     interface WidgetStyle extends CssResource {

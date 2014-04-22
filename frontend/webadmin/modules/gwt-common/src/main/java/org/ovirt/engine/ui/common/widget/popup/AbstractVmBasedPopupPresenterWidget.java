@@ -1,22 +1,26 @@
 package org.ovirt.engine.ui.common.widget.popup;
 
-import com.google.gwt.event.logical.shared.HasAttachHandlers;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.ui.HasVisibility;
-import com.google.inject.Inject;
+import java.util.List;
+
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.utils.ValidationTabSwitchHelper;
+import org.ovirt.engine.ui.common.view.TabbedView;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-import java.util.List;
+import com.google.gwt.event.logical.shared.HasAttachHandlers;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.HasVisibility;
+import com.google.inject.Inject;
 
-public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupPresenterWidget.ViewDef> extends AbstractModelBoundPopupPresenterWidget<UnitVmModel, V>  {
+public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupPresenterWidget.ViewDef> extends
+    AbstractModelBoundPopupPresenterWidget<UnitVmModel, V>  {
 
-    public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<UnitVmModel> {
+    public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<UnitVmModel>, TabbedView {
         void switchMode(boolean isAdvanced);
 
         void initToCreateInstanceMode();
@@ -28,7 +32,7 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
         List<HasValidation> getInvalidWidgets();
     }
 
-    private ClientStorage clientStorage;
+    private final ClientStorage clientStorage;
 
     @Inject
     public AbstractVmBasedPopupPresenterWidget(EventBus eventBus, V view, ClientStorage clientStorage) {
@@ -55,6 +59,13 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
             // hide the admin-only widgets only for non-admin users
             getView().initToCreateInstanceMode();
         }
+    }
+
+    @Override
+    public void onBind() {
+        super.onBind();
+        registerHandler(ValidationTabSwitchHelper.registerValidationHandler((EventBus) getEventBus(), this,
+                getView()));
     }
 
     private void initListeners(final UnitVmModel model) {

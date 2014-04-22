@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host;
 
-import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.AbstractTabbedModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -15,9 +15,9 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 
-public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<HostModel, HostPopupPresenterWidget.ViewDef> {
+public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPresenterWidget<HostModel, HostPopupPresenterWidget.ViewDef> {
 
-    public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<HostModel> {
+    public interface ViewDef extends AbstractTabbedModelBoundPopupPresenterWidget.ViewDef<HostModel> {
 
         HasUiCommandClickHandlers getTestButton();
         HasClickHandlers getUpdateHostsButton();

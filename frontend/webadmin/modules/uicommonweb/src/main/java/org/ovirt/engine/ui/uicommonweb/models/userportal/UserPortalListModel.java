@@ -54,6 +54,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
@@ -1058,7 +1059,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                                     .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
                             unitModel.getName().setIsValid(false);
                             unitModel.setIsValid(false);
-                            unitModel.setIsGeneralTabValid(false);
+                            unitModel.setValidTab(TabName.GENERAL_TAB, false);
                             stopProgress(target);
                         } else {
                             userPortalListModel.postVmNameUniqueCheck(userPortalListModel);

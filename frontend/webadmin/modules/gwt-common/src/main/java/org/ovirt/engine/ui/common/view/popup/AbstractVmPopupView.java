@@ -1,21 +1,26 @@
 package org.ovirt.engine.ui.common.view.popup;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.LeftAlignedUiCommandButton;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.popup.AbstractVmBasedPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-import java.util.Collections;
-import java.util.List;
-
-public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupView<UnitVmModel> implements AbstractVmBasedPopupPresenterWidget.ViewDef {
+public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupView<UnitVmModel> implements
+    AbstractVmBasedPopupPresenterWidget.ViewDef {
 
     @Inject
     public AbstractVmPopupView(EventBus eventBus, CommonApplicationResources resources,
@@ -73,5 +78,15 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
         }
 
         return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public DialogTabPanel getTabPanel() {
+        return ((AbstractVmPopupWidget) getContentWidget()).getTabPanel();
+    }
+
+    @Override
+    public Map<TabName, DialogTab> getTabNameMapping() {
+        return ((AbstractVmPopupWidget) getContentWidget()).getTabNameMapping();
     }
 }

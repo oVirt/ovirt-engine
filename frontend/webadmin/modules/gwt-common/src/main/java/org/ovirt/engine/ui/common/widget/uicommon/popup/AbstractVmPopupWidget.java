@@ -1,29 +1,14 @@
 
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.text.shared.AbstractRenderer;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.client.ui.ButtonBase;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.ValueLabel;
-import com.google.gwt.user.client.ui.Widget;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -51,6 +36,7 @@ import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.view.TabbedView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelDetachableWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
@@ -93,6 +79,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
@@ -106,14 +93,33 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.text.shared.AbstractRenderer;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.client.ui.ButtonBase;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.ValueLabel;
+import com.google.gwt.user.client.ui.Widget;
 
-import static com.google.gwt.dom.client.Style.Unit;
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
-
-public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWidget<UnitVmModel> {
+public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWidget<UnitVmModel>
+    implements TabbedView {
 
     interface Driver extends SimpleBeanEditorDriver<UnitVmModel, AbstractVmPopupWidget> {
     }
@@ -813,7 +819,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField
     @Ignore
-    public DialogTabPanel mainTabPanel;
+    protected DialogTabPanel mainTabPanel;
 
     private UnitVmModel unitVmModel;
 
@@ -822,6 +828,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private final CommonApplicationTemplates applicationTemplates;
 
     private final CommonApplicationConstants constants;
+
+    private final Map<TabName, DialogTab> tabMap = new HashMap<TabName, DialogTab>();
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public AbstractVmPopupWidget(CommonApplicationConstants constants,
@@ -930,6 +938,20 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         driver.initialize(this);
 
         initialize();
+        populateTabMap();
+    }
+
+    protected void populateTabMap() {
+        getTabNameMapping().put(TabName.GENERAL_TAB, generalTab);
+        getTabNameMapping().put(TabName.BOOT_OPTIONS_TAB, this.bootOptionsTab);
+        getTabNameMapping().put(TabName.CONSOLE_TAB, this.consoleTab);
+        getTabNameMapping().put(TabName.CUSTOM_PROPERTIES_TAB, this.customPropertiesTab);
+        getTabNameMapping().put(TabName.HIGH_AVAILABILITY_TAB, this.highAvailabilityTab);
+        getTabNameMapping().put(TabName.HOST_TAB, this.hostTab);
+        getTabNameMapping().put(TabName.INITIAL_RUN_TAB, this.initialRunTab);
+        getTabNameMapping().put(TabName.POOL_TAB, this.poolTab);
+        getTabNameMapping().put(TabName.RESOURCE_ALLOCATION_TAB, this.resourceAllocationTab);
+        getTabNameMapping().put(TabName.SYSTEM_TAB, this.systemTab);
     }
 
     private void initDetachableFields() {
@@ -1429,13 +1451,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 }
 
                 String propName = ((PropertyChangedEventArgs) args).propertyName;
-                if ("IsHostTabValid".equals(propName)) { //$NON-NLS-1$
-                    if (object.getIsHostTabValid()) {
-                        hostTab.markAsValid();
-                    } else {
-                        hostTab.markAsInvalid(null);
-                    }
-                } else if ("IsCustomPropertiesTabAvailable".equals(propName)) { //$NON-NLS-1$
+                if ("IsCustomPropertiesTabAvailable".equals(propName)) { //$NON-NLS-1$
                     setupCustomPropertiesAvailability(object);
                 } else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
                     addDiskAllocation(object);
@@ -1558,7 +1574,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         object.getIsRngEnabled().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                rngPanel.setVisible((Boolean) object.getIsRngEnabled().getEntity());
+                rngPanel.setVisible(object.getIsRngEnabled().getEntity());
             }
         });
     }
@@ -1600,56 +1616,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).propertyName;
-                if ("IsGeneralTabValid".equals(propName)) { //$NON-NLS-1$
-                    if (vm.getIsGeneralTabValid()) {
-                        generalTab.markAsValid();
-                    } else {
-                        generalTab.markAsInvalid(null);
-                    }
-                } else if ("IsSystemTabValid".equals(propName)) { //$NON-NLS-1$
-                    if (vm.getIsSystemTabValid()) {
-                        systemTab.markAsValid();
-                    } else {
-                        systemTab.markAsInvalid(null);
-                    }
-                } else if ("IsFirstRunTabValid".equals(propName)) { //$NON-NLS-1$
-                    if (vm.getIsFirstRunTabValid()) {
-                        initialRunTab.markAsValid();
-                    } else {
-                        initialRunTab.markAsInvalid(null);
-                    }
-                } else if ("IsDisplayTabValid".equals(propName)) { //$NON-NLS-1$
-                    if (vm.getIsDisplayTabValid()) {
-                        consoleTab.markAsValid();
-                    } else {
-                        consoleTab.markAsInvalid(null);
-                    }
-                } else if ("IsAllocationTabValid".equals(propName)) { //$NON-NLS-1$
-                    if (vm.getIsAllocationTabValid()) {
-                        resourceAllocationTab.markAsValid();
-                    } else {
-                        resourceAllocationTab.markAsInvalid(null);
-                    }
-                } else if ("IsHighlyAvailable".equals(propName)) { //$NON-NLS-1$
+                if ("IsHighlyAvailable".equals(propName)) { //$NON-NLS-1$
                     changeApplicationLevelVisibility(highAvailabilityTab, vm.getIsHighlyAvailable().getEntity());
-                } else if ("IsBootSequenceTabValid".equals(propName)) { //$NON-NLS-1$
-                    if (vm.getIsHighlyAvailable().getEntity()) {
-                        bootOptionsTab.markAsValid();
-                    } else {
-                        bootOptionsTab.markAsInvalid(null);
-                    }
-                } else if ("IsCustomPropertiesTabValid".equals(propName)) { //$NON-NLS-1$
-                    if (vm.getIsCustomPropertiesTabValid()) {
-                        customPropertiesTab.markAsValid();
-                    } else {
-                        customPropertiesTab.markAsInvalid(null);
-                    }
-                } else if ("IsRngTabValid".equals(propName)) { //$NON-NLS-1$
-                    if (vm.isRngTabValid()) {
-                        rngDeviceTab.markAsValid();
-                    } else {
-                        rngDeviceTab.markAsInvalid(null);
-                    }
                 } else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
                     boolean isDisksAvailable = vm.getIsDisksAvailable();
                     changeApplicationLevelVisibility(disksPanel, isDisksAvailable);
@@ -2137,5 +2105,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         }
 
         return hasValidations;
+    }
+
+    @Override
+    public DialogTabPanel getTabPanel() {
+        return mainTabPanel;
+    }
+
+    @Override
+    public Map<TabName, DialogTab> getTabNameMapping() {
+        return tabMap;
     }
 }

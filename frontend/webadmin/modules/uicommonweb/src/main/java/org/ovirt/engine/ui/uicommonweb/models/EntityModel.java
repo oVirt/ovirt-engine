@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 
@@ -173,79 +172,6 @@ public class EntityModel<T> extends Model implements HasHandlers {
 
     public Convertible asConvertible() {
         return new Convertible(this);
-    }
-
-    /**
-     * Get the GWT event bus.
-     * @return The {@code EventBus}, can be null.
-     */
-    protected final EventBus getEventBus() {
-        return eventBus;
-    }
-
-    /**
-     * Set the GWT event bus.
-     * @param eventBus The {@code EventBus}, can be null.
-     */
-    public final void setEventBus(EventBus eventBus) {
-        assert eventBus != null : "EventBus cannot be null"; //$NON-NLS-1$
-        assert this.eventBus == null : "EventBus is already set"; //$NON-NLS-1$
-        this.eventBus = eventBus;
-        registerHandlers();
-    }
-
-    /**
-     * Unset the GWT event bus, use this when cleaning up models.
-     */
-    public final void unsetEventBus() {
-        unregisterHandlers();
-        this.eventBus = null;
-    }
-
-    /**
-     * Register handlers after the {@code EventBus} has been set.
-     * <p>
-     * Make sure to use {@link #registerHandler} to ensure proper
-     * handler cleanup when {@link #unsetEventBus} is called.
-     */
-    protected void registerHandlers() {
-        // No-op, override as necessary
-    }
-
-    /**
-     * Register a handler.
-     * @param reg The {@code HandlerRegistration} returned from registering a handler.
-     */
-    public final void registerHandler(HandlerRegistration reg) {
-        if (reg != null && !handlerRegistrations.contains(reg)) {
-            handlerRegistrations.add(reg);
-        }
-    }
-
-    /**
-     * Unregister all registered handlers.
-     */
-    public final void unregisterHandlers() {
-        for (HandlerRegistration reg: handlerRegistrations) {
-            reg.removeHandler(); // can't call unregisterHandler(reg) as that would modify the list during iteration
-        }
-        handlerRegistrations.clear();
-    }
-
-    /**
-     * Unregister a specific handler using its {@code HandlerRegistration}.
-     * @param reg The {@code HandlerRegistration} to use to remove the handler.
-     */
-    public final void unregisterHandler(HandlerRegistration reg) {
-        if (reg != null) {
-            reg.removeHandler();
-            handlerRegistrations.remove(reg);
-        }
-    }
-
-    @Override
-    public void fireEvent(GwtEvent<?> event) {
-        getEventBus().fireEvent(event);
     }
 
 }

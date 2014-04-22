@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -53,7 +54,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
-public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> implements ClusterPopupPresenterWidget.ViewDef {
+public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterModel> implements ClusterPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ClusterModel, ClusterPopupView> {
     }
@@ -67,7 +68,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     }
 
     @UiField
-    DialogTabPanel tabsPanel;
+    DialogTabPanel tabPanel;
 
     @UiField
     WidgetStyle style;
@@ -409,6 +410,15 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         localize(constants);
         driver.initialize(this);
         applyModeCustomizations();
+    }
+
+    @Override
+    protected void populateTabMap() {
+        getTabNameMapping().put(TabName.GENERAL_TAB, this.generalTab);
+        getTabNameMapping().put(TabName.CONSOLE_TAB, this.consoleTab);
+        getTabNameMapping().put(TabName.CLUSTER_POLICY_TAB, this.clusterPolicyTab);
+        getTabNameMapping().put(TabName.OPTIMIZATION_TAB, this.optimizationTab);
+        getTabNameMapping().put(TabName.RESILIENCE_POLICY_TAB, this.resiliencePolicyTab);
     }
 
     private void addStyles() {
@@ -783,4 +793,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         String optimizationTabPanel();
     }
 
+    @Override
+    public DialogTabPanel getTabPanel() {
+        return tabPanel;
+    }
 }

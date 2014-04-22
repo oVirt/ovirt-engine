@@ -33,9 +33,12 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
+import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.providers.HostNetworkProviderModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostnameValidation;
@@ -52,9 +55,8 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-public abstract class HostModel extends Model
+public abstract class HostModel extends Model implements HasValidatedTabs
 {
-
     public static final int HostNameMaxLength = 255;
     public static final String PmSecureKey = "secure"; //$NON-NLS-1$
     public static final String PmPortKey = "port"; //$NON-NLS-1$
@@ -618,38 +620,6 @@ public abstract class HostModel extends Model
         disableAutomaticPowerManagement = value;
     }
 
-    private boolean isGeneralTabValid;
-
-    public boolean getIsGeneralTabValid()
-    {
-        return isGeneralTabValid;
-    }
-
-    public void setIsGeneralTabValid(boolean value)
-    {
-        if (isGeneralTabValid != value)
-        {
-            isGeneralTabValid = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean isPowerManagementTabValid;
-
-    public boolean getIsPowerManagementTabValid()
-    {
-        return isPowerManagementTabValid;
-    }
-
-    public void setIsPowerManagementTabValid(boolean value)
-    {
-        if (isPowerManagementTabValid != value)
-        {
-            isPowerManagementTabValid = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsPowerManagementTabValid")); //$NON-NLS-1$
-        }
-    }
-
     private boolean isPowerManagementTabSelected;
 
     public boolean getIsPowerManagementTabSelected()
@@ -1075,8 +1045,8 @@ public abstract class HostModel extends Model
         getIsPm().setEntity(false);
 
 
-        setIsPowerManagementTabValid(true);
-        setIsGeneralTabValid(getIsPowerManagementTabValid());
+        setValidTab(TabName.POWER_MANAGEMENT_TAB, true);
+        setValidTab(TabName.GENERAL_TAB, true);
 
         setSpmPriority(new ListModel<EntityModel<Integer>>());
 
@@ -1687,6 +1657,7 @@ public abstract class HostModel extends Model
             // the console address is ignored so can not be invalid
             getConsoleAddress().setIsValid(true);
         }
+        setValidTab(TabName.CONSOLE_TAB, getConsoleAddress().getIsValid());
 
         getDataCenter().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getCluster().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
@@ -1716,14 +1687,14 @@ public abstract class HostModel extends Model
             }
         }
 
-        setIsGeneralTabValid(getName().getIsValid()
+        setValidTab(TabName.GENERAL_TAB, getName().getIsValid()
                 && getComment().getIsValid()
                 && getHost().getIsValid()
                 && getAuthSshPort().getIsValid()
                 && getCluster().getIsValid()
         );
 
-        setIsPowerManagementTabValid(getManagementIp().getIsValid()
+        setValidTab(TabName.POWER_MANAGEMENT_TAB, getManagementIp().getIsValid()
                 && getPmUserName().getIsValid()
                 && getPmPassword().getIsValid()
                 && getPmType().getIsValid()
@@ -1739,8 +1710,9 @@ public abstract class HostModel extends Model
 
         getNetworkProviderModel().validate();
 
-        return getIsGeneralTabValid() && getIsPowerManagementTabValid() && getConsoleAddress().getIsValid()
-                && getNetworkProviderModel().getIsValid();
+        ValidationCompleteEvent.fire(getEventBus(), this);
+        return isValidTab(TabName.GENERAL_TAB) && isValidTab(TabName.POWER_MANAGEMENT_TAB)
+                && getConsoleAddress().getIsValid() && getNetworkProviderModel().getIsValid();
     }
 
     private boolean isEntityModelEmpty(EntityModel<String> model) {

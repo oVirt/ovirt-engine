@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -14,6 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CoreVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostWithProtocolAndPortAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -25,12 +29,9 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolModel> {
 
-    private Event poolModelBehaviorInitializedEvent = new Event("PoolModelBehaviorInitializedEvent", //$NON-NLS-1$
+    private final Event poolModelBehaviorInitializedEvent = new Event("PoolModelBehaviorInitializedEvent", //$NON-NLS-1$
             NewPoolModelBehavior.class);
 
     public Event getPoolModelBehaviorInitializedEvent()
@@ -217,7 +218,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     @Override
     public void updateMinAllocatedMemory()
     {
-        VDSGroup cluster = (VDSGroup) getModel().getSelectedCluster();
+        VDSGroup cluster = getModel().getSelectedCluster();
         if (cluster == null)
         {
             return;
@@ -269,13 +270,13 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                         new IntegerValidation(1, Short.MAX_VALUE)
                 });
 
-        getModel().setIsGeneralTabValid(getModel().getIsGeneralTabValid()
+        getModel().setValidTab(TabName.GENERAL_TAB, getModel().isValidTab(TabName.GENERAL_TAB)
                 && getModel().getName().getIsValid()
                 && getModel().getNumOfDesktops().getIsValid()
                 && getModel().getPrestartedVms().getIsValid()
                 && getModel().getMaxAssignedVmsPerUser().getIsValid());
 
-        getModel().setIsPoolTabValid(true);
+        getModel().setValidTab(TabName.POOL_TAB, true);
 
         if (getModel().getSpiceProxyEnabled().getEntity()) {
             getModel().getSpiceProxy().validateEntity(new IValidation[]{ new HostWithProtocolAndPortAddressValidation()});

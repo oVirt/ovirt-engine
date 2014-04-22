@@ -1,5 +1,15 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -35,10 +45,13 @@ import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
+import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
@@ -60,17 +73,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-public class UnitVmModel extends Model {
+public class UnitVmModel extends Model implements HasValidatedTabs {
 
     public static final int VM_TEMPLATE_NAME_MAX_LIMIT = 40;
     public static final int DESCRIPTION_MAX_LIMIT = 255;
@@ -359,142 +362,6 @@ public class UnitVmModel extends Model {
             isCPUsAmountValid = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsCPUsAmountValid")); //$NON-NLS-1$
         }
-    }
-
-    private boolean isGeneralTabValid;
-
-    public boolean getIsGeneralTabValid()
-    {
-        return isGeneralTabValid;
-    }
-
-    public void setIsGeneralTabValid(boolean value)
-    {
-        if (isGeneralTabValid != value)
-        {
-            isGeneralTabValid = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean isSystemTabValid;
-
-    public boolean getIsSystemTabValid() {
-        return isSystemTabValid;
-    }
-
-    public void setIsSystemTabValid(boolean value) {
-        if (isSystemTabValid != value) {
-            isSystemTabValid = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsSystemTabValid")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean isFirstRunTabValid;
-
-    public boolean getIsFirstRunTabValid()
-    {
-        return isFirstRunTabValid;
-    }
-
-    public void setIsFirstRunTabValid(boolean value)
-    {
-        if (isFirstRunTabValid != value)
-        {
-            isFirstRunTabValid = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsFirstRunTabValid")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean isDisplayTabValid;
-
-    public boolean getIsDisplayTabValid()
-    {
-        return isDisplayTabValid;
-    }
-
-    public void setIsDisplayTabValid(boolean value)
-    {
-        if (isDisplayTabValid != value)
-        {
-            isDisplayTabValid = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsDisplayTabValid")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean isAllocationTabValid;
-
-    public boolean getIsAllocationTabValid()
-    {
-        return isAllocationTabValid;
-    }
-
-    public void setIsAllocationTabValid(boolean value)
-    {
-        if (isAllocationTabValid != value)
-        {
-            isAllocationTabValid = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsAllocationTabValid")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean isHostTabValid;
-
-    public boolean getIsHostTabValid()
-    {
-        return isHostTabValid;
-    }
-
-    public void setIsHostTabValid(boolean value)
-    {
-        if (isHostTabValid != value)
-        {
-            isHostTabValid = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsHostTabValid")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean isBootSequenceTabValid;
-
-    public boolean getIsBootSequenceTabValid()
-    {
-        return isBootSequenceTabValid;
-    }
-
-    public void setIsBootSequenceTabValid(boolean value)
-    {
-        if (isBootSequenceTabValid != value)
-        {
-            isBootSequenceTabValid = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsBootSequenceTabValid")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean isCustomPropertiesTabValid;
-
-    public boolean getIsCustomPropertiesTabValid()
-    {
-        return isCustomPropertiesTabValid;
-    }
-
-    public void setIsCustomPropertiesTabValid(boolean value)
-    {
-        if (isCustomPropertiesTabValid != value)
-        {
-            isCustomPropertiesTabValid = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesTabValid")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean isRngTabValid;
-
-    public boolean isRngTabValid() {
-        return isRngTabValid;
-    }
-
-    public void setRngTabValid(boolean rngTabValid) {
-        isRngTabValid = rngTabValid;
-        onPropertyChanged(new PropertyChangedEventArgs("IsRngTabValid")); //$NON-NLS-1$
     }
 
     private NotChangableForVmInPoolListModel<StorageDomain> privateStorageDomain;
@@ -1989,7 +1856,7 @@ public class UnitVmModel extends Model {
     private void updateMigrationOptions()
     {
         DataCenterWithCluster dataCenterWithCluster =
-                (DataCenterWithCluster) getDataCenterWithClustersList().getSelectedItem();
+                getDataCenterWithClustersList().getSelectedItem();
         if (dataCenterWithCluster == null) {
             return;
         }
@@ -2230,7 +2097,7 @@ public class UnitVmModel extends Model {
     }
 
     private void updateWatchdogModels() {
-        updateWatchdogModels((Integer) getOSType().getSelectedItem());
+        updateWatchdogModels(getOSType().getSelectedItem());
     }
 
     private void updateWatchdogModels(Integer osType) {
@@ -2632,7 +2499,7 @@ public class UnitVmModel extends Model {
                                             ? VM_TEMPLATE_NAME_MAX_LIMIT
                                             : AsyncDataProvider.getInstance().isWindowsOsType(osType) ? AsyncDataProvider.getInstance().getMaxVmNameLengthWin()
                                             : AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin()),
-                            isPoolTabValid ? new PoolNameValidation() : new I18NNameValidation()
+                                            isValidTab(TabName.POOL_TAB) ? new PoolNameValidation() : new I18NNameValidation()
                     });
 
             getDescription().validateEntity(
@@ -2680,30 +2547,24 @@ public class UnitVmModel extends Model {
         }
 
 
-        setIsGeneralTabValid(getIsGeneralTabValid()
+        setValidTab(TabName.GENERAL_TAB, isValidTab(TabName.GENERAL_TAB)
                 && getDataCenterWithClustersList().getIsValid()
                 && getTemplate().getIsValid());
 
-        setIsFirstRunTabValid(getTimeZone().getIsValid());
+        setValidTab(TabName.INITIAL_RUN_TAB, getTimeZone().getIsValid());
 
-        setIsHostTabValid(getIsHostTabValid() && getMigrationDowntime().getIsValid());
+        setValidTab(TabName.HOST_TAB, isValidTab(TabName.HOST_TAB) && getMigrationDowntime().getIsValid());
 
-        setIsAllocationTabValid(getIsAllocationTabValid() && getCpuSharesAmount().getIsValid());
-        setIsBootSequenceTabValid(getCdImage().getIsValid() && getKernel_path().getIsValid());
+        setValidTab(TabName.RESOURCE_ALLOCATION_TAB, isValidTab(TabName.RESOURCE_ALLOCATION_TAB)
+                && getCpuSharesAmount().getIsValid());
+
+        setValidTab(TabName.BOOT_OPTIONS_TAB, getCdImage().getIsValid() && getKernel_path().getIsValid());
         boolean vmInitIsValid = getVmInitModel().validate();
-        setIsFirstRunTabValid(vmInitIsValid);
+        setValidTab(TabName.FIRST_RUN, vmInitIsValid);
 
-        boolean isValid = hwPartValid && vmInitIsValid && getDataCenterWithClustersList().getIsValid()
-                && getDisksAllocationModel().getIsValid() && getTemplate().getIsValid() && getComment().getIsValid()
-                && getDefaultHost().getIsValid()
-                && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid()
-                && getKernel_path().getIsValid()
-                && getInitrd_path().getIsValid()
-                && getKernel_parameters().getIsValid()
-                && getCpuSharesAmount().getIsValid()
-                && getQuota().getIsValid();
-
+        boolean isValid = hwPartValid && vmInitIsValid && getDataCenterWithClustersList().getIsValid();
         getValid().setEntity(isValid);
+        ValidationCompleteEvent.fire(getEventBus(), this);
         return isValid;
     }
 
@@ -2730,7 +2591,7 @@ public class UnitVmModel extends Model {
         }
 
         boolean customPropertySheetValid = getCustomPropertySheet().validate();
-        setIsCustomPropertiesTabValid(customPropertySheetValid);
+        setValidTab(TabName.CUSTOM_PROPERTIES_TAB, customPropertySheetValid);
 
         if (getSerialNumberPolicy().getSelectedSerialNumberPolicy() == SerialNumberPolicy.CUSTOM) {
             getSerialNumberPolicy().getCustomSerialNumber().validateEntity(new IValidation[] { new NotEmptyValidation() });
@@ -2739,20 +2600,22 @@ public class UnitVmModel extends Model {
         }
 
         boolean behaviorValid = behavior.validate();
-        setIsGeneralTabValid(getName().getIsValid() && getDescription().getIsValid() && getComment().getIsValid()
-        && getMinAllocatedMemory().getIsValid());
+        setValidTab(TabName.GENERAL_TAB, getName().getIsValid() && getDescription().getIsValid()
+                && getComment().getIsValid());
 
-        setIsFirstRunTabValid(getTimeZone().getIsValid());
+        setValidTab(TabName.INITIAL_RUN_TAB, getTimeZone().getIsValid());
 
-        setIsDisplayTabValid(getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid() && getSpiceProxy().getIsValid());
-        setIsHostTabValid(getMigrationDowntime().getIsValid());
-        setIsAllocationTabValid(getMinAllocatedMemory().getIsValid());
+        setValidTab(TabName.CONSOLE_TAB, getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid()
+                && getSpiceProxy().getIsValid());
+        setValidTab(TabName.HOST_TAB, getMigrationDowntime().getIsValid());
+        setValidTab(TabName.RESOURCE_ALLOCATION_TAB, getMinAllocatedMemory().getIsValid());
 
         getRngBytes().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE), new RngDevValidation()});
         getRngPeriod().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE)});
-        setRngTabValid(getRngBytes().getIsValid() && getRngPeriod().getIsValid());
 
-        setIsSystemTabValid(getMemSize().getIsValid() &&
+        setValidTab(TabName.TAB_RNG, getRngBytes().getIsValid() && getRngPeriod().getIsValid());
+
+        setValidTab(TabName.SYSTEM_TAB, getMemSize().getIsValid() &&
                             getTotalCPUCores().getIsValid() &&
                             getSerialNumberPolicy().getCustomSerialNumber().getIsValid());
 
@@ -2773,19 +2636,21 @@ public class UnitVmModel extends Model {
                 && getTotalCPUCores().getIsValid();
 
         getValid().setEntity(isValid);
+        ValidationCompleteEvent.fire(getEventBus(), this);
         return isValid;
     }
 
     private void resetTabsValidity() {
-        setIsGeneralTabValid(true);
-        setIsSystemTabValid(true);
-        setIsFirstRunTabValid(true);
-        setIsDisplayTabValid(true);
-        setIsHostTabValid(true);
-        setIsAllocationTabValid(true);
-        setIsBootSequenceTabValid(true);
-        setRngTabValid(true);
-        setIsCustomPropertiesTabValid(true);
+        setValidTab(TabName.HOST_TAB, true);
+        setIsCustomPropertiesTabAvailable(true);
+
+        setValidTab(TabName.TAB_RNG, true);
+        setValidTab(TabName.CUSTOM_PROPERTIES_TAB, true);
+        setValidTab(TabName.BOOT_OPTIONS_TAB, true);
+        setValidTab(TabName.RESOURCE_ALLOCATION_TAB, true);
+        setValidTab(TabName.CONSOLE_TAB, true);
+        setValidTab(TabName.INITIAL_RUN_TAB, true);
+        setValidTab(TabName.GENERAL_TAB, true);
         getValid().setEntity(true);
     }
 
@@ -2893,22 +2758,6 @@ public class UnitVmModel extends Model {
     public void setAssignedVms(NotChangableForVmInPoolEntityModel<Integer> value)
     {
         assignedVms = value;
-    }
-
-    private boolean isPoolTabValid;
-
-    public boolean getIsPoolTabValid()
-    {
-        return isPoolTabValid;
-    }
-
-    public void setIsPoolTabValid(boolean value)
-    {
-        if (isPoolTabValid != value)
-        {
-            isPoolTabValid = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsPoolTabValid")); //$NON-NLS-1$
-        }
     }
 
     private NotChangableForVmInPoolEntityModel<Integer> prestartedVms;

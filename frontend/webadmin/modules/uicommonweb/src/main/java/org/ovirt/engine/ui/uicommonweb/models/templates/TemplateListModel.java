@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -35,6 +34,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
@@ -222,7 +222,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     private void getTemplatesNotPresentOnExportDomain()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
+        Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
         AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -241,7 +241,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     private void postGetTemplatesNotPresentOnExportDomain(StoragePool storagePool)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
+        Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
         if (storagePool != null)
         {
@@ -331,8 +331,8 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             }
             MoveOrCopyParameters tempVar =
                     new MoveOrCopyParameters(a.getId(),
-                            ((StorageDomain) model.getStorage().getSelectedItem()).getId());
-            tempVar.setForceOverride((Boolean) model.getForceOverride().getEntity());
+                            model.getStorage().getSelectedItem().getId());
+            tempVar.setForceOverride(model.getForceOverride().getEntity());
             list.add(tempVar);
         }
 
@@ -599,7 +599,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                     .getInvalidityReasons()
                     .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
             model.getName().setIsValid(false);
-            model.setIsGeneralTabValid(false);
+            model.setValidTab(TabName.GENERAL_TAB, false);
             return;
         }
 

@@ -35,7 +35,10 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
+import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SerialNumberPolicyModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostWithProtocolAndPortAddressValidation;
@@ -49,7 +52,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class ClusterModel extends EntityModel<VDSGroup>
+public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedTabs
 {
     private Map<Guid, PolicyUnit> policyUnitMap;
     private ListModel<ClusterPolicy> clusterPolicy;
@@ -574,22 +577,6 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
     public void setSerialNumberPolicy(SerialNumberPolicyModel serialNumberPolicy) {
         this.serialNumberPolicy = serialNumberPolicy;
-    }
-
-    private boolean isGeneralTabValid;
-
-    public boolean getIsGeneralTabValid()
-    {
-        return isGeneralTabValid;
-    }
-
-    public void setIsGeneralTabValid(boolean value)
-    {
-        if (isGeneralTabValid != value)
-        {
-            isGeneralTabValid = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
-        }
     }
 
     private EntityModel<String> spiceProxy;
@@ -1132,7 +1119,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
         setArchitecture(new ListModel<ArchitectureType>());
         getArchitecture().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
 
-        setIsGeneralTabValid(true);
+        setValidTab(TabName.GENERAL_TAB, true);
         setIsResiliencePolicyTabAvailable(true);
 
         setClusterPolicy(new ListModel<ClusterPolicy>());
@@ -1738,6 +1725,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
         if (validateCustomProperties) {
             getCustomPropertySheet().setIsValid(getCustomPropertySheet().validate());
         }
+        setValidTab(TabName.CLUSTER_POLICY_TAB, getCustomPropertySheet().getIsValid());
 
         getVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
@@ -1773,6 +1761,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
         } else {
             getSpiceProxy().setIsValid(true);
         }
+        setValidTab(TabName.CONSOLE_TAB, getSpiceProxy().getIsValid());
 
         if (getSerialNumberPolicy().getSelectedSerialNumberPolicy() == SerialNumberPolicy.CUSTOM) {
             getSerialNumberPolicy().getCustomSerialNumber().validateEntity(new IValidation[] { new NotEmptyValidation() });
@@ -1789,10 +1778,9 @@ public class ClusterModel extends EntityModel<VDSGroup>
                 && getGlusterHostPassword().getIsValid()
                 && getSerialNumberPolicy().getCustomSerialNumber().getIsValid()
                 && isFingerprintVerified()) : true);
-
-        setIsGeneralTabValid(generalTabValid);
-
-        return generalTabValid && getCustomPropertySheet().getIsValid();
+        setValidTab(TabName.GENERAL_TAB, generalTabValid);
+        ValidationCompleteEvent.fire(getEventBus(), this);
+        return generalTabValid && getCustomPropertySheet().getIsValid() && getSpiceProxy().getIsValid();
     }
 
     private void validateRngRequiredSource() {

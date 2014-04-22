@@ -1,9 +1,10 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.pool;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.text.shared.Parser;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
+
 import java.text.ParseException;
+
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -15,12 +16,10 @@ import org.ovirt.engine.ui.common.widget.editor.generic.ToStringEntityModelRende
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.text.shared.Parser;
 
 public class PoolNewPopupWidget extends AbstractVmPopupWidget {
 
@@ -44,7 +43,6 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
     @Override
     public void edit(final UnitVmModel object) {
         super.edit(object);
-        initTabAvailabilityListeners(object);
 
         if (object.getIsNew()) {
             object.getNumOfDesktops().setEntity(1);
@@ -64,19 +62,6 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
                 return numOfVmsEditor.asEditor().getValue();
             }
 
-        });
-    }
-
-    private void initTabAvailabilityListeners(final UnitVmModel pool) {
-        // TODO should be handled by the core framework
-        pool.getPropertyChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
-                if ("IsPoolTabValid".equals(propName)) { //$NON-NLS-1$
-                    poolTab.markAsInvalid(null);
-                }
-            }
         });
     }
 

@@ -1,5 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -25,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -73,6 +80,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -93,14 +101,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext {
 
@@ -1028,7 +1028,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void getTemplatesNotPresentOnExportDomain()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
+        Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
         AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -1047,7 +1047,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void postGetTemplatesNotPresentOnExportDomain(StoragePool storagePool)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
+        Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
         if (storagePool != null)
         {
@@ -1114,7 +1114,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void postExportGetMissingTemplates(ArrayList<String> missingTemplatesFromVms)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
+        Guid storageDomainId = model.getStorage().getSelectedItem().getId();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
 
         model.stopProgress();
@@ -1123,8 +1123,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             VM vm = (VM) a;
             MoveVmParameters parameter = new MoveVmParameters(vm.getId(), storageDomainId);
-            parameter.setForceOverride((Boolean) model.getForceOverride().getEntity());
-            parameter.setCopyCollapse((Boolean) model.getCollapseSnapshots().getEntity());
+            parameter.setForceOverride(model.getForceOverride().getEntity());
+            parameter.setCopyCollapse(model.getCollapseSnapshots().getEntity());
             parameter.setTemplateMustExists(true);
 
             parameters.add(parameter);
@@ -1222,7 +1222,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void onExportNoTemplates()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
+        Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
         if (model.getProgress() != null)
         {
@@ -1234,8 +1234,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             VM a = (VM) item;
             MoveVmParameters parameters = new MoveVmParameters(a.getId(), storageDomainId);
-            parameters.setForceOverride((Boolean) model.getForceOverride().getEntity());
-            parameters.setCopyCollapse((Boolean) model.getCollapseSnapshots().getEntity());
+            parameters.setForceOverride(model.getForceOverride().getEntity());
+            parameters.setCopyCollapse(model.getCollapseSnapshots().getEntity());
             parameters.setTemplateMustExists(false);
 
             list.add(parameters);
@@ -1591,13 +1591,13 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             {
                 VM a = (VM) item;
 
-                if (a.getRunOnVds().equals(((VDS) model.getHosts().getSelectedItem()).getId()))
+                if (a.getRunOnVds().equals(model.getHosts().getSelectedItem().getId()))
                 {
                     continue;
                 }
 
-                list.add(new MigrateVmToServerParameters(true, a.getId(), ((VDS) model.getHosts()
-                        .getSelectedItem()).getId()));
+                list.add(new MigrateVmToServerParameters(true, a.getId(), model.getHosts()
+                        .getSelectedItem().getId()));
             }
 
             Frontend.getInstance().runMultipleAction(VdcActionType.MigrateVmToServer, list,
@@ -1977,12 +1977,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             .getInvalidityReasons()
                             .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
                     model.getName().setIsValid(false);
-                    model.setIsGeneralTabValid(false);
+                    model.setValidTab(TabName.GENERAL_TAB, false);
                 } else {
                     model.getName()
                             .getInvalidityReasons().clear();
                     model.getName().setIsValid(true);
-                    model.setIsGeneralTabValid(true);
+                    model.setValidTab(TabName.GENERAL_TAB, true);
                     onSave();
                 }
             }

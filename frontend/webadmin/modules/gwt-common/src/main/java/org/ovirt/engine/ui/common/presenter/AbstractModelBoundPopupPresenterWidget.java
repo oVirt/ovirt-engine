@@ -193,6 +193,11 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         // Initialize popup contents from the model
         getView().edit(model);
         getView().updateTabIndexes();
+
+        if (!model.hasEventBusSet()) {
+            model.setEventBus((EventBus) getEventBus());
+        }
+
     }
 
     @Override
@@ -303,4 +308,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
                 WebUtils.OPTION_SCROLLBARS);
     }
 
+    public T getModel() {
+        return model;
+    }
 }

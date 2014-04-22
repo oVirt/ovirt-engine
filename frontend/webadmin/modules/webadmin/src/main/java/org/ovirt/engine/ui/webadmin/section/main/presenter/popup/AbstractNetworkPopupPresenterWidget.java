@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup;
 
-import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.AbstractTabbedModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
+import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -12,10 +13,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 
-public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V extends AbstractNetworkPopupPresenterWidget.ViewDef<T>>
-        extends AbstractModelBoundPopupPresenterWidget<T, V> {
+public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel & HasValidatedTabs,
+    V extends AbstractNetworkPopupPresenterWidget.ViewDef<T>>
+        extends AbstractTabbedModelBoundPopupPresenterWidget<T, V> {
 
-    public interface ViewDef<T extends NetworkModel> extends AbstractModelBoundPopupPresenterWidget.ViewDef<T> {
+    public interface ViewDef<T extends NetworkModel> extends AbstractTabbedModelBoundPopupPresenterWidget.ViewDef<T> {
 
         void setMessageLabel(String label);
 
@@ -28,12 +30,6 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
         UiCommandButton getQosButton();
 
         void addMtuEditor();
-
-        void updateGeneralTabValidity(boolean isValid);
-
-        void updateVnicProfileTabValidity(boolean isValid);
-
-        void updateSubnetTabValidity(boolean isValid);
     }
 
     public AbstractNetworkPopupPresenterWidget(EventBus eventBus, V view) {
@@ -54,21 +50,15 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
 
                 if ("Message".equals(propertyName)) { //$NON-NLS-1$
                     getView().setMessageLabel(model.getMessage());
-                } else if ("IsGeneralTabValid".equals(propertyName)) { //$NON-NLS-1$
-                    getView().updateGeneralTabValidity(model.getIsGeneralTabValid());
-                } else if ("IsVnicProfileTabValid".equals(propertyName)) { //$NON-NLS-1$
-                    getView().updateVnicProfileTabValidity(model.getIsVnicProfileTabValid());
-                } else if ("IsSubnetTabValid".equals(propertyName)) { //$NON-NLS-1$
-                    getView().updateSubnetTabValidity(model.getIsSubnetTabValid());
                 }
             }
         });
 
-        getView().toggleSubnetVisibility((Boolean) model.getExport().getEntity());
+        getView().toggleSubnetVisibility(model.getExport().getEntity());
         model.getExport().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                getView().toggleSubnetVisibility((Boolean) model.getExport().getEntity());
+                getView().toggleSubnetVisibility(model.getExport().getEntity());
             }
         });
 

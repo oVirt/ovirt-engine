@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.widget.dialog.tab;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -107,5 +110,16 @@ public class DialogTabPanel extends Composite {
             tabHeaderContainer.getElement().getStyle().setDisplay(Display.NONE);
         }
 
+    }
+
+    public List<DialogTab> getTabs() {
+        List<DialogTab> tabs = new ArrayList<DialogTab>();
+        for (int i = 0; i < tabContainer.getWidgetCount(); i++) {
+            Widget tab = tabContainer.getWidget(i);
+            if (tab instanceof DialogTab) {
+                tabs.add((DialogTab) tab);
+            }
+        }
+        return tabs;
     }
 }

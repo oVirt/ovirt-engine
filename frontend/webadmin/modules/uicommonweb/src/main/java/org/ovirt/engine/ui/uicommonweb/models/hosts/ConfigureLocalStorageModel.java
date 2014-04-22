@@ -24,8 +24,11 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
+import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
@@ -34,10 +37,9 @@ import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class ConfigureLocalStorageModel extends Model {
+public class ConfigureLocalStorageModel extends Model implements HasValidatedTabs {
 
     private LocalStorageModel privateStorage;
 
@@ -109,21 +111,7 @@ public class ConfigureLocalStorageModel extends Model {
         privateCommonName = value;
     }
 
-    private boolean isGeneralTabValid;
-
-    public boolean getIsGeneralTabValid() {
-        return isGeneralTabValid;
-    }
-
-    public void setIsGeneralTabValid(boolean value) {
-
-        if (isGeneralTabValid != value) {
-            isGeneralTabValid = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
-        }
-    }
-
-    private String frontendHash = getHashName() + new Date();
+    private final String frontendHash = getHashName() + new Date();
 
     public ConfigureLocalStorageModel() {
 
@@ -156,7 +144,7 @@ public class ConfigureLocalStorageModel extends Model {
             }
         }
 
-        setIsGeneralTabValid(true);
+        setValidTab(TabName.GENERAL_TAB, true);
     }
 
     @Override
@@ -190,7 +178,7 @@ public class ConfigureLocalStorageModel extends Model {
 
         if (getFormattedStorageName().getEntity() != null
                 && Linq.firstOrDefault(context.storageList,
-                        new Linq.StorageNamePredicate((String) getFormattedStorageName().getEntity())) != null) {
+                        new Linq.StorageNamePredicate(getFormattedStorageName().getEntity())) != null) {
 
             getFormattedStorageName().setIsValid(false);
             getFormattedStorageName().getInvalidityReasons().add(ConstantsManager.getInstance()
@@ -208,7 +196,8 @@ public class ConfigureLocalStorageModel extends Model {
             isClusterValid = getCluster().validate(false, true, false);
         }
 
-        setIsGeneralTabValid(isStorageValid && isDataCenterValid && isClusterValid);
+        setValidTab(TabName.GENERAL_TAB, isStorageValid && isDataCenterValid && isClusterValid);
+        ValidationCompleteEvent.fire(getEventBus(), this);
 
         return isStorageValid && isDataCenterValid && isClusterValid;
     }

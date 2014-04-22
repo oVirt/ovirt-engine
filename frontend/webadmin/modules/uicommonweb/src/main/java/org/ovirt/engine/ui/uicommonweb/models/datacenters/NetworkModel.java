@@ -25,8 +25,11 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
+import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NetworkProfilesModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
@@ -45,7 +48,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public abstract class NetworkModel extends Model
+public abstract class NetworkModel extends Model implements HasValidatedTabs
 {
     private static final String CMD_APPROVE = "OnApprove"; //$NON-NLS-1$
     private static final String CMD_ABORT = "OnAbort"; //$NON-NLS-1$
@@ -496,7 +499,7 @@ public abstract class NetworkModel extends Model
         getExternalProviders().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         boolean subnetValid = true;
-        if ((Boolean) getExport().getEntity() && (Boolean) getCreateSubnet().getEntity()) {
+        if (getExport().getEntity() && getCreateSubnet().getEntity()) {
             subnetValid = getSubnetModel().validate();
         }
 
@@ -510,12 +513,14 @@ public abstract class NetworkModel extends Model
 
         getNetworkLabel().validateSelectedItem(new IValidation[] { new AsciiNameValidation() });
 
-        setIsGeneralTabValid(getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()
+        setValidTab(TabName.GENERAL_TAB, getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()
                 && getMtu().getIsValid() && getExternalProviders().getIsValid() && getComment().getIsValid()
                 && getNetworkLabel().getIsValid());
-        setIsVnicProfileTabValid(profilesValid);
-        setIsSubnetTabValid(subnetValid);
-        return getIsGeneralTabValid() && getIsVnicProfileTabValid() && getIsSubnetTabValid();
+        setValidTab(TabName.SUBNET_TAB, subnetValid);
+        setValidTab(TabName.PROFILES_TAB, profilesValid);
+
+        ValidationCompleteEvent.fire(getEventBus(), this);
+        return getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid();
     }
 
     protected boolean isCustomMtu() {
@@ -634,7 +639,7 @@ public abstract class NetworkModel extends Model
                 VnicProfile vnicProfile = profileModel.getProfile();
                 vnicProfile.setNetworkId(networkGuid);
                 VnicProfileParameters parameters = new VnicProfileParameters(vnicProfile);
-                parameters.setPublicUse((Boolean) profileModel.getPublicUse().getEntity());
+                parameters.setPublicUse(profileModel.getPublicUse().getEntity());
                 paramlist.add(parameters);
             }
         }
@@ -818,5 +823,4 @@ public abstract class NetworkModel extends Model
             return description;
         }
     }
-
 }

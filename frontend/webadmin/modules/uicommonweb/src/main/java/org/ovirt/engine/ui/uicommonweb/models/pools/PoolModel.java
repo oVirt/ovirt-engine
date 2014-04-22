@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -32,7 +33,7 @@ public class PoolModel extends UnitVmModel {
         getPrestartedVms().setIsAvailable(true);
         getMaxAssignedVmsPerUser().setIsAvailable(true);
 
-        setIsPoolTabValid(true);
+        setValidTab(TabName.POOL_TAB, true);
 
         getPoolType().setSelectedItem(automaticOption);
     }

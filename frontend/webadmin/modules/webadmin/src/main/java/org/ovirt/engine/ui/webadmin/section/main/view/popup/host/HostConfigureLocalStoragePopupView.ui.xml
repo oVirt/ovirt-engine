@@ -74,7 +74,7 @@
 
 	<d:SimpleDialogPanel width="723px" height="500px">
 		<d:content>
-			<t:DialogTabPanel height="100%">
+			<t:DialogTabPanel height="100%" ui:field="tabPanel">
 				<t:tab>
 					<t:DialogTab ui:field="generalTab">
 						<t:content>
