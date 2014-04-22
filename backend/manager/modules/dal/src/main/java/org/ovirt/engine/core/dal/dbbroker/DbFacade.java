@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
+import org.ovirt.engine.core.common.businessentities.VdsKdumpStatus;
 import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.Permissions;
@@ -70,6 +71,7 @@ import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.EventDAO;
 import org.ovirt.engine.core.dao.ExternalVariableDao;
+import org.ovirt.engine.core.dao.VdsKdumpStatusDao;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
@@ -193,6 +195,7 @@ public class DbFacade {
             put(VmNumaNode.class, VmNumaNodeDAO.class);
             put(CommandEntity.class, CommandEntityDao.class);
             put(ExternalVariable.class, ExternalVariableDao.class);
+            put(VdsKdumpStatus.class, VdsKdumpStatusDao.class);
         }
     };
 
@@ -1023,6 +1026,15 @@ public class DbFacade {
      */
     public ExternalVariableDao getExternalVariableDao() {
         return getDao(ExternalVariableDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link VdsKdumpStatusDao}.
+     *
+     * @return the dao instance
+     */
+    public VdsKdumpStatusDao getVdsKdumpStatusDao() {
+        return getDao(VdsKdumpStatusDao.class);
     }
 
     /**

@@ -6699,4 +6699,20 @@
             <value>2014-04-22 15:00:05 UTC</value>
         </row>
     </table>
+
+    <table name="vds_kdump_status">
+        <column>vds_id</column>
+        <column>status</column>
+        <column>address</column>
+        <row>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>finished</value>
+            <value>["192.168.122.17", 1111]</value>
+        </row>
+        <row>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>dumping</value>
+            <value>["192.168.122.18", 2222]</value>
+        </row>
+    </table>
 </dataset>
