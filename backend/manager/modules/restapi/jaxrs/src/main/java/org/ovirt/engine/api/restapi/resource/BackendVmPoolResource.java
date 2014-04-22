@@ -113,7 +113,7 @@ public class BackendVmPoolResource
                 vm.setVmtGuid(new Guid(incoming.getTemplate().getId()));
             } else {
                 final VM existing = currentVmCount > 0
-                              ? getEntity(VM.class, SearchType.VM, "Vms: pool=" + incoming.getName())
+                              ? getEntity(VM.class, SearchType.VM, "Vms: pool=" + current.getName())
                               : null;
                 if (existing != null) {
                     vm.setVmtGuid(existing.getVmtGuid());
