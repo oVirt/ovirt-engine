@@ -258,13 +258,26 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
-
 Create or replace FUNCTION GetNumberOfVmsInCluster(v_vds_group_id UUID) RETURNS SETOF BIGINT STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT COUNT (vms.*)
       FROM vm_static vms
       WHERE vms.vds_group_id = v_vds_group_id AND vms.entity_type = 'VM';
+END; $procedure$
+LANGUAGE plpgsql;
+
+DROP TYPE IF EXISTS host_vm_cluster_rs CASCADE;
+CREATE TYPE host_vm_cluster_rs AS (vds_group_id UUID,hosts bigint,vms bigint);
+
+Create or replace FUNCTION GetHostsAndVmsForClusters(v_vds_group_ids UUID[]) RETURNS SETOF host_vm_cluster_rs STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT groups.vds_group_id,COUNT(DISTINCT vds.vds_id) as host_count,COUNT(DISTINCT vms.vm_guid) as vm_count
+      FROM vds_groups groups
+      LEFT JOIN vm_static vms on vms.vds_group_id = groups.vds_group_id and vms.entity_type::text = 'VM'::text
+      LEFT JOIN vds_static vds on vds.vds_group_id = groups.vds_group_id
+      WHERE groups.vds_group_id = any(v_vds_group_ids)
+      GROUP BY groups.vds_group_id;
 END; $procedure$
 LANGUAGE plpgsql;

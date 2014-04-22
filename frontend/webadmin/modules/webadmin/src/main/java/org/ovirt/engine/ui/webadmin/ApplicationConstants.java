@@ -1246,6 +1246,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Description")
     String descriptionCluster();
 
+    @DefaultStringValue("Host Count")
+    String hostCount();
+
+    @DefaultStringValue("VM Count")
+    String vmCount();
+
     @DefaultStringValue("Cluster CPU Type")
     String cpuTypeCluster();
 

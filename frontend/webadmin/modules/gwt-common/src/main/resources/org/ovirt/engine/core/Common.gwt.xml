@@ -123,6 +123,7 @@
 		<include name="common/businessentities/VDSDomainsData.java" />
 		<include name="common/businessentities/VdsDynamic.java" />
 		<include name="common/businessentities/VDSGroup.java" />
+		<include name="common/businessentities/VDSGroupHostsAndVMs.java" />
 		<include name="common/businessentities/VdsSelectionAlgorithm.java" />
 		<include name="common/businessentities/VdsSpmStatus.java" />
 		<include name="common/businessentities/VdsStatic.java" />

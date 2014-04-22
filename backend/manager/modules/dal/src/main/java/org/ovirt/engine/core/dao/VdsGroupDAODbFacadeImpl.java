@@ -1,20 +1,28 @@
 package org.ovirt.engine.core.dao;
 
+import java.sql.Array;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSGroupHostsAndVMs;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -24,6 +32,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  *
  */
 public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroupDAO {
+    private static final Log log = LogFactory.getLog(VdsGroupDAODbFacadeImpl.class);
+
     @Override
     public VDSGroup get(Guid id) {
         return get(id, null, false);
@@ -102,7 +112,15 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
 
     @Override
     public List<VDSGroup> getAllWithQuery(String query) {
-        return jdbcTemplate.query(query, VdsGroupRowMapper.instance);
+        List<VDSGroup> groups = jdbcTemplate.query(query, VdsGroupRowMapper.instance);
+
+        try {
+            // The UI requires the host and vm count
+            return getHostsAndVmsForClusters(groups);
+        } catch (Exception e) {
+            log.error("Can't load host and vm count for cluster. Query is " + query, e);
+        }
+        return groups;
     }
 
     @Override
@@ -213,9 +231,21 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
         return parameterSource;
     }
 
+    private final static class VDSGroupHostsAndVMsRowMapper implements RowMapper<VDSGroupHostsAndVMs> {
+        public static final RowMapper<VDSGroupHostsAndVMs> instance = new VDSGroupHostsAndVMsRowMapper();
+
+        @Override
+        public VDSGroupHostsAndVMs mapRow(ResultSet rs, int rowNum) throws SQLException {
+            VDSGroupHostsAndVMs entity = new VDSGroupHostsAndVMs();
+            entity.setHosts(rs.getInt("hosts"));
+            entity.setVms(rs.getInt("vms"));
+            entity.setVdsGroupId(getGuid(rs, "vds_group_id"));
+            return entity;
+        }
+
+    }
     private final static class VdsGroupRowMapper implements RowMapper<VDSGroup> {
         public static final RowMapper<VDSGroup> instance = new VdsGroupRowMapper();
-
         @Override
         public VDSGroup mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
@@ -276,5 +306,25 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 VdsGroupRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("cluster_policy_id", clusterPolicyId));
+    }
+
+    protected List<VDSGroup> getHostsAndVmsForClusters(List<VDSGroup> vdsGroups) throws Exception {
+        Map<Guid, VDSGroup> groupsById = new HashMap<>();
+        for (VDSGroup vdsGroup : vdsGroups) {
+            groupsById.put(vdsGroup.getId(), vdsGroup);
+        }
+        Connection c = jdbcTemplate.getDataSource().getConnection();
+        Array groups = c.createArrayOf("uuid", groupsById.keySet().toArray());
+        List<VDSGroupHostsAndVMs> dataList = getCallsHandler().executeReadList("GetHostsAndVmsForClusters",
+                VDSGroupHostsAndVMsRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_group_ids", groups));
+
+        c.close();
+        for (VDSGroupHostsAndVMs groupDetail : dataList) {
+            groupsById.get(groupDetail.getVdsGroupId()).setGroupHostsAndVms(groupDetail);
+        }
+        return new ArrayList<VDSGroup>(groupsById.values());
+
     }
 }

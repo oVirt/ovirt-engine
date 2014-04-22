@@ -90,6 +90,30 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             getTable().addColumn(cpuTypeColumn, constants.cpuTypeCluster(), "150px"); //$NON-NLS-1$
         }
 
+        TextColumnWithTooltip<VDSGroup> hostCountColumn = new TextColumnWithTooltip<VDSGroup>() {
+            @Override
+            public String getValue(VDSGroup object) {
+                if (object.getGroupHostsAndVms() == null) {
+                    return "";
+                }
+                return object.getGroupHostsAndVms().getHosts() + "";
+            }
+        };
+
+        getTable().addColumn(hostCountColumn, constants.hostCount(), "150px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<VDSGroup> vmCountColumn = new TextColumnWithTooltip<VDSGroup>() {
+            @Override
+            public String getValue(VDSGroup object) {
+                if (object.getGroupHostsAndVms() == null) {
+                    return "";
+                }
+                return object.getGroupHostsAndVms().getVms() + "";
+            }
+        };
+
+        getTable().addColumn(vmCountColumn, constants.vmCount(), "150px"); //$NON-NLS-1$
+
         getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>(constants.newCluster()) {
             @Override
             protected UICommand resolveCommand() {

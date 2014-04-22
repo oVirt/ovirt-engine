@@ -2,8 +2,10 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.Map;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
@@ -91,6 +93,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     private OptimizationType optimizationType;
 
     private SerialNumberPolicy serialNumberPolicy;
+    private VDSGroupHostsAndVMs groupHostsAndVms;
 
     @Size(max = BusinessEntitiesDefinitions.VM_SERIAL_NUMBER_SIZE)
     private String customSerialNumber;
@@ -388,7 +391,16 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + ((optimizationType == null) ? 0 : optimizationType.hashCode());
         result = prime * result + (serialNumberPolicy == null ? 0 : serialNumberPolicy.hashCode());
         result = prime * result + (customSerialNumber == null ? 0 : customSerialNumber.hashCode());
+        result = prime * result + (groupHostsAndVms == null ? 0 : groupHostsAndVms.hashCode());
         return result;
+    }
+
+    public VDSGroupHostsAndVMs getGroupHostsAndVms() {
+        return groupHostsAndVms;
+    }
+
+    public void setGroupHostsAndVms(VDSGroupHostsAndVMs groupHostsAndVms) {
+        this.groupHostsAndVms = groupHostsAndVms;
     }
 
     @Override
@@ -429,7 +441,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && detectEmulatedMachine == other.detectEmulatedMachine
                 && optimizationType == other.optimizationType)
                 && serialNumberPolicy == other.serialNumberPolicy
-                && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber);
+                && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber)
+                && ObjectUtils.objectsEqual(groupHostsAndVms, other.groupHostsAndVms);
     }
 
 }

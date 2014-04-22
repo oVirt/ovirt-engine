@@ -183,4 +183,5 @@ public interface VdsGroupDAO extends DAO, SearchDAO<VDSGroup> {
      * @return
      */
     int getVmsCountByClusterId(Guid vdsGroupId);
+
 }
