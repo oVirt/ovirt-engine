@@ -135,6 +135,19 @@
             }
 
             /*
+             * Toggles messages div visibility
+             */
+            function toggleMessages() {
+                var messagesStyle = document.getElementById("message-div").style;
+                if (messagesStyle.display == "none") {
+                    messagesStyle.visibility = "visible";
+                    messagesStyle.display = "block";
+                } else {
+                    messagesStyle.display = "none";
+                }
+            }
+
+            /*
             * This functions emulates the sendCtrlAltDel from inputs.js from
             * version 0.1.3. As soon as we upgrade to that version, this function
             * should be removed!
@@ -194,6 +207,9 @@
         <div class="control-panel">
             <button type="button" onclick="sendCtrlAltDel()">
                 Send Ctrl-Alt-Delete
+            </button>
+            <button type="button" onclick="toggleMessages()">
+                Toggle messages output
             </button>
         </div>
 
