@@ -130,10 +130,11 @@ public class KeyValueModel extends BaseKeyModel {
     }
 
     public boolean validate() {
-        boolean isValid = true;
+        setIsValid(true);
         if (getItems() == null || !getIsAvailable()) {
-            return isValid;
+            return true;
         }
+        boolean isValid = true;
         for (KeyValueLineModel keyValueLineModel : (List<KeyValueLineModel>) getItems()) {
             String key = keyValueLineModel.getKeys().getSelectedItem();
             if (!isKeyValid(key)) {
@@ -150,6 +151,7 @@ public class KeyValueModel extends BaseKeyModel {
                     new IValidation[] { regexValidation });
             isValid &= keyValueLineModel.getValue().getIsValid();
         }
+        setIsValid(isValid);
         return isValid;
     }
 
