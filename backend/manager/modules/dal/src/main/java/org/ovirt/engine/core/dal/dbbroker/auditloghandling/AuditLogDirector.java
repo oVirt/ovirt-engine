@@ -403,6 +403,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.SYSTEM_DEACTIVATE_STORAGE_DOMAIN_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_EXTENDED_STORAGE_DOMAIN, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_EXTEND_DISK_SIZE_UPDATE_VM_FAILURE, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.USER_EXTENDED_STORAGE_DOMAIN_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_CONNECT_HOSTS_TO_LUN_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_REMOVE_VG, AuditLogSeverity.NORMAL);
