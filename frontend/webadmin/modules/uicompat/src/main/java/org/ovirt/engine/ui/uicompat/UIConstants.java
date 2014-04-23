@@ -2254,7 +2254,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Edit Instance Type")
     String editInstanceTypeTitle();
 
-    @DefaultStringValue("Remove Instance Type(s)")
+    @DefaultStringValue("Remove Instance Type")
     String removeInstanceTypeTitle();
 
     @DefaultStringValue("Custom")
@@ -2262,5 +2262,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("No instance type - if selected the instance will be attached to no instance type")
     String customInstanceTypeDescription();
+
+    @DefaultStringValue("There are VMs attached to this instance type-this will make them attached to 'Custom'")
+    String vmsAttachedToInstanceTypeNote();
+
+    @DefaultStringValue("The following VMs are attached to the instance type")
+    String vmsAttachedToInstanceTypeWarningMessage();
 }
 

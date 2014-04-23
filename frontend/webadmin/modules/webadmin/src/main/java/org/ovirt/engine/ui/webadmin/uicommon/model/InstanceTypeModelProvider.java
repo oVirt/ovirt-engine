@@ -6,6 +6,7 @@ import com.google.inject.Provider;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -17,12 +18,16 @@ public class InstanceTypeModelProvider extends SearchableTabModelProvider<Instan
 
     private final Provider<InstanceTypesPopupPresenterWidget> instanceTypePopupProvider;
 
+    private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
+
     @Inject
     public InstanceTypeModelProvider(EventBus eventBus,
                                      final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-                                     final Provider<InstanceTypesPopupPresenterWidget> instanceTypePopupProvider) {
+                                     final Provider<InstanceTypesPopupPresenterWidget> instanceTypePopupProvider,
+                                     final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         super(eventBus, defaultConfirmPopupProvider);
         this.instanceTypePopupProvider = instanceTypePopupProvider;
+        this.removeConfirmPopupProvider = removeConfirmPopupProvider;
     }
 
     @Override
@@ -43,8 +48,11 @@ public class InstanceTypeModelProvider extends SearchableTabModelProvider<Instan
     @Override
     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(InstanceTypeListModel source,
             UICommand lastExecutedCommand) {
-            return super.getConfirmModelPopup(source, lastExecutedCommand);
-
+            if (lastExecutedCommand == getModel().getDeleteInstanceTypeCommand()) {
+                return removeConfirmPopupProvider.get();
+            } else {
+                return super.getConfirmModelPopup(source, lastExecutedCommand);
+            }
     }
 
 }

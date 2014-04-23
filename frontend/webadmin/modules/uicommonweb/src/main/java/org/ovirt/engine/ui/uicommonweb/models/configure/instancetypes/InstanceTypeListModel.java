@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes;
 
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -14,7 +13,9 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -42,11 +43,13 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.ExistingInstance
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewInstanceTypeModelBehavior;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class InstanceTypeListModel extends ListWithDetailsModel {
@@ -119,17 +122,44 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
             return;
         }
 
-        ConfirmationModel window = new ConfirmationModel();
-        setWindow(window);
-        window.setTitle(ConstantsManager.getInstance().getConstants().removeInstanceTypeTitle());
+        final ConfirmationModel window = new ConfirmationModel();
+        setConfirmWindow(window);
+        window.startProgress(null);
+
         window.setHelpTag(HelpTag.remove_instance_type);
         window.setHashName("remove_instance_type"); //$NON-NLS-1$
-        List<String> instanceTypeNames = new ArrayList<String>();
-        for (InstanceType instanceType : (List<InstanceType>) getSelectedItems()) {
-            instanceTypeNames.add(instanceType.getName());
-        }
 
-        window.setItems(instanceTypeNames);
+        final Guid instanceTypeId = ((InstanceType) getSelectedItem()).getId();
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmsByInstanceTypeId,
+                new IdQueryParameters(instanceTypeId), new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object parentModel, Object returnValue) {
+                List<VM> vmsAttachedToInstanceType = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                if (vmsAttachedToInstanceType == null || vmsAttachedToInstanceType.size() == 0) {
+                    window.setTitle(ConstantsManager.getInstance().getConstants().removeInstanceTypeTitle());
+                    window.setItems(Arrays.asList(((InstanceType) getSelectedItem()).getName()));
+                } else {
+                    List<String> attachedVmsNames = new ArrayList<String>();
+                    for (VM vm : vmsAttachedToInstanceType) {
+                        attachedVmsNames.add(vm.getName());
+                    }
+
+                    Collections.sort(attachedVmsNames);
+
+                    window.setItems(attachedVmsNames);
+
+                    window.getLatch().setIsAvailable(true);
+                    window.getLatch().setIsChangable(true);
+                    window.setNote(ConstantsManager.getInstance().getConstants().vmsAttachedToInstanceTypeNote());
+
+                    window.setMessage(ConstantsManager.getInstance().getConstants().vmsAttachedToInstanceTypeWarningMessage());
+                }
+
+                window.stopProgress();
+            }
+        }));
+
+
 
         UICommand tempVar = new UICommand("OnDeleteInstanceType", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -244,28 +274,26 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
     }
 
     private void onDeleteInstanceType() {
-        final ConfirmationModel model = (ConfirmationModel) getWindow();
+        final ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
-        if (model.getProgress() != null) {
+        boolean latchChecked = !model.validate();
+
+        if (model.getProgress() != null || latchChecked) {
             return;
-        }
-
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (InstanceType instanceType : (List<InstanceType>) getSelectedItems()) {
-            list.add(new VmTemplateParametersBase(instanceType.getId()));
         }
 
         model.startProgress(null);
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmTemplate, list,
-                new IFrontendMultipleActionAsyncCallback() {
+        Guid instanceTypeId = ((InstanceType) getSelectedItem()).getId();
+
+        Frontend.getInstance().runAction(VdcActionType.RemoveVmTemplate, new VmTemplateParametersBase(instanceTypeId),
+                new IFrontendActionAsyncCallback() {
                     @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
                         model.stopProgress();
                         cancel();
-
                     }
-                }, model);
+                }, this);
     }
 
     private void createWindow(VmModelBehaviorBase<UnitVmModel> behavior, String hashName, String onOkAction, boolean isNew, String title, HelpTag helpTag) {
@@ -300,13 +328,14 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
 
     private void cancel() {
         setWindow(null);
+        setConfirmWindow(null);
     }
 
     protected void updateActionAvailability() {
         int numOfSelectedItems = getSelectedItems() != null ? getSelectedItems().size() : 0;
 
         getEditInstanceTypeCommand().setIsExecutionAllowed(numOfSelectedItems == 1);
-        getDeleteInstanceTypeCommand().setIsExecutionAllowed(numOfSelectedItems > 0);
+        getDeleteInstanceTypeCommand().setIsExecutionAllowed(numOfSelectedItems == 1);
     }
 
     @Override

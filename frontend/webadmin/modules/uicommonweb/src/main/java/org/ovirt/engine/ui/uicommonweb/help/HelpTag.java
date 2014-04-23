@@ -362,7 +362,7 @@ public enum HelpTag {
 
     remove_template("remove_template", HelpTagType.COMMON, "Templates Tab > Remove Template(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    remove_instance_type("remove_instance_type", HelpTagType.WEBADMIN, "Configure' dialog -> 'Instance Types' section -> 'Remove Instance Type(s)'"), //$NON-NLS-1$ //$NON-NLS-2$
+    remove_instance_type("remove_instance_type", HelpTagType.WEBADMIN, "Configure' dialog -> 'Instance Types' section -> 'Remove Instance Type'"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_template_disks("remove_template_disks", HelpTagType.WEBADMIN, "Templates Tab > Storage Sub-Tab > Remove Disk Instance From Storage"), //$NON-NLS-1$ //$NON-NLS-2$
 
