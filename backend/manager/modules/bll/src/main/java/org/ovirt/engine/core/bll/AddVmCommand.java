@@ -1002,25 +1002,25 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 }
             }
         }
-        // if using instance type, need create instance
-        if (getInstanceType() != null) {
-            permissionList.add(new PermissionSubject(instanceTypeId, VdcObjectType.VmTemplate, ActionGroup.CREATE_INSTANCE));
-        }
-        // if using image type, need create instance
-        if (getImageType() != null) {
-            permissionList.add(new PermissionSubject(imageTypeId, VdcObjectType.VmTemplate, ActionGroup.CREATE_INSTANCE));
-        }
+
         addPermissionSubjectForAdminLevelProperties(permissionList);
         return permissionList;
     }
 
     /**
-     * user need permission on each object used: template, instance type, image type..
-     * for cluster: if instance type is used, create_instance is enough
-     * but if user has create_template he can choose to use instance type or template
+     * user need permission on each object used: template, instance type, image type.
      */
     @Override
     protected boolean checkPermissions(final List<PermissionSubject> permSubjects) {
+
+        if (instanceTypeId != null && !checkInstanceTypeImagePermissions(instanceTypeId)) {
+            return false;
+        }
+
+        if (imageTypeId != null && !checkInstanceTypeImagePermissions(imageTypeId)) {
+            return false;
+        }
+
         for (PermissionSubject permSubject : permSubjects) {
             // if user is using instance type, then create_instance on the cluster is enough
             if (permSubject.getObjectType() == VdcObjectType.VdsGroups && instanceTypeId != null) {
@@ -1037,6 +1037,27 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 return false;
             }
         }
+        return true;
+    }
+
+    /**
+     * If using an instance type/image the user needs to have either CREATE_INSTANCE or the specific
+     * getActionType().getActionGroup() on the instance type/image
+     */
+    private boolean checkInstanceTypeImagePermissions(Guid id) {
+        Collection<String> createInstanceMessages = new ArrayList<>();
+        Collection<String> actionGroupMessages = new ArrayList<>();
+
+        PermissionSubject createInstanceSubject = new PermissionSubject(id, VdcObjectType.VmTemplate, ActionGroup.CREATE_INSTANCE);
+        PermissionSubject actionGroupSubject = new PermissionSubject(id, VdcObjectType.VmTemplate, getActionType().getActionGroup());
+
+        // it is enough if at least one of this two permissions are there
+        if (!checkSinglePermission(createInstanceSubject, createInstanceMessages) &&
+                !checkSinglePermission(actionGroupSubject, actionGroupMessages)) {
+            getReturnValue().getCanDoActionMessages().addAll(actionGroupMessages);
+            return false;
+        }
+
         return true;
     }
 
