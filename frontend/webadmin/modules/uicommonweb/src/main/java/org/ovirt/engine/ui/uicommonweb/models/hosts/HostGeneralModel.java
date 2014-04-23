@@ -638,7 +638,7 @@ public class HostGeneralModel extends EntityModel
 
     public void setKdumpStatus(String value)
     {
-        if (kdumpStatus != value)
+        if (!ObjectUtils.objectsEqual(kdumpStatus, value))
         {
             kdumpStatus = value;
             onPropertyChanged(new PropertyChangedEventArgs("KdumpStatus")); //$NON-NLS-1$
