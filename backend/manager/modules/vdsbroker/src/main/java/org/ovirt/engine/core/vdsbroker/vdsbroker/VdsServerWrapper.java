@@ -1200,9 +1200,9 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public GlusterVolumeProfileInfoReturnForXmlRpc glusterVolumeProfileInfo(Guid clusterId, String volumeName) {
+    public GlusterVolumeProfileInfoReturnForXmlRpc glusterVolumeProfileInfo(Guid clusterId, String volumeName, boolean nfs) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeProfileInfo(volumeName);
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeProfileInfo(volumeName, nfs);
             GlusterVolumeProfileInfoReturnForXmlRpc wrapper =
                     new GlusterVolumeProfileInfoReturnForXmlRpc(clusterId, xmlRpcReturnValue);
             return wrapper;

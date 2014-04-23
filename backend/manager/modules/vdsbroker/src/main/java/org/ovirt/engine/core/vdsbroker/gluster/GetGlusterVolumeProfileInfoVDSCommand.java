@@ -17,7 +17,7 @@ public class GetGlusterVolumeProfileInfoVDSCommand<P extends GlusterVolumeProfil
 
     @Override
     protected void executeVdsBrokerCommand() {
-        result = getBroker().glusterVolumeProfileInfo(getParameters().getClusterId(), getParameters().getVolumeName());
+        result = getBroker().glusterVolumeProfileInfo(getParameters().getClusterId(), getParameters().getVolumeName(), getParameters().isNfs());
         proceedProxyReturnValue();
         setReturnValue(result.getGlusterVolumeProfileInfo());
     }

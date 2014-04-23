@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.FopStats;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.NfsProfileDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.ProfileStatsType;
 import org.ovirt.engine.core.common.businessentities.gluster.StatsInfo;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
@@ -42,6 +43,8 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
     private static final String LATENCY_AVG = "latencyAvg";
     private static final String LATENCY_MIN = "latencyMin";
     private static final String LATENCY_MAX = "latencyMax";
+    private static final String NFSSERVERS = "nfsServers";
+    private static final String NFS = "nfs";
 
     private StatusForXmlRpc status;
 
@@ -61,9 +64,29 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
             GlusterVolumeEntity volume = getGlusterVolumeDao().getByName(clusterId, volumeName);
 
             glusterVolumeProfileInfo.setVolumeId(volume.getId());
-            glusterVolumeProfileInfo.setBrickProfileDetails(prepareBrickProfileDetails(volume,
+            if(profileInfo.containsKey(BRICKS)) {
+                glusterVolumeProfileInfo.setBrickProfileDetails(prepareBrickProfileDetails(volume,
                     (Object[]) profileInfo.get(BRICKS)));
+            } else if(profileInfo.containsKey(NFSSERVERS)){
+                glusterVolumeProfileInfo.setNfsProfileDetails(prepareNfsProfileDetails((Object[]) profileInfo.get(NFSSERVERS)));
+            }
         }
+    }
+
+    private List<NfsProfileDetails> prepareNfsProfileDetails(Object[] nfsServerProfileDetails) {
+        List<NfsProfileDetails> nfsProfileDetails = new ArrayList<NfsProfileDetails>();
+        for(Object nfsObject : nfsServerProfileDetails) {
+            NfsProfileDetails nfsDetails = new NfsProfileDetails();
+            Map<String, Object> nfsProfile = (Map<String, Object>) nfsObject;
+            nfsDetails.setNfsServerIp((String) nfsProfile.get(NFS));
+
+            List<StatsInfo> statsInfo = new ArrayList<StatsInfo>();
+            statsInfo.add(getStatInfo((Map<String, Object>) nfsProfile.get(CUMULATIVE_STATS), CUMULATIVE_STATS));
+            statsInfo.add(getStatInfo((Map<String, Object>) nfsProfile.get(INTERVAL_STATS), INTERVAL_STATS));
+            nfsDetails.setStatsInfo(statsInfo);
+            nfsProfileDetails.add(nfsDetails);
+        }
+        return nfsProfileDetails;
     }
 
     private List<BrickProfileDetails> prepareBrickProfileDetails(GlusterVolumeEntity volume,
