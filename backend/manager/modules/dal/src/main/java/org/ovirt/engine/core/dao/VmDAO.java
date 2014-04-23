@@ -77,6 +77,13 @@ public interface VmDAO extends DAO {
     List<VM> getVmsListForDisk(Guid id, boolean includeVmsSnapshotAttachedTo);
 
     /**
+     * Retrieves a list of VMs for the specified instance type id.
+     *
+     * @return A {@link List} of the VMs connected to the given instance type.
+     */
+    List<VM> getVmsListByInstanceType(Guid id);
+
+    /**
      * Retrieves a list of VMs for the specified disk id.
      *
      * @param disk

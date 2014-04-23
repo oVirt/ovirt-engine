@@ -89,6 +89,14 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
         return result;
     }
 
+    @Override
+    public List<VM> getVmsListByInstanceType(Guid id) {
+        return getCallsHandler().executeReadList("GetVmsByInstanceTypeId",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("instance_type_id", id));
+    }
+
     public List<Pair<VM, VmDevice>> getVmsWithPlugInfo(Guid id) {
         return getCallsHandler().executeReadList
                 ("GetVmsByDiskId",

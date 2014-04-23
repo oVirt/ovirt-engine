@@ -919,6 +919,20 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetVmsByInstanceTypeId(v_instance_type_id UUID) RETURNS SETOF vms STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY select vms.* from vms
+   WHERE instance_type_id = v_instance_type_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+
+
 Create or replace FUNCTION GetVmsByUserIdWithGroupsAndUserRoles(v_user_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
