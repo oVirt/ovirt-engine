@@ -16,6 +16,7 @@ public class AuthenticationProfileRepository {
 
     private static final String AUTHN_SERVICE = Authn.class.getName();
     private static final String AUTHN_AUTHZ_PLUGIN = "ovirt.engine.aaa.authn.authz.plugin";
+    private static final String AUTHN_MAPPING_PLUGIN = "ovirt.engine.aaa.authn.mapping.plugin";
 
 
     private static volatile AuthenticationProfileRepository instance = null;
@@ -82,9 +83,10 @@ public class AuthenticationProfileRepository {
                 new AuthenticationProfile(
                     authnExtension,
                     ExtensionsManager.getInstance().getExtensionByName(
-                        authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(
-                            AUTHN_AUTHZ_PLUGIN
-                                    )
+                        authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(AUTHN_AUTHZ_PLUGIN)
+                    ),
+                    ExtensionsManager.getInstance().getExtensionByName(
+                        authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(AUTHN_MAPPING_PLUGIN)
                     )
                 )
             );

@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
+import org.ovirt.engine.api.extensions.aaa.Mapping;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.AuthzUtils;
@@ -55,6 +56,10 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     }
 
     private ExtensionProxy authnExtension;
+
+    private AuthenticationProfile profile;
+
+    private ExtMap authRecord;
 
     public LoginBaseCommand(T parameters) {
         super(parameters);
@@ -143,7 +148,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         }
 
         // Check that the authentication profile exists:
-        AuthenticationProfile profile = AuthenticationProfileRepository.getInstance().getProfile(profileName);
+        profile = AuthenticationProfileRepository.getInstance().getProfile(profileName);
         if (profile == null) {
             log.errorFormat(
                 "Can't login user \"{0}\" because authentication profile \"{1}\" doesn't exist.",
@@ -181,7 +186,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             password = curPassword;
         }
         // Perform the actual authentication:
-        ExtMap authRecord = authenticate(loginName, password);
+        authRecord = authenticate(loginName, password);
         if (authRecord != null) {
             DirectoryUser directoryUser =
                     AuthzUtils.fetchPrincipalRecord(profile.getAuthz(), authRecord);
@@ -286,6 +291,17 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     private ExtMap authenticate(String user, String password) {
         ExtMap result = null;
+        ExtensionProxy mapper = profile.getMapper();
+        if (mapper != null) {
+            user = mapper.invoke(new ExtMap().mput(
+                    Base.InvokeKeys.COMMAND,
+                    Mapping.InvokeCommands.MAP_USER
+                    ).mput(
+                            Mapping.InvokeKeys.USER,
+                            user),
+                    true).<String> get(Mapping.InvokeKeys.USER, user);
+        }
+
         ExtMap outputMap = authnExtension.invoke(new ExtMap().mput(
                 Base.InvokeKeys.COMMAND,
                 Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS
@@ -335,6 +351,20 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             result = null;
         } else {
             result = outputMap.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD);
+            if (mapper != null) {
+                result = mapper.invoke(new ExtMap().mput(
+                                Base.InvokeKeys.COMMAND,
+                                Mapping.InvokeCommands.MAP_AUTH_RECORD
+                                ).mput(
+                                        Authn.InvokeKeys.AUTH_RECORD,
+                                result
+                        )
+                        , true).<ExtMap> get(
+                        Authn.InvokeKeys.AUTH_RECORD,
+                        result
+                        );
+            }
+
         }
         return result;
     }

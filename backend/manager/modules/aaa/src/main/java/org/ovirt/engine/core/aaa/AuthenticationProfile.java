@@ -19,18 +19,22 @@ public class AuthenticationProfile {
 
     private ExtensionProxy authz;
 
+    private ExtensionProxy mapper;
+
     /**
      * Create a new authentication profile with the given name, authenticator and directory.
      *
      * @param authn the authenticator that will be used to check the credentials of the user
      * @param authz the directory that will be used to lookup the details of the user once it is successfully
+     * @param mapping the mappinng extension to map the post authn auth record
      *     authenticated
      */
-    public AuthenticationProfile(ExtensionProxy authn, ExtensionProxy authz) {
+    public AuthenticationProfile(ExtensionProxy authn, ExtensionProxy authz, ExtensionProxy mapper) {
         this.name = authn.getContext().<Properties> get(Base.ContextKeys.CONFIGURATION)
                 .getProperty("ovirt.engine.aaa.authn.profile.name");
         this.authn = authn;
         this.authz = authz;
+        this.mapper = mapper;
     }
 
     /**
@@ -53,5 +57,9 @@ public class AuthenticationProfile {
 
     public ExtensionProxy getAuthz() {
         return authz;
+    }
+
+    public ExtensionProxy getMapper() {
+        return mapper;
     }
 }
