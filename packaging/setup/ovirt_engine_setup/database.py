@@ -373,6 +373,7 @@ class OvirtUtils(base.Base):
 
     def detectCommands(self):
         self.command.detect('pg_dump')
+        self.command.detect('pg_restore')
         self.command.detect('psql')
 
     def createPgPass(self):
@@ -656,7 +657,7 @@ class OvirtUtils(base.Base):
                 prefix,
                 datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             ),
-            suffix='.sql',
+            suffix='.dump',
             dir=dir,
         )
         os.close(fd)
@@ -674,7 +675,7 @@ class OvirtUtils(base.Base):
                 '-E', 'UTF8',
                 '--disable-dollar-quoting',
                 '--disable-triggers',
-                '--format=p',
+                '--format=c',
                 '-U', self.environment[self._dbenvkeys['user']],
                 '-h', self.environment[self._dbenvkeys['host']],
                 '-p', str(self.environment[self._dbenvkeys['port']]),
@@ -695,18 +696,23 @@ class OvirtUtils(base.Base):
     ):
         self._plugin.execute(
             (
-                self.command.get('psql'),
+                self.command.get('pg_restore'),
                 '-w',
                 '-h', self.environment[self._dbenvkeys['host']],
                 '-p', str(self.environment[self._dbenvkeys['port']]),
                 '-U', self.environment[self._dbenvkeys['user']],
                 '-d', self.environment[self._dbenvkeys['database']],
-                '-f', backupFile,
+                '-j', '2',
+                backupFile,
             ),
             envAppend={
                 'PGPASSWORD': '',
                 'PGPASSFILE': self.environment[self._dbenvkeys['pgpassfile']],
             },
+            raiseOnError=False,
+            # TODO: check stderr of this and raise an error if there are real
+            # errors. We currently always have one about plpgsql already
+            # existing. When doing that, verify with both pg 8 and 9.
         )
 
 
