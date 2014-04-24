@@ -100,7 +100,7 @@ public class SpiceMenu
     private String formatSpiceMenuItem(int parentId, int itemId, String itemText, int itemCode) {
         return new StringBuilder(Integer.toString(parentId))
             .append("\r").append(itemId) //$NON-NLS-1$
-            .append("\r").append(itemText) //$NON-NLS-1$
+            .append("\r").append(itemText.replaceAll("_", "__")) // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
             .append("\r").append(itemCode) //$NON-NLS-1$
             .append("\r\n").toString(); //$NON-NLS-1$
     }
