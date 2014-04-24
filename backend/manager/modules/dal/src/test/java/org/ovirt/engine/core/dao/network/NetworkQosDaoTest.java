@@ -39,7 +39,7 @@ public class NetworkQosDaoTest extends BaseDAOTestCase {
         NetworkQoS trueA = new NetworkQoS();
         trueA.setId(qosAId);
         trueA.setName("qos_a");
-        trueA.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS_2);
+        trueA.setStoragePoolId(FixturesTool.STORAGE_POOL_MIXED_TYPES);
         trueA.setInboundAverage(1000);
         trueA.setInboundPeak(2000);
         trueA.setInboundBurst(500);
@@ -67,7 +67,7 @@ public class NetworkQosDaoTest extends BaseDAOTestCase {
         NetworkQoS newB = new NetworkQoS();
         newB.setId(qosBId);
         newB.setName("newB");
-        newB.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS_2);
+        newB.setStoragePoolId(FixturesTool.STORAGE_POOL_MIXED_TYPES);
         newB.setInboundAverage(30);
         newB.setInboundPeak(30);
         newB.setInboundBurst(30);
@@ -99,7 +99,7 @@ public class NetworkQosDaoTest extends BaseDAOTestCase {
         NetworkQoS qosD = new NetworkQoS();
         qosD.setId(qosDId);
         qosD.setName("qos_d");
-        qosD.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS_2);
+        qosD.setStoragePoolId(FixturesTool.STORAGE_POOL_MIXED_TYPES);
         qosD.setInboundAverage(200);
         qosD.setInboundPeak(200);
         qosD.setInboundBurst(200);
@@ -117,7 +117,7 @@ public class NetworkQosDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllNetworkQosForStoragePool() {
-        assertTrue(dao.getAllForStoragePoolId(FixturesTool.STORAGE_POOL_NFS_2).size() == 2);
+        assertTrue(dao.getAllForStoragePoolId(FixturesTool.STORAGE_POOL_MIXED_TYPES).size() == 2);
     }
 
 }
