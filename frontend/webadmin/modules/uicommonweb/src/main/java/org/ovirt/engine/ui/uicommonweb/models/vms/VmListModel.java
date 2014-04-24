@@ -418,12 +418,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private final ConsoleModelsCache consoleModelsCache;
 
-    private HashMap<Version, ArrayList<String>> privateCustomPropertiesKeysList;
-
-    private void setCustomPropertiesKeysList(HashMap<Version, ArrayList<String>> value) {
-        privateCustomPropertiesKeysList = value;
-    }
-
     private ErrorPopupManager errorPopupManager;
 
     public VmListModel()
