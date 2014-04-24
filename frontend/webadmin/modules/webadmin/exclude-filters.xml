@@ -227,6 +227,18 @@
      </Match>
 
        <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and is used to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider$SystemTreeSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
         findbugs complain of using Boolean constructor instead of Boolean.valueOf
         This calss is GWT generated code
 
