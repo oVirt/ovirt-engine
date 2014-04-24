@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -276,53 +275,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         getModel().getTimeZone().setSelectedItem(Linq.firstOrDefault(timeZones, new Linq.TimeZonePredicate(selectedTimeZone)));
         getModel().getTimeZone().setChangeProhibitionReason(constants.timeZoneNotChangeableForLinuxVms());
         getModel().getTimeZone().setIsChangable(!getModel().getIsLinuxOS());
-    }
-
-    /**
-     * This method checks the item that will be selected.
-     * For a good UX, if the getItems contains the last selected item, this one not will be changed.
-     * @param oldDisplayProtocolOption
-     */
-    public void postDisplayTypeItemChanged(DisplayType oldDisplayProtocolOption) {
-
-        List<DisplayType> displayProtocolOptions = new ArrayList<DisplayType>();
-
-        if (getModel().getDisplayProtocol().getItems() != null) {
-            for (EntityModel<DisplayType> item : (ArrayList<EntityModel<DisplayType>>) getModel().getDisplayProtocol().getItems()) {
-                displayProtocolOptions.add(item.getEntity());
-            }
-        }
-
-        if (oldDisplayProtocolOption != null
-                && displayProtocolOptions.contains(oldDisplayProtocolOption)) {
-            selectDisplayProtocol(oldDisplayProtocolOption);
-        }
-
-    }
-
-    private void selectDisplayProtocol(DisplayType displayProtocol) {
-        if (getModel().getDisplayProtocol().getItems() == null)
-            return;
-
-        EntityModel selectedDisplayProtocol = null;
-        boolean isFirst = true;
-        for (Object item : getModel().getDisplayProtocol().getItems())
-        {
-            EntityModel a = (EntityModel) item;
-            if (isFirst)
-            {
-                selectedDisplayProtocol = a;
-                isFirst = false;
-            }
-            DisplayType dt = (DisplayType) a.getEntity();
-            if (dt == displayProtocol)
-            {
-                selectedDisplayProtocol = a;
-                break;
-            }
-        }
-
-        getModel().getDisplayProtocol().setSelectedItem(selectedDisplayProtocol);
     }
 
     public TimeZoneType getTimeZoneType() {

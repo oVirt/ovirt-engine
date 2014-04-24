@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1681,6 +1682,9 @@ public class UnitVmModel extends Model {
         }
 
         getUsbPolicy().setIsChangable(true);
+
+        UsbPolicy prevSelectedUsbPolicy = getUsbPolicy().getSelectedItem();
+
         if (Version.v3_1.compareTo(cluster.getcompatibility_version()) > 0) {
             if (AsyncDataProvider.isWindowsOsType(osType)) {
                 getUsbPolicy().setItems(Arrays.asList(
@@ -1689,7 +1693,6 @@ public class UnitVmModel extends Model {
                         ));
             } else {
                 getUsbPolicy().setItems(Arrays.asList(UsbPolicy.DISABLED));
-                getUsbPolicy().setSelectedItem(UsbPolicy.DISABLED);
                 getUsbPolicy().setIsChangable(false);
             }
         }
@@ -1714,7 +1717,17 @@ public class UnitVmModel extends Model {
             getUsbPolicy().setIsChangable(false);
         }
 
-        getUsbPolicy().setSelectedItem(UsbPolicy.DISABLED);
+        Collection<UsbPolicy> policies = new ArrayList<UsbPolicy>();
+
+        for (UsbPolicy policy : getUsbPolicy().getItems()) {
+            policies.add(policy);
+        }
+
+        if (policies.contains(prevSelectedUsbPolicy)) {
+            getUsbPolicy().setSelectedItem(prevSelectedUsbPolicy);
+        } else if (policies.size() > 0) {
+            getUsbPolicy().setSelectedItem(policies.iterator().next());
+        }
     }
 
     private void initDisplayProtocol()
@@ -1725,6 +1738,7 @@ public class UnitVmModel extends Model {
     private void updateDisplayProtocol()
     {
         DisplayType oldDisplayProtocolOption = null;
+        EntityModel<DisplayType> oldDisplayProtocolEntity = null;
 
         if (getDisplayProtocol().getSelectedItem() != null) {
             oldDisplayProtocolOption = getDisplayProtocol().getSelectedItem().getEntity();
@@ -1745,6 +1759,9 @@ public class UnitVmModel extends Model {
             vncProtocol.setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
             vncProtocol.setEntity(DisplayType.vnc);
             displayProtocolOptions.add(vncProtocol);
+            if (DisplayType.vnc == oldDisplayProtocolOption) {
+                oldDisplayProtocolEntity = vncProtocol;
+            }
         }
 
         if (displayTypes.contains(DisplayType.qxl)) {
@@ -1752,11 +1769,16 @@ public class UnitVmModel extends Model {
             spiceProtocol.setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
             spiceProtocol.setEntity(DisplayType.qxl);
             displayProtocolOptions.add(spiceProtocol);
+            if (oldDisplayProtocolOption == DisplayType.qxl) {
+                oldDisplayProtocolEntity = spiceProtocol;
+            }
         }
 
-        getDisplayProtocol().setItems(displayProtocolOptions);
-
-        behavior.postDisplayTypeItemChanged(oldDisplayProtocolOption);
+        if (displayProtocolOptions.contains(oldDisplayProtocolEntity)) {
+            getDisplayProtocol().setItems(displayProtocolOptions, oldDisplayProtocolEntity);
+        } else if (displayProtocolOptions.size() > 0) {
+            getDisplayProtocol().setItems(displayProtocolOptions, displayProtocolOptions.iterator().next());
+        }
     }
 
     private void initFirstBootDevice()
