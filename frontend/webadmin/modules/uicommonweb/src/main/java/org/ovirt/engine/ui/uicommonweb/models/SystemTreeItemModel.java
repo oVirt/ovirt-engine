@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.List;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.TreeNodeInfo;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -115,28 +116,29 @@ public class SystemTreeItemModel extends EntityModel implements TreeNodeInfo {
         if (other == null || other.getClass() != getClass()) {
             return false;
         }
-        boolean result = true;
         SystemTreeItemModel otherModel = (SystemTreeItemModel) other;
-        if (getChildren().size() > 0 && deepCompare) {
-            if (otherModel.getChildren().size() == getChildren().size()) {
+        boolean result = true;
+
+        // Compare item's attributes
+        if (!ObjectUtils.objectsEqual(getType(), otherModel.getType())
+                || !ObjectUtils.objectsEqual(getEntity(), otherModel.getEntity())) {
+            result = false;
+        }
+
+        // Compare item's children, if necessary
+        if (result && getChildren().size() > 0 && deepCompare) {
+            if (getChildren().size() != otherModel.getChildren().size()) {
+                result = false;
+            } else {
                 for (int i = 0; i < getChildren().size(); i++) {
-                    result = getChildren().get(i).equals(otherModel.getChildren().get(i), deepCompare);
-                    if (!result) {
+                    if (!getChildren().get(i).equals(otherModel.getChildren().get(i), deepCompare)) {
+                        result = false;
                         break;
                     }
                 }
-            } else {
-                result = false;
             }
         }
-        if (result) {
-            if (!((otherModel.getEntity() == null && getEntity() == null)
-                    || (otherModel.getEntity() != null && otherModel.getEntity().equals(getEntity())
-                    && ((otherModel.getTitle() == null && getTitle() == null)
-                            || (otherModel.getTitle() != null && otherModel.getTitle().equals(getTitle())))))) {
-                result = false;
-            }
-        }
+
         return result;
     }
 
@@ -144,8 +146,8 @@ public class SystemTreeItemModel extends EntityModel implements TreeNodeInfo {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
+        result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
         result = prime * result + ((getEntity() == null) ? 0 : getEntity().hashCode());
-        result = prime * result + ((getTitle() == null) ? 0 : getTitle().hashCode());
         return result;
     }
 
