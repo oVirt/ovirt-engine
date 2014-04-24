@@ -114,7 +114,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetConnectableFileStorageConnectionsByStorageType() {
         List<StorageServerConnections> conns =
-                dao.getConnectableStorageConnectionsByStorageType(FixturesTool.STORAGE_POOL_NFS_2, StorageType.NFS);
+                dao.getConnectableStorageConnectionsByStorageType(FixturesTool.STORAGE_POOL_MIXED_TYPES, StorageType.NFS);
 
         assertNotNull(conns);
         assertEquals(1, conns.size());

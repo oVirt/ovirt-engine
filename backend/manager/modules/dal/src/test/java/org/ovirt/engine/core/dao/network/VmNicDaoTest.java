@@ -96,7 +96,7 @@ public class VmNicDaoTest extends BaseGenericDaoTestCase<Guid, VmNic, VmNicDao> 
 
     @Test
     public void testGetAllMacsByStoragePool() throws Exception {
-        List<String> result = dao.getAllMacsByDataCenter(FixturesTool.STORAGE_POOL_NFS_2);
+        List<String> result = dao.getAllMacsByDataCenter(FixturesTool.STORAGE_POOL_MIXED_TYPES);
         assertEquals(FixturesTool.MAC_ADDRESS, result.get(0));
     }
 

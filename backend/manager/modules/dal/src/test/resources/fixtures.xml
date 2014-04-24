@@ -487,8 +487,8 @@
         </row>
         <row>
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
-            <value>rhel6.NFS2</value>
-            <value></value>
+            <value>rhel6.Mixed</value>
+            <value>A shared storage pool with mixed domain types</value>
             <value>false</value>
             <value>1</value>
             <value>1</value>
@@ -520,6 +520,18 @@
             <value>2.3</value>
             <value>2011-03-21 03:38:22</value>
             <value>2011-03-21 15:57:10</value>
+        </row>
+        <row>
+            <value>d9220003-8ad8-41d2-8c9e-5ea30b2e88e7</value>
+            <value>Empty_Shared_Pool</value>
+            <value>A shared storage pool with no domains attached</value>
+            <value>false</value>
+            <value>0</value>
+            <value>0</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>3.4</value>
+            <value>2014-04-24 12:00:00</value>
+            <value>2011-04-24 12:00:00</value>
         </row>
     </table>
 
@@ -3444,6 +3456,28 @@
             <value>7</value>
             <value>description7</value>
         </row>
+        <row>
+            <value>a7957057-b5de-47bb-b8e0-2f8dbd9e63d8</value>
+            <value>c18d59a9-c218-4076-8cd4-e19b43565111</value>
+            <value>iscsi_domain</value>
+            <value>1</value>
+            <value>3</value>
+            <value>2014-04-24 12:00:00</value>
+            <value>2014-04-24 12:00:00</value>
+            <value>7</value>
+            <value>ISCSI domain, part of 'rhel6.Mixed' storage pool</value>
+        </row>
+        <row>
+            <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f5</value>
+            <value>85422037-cdf4-4b98-9ae1-39588af0a7b4</value>
+            <value>posix_domain</value>
+            <value>1</value>
+            <value>6</value>
+            <value>2014-04-24 12:00:00</value>
+            <value>2014-04-24 12:00:00</value>
+            <value>7</value>
+            <value>POSIX domain, part of 'rhel6.Mixed' storage pool</value>
+        </row>
     </table>
 
     <table name="storage_domain_dynamic">
@@ -3487,7 +3521,18 @@
             <value>14</value>
             <null />
         </row>
-
+        <row>
+            <value>a7957057-b5de-47bb-b8e0-2f8dbd9e63d8</value>
+            <value>666</value>
+            <value>666</value>
+            <null />
+        </row>
+        <row>
+            <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f5</value>
+            <value>666</value>
+            <value>666</value>
+            <null />
+        </row>
     </table>
 
     <table name="storage_pool_iso_map">
@@ -3527,6 +3572,16 @@
         <row>
             <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a1</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>a7957057-b5de-47bb-b8e0-2f8dbd9e63d8</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f5</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
             <value>3</value>
         </row>
     </table>

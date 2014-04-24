@@ -13,9 +13,14 @@ public class FixturesTool {
     protected static final Guid STORAGE_POOL_NFS = new Guid("72b9e200-f48b-4687-83f2-62828f249a47");
 
     /**
-     * Predefined NFS storage pool.
+     * Predefined mixed types storage pool.
      */
-    public static final Guid STORAGE_POOL_NFS_2 = new Guid("386bffd1-e7ed-4b08-bce9-d7df10f8c9a0");
+    public static final Guid STORAGE_POOL_MIXED_TYPES = new Guid("386bffd1-e7ed-4b08-bce9-d7df10f8c9a0");
+
+    /**
+     * Predefined storage pool with no domains.
+     */
+    public static final Guid STORAGE_POOL_NO_DOMAINS = new Guid("d9220003-8ad8-41d2-8c9e-5ea30b2e88e7");
 
     /**
      * Predefined ISCSI storage pool.
