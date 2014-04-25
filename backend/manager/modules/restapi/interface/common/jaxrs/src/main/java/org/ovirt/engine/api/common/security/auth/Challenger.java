@@ -107,6 +107,7 @@ public class Challenger implements PreProcessInterceptor {
             // If the session isn't new but carries authorization header, we invalidate it first
             if (validator != null && httpSession != null) {
                 httpSession.invalidate();
+                httpSession = null;
                 if (preferPersistentAuth) {
                     httpSession = getCurrentSession(true);
                 }
@@ -142,6 +143,7 @@ public class Challenger implements PreProcessInterceptor {
             // In this case we invalidate the session, so that a new one will be created on the next attempt
             if (httpSession != null) {
                 httpSession.invalidate();
+                httpSession = null;
             }
         }
         return response;
