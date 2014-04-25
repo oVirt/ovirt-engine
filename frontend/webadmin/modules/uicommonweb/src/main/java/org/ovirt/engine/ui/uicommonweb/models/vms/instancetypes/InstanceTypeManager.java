@@ -87,7 +87,11 @@ public abstract class InstanceTypeManager {
                 }
 
                 List<InstanceType> instanceTypes = new ArrayList<InstanceType>();
-                instanceTypes.add(CustomInstanceType.INSTANCE);
+
+                // add this only if the user is allowed to
+                if (!getModel().isCreateInstanceOnly()) {
+                    instanceTypes.add(CustomInstanceType.INSTANCE);
+                }
 
                 for (InstanceType instanceType : (Iterable<InstanceType>) res.getReturnValue()) {
                     instanceTypes.add(instanceType);

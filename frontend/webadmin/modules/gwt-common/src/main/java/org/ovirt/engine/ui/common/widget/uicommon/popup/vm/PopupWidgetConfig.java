@@ -76,7 +76,7 @@ public class PopupWidgetConfig {
         this.applicationLevelVisible = applicationLevelVisible;
     }
 
-    public boolean isCurrentlyVisible(boolean advancedMode) {
+    public boolean isCurrentlyVisible(boolean advancedMode, boolean createInstanceMode) {
         if (isAlwaysHidden()) {
             return false;
         }
@@ -89,7 +89,10 @@ public class PopupWidgetConfig {
             return false;
         }
 
-        // ignoring the adminOnly flag for now
+        if (createInstanceMode && isAdminOnly()) {
+            return false;
+        }
+
         return true;
     }
 

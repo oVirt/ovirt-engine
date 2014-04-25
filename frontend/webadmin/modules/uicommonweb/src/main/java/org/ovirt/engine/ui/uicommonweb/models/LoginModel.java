@@ -115,6 +115,16 @@ public class LoginModel extends Model
         }
     }
 
+    private EntityModel<Boolean> createInstanceOnly;
+
+    public EntityModel<Boolean> getCreateInstanceOnly() {
+        return createInstanceOnly;
+    }
+
+    public void setCreateInstanceOnly(EntityModel<Boolean> createInstanceOnly) {
+        this.createInstanceOnly = createInstanceOnly;
+    }
+
     private DbUser privateLoggedUser;
 
     // If true, indicates that the model is in the process of logging in automatically
@@ -154,6 +164,7 @@ public class LoginModel extends Model
         getUserName().getEntityChangedEvent().addListener(this);
         setPassword(new EntityModel<String>());
         getPassword().setIsChangable(false);
+        setCreateInstanceOnly(new EntityModel<Boolean>(false));
 
         setIsConnecting(true);
 

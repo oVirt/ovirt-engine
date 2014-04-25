@@ -599,6 +599,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
+        ActionGroup actionGroup = getModel().isCreateInstanceOnly() ? ActionGroup.CREATE_INSTANCE : ActionGroup.CREATE_VM;
         StoragePool dataCenter = getModel().getSelectedDataCenter();
         AsyncDataProvider.getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -630,7 +631,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     diskModel.getStorageDomain().setIsChangable(!availableDiskStorageDomains.isEmpty());
                 }
             }
-        }, getModel().getHash()), dataCenter.getId(), ActionGroup.CREATE_VM);
+        }, getModel().getHash()), dataCenter.getId(), actionGroup);
     }
 
     public ArrayList<StorageDomain> filterStorageDomains(ArrayList<StorageDomain> storageDomains)

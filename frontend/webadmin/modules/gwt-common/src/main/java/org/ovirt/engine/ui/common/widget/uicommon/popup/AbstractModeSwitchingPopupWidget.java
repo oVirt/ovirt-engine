@@ -14,6 +14,8 @@ public abstract class AbstractModeSwitchingPopupWidget<T extends Model> extends 
 
     private PopupWidgetConfigMap widgetConfiguration;
 
+    private boolean createInstanceMode = false;
+
     private T model;
 
     // the tab which is always here
@@ -39,7 +41,7 @@ public abstract class AbstractModeSwitchingPopupWidget<T extends Model> extends 
     public void switchMode(boolean advanced) {
         Set<Widget> allConfiguredWidgets = widgetConfiguration.getAll().keySet();
         for (Widget widget : allConfiguredWidgets) {
-            widget.setVisible(widgetConfiguration.get(widget).isCurrentlyVisible(advanced));
+            widget.setVisible(widgetConfiguration.get(widget).isCurrentlyVisible(advanced, createInstanceMode));
         }
 
         DialogTab activeTab = ((DialogTabPanel) getWidget()).getActiveTab();
@@ -67,9 +69,9 @@ public abstract class AbstractModeSwitchingPopupWidget<T extends Model> extends 
         }
 
         vmPopupWidgetConfig.setApplicationLevelVisible(desiredVisibility);
-        boolean advancedMode = (Boolean) model.getAdvancedMode().getEntity();
+        boolean advancedMode = model.getAdvancedMode().getEntity();
 
-        return vmPopupWidgetConfig.isCurrentlyVisible(advancedMode);
+        return vmPopupWidgetConfig.isCurrentlyVisible(advancedMode, createInstanceMode);
     }
 
     @Override
@@ -88,5 +90,9 @@ public abstract class AbstractModeSwitchingPopupWidget<T extends Model> extends 
 
     public PopupWidgetConfigMap getWidgetConfiguration() {
         return widgetConfiguration;
+    }
+
+    public void setCreateInstanceMode(boolean createInstanceMode) {
+        this.createInstanceMode = createInstanceMode;
     }
 }

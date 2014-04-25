@@ -82,7 +82,7 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
 
     @Override
     protected PopupWidgetConfigMap createWidgetConfiguration() {
-        return super.createWidgetConfiguration().
+        PopupWidgetConfigMap widgetConfiguration = super.createWidgetConfiguration().
                 update(highAvailabilityTab, hiddenField()).
                 update(spiceProxyEditor, simpleField().visibleInAdvancedModeOnly()).
                 update(spiceProxyEnabledCheckboxWithInfoIcon, simpleField().visibleInAdvancedModeOnly()).
@@ -95,6 +95,10 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
                 putOne(editPoolEditMaxAssignedVmsPerUserPanel, hiddenField()).
                 update(templateVersionNameEditor, hiddenField()).
                 putAll(detachableWidgets(), simpleField().detachable().visibleInAdvancedModeOnly());
+
+        updateOrAddToWidgetConfiguration(widgetConfiguration, detachableWidgets(), UpdateToDetachable.INSTANCE);
+
+        return widgetConfiguration;
     }
 
 }

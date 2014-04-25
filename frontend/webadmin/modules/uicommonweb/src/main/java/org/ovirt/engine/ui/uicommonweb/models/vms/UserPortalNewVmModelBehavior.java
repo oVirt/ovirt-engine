@@ -33,13 +33,15 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements IFrontendMultipleQueryAsyncCallback
 {
-    private static final ActionGroup CREATE_VM = ActionGroup.CREATE_VM;
-
     private InstanceTypeManager instanceTypeManager;
+
+    private ActionGroup actionGroup;
 
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
+        actionGroup = getModel().isCreateInstanceOnly() ? ActionGroup.CREATE_INSTANCE : ActionGroup.CREATE_VM;
+
         commonInitialize();
         // The custom properties tab should be hidden on the User Portal
         getModel().setIsCustomPropertiesTabAvailable(false);
@@ -77,12 +79,12 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                                                     clusters, null);
                                         }
                                     }, getModel().getHash()),
-                                    CREATE_VM, true, false);
+                                    actionGroup, true, false);
                         } else {
                             getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
                         }
                     }
-                }, getModel().getHash()), CREATE_VM, true, false);
+                }, getModel().getHash()), actionGroup, true, false);
 
         instanceTypeManager = new NewVmInstanceTypeManager(getModel());
     }
@@ -97,7 +99,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
 
         GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters =
                 new GetEntitiesWithPermittedActionParameters();
-        getEntitiesWithPermittedActionParameters.setActionGroup(CREATE_VM);
+        getEntitiesWithPermittedActionParameters.setActionGroup(actionGroup);
 
         ArrayList<VdcQueryParametersBase> parametersList =
                 new ArrayList<VdcQueryParametersBase>(Arrays.asList(new VdcQueryParametersBase[] {

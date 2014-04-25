@@ -92,6 +92,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
             return;
         }
 
+        ActionGroup actionGroup = getModel().isCreateInstanceOnly() ? ActionGroup.CREATE_INSTANCE : ActionGroup.CREATE_VM;
         StoragePool dataCenter = getModel().getSelectedDataCenter();
         AsyncDataProvider.getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -126,7 +127,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                     diskModel.getStorageDomain().setIsChangable(false);
                 }
             }
-        }, getModel().getHash()), dataCenter.getId(), ActionGroup.CREATE_VM);
+        }, getModel().getHash()), dataCenter.getId(), actionGroup);
     }
 
     public boolean validate() {

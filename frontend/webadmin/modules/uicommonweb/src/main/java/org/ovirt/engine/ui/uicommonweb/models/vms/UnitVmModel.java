@@ -40,6 +40,8 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -2085,19 +2087,22 @@ public class UnitVmModel extends Model {
 
         getBehavior().enableSinglePCI(isLinux && isQxl && clusterSupportsSinglePci);
 
-        boolean spiceFileTransferToggle = isQxl && getSelectedCluster() != null
-                && AsyncDataProvider.isSpiceFileTransferToggleSupported(getSelectedCluster().getcompatibility_version().toString());
-        if (!spiceFileTransferToggle) {
-            handleQxlChangeProhibitionReason(getSpiceFileTransferEnabled(), getSelectedCluster().getcompatibility_version().toString(), isQxl);
-        }
-        getSpiceFileTransferEnabled().setIsChangable(spiceFileTransferToggle);
+        if (getSelectedCluster() != null) {
+            boolean spiceFileTransferToggle = isQxl
+                    && AsyncDataProvider.isSpiceFileTransferToggleSupported(getSelectedCluster().getcompatibility_version().toString());
+            if (!spiceFileTransferToggle) {
+                handleQxlChangeProhibitionReason(getSpiceFileTransferEnabled(), getSelectedCluster().getcompatibility_version().toString(), isQxl);
+            }
+            getSpiceFileTransferEnabled().setIsChangable(spiceFileTransferToggle);
 
-        boolean spiceCopyPasteToggle = isQxl && getSelectedCluster() != null
-                && AsyncDataProvider.isSpiceCopyPasteToggleSupported(getSelectedCluster().getcompatibility_version().toString());
-        if (!spiceCopyPasteToggle) {
-            handleQxlChangeProhibitionReason(getSpiceCopyPasteEnabled(), getSelectedCluster().getcompatibility_version().toString(), isQxl);
+            boolean spiceCopyPasteToggle = isQxl
+                    && AsyncDataProvider.isSpiceCopyPasteToggleSupported(getSelectedCluster().getcompatibility_version().toString());
+            if (!spiceCopyPasteToggle) {
+                handleQxlChangeProhibitionReason(getSpiceCopyPasteEnabled(), getSelectedCluster().getcompatibility_version().toString(), isQxl);
+            }
+            getSpiceCopyPasteEnabled().setIsChangable(spiceCopyPasteToggle);
         }
-        getSpiceCopyPasteEnabled().setIsChangable(spiceCopyPasteToggle);
+
     }
 
     private void handleQxlChangeProhibitionReason(EntityModel<Boolean> checkbox, String version, boolean isQxl)
@@ -2518,6 +2523,9 @@ public class UnitVmModel extends Model {
 
     public boolean validate() {
         boolean hwPartValid = validateHwPart();
+
+        getInstanceTypes().setIsValid(true);
+        getInstanceTypes().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         getDataCenterWithClustersList().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         setIsSystemTabValid(true);
@@ -2940,4 +2948,9 @@ public class UnitVmModel extends Model {
         getOverrideMigrationDowntime().setEntity(value != null);
         getMigrationDowntime().setEntity(value);
     }
+
+    public boolean isCreateInstanceOnly() {
+        return ((CurrentUserRole) TypeResolver.getInstance().resolve(CurrentUserRole.class)).isCreateInstanceOnly();
+    }
+
 }

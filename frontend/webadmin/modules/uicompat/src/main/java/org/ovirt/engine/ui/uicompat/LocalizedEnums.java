@@ -108,6 +108,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionGroup___CREATE_VM();
 
+    String ActionGroup___CREATE_INSTANCE();
+
     String ActionGroup___DELETE_VM();
 
     String ActionGroup___MOVE_VM();

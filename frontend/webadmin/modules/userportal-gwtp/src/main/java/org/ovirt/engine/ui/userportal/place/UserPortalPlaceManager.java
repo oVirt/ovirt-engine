@@ -6,7 +6,8 @@ import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.section.DefaultLoginSectionPlace;
 import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
-import org.ovirt.engine.ui.userportal.auth.CurrentUserRole;
+import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
+import org.ovirt.engine.ui.userportal.auth.UserPortalCurrentUserRole;
 import org.ovirt.engine.ui.userportal.section.DefaultMainSectionExtendedPlace;
 
 import com.google.gwt.event.shared.EventBus;
@@ -16,7 +17,7 @@ import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 
 public class UserPortalPlaceManager extends ApplicationPlaceManager {
 
-    private final CurrentUserRole userRole;
+    private final UserPortalCurrentUserRole userRole;
 
     private final PlaceRequest defaultMainSectionRequest;
     private final PlaceRequest defaultMainSectionExtendedRequest;
@@ -32,7 +33,7 @@ public class UserPortalPlaceManager extends ApplicationPlaceManager {
             @DefaultMainSectionExtendedPlace String defaultMainSectionExtendedPlace) {
         super(eventBus, tokenFormatter, user, clientAgentType,
                 PlaceRequestFactory.get(defaultLoginSectionPlace));
-        this.userRole = userRole;
+        this.userRole = (UserPortalCurrentUserRole) userRole;
         this.defaultMainSectionRequest = PlaceRequestFactory.get(defaultMainSectionPlace);
         this.defaultMainSectionExtendedRequest = PlaceRequestFactory.get(defaultMainSectionExtendedPlace);
     }

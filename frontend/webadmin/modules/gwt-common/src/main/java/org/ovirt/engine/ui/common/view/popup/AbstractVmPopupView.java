@@ -39,6 +39,13 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
     }
 
     @Override
+    public void initToCreateInstanceMode() {
+        if (getContentWidget() instanceof AbstractVmPopupWidget) {
+            ((AbstractVmPopupWidget) getContentWidget()).initCreateInstanceMode();
+        }
+    }
+
+    @Override
     public void setSpiceProxyOverrideExplanation(String explanation) {
         if (getContentWidget() instanceof AbstractVmPopupWidget) {
             ((AbstractVmPopupWidget) getContentWidget()).setSpiceProxyOverrideExplanation(explanation);

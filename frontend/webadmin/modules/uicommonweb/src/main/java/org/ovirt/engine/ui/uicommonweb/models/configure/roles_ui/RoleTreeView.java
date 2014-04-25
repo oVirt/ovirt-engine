@@ -138,6 +138,8 @@ public class RoleTreeView
                                                 getConstants().allowChangeVmPropertiesRoleTreeTooltip()),
                                         new RoleNode(ActionGroup.CREATE_VM,
                                                 getConstants().allowToCreateNewVmsRoleTreeTooltip()),
+                                        new RoleNode(ActionGroup.CREATE_INSTANCE,
+                                                getConstants().allowToCreateNewInstnaceRoleTreeTooltip()),
                                         new RoleNode(ActionGroup.DELETE_VM,
                                                 getConstants().allowToRemoveVmsFromTheSystemRoleTreeTooltip()),
                                         new RoleNode(ActionGroup.IMPORT_EXPORT_VM,

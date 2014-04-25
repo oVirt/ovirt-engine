@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.common.system;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Provider;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
@@ -13,16 +17,13 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.event.shared.EventBus;
-import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.Bootstrapper;
 
 /**
@@ -40,6 +41,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     protected final CurrentUser user;
     protected final EventBus eventBus;
     protected final Frontend frontend;
+    private CurrentUserRole currentUserRole;
 
     // Using Provider because any UiCommon model will fail before TypeResolver is initialized
     private final Provider<T> loginModelProvider;
@@ -52,7 +54,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             CurrentUser user, EventBus eventBus,
             Provider<T> loginModelProvider,
             LockInteractionManager lockInteractionManager,
-            Frontend frontend) {
+            Frontend frontend, CurrentUserRole currentUserRole) {
         this.typeResolver = typeResolver;
         this.frontendEventsHandler = frontendEventsHandler;
         this.frontendFailureEventListener = frontendFailureEventListener;
@@ -61,6 +63,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         this.loginModelProvider = loginModelProvider;
         this.lockInteractionManager = lockInteractionManager;
         this.frontend = frontend;
+        this.currentUserRole = currentUserRole;
     }
 
     @Override
@@ -94,6 +97,15 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
                 onLogin(loginModel);
             }
         });
+
+        loginModel.getCreateInstanceOnly().getEntityChangedEvent().addListener(
+                new IEventListener() {
+                    @Override
+                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+                        currentUserRole.setCreateInstanceOnly(loginModel.getCreateInstanceOnly().getEntity() );
+                    }
+                }
+        );
     }
 
     /**

@@ -66,6 +66,7 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmPopupVmInitWidget;
@@ -446,6 +447,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "numOfMonitors.selectedItem")
     @WithElementId("numOfMonitors")
     public ListModelListBoxEditor<Integer> numOfMonitorsEditor;
+
+    @UiField
+    @Ignore
+    public Label numOfMonitorsLabel;
 
     @UiField(provided = true)
     @Path(value = "isSingleQxlEnabled.entity")
@@ -1963,6 +1968,42 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         );
     }
 
+    protected List<Widget> adminOnlyWidgets() {
+        return Arrays.<Widget> asList(
+                // general tab
+                oSTypeEditor,
+
+                // system tab
+                detachableMemSizeEditor,
+                totalvCPUsEditorWithInfoIcon,
+                vcpusAdvancedParameterExpander,
+                vcpusAdvancedParameterExpanderContent,
+                serialNumberPolicyEditor,
+
+                // console tab
+                usbSupportEditor,
+                numOfMonitorsLabel,
+                numOfMonitorsEditor,
+                isSingleQxlEnabledEditor,
+                isSmartcardEnabledEditorWithDetachable,
+                ssoMethodLabel,
+                ssoMethodNone,
+                ssoMethodGuestAgent,
+                expander,
+                isSoundcardEnabledEditorWithDetachable,
+                isConsoleDeviceEnabledEditorWithDetachable,
+                spiceProxyEnabledCheckboxWithInfoIcon,
+                spiceProxyEditor,
+
+                // rest of the tabs
+                initialRunTab,
+                hostTab,
+                highAvailabilityTab,
+                resourceAllocationTab,
+                customPropertiesTab
+        );
+    }
+
     protected void disableAllTabs() {
         generalTab.disableContent();
         poolTab.disableContent();
@@ -1984,6 +2025,39 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         instanceTypesEditor.setEnabled(false);
     }
 
+    protected void updateOrAddToWidgetConfiguration(PopupWidgetConfigMap configuration, List<Widget> widgets, WidgetConfigurationUpdater updater) {
+        for (Widget widget: widgets) {
+            if (configuration.containsKey(widget)) {
+                configuration.update(widget, updater.updateConfiguration(configuration.get(widget)));
+            } else {
+                configuration.putOne(widget, updater.updateConfiguration(simpleField()));
+            }
+        }
+    }
+
+    protected static interface WidgetConfigurationUpdater {
+        PopupWidgetConfig updateConfiguration(PopupWidgetConfig original);
+    }
+
+    protected static class UpdateToDetachable implements WidgetConfigurationUpdater {
+        public static final UpdateToDetachable INSTANCE = new UpdateToDetachable();
+
+
+        @Override
+        public PopupWidgetConfig updateConfiguration(PopupWidgetConfig original) {
+            return original.detachable();
+        }
+    }
+
+    protected static class UpdateToAdminOnly implements WidgetConfigurationUpdater {
+        public static final UpdateToAdminOnly INSTANCE = new UpdateToAdminOnly();
+
+
+        @Override
+        public PopupWidgetConfig updateConfiguration(PopupWidgetConfig original) {
+            return original.visibleForAdminOnly();
+        }
+    }
 
     protected void decorateDetachableFields() {
         for (Widget decoratedWidget : getWidgetConfiguration().getDetachables().keySet()) {
@@ -1998,6 +2072,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             if (detachable instanceof HasDetachable) {
                 ((HasDetachable) detachable).setAttached(attached);
             }
+        }
+    }
+
+    public void initCreateInstanceMode() {
+        setCreateInstanceMode(true);
+        for (Widget adminOnlyField : getWidgetConfiguration().getVisibleForAdminOnly().keySet()) {
+            adminOnlyField.setVisible(false);
         }
     }
 }

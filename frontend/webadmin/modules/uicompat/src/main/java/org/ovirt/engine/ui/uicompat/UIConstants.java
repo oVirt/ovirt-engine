@@ -1247,6 +1247,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allow to create new Vms")
     String allowToCreateNewVmsRoleTreeTooltip();
 
+    @DefaultStringValue("Allow to create new Vms from Instance Type")
+    String allowToCreateNewInstnaceRoleTreeTooltip();
+
     @DefaultStringValue("Allow to remove Vms from the system")
     String allowToRemoveVmsFromTheSystemRoleTreeTooltip();
 

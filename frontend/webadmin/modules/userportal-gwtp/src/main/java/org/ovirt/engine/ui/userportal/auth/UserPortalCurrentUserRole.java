@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.userportal.auth;
 
-public class CurrentUserRole {
+import org.ovirt.engine.ui.common.auth.CommonCurrentUserRole;
+
+public class UserPortalCurrentUserRole extends CommonCurrentUserRole {
 
     private boolean engineUser = true;
 

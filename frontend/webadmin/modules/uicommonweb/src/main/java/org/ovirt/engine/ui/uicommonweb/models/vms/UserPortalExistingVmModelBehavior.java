@@ -22,8 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
 public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 {
-    private static final ActionGroup CREATE_VM = ActionGroup.CREATE_VM;
-
     public UserPortalExistingVmModelBehavior(VM vm)
     {
         super(vm);
@@ -40,6 +38,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
     @Override
     protected void initClusters(final List<StoragePool> dataCenters) {
         // Get clusters with permitted edit action
+        ActionGroup actionGroup = getModel().isCreateInstanceOnly() ? ActionGroup.CREATE_INSTANCE : ActionGroup.CREATE_VM;
         AsyncDataProvider.getClustersWithPermittedAction(new AsyncQuery(new Object[]{this, getModel()},
                 new INewAsyncCallback() {
                     @Override
@@ -65,7 +64,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                         behavior.initCdImage();
 
                     }
-                }, getModel().getHash()), CREATE_VM, true, false);
+                }, getModel().getHash()), actionGroup, true, false);
 
     }
 

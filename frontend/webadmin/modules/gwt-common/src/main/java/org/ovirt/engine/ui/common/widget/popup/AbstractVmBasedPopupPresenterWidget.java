@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.popup;
 
+import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -7,13 +9,12 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.inject.Inject;
-
 public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupPresenterWidget.ViewDef> extends AbstractModelBoundPopupPresenterWidget<UnitVmModel, V>  {
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<UnitVmModel> {
         void switchMode(boolean isAdvanced);
+
+        void initToCreateInstanceMode();
 
         void setSpiceProxyOverrideExplanation(String explanation);
 
@@ -37,7 +38,16 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
 
         swithAccordingToMode(model);
 
+        initToCreateInstanceMode(model);
+
         initListeners(model);
+    }
+
+    private void initToCreateInstanceMode(UnitVmModel model) {
+        if (model.isCreateInstanceOnly()) {
+            // hide the admin-only widgets only for non-admin users
+            getView().initToCreateInstanceMode();
+        }
     }
 
     private void initListeners(final UnitVmModel model) {

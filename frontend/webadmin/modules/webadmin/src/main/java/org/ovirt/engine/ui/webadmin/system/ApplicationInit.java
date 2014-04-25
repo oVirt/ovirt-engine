@@ -1,5 +1,11 @@
 package org.ovirt.engine.ui.webadmin.system;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
@@ -12,6 +18,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.FrontendLoginHandler;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
+import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -22,12 +29,6 @@ import org.ovirt.engine.ui.webadmin.plugin.restapi.EngineSessionTimeoutData;
 import org.ovirt.engine.ui.webadmin.plugin.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.Window;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 
 public class ApplicationInit extends BaseApplicationInit<LoginModel> {
@@ -47,9 +48,10 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
             Frontend frontend,
             PlaceManager placeManager,
             RestApiSessionManager restApiSessionManager,
-            ApplicationDynamicMessages dynamicMessages) {
+            ApplicationDynamicMessages dynamicMessages,
+            CurrentUserRole currentUserRole) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
-                user, eventBus, loginModelProvider, lockInteractionManager, frontend);
+                user, eventBus, loginModelProvider, lockInteractionManager, frontend, currentUserRole);
         this.placeManager = placeManager;
         this.restApiSessionManager = restApiSessionManager;
         this.dynamicMessages = dynamicMessages;

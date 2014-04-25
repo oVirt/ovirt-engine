@@ -399,6 +399,12 @@ public class UserPortalLoginModel extends LoginModel
             }
         }
 
+        if (loginModel.getLoggedUserActionGroupList().contains(ActionGroup.CREATE_INSTANCE)) {
+            loginModel.getCreateInstanceOnly().setEntity(true);
+        } else {
+            loginModel.getCreateInstanceOnly().setEntity(false);
+        }
+
         loginModel.getIsENGINEUser().setEntity(isENGINEUser);
     }
 

@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
-import org.ovirt.engine.ui.userportal.auth.CurrentUserRole;
+import org.ovirt.engine.ui.userportal.auth.UserPortalCurrentUserRole;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.utils.ConnectAutomaticallyManager;
 
@@ -28,7 +28,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
 
     private final PlaceManager placeManager;
-    private final CurrentUserRole userRole;
+    private final UserPortalCurrentUserRole userRole;
     private final ConnectAutomaticallyManager connectAutomaticallyManager;
     private final ClientAgentType clientAgentType;
     private final ApplicationDynamicMessages dynamicMessages;
@@ -43,12 +43,12 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
             LockInteractionManager lockInteractionManager,
             Frontend frontend,
             PlaceManager placeManager,
-            CurrentUserRole userRole,
+            UserPortalCurrentUserRole userRole,
             ConnectAutomaticallyManager connectAutomaticallyManager,
             ClientAgentType clientAgentType,
             ApplicationDynamicMessages dynamicMessages) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
-                user, eventBus, loginModelProvider, lockInteractionManager, frontend);
+                user, eventBus, loginModelProvider, lockInteractionManager, frontend, userRole);
         this.placeManager = placeManager;
         this.userRole = userRole;
         this.connectAutomaticallyManager = connectAutomaticallyManager;

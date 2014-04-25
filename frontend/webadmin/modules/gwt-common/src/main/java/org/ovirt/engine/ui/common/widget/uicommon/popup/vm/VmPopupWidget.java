@@ -1,8 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
-
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -12,7 +10,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
-import com.google.gwt.core.client.GWT;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
 
 public class VmPopupWidget extends AbstractVmPopupWidget {
 
@@ -48,9 +46,13 @@ public class VmPopupWidget extends AbstractVmPopupWidget {
 
     @Override
     protected PopupWidgetConfigMap createWidgetConfiguration() {
-        return super.createWidgetConfiguration().
+        PopupWidgetConfigMap widgetConfiguration = super.createWidgetConfiguration().
                 putAll(poolSpecificFields(), hiddenField()).
-                update(templateVersionNameEditor, hiddenField()).
-                putAll(detachableWidgets(), simpleField().detachable().visibleInAdvancedModeOnly());
+                update(templateVersionNameEditor, hiddenField());
+
+        updateOrAddToWidgetConfiguration(widgetConfiguration, detachableWidgets(), UpdateToDetachable.INSTANCE);
+        updateOrAddToWidgetConfiguration(widgetConfiguration, adminOnlyWidgets(), UpdateToAdminOnly.INSTANCE);
+
+        return widgetConfiguration;
     }
 }

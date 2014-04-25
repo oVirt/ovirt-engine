@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.webadmin.gin;
 
+import org.ovirt.engine.ui.common.auth.CommonCurrentUserRole;
 import org.ovirt.engine.ui.common.gin.BaseSystemModule;
 import org.ovirt.engine.ui.common.section.DefaultLoginSectionPlace;
 import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
+import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
@@ -30,6 +32,7 @@ public class SystemModule extends BaseSystemModule {
         bindCommonInfrastructure(WebAdminPlaceManager.class);
         bind(InternalConfiguration.class).asEagerSingleton();
         bind(PostMessageDispatcher.class).asEagerSingleton();
+        bindTypeAndImplAsSingleton(CurrentUserRole.class, CommonCurrentUserRole.class);
     }
 
     void bindConfiguration() {

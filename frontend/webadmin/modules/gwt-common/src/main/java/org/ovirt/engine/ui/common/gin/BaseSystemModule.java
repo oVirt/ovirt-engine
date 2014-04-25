@@ -97,7 +97,7 @@ public abstract class BaseSystemModule extends AbstractGinModule {
     /**
      * Binds {@code type} to its {@code impl} so that injecting any of these yields the singleton {@code impl} instance.
      */
-    private <T> void bindTypeAndImplAsSingleton(Class<T> type, Class<? extends T> impl) {
+    protected <T> void bindTypeAndImplAsSingleton(Class<T> type, Class<? extends T> impl) {
         bind(type).to(impl);
         bind(impl).in(Singleton.class);
     }
