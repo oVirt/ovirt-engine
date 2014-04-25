@@ -68,6 +68,10 @@
 		.destStorageQuotaEditor {
 			visibility: hidden;
 		}
+
+        .listBoxEditor {
+            width: 515px;
+        }
 	</ui:style>
 	<d:SimpleDialogPanel height="575px" width="1000px">
 		<d:content>
@@ -76,8 +80,8 @@
 					<g:VerticalPanel>
 						<g:HorizontalPanel>
 							<g:VerticalPanel>
-								<e:ListModelListBoxEditor ui:field="destStorageEditor" />
-								<e:ListModelListBoxEditor ui:field="destClusterEditor" />
+								<e:ListModelListBoxEditor ui:field="destStorageEditor" addStyleNames="{style.listBoxEditor}"/>
+								<e:ListModelListBoxEditor ui:field="destClusterEditor" addStyleNames="{style.listBoxEditor}"/>
 							</g:VerticalPanel>
 							<g:VerticalPanel>
 								<e:ListModelListBoxEditor ui:field="destStorageQuotaEditor" addStyleNames="{style.destStorageQuotaEditor}"/>
