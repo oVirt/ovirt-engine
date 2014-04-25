@@ -8,7 +8,8 @@ public interface MainTableHeaderlessResources extends CellTable.Resources {
     }
 
     @Override
-    @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/TabCellTableHeaderless.css" })
+    @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/TabCellTable.css",
+        "org/ovirt/engine/ui/common/css/TabCellTableHeaderless.css" })
     TableStyle cellTableStyle();
 
 }

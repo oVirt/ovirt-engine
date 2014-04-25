@@ -1,0 +1,6 @@
+.cellTableHeaderContent {
+    border-right: 1px solid #D7D7E1;
+    height: 32px;
+    margin-right: 3px;
+    overflow: hidden;
+}

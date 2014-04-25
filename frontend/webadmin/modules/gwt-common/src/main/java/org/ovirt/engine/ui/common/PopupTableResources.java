@@ -8,7 +8,8 @@ public interface PopupTableResources extends CellTable.Resources {
     }
 
     @Override
-    @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/PopupCellTable.css" })
+    @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/TabCellTable.css",
+        "org/ovirt/engine/ui/common/css/PopupCellTable.css" })
     TableStyle cellTableStyle();
 
 }

@@ -296,13 +296,11 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     @Override
     public void onResizeStart(Column<T, ?> column, Element headerElement) {
-        headerElement.getStyle().setBackgroundColor("#D6DCFF"); //$NON-NLS-1$
+        // Don't do anything.
     }
 
     @Override
     public void onResizeEnd(Column<T, ?> column, Element headerElement) {
-        headerElement.getStyle().clearBackgroundColor();
-
         // Redraw the table
         redraw();
 
