@@ -268,15 +268,15 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
      * This is tick based vector, every event execute the next
      * tick.
      */
-    private final Callable<?>[] _customizationDialog = new Callable<?>[] {
-        new Callable<Object>() { public Object call() throws Exception {
+    private final List<Callable<Boolean>> _customizationDialog = Arrays.asList(
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 "OVIRT_ENGINE/correlationId",
                 _correlationId
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             if (
                 (Boolean)_parser.cliEnvironmentGet(
                     VdsmEnv.OVIRT_NODE
@@ -288,9 +288,9 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                 );
                 _setNode();
             }
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             if (_isNode) {
                 _isLegacyNode = (Boolean)_parser.cliEnvironmentGet(
                     VdsmEnv.OVIRT_NODE_HAS_OWN_BRIDGES
@@ -299,9 +299,9 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             else {
                 _parser.cliNoop();
             }
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _messages.post(
                 InstallerMessages.Severity.INFO,
                 String.format(
@@ -311,57 +311,57 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                     )
                 )
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 SysEnv.CLOCK_SET,
                 true
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 NetEnv.SSH_ENABLE,
                 true
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 NetEnv.SSH_USER,
                 _vds.getSshUsername()
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 NetEnv.SSH_KEY,
                 EngineEncryptionUtils.getEngineSSHPublicKey().replace("\n", "")
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() {@CallWhen(CustomizationCondition.IPTABLES_OVERRIDE)
-        public Object call() throws Exception {
+        new Callable<Boolean>() {@CallWhen(CustomizationCondition.IPTABLES_OVERRIDE)
+        public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 NetEnv.IPTABLES_ENABLE,
                 true
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() {@CallWhen(CustomizationCondition.IPTABLES_OVERRIDE)
-        public Object call() throws Exception {
+        new Callable<Boolean>() {@CallWhen(CustomizationCondition.IPTABLES_OVERRIDE)
+        public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 NetEnv.IPTABLES_RULES,
                 _iptables.split("\n")
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _setVdsmId((String)_parser.cliEnvironmentGet(VdsmEnv.VDSM_ID));
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 String.format(
                     "%svars/ssl",
@@ -369,9 +369,9 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                 ),
                 Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication).toString()
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 String.format(
                     "%saddresses/management_port",
@@ -379,23 +379,23 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                 ),
                 Integer.toString(_vds.getPort())
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 VdsmEnv.ENGINE_HOST,
                 EngineLocalConfig.getInstance().getHost()
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 VdsmEnv.ENGINE_PORT,
                 EngineLocalConfig.getInstance().getExternalHttpPort()
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             if (_managementNetwork != null) {
                 _parser.cliEnvironmentSet(
                     VdsmEnv.MANAGEMENT_BRIDGE_NAME,
@@ -411,10 +411,10 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             else {
                 _parser.cliNoop();
             }
-            return null;
+            return true;
         }},
-        new Callable<Object>() {
-            public Object call() throws Exception {
+        new Callable<Boolean>() {
+            public Boolean call() throws Exception {
                 String minimal = Config.<String> getValue(ConfigValues.BootstrapMinimalVdsmVersion);
                 if (minimal.trim().length() == 0) {
                     _parser.cliNoop();
@@ -425,9 +425,9 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                     minimal
                 );
             }
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(
                 _vds.getVdsGroupId()
             );
@@ -435,16 +435,16 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                 VdsmEnv.CHECK_VIRT_HARDWARE,
                 vdsGroup.supportsVirtService()
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 VdsmEnv.CERTIFICATE_ENROLLMENT,
                 Const.CERTIFICATE_ENROLLMENT_INLINE
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(
                 _vds.getVdsGroupId()
             );
@@ -452,9 +452,9 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                 VirtEnv.ENABLE,
                 vdsGroup.supportsVirtService()
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(
                 _vds.getVdsGroupId()
             );
@@ -462,9 +462,9 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                 GlusterEnv.ENABLE,
                 vdsGroup.supportsGlusterService()
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             /**
              * Legacy logic
              * Force reboot only if not node.
@@ -480,93 +480,93 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                 org.ovirt.ovirt_host_deploy.constants.CoreEnv.FORCE_REBOOT,
                 reboot
             );
-            return null;
+            return true;
         }},
-        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
-        public Void call() throws Exception {
+        new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
+        public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 OpenStackEnv.NEUTRON_ENABLE,
                 true
             );
-            return null;
+            return true;
         }},
-        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
-        public Void call() throws Exception {
+        new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
+        public Boolean call() throws Exception {
             _setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_hostname",
                 _openStackAgentProperties.getAgentConfiguration().getQpidConfiguration().getAddress()
             );
-            return null;
+            return true;
         }},
-        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
-        public Void call() throws Exception {
+        new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
+        public Boolean call() throws Exception {
             _setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_port",
                 _openStackAgentProperties.getAgentConfiguration().getQpidConfiguration().getPort()
             );
-            return null;
+            return true;
         }},
-        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
-        public Void call() throws Exception {
+        new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
+        public Boolean call() throws Exception {
             _setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_username",
                 _openStackAgentProperties.getAgentConfiguration().getQpidConfiguration().getUsername()
             );
-            return null;
+            return true;
         }},
-        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
-        public Void call() throws Exception {
+        new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
+        public Boolean call() throws Exception {
             _setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_password",
                 _openStackAgentProperties.getAgentConfiguration().getQpidConfiguration().getPassword()
             );
-            return null;
+            return true;
         }},
-        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
-        public Void call() throws Exception {
+        new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
+        public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/rpc_backend",
                 "quantum.openstack.common.rpc.impl_qpid"
             );
-            return null;
+            return true;
         }},
-        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_LINUX_BRIDGE_SETUP)
-        public Void call() throws Exception {
+        new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_LINUX_BRIDGE_SETUP)
+        public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 OpenStackEnv.NEUTRON_LINUXBRIDGE_ENABLE,
                 true
             );
-            return null;
+            return true;
         }},
-        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_LINUX_BRIDGE_SETUP)
-        public Void call() throws Exception {
+        new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_LINUX_BRIDGE_SETUP)
+        public Boolean call() throws Exception {
             _setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_LINUXBRIDGE_CONFIG_PREFIX + "LINUX_BRIDGE/physical_interface_mappings",
                 _openStackAgentProperties.getAgentConfiguration().getNetworkMappings()
             );
-            return null;
+            return true;
         }},
-        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_OPEN_VSWITCH_SETUP)
-        public Void call() throws Exception {
+        new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_OPEN_VSWITCH_SETUP)
+        public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 OpenStackEnv.NEUTRON_OPENVSWITCH_ENABLE,
                 true
             );
-            return null;
+            return true;
         }},
-        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_OPEN_VSWITCH_SETUP)
-        public Void call() throws Exception {
+        new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_OPEN_VSWITCH_SETUP)
+        public Boolean call() throws Exception {
             _setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_OPENVSWITCH_CONFIG_PREFIX + "OVS/bridge_mappings",
                 _openStackAgentProperties.getAgentConfiguration().getNetworkMappings()
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliInstall();
-            return null;
-        }},
-    };
+            return true;
+        }}
+    );
     /**
      * Set the CLI environment variable if it's not <code>null</code>, otherwise perform a no-op so the dialog can
      * advance.
@@ -591,16 +591,23 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                 _parser.cliAbort();
             }
             else {
-                Callable<?> customizationStep = _customizationDialog[_customizationIndex++];
+                boolean skip = false;
+                Callable<Boolean> customizationStep = _customizationDialog.get(_customizationIndex);
                 Method callMethod = customizationStep.getClass().getDeclaredMethod("call");
                 if (callMethod != null) {
                     CallWhen ann = callMethod.getAnnotation(CallWhen.class);
-                    if (ann != null && !_customizationConditions.containsAll(Arrays.asList(ann.value()))) {
-                        _parser.cliNoop();
-                        return;
+                    skip = ann != null && !_customizationConditions.containsAll(Arrays.asList(ann.value()));
+                }
+
+                if (skip) {
+                    _customizationIndex++;
+                    _parser.cliNoop();
+                }
+                else {
+                    if (customizationStep.call()) {
+                        _customizationIndex++;
                     }
                 }
-                customizationStep.call();
             }
         }
         catch (ArrayIndexOutOfBoundsException e) {
@@ -630,26 +637,26 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
      * This is tick based vector, every event execute the next
      * tick.
      */
-    private final Callable<?>[] _terminationDialog = new Callable<?>[] {
-        new Callable<Object>() { public Object call() throws Exception {
+    private final List<Callable<Boolean>> _terminationDialog = Arrays.asList(
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _resultError = (Boolean)_parser.cliEnvironmentGet(
                 BaseEnv.ERROR
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _aborted = (Boolean)_parser.cliEnvironmentGet(
                 BaseEnv.ABORTED
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _installIncomplete = (Boolean)_parser.cliEnvironmentGet(
                 org.ovirt.ovirt_host_deploy.constants.CoreEnv.INSTALL_INCOMPLETE
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             if (_resultError || !_installIncomplete) {
                 _parser.cliNoop();
             }
@@ -668,9 +675,9 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                     );
                 }
             }
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _goingToReboot = (Boolean)_parser.cliEnvironmentGet(
                 SysEnv.REBOOT
             );
@@ -680,9 +687,9 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                     "Reboot scheduled"
                 );
             }
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             File logFile = new File(
                 EngineLocalConfig.getInstance().getLogDir(),
                 String.format(
@@ -713,26 +720,28 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                 log.error("Unexpected exception", e);
                 throw new RuntimeException(e);
             }
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 CoreEnv.LOG_REMOVE_AT_EXIT,
                 true
             );
-            return null;
+            return true;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliQuit();
-            return null;
-        }},
-    };
+            return true;
+        }}
+    );
     /**
      * Execute the next termination vector entry.
      */
     private void _nextTerminationEntry() throws Exception {
         try {
-            _terminationDialog[_terminationIndex++].call();
+            if (_terminationDialog.get(_terminationIndex).call()) {
+                _terminationIndex++;
+            }
         }
         catch (ArrayIndexOutOfBoundsException e) {
             throw new RuntimeException("Protocol violation", e);
