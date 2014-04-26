@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+    <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+
+    <ui:style>
+        .headerPanel {
+            background-color: #EDEDED;
+            color: #75797D;
+        }
+
+        .collapseButton {
+            width: 24px;
+            background: transparent;
+            float:left;
+            border: none;
+            padding: 0px 2px 2px 6px;
+        }
+
+        .endFloat {
+            clear: both;
+        }
+    </ui:style>
+
+    <g:FlowPanel>
+        <g:FlowPanel ui:field="headerPanel" addStyleNames="{style.headerPanel}">
+            <g:ToggleButton ui:field="collapseButton" addStyleNames="{style.collapseButton}" >
+                <g:upFace image="{resources.expandedHeaderArrow}" />
+                <g:downFace image="{resources.collapsedHeaderArrow}"/>
+            </g:ToggleButton>
+            <g:SimplePanel addStyleNames="{style.endFloat}" />
+        </g:FlowPanel>
+        <g:FlowPanel ui:field="contentPanel" />
+    </g:FlowPanel>
+</ui:UiBinder>

@@ -3753,6 +3753,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Disk Snapshots")
     String snapshotsLabel();
 
+
     @DefaultStringValue("Attached by label")
     String attachedByLabel();
 
@@ -3906,4 +3907,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("QoS")
     String cpuProfileQosLabel();
+
+    @DefaultStringValue("NUMA Support")
+    String numaSupport();
 }

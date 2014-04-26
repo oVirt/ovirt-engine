@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -57,6 +58,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -84,8 +86,8 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters.ArchCapabilitiesVerb;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters;
+import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters.ArchCapabilitiesVerb;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAgentFenceOptionsQueryParameters;
@@ -115,8 +117,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.OsQueryParameters.OsRepositoryVerb;
 import org.ovirt.engine.core.common.queries.OsQueryParameters;
+import org.ovirt.engine.core.common.queries.OsQueryParameters.OsRepositoryVerb;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ServerParameters;
@@ -3820,4 +3822,43 @@ public class AsyncDataProvider {
         };
     }
 
+    public void getHostNumaTopologyByHostId(AsyncQuery asyncQuery, Guid hostId) {
+        asyncQuery.converterCallback = new IAsyncConverter() {
+
+            @Override
+            public Object Convert(Object source, AsyncQuery asyncQuery) {
+                if (source == null) {
+                    return new ArrayList<VdsNumaNode>();
+                }
+                return source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsNumaNodesByVdsId,
+                new IdQueryParameters(hostId),
+                asyncQuery);
+    }
+
+    public void getVMsWithVNumaNodesByClusterId(AsyncQuery asyncQuery, Guid clusterId) {
+        asyncQuery.converterCallback = new IAsyncConverter() {
+
+            @Override
+            public Object Convert(Object source, AsyncQuery asyncQuery) {
+                if (source == null) {
+                    return new ArrayList<VM>();
+                }
+                return source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllVmsWithNumaByVdsGroupId,
+                new IdQueryParameters(clusterId),
+                asyncQuery);
+    }
+
+    public ArrayList<NumaTuneMode> getNumaTuneModeList() {
+        return new ArrayList<NumaTuneMode>(Arrays.asList(new NumaTuneMode[] {
+                NumaTuneMode.STRICT,
+                NumaTuneMode.PREFERRED,
+                NumaTuneMode.INTERLEAVE
+        }));
+    }
 }

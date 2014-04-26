@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:with field="commonConstants" type="org.ovirt.engine.ui.common.CommonApplicationConstants" />
+
+    <ui:style type="org.ovirt.engine.ui.common.view.popup.numa.UnassignedVNumaNodesPanelView.Style">
+        .unassignedPanelContainer {
+            height: 380px;
+        }
+
+        .unassignedNodesPanel {
+            overflow-y: scroll;
+            background-color: white;
+            border: 1px solid #DADADA;
+            margin: 15px;
+            padding: 5px;
+            height: 260px;
+        }
+
+        .headerLabel {
+            font-size: medium;
+            color: #75797D;
+        }
+
+        .instructionLabel {
+            font-size: smaller;
+            color: #AEAEAE;
+        }
+
+        .labelContainer {
+            padding: 15px;
+        }
+
+        .scrollPanel {
+            background-color: white;
+            overflow-y: auto;
+            height: auto;
+        }
+
+        .unassignPanel {
+            min-height: 75px;
+            margin: 15px;
+            border: 1px dashed #DADADA;
+        }
+
+        .emptyPanel {
+            min-height: 35px;
+            margin-left: 15px;
+            margin-right: 15px;
+            border: 1px dashed #DADADA;
+        }
+    </ui:style>
+
+    <g:FlowPanel addStyleNames="{style.unassignedPanelContainer}">
+        <g:FlowPanel addStyleNames="{style.labelContainer}">
+            <g:Label ui:field="unassignedHeaderLabel" addStyleNames="{style.headerLabel}" text="{commonConstants.numaUnassignedInstructions}" />
+            <g:Label ui:field="instructionsLabel" addStyleNames="{style.instructionLabel}" text="{commonConstants.unassignedVNumaNodesLabel}"/>
+        </g:FlowPanel>
+        <g:FlowPanel ui:field="unassignedNodesPanel" addStyleNames="{style.unassignedNodesPanel}"/>
+        <g:FlowPanel ui:field="nodeDetailPanel" />
+    </g:FlowPanel>
+</ui:UiBinder>

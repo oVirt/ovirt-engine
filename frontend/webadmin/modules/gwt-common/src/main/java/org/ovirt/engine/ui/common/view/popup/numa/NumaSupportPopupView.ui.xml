@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:n="urn:import:org.ovirt.engine.ui.common.view.popup.numa">
+
+    <ui:style type="org.ovirt.engine.ui.common.view.popup.numa.NumaSupportPopupView.Style">
+        .header {
+            background-color: #EFEFEF;
+        }
+
+        .headerLabel {
+            float: left;
+            font-weight: bolder;
+            font-size: large;
+            line-height: 35px;
+            padding-left: 15px;
+        }
+
+        .hostInfoPanel {
+            margin: 15px 15px 0px 15px;
+            border: 1px solid EFEFEF;
+        }
+
+        .socketScrollPanel {
+            overflow-y: auto;
+        }
+
+        .socketListPanel {
+            float: left;
+        }
+
+        .endFloat {
+            clear: both;
+        }
+
+        .unassignedPanel {
+            background-color: #EDEDED;
+        }
+
+        .hostSummaryNumaTitle {
+            float: left;
+            padding-left: 5px;
+            width: 180px;
+            font-size: medium;
+            color: black;
+            padding: 5px;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="1200px" height="700px">
+        <d:content>
+            <g:SplitLayoutPanel ui:field="horizontalSplitLayoutPanel">
+                <g:center>
+                    <g:FlowPanel ui:field="groupPanel">
+                        <g:FlowPanel ui:field="hostSummaryPanel" addStyleNames="{style.hostInfoPanel}">
+                        </g:FlowPanel>
+                        <g:FlowPanel addStyleNames="{style.socketScrollPanel}">
+                            <g:FlowPanel ui:field="socketListPanel" addStyleNames="{style.socketListPanel}"/>
+                        </g:FlowPanel>
+                        <g:SimplePanel addStyleNames="{style.endFloat}" />
+                    </g:FlowPanel>
+                </g:center>
+                <g:east size="300">
+                    <g:FlowPanel ui:field="unassignedvNumaNodesContainer" addStyleNames="{style.unassignedPanel}">
+                        <g:HTMLPanel>
+                            <g:Label ui:field="unassignedvNumaNodesLabel" />
+                        </g:HTMLPanel>
+                    </g:FlowPanel>
+                </g:east>
+            </g:SplitLayoutPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
+
+</ui:UiBinder>

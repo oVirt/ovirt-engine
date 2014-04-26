@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui" >
+
+    <ui:style type="org.ovirt.engine.ui.common.view.popup.numa.AssignedVNumaNodesPanel.Style">
+        .numaTitle {
+            padding-left: 5px;
+        }
+    </ui:style>
+
+    <g:FlowPanel ui:field="container" />
+</ui:UiBinder>

@@ -1919,4 +1919,21 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("SPICE-HTML5 does not support SPICE Proxy.")
     String spiceHtml5DoesntSupportSpiceProxy();
+
+    //Numa
+    @DefaultStringValue("Drag a vNUMA onto a NUMA node to pin the vNUMA to that node.")
+    String numaUnassignedInstructions();
+
+    @DefaultStringValue("Unassigned virtual nodes")
+    String unassignedVNumaNodesLabel();
+
+    @DefaultStringValue("Totals:")
+    String numaSummaryTotals();
+
+    @DefaultStringValue("Pin to NUMA node")
+    String pinToNumaNode();
+
+    @DefaultStringValue("Un pin virtual node")
+    String unPinNode();
+
 }
