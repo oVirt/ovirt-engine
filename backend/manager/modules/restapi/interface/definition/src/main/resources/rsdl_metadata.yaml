@@ -1366,6 +1366,72 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
+- name: /datacenters/{datacenter:id}/qoss|rel=get
+  description: get QoSs for the datacenter in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /datacenters/{datacenter:id}/qoss/{qos:id}|rel=get
+  description: get the specified QoS in the datacenter
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /datacenters/{datacenter:id}/qoss/{qos:id}|rel=delete
+  description: delete the specified QoS in the datacenter
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /datacenters/{datacenter:id}/qoss/{qos:id}|rel=update
+  description: update the specified QoS in the datacenter
+  request:
+    body:
+      parameterType: QoS
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {qos.name: 'xs:string',
+                           qos.description: 'xs:string',
+                           qos.max_throughput: 'xs:int',
+                           qos.max_read_throughput: 'xs:int',
+                           qos.max_write_throughput: 'xs:int',
+                           qos.max_iops: 'xs:int',
+                           qos.max_read_iops: 'xs:int',
+                           qos.max_write_iops: 'xs:int'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /datacenters/{datacenter:id}/qoss|rel=add
+  description: add a new QoS to the datacenter
+  request:
+    body:
+      parameterType: QoS
+      signatures:
+      - mandatoryArguments: {qos.name: 'xs:string', qos.type: 'xs:string'}
+        optionalArguments: {qos.description: 'xs:string',
+                           qos.max_throughput: 'xs:int',
+                           qos.max_read_throughput: 'xs:int',
+                           qos.max_write_throughput: 'xs:int',
+                           qos.max_iops: 'xs:int',
+                           qos.max_read_iops: 'xs:int',
+                           qos.max_write_iops: 'xs:int'}
+        description: add a new QoS to the datacenter
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /storagedomains|rel=get
   description: get storage domains in the system
   request:

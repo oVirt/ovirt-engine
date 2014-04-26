@@ -5,13 +5,13 @@ import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResource.S
 
 import java.util.List;
 
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
 import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.NetworksResource;
+import org.ovirt.engine.api.resource.QoSsResource;
 import org.ovirt.engine.api.resource.QuotasResource;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -28,7 +28,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendDataCenterResource extends AbstractBackendSubResource<DataCenter, StoragePool>
         implements DataCenterResource {
 
-    private BackendDataCentersResource parent;
+    private final BackendDataCentersResource parent;
 
     public BackendDataCenterResource(String id, BackendDataCentersResource parent) {
         super(id, DataCenter.class, StoragePool.class, SUB_COLLECTIONS);
@@ -63,6 +63,7 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
         return inject(new BackendAttachedStorageDomainsResource(id));
     }
 
+    @Override
     public NetworksResource getNetworksResource() {
         return inject(new BackendDataCenterNetworksResource(id));
     }
@@ -104,10 +105,10 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
      * cluster.
      */
     @SuppressWarnings("unchecked")
-    public static StoragePool getStoragePool(Cluster cluster, AbstractBackendResource parent) {
+    public static StoragePool getStoragePool(DataCenter dataCenter, AbstractBackendResource parent) {
         StoragePool pool = null;
-        if (cluster.getDataCenter().isSetId()) {
-            String id = cluster.getDataCenter().getId();
+        if (dataCenter.isSetId()) {
+            String id = dataCenter.getId();
             Guid guid;
             try {
                 guid = new Guid(id); // can't use asGuid() because the method is static.
@@ -117,11 +118,11 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
             pool = parent.getEntity(StoragePool.class, VdcQueryType.GetStoragePoolById,
                     new IdQueryParameters(guid), "Datacenter: id=" + id);
         } else {
-            String clusterName = cluster.getDataCenter().getName();
+            String clusterName = dataCenter.getName();
             pool = parent.getEntity(StoragePool.class, VdcQueryType.GetStoragePoolByDatacenterName,
                     new NameQueryParameters(clusterName), "Datacenter: name="
                             + clusterName);
-            cluster.getDataCenter().setId(pool.getId().toString());
+            dataCenter.setId(pool.getId().toString());
         }
         return pool;
     }
@@ -137,5 +138,10 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
                                                     new IdQueryParameters(storageDomainId),
                                                     "Datacenters",
                                                     true);
+    }
+
+    @Override
+    public QoSsResource getQossResource() {
+        return inject(new BackendQossResource(id));
     }
 }

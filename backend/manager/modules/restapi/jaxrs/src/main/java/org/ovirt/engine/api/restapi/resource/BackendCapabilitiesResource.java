@@ -72,6 +72,7 @@ import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.PowerManagementStates;
 import org.ovirt.engine.api.model.PowerManagementStatus;
 import org.ovirt.engine.api.model.PowerManagers;
+import org.ovirt.engine.api.model.QosTypes;
 import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.api.model.ReportedDeviceTypes;
 import org.ovirt.engine.api.model.SELinuxMode;
@@ -142,7 +143,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendCapabilitiesResource extends BackendResource implements CapabilitiesResource {
 
-    private FeaturesHelper featuresHelper = new FeaturesHelper();
+    private final FeaturesHelper featuresHelper = new FeaturesHelper();
 
     public static final Version VERSION_3_0 = new Version() {
         {
@@ -184,14 +185,14 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     @Override
     public Capabilities list() {
-    Capabilities caps = new Capabilities();
+        Capabilities caps = new Capabilities();
         for (Version v : getSupportedClusterLevels()) {
             caps.getVersions().add(generateVersionCaps(v));
         }
 
         caps.setPermits(getPermits());
         caps.setSchedulingPolicies(getSchedulingPolicies());
-        return  caps;
+        return caps;
     }
 
     public VersionCaps generateVersionCaps(Version v) {
@@ -234,10 +235,11 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addOsTypes(version);
         addNfsVersions(version, NfsVersion.values());
         addKdumpStates(version, KdumpStatus.values());
+        addSupportedQosTypes(version);
 
         addGlusterTypesAndStates(version);
 
-        //Add States. User can't update States, but he still needs to know which exist.
+        // Add States. User can't update States, but he still needs to know which exist.
         addCreationStates(version, CreationStatus.values());
         addStorageDomaintStates(version, StorageDomainStatus.values());
         addPowerManagementStateses(version, PowerManagementStatus.values());
@@ -280,7 +282,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             version.setCurrent(false);
         }
 
-        LinkHelper.<VersionCaps>addLinks(getUriInfo(), version);
+        LinkHelper.<VersionCaps> addLinks(getUriInfo(), version);
 
         return version;
     }
@@ -439,13 +441,13 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             addGlusterHookContentTypes(version, HookContentType.values());
             addStages(version, HookStage.values());
             addGlusterHookStates(version, HookStatus.values());
-         }
+        }
     }
 
     private Version getCurrentVersion() {
         if (currentVersion == null) {
             currentVersion = VersionHelper.parseVersion(getConfigurationValueDefault(String.class,
-                                                                              ConfigurationValues.VdcVersion));
+                    ConfigurationValues.VdcVersion));
         }
         return currentVersion;
     }
@@ -607,8 +609,14 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     private List<CustomProperty> getVmHooksEnvs(Version version) {
         List<CustomProperty> ret = new ArrayList<CustomProperty>();
-        ret.addAll(CustomPropertiesParser.parse(getConfigurationValue(String.class, ConfigurationValues.PredefinedVMProperties, version), true));
-        ret.addAll(CustomPropertiesParser.parse(getConfigurationValue(String.class, ConfigurationValues.UserDefinedVMProperties, version), true));
+        ret.addAll(CustomPropertiesParser.parse(getConfigurationValue(String.class,
+                ConfigurationValues.PredefinedVMProperties,
+                version),
+                true));
+        ret.addAll(CustomPropertiesParser.parse(getConfigurationValue(String.class,
+                ConfigurationValues.UserDefinedVMProperties,
+                version),
+                true));
         return ret;
     }
 
@@ -620,8 +628,8 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     public List<Version> getSupportedClusterLevels() {
         List<Version> versions = new ArrayList<Version>();
-        for (org.ovirt.engine.core.compat.Version v :
-                    (Set<org.ovirt.engine.core.compat.Version>)getConfigurationValueDefault(Set.class, ConfigurationValues.SupportedClusterLevels)){
+        for (org.ovirt.engine.core.compat.Version v : (Set<org.ovirt.engine.core.compat.Version>) getConfigurationValueDefault(Set.class,
+                ConfigurationValues.SupportedClusterLevels)) {
             Version version = new Version();
             version.setMajor(v.getMajor());
             version.setMinor(v.getMinor());
@@ -755,49 +763,49 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     // Gluster related types and states
     private void addGlusterVolumeTypes(VersionCaps version, GlusterVolumeType[] types) {
         version.setGlusterVolumeTypes(new GlusterVolumeTypes());
-        for(GlusterVolumeType type : types) {
+        for (GlusterVolumeType type : types) {
             version.getGlusterVolumeTypes().getGlusterVolumeTypes().add(type.value());
         }
     }
 
     private void addTransportTypes(VersionCaps version, TransportType[] types) {
         version.setTransportTypes(new TransportTypes());
-        for(TransportType type : types) {
+        for (TransportType type : types) {
             version.getTransportTypes().getTransportTypes().add(type.value());
         }
     }
 
     private void addGlusterVolumeStates(VersionCaps version, GlusterState[] states) {
         version.setGlusterVolumeStates(new GlusterStates());
-        for(GlusterState type : states) {
+        for (GlusterState type : states) {
             version.getGlusterVolumeStates().getGlusterStates().add(type.value());
         }
     }
 
     private void addGlusterBrickStates(VersionCaps version, GlusterState[] states) {
         version.setBrickStates(new GlusterStates());
-        for(GlusterState type : states) {
+        for (GlusterState type : states) {
             version.getBrickStates().getGlusterStates().add(type.value());
         }
     }
 
     private void addGlusterHookContentTypes(VersionCaps version, HookContentType[] values) {
         version.setContentTypes(new ContentTypes());
-        for (HookContentType type: values) {
+        for (HookContentType type : values) {
             version.getContentTypes().getContentTypes().add(type.value());
         }
     }
 
     private void addGlusterHookStates(VersionCaps version, HookStatus[] values) {
         version.setHookStates(new HookStates());
-        for (HookStatus status: values) {
+        for (HookStatus status : values) {
             version.getHookStates().getHookStates().add(status.value());
         }
     }
 
     private void addStages(VersionCaps version, HookStage[] values) {
         version.setStages(new Stages());
-        for (HookStage stage: values) {
+        for (HookStage stage : values) {
             version.getStages().getStages().add(stage.value());
         }
     }
@@ -813,7 +821,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     private void addStepEnumTypes(VersionCaps version, StepEnum[] states) {
         version.setStepTypes(new StepTypes());
-        for(StepEnum type : states) {
+        for (StepEnum type : states) {
             version.getStepTypes().getStepType().add(type.value());
         }
     }
@@ -848,7 +856,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     private void addSELinuxModes(VersionCaps version, SELinuxMode[] values) {
         if (VersionUtils.greaterOrEqual(version, VERSION_3_5)) {
             version.setSelinuxModes(new SELinuxModes());
-            for (SELinuxMode mode: values) {
+            for (SELinuxMode mode : values) {
                 version.getSelinuxModes().getSELinuxModes().add(mode.value());
             }
         }
@@ -866,7 +874,16 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     private void addPolicyUnitTypes(VersionCaps version, PolicyUnitType[] values) {
         version.setSchedulingPolicyUnitTypes(new SchedulingPolicyUnitTypes());
         for (PolicyUnitType policyUnitType : values) {
-            version.getSchedulingPolicyUnitTypes().getSchedulingPolicyUnitTypes().add(policyUnitType.name().toLowerCase());
+            version.getSchedulingPolicyUnitTypes()
+                    .getSchedulingPolicyUnitTypes()
+                    .add(policyUnitType.name().toLowerCase());
+        }
+    }
+
+    private void addSupportedQosTypes(VersionCaps version) {
+        version.setQosTypes(new QosTypes());
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_5)) {
+            version.getQosTypes().getQosTypes().add(org.ovirt.engine.api.model.QosType.STORAGE.name().toLowerCase());
         }
     }
 
