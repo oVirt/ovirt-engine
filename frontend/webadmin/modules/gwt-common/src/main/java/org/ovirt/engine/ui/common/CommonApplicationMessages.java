@@ -153,4 +153,27 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("{0} (Previewing: {1})")
     String snapshotPreviewing(String snapshotDescription, String diskAliases);
+
+    //Numa messages
+    @DefaultMessage("{0}_NUMA{1}")
+    String vNumaName(String name, int index);
+
+    @DefaultMessage("{0} CPUs")
+    String numaTotalCpus(int totalCpu);
+
+    @DefaultMessage("{0}% Used")
+    String numaPercentUsed(int percentage);
+
+    @DefaultMessage("{0} MB")
+    String numaMemory(long totalMemory);
+
+    @DefaultMessage("{0} MB used")
+    String numaMemoryUsed(long totalMemoryUsed);
+
+    @DefaultMessage("Socket {0}")
+    SafeHtml numaSocketNumber(int nodeIndex);
+
+    @DefaultMessage("NUMA {0}")
+    String numaNode(int index);
+
 }

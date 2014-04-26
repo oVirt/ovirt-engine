@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.numa.NumaSupportPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -80,7 +81,8 @@ public class HostModule extends AbstractGinModule {
             final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider,
             final Provider<ConfigureLocalStoragePopupPresenterWidget> configureLocalStoragePopupProvider,
-            final Provider<HostInstallPopupPresenterWidget> installPopupProvider) {
+            final Provider<HostInstallPopupPresenterWidget> installPopupProvider,
+            final Provider<NumaSupportPopupPresenterWidget> numaSupportPopupProvider) {
         return new MainTabModelProvider<VDS, HostListModel>(eventBus, defaultConfirmPopupProvider, HostListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostListModel source,
@@ -97,6 +99,8 @@ public class HostModule extends AbstractGinModule {
                     return assignTagsPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getConfigureLocalStorageCommand()) {
                     return configureLocalStoragePopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getNumaSupportCommand()) {
+                    return numaSupportPopupProvider.get();
                 }
                 return super.getModelPopup(source, lastExecutedCommand, windowModel);
             }

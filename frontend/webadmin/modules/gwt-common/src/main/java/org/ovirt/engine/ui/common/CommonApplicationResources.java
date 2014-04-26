@@ -280,4 +280,42 @@ public interface CommonApplicationResources extends ClientBundle {
 
     @Source("images/separated.png")
     ImageResource separatedIcon();
+
+    //Collapsible panel
+    @Source("images/collapsed_header_icon.png")
+    ImageResource collapsedHeaderArrow();
+
+    @Source("images/expanded_header_icon.png")
+    ImageResource expandedHeaderArrow();
+
+    //Numa popup
+    @Source("images/numa/vnuma_icon.png")
+    ImageResource vNumaTitleIcon();
+
+    @Source("images/numa/partial_vnuma_light_icon.png")
+    ImageResource partialVNumaIcon();
+
+    @Source("images/numa/pinned_partial_vnuma_light_icon.png")
+    ImageResource pinnedPartialVNumaIcon();
+
+    @Source("images/numa/vnuma_light_icon.png")
+    ImageResource vNumaIcon();
+
+    @Source("images/numa/pinned_vnuma_light_icon.png")
+    ImageResource pinnedVNumaIcon();
+
+    @Source("images/numa/drag_handle.png")
+    ImageResource dragHandleIcon();
+
+    @Source("images/numa/pinned_partial_vnuma_dark_icon.png")
+    ImageResource darkPinnedPartialVNumaIcon();
+
+    @Source("images/numa/pinned_vnuma_dark_icon.png")
+    ImageResource darkPinnedVNumaIcon();
+
+    @Source("images/numa/partial_vnuma_dark_icon.png")
+    ImageResource darkPartialVNumaIcon();
+
+    @Source("images/numa/vnuma_dark_icon.png")
+    ImageResource darkVNumaIcon();
 }

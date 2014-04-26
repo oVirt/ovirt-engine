@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:onu="urn:import:org.ovirt.engine.ui.common.view.popup.numa">
+
+    <ui:style>
+        .container {
+            background-color: white;
+            border: 1px solid #EDEDED;
+        }
+
+        .fancyBarsContainer {
+            width: 200px;
+            min-height: 1px;
+            float: left;
+        }
+
+        .scrollPanel {
+            overflow-y: scroll;
+            overflow-x: hidden;
+            max-height: 100px;
+            height: 100px;
+            width: 180px;
+            padding: 5px;
+            float: left;
+            border-left: 1px solid #EDEDED;
+            margin-top: 1px;
+        }
+
+        .vNumaScrollPanel {
+            background-color: #EDEDED;
+        }
+
+        .clearFloat {
+            clear: both;
+        }
+    </ui:style>
+
+    <g:FlowPanel addStyleNames="{style.container}">
+        <g:FlowPanel addStyleNames="{style.fancyBarsContainer}" />
+        <g:FocusPanel ui:field="numaContainer" addStyleNames="{style.scrollPanel}">
+            <g:FlowPanel ui:field="numaPanel" />
+        </g:FocusPanel>
+        <g:FocusPanel ui:field="vNumaContainer" addStyleNames="{style.scrollPanel} {style.vNumaScrollPanel}">
+            <g:FlowPanel ui:field="vNumaPanel" />
+        </g:FocusPanel>
+        <g:SimplePanel addStyleNames="{style.clearFloat}" />
+    </g:FlowPanel>
+
+</ui:UiBinder>

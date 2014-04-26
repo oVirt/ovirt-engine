@@ -245,6 +245,12 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             }
         });
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
+            getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.numaSupport()) {
+                @Override
+                protected UICommand resolveCommand() {
+                    return getMainModel().getNumaSupportCommand();
+                }
+            });
             getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.confirmRebootedHost(),
                     CommandLocation.OnlyFromContext) {
                 @Override

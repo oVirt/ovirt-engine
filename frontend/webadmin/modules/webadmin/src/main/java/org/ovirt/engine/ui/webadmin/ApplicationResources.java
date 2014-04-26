@@ -426,5 +426,4 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/glusterAsyncTasks/remove_brick_commit_required.png")
     ImageResource removeBrickCommitRequired();
-
 }

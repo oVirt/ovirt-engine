@@ -1917,4 +1917,20 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("CPU Profile")
     String cpuProfileLabel();
 
+    //Numa
+    @DefaultStringValue("Drag a vNUMA onto a NUMA node to pin the vNUMA to that node.")
+    String numaUnassignedInstructions();
+
+    @DefaultStringValue("Unassigned virtual nodes")
+    String unassignedVNumaNodesLabel();
+
+    @DefaultStringValue("Totals:")
+    String numaSummaryTotals();
+
+    @DefaultStringValue("Pin to NUMA node")
+    String pinToNumaNode();
+
+    @DefaultStringValue("Un pin virtual node")
+    String unPinNode();
+
 }

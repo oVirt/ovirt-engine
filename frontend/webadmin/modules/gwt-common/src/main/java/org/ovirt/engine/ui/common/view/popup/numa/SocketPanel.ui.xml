@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:style>
+        .header {
+            width: 100%;
+            background-color: #EDEDED;
+            padding-left: 15px;
+            font-weight: bold;
+        }
+
+        .socketPanel {
+            border: 1px #EDEDED solid;
+            width: 260px;
+            float: left;
+            margin-left: 15px;
+            margin-top: 15px;
+        }
+    </ui:style>
+
+    <g:FocusPanel addStyleNames="{style.socketPanel}">
+        <g:FlowPanel>
+            <g:Label ui:field="headerLabel" addStyleNames="{style.header}"/>
+            <g:FlowPanel ui:field="container" />
+        </g:FlowPanel>
+    </g:FocusPanel>
+
+</ui:UiBinder>

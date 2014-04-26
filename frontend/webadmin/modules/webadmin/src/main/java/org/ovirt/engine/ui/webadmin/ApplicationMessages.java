@@ -106,4 +106,5 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("Default ({0})")
     String defaultMtu(int mtu);
+
 }

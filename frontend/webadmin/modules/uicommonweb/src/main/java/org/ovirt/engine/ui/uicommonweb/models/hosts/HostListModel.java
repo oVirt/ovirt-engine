@@ -40,8 +40,10 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -76,6 +78,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterFeaturesUtil;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -303,6 +306,16 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         refreshCapabilitiesCommand = value;
     }
 
+    private UICommand numaSupportCommand;
+
+    public UICommand getNumaSupportCommand() {
+        return numaSupportCommand;
+    }
+
+    public void setNumaSupportCommand(UICommand numaSupportCommand) {
+        this.numaSupportCommand = numaSupportCommand;
+    }
+
     private HostEventListModel privateHostEventListModel;
 
     private HostEventListModel getHostEventListModel()
@@ -405,7 +418,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         setAssignTagsCommand(new UICommand("AssignTags", this)); //$NON-NLS-1$
         setConfigureLocalStorageCommand(new UICommand("ConfigureLocalStorage", this)); //$NON-NLS-1$
         setRefreshCapabilitiesCommand(new UICommand("GetCapabilities", this)); //$NON-NLS-1$
-
+        setNumaSupportCommand(new UICommand("NumaSupport", this)); //$NON-NLS-1$
         getConfigureLocalStorageCommand().setAvailableInModes(ApplicationMode.VirtOnly);
         getSelectAsSpmCommand().setAvailableInModes(ApplicationMode.VirtOnly);
         updateActionAvailability();
@@ -2076,6 +2089,13 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         getRefreshCapabilitiesCommand().setIsExecutionAllowed(items.size() > 0 && VdcActionUtils.canExecute(items,
                 VDS.class,
                 VdcActionType.RefreshHostCapabilities));
+
+        boolean numaVisible = false;
+        if (getSelectedItem() != null) {
+            numaVisible = ((VDS) getSelectedItem()).isNumaSupport();
+        }
+        getNumaSupportCommand().setIsVisible(numaVisible);
+
     }
 
     private Boolean hasAdminSystemPermission = null;
@@ -2213,6 +2233,9 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         {
             refreshCapabilities();
         }
+        else if (command == getNumaSupportCommand()) {
+            numaSupport();
+        }
         else if ("OnAssignTags".equals(command.getName())) //$NON-NLS-1$
         {
             onAssignTags();
@@ -2276,6 +2299,43 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         else if ("OnConfigureLocalStorage".equals(command.getName())) //$NON-NLS-1$
         {
             onConfigureLocalStorage();
+        }
+        else if (NumaSupportModel.SUBMIT_NUMA_SUPPORT.equals(command.getName())) {
+            onNumaSupport();
+        }
+    }
+
+    private void numaSupport() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        VDS host = (VDS) getSelectedItem();
+        List<VDS> hosts = getSelectedItems();
+
+        NumaSupportModel model = new NumaSupportModel(hosts, host, this);
+        setWindow(model);
+    }
+
+    private void onNumaSupport() {
+        if (getWindow() == null) {
+            return;
+        }
+        NumaSupportModel model = (NumaSupportModel) getWindow();
+        ArrayList<VdcActionParametersBase> updateParamsList = model.getUpdateParameters();
+        if (!updateParamsList.isEmpty()) {
+            Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVmNumaNodes, updateParamsList);
+        }
+        setWindow(null);
+    }
+
+    private void updateVNodesMap(VM vm, Map<Guid, VmNumaNode> map) {
+        List<VmNumaNode> list = new ArrayList<VmNumaNode>();
+        for (VmNumaNode node : vm.getvNumaNodeList()) {
+            list.add(node);
+        }
+        for (VmNumaNode node : list) {
+            map.put(node.getId(), node);
         }
     }
 

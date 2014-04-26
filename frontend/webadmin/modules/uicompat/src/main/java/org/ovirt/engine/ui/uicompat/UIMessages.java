@@ -313,6 +313,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("{0} ({1} Socket(s), {2} Core(s) per Socket)")
     String cpuInfoMessage(int numOfCpus, int sockets, int coresPerSocket);
 
+    @DefaultMessage("NUMA Topology - {0}")
+    String numaTopologyTitle(String hostName);
+
     @DefaultMessage("Could not fetch rebalance status of volume :  {0}")
     String rebalanceStatusFailed(String name);
 

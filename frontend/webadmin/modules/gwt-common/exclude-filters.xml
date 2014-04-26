@@ -196,4 +196,55 @@
      <Match>
         <Bug pattern="SIC_INNER_SHOULD_BE_STATIC" />
      </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.presenter.popup.numa.NumaVmSelected" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.presenter.popup.numa.UpdatedVnuma" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of using Integer constructor instead of Integer.valueOf
+        This class is GWT generated code
+
+        findbugs reason:
+        Dm: Method invokes inefficient Integer constructor; use Integer.valueOf(...) instead (DM_NUMBER_CTOR)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.presenter.popup.numa.UpdatedVnumaEvent" />
+       <Method name="hashCode"/>
+       <Bug code="Bx"/>
+     </Match>
+
+       <!--
+        findbugs complain of using Boolean constructor instead of Boolean.valueOf
+        This calss is GWT generated code
+
+        findbugs reason:
+        Dm: Method invokes inefficient Boolean constructor; use Boolean.valueOf(...) instead (DM_BOOLEAN_CTOR)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.presenter.popup.numa.UpdatedVnumaEvent" />
+       <Method name="hashCode"/>
+       <Bug pattern="DM_BOOLEAN_CTOR"/>
+     </Match>
+
 </FindBugsFilter>
