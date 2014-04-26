@@ -525,6 +525,7 @@ select fn_db_add_config_value('DelayResetPerVmInSeconds','0.5','general');
 select fn_db_add_config_value('EncryptHostCommunication','true','general');
 select fn_db_add_config_value('TimeToReduceFailedRunOnVdsInMinutes','30','general');
 select fn_db_add_config_value('UknownTaskPrePollingLapse','60000','general');
+select fn_db_add_config_value('UserSessionHardLimit','600','general');
 select fn_db_add_config_value('UserDefinedVMProperties','','3.0');
 select fn_db_add_config_value('UserDefinedVMProperties','','3.1');
 select fn_db_add_config_value('UserDefinedVMProperties','','3.2');

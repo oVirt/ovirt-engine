@@ -48,6 +48,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
+import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -107,6 +108,7 @@ public class RemoveVdsCommandTest {
     @Before
     public void setUp() {
         clusterId = Guid.newGuid();
+        ThreadLocalParamsContainer.setHttpSessionId("session");
     }
 
     private void prepareMocks() {

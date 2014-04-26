@@ -135,6 +135,7 @@ public class QueriesCommandBaseTest {
     @After
     public void clearSession() {
         ThreadLocalParamsContainer.clean();
+        ThreadLocalParamsContainer.setHttpSessionId("session");
         SessionDataContainer.getInstance().removeSession();
     }
 

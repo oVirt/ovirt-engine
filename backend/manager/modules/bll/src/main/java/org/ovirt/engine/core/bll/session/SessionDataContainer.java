@@ -1,26 +1,34 @@
 package org.ovirt.engine.core.bll.session;
 
-import java.util.Map;
+import java.util.Date;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 
 public class SessionDataContainer {
 
-    private ConcurrentMap<String, Map<String, Object>> oldContext =
-            new ConcurrentHashMap<String, Map<String, Object>>();
-    private ConcurrentMap<String, Map<String, Object>> newContext =
-            new ConcurrentHashMap<String, Map<String, Object>>();
+    private static class SessionInfo {
+        private ConcurrentMap<String, Object> contentOfSession = new ConcurrentHashMap<>();
+
+    }
+
+    private ConcurrentMap<String, SessionInfo> sessionInfoMap = new ConcurrentHashMap<>();
 
     private static final String USER_PARAMETER_NAME = "user";
     private static final String PASSWORD_PARAMETER_NAME = "password";
     private static final String AUTHN_PARAMETER_NAME = "authn";
     private static final String PRINCIPAL_PARAMETER_NAME = "principal";
+    private static final String HARD_LIMIT_PARAMETER_NAME = "hard_limit";
+    private static final String SOFT_LIMIT_PARAMETER_NAME = "soft_limit";
 
     private static SessionDataContainer dataProviderInstance = new SessionDataContainer();
 
@@ -38,13 +46,18 @@ public class SessionDataContainer {
      *            - the internal key
      * @return
      */
-    public final Object getData(String key, boolean refresh) {
+    public final Object getData(String key) {
         String sessionId = ThreadLocalParamsContainer.getHttpSessionId();
         if (sessionId == null) {
             return null;
         }
-        return getData(sessionId, key, refresh);
+        return getData(sessionId, key, false);
     }
+
+    public final Object getData(String key, boolean refresh) {
+        return getData(ThreadLocalParamsContainer.getHttpSessionId(), key, refresh);
+    }
+
 
     /**
      * This method will set user by session which is attached to thread
@@ -73,53 +86,35 @@ public class SessionDataContainer {
      * @return
      */
     public final Object getData(String sessionId, String key, boolean refresh) {
-        Map<String, Object> currentContext = null;
-        if ((currentContext = newContext.get(sessionId)) != null) {
-            return currentContext.get(key);
+        if (sessionId == null) {
+            return null;
         }
-        if (refresh) {
-            if ((currentContext = oldContext.remove(sessionId)) != null) {
-                newContext.put(sessionId, currentContext);
+        SessionInfo sessionInfo = getSessionInfo(sessionId);
+        Object value = null;
+        if (sessionInfo != null) {
+            if (refresh) {
+                refresh(sessionInfo);
+
             }
-        } else {
-            currentContext = oldContext.get(sessionId);
+            value = sessionInfo.contentOfSession.get(key);
         }
-        if (currentContext != null) {
-            return currentContext.get(key);
-        }
-        return null;
+        return value;
     }
 
     public final void setData(String sessionId, String key, Object value) {
-        // Try to get value from new generation
-        Map<String, Object> context = newContext.get(sessionId);
-        if (context == null) {
-            // Try to get value from old generation
-            context = oldContext.get(sessionId);
-            if (context == null) {
-                context = new ConcurrentHashMap<String, Object>();
+        SessionInfo sessionInfo = getSessionInfo(sessionId);
+        if (sessionInfo == null) {
+            sessionInfo = new SessionInfo();
+            SessionInfo oldSessionInfo = sessionInfoMap.putIfAbsent(sessionId, sessionInfo);
+            if (oldSessionInfo != null) {
+               sessionInfo = oldSessionInfo;
             }
-            // Put a value to new generation , for case that other thread put
-            // value before current thread , his value will be used
-            Map<String, Object> oldSessionContext = newContext.putIfAbsent(sessionId, context);
-            if (oldSessionContext != null) {
-                context = oldSessionContext;
-            }
-        }
-        context.put(key, value);
+         }
+        sessionInfo.contentOfSession.put(key, value);
     }
 
-    /**
-     * This method will move all newGeneration to old generation and old
-     * generation will be cleaned automatically
-     *
-     * @return
-     */
-    private Map<String, Map<String, Object>> deleteOldGeneration() {
-        Map<String, Map<String, Object>> temp = oldContext;
-        oldContext = newContext;
-        newContext = new ConcurrentHashMap<String, Map<String, Object>>();
-        return temp;
+    private SessionInfo getSessionInfo(String sessionId) {
+        return sessionInfoMap.get(sessionId);
     }
 
     /**
@@ -140,8 +135,7 @@ public class SessionDataContainer {
      *            - id of current session
      */
     public final void removeSession(String sessionId) {
-        oldContext.remove(sessionId);
-        newContext.remove(sessionId);
+        sessionInfoMap.remove(sessionId);
     }
 
     /**
@@ -149,9 +143,16 @@ public class SessionDataContainer {
      */
     @OnTimerMethodAnnotation("cleanExpiredUsersSessions")
     public final void cleanExpiredUsersSessions() {
-        deleteOldGeneration();
+        Date now = new Date();
+        for (Entry<String, SessionInfo> entry : sessionInfoMap.entrySet()) {
+            ConcurrentMap<String, Object> sessionMap = entry.getValue().contentOfSession;
+            Date hardLimit = (Date) sessionMap.get(HARD_LIMIT_PARAMETER_NAME);
+            Date softLimit = (Date) sessionMap.get(SOFT_LIMIT_PARAMETER_NAME);
+            if ((hardLimit != null && hardLimit.before(now)) || (softLimit != null && softLimit.before(now))) {
+                removeSessionImpl(entry.getKey());
+            }
+        }
     }
-
     /**
      * This method will add a user to thread local, at case that user is not
      * already added to context. If session is null or empty will try to get
@@ -191,6 +192,14 @@ public class SessionDataContainer {
         return setData(USER_PARAMETER_NAME, user);
     }
 
+    public final void setHardLimit(Date hardLimit) {
+        setData(HARD_LIMIT_PARAMETER_NAME, hardLimit);
+    }
+
+    public final void setSoftLimit(Date softLimit) {
+        setData(SOFT_LIMIT_PARAMETER_NAME, softLimit);
+    }
+
     /**
      * @param sessionId The session to get the user for
      * @param refresh Whether refreshing the session is needed
@@ -202,7 +211,7 @@ public class SessionDataContainer {
 
     /** @return The user set in the current session */
     public DbUser getUser(boolean refresh) {
-        return (DbUser) getData(USER_PARAMETER_NAME, refresh);
+        return (DbUser) getData(ThreadLocalParamsContainer.getHttpSessionId(), USER_PARAMETER_NAME, refresh);
     }
 
     /**
@@ -231,7 +240,11 @@ public class SessionDataContainer {
      *     <code>null</code> if the password is not available
      */
     public String getPassword() {
-        return (String) getData(PASSWORD_PARAMETER_NAME, false);
+        return (String) getData(PASSWORD_PARAMETER_NAME);
+    }
+
+    public void refresh() {
+        refresh(getSessionInfo(ThreadLocalParamsContainer.getHttpSessionId()));
     }
 
     public ExtensionProxy getAuthn() {
@@ -249,4 +262,16 @@ public class SessionDataContainer {
     public String getPrincipal() {
         return (String) getData(PRINCIPAL_PARAMETER_NAME, false);
     }
+    private void refresh(SessionInfo sessionInfo) {
+        int softLimitValue = Config.<Integer> getValue(ConfigValues.UserSessionTimeOutInterval);
+        if (softLimitValue > 0) {
+            sessionInfo.contentOfSession.put(SOFT_LIMIT_PARAMETER_NAME,
+                    DateUtils.addMinutes(new Date(), softLimitValue));
+        }
+    }
+
+    private void removeSessionImpl(String sessionId) {
+        sessionInfoMap.remove(sessionId);
+    }
+
 }

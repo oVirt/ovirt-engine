@@ -8,10 +8,16 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
+import java.util.Date;
+
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
 /**
@@ -24,6 +30,11 @@ public class SessionDataContainerTest {
     private static final String TEST_VALUE = "someValue";
     private static final String TEST_SESSION_ID = "someSession";
     private static final String USER = "user";
+    private static final String SOFT_LIMIT = "soft_limit";
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule(
+            MockConfigRule.mockConfig(ConfigValues.UserSessionTimeOutInterval, 2));
 
     @Before
     public void setUpContainer() {
@@ -36,16 +47,6 @@ public class SessionDataContainerTest {
         container.removeSession();
         container.removeSession(TEST_SESSION_ID);
         ThreadLocalParamsContainer.setHttpSessionId(null);
-    }
-
-    /* Tests for setData and getData */
-
-    @Test
-    public void testGetDataAndSetDataWithNullSession() {
-        ThreadLocalParamsContainer.setHttpSessionId(null);
-        assertFalse("Set should fail with a null session",
-                container.setData(TEST_KEY, TEST_VALUE));
-        assertNull("Get should return null with a null session", container.getData(TEST_KEY, false));
     }
 
     @Test
@@ -71,6 +72,7 @@ public class SessionDataContainerTest {
 
     @Test
     public void testGetDataAndSetDataWithSessionParam() {
+        ThreadLocalParamsContainer.setHttpSessionId("");
         container.setData(TEST_SESSION_ID, TEST_KEY, TEST_VALUE);
         assertNull("Get should return null with an empty session", container.getData(TEST_KEY, false));
         assertEquals("Get should return the value with a given session",
@@ -129,69 +131,24 @@ public class SessionDataContainerTest {
     /* Tests for clearedExpiredSessions */
 
     @Test
-    public void testCleanNotExpiredUsersSessionsNoUsers() {
+    public void testCleanExpiredSessions() {
         initDataForClearTest(TEST_KEY);
-
         // Clear expired sessions - data is moved to older generation
         // nothing should happen as far as the user is concerned
         container.cleanExpiredUsersSessions();
-
-        assertNotNull("Get should return the value since the session was not removed",
+        assertNull("Get not find the session",
                 container.getData(TEST_SESSION_ID, TEST_KEY, false));
-    }
-
-    @Test
-    public void testCleanExpiredUsersSessionsNoUsers() {
-        initDataForClearTest(TEST_KEY);
-
-        // Clear expired sessions twice - data is moved to older generation, then removed
-        container.cleanExpiredUsersSessions();
-        container.cleanExpiredUsersSessions();
-
-        assertNull("Get should return null since the session was removed",
-                container.getData(TEST_SESSION_ID, TEST_KEY, false));
-    }
-
-    @Test
-    public void testCleanNotExpiredUsersSessionsWithUsers() {
-        initDataForClearTest(USER);
-
-        // Clear expired sessions - data is moved to older generation
-        // nothing should happen as far as the user is concerned
-        container.cleanExpiredUsersSessions();
-
-        assertNotNull("Get should return the value since the session was not removed",
-                container.getData(TEST_SESSION_ID, USER, false));
-        assertNotNull("Get should return the value since the session was not removed",
-                container.getUser(TEST_SESSION_ID, false));
-    }
-
-    @Test
-    public void testCleanExpiredUsersSessionsWithUsers() {
-        initDataForClearTest(USER);
-
-        // Clear expired sessions twice - data is moved to older generation, then removed
-        container.cleanExpiredUsersSessions();
-        container.cleanExpiredUsersSessions();
-
-        assertNull("Get should return null since the session was removed",
-                container.getData(TEST_SESSION_ID, USER, false));
-        assertNull("Get should return null since the session was removed",
-                container.getUser(TEST_SESSION_ID, false));
     }
 
     /** Initializes the {@link #key} data */
     private void initDataForClearTest(String key) {
         container.setData(TEST_SESSION_ID, key, mock(DbUser.class));
+        container.setData(TEST_SESSION_ID, SOFT_LIMIT, (DateUtils.addMinutes(new Date(), -1)));
     }
 
     @Test
     public void testRefreshUserSession() {
         initDataForClearTest(USER);
-
-        // Clear expired sessions - data is moved to older generation
-        container.cleanExpiredUsersSessions();
-
         // refresh the old session (refresh = true)
         container.getData(TEST_SESSION_ID, USER, true);
 

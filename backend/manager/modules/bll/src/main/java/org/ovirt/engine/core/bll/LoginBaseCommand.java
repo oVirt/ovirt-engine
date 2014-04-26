@@ -1,14 +1,19 @@
 package org.ovirt.engine.core.bll;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
+import org.ovirt.engine.api.extensions.aaa.Authn.AuthRecord;
 import org.ovirt.engine.api.extensions.aaa.Mapping;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
@@ -23,6 +28,8 @@ import org.ovirt.engine.core.common.action.LoginResult;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -104,8 +111,30 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     protected boolean attachUserToSession() {
         if (!StringUtils.isEmpty(getParameters().getSessionId())) {
             SessionDataContainer.getInstance().setUser(getParameters().getSessionId(), getCurrentUser());
-        } else if (!SessionDataContainer.getInstance().setUser(getCurrentUser())) {
-            return failCanDoAction(VdcBllMessages.USER_CANNOT_LOGIN_SESSION_MISSING);
+        } else {
+            if (!SessionDataContainer.getInstance().setUser(getCurrentUser())) {
+                return failCanDoAction(VdcBllMessages.USER_CANNOT_LOGIN_SESSION_MISSING);
+            }
+
+            SessionDataContainer.getInstance().refresh();
+
+            int userSessionHardLimit = Config.<Integer> getValue(ConfigValues.UserSessionHardLimit);
+            Date validTo = userSessionHardLimit != 0 ? DateUtils.addMinutes(new Date(), userSessionHardLimit) : null;
+            if (authRecord.<String> get(AuthRecord.VALID_TO) != null) {
+                try {
+                    Date fromExtension =
+                            new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ").parse(authRecord.<String> get(AuthRecord.VALID_TO));
+                    if (validTo != null) {
+                        validTo = validTo.compareTo(fromExtension) < 0 ? validTo : fromExtension;
+                    } else {
+                        validTo = fromExtension;
+                    }
+                } catch (ParseException e) {
+                    log.warn("Error parsing AuthRecord.VALID_TO . Default VALID_TO value will be set on session");
+                    log.debug("Exception is ", e);
+                }
+            }
+            SessionDataContainer.getInstance().setHardLimit(validTo);
         }
         return true;
     }

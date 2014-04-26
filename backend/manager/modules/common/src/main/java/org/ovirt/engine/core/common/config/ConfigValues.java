@@ -1711,5 +1711,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     BootMenuSupported,
 
-    Invalid;
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("0")
+    UserSessionHardLimit,
+
+    Invalid
 }

@@ -37,7 +37,10 @@ import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 /** A test case for {@link CommandBase} */
 public class CommandBaseTest {
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.IsMultilevelAdministrationOn, false));
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.IsMultilevelAdministrationOn, false),
+            mockConfig(ConfigValues.UserSessionTimeOutInterval, 60),
+            mockConfig(ConfigValues.UserSessionHardLimit, 600));
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
@@ -85,12 +88,14 @@ public class CommandBaseTest {
         ThreadLocalParamsContainer.clean();
         SessionDataContainer.getInstance().removeSession();
         SessionDataContainer.getInstance().removeSession(session);
+        ThreadLocalParamsContainer.setHttpSessionId(session);
     }
 
     /** Testing the constructor, which adds the user id to the thread local container */
     @Test
     public void testConstructor() {
         session = RandomStringUtils.random(10);
+        ThreadLocalParamsContainer.setHttpSessionId(session);
 
         DbUser user = mock(DbUser.class);
         when(user.getId()).thenReturn(Guid.EVERYONE);
@@ -98,7 +103,6 @@ public class CommandBaseTest {
         // Mock the parameters
         VdcActionParametersBase paramterMock = mock(VdcActionParametersBase.class);
         when(paramterMock.getSessionId()).thenReturn(session);
-
         SessionDataContainer.getInstance().setUser(session, user);
 
         // Create a command
