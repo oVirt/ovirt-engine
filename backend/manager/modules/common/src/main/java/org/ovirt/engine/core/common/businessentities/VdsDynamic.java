@@ -468,14 +468,13 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
      *
      * @param supportedVersions
      *            a string contains a concatenated list of supported versions
-     * @returns a set of the parsed versions, or null if {@code supportedVersions} provided empty.
+     * @returns a set of the parsed versions, or an empty set if {@code supportedVersions} provided empty.
      * @throws RuntimeException
      *             thrown in case and parsing a version fails
      */
     private HashSet<Version> parseSupportedVersions(String supportedVersions) {
-        HashSet<Version> parsedVersions = null;
+        HashSet<Version> parsedVersions = new HashSet<Version>();
         if (!StringHelper.isNullOrEmpty(supportedVersions)) {
-            parsedVersions = new HashSet<Version>();
             for (String ver : supportedVersions.split("[,]", -1)) {
                 try {
                     parsedVersions.add(new Version(ver));
