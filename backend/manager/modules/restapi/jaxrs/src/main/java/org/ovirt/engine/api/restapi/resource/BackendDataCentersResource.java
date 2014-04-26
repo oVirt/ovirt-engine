@@ -25,7 +25,7 @@ public class BackendDataCentersResource extends
         AbstractBackendCollectionResource<DataCenter, StoragePool> implements DataCentersResource {
 
     static final String[] SUB_COLLECTIONS =
-            { "storagedomains", "clusters", "networks", "permissions", "quotas", "iscsibonds" };
+            { "storagedomains", "clusters", "networks", "permissions", "quotas", "iscsibonds", "qoss" };
 
     public BackendDataCentersResource() {
         super(DataCenter.class, StoragePool.class, SUB_COLLECTIONS);

@@ -49,7 +49,7 @@ public class BackendDataCenterClustersResource extends BackendClustersResource {
         DataCenter dataCenter = new DataCenter();
         dataCenter.setId(dataCenterId.toString());
         cluster.setDataCenter(dataCenter);
-        StoragePool pool = getStoragePool(cluster, this);
+        StoragePool pool = getStoragePool(cluster.getDataCenter(), this);
         VDSGroup entity = map(cluster, map(pool));
         return performCreate(VdcActionType.AddVdsGroup,
                 new VdsGroupOperationParameters(entity),

@@ -68,6 +68,7 @@ import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.Quota;
+import org.ovirt.engine.api.model.QoS;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Role;
@@ -148,6 +149,8 @@ import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.api.resource.PermissionResource;
 import org.ovirt.engine.api.resource.PermitResource;
 import org.ovirt.engine.api.resource.PermitsResource;
+import org.ovirt.engine.api.resource.QosResource;
+import org.ovirt.engine.api.resource.QoSsResource;
 import org.ovirt.engine.api.resource.QuotaResource;
 import org.ovirt.engine.api.resource.QuotasResource;
 import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
@@ -454,6 +457,10 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(IscsiBondResource.class, IscsiBondsResource.class, DataCenter.class);
         TYPES.put(IscsiBond.class, map);
+
+        map = new ParentToCollectionMap(QosResource.class, QoSsResource.class, DataCenter.class);
+        TYPES.put(QoS.class, map);
+
     }
 
     /**
