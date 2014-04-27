@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -130,4 +131,12 @@ public interface StoragePoolDAO extends GenericDao<StoragePool, Guid>, StatusAwa
      */
     List<Guid> getDcIdByExternalNetworkId(String externalId);
 
+    /**
+     * Retrieves the storage domain types of the data domains that are existing in the pool.
+     *
+     * @param storagePoolId
+     *            the storage pool ID.
+     * @return the list storage types that are existing in the pool.
+     */
+    List<StorageType> getStorageTypesInPool(Guid storagePoolId);
 }

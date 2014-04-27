@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.springframework.jdbc.core.RowMapper;
@@ -237,4 +238,18 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 getCustomMapSqlParameterSource().addValue("external_id", externalId));
     }
 
+    @Override
+    public List<StorageType> getStorageTypesInPool(Guid storagePoolId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("storage_pool_id", storagePoolId);
+
+        return getCallsHandler().executeReadList("GetStorageTypesInPoolByPoolId", storageTypeRowMapper, parameterSource);
+    }
+
+    private static RowMapper<StorageType> storageTypeRowMapper = new RowMapper<StorageType>() {
+        @Override
+        public StorageType mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return StorageType.forValue(rs.getInt(1));
+        }
+    };
 }
