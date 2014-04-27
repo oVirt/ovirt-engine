@@ -230,6 +230,7 @@ public enum VdcQueryType implements Serializable {
     GetLunsByVgId,
     GetPermittedStorageDomainsByStoragePoolId(VdcQueryAuthType.User),
     GetIscsiBondsByStoragePoolId,
+    GetStorageTypesInPoolByPoolId,
 
     // Event Notification
     GetEventSubscribersBySubscriberIdGrouped,
