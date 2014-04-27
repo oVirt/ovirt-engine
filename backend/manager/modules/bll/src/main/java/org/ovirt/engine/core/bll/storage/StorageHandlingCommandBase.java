@@ -216,7 +216,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         if (!isStorageDomainCompatibleWithDC(storageDomain)) {
             return false;
         }
-        if (!isMixedTypesAllowedInDC(getStoragePool().getcompatibility_version()) && isMixedTypeDC(storageDomain)) {
+        if (!isStorageDomainOfTypeIsoOrExport(storageDomain ) && !isMixedTypesAllowedInDC(getStoragePool().getcompatibility_version())
+                && isMixedTypeDC(storageDomain)) {
             return false;
         }
 
@@ -234,9 +235,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     public boolean isMixedTypeDC(StorageDomain storageDomain) {
         boolean isBlockDomain = storageDomain.getStorageType().isBlockDomain();
 
-        List<StorageDomain> poolDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePoolId());
-        for (StorageDomain currSD : poolDomains) {
-            if (!isStorageDomainOfTypeIsoOrExport(currSD) && currSD.getStorageType().isBlockDomain() != isBlockDomain) {
+        List<StorageType> storageTypesOnPool = getStoragePoolDAO().getStorageTypesInPool(getStoragePoolId());
+        for (StorageType storageType : storageTypesOnPool) {
+            if (storageType.isBlockDomain() != isBlockDomain) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
                 return true;
             }

@@ -8,6 +8,7 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -157,13 +158,11 @@ public class StorageHandlingCommandBaseTest {
     private void testAddingMixedTypes(Version version, boolean addingMixedTypesShouldSucceed) {
         storagePool.setcompatibility_version(version);
 
-        StorageDomain existingStorageDomain = createValidStorageDomain();
-        existingStorageDomain.setStorageType(StorageType.NFS);
-        addDomainToPool(existingStorageDomain);
+        // This will make the storage pool show as if he already has an NFS domain attached
+        when(storagePoolDAO.getStorageTypesInPool(storagePool.getId())).thenReturn(Collections.singletonList(StorageType.NFS));
 
         StorageDomain domainToAttach = createValidStorageDomain();
         domainToAttach.setStorageFormat(cmd.getSupportedStorageFormatSet(version).iterator().next());
-        existingStorageDomain.setStorageType(StorageType.NFS);
         initCommand();
         assertTrue("Attaching an NFS domain to a pool with NFS domain with no mixed type allowed failed, version: " + version, cmd.checkDomainCanBeAttached(domainToAttach));
 
