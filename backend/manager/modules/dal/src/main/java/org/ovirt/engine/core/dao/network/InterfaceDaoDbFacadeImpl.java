@@ -128,8 +128,8 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                 .addValue("bridged", nic.isBridged())
                 .addValue("qos_overridden", nic.isQosOverridden())
                 .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()))
-                .addValue("custom_properties",
-                        SerializationFactory.getSerializer().serialize(nic.getCustomProperties()));
+                .addValue("custom_properties", nic.hasCustomProperties() ?
+                        SerializationFactory.getSerializer().serialize(nic.getCustomProperties()) : null);
     }
 
     private void persistQosChanges(VdsNetworkInterface entity) {

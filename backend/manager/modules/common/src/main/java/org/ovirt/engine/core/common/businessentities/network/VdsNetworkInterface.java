@@ -366,6 +366,10 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         this.labels = labels;
     }
 
+    public boolean hasCustomProperties() {
+        return customProperties != null && !customProperties.isEmpty();
+    }
+
     public Map<String, String> getCustomProperties() {
         return customProperties;
     }
