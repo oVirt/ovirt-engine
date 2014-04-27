@@ -52,6 +52,21 @@
 %global ovirt_install_systemv 1
 %global ovirt_install_poms 0
 %global ovirt_require_maven 0
+
+# emulate fedora java for simplicity
+%undefine add_maven_depmap
+%define add_maven_depmap(f:) \
+	_jarpart="%2" \
+	_filelist=".mfiles%{-f*:-%{-f*}}" \
+	_jpath= \
+	for _dir in "%{_jnidir}" "%{_javajnidir}" "%{_javadir}"; do \
+		if [ -f "%{buildroot}/${_dir}/${_jarpart}" ]; then \
+			_jpath="${_dir}/${_jarpart}" \
+		fi \
+	done \
+	[ -n "${_jpath}" ] && echo "${_jpath}" >> "${_filelist}" \
+	%{nil}
+
 %endif
 
 %global ovirt_product_name oVirt Engine
@@ -303,16 +318,6 @@ Requires:	%{name} = %{version}-%{release}
 %description restapi
 The RESTful API for %{ovirt_product_name_short}
 
-%post restapi
-%if %{ovirt_install_poms}
-%update_maven_depmap
-%endif
-
-%postun restapi
-%if %{ovirt_install_poms}
-%update_maven_depmap
-%endif
-
 %package setup-base
 Summary:	%{ovirt_product_name_short} suite base setup components.
 Group:		%{ovirt_product_group}
@@ -436,16 +441,9 @@ Provides:	%{name}-tools-common = %{version}-%{release}
 chkconfig --add ovirt-engine-notifier
 %endif
 
-%if %{ovirt_install_poms}
-%update_maven_depmap
-%endif
-
 %postun tools
 %if %{ovirt_install_systemd}
 %systemd_postun ovirt-engine-notifier.service
-%endif
-%if %{ovirt_install_poms}
-%update_maven_depmap
 %endif
 
 %preun tools
@@ -587,35 +585,65 @@ done << __EOF__
 %{engine_jboss_modules}/org/ovirt/engine/core/tools/main/tools.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/utils/main/utils.jar
 %{engine_jboss_modules}/org/ovirt/engine/extensions/builtin/main/builtin.jar
+%{engine_legacy_restapi_war}/WEB-INF/lib/interface-common-jaxrs.jar
+%{engine_legacy_restapi_war}/WEB-INF/lib/restapi-definition.jar
+%{engine_legacy_restapi_war}/WEB-INF/lib/restapi-jaxrs.jar
+%{engine_legacy_restapi_war}/WEB-INF/lib/restapi-types.jar
 %{engine_restapi_war}/WEB-INF/lib/interface-common-jaxrs.jar
 %{engine_restapi_war}/WEB-INF/lib/restapi-definition.jar
 %{engine_restapi_war}/WEB-INF/lib/restapi-jaxrs.jar
 %{engine_restapi_war}/WEB-INF/lib/restapi-types.jar
 __EOF__
 
-# Needed for compatibility if package is different than the directory structure
+# needed for compatibility if package is different than the directory structure
+# as we must install poms/files at %{name} we must set it to be the real path
 %if "%{name}" != "%{engine_name}"
-ln -s "%{engine_name}" "%{buildroot}%{engine_java}/../%{name}"
+mv "%{buildroot}%{engine_java}" "%{buildroot}%{engine_java}/../%{name}"
+ln -s "%{name}" "%{buildroot}%{engine_java}"
 %endif
 
 #
 # Register poms
 #
-%if !%{ovirt_install_poms}
-rm -fr "%{buildroot}%{_mavenpomdir}"
-%else
-for pom in %{buildroot}%{_mavenpomdir}/*.pom; do
-	pomdir="$(dirname "${pom}")"
+while read package pom; do
+	pomdir="$(dirname "%{_mavenpomdir}/${pom}")"
 	pom="$(basename "${pom}")"
 	jpppom="JPP.${pom}"
-	mv "${pomdir}/${pom}" "${pomdir}/${jpppom}"
+	mv "%{buildroot}${pomdir}/${pom}" "%{buildroot}${pomdir}/${jpppom}"
 	artifact_id="$(echo "${pom}" | sed -e 's/^%{name}-//' -e 's/\.pom//')"
 	if [ -f "%{buildroot}%{engine_java}/${artifact_id}.jar" ]; then
-		%add_maven_depmap "${jpppom}" "%{name}/${artifact_id}.jar"
+		%add_maven_depmap -f "${package}" "${jpppom}" "%{name}/${artifact_id}.jar"
 	else
-		%add_maven_depmap "${jpppom}"
+		%add_maven_depmap -f "${package}" "${jpppom}"
 	fi
-done
+done << __EOF__
+backend %{name}-aaa.pom
+backend %{name}-backend.pom
+backend %{name}-bll.pom
+backend %{name}-builtin.pom
+backend %{name}-dal.pom
+backend %{name}-manager-modules.pom
+backend %{name}-manager.pom
+backend %{name}-ovirt-engine-extensions-api.pom
+backend %{name}-scheduler.pom
+backend %{name}-searchbackend.pom
+backend %{name}-vdsbroker.pom
+base %{name}-branding.pom
+base %{name}-common.pom
+base %{name}-compat.pom
+base %{name}-extensions-manager.pom
+base %{name}-root.pom
+base %{name}-utils.pom
+restapi %{name}-interface-common-jaxrs.pom
+restapi %{name}-restapi-definition.pom
+restapi %{name}-restapi-jaxrs.pom
+restapi %{name}-restapi-parent.pom
+restapi %{name}-restapi-types.pom
+tools %{name}-tools.pom
+__EOF__
+
+%if !%{ovirt_install_poms}
+rm -fr "%{buildroot}%{_mavenpomdir}"
 %endif
 
 #
@@ -743,11 +771,6 @@ if [ "$1" -eq 0 ]; then
 	fi
 fi
 
-%post
-%if %{ovirt_install_poms}
-%update_maven_depmap
-%endif
-
 %postun
 if [ "$1" -eq 0 ]; then
 	rm -rf "%{engine_cache}"
@@ -757,14 +780,11 @@ if [ "$1" -eq 0 ]; then
 		sed -i '/%{name}/d' "%{_sysconfdir}/yum/pluginconf.d/versionlock.list"
 	fi
 fi
-%if %{ovirt_install_poms}
-%update_maven_depmap
-%endif
 
 %pre
 %ovirt_create_user_engine
 
-%files
+%files -f .mfiles-base
 
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_cache}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}
@@ -783,14 +803,6 @@ fi
 %{engine_data}/branding/ovirt.brand/
 %{engine_etc}/branding/00-ovirt.brand
 %{engine_etc}/engine.conf.d/
-%{engine_java}/aaa.jar
-%{engine_java}/branding.jar
-%{engine_java}/builtin.jar
-%{engine_java}/common.jar
-%{engine_java}/compat.jar
-%{engine_java}/extensions-manager.jar
-%{engine_java}/ovirt-engine-extensions-api.jar
-%{engine_java}/utils.jar
 
 #
 # ATTENTION:
@@ -798,22 +810,14 @@ fi
 # than the directory structure
 #
 %if "%{name}" != "%{engine_name}"
-%{_javadir}/%{name}
-%endif
-
-%if %{ovirt_install_poms}
-%{_mavendepmapfragdir}/%{name}
-%{_mavenpomdir}/JPP.%{name}-root.pom
-%{_mavenpomdir}/JPP.%{name}-common.pom
-%{_mavenpomdir}/JPP.%{name}-compat.pom
-%{_mavenpomdir}/JPP.%{name}-utils.pom
+%{_javadir}/%{engine_name}
 %endif
 
 %files lib
 %{engine_data}/bin/java-home
 %{python_sitelib}/ovirt_engine/
 
-%files backend
+%files backend -f .mfiles-backend
 
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/host-deploy
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/content
@@ -835,11 +839,6 @@ fi
 %{engine_ear}/services.war/
 %{engine_ear}/welcome.war/
 %{engine_etc}/osinfo.conf.d/
-%{engine_java}/bll.jar
-%{engine_java}/dal.jar
-%{engine_java}/scheduler.jar
-%{engine_java}/searchbackend.jar
-%{engine_java}/vdsbroker.jar
 %{engine_jboss_modules}/
 
 %{engine_data}/services/ovirt-engine
@@ -848,18 +847,6 @@ fi
 %endif
 %if %{ovirt_install_systemv}
 %{_initddir}/ovirt-engine
-%endif
-
-%if %{ovirt_install_poms}
-%{_mavenpomdir}/JPP.%{name}-backend.pom
-%{_mavenpomdir}/JPP.%{name}-manager.pom
-%{_mavenpomdir}/JPP.%{name}-manager-modules.pom
-%{_mavenpomdir}/JPP.%{name}-tools.pom
-%{_mavenpomdir}/JPP.%{name}-bll.pom
-%{_mavenpomdir}/JPP.%{name}-dal.pom
-%{_mavenpomdir}/JPP.%{name}-scheduler.pom
-%{_mavenpomdir}/JPP.%{name}-searchbackend.pom
-%{_mavenpomdir}/JPP.%{name}-vdsbroker.pom
 %endif
 
 #
@@ -951,22 +938,10 @@ fi
 
 %{engine_data}/dbscripts/
 
-%files restapi
+%files restapi -f .mfiles-restapi
 
-%{engine_java}/interface-common-jaxrs.jar
-%{engine_java}/restapi-definition.jar
-%{engine_java}/restapi-jaxrs.jar
-%{engine_java}/restapi-types.jar
 %{engine_restapi_war}/
 %{engine_legacy_restapi_war}/
-
-%if %{ovirt_install_poms}
-%{_mavenpomdir}/JPP.%{name}-interface-common-jaxrs.pom
-%{_mavenpomdir}/JPP.%{name}-restapi-definition.pom
-%{_mavenpomdir}/JPP.%{name}-restapi-jaxrs.pom
-%{_mavenpomdir}/JPP.%{name}-restapi-parent.pom
-%{_mavenpomdir}/JPP.%{name}-restapi-types.pom
-%endif
 
 %files userportal
 
@@ -989,7 +964,7 @@ fi
 %{_initddir}/ovirt-websocket-proxy
 %endif
 
-%files tools
+%files tools -f .mfiles-tools
 
 %config %{_sysconfdir}/logrotate.d/ovirt-engine-notifier
 %config %{engine_etc}/notifier/log4j.xml
@@ -1016,11 +991,6 @@ fi
 %{engine_data}/services/ovirt-engine-notifier
 %{engine_etc}/engine-config/engine-config.*properties
 %{engine_etc}/notifier/notifier.conf.d/
-%{engine_java}/tools.jar
-
-%if %{ovirt_install_poms}
-%{_mavenpomdir}/JPP.%{name}-tools.pom
-%endif
 
 %if %{ovirt_install_systemd}
 %{_unitdir}/ovirt-engine-notifier.service
