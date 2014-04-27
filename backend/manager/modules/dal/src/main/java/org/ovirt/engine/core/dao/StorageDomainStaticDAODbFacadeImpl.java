@@ -36,7 +36,7 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
                 getCustomMapSqlParameterSource()
                         .addValue("name", name)
                         .addValue("user_id", userId)
-                        .addValue("filtered", filtered));
+                        .addValue("is_filtered", filtered));
     }
 
     @Override
