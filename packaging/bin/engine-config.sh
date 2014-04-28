@@ -24,6 +24,9 @@ AVAILABLE ACTIONS
        -s KEY=VALUE, --set KEY=VALUE
            Set the value of the given key for the given version. The version is required for this action only when the version is not 'general'.
 
+       -m KEY=VALUE, --merge KEY=VALUE
+           Merge the value of the given key for the given version with the value in the database. The version is required for this action only when the version is not 'general'.
+
        -h, --help
            Show this help message and exit.
 
