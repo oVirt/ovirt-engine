@@ -56,11 +56,16 @@ public class XmlMessageBodyReader extends AbstractJAXBProvider<Object> {
                 return ((JAXBElement) parsedObj).getValue();
             }
             return parsedObj;
-        } catch (JAXBException e) {
-            if (e.getLinkedException().getCause() instanceof InvalidValueException) {
-                throw (InvalidValueException) e.getLinkedException().getCause();
+        }
+        catch (JAXBException exception) {
+            Throwable linked = exception.getLinkedException();
+            if (linked != null) {
+                Throwable cause = linked.getCause();
+                if (cause instanceof InvalidValueException) {
+                    throw (InvalidValueException) cause;
+                }
             }
-            throw new JAXBMarshalException(e);
+            throw new JAXBMarshalException(exception);
         }
     }
 
