@@ -120,7 +120,8 @@ public enum ConfigurationValues {
     IsSuspendSupported(ConfigAuthType.User),
     SerialNumberPolicySupported(ConfigAuthType.User),
     IscsiMultipathingSupported,
-    BootMenuSupported(ConfigAuthType.User);
+    BootMenuSupported(ConfigAuthType.User),
+    MixedDomainTypesInDataCenter;
 
     public static enum ConfigAuthType {
         Admin,

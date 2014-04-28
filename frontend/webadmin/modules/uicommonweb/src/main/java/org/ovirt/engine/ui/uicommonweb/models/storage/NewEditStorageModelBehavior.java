@@ -1,9 +1,16 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -66,45 +73,83 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
 
     public void postUpdateItemsAvailability(IStorageModel item, boolean isNoExportOrIsoStorageAttached) {
         StoragePool dataCenter = getModel().getDataCenter().getSelectedItem();
-        Model model = (Model) item;
 
-        boolean isItemSelectable = isItemSelectable(item, dataCenter, isNoExportOrIsoStorageAttached);
-        model.setIsSelectable(isItemSelectable);
-
-        onStorageModelUpdated(item);
+        checkCanItemBeSelected(item, dataCenter, isNoExportOrIsoStorageAttached);
     }
 
-    private boolean isItemSelectable(IStorageModel item, StoragePool dataCenter, boolean isNoExportOrIsoStorageAttached) {
+    private void checkCanItemBeSelected(final IStorageModel item, StoragePool dataCenter, boolean isNoExportOrIsoStorageAttached) {
         boolean isExistingStorage = getModel().getStorage() != null &&
                 item.getType() == getModel().getStorage().getStorageType();
 
+        // If we are in edit mode then the type of the entity edited should appear in the selection
         if (isExistingStorage) {
-            return true;
+            updateItemSelectability(item, true);
+            return;
         }
 
+        // Local types should not be selectable for shared data centers and vice versa
         if (isLocalStorage(item) != dataCenter.isLocal()) {
-            return false;
+            updateItemSelectability(item, false);
+            return;
         }
 
         boolean isNoneDataCenter = dataCenter.getId().equals(StorageModel.UnassignedDataCenterId);
         boolean isDataDomain = item.getRole() == StorageDomainType.Data;
 
+        // For 'None' data center we allow all data types and no ISO/Export, no reason for further checks
         if (isNoneDataCenter) {
-            // 'None' Data Center can create only Data Storage Domain
-            return isDataDomain;
-        } else {
-            boolean isExportDomain = item.getRole() == StorageDomainType.ImportExport;
-            boolean canAttachExportDomain = isNoExportOrIsoStorageAttached &&
-                    dataCenter.getStatus() != StoragePoolStatus.Uninitialized;
-
-            boolean isIsoDomain = item.getRole() == StorageDomainType.ISO;
-            boolean canAttachIsoDomain = isNoExportOrIsoStorageAttached &&
-                    dataCenter.getStatus() != StoragePoolStatus.Uninitialized;
-
-            return isExportDomain && canAttachExportDomain ||
-                    isIsoDomain && canAttachIsoDomain ||
-                    isDataDomain;
-
+            updateItemSelectability(item, isDataDomain);
+            return;
         }
+
+        boolean isExportDomain = item.getRole() == StorageDomainType.ImportExport;
+        boolean canAttachExportDomain = isNoExportOrIsoStorageAttached &&
+                dataCenter.getStatus() != StoragePoolStatus.Uninitialized;
+
+        boolean isIsoDomain = item.getRole() == StorageDomainType.ISO;
+        boolean canAttachIsoDomain = isNoExportOrIsoStorageAttached &&
+                dataCenter.getStatus() != StoragePoolStatus.Uninitialized;
+
+        if ((isExportDomain && canAttachExportDomain) || (isIsoDomain && canAttachIsoDomain)) {
+            updateItemSelectability(item, true);
+            return;
+        }
+
+        if (isDataDomain) {
+            if (isLocalStorage(item)) {
+                updateItemSelectability(item, true);
+                return;
+            }
+
+            if (AsyncDataProvider.isMixedStorageDomainsSupported(dataCenter.getcompatibility_version())) {
+                updateItemSelectability(item, true);
+                return;
+            } else {
+                IdQueryParameters params = new IdQueryParameters(dataCenter.getId());
+                Frontend.getInstance().runQuery(VdcQueryType.GetStorageTypesInPoolByPoolId, params,
+                        new AsyncQuery(this, new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object model, Object ReturnValue) {
+                                List<StorageType> storageTypes = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                                for (StorageType storageType : storageTypes) {
+                                    if (storageType.isBlockDomain() != item.getType().isBlockDomain()) {
+                                        updateItemSelectability(item, false);
+                                        return;
+                                    }
+                                }
+                                updateItemSelectability(item, true);
+                                return;
+                            }
+                        }));
+                return;
+            }
+        }
+        updateItemSelectability(item, false);
+    }
+
+    private void updateItemSelectability(IStorageModel item, boolean isSelectable) {
+        Model model = (Model) item;
+        model.setIsSelectable(isSelectable);
+        onStorageModelUpdated(item);
     }
 }
