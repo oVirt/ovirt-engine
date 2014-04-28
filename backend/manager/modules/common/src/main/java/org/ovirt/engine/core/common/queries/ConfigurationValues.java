@@ -115,7 +115,8 @@ public enum ConfigurationValues {
     SchedulerOverBookingThreshold,
     UserSessionTimeOutInterval(ConfigAuthType.User),
     DefaultMaximumMigrationDowntime,
-    IscsiMultipathingSupported;
+    IscsiMultipathingSupported,
+    MixedDomainTypesInDataCenter;
 
     public static enum ConfigAuthType {
         Admin,

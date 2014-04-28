@@ -3525,6 +3525,10 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetNumberOfActiveVmsInVdsGroupByVdsGroupId, new IdQueryParameters(clusterId), aQuery);
     }
 
+    public static boolean isMixedStorageDomainsSupported(Version version) {
+        return (Boolean) getConfigValuePreConverted(ConfigurationValues.MixedDomainTypesInDataCenter, version.toString());
+    }
+
     private static ArrayList<VDSGroup> getClusterByServiceList(ArrayList<VDSGroup> list,
             boolean supportsVirtService,
             boolean supportsGlusterService) {
