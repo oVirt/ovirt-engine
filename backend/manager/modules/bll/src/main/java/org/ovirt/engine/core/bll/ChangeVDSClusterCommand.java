@@ -26,6 +26,8 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -287,8 +289,16 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>(2);
-        permissionList.add(new PermissionSubject(getParameters().getVdsId(), VdcObjectType.VDS, getActionType().getActionGroup()));
+        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        VdsDynamic vdsDynamic = getVds().getDynamicData();
+
+        // If the state of the host is PendingApproval then we just check if the user has a permission on the destination cluster
+        // Otherwise we require adding this permission both on the host and on the cluster, and it is not really needed
+        // in order to approve a host
+        if (vdsDynamic != null && !VDSStatus.PendingApproval.equals(vdsDynamic.getStatus())) {
+            permissionList.add(new PermissionSubject(getParameters().getVdsId(), VdcObjectType.VDS, getActionType().getActionGroup()));
+        }
+
         permissionList.add(new PermissionSubject(getParameters().getClusterId(), VdcObjectType.VdsGroups, getActionType().getActionGroup()));
         List<PermissionSubject> unmodifiableList = Collections.unmodifiableList(permissionList);
         return unmodifiableList;
