@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +66,8 @@ public abstract class ConsolesBase implements VmConsoles {
 
 
     protected void setDefaultSelectedProtocol() {
-        List<ConsoleProtocol> allProtocols = new ArrayList<ConsoleProtocol>(Arrays.asList(ConsoleProtocol.values()));
+        List<ConsoleProtocol> allProtocols = ConsoleProtocol.getProtocolsByPriority();
+        Collections.reverse(allProtocols);
 
         if (selectedProtocol != null) { // if it's selected, it's prefered -> set it to the 1st position
             allProtocols.remove(selectedProtocol);
