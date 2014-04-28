@@ -566,8 +566,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         // Only if the VM has agent and we connect through user-portal
         // we attempt to perform SSO (otherwise an error will be thrown)
-        if (!getConfigurator().getIsAdmin() && getEntity().getHasAgent()
-                && getEntity().getStatus() == VMStatus.Up && SsoMethod.GUEST_AGENT.equals(getEntity().getSsoMethod())) {
+        if (!getConfigurator().getIsAdmin() && getEntity().getStatus() == VMStatus.Up
+                && SsoMethod.GUEST_AGENT.equals(getEntity().getSsoMethod())) {
             getLogger().info("SpiceConsoleManager::Connect: Attempting to perform SSO on Desktop " //$NON-NLS-1$
                     + getEntity().getName());
 
