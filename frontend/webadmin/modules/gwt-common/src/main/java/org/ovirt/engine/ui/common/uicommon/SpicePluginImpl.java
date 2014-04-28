@@ -395,45 +395,4 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                    }
                                                    }-*/;
 
-    @Override
-    public void install() {
-        logger.finer("Spice must be installed ahead..."); //$NON-NLS-1$
-        installNatively();
-    }
-
-    public native void installNatively() /*-{
-                                         alert("Spice must be already installed!");
-                                         }-*/;
-
-    @Override
-    public boolean getIsInstalled() {
-        boolean result = getIsInstalledNative();
-        logger.finer("Determining whether spice is installed [" + result + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        return result;
-    }
-
-    public native boolean getIsInstalledNative() /*-{
-                                                 return true;
-                                                 //var daPlugins = "Spice";
-                                                 //var pluginFound = false;
-                                                 //if (navigator.plugins && navigator.plugins.length > 0) {
-                                                 //var pluginsArrayLength = navigator.plugins.length;
-                                                 //for (pluginsArrayCounter=0; pluginsArrayCounter < pluginsArrayLength; pluginsArrayCounter++ ) {
-                                                 //var numFound = 0;
-                                                 //for(namesCounter=0; namesCounter < daPlugins.length; namesCounter++) {
-                                                 //if( (navigator.plugins[pluginsArrayCounter].name.indexOf(daPlugins[namesCounter]) >= 0) ||
-                                                 //(navigator.plugins[pluginsArrayCounter].description.indexOf(daPlugins[namesCounter]) >= 0) ) {
-                                                 //numFound++;
-                                                 //}
-                                                 //}
-                                                 //if(numFound == daPlugins.length) {
-                                                 //pluginFound = true;
-                                                 //break;
-                                                 //}
-                                                 //}
-                                                 //}
-                                                 //return pluginFound;
-                                                 }-*/;
-
 }

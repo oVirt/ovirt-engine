@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import com.google.gwt.user.client.Window;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -151,24 +152,16 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     protected void connect() {
         if (getEntity() != null) {
             getLogger().debug("Connecting to Spice console..."); //$NON-NLS-1$
-            if (!getspice().getIsInstalled()) {
-                getLogger().info("Spice client is not installed."); //$NON-NLS-1$
-                getspice().install();
-                return;
-            }
-
             // Check a spice version.
             if (getConfigurator().getIsAdmin()
                     && getspice().getCurrentVersion().compareTo(getspice().getDesiredVersion()) < 0)
             {
-                getLogger().info("Spice client version is not as desired (" + getspice().getDesiredVersion() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-                getspice().install();
+                Window.alert("Spice client version is not as desired (" + getspice().getDesiredVersion() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
 
             // Don't connect if there VM is not running on any host.
-            if (getEntity().getRunOnVds() == null)
-            {
+            if (getEntity().getRunOnVds() == null) {
                 return;
             }
 

@@ -11,11 +11,6 @@ public class SpiceNativeImpl extends AbstractSpice implements ISpiceNative {
     }
 
     @Override
-    public boolean getIsInstalled() {
-        return true;
-    }
-
-    @Override
     public void connect() {
         StringBuilder configBuilder = new StringBuilder("[virt-viewer]"); //$NON-NLS-1$
 
@@ -96,10 +91,6 @@ public class SpiceNativeImpl extends AbstractSpice implements ISpiceNative {
         return (sslChanels == null)
                 ? "" //$NON-NLS-1$
                 : sslChanels.replace(',', ';');
-    }
-
-    @Override
-    public void install() {
     }
 
 }

@@ -28,8 +28,6 @@ public interface ISpice {
 
     Version getCurrentVersion();
 
-    boolean getIsInstalled();
-
     Version getDesiredVersion();
 
     void setDesiredVersion(Version value);
@@ -135,8 +133,6 @@ public interface ISpice {
     void setUsbFilter(String value);
 
     void connect();
-
-    void install();
 
     void setCurrentVersion(Version currentVersion);
 

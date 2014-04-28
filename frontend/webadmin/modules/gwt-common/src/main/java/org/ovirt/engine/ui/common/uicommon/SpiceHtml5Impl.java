@@ -25,11 +25,4 @@ public class SpiceHtml5Impl extends AbstractSpice implements ISpiceHtml5 {
         invoker.invokeClient();
     }
 
-    @Override
-    public void install() { }
-
-    @Override
-    public boolean getIsInstalled() {
-        return true;
-    }
 }
