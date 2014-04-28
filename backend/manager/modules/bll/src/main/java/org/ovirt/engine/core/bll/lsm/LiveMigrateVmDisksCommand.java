@@ -139,9 +139,12 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
 
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
-            permissionList.add(new PermissionSubject(parameters.getImageId(),
-                    VdcObjectType.Disk,
-                    ActionGroup.CONFIGURE_DISK_STORAGE));
+            DiskImage diskImage = getDiskImageDao().get(parameters.getImageId());
+            if (diskImage != null) {
+                permissionList.add(new PermissionSubject(diskImage.getId(),
+                        VdcObjectType.Disk,
+                        ActionGroup.CONFIGURE_DISK_STORAGE));
+            }
             permissionList.add(new PermissionSubject(parameters.getStorageDomainId(),
                     VdcObjectType.Storage,
                     ActionGroup.CREATE_DISK));
