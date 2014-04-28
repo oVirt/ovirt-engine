@@ -77,6 +77,20 @@ public interface GlusterVolumeResource extends MeasurableResource {
     @Path("resetalloptions")
     public Response resetAllOptions(Action action);
 
+    @POST
+    @Formatted
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Actionable
+    @Path("startprofile")
+    public Response startProfile(Action action);
+
+    @POST
+    @Formatted
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Actionable
+    @Path("stopprofile")
+    public Response stopProfile(Action action);
+
     /**
      * Sub-resource locator method, returns GlusterBricksResource on which the remainder of the URI is dispatched.
      *

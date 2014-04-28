@@ -4351,6 +4351,32 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/startprofile|rel=startprofile
+  description: start profile on the gluster volume attached to the cluster
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+        description: start profiling on the gluster volume attached to the cluster
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stopprofile|rel=stopprofile
+  description: stop the profiling of gluster volume attached to the cluster
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+        description: stop profiling on the gluster volume attached to the cluster
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=get
   description: get the list of all bricks in the gluster volume attached to the cluster
   request:

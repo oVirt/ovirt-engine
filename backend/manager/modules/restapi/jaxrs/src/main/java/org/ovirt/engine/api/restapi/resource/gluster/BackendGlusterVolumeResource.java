@@ -15,6 +15,7 @@ import org.ovirt.engine.api.restapi.resource.VolumeStatisticalQuery;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
+import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -109,6 +110,17 @@ public class BackendGlusterVolumeResource
                 new ResetGlusterVolumeOptionsParameters(guid,
                         new GlusterVolumeOptionEntity(guid, optionName, optionValue),
                         force), action);
+    }
+
+    @Override
+    public Response startProfile(Action action) {
+        return doAction(VdcActionType.StartGlusterVolumeProfile, new GlusterVolumeParameters(guid), action);
+    }
+
+
+    @Override
+    public Response stopProfile(Action action) {
+        return doAction(VdcActionType.StopGlusterVolumeProfile, new GlusterVolumeParameters(guid), action);
     }
 
     @Override
