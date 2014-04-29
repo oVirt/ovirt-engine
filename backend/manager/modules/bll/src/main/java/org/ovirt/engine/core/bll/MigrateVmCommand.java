@@ -223,7 +223,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     protected boolean migrationInterfaceUp(VdsNetworkInterface nic, List<VdsNetworkInterface> nics) {
         if (NetworkUtils.isVlan(nic)) {
-            String physicalNic = NetworkUtils.stripVlan(nic.getName());
+            String physicalNic = nic.getBaseInterface();
             for (VdsNetworkInterface iface : nics) {
                 if (iface.getName().equals(physicalNic)) {
                     return iface.getStatistics().getStatus() == InterfaceStatus.UP;
