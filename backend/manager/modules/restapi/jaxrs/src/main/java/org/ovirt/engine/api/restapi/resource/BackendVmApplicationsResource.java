@@ -22,10 +22,12 @@ public class BackendVmApplicationsResource extends AbstractBackendResource<Appli
     public Applications list() {
         VM vm = getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(vmId), vmId.toString(), true);
         Applications applications = new Applications();
-        int index = 1;
-        if (vm.getAppList() != null) {
-            for (String appName : vm.getAppList().split(",")) {
-                applications.getApplications().add(addLinks(map(appName)));
+        String appList = vm.getAppList();
+        if (appList != null) {
+            for (String appName : appList.split(",")) {
+                if (!appName.isEmpty()) {
+                    applications.getApplications().add(addLinks(map(appName)));
+                }
             }
         }
         return applications;
@@ -40,10 +42,6 @@ public class BackendVmApplicationsResource extends AbstractBackendResource<Appli
         model.setVm(new org.ovirt.engine.api.model.VM());
         model.getVm().setId(vmId.toString());
         return model;
-    }
-
-    private String buildId(int index) {
-        return new Guid("0-0-0-0-"+index).toString();
     }
 
     @Override
