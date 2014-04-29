@@ -16,7 +16,7 @@ UPDATE users SET temp_id = CAST(substring(encode(external_id,'hex') FROM 1 FOR 8
        substring(encode(external_id,'hex') FROM 21 FOR 12) AS uuid);
 
 --2. Changing relevant group_id appearances in other tables
-ALTER TABLE tags_user_map DISABLE TRIGGER USER;
+ALTER TABLE tags_user_map DISABLE TRIGGER ALL;
 UPDATE tags_user_map m set user_id = (
        SELECT temp_id FROM users WHERE user_id = m.user_id);
 
@@ -28,7 +28,7 @@ UPDATE permissions p SET ad_element_id = (
 
 UPDATE users SET user_id = temp_id;
 --3. Cleanup
-ALTER TABLE tags_user_map ENABLE TRIGGER USER;
+ALTER TABLE tags_user_map ENABLE TRIGGER ALL;
 PERFORM fn_db_drop_column('users','temp_id');
 RETURN;
 END; $procedure$
