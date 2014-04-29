@@ -16,7 +16,7 @@ UPDATE ad_groups SET temp_id = CAST(substring(encode(external_id,'hex') FROM 1 F
        substring(encode(external_id,'hex') FROM 21 FOR 12) AS uuid);
 
 --2. Changing relevant group_id appearances in other tables
-ALTER TABLE tags_user_group_map DISABLE TRIGGER USER;
+ALTER TABLE tags_user_group_map drop constraint tags_user_map_user_group;
 
 UPDATE tags_user_group_map m set group_id = (
        SELECT temp_id FROM ad_groups WHERE id = m.group_id
@@ -43,7 +43,7 @@ UPDATE ad_groups SET id = temp_id;
 --4. Cleanup
 --DROP TABLE tmp_users_group_ids;
 --DROP TABLE tmp_users_groups;
-ALTER TABLE tags_user_group_map ENABLE TRIGGER USER;
+ALTER TABLE tags_user_group_map add constraint "tags_user_map_user_group" FOREIGN KEY (group_id) REFERENCES ad_groups(id);
 PERFORM fn_db_drop_column('ad_groups','temp_id');
 RETURN;
 END; $procedure$
