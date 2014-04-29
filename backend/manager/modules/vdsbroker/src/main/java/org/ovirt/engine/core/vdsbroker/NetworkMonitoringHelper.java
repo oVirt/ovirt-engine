@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
@@ -159,33 +158,19 @@ public class NetworkMonitoringHelper {
         }
 
         // check if vlan over bond i.e if we are in bond0.5 we look for bond0
-        String name = NetworkUtils.getVlanInterfaceName(iface.getName());
-        if (name == null) {
-            return false;
-        }
-
-        for (VdsNetworkInterface i : interfaces) {
-            if (name.equals(i.getName())) {
-                return (i.getBonded() != null && i.getBonded() == true);
-            }
-        }
-        return false;
-    }
+        return NetworkUtils.isBondVlan(interfaces, iface);
+     }
 
     // function check if vlan over bond connected to network
     // i.e. if we have bond0 that have vlan #5 like:
     // bond0 and bond0.5
-    // bond0 is not connectet to network just the bond0.5 is connected to network
+    // bond0 is not connected to network just the bond0.5 is connected to network
     // and this method check for that case
     private static boolean isVlanOverBondNetwork(String bondName,
             String networkName,
             List<VdsNetworkInterface> interfaces) {
         for (VdsNetworkInterface iface : interfaces) {
-            String name = NetworkUtils.getVlanInterfaceName(iface.getName());
-            // this if check if the interface is vlan
-            if (name == null) {
-                continue;
-            } else if (name.equals(bondName)
+            if (NetworkUtils.isVlan(iface) && NetworkUtils.interfaceBasedOn(iface, bondName)
                     && networkName.equals(iface.getNetworkName())) {
                 return true;
             }
@@ -195,18 +180,12 @@ public class NetworkMonitoringHelper {
 
     // If vlan we search if the interface is up (i.e. not eth2.5 we look for eth2)
     private static boolean isVlanInterfaceUp(VdsNetworkInterface vlan, List<VdsNetworkInterface> interfaces) {
-        String[] tokens = vlan.getName().split("[.]");
-        if (tokens.length == 1) {
+        if (!NetworkUtils.isVlan(vlan)) {
             // not vlan
             return true;
         }
 
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < tokens.length - 1; i++) {
-            sb.append(tokens[i])
-                    .append(".");
-        }
-        String ifaceName = StringUtils.stripEnd(sb.toString(), ".");
+        String ifaceName = vlan.getBaseInterface();
         for (VdsNetworkInterface iface : interfaces) {
             if (iface.getName().equals(ifaceName)) {
                 return iface.getStatistics().getStatus() == InterfaceStatus.UP;
