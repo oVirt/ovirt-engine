@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
-import org.ovirt.engine.core.common.AuditLogSeverity;
-import org.ovirt.engine.core.common.AuditLogTimeInterval;
-
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public interface LocalizedEnums extends ConstantsWithLookup {
