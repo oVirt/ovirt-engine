@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -36,6 +37,7 @@ public class FenceExecutor {
     private FenceActionType _action = FenceActionType.forValue(0);
     private Guid proxyHostId;
     private String proxyHostName;
+    private Guid skippedProxyHostId=null;
 
     public FenceExecutor(VDS vds, FenceActionType actionType) {
         // TODO remove if block after UI patch that should set also cluster & proxy preferences in GetNewVdsFenceStatusParameters
@@ -137,6 +139,13 @@ public class FenceExecutor {
         return !NO_VDS.equals(proxyHostId);
     }
 
+    private synchronized boolean findProxyHostExcluding(Guid exludedHostId) {
+        skippedProxyHostId = exludedHostId;
+        boolean res = findProxyHost();
+        skippedProxyHostId=null;
+        return res;
+    }
+
     private void logProxySelection(String proxy, String origin, String command) {
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("Proxy", proxy);
@@ -169,6 +178,15 @@ public class FenceExecutor {
                 }
             }
             retValue = runFenceAction(_action, order);
+            // if fence failed, retry with another proxy
+            if (!retValue.getSucceeded()) {
+                log.warnFormat("Fencing operation failed with proxy host {0}, trying another proxy...", proxyHostId);
+                if (!findProxyHostExcluding(proxyHostId)) {
+                    log.warnFormat("Failed to find other proxy to re-run failed fence operation, retrying with the same proxy...");
+                    findProxyHost();
+                }
+                retValue = runFenceAction(_action, order);
+            }
         } catch (VdcBLLException e) {
             retValue = new VDSReturnValue();
             retValue.setReturnValue(new FenceStatusReturnValue("unknown", e.getMessage()));
@@ -286,6 +304,18 @@ public class FenceExecutor {
 
     private VDS getFenceProxy(final boolean onlyUpHost, final boolean filterSelf, final PMProxyOptions proxyOptions) {
         List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
+        synchronized (this) {
+            // If a skippedProxyHostId was given, try to use another proxy
+            if (skippedProxyHostId != null) {
+                Iterator<VDS> iter = hosts.iterator();
+                while (iter.hasNext()) {
+                    if (iter.next().getId().equals(skippedProxyHostId)) {
+                        iter.remove();
+                        break;
+                    }
+                }
+            }
+        }
         VDS proxyHost = LinqUtils.firstOrNull(hosts, new Predicate<VDS>() {
             @Override
             public boolean eval(VDS vds) {
