@@ -192,12 +192,10 @@ public class UpdateVmDiskCommandTest {
         // make sure that device is plugged
         assertEquals(true, device.getIsPlugged());
 
-        DiskImage disk = createDiskImage();
-        disk.setReadOnly(true);
-
-        when(diskDao.get(diskImageGuid)).thenReturn(disk);
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
 
         UpdateVmDiskParameters parameters = createParameters();
+        parameters.getDiskInfo().setReadOnly(true);
         initializeCommand(parameters, Arrays.asList(createVm(VMStatus.Up)));
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
