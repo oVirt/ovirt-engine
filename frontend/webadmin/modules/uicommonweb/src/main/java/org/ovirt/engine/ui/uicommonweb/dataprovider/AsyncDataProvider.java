@@ -3774,14 +3774,14 @@ public final class AsyncDataProvider {
     public static List<IStorageModel> getIsoStorageModels() {
         ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
 
-        LocalStorageModel localIsoModel = new LocalStorageModel();
-        models.add(localIsoModel);
+        NfsStorageModel nfsIsoModel = new NfsStorageModel();
+        models.add(nfsIsoModel);
 
         PosixStorageModel posixIsoModel = new PosixStorageModel();
         models.add(posixIsoModel);
 
-        NfsStorageModel nfsIsoModel = new NfsStorageModel();
-        models.add(nfsIsoModel);
+        LocalStorageModel localIsoModel = new LocalStorageModel();
+        models.add(localIsoModel);
 
         for (IStorageModel model : models) {
             model.setRole(StorageDomainType.ISO);
