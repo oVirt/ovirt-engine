@@ -120,9 +120,8 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                 }
             }
             if (!problematicDomains.isEmpty()) {
-                addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_REMOVE_DOMAINS_LIST_MISMATCH);
-                addCanDoActionMessage(String.format("$domainsList %1$s", StringUtils.join(problematicDomains, ",")));
-                return false;
+                return failCanDoAction(VdcBllMessages.VMT_CANNOT_REMOVE_DOMAINS_LIST_MISMATCH,
+                        String.format("$domainsList %1$s", StringUtils.join(problematicDomains, ",")));
             }
             getParameters().setRemoveTemplateFromDb(allDomainsList.size() == storageDomainsList.size());
         }
@@ -164,9 +163,8 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         if (!problematicVmNames.isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM);
-            addCanDoActionMessage(String.format("$vmsList %1$s", StringUtils.join(problematicVmNames, ",")));
-            return false;
+            return failCanDoAction(VdcBllMessages.VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM,
+                    String.format("$vmsList %1$s", StringUtils.join(problematicVmNames, ",")));
         }
 
         // for base templates, make sure it has no versions that need to be removed first
@@ -178,17 +176,16 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                     templateVersionsNames.add(version.getName());
                 }
 
-            addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_REMOVE_BASE_WITH_VERSIONS);
-            addCanDoActionMessage(String.format("$versionsList %1$s", StringUtils.join(templateVersionsNames, ",")));
-            return false;
+                return failCanDoAction(VdcBllMessages.VMT_CANNOT_REMOVE_BASE_WITH_VERSIONS,
+                        String.format("$versionsList %1$s", StringUtils.join(templateVersionsNames, ",")));
             }
         }
 
-        if (isInstanceType) {
-            return true;
-        } else {
-            return validate(checkNoDisksBasedOnTemplateDisks());
+        if (!isInstanceType && !validate(checkNoDisksBasedOnTemplateDisks())) {
+            return false;
         }
+
+        return true;
     }
 
     private ValidationResult checkNoDisksBasedOnTemplateDisks() {
@@ -227,9 +224,8 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     protected void executeCommand() {
         // Set VM to lock status immediately, for reducing race condition.
         VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
-        // if for some reason template doesn't have images, remove it now and not in end action
-        final boolean hasImages = imageTemplates.size() > 0;
-        if (hasImages) {
+
+        if (!imageTemplates.isEmpty()) {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
                 @Override
@@ -242,6 +238,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                 }
             });
         } else {
+            // if for some reason template doesn't have images, remove it now and not in end action
             HandleEndAction();
         }
     }
