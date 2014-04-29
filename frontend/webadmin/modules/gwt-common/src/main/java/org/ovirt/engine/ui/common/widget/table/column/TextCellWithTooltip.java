@@ -16,13 +16,12 @@ import com.google.gwt.user.client.DOM;
  * <p/>
  * This cell escapes the (String) value when rendering cell HTML.
  */
-public class TextCellWithTooltip extends AbstractCellWithTooltip<String> {
+public class TextCellWithTooltip extends AbstractCellWithTooltip<String> implements HasStyleClass {
 
     interface CellTemplate extends SafeHtmlTemplates {
 
-        @Template("<div id=\"{0}\">{1}</div>")
-        SafeHtml textContainer(String id, SafeHtml text);
-
+        @Template("<div class=\"{0}\" id=\"{1}\">{2}</div>")
+        SafeHtml textContainer(String style, String id, SafeHtml text);
     }
 
     public static final int UNLIMITED_LENGTH = -1;
@@ -32,6 +31,7 @@ public class TextCellWithTooltip extends AbstractCellWithTooltip<String> {
     private String elementIdPrefix = DOM.createUniqueId();
     private String columnId;
     private String title;
+    private String styleClass = ""; //$NON-NLS-1$
 
     // Text longer than this value will be shortened, providing tooltip with original text
     private final int maxTextLength;
@@ -50,6 +50,10 @@ public class TextCellWithTooltip extends AbstractCellWithTooltip<String> {
         if (template == null) {
             template = GWT.create(CellTemplate.class);
         }
+    }
+
+    public void setStyleClass(String styleClass) {
+        this.styleClass = styleClass == null ? "" : styleClass; //$NON-NLS-1$
     }
 
     // This is used to provide an optional tooltip text that is different from the
@@ -71,8 +75,7 @@ public class TextCellWithTooltip extends AbstractCellWithTooltip<String> {
         if (value != null) {
             SafeHtml escapedValue = getEscapedValue(value);
             SafeHtml renderedValue = getRenderedValue(escapedValue);
-
-            sb.append(template.textContainer(
+            sb.append(template.textContainer(styleClass,
                     ElementIdUtils.createTableCellElementId(elementIdPrefix, columnId, context),
                     renderedValue));
         }

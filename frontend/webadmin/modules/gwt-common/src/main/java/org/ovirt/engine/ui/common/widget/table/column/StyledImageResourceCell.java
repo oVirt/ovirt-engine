@@ -24,14 +24,15 @@ import com.google.gwt.user.client.ui.Label;
  * DecoratedPopupPanel.
  *
  */
-public class StyledImageResourceCell extends ImageResourceCell {
+public class StyledImageResourceCell extends ImageResourceCell implements HasStyleClass {
 
     interface CellTemplate extends SafeHtmlTemplates {
-        @Template("<div style=\"{0}\">{1}</div>")
-        SafeHtml imageContainer(String style, SafeHtml imageHtml);
+        @Template("<div style=\"{0}\" class=\"{1}\">{2}</div>")
+        SafeHtml imageContainerWithStyleClass(String style, String styleClass, SafeHtml imageHtml);
     }
 
     private String style = "line-height: 100%; text-align: center; vertical-align: middle;"; //$NON-NLS-1$
+    private String styleClass = ""; //$NON-NLS-1$
     private String title = ""; //$NON-NLS-1$
 
     private static CellTemplate template;
@@ -61,13 +62,19 @@ public class StyledImageResourceCell extends ImageResourceCell {
     @Override
     public void render(Context context, ImageResource value, SafeHtmlBuilder sb) {
         if (value != null) {
-            sb.append(template.imageContainer(style,
+            sb.append(template.imageContainerWithStyleClass(
+                    style,
+                    styleClass,
                     SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(value).getHTML())));
         }
     }
 
     public void setStyle(String style) {
         this.style = style;
+    }
+
+    public void setStyleClass(String styleClass) {
+        this.styleClass = styleClass == null ? "" : styleClass; //$NON-NLS-1$
     }
 
     /**

@@ -1,7 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import com.google.gwt.cell.client.CompositeCell;
+import com.google.gwt.cell.client.HasCell;
+import com.google.gwt.user.cellview.client.Column;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -11,6 +16,7 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.StatusCompositeCell;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -73,9 +79,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
 
         CommentColumn<VM> commentColumn = new CommentColumn<VM>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
-
-        ReasonColumn<VM> reasonColumn = new ReasonColumn<VM>();
-        getTable().addColumnWithHtmlHeader(reasonColumn, reasonColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -175,7 +178,20 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 }
             }
         };
-        getTable().addColumn(statusColumn, constants.statusVm(), "80px"); //$NON-NLS-1$
+
+        ReasonColumn<VM> reasonColumn = new ReasonColumn<VM>();
+
+        CompositeCell<VM> compositeCell = new StatusCompositeCell(
+                new ArrayList<HasCell<VM, ?>>(Arrays.asList(
+                        statusColumn,
+                        reasonColumn)));
+
+        getTable().addColumn(new Column<VM, VM>(compositeCell) {
+            @Override
+            public VM getValue(VM object) {
+                return object;
+            }
+        }, constants.statusVm(), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
             @Override
@@ -352,4 +368,5 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         });
     }
+
 }
