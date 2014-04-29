@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
+import org.ovirt.engine.core.bll.network.cluster.helper.DisplayNetworkClusterHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirectorDelegator;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> extends
@@ -51,6 +53,16 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
     @Override
     protected void executeCommand() {
+        final DisplayNetworkClusterHelper displayNetworkClusterHelper = new DisplayNetworkClusterHelper(
+                getNetworkClusterDAO(),
+                getVmDAO(),
+                getNetworkCluster(),
+                getNetworkName(),
+                AuditLogDirectorDelegator.getInstance());
+        if (displayNetworkClusterHelper.isDisplayToBeUpdated()) {
+            displayNetworkClusterHelper.warnOnActiveVm();
+        }
+
         getNetworkClusterDAO().update(getNetworkCluster());
 
         if (getNetworkCluster().isDisplay()) {

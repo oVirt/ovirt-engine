@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
 import org.ovirt.engine.core.bll.network.AddNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
+import org.ovirt.engine.core.bll.network.cluster.helper.DisplayNetworkClusterHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirectorDelegator;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -61,6 +63,16 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected void executeCommand() {
+        final DisplayNetworkClusterHelper displayNetworkClusterHelper = new DisplayNetworkClusterHelper(
+                getNetworkClusterDAO(),
+                getVmDAO(),
+                getNetworkCluster(),
+                getNetworkName(),
+                AuditLogDirectorDelegator.getInstance());
+        if (displayNetworkClusterHelper.isDisplayToBeUpdated()) {
+            displayNetworkClusterHelper.warnOnActiveVm();
+        }
+
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
             @Override
@@ -77,7 +89,6 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
         setSucceeded(true);
     }
-
 
     private void addNetworkToHosts() {
         List<VdsNetworkInterface> nics =
