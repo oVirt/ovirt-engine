@@ -711,7 +711,7 @@ public class VdsUpdateRunTimeInfo {
                 slaves.add(iface);
             }
 
-            String baseIfaceName = NetworkUtils.stripVlan(iface.getName());
+            String baseIfaceName = NetworkUtils.stripVlan(iface);
 
             // If the parent interface already marked as monitored- no need to check it again
             if (monitoredInterfaces.containsKey(baseIfaceName)) {
