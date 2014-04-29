@@ -1890,5 +1890,29 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     JsonProtocolSupported,
 
-    Invalid
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1000000")
+    MaxThroughputUpperBoundQosValue,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1000000")
+    MaxReadThroughputUpperBoundQosValue,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1000000")
+    MaxWriteThroughputUpperBoundQosValue,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1000000")
+    MaxIopsUpperBoundQosValue,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1000000")
+    MaxReadIopsUpperBoundQosValue,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1000000")
+    MaxWriteIopsUpperBoundQosValue,
+
+    Invalid;
 }
