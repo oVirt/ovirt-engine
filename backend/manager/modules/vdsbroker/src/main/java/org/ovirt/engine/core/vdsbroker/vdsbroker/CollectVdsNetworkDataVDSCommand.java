@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import static org.ovirt.engine.core.common.businessentities.network.NetworkStatus.OPERATIONAL;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,9 +26,12 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.predicates.DisplayInterfaceEqualityPredicate;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.predicates.IsNetworkOnInterfacePredicate;
 
 public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<CollectHostNetworkDataVdsCommandParameters> {
     public CollectVdsNetworkDataVDSCommand(CollectHostNetworkDataVdsCommandParameters parameters) {
@@ -91,7 +95,9 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
     public static NonOperationalReason persistAndEnforceNetworkCompliance(VDS vds,
             boolean skipManagementNetwork,
             Map<String, VdsNetworkInterface> nicsByName) {
-        persistTopology(vds, nicsByName);
+        List<VdsNetworkInterface> dbIfaces =
+                DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(vds.getId());
+        persistTopology(vds, nicsByName, dbIfaces);
 
         if (vds.getStatus() != VDSStatus.Maintenance) {
 
@@ -123,7 +129,10 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
                 return NonOperationalReason.VM_NETWORK_IS_BRIDGELESS;
             }
 
-            logUnsynchronizedNetworks(vds, Entities.entitiesByName(clusterNetworks));
+            final Map<String, Network> clusterNetworksByName = Entities.entitiesByName(clusterNetworks);
+            final Collection<Network> dbHostNetworks = findNetworksOnInterfaces(dbIfaces, clusterNetworksByName);
+            logChangedDisplayNetwork(vds, dbHostNetworks, dbIfaces);
+            logUnsynchronizedNetworks(vds, clusterNetworksByName);
         }
         return NonOperationalReason.NONE;
     }
@@ -147,6 +156,63 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
                 break;
             }
         }
+    }
+
+    private static void logChangedDisplayNetwork(
+            VDS vds,
+            Collection<Network> engineHostNetworks,
+            Collection<VdsNetworkInterface> engineInterfaces) {
+
+        if (isVmRunningOnHost(vds.getId())) {
+            final Network engineDisplayNetwork = findDisplayNetwork(engineHostNetworks);
+
+            final IsNetworkOnInterfacePredicate isNetworkOnInterfacePredicate =
+                    new IsNetworkOnInterfacePredicate(engineDisplayNetwork.getName());
+            final VdsNetworkInterface vdsmDisplayInterface = LinqUtils.firstOrNull(
+                    vds.getInterfaces(),
+                    isNetworkOnInterfacePredicate);
+            final VdsNetworkInterface engineDisplayInterface = LinqUtils.firstOrNull(
+                    engineInterfaces,
+                    isNetworkOnInterfacePredicate);
+            final DisplayInterfaceEqualityPredicate displayIneterfaceEqualityPredicate =
+                    new DisplayInterfaceEqualityPredicate(engineDisplayInterface);
+            if (vdsmDisplayInterface == null // the display interface is't on host anymore
+                    || !displayIneterfaceEqualityPredicate.eval(vdsmDisplayInterface)) {
+                final AuditLogableBase loggable = new AuditLogableBase(vds.getId());
+                AuditLogDirector.log(loggable, AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_HOST_WITH_ACTIVE_VM);
+            }
+        }
+    }
+
+    private static boolean isVmRunningOnHost(Guid hostId) {
+        return !DbFacade.getInstance().getVmDynamicDao().getAllRunningForVds(hostId).isEmpty();
+    }
+
+    private static Collection<Network> findNetworksOnInterfaces(
+            Collection<VdsNetworkInterface> ifaces,
+            Map<String, Network> clusterNetworksByName) {
+        final Collection<Network> networks = new ArrayList<Network>();
+        for (VdsNetworkInterface iface : ifaces) {
+            final String interfaceNetworkName = iface.getNetworkName();
+            if (clusterNetworksByName.containsKey(interfaceNetworkName)) {
+                final Network network = clusterNetworksByName.get(interfaceNetworkName);
+                networks.add(network);
+            }
+        }
+        return networks;
+    }
+
+    private static Network findDisplayNetwork(Collection<Network> networks) {
+        Network managementNetwork = null;
+        for (Network network : networks) {
+            if (network.getCluster().isDisplay()) {
+                return network;
+            }
+            if (NetworkUtils.isManagementNetwork(network)) {
+                managementNetwork = network;
+            }
+        }
+        return managementNetwork;
     }
 
     private static void logUnsynchronizedNetworks(VDS vds, Map<String, Network> networks) {
@@ -174,9 +240,11 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
         }
     }
 
-    private static void persistTopology(VDS vds, Map<String, VdsNetworkInterface> nicsByName) {
+    private static void persistTopology(
+            VDS vds,
+            Map<String, VdsNetworkInterface> nicsByName,
+            List<VdsNetworkInterface> dbIfaces) {
         InterfaceDao interfaceDAO = DbFacade.getInstance().getInterfaceDao();
-        List<VdsNetworkInterface> dbIfaces = interfaceDAO.getAllInterfacesForVds(vds.getId());
         List<String> updatedIfaces = new ArrayList<String>();
         List<VdsNetworkInterface> dbIfacesToBatch = new ArrayList<>();
         Map<String, VdsNetworkInterface> hostNicsByNames = Entities.entitiesByName(vds.getInterfaces());
