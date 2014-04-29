@@ -17,6 +17,8 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.Engine, AuditLogType.VDC_STOP);
         // VDS GROUP
         AddEventNotificationEntry(EventNotificationEntity.VdsGroup, AuditLogType.CLUSTER_ALERT_HA_RESERVATION);
+        AddEventNotificationEntry(EventNotificationEntity.VdsGroup,
+                AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_CLUSTER_WITH_ACTIVE_VM);
         // VDS
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_FAILURE);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.USER_VDS_MAINTENANCE);
@@ -37,6 +39,8 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_LOW_SWAP);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.HOST_INTERFACE_STATE_DOWN);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.HOST_BOND_SLAVE_STATE_DOWN);
+        AddEventNotificationEntry(EventNotificationEntity.Host,
+                AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_HOST_WITH_ACTIVE_VM);
         AddEventNotificationEntry(EventNotificationEntity.VirtHost, AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN);
         AddEventNotificationEntry(EventNotificationEntity.VirtHost, AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM);
         AddEventNotificationEntry(EventNotificationEntity.VirtHost, AuditLogType.SYSTEM_DEACTIVATED_STORAGE_DOMAIN);

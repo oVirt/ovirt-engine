@@ -900,6 +900,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___VM_SET_TICKET();
 
+    String AuditLogType___NETWORK_UPDATE_DISPLAY_FOR_CLUSTER_WITH_ACTIVE_VM();
+
+    String AuditLogType___NETWORK_UPDATE_DISPLAY_FOR_HOST_WITH_ACTIVE_VM();
+
     String UnitVmModel$CpuSharesAmount___DISABLED();
 
     String UnitVmModel$CpuSharesAmount___HIGH();
@@ -925,4 +929,5 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String KdumpStatus___DISABLED();
 
     String KdumpStatus___ENABLED();
+
 }
