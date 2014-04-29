@@ -115,7 +115,7 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
         for (Network network : getClusterNetworksByLabel()) {
             if (nicsByNetworkName.containsKey(network.getName())) {
                 VdsNetworkInterface assignedNic = nicsByNetworkName.get(network.getName());
-                if (!StringUtils.equals(getNicName(), NetworkUtils.stripVlan(assignedNic.getName()))) {
+                if (!StringUtils.equals(getNicName(), NetworkUtils.stripVlan(assignedNic))) {
                     badlyAssignedNetworks.add(network.getName());
                 }
             }
