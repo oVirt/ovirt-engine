@@ -271,6 +271,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     protected boolean validateCanResizeDisk() {
         DiskImage newDiskImage = (DiskImage) getNewDisk();
 
+        if (Boolean.TRUE.equals(getVmDeviceForVm().getIsReadOnly())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_RESIZE_READ_ONLY_DISK);
+        }
+
         if (vmDeviceForVm.getSnapshotId() != null) {
             DiskImage snapshotDisk = getDiskImageDao().getDiskSnapshotForVmSnapshot(getParameters().getDiskId(), vmDeviceForVm.getSnapshotId());
             if (snapshotDisk.getSize() != newDiskImage.getSize()) {
@@ -592,6 +596,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             oldDisk = getDiskDao().get(getParameters().getDiskId());
         }
         return oldDisk;
+    }
+
+    protected VmDevice getVmDeviceForVm() {
+        return vmDeviceForVm;
     }
 
     private Disk getNewDisk() {

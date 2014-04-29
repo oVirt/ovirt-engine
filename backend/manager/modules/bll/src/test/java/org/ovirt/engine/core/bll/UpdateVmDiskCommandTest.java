@@ -501,6 +501,26 @@ public class UpdateVmDiskCommandTest {
                 ("wrong failure", command, VdcBllMessages.ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL);
     }
 
+    @Test
+    public void testFailedRoDiskResize() {
+        StorageDomain sd = new StorageDomain();
+        sd.setAvailableDiskSize(Integer.MAX_VALUE);
+        sd.setStatus(StorageDomainStatus.Active);
+        when(storageDomainDao.getForStoragePool(sdId, spId)).thenReturn(sd);
+
+        UpdateVmDiskParameters parameters = createParameters();
+        ((DiskImage) parameters.getDiskInfo()).setSize(parameters.getDiskInfo().getSize() * 2);
+        initializeCommand(parameters);
+
+        VmDevice device = createVmDevice(diskImageGuid, vmId);
+        device.setIsReadOnly(true);
+        doReturn(device).when(command).getVmDeviceForVm();
+
+        assertFalse(command.validateCanResizeDisk());
+        CanDoActionTestUtils.assertCanDoActionMessages
+                ("wrong failure", command, VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_RESIZE_READ_ONLY_DISK);
+    }
+
     private void initializeCommand(UpdateVmDiskParameters params) {
         initializeCommand(params, Collections.singletonList(createVmStatusDown()));
     }
