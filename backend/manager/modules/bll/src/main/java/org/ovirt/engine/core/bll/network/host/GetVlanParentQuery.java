@@ -21,8 +21,7 @@ public class GetVlanParentQuery<P extends InterfaceAndIdQueryParameters> extends
             List<VdsNetworkInterface> vdsInterfaces =
                     getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getId());
             for (int i = 0; i < vdsInterfaces.size(); i++) {
-                if (NetworkUtils.interfaceBasedOn(getParameters().getInterface().getName(),
-                        vdsInterfaces.get(i).getName())) {
+                if (NetworkUtils.interfaceBasedOn(getParameters().getInterface(), vdsInterfaces.get(i).getName())) {
                     getQueryReturnValue().setReturnValue(vdsInterfaces.get(i));
                     break;
                 }
