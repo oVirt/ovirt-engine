@@ -1883,12 +1883,36 @@ public enum ConfigValues {
     @DefaultValueAttribute("90")
     HostStorageLeaseAliveCheckingInterval,
 
-    Invalid,
-
     /**
      * Specifies whether jsonrpc protocol is supported.
      */
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     JsonProtocolSupported,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1000000")
+    MaxThroughputUpperBoundQosValue,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1000000")
+    MaxReadThroughputUpperBoundQosValue,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1000000")
+    MaxWriteThroughputUpperBoundQosValue,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1000000")
+    MaxIopsUpperBoundQosValue,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1000000")
+    MaxReadIopsUpperBoundQosValue,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1000000")
+    MaxWriteIopsUpperBoundQosValue,
+
+    Invalid;
 }
