@@ -1,9 +1,13 @@
 package org.ovirt.engine.core.dao;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 
 /**
@@ -16,7 +20,7 @@ import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
  * @param <ID>
  *            The type of the entity's id.
  */
-public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<ID>, ID extends Serializable>
+public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<ID>, ID extends Serializable & Comparable<ID>>
         extends DefaultGenericDaoDbFacade<T, ID> implements MassOperationsDao<T, ID> {
 
     public MassOperationsGenericDaoDbFacade(String entityStoredProcedureName) {
@@ -49,6 +53,10 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
     protected void updateAllInBatch(String procedureName,
             Collection<T> paramValues,
             MapSqlParameterMapper<T> mapper) {
+
+        // To overcome possible deadlocks, we need to sort the collection
+        List<T> sortedParamValues = new ArrayList<>(paramValues);
+        Collections.sort(sortedParamValues, BusinessEntityComparator.<T, ID> newInstance());
         getCallsHandler().executeStoredProcAsBatch(procedureName == null ? getProcedureNameForUpdate() : procedureName,
                 paramValues, mapper);
     }
