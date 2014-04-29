@@ -135,7 +135,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 && !clusterNetworkModel.isExternal();
     }
 
-    private final class NetworkNameTextColumnWithTooltip extends TextColumnWithTooltip<ClusterNetworkModel> {
+    private static final class NetworkNameTextColumnWithTooltip extends TextColumnWithTooltip<ClusterNetworkModel> {
         @Override
         public String getValue(ClusterNetworkModel clusterNetworkModel) {
             return clusterNetworkModel.getDisplayedName();
@@ -301,7 +301,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         }
     }
 
-    private final class MigrationNetworkIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
+    private static final class MigrationNetworkIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
         private MigrationNetworkIndicatorCheckboxColumn(boolean multipleSelectionAllowed,
                 MigrationNetworkIndicatorFieldUpdater migrationNetworkIndicatorFieldUpdater) {
             super(multipleSelectionAllowed, migrationNetworkIndicatorFieldUpdater);
@@ -338,7 +338,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         }
     }
 
-    private final class DisplayNetworkIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
+    private final static class DisplayNetworkIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
         private DisplayNetworkIndicatorCheckboxColumn(boolean multipleSelectionAllowed,
                 DisplayNetworkIndicatorFieldUpdater displayNetworkIndicatorFieldUpdater) {
             super(multipleSelectionAllowed, displayNetworkIndicatorFieldUpdater);
