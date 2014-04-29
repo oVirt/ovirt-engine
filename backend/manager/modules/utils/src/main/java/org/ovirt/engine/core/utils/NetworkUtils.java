@@ -311,7 +311,7 @@ public final class NetworkUtils {
      *            the network which holds the vlan-id
      * @return a name representing the vlan device
      */
-    public static String getVlanDeviceName(VdsNetworkInterface underlyingNic, Network network) {
+    public static String constructVlanDeviceName(VdsNetworkInterface underlyingNic, Network network) {
         return underlyingNic.getName() + "." + network.getVlanId();
     }
 

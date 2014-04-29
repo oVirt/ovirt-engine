@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -50,7 +51,9 @@ public abstract class NetworkParametersBuilder {
         VdsNetworkInterface vlan = new Vlan();
         vlan.setNetworkName(network.getName());
         vlan.setVdsId(nic.getVdsId());
-        vlan.setName(NetworkUtils.getVlanDeviceName(nic, network));
+        vlan.setName(NetworkUtils.constructVlanDeviceName(nic, network));
+        vlan.setVlanId(network.getVlanId());
+        vlan.setBaseInterface(nic.getName());
         vlan.setBootProtocol(NetworkBootProtocol.NONE);
         return vlan;
     }
@@ -122,7 +125,8 @@ public abstract class NetworkParametersBuilder {
             VdsNetworkInterface baseNic,
             Network network) {
         for (VdsNetworkInterface n : nics) {
-            if (StringUtils.equals(n.getName(), NetworkUtils.getVlanDeviceName(baseNic, network))
+            if ((baseNic.getName().equals(n.getBaseInterface()) && ObjectUtils.objectsEqual(n.getVlanId(),
+                    network.getVlanId()))
                     || StringUtils.equals(n.getNetworkName(), network.getName())) {
                 return n;
             }
