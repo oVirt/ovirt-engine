@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.host;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
@@ -50,16 +51,18 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         String gateway = StringUtils.isEmpty(getParameters().getGateway()) ? "" : getParameters().getGateway();
         ArrayList<String> interfaceNames = new ArrayList<String>();
 
+        Map<String, VdsNetworkInterface> interfaceByName = Entities.entitiesByName(interfaces);
         for (VdsNetworkInterface i : getParameters().getInterfaces()) {
-            if (Boolean.TRUE.equals(i.getBonded()) || NetworkUtils.isBondVlan(interfaces, i)) {
-                getParameters().setBondName(NetworkUtils.stripVlan(i.getName()));
+            VdsNetworkInterface existingIface = interfaceByName.get(i.getName());
+            if (Boolean.TRUE.equals(existingIface.getBonded()) || NetworkUtils.isBondVlan(interfaces, existingIface)) {
+                getParameters().setBondName(NetworkUtils.stripVlan(existingIface));
                 for (VdsNetworkInterface ix : interfaces) {
-                    if (NetworkUtils.interfaceBasedOn(i.getName(), ix.getBondName())) {
-                        interfaceNames.add(NetworkUtils.stripVlan(ix.getName()));
+                    if (NetworkUtils.interfaceBasedOn(existingIface, ix.getBondName())) {
+                        interfaceNames.add(NetworkUtils.stripVlan(ix));
                     }
                 }
             } else {
-                interfaceNames.add(NetworkUtils.stripVlan(i.getName()));
+                interfaceNames.add(NetworkUtils.stripVlan(existingIface));
             }
         }
 
