@@ -2946,6 +2946,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action}. New disk size cannot be smaller than the current.")
     String ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Read-only disk cannot be resized.")
+    String ACTION_TYPE_FAILED_CANNOT_RESIZE_READ_ONLY_DISK();
+
     @DefaultStringValue("Cannot ${action} ${type}. Disk snapshot cannot be resized.")
     String ACTION_TYPE_FAILED_CANNOT_RESIZE_DISK_SNAPSHOT();
 
