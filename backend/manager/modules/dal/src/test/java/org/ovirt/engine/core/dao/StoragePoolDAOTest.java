@@ -322,7 +322,6 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetStorageTypesInPoolForMixedTypes() {
-        List<StorageType> expectedTypes = Arrays.asList();
         Guid poolId = FixturesTool.STORAGE_POOL_MIXED_TYPES;
         List<StorageType> storageTypes = dao.getStorageTypesInPool(poolId);
         assertStorageTypes(storageTypes, StorageType.POSIXFS, StorageType.NFS, StorageType.ISCSI);
@@ -330,7 +329,6 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetStorageTypesInPoolForSingleType() {
-        List<StorageType> expectedTypes = Arrays.asList();
         Guid poolId = FixturesTool.STORAGE_POOL_NFS;
         List<StorageType> storageTypes = dao.getStorageTypesInPool(poolId);
         assertStorageTypes(storageTypes, StorageType.NFS);
