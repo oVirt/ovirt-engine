@@ -33,7 +33,7 @@ Manage user roles.
 
     --command=command        Command.
         add                      Add role.
-    --user-name              User name.
+    --user-name=name         User name.
     --provider=name          Name of authorization provider instace.
     --provider-id=id         Unique user id within provider.
     --role=role              Role name.
