@@ -40,6 +40,7 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
     @Override
     public Response add(Step step) {
         validateParameters(step, "type", "description");
+        validateEnums(Step.class, step);
         String id;
         if (step.isSetParentStep()) {
             validateParameters(step, "parentStep.id");
