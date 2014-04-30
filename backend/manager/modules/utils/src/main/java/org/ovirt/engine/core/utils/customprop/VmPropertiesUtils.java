@@ -9,12 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.exceptions.InitializationException;
 
@@ -31,8 +30,8 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         vmPropertiesUtils = new VmPropertiesUtils();
     }
 
-    private Map<Version, Map<String, Pattern>> predefinedProperties;
-    private Map<Version, Map<String, Pattern>> userdefinedProperties;
+    private Map<Version, Map<String, String>> predefinedProperties;
+    private Map<Version, Map<String, String>> userdefinedProperties;
     private Map<Version, String> allVmProperties;
 
     public static VmPropertiesUtils getInstance() {
@@ -41,8 +40,8 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
 
     public void init() throws InitializationException {
         try {
-            predefinedProperties = new HashMap<Version, Map<String, Pattern>>();
-            userdefinedProperties = new HashMap<Version, Map<String, Pattern>>();
+            predefinedProperties = new HashMap<Version, Map<String, String>>();
+            userdefinedProperties = new HashMap<Version, Map<String, String>>();
             allVmProperties = new HashMap<Version, String>();
             Set<Version> versions = getSupportedClusterLevels();
             String predefinedVMPropertiesStr, userDefinedVMPropertiesStr;
@@ -58,8 +57,8 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
                 sb.append(userDefinedVMPropertiesStr);
                 allVmProperties.put(version, sb.toString());
 
-                predefinedProperties.put(version, new HashMap<String, Pattern>());
-                userdefinedProperties.put(version, new HashMap<String, Pattern>());
+                predefinedProperties.put(version, new HashMap<String, String>());
+                userdefinedProperties.put(version, new HashMap<String, String>());
                 parsePropertiesRegex(predefinedVMPropertiesStr, predefinedProperties.get(version));
                 parsePropertiesRegex(userDefinedVMPropertiesStr, userdefinedProperties.get(version));
             }
@@ -118,7 +117,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
      * @return a list of validation errors. if there are no errors - the list will be empty
      */
     public List<ValidationError> validateVmProperties(Version version, String properties) {
-        if (StringUtils.isEmpty(properties)) { // No errors in case of empty value
+        if (StringHelper.isNullOrEmpty(properties)) { // No errors in case of empty value
             return Collections.emptyList();
         }
         if (syntaxErrorInProperties(properties)) {
@@ -136,11 +135,11 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
     private boolean isValueValid(Version version, String key, String value) {
         // Checks that the value for the given property is valid by running by trying to perform
         // regex validation
-        Pattern userDefinedPattern = userdefinedProperties.get(version).get(key);
-        Pattern predefinedPattern = predefinedProperties.get(version).get(key);
+        String userDefinedPattern = userdefinedProperties.get(version).get(key);
+        String predefinedPattern = predefinedProperties.get(version).get(key);
 
-        return (userDefinedPattern != null && userDefinedPattern.matcher(value).matches())
-                || (predefinedPattern != null && predefinedPattern.matcher(value).matches());
+        return (userDefinedPattern != null && value.matches(userDefinedPattern))
+                || (predefinedPattern != null && value.matches(predefinedPattern));
     }
 
     /**
@@ -207,7 +206,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
      */
     public void getVMProperties(Version version, Map<String, String> propertiesMap, String vmPropertiesFieldValue) {
         // format of properties is key1=val1,key2=val2,key3=val3,key4=val4
-        if (StringUtils.isEmpty(vmPropertiesFieldValue)) {
+        if (StringHelper.isNullOrEmpty(vmPropertiesFieldValue)) {
             return;
         }
 
@@ -228,13 +227,13 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
             Map<String, String> propertiesMap) {
         Set<ValidationError> errorsSet = new HashSet<ValidationError>();
         List<ValidationError> results = new ArrayList<ValidationError>();
-        if (!StringUtils.isEmpty(vmPropertiesFieldValue)) {
-            String keyValuePairs[] = semicolonPattern.split(vmPropertiesFieldValue);
+        if (!StringHelper.isNullOrEmpty(vmPropertiesFieldValue)) {
+            String keyValuePairs[] = vmPropertiesFieldValue.split(PROPERTIES_DELIMETER);
 
             for (String keyValuePairStr : keyValuePairs) {
                 String[] pairParts = keyValuePairStr.split(KEY_VALUE_DELIMETER, 2);
                 String key = pairParts[0];
-                String value = StringUtils.defaultString(pairParts[1]);
+                String value = StringHelper.defaultString(pairParts[1]);
                 if (propertiesMap.containsKey(key)) {
                     errorsSet.add(new ValidationError(ValidationFailureReason.DUPLICATE_KEY, key));
                     continue;
@@ -256,7 +255,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         return results;
     }
 
-    protected boolean keyExistsInVersion(Map<Version, Map<String, Pattern>> propertiesMap, Version version, String key) {
+    protected boolean keyExistsInVersion(Map<Version, Map<String, String>> propertiesMap, Version version, String key) {
         return propertiesMap.get(version).containsKey(key);
     }
 
@@ -271,14 +270,14 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         Entry<String, String> entry = iterator.next();
         result.append(entry.getKey())
                 .append("=")
-                .append(StringUtils.defaultString(entry.getValue()));
+                .append(StringHelper.defaultString(entry.getValue()));
         while (iterator.hasNext()) {
             result.append(";");
             entry = iterator.next();
             if (entry != null) {
                 result.append(entry.getKey())
                         .append("=")
-                        .append(StringUtils.defaultString(entry.getValue()));
+                        .append(StringHelper.defaultString(entry.getValue()));
             }
         }
         return result.toString();
@@ -299,7 +298,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         Set<String> userdefinedPropertiesKeys = userdefinedProperties.get(version).keySet();
         for (Entry<String, String> propertiesEntry : propertiesEntries) {
             String propertyKey = propertiesEntry.getKey();
-            String propertyValue = StringUtils.defaultString(propertiesEntry.getValue());
+            String propertyValue = StringHelper.defaultString(propertiesEntry.getValue());
             if (predefinedPropertiesKeys.contains(propertyKey)) {
                 predefinedPropertiesMap.put(propertyKey, propertyValue);
             }
@@ -319,9 +318,9 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
      */
     public String customProperties(String predefinedProperties, String userDefinedProperties) {
         StringBuilder result = new StringBuilder();
-        result.append((StringUtils.isEmpty(predefinedProperties)) ? "" : predefinedProperties);
+        result.append(predefinedProperties == null ? "" : predefinedProperties);
         result.append((result.length() == 0) ? "" : ";");
-        result.append((StringUtils.isEmpty(userDefinedProperties)) ? "" : userDefinedProperties);
+        result.append(userDefinedProperties == null ? "" : userDefinedProperties);
         return result.toString();
     }
 

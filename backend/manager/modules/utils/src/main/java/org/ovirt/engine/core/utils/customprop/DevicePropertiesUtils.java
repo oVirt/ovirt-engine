@@ -86,7 +86,7 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
     /**
      * Map of device custom properties for each version and device type
      */
-    private Map<Version, EnumMap<VmDeviceGeneralType, Map<String, Pattern>>> deviceProperties;
+    private Map<Version, EnumMap<VmDeviceGeneralType, Map<String, String>>> deviceProperties;
 
     /**
      * List of device types for which custom properties can be set
@@ -188,7 +188,7 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
                 devicePropertiesStr = getCustomDeviceProperties(version);
                 if (FeatureSupported.deviceCustomProperties(version)) {
                     deviceProperties.put(version,
-                            new EnumMap<VmDeviceGeneralType, Map<String, Pattern>>(VmDeviceGeneralType.class));
+                            new EnumMap<VmDeviceGeneralType, Map<String, String>>(VmDeviceGeneralType.class));
                     Matcher typeMatcher = devicePropSplitPattern.matcher(devicePropertiesStr);
                     while (typeMatcher.find()) {
                         String dcpStr = typeMatcher.group();
@@ -204,7 +204,7 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
                         VmDeviceGeneralType type = VmDeviceGeneralType.forValue(dcpStr.substring(0, idx));
                         // properties definition for device starts with ";prop={"
                         String propStr = dcpStr.substring(idx + PROP_PREFIX_LEN, dcpStr.length() - 1);
-                        Map<String, Pattern> props = new HashMap<String, Pattern>();
+                        Map<String, String> props = new HashMap<String, String>();
                         parsePropertiesRegex(propStr, props);
                         deviceProperties.get(version).put(type, props);
                     }
@@ -226,7 +226,7 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
             return Collections.emptySet();
         }
 
-        EnumMap<VmDeviceGeneralType, Map<String, Pattern>> map = deviceProperties.get(version);
+        EnumMap<VmDeviceGeneralType, Map<String, String>> map = deviceProperties.get(version);
         if (map.isEmpty()) {
             // no device type has any properties
             return Collections.emptySet();
@@ -246,12 +246,12 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
      *            specified device type
      * @return map of device properties
      */
-    public Map<String, Pattern> getDeviceProperties(Version version, VmDeviceGeneralType type) {
+    public Map<String, String> getDeviceProperties(Version version, VmDeviceGeneralType type) {
         if (!FeatureSupported.deviceCustomProperties(version)) {
             return Collections.emptyMap();
         }
 
-        Map<String, Pattern> map = deviceProperties.get(version).get(type);
+        Map<String, String> map = deviceProperties.get(version).get(type);
         if (map == null) {
             // no defined properties for specified type
             map = Collections.emptyMap();
@@ -260,31 +260,6 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
             map = Collections.unmodifiableMap(map);
         }
         return map;
-    }
-
-    /**
-     * Returns map of device properties <property name, regex to validate property value> for specified version and
-     * device type. Method should be used only for GWT, because {@code java.util.regex.Pattern} cannot be used for GWT
-     *
-     * @param version
-     *            version of the cluster that the VM containing the device is in
-     * @param type
-     *            specified device type
-     * @return map of device properties
-     */
-    public Map<String, String> getRawDeviceProperties(Version version, VmDeviceGeneralType type) {
-        Map<String, Pattern> map = getDeviceProperties(version, type);
-
-        if (map.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        // convert to Map<String,String>
-        Map<String, String> result = new HashMap<>();
-        for (Map.Entry<String, Pattern> e : map.entrySet()) {
-            result.put(e.getKey(), e.getValue().pattern());
-        }
-        return result;
     }
 
     /**
@@ -336,7 +311,7 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
             }
 
             String value = StringUtils.defaultString(e.getValue());
-            if (!deviceProperties.get(version).get(type).get(key).matcher(value).matches()) {
+            if (!value.matches(deviceProperties.get(version).get(type).get(key))) {
                 errorsSet.add(new ValidationError(ValidationFailureReason.INCORRECT_VALUE, key));
                 continue;
             }

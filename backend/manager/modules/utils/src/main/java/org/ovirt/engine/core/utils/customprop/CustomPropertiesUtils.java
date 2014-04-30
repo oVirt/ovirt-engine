@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils.customprop;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,13 +9,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 /**
  * Abstract class to ease custom properties handling
@@ -32,19 +31,14 @@ public class CustomPropertiesUtils {
     protected final static String KEY_VALUE_DELIMETER = "=";
 
     /**
-     * Pattern to separate property definition
-     */
-    protected final Pattern semicolonPattern;
-
-    /**
      * Regex describing legitimate characters for property name - alphanumeric characters and underscore
      */
     protected final static String LEGITIMATE_CHARACTER_FOR_KEY = "[a-z_A-Z0-9]";
 
     /**
-     * Pattern to validate property name
+     * Regex describing property name
      */
-    protected final Pattern keyPattern;
+    protected final static String KEY_REGEX = "(" + LEGITIMATE_CHARACTER_FOR_KEY + ")+";
 
     /**
      * Regex describing legitimate characters for property value - all except {@code PROPERTIES_DELIMITER}
@@ -52,9 +46,9 @@ public class CustomPropertiesUtils {
     protected final static String LEGITIMATE_CHARACTER_FOR_VALUE = "[^" + PROPERTIES_DELIMETER + "]";
 
     /**
-     * Pattern to validate property value
+     * Regex describing property value
      */
-    protected final Pattern valuePattern;
+    protected final static String VALUE_REGEX = "(" + LEGITIMATE_CHARACTER_FOR_VALUE + ")*";
 
     /**
      * Regex describing property definition - key=value
@@ -69,11 +63,6 @@ public class CustomPropertiesUtils {
     protected static final String VALIDATION_STR = "(" + KEY_VALUE_REGEX_STR + "(;" + KEY_VALUE_REGEX_STR + ")*;?)?";
 
     /**
-     * Pattern to validation properties definition
-     */
-    protected final Pattern validationPattern;
-
-    /**
      * List defining syntax error during properties validation
      */
     protected final List<ValidationError> invalidSyntaxValidationError;
@@ -82,10 +71,6 @@ public class CustomPropertiesUtils {
      * Constructor has package access to enable testing, but class cannot be instantiated outside package
      */
     CustomPropertiesUtils() {
-        semicolonPattern = Pattern.compile(PROPERTIES_DELIMETER);
-        keyPattern = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_KEY + ")+");
-        valuePattern = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_VALUE + ")*");
-        validationPattern = Pattern.compile(VALIDATION_STR);
         invalidSyntaxValidationError = Arrays.asList(new ValidationError(ValidationFailureReason.SYNTAX_ERROR, ""));
     }
 
@@ -107,7 +92,7 @@ public class CustomPropertiesUtils {
      * @return returns {@code true} if custom properties contains syntax error, otherwise {@code false}
      */
     public boolean syntaxErrorInProperties(String properties) {
-        return !validationPattern.matcher(properties).matches();
+        return properties != null && !properties.matches(VALIDATION_STR);
     }
 
     /**
@@ -122,13 +107,13 @@ public class CustomPropertiesUtils {
         if (properties != null && !properties.isEmpty()) {
             for (Map.Entry<String, String> e : properties.entrySet()) {
                 String key = e.getKey();
-                if (key == null || !keyPattern.matcher(key).matches()) {
+                if (key == null || !key.matches(KEY_REGEX)) {
                     // syntax error in property name
                     error = true;
                     break;
                 }
 
-                if (!valuePattern.matcher(StringUtils.defaultString(e.getValue())).matches()) {
+                if (!StringHelper.defaultString(e.getValue()).matches(VALUE_REGEX)) {
                     // syntax error in property value
                     error = true;
                     break;
@@ -141,24 +126,24 @@ public class CustomPropertiesUtils {
     /**
      * Converts properties specification from {@code String} to {@code Map<String, Pattern}
      */
-    protected void parsePropertiesRegex(String properties, Map<String, Pattern> keysToRegex) {
-        if (StringUtils.isEmpty(properties)) {
+    protected void parsePropertiesRegex(String properties, Map<String, String> keysToRegex) {
+        if (StringHelper.isNullOrEmpty(properties)) {
             return;
         }
 
-        String[] propertiesStrs = semicolonPattern.split(properties);
+        String[] propertiesStrs = properties.split(PROPERTIES_DELIMETER);
 
         // Property is in the form of key=regex
         for (String property : propertiesStrs) {
 
-            Pattern pattern = null;
+            String pattern = null;
             String[] propertyParts = property.split(KEY_VALUE_DELIMETER, 2);
             if (propertyParts.length == 1) {
                 // there is no value(regex) for the property - we assume in that case that any value is allowed except
                 // for the properties delimiter
-                pattern = valuePattern;
+                pattern = VALUE_REGEX;
             } else {
-                pattern = Pattern.compile(propertyParts[1]);
+                pattern = propertyParts[1];
             }
 
             keysToRegex.put(propertyParts[0], pattern);
@@ -179,7 +164,12 @@ public class CustomPropertiesUtils {
         }
 
         for (ValidationError error : errorsList) {
-            MultiValueMapUtils.addToMap(error.getReason(), error, resultMap);
+            List<ValidationError> errorsForReason = resultMap.get(error.getReason());
+            if (errorsForReason == null) {
+                errorsForReason = new ArrayList<ValidationError>();
+                resultMap.put(error.getReason(), errorsForReason);
+            }
+            errorsForReason.add(error);
         }
     }
 
@@ -259,8 +249,8 @@ public class CustomPropertiesUtils {
         }
 
         Map<String, String> map = new LinkedHashMap<String, String>();
-        if (StringUtils.isNotEmpty(properties)) {
-            String keyValuePairs[] = semicolonPattern.split(properties);
+        if (!StringHelper.isNullOrEmpty(properties)) {
+            String keyValuePairs[] = properties.split(PROPERTIES_DELIMETER);
             for (String keyValuePairStr : keyValuePairs) {
                 String[] pairParts = keyValuePairStr.split(KEY_VALUE_DELIMETER, 2);
                 String key = pairParts[0];
@@ -291,7 +281,7 @@ public class CustomPropertiesUtils {
             for (Map.Entry<String, String> e : properties.entrySet()) {
                 sb.append(e.getKey());
                 sb.append(KEY_VALUE_DELIMETER);
-                sb.append(StringUtils.defaultString(e.getValue()));
+                sb.append(StringHelper.defaultString(e.getValue()));
                 sb.append(PROPERTIES_DELIMETER);
             }
             // remove last PROPERTIES_DELIMETER

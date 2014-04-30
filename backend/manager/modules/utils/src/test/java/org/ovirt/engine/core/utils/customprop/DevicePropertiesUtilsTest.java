@@ -9,7 +9,6 @@ import static org.mockito.Mockito.spy;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import static org.ovirt.engine.core.utils.customprop.PropertiesUtilsTestHelper.validateFailure;
 import static org.ovirt.engine.core.utils.customprop.PropertiesUtilsTestHelper.validatePropertyMap;
-import static org.ovirt.engine.core.utils.customprop.PropertiesUtilsTestHelper.validatePropertyPattern;
 import static org.ovirt.engine.core.utils.customprop.PropertiesUtilsTestHelper.validatePropertyValue;
 
 import java.util.Arrays;
@@ -17,7 +16,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -292,7 +290,7 @@ public class DevicePropertiesUtilsTest {
      */
     @Test
     public void parseValidCustomDevPropSpec() {
-        Map<String, Pattern> devProp;
+        Map<String, String> devProp;
 
         String customDevPropSpec = "{type=disk;prop={bootable=^(true|false)$}};"
                 + "{type=interface;prop={speed=[0-9]{1,5};duplex=^(full|half)$}};"
@@ -317,54 +315,54 @@ public class DevicePropertiesUtilsTest {
         // test disk properties
         devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.DISK);
         validatePropertyMap(devProp, 1);
-        validatePropertyPattern(devProp, "bootable", "^(true|false)$");
+        validatePropertyValue(devProp, "bootable", "^(true|false)$");
 
         // test interface properties
         devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.INTERFACE);
         validatePropertyMap(devProp, 2);
-        validatePropertyPattern(devProp, "speed", "[0-9]{1,5}");
-        validatePropertyPattern(devProp, "duplex", "^(full|half)$");
+        validatePropertyValue(devProp, "speed", "[0-9]{1,5}");
+        validatePropertyValue(devProp, "duplex", "^(full|half)$");
 
         // test video properties
         devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.VIDEO);
         validatePropertyMap(devProp, 1);
-        validatePropertyPattern(devProp, "turned_on", "^(true|false)$");
+        validatePropertyValue(devProp, "turned_on", "^(true|false)$");
 
         // test sound properties
         devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.SOUND);
         validatePropertyMap(devProp, 1);
-        validatePropertyPattern(devProp, "volume", "[0-9]{1,2}");
+        validatePropertyValue(devProp, "volume", "[0-9]{1,2}");
 
         // test video properties
         devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.CONTROLLER);
         validatePropertyMap(devProp, 1);
-        validatePropertyPattern(devProp, "hotplug", "^(true|false)$");
+        validatePropertyValue(devProp, "hotplug", "^(true|false)$");
 
         // test balloon properties
         devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.BALLOON);
         validatePropertyMap(devProp, 1);
-        validatePropertyPattern(devProp, "max_size", "[0-9]{1,15}");
+        validatePropertyValue(devProp, "max_size", "[0-9]{1,15}");
 
         // test channel properties
         devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.CHANNEL);
         validatePropertyMap(devProp, 1);
-        validatePropertyPattern(devProp, "auth_type", "^(plain|md5|kerberos)$");
+        validatePropertyValue(devProp, "auth_type", "^(plain|md5|kerberos)$");
 
         // test redir properties
         devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.REDIR);
         validatePropertyMap(devProp, 1);
-        validatePropertyPattern(devProp, "max_len", "[0-9]{1,15}");
+        validatePropertyValue(devProp, "max_len", "[0-9]{1,15}");
 
         // test console properties
         devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.CONSOLE);
         validatePropertyMap(devProp, 2);
-        validatePropertyPattern(devProp, "type", "^(text|vnc)$");
-        validatePropertyPattern(devProp, "prop", "\\{\\}");
+        validatePropertyValue(devProp, "type", "^(text|vnc)$");
+        validatePropertyValue(devProp, "prop", "\\{\\}");
 
         // test smartcard properties
         devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.SMARTCARD);
         validatePropertyMap(devProp, 1);
-        validatePropertyPattern(devProp, "spec_chars", "[\\@\\#\\$\\%\\^\\&\\*\\(\\)\\{\\}\\:\\<\\>\\,\\.\\?\\[\\]]?");
+        validatePropertyValue(devProp, "spec_chars", "[\\@\\#\\$\\%\\^\\&\\*\\(\\)\\{\\}\\:\\<\\>\\,\\.\\?\\[\\]]?");
     }
 
     /**
@@ -387,12 +385,12 @@ public class DevicePropertiesUtilsTest {
         assertEquals(2, utils.getDeviceTypesWithProperties(Version.v3_3).size());
 
         // test disk properties
-        devProp = utils.getRawDeviceProperties(Version.v3_3, VmDeviceGeneralType.DISK);
+        devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.DISK);
         validatePropertyMap(devProp, 1);
         validatePropertyValue(devProp, "bootable", "^(true|false)$");
 
         // test interface properties
-        devProp = utils.getRawDeviceProperties(Version.v3_3, VmDeviceGeneralType.INTERFACE);
+        devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.INTERFACE);
         validatePropertyMap(devProp, 2);
         validatePropertyValue(devProp, "speed", "[0-9]{1,5}");
         validatePropertyValue(devProp, "duplex", "^(full|half)$");

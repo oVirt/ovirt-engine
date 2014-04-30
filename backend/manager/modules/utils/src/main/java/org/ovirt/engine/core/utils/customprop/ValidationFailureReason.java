@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.utils.customprop;
 
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.compat.StringFormat;
 
 /**
  * Errors reasons that may appear during custom properties validation
@@ -56,7 +57,7 @@ public enum ValidationFailureReason {
         if (errorMessage == null) {
             return "";
         } else {
-            return String.format(messageFormat, key);
+            return StringFormat.format(messageFormat, key);
         }
     }
 }

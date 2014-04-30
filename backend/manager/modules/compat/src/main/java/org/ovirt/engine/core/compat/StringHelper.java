@@ -164,4 +164,11 @@ public final class StringHelper {
         return sb.toString();
     }
 
+    /**
+     * Replaces a null String with "", otherwise returns the original String.
+     */
+    public static String defaultString(String s) {
+        return s == null ? "" : s;
+    }
+
 }

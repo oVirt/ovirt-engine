@@ -23,6 +23,6 @@ public class GetDeviceCustomPropertiesQuery<P extends GetDeviceCustomPropertiesP
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DevicePropertiesUtils.getInstance()
-                .getRawDeviceProperties(getParameters().getVersion(), getParameters().getDeviceType()));
+                .getDeviceProperties(getParameters().getVersion(), getParameters().getDeviceType()));
     }
 }

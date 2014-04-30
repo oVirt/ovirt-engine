@@ -2,15 +2,13 @@ package org.ovirt.engine.core.utils.customprop;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.compat.StringHelper;
 
 public class SimpleCustomPropertiesUtil extends CustomPropertiesUtils {
 
@@ -41,12 +39,6 @@ public class SimpleCustomPropertiesUtil extends CustomPropertiesUtils {
         }
 
         Set<ValidationError> errorsSet = new HashSet<ValidationError>();
-        Map<String, Pattern> keysToRegex = new HashMap<String, Pattern>();
-        for (Entry<String, String> property : regExMap.entrySet()) {
-            Pattern pattern = Pattern.compile(property.getValue());
-            keysToRegex.put(property.getKey(), pattern);
-        }
-
         for (Entry<String, String> e : properties.entrySet()) {
             String key = e.getKey();
             if (key == null || !regExMap.containsKey(key)) {
@@ -54,7 +46,7 @@ public class SimpleCustomPropertiesUtil extends CustomPropertiesUtils {
                 continue;
             }
 
-            if (!keysToRegex.get(key).matcher(StringUtils.defaultString(e.getValue())).matches()) {
+            if (!StringHelper.defaultString(e.getValue()).matches(regExMap.get(key))) {
                 errorsSet.add(new ValidationError(ValidationFailureReason.INCORRECT_VALUE, key));
                 continue;
             }
