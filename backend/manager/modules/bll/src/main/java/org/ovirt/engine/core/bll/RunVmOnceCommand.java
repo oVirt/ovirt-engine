@@ -141,6 +141,9 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             // the VM can run with keyboard layout type which is different from its default display type
             getVm().getDynamicData().setVncKeyboardLayout(getParameters().getVncKeyboardLayout());
         }
+        if (getParameters().getVmInit() != null) {
+            getVm().setVmInit(getParameters().getVmInit());
+        }
     }
 
 }

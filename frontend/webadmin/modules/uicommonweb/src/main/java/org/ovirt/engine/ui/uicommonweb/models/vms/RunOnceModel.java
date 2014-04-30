@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -32,10 +36,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public abstract class RunOnceModel extends Model
 {
@@ -738,7 +738,8 @@ public abstract class RunOnceModel extends Model
             params.setSysPrepPassword((String) getSysPrepPassword().getEntity());
         }
 
-        if (getIsCloudInitEnabled() != null && (Boolean) getIsCloudInitEnabled().getEntity()) {
+        if (getIsCloudInitEnabled() != null && (Boolean) getIsCloudInitEnabled().getEntity() ||
+                getIsSysprepEnabled() != null && (Boolean) getIsSysprepEnabled().getEntity()) {
             params.setVmInit(getVmInit().buildCloudInitParameters(this));
         }
 

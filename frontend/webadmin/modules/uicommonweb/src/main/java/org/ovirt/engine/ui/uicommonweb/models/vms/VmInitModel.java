@@ -646,7 +646,8 @@ public class VmInitModel extends Model {
     }
 
     public VmInit buildCloudInitParameters(UnitVmModel model) {
-        if (model.getVmInitEnabled().getEntity()) {
+        if (model.getVmInitEnabled().getEntity() ||
+                model.getSysprepEnabled().getEntity()) {
             return buildModelSpecificParameters(model.getIsWindowsOS());
         } else {
             return null;
