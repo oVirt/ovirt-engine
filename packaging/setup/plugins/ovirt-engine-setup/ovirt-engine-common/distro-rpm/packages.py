@@ -126,46 +126,47 @@ class Plugin(plugin.PluginBase):
 
             # execute rpm directly
             # yum is not good in offline usage
-            rc, out, err = self._parent.execute(
-                args=(
-                    self._parent.command.get('rpm'),
-                    '-q',
-                ) + tuple(
-                    self.environment[
-                        osetupcons.RPMDistroEnv.VERSION_LOCK_APPLY
-                    ]
-                ),
-            )
-            changes = []
-            for line in out:
-                changes.append(
-                    {
-                        'added': line,
-                    }
+            if self.environment[osetupcons.RPMDistroEnv.VERSION_LOCK_APPLY]:
+                rc, out, err = self._parent.execute(
+                    args=(
+                        self._parent.command.get('rpm'),
+                        '-q',
+                    ) + tuple(
+                        self.environment[
+                            osetupcons.RPMDistroEnv.VERSION_LOCK_APPLY
+                        ]
+                    ),
                 )
-            self.environment[
-                osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-            ].append(osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK)
+                changes = []
+                for line in out:
+                    changes.append(
+                        {
+                            'added': line,
+                        }
+                    )
+                self.environment[
+                    osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+                ].append(osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK)
 
-            self.environment[
-                osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
-            ].createGroup(
-                group='versionlock',
-                description='YUM version locking configuration',
-                optional=False
-            ).addChanges(
-                'versionlock',
-                osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-                changes,
-            )
+                self.environment[
+                    osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+                ].createGroup(
+                    group='versionlock',
+                    description='YUM version locking configuration',
+                    optional=False
+                ).addChanges(
+                    'versionlock',
+                    osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
+                    changes,
+                )
 
-            modified, content = self._filterVersionLock()
-            content.extend(out)
-            with open(
-                osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-                'w',
-            ) as f:
-                f.write('\n'.join(content) + '\n')
+                modified, content = self._filterVersionLock()
+                content.extend(out)
+                with open(
+                    osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
+                    'w',
+                ) as f:
+                    f.write('\n'.join(content) + '\n')
 
     def _getSink(self):
         class MyMiniYumSink(self._miniyum.MiniYumSinkBase):
