@@ -81,7 +81,7 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
         }
 
         if (!getSucceeded()) {
-            getParameters().getOutputMap().put(Authn.InvokeKeys.RESULT, Authn.AuthResult.GENERAL_ERROR);
+            getParameters().getOutputMap().putIfAbsent(Authn.InvokeKeys.RESULT, Authn.AuthResult.GENERAL_ERROR);
         }
     }
 
