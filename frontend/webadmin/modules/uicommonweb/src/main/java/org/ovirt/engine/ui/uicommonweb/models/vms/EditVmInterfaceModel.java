@@ -7,6 +7,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -15,6 +17,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
 
+    private static final String ON_APPROVE_COMMAND = "ON_APPROVE"; //$NON-NLS-1$
+    private static final String ABORT_COMMAMD = "ABORT"; //$NON-NLS-1$
     private final VM vm;
 
     public static EditVmInterfaceModel createInstance(VmBase vmStatic, VM vm,
@@ -137,5 +141,46 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
 
     private boolean isPluggedBeforeAndAfterEdit() {
         return getNic().isPlugged() && (Boolean) getPlugged().getEntity();
+    }
+
+    private void confirmSave() {
+        // Check if the nic was unplugged
+        if (getNic().isPlugged() && !(Boolean) getPlugged().getEntity()) {
+            ConfirmationModel model = new ConfirmationModel();
+            model.setTitle(ConstantsManager.getInstance().getConstants().unplugVnicTitle());
+            model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantUnplugVnicMsg());
+            model.setHashName("unplug_vnic"); //$NON-NLS-1$
+            getSourceModel().setConfirmWindow(model);
+
+            UICommand approveCommand = new UICommand(ON_APPROVE_COMMAND, this);
+            approveCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            approveCommand.setIsDefault(true);
+            model.getCommands().add(approveCommand);
+
+            UICommand cancel = new UICommand(ABORT_COMMAMD, this);
+            cancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+            cancel.setIsCancel(true);
+            model.getCommands().add(cancel);
+        } else {
+            onSave();
+        }
+    }
+
+    private void abort() {
+        getSourceModel().setConfirmWindow(null);
+    }
+
+    @Override
+    public void executeCommand(UICommand command) {
+        if (ON_SAVE_COMMAND.equals(command.getName())) {
+            confirmSave();
+        } else if (ON_APPROVE_COMMAND.equals(command.getName())) {
+            abort();
+            onSave();
+        } else if (ABORT_COMMAMD.equals(command.getName())) {
+            abort();
+        } else {
+            super.executeCommand(command);
+        }
     }
 }

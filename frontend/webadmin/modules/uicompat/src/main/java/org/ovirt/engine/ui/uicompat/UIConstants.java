@@ -2238,5 +2238,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("When the VM is running, cannot activate a disk attached with IDE interface.")
     String cannotHotPlugDiskWithIdeInterface();
+
+    @DefaultStringValue("Unplug VM Network Interface")
+    String unplugVnicTitle();
+
+    @DefaultStringValue("Are you sure you want to unplug the VM Network Interface?")
+    String areYouSureYouWantUnplugVnicMsg();
 }
 

@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 @SuppressWarnings("unused")
 public abstract class VmInterfaceModel extends Model
 {
+    protected static final String ON_SAVE_COMMAND = "OnSave"; //$NON-NLS-1$
     protected static String ENGINE_NETWORK_NAME;
 
     private EntityModel<String> privateName;
@@ -381,7 +382,7 @@ public abstract class VmInterfaceModel extends Model
 
     protected abstract VmNetworkInterface createBaseNic();
 
-    private void onSave()
+    protected void onSave()
     {
         VmNetworkInterface nic = createBaseNic();
 
@@ -466,13 +467,13 @@ public abstract class VmInterfaceModel extends Model
     }
 
     protected void initCommands() {
-        okCommand = new UICommand("OnSave", this); //$NON-NLS-1$
+        okCommand = new UICommand(ON_SAVE_COMMAND, this);
         okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
         okCommand.setIsDefault(true);
         // wait for data to fetch
         okCommand.setIsExecutionAllowed(false);
         getCommands().add(okCommand);
-        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        UICommand cancelCommand = new UICommand(CANCEL_COMMAND, this);
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
         getCommands().add(cancelCommand);
@@ -487,11 +488,11 @@ public abstract class VmInterfaceModel extends Model
     {
         super.executeCommand(command);
 
-        if ("OnSave".equals(command.getName())) //$NON-NLS-1$
+        if (ON_SAVE_COMMAND.equals(command.getName()))
         {
             onSave();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
+        else if (CANCEL_COMMAND.equals(command.getName()))
         {
             cancel();
         }
