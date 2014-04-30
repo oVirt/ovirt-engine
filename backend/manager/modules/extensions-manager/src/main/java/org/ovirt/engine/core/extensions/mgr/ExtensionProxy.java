@@ -64,13 +64,13 @@ public class ExtensionProxy implements Extension {
         invoke(input, output);
 
         String message = output.<String>get(Base.InvokeKeys.MESSAGE);
-        switch(output.<Integer>get(Base.InvokeKeys.RESULT)) {
+        switch(output.<Integer>get(Base.InvokeKeys.RESULT, Base.InvokeResult.FAILED)) {
         case Base.InvokeResult.SUCCESS:
             break;
         case Base.InvokeResult.UNSUPPORTED:
             if (!allowUnsupported) {
                 throw new ExtensionInvokeCommandUnsupportedException(
-                    message == null ? "Invoke failed" : message,
+                    message == null ? "Unsupported command" : message,
                     input,
                     output
                 );
@@ -80,7 +80,7 @@ public class ExtensionProxy implements Extension {
         default:
             if (!allowFail) {
                 throw new ExtensionInvokeCommandFailedException(
-                    message == null ? "Unsupported command" : message,
+                    message == null ? "Invoke failed" : message,
                     input,
                     output
                 );
