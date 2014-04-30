@@ -92,10 +92,10 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @Ignore
     FlowPanel syspreptOptionsContent;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "windowsSysprepTimeZone.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> windowsSysprepTimeZoneEditor;
+    ListModelListBoxEditor<Map.Entry<String, String>> windowsSysprepTimeZoneEditor;
 
     @UiField
     @Path(value = "windowsSysprepTimeZoneEnabled.entity")
@@ -188,7 +188,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @UiField(provided = true)
     @Path(value = "timeZoneList.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> timeZoneEditor;
+    ListModelListBoxEditor<Map.Entry<String, String>> timeZoneEditor;
 
     @UiField
     @Ignore
@@ -351,12 +351,17 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     }
 
     void initListBoxEditors() {
-        timeZoneEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        timeZoneEditor = new ListModelListBoxEditor<Map.Entry<String, String>>(new NullSafeRenderer<Map.Entry<String, String>>() {
             @Override
-            public String renderNullSafe(Object object) {
-                @SuppressWarnings("unchecked")
-                Map.Entry<String, String> entry = (Map.Entry<String, String>) object;
-                return entry.getValue();
+            public String renderNullSafe(Map.Entry<String, String> object) {
+                return object.getValue();
+            }
+        });
+
+        windowsSysprepTimeZoneEditor = new ListModelListBoxEditor<Map.Entry<String, String>>(new NullSafeRenderer<Map.Entry<String, String>>() {
+            @Override
+            public String renderNullSafe(Map.Entry<String, String> object) {
+                return object.getValue();
             }
         });
 

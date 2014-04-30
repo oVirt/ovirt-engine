@@ -29,8 +29,6 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUni
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class ExistingVmModelBehavior extends VmModelBehaviorBase
 {
@@ -240,14 +238,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                     }
                 }
         ));
-
-        if (vm.isInitialized())
-        {
-            UIConstants constants = ConstantsManager.getInstance().getConstants();
-            getModel().getTimeZone().setChangeProhibitionReason(
-                    constants.timeZoneCannotBeChangedAfterVMInit());
-            getModel().getTimeZone().setIsChangable(false);
-        }
 
         updateTimeZone(vm.getTimeZone());
 

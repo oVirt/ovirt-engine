@@ -169,17 +169,17 @@ public final class SysprepHandler {
     }
 
     private static String getTimeZone(VM vm) {
-        String timeZone;
+        String timeZone = null;
         // Can be empty if the VM was imported.
-        if (StringUtils.isEmpty(vm.getTimeZone())) {
-            vm.setTimeZone(Config.<String> getValue(ConfigValues.DefaultWindowsTimeZone));
+        if (vm.getVmInit() != null && StringUtils.isNotEmpty(vm.getVmInit().getTimeZone())) {
+            timeZone = vm.getVmInit().getTimeZone();
+        } else {
+            timeZone = Config.<String> getValue(ConfigValues.DefaultWindowsTimeZone);
         }
 
         if (osRepository.isTimezoneValueInteger(vm.getStaticData(). getOsId(), null)) {
             // send correct time zone as sysprep expect to get it (a wierd number)
-            timeZone = getTimezoneIndexByKey(vm.getTimeZone());
-        } else {
-            timeZone = vm.getTimeZone();
+            return getTimezoneIndexByKey(timeZone);
         }
 
         return timeZone;
