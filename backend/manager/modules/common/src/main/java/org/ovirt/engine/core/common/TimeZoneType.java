@@ -95,6 +95,7 @@ public enum TimeZoneType {
             generalTimeZones.put("Asia/Tashkent", "(GMT+05:00) West Asia Standard Time");
             generalTimeZones.put("Pacific/Port_Moresby", "(GMT+10:00) West Pacific Standard Time");
             generalTimeZones.put("Asia/Yakutsk", "(GMT+09:00) Yakutsk Standard Time");
+            generalTimeZones.put("America/Caracas", "(GMT-04:30) Venezuelan Standard Time");
 
             return sortMapByValue(generalTimeZones);
         }
@@ -177,6 +178,7 @@ public enum TimeZoneType {
             windowsTimeZones.put("SA Pacific Standard Time", "(GMT-05:00) SA Pacific Standard Time");
             windowsTimeZones.put("West Pacific Standard Time", "(GMT+10:00) West Pacific Standard Time");
             windowsTimeZones.put("N. Central Asia Standard Time", "(GMT+06:00) N. Central Asia Standard Time");
+            windowsTimeZones.put("Venezuela Standard Time", "(GMT-04:30) Venezuela Standard Time");
 
             return sortMapByValue(windowsTimeZones);
         }

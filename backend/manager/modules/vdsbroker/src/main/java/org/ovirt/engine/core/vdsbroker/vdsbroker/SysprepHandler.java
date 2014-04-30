@@ -219,6 +219,8 @@ public final class SysprepHandler {
         timeZoneIndex.put("(GMT+04:00) Arabian Standard Time", 165);
         timeZoneIndex.put("(GMT+03:00) Arabic Standard Time", 158);
         timeZoneIndex.put("(GMT-04:00) Atlantic Standard Time", 50);
+        /** Before September 2007 Venezuela observed AST */
+        timeZoneIndex.put("(GMT-04:30) Venezuelan Standard Time", 50);
         // timeZoneIndex.put("(GMT+04:00) Azerbaijan Standard Time", xxx);
         timeZoneIndex.put("(GMT-10:00) Azores Standard Time", 80);
         timeZoneIndex.put("(GMT-06:00) Canada Central Standard Time", 25);
