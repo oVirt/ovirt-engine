@@ -266,20 +266,19 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     protected boolean validateCanResizeDisk() {
         DiskImage newDiskImage = (DiskImage) getNewDisk();
+        DiskImage oldDiskImage = (DiskImage) getOldDisk();
 
-        if (Boolean.TRUE.equals(getVmDeviceForVm().getIsReadOnly())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_RESIZE_READ_ONLY_DISK);
-        }
-
-        if (vmDeviceForVm.getSnapshotId() != null) {
-            DiskImage snapshotDisk = getDiskImageDao().getDiskSnapshotForVmSnapshot(getParameters().getDiskId(), vmDeviceForVm.getSnapshotId());
-            if (snapshotDisk.getSize() != newDiskImage.getSize()) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_RESIZE_DISK_SNAPSHOT);
+        if (newDiskImage.getSize() != oldDiskImage.getSize()) {
+            if (Boolean.TRUE.equals(getVmDeviceForVm().getIsReadOnly())) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_RESIZE_READ_ONLY_DISK);
             }
-        }
 
-        if (getNewDisk().getSize() != getOldDisk().getSize()) {
-            DiskImage oldDiskImage = (DiskImage) getOldDisk();
+            if (vmDeviceForVm.getSnapshotId() != null) {
+                DiskImage snapshotDisk = getDiskImageDao().getDiskSnapshotForVmSnapshot(getParameters().getDiskId(), vmDeviceForVm.getSnapshotId());
+                if (snapshotDisk.getSize() != newDiskImage.getSize()) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_RESIZE_DISK_SNAPSHOT);
+                }
+            }
 
             if (oldDiskImage.getSize() > newDiskImage.getSize()) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL);
@@ -588,19 +587,19 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         }
     }
 
-    private Disk getOldDisk() {
+    protected Disk getOldDisk() {
         if (oldDisk == null) {
             oldDisk = getDiskDao().get(getParameters().getDiskId());
         }
         return oldDisk;
     }
 
-    protected VmDevice getVmDeviceForVm() {
-        return vmDeviceForVm;
-    }
-
     private Disk getNewDisk() {
         return getParameters().getDiskInfo();
+    }
+
+    protected VmDevice getVmDeviceForVm() {
+        return vmDeviceForVm;
     }
 
     private List<VM> getVmsDiskPluggedTo() {
