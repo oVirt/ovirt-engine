@@ -512,6 +512,9 @@ public class UpdateVmDiskCommandTest {
         ((DiskImage) parameters.getDiskInfo()).setSize(parameters.getDiskInfo().getSize() * 2);
         initializeCommand(parameters);
 
+        DiskImage oldDisk = createDiskImage();
+        doReturn(oldDisk).when(command).getOldDisk();
+
         VmDevice device = createVmDevice(diskImageGuid, vmId);
         device.setIsReadOnly(true);
         doReturn(device).when(command).getVmDeviceForVm();
