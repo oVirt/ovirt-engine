@@ -118,8 +118,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         Properties authConfig = new Properties();
         authConfig.put(Base.ConfigKeys.NAME, "builtin-authn-internal");
         authConfig.put(Base.ConfigKeys.PROVIDES, Authn.class.getName());
-        authConfig.put(Base.ConfigKeys.MODULE, "org.ovirt.engine.extensions.builtin");
-        authConfig.put(Base.ConfigKeys.CLASS, "org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthn");
+        authConfig.put(Base.ConfigKeys.BINDINGS_METHOD, Base.ConfigBindingsMethods.JBOSSMODULE);
+        authConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_MODULE, "org.ovirt.engine.extensions.builtin");
+        authConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_CLASS, "org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthn");
         authConfig.put("ovirt.engine.aaa.authn.profile.name", "internal");
         authConfig.put("ovirt.engine.aaa.authn.authz.plugin", "internal");
         authConfig.put("config.authn.user.name", Config.<String> getValue(ConfigValues.AdminUser));
@@ -130,8 +131,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         Properties dirConfig = new Properties();
         dirConfig.put(Base.ConfigKeys.NAME, "internal");
         dirConfig.put(Base.ConfigKeys.PROVIDES, Authz.class.getName());
-        dirConfig.put(Base.ConfigKeys.MODULE, "org.ovirt.engine.extensions.builtin");
-        dirConfig.put(Base.ConfigKeys.CLASS, "org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthz");
+        dirConfig.put(Base.ConfigKeys.BINDINGS_METHOD, Base.ConfigBindingsMethods.JBOSSMODULE);
+        dirConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_MODULE, "org.ovirt.engine.extensions.builtin");
+        dirConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_CLASS, "org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthz");
         dirConfig.put("config.authz.user.name", Config.<String> getValue(ConfigValues.AdminUser));
         dirConfig.put("config.authz.user.id", "fdfc627c-d875-11e0-90f0-83df133b58cc");
         dirConfig.put("config.query.filter.size",
@@ -167,8 +169,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
                 authConfig.put(Base.ConfigKeys.NAME, String.format("builtin-authn-%1$s", domain));
                 authConfig.put(Base.ConfigKeys.PROVIDES, Authn.class.getName());
                 authConfig.put(Base.ConfigKeys.ENABLED, "true");
-                authConfig.put(Base.ConfigKeys.MODULE, "org.ovirt.engine.extensions.builtin");
-                authConfig.put(Base.ConfigKeys.CLASS,
+                authConfig.put(Base.ConfigKeys.BINDINGS_METHOD, Base.ConfigBindingsMethods.JBOSSMODULE);
+                authConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_MODULE, "org.ovirt.engine.extensions.builtin");
+                authConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_CLASS,
                         "org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapAuthn");
                 authConfig.put("ovirt.engine.aaa.authn.profile.name", domain);
                 authConfig.put("ovirt.engine.aaa.authn.authz.plugin", domain);
@@ -179,8 +182,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
                 Properties dirConfig = new Properties();
                 dirConfig.put(Base.ConfigKeys.NAME, domain);
                 dirConfig.put(Base.ConfigKeys.PROVIDES, Authz.class.getName());
-                dirConfig.put(Base.ConfigKeys.MODULE, "org.ovirt.engine.extensions.builtin");
-                dirConfig.put(Base.ConfigKeys.CLASS,
+                dirConfig.put(Base.ConfigKeys.BINDINGS_METHOD, Base.ConfigBindingsMethods.JBOSSMODULE);
+                dirConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_MODULE, "org.ovirt.engine.extensions.builtin");
+                dirConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_CLASS,
                         "org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapAuthz");
                 dirConfig.put("config.query.filter.size",
                         Config.<Integer> getValue(ConfigValues.MaxLDAPQueryPartsNumber));

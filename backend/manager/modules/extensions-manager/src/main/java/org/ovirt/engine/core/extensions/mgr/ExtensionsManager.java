@@ -36,9 +36,64 @@ public class ExtensionsManager {
     public static final ExtKey TRACE_LOG_CONTEXT_KEY = new ExtKey("EXTENSION_MANAGER_TRACE_LOG", Logger.class, "863db666-3ea7-4751-9695-918a3197ad83");
     public static final ExtKey CAUSE_OUTPUT_KEY = new ExtKey("EXTENSION_MANAGER_CAUSE_OUTPUT_KEY", Throwable.class, "894e1c86-518b-40a2-a92b-29ea1eb0403d");
 
-    private static int extensionNameIndex = 0;
+    private static interface BindingsLoader {
+        Extension load(Properties props) throws Exception;
+    }
+
+    private static class JBossBindingsLoader implements BindingsLoader {
+        private Map<String, Module> loadedModules = new HashMap<>();
+
+        private Module loadModule(String moduleSpec) {
+            // If the module was not already loaded, load it
+            try {
+                Module module = loadedModules.get(moduleSpec);
+                if (module == null) {
+                    ModuleLoader loader = ModuleLoader.forClass(this.getClass());
+                    if (loader == null) {
+                        throw new ConfigurationException(String.format("The module '%1$s' cannot be loaded as the module system isn't enabled.",
+                                moduleSpec));
+                    }
+                    module = loader.loadModule(ModuleIdentifier.fromString(moduleSpec));
+                    loadedModules.put(moduleSpec, module);
+                }
+                return module;
+            } catch (ModuleLoadException exception) {
+                throw new ConfigurationException(String.format("The module '%1$s' cannot be loaded.", moduleSpec),
+                        exception);
+            }
+        }
+
+        private Class<?> lookupService(Class<?> serviceInterface, String serviceClassName, String moduleName) {
+            // Iterate over the service classes, and find the one that should
+            // be instantiated and initialized.
+            Module module = loadModule(moduleName);
+            Class<?> serviceClass = null;
+            for (Object service : ServiceLoader.load(serviceInterface, module.getClassLoader())) {
+                if (service.getClass().getName().equals(serviceClassName)) {
+                    serviceClass = service.getClass();
+                    break;
+                }
+            }
+            if (serviceClass == null) {
+                throw new ConfigurationException(String.format("The module '%1$s' does not contain the service '%2$s'.",
+                        module.getIdentifier().getName(),
+                        serviceClassName));
+            }
+            return serviceClass;
+        }
+
+        public Extension load(Properties props) throws Exception {
+            return (Extension) lookupService(
+                Extension.class,
+                props.getProperty(Base.ConfigKeys.BINDINGS_JBOSSMODULE_CLASS),
+                props.getProperty(Base.ConfigKeys.BINDINGS_JBOSSMODULE_MODULE)
+            ).newInstance();
+        }
+    }
 
     private static class ExtensionEntry {
+
+        private static int extensionNameIndex = 0;
 
         private String name;
         private File file;
@@ -63,8 +118,8 @@ public class ExtensionsManager {
     private static final Logger log = LoggerFactory.getLogger(ExtensionsManager.class);
     private static final Logger traceLog = LoggerFactory.getLogger(ExtensionsManager.class.getName() + ".trace");
     private static volatile ExtensionsManager instance = null;
+    private Map<String, BindingsLoader> bindingsLoaders = new HashMap<>();
     private Map<String, ExtensionEntry> loadedEntries = new HashMap<>();
-    private Map<String, Module> loadedModules = new HashMap<>();
     private ExtMap globalContext = new ExtMap().mput(Base.GlobalContextKeys.EXTENSIONS, new ArrayList<ExtMap>());
 
     public static ExtensionsManager getInstance() {
@@ -98,6 +153,9 @@ public class ExtensionsManager {
     }
 
     private ExtensionsManager() {
+
+        bindingsLoaders.put(Base.ConfigBindingsMethods.JBOSSMODULE, new JBossBindingsLoader());
+
         for (File directory : EngineLocalConfig.getInstance().getExtensionsDirectories()) {
             if (!directory.exists()) {
                 log.warn(String.format("The directory '%1$s' cotaning configuration files does not exist.",
@@ -177,11 +235,7 @@ public class ExtensionsManager {
         if (entry.enabled && entry.extension == null) {
             try {
                 entry.extension = new ExtensionProxy(
-                    (Extension) lookupService(
-                        Extension.class,
-                        props.getProperty(Base.ConfigKeys.CLASS),
-                        props.getProperty(Base.ConfigKeys.MODULE)
-                    ).newInstance(),
+                    loadExtension(props),
                     (
                         new ExtMap().mput(
                             Base.ContextKeys.GLOBAL_CONTEXT,
@@ -266,43 +320,16 @@ public class ExtensionsManager {
         }
     }
 
-    private Module loadModule(String moduleSpec) {
-        // If the module was not already loaded, load it
-        try {
-            Module module = loadedModules.get(moduleSpec);
-            if (module == null) {
-                ModuleLoader loader = ModuleLoader.forClass(this.getClass());
-                if (loader == null) {
-                    throw new ConfigurationException(String.format("The module '%1$s' cannot be loaded as the module system isn't enabled.",
-                            moduleSpec));
-                }
-                module = loader.loadModule(ModuleIdentifier.fromString(moduleSpec));
-                loadedModules.put(moduleSpec, module);
-            }
-            return module;
-        } catch (ModuleLoadException exception) {
-            throw new ConfigurationException(String.format("The module '%1$s' cannot be loaded.", moduleSpec),
-                    exception);
-        }
-    }
+    private Extension loadExtension(Properties props) throws Exception {
+        Extension extension;
 
-    private Class<?> lookupService(Class<?> serviceInterface, String serviceClassName, String moduleName) {
-        // Iterate over the service classes, and find the one that should
-            // be instantiated and initialized.
-        Module module = loadModule(moduleName);
-        Class<?> serviceClass = null;
-        for (Object service : ServiceLoader.load(serviceInterface, module.getClassLoader())) {
-            if (service.getClass().getName().equals(serviceClassName)) {
-                serviceClass = service.getClass();
-                break;
-            }
+        BindingsLoader loader = bindingsLoaders.get(props.getProperty(Base.ConfigKeys.BINDINGS_METHOD));
+        if (loader == null) {
+            throw new ConfigurationException(String.format("Invalid binding method '%1$s'.",
+                    props.getProperty(Base.ConfigKeys.BINDINGS_METHOD)));
         }
-        if (serviceClass == null) {
-            throw new ConfigurationException(String.format("The module '%1$s' does not contain the service '%2$s'.",
-                    module.getIdentifier().getName(),
-                    serviceClassName));
-        }
-        return serviceClass;
+
+        return loader.load(props);
     }
 
     public void dump() {

@@ -42,24 +42,87 @@ public class Base {
          */
         public static final String ENABLED = "ovirt.engine.extension.enabled";
         /**
-         * Extension module name.
-         * Jboss module to load.
+         * Extension binding method.
+         * Bindings method to use.
+         * <ul>
+         * <li>{@link ConfigBindingsMethods#JBOSSMODULE}</li>
+         * </ul>
+         * Mandatory if binding method is Jboss module.
+         * @see ConfigBindingsMethods
+         */
+        public static final String BINDINGS_METHOD = "ovirt.engine.extension.bindings.method";
+        /**
+         * Jboss module binding method jboss module name.
          * <br>
          * Mandatory.
          */
-        public static final String MODULE = "ovirt.engine.extension.module";
+        public static final String BINDINGS_JBOSSMODULE_MODULE = "ovirt.engine.extension.binding.jbossmodule.module";
         /**
-         * Extension class name within module.
+         * Jboss module binding method class name.
          * Used to locate the service at META-INF/services/&lt;class&gt;.Extension.
          * <br>
-         * Mandatory.
+         * Mandatory if binding method is Jboss module.
          */
-        public static final String CLASS = "ovirt.engine.extension.class";
+        public static final String BINDINGS_JBOSSMODULE_CLASS = "ovirt.engine.extension.binding.jbossmodule.class";
         /**
          * Sensitive keys of configuration.
          * These will should not appear in debugging.
          */
         public static final String SENSITIVE_KEYS = "ovirt.engine.extension.sensitiveKeys";
+    }
+
+    /**
+     * Binding methods.
+     */
+    public static class ConfigBindingsMethods {
+        /**
+         * Jboss module binding method.
+         * Use Jboss module loading method and Java bindings.
+         * <pre>
+         * public class MyExtension implements Extension {
+         *     {@code
+         *     private void doInit(ExtMap input, ExtMap output) {
+         *         input.<ExtMap> get(Base.InvokeKeys.CONTEXT).mput(
+         *             Base.ContextKeys.AUTHOR,
+         *             "The oVirt Project"
+         *         ).mput(
+         *             Base.ContextKeys.EXTENSION_NAME,
+         *             "Extension Java Example"
+         *         ).mput(
+         *             Base.ContextKeys.LICENSE,
+         *             "ASL 2.0"
+         *         ).mput(
+         *             Base.ContextKeys.HOME_URL,
+         *             "http://www.ovirt.org"
+         *         ).mput(
+         *             Base.ContextKeys.VERSION,
+         *             "0.0.0"
+         *         );
+         *     }
+         *
+         *     \@Override
+         *     public void invoke(ExtMap input, ExtMap output) {
+         *         try {
+         *             if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.INITIALIZE)) {
+         *                 doInit(input, output);
+         *             } else {
+         *                 output.put(Base.InvokeKeys.RESULT, Base.InvokeResult.UNSUPPORTED);
+         *             }
+         *             output.putIfAbsent(Base.InvokeKeys.RESULT, Base.InvokeResult.SUCCESS);
+         *         } catch (Exception e) {
+         *             output.mput(
+         *                 Base.InvokeKeys.RESULT,
+         *                 Base.InvokeResult.FAILED
+         *             ).mput(
+         *                 Base.InvokeKeys.MESSAGE,
+         *                 e.getMessage()
+         *             );
+         *         }
+         *     }
+         * }
+         * }</pre>
+         */
+        public static final String JBOSSMODULE = "jbossmodule";
     }
 
     /**
