@@ -641,7 +641,6 @@ backend %{name}-builtin.pom
 backend %{name}-dal.pom
 backend %{name}-manager-modules.pom
 backend %{name}-manager.pom
-backend %{name}-ovirt-engine-extensions-api.pom
 backend %{name}-scheduler.pom
 backend %{name}-searchbackend.pom
 backend %{name}-vdsbroker.pom
