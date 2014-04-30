@@ -2545,6 +2545,29 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="property" type="Property"/>
+
+  <xs:complexType name="Property">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="properties" type="Properties"/>
+
+  <xs:complexType name="Properties">
+    <xs:sequence>
+      <xs:element ref="property" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="Properties"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:element name="payloads" type="Payloads"/>
 
   <xs:complexType name="Payloads">

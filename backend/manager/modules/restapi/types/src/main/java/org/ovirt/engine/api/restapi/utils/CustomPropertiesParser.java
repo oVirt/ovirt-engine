@@ -1,9 +1,13 @@
 package org.ovirt.engine.api.restapi.utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.api.model.CustomProperty;
+import org.ovirt.engine.api.model.Properties;
+import org.ovirt.engine.api.model.Property;
 
 public class CustomPropertiesParser {
 
@@ -60,5 +64,38 @@ public class CustomPropertiesParser {
             }
         }
         return buff.toString();
+    }
+
+    /**
+     * Get a map containing the key:value pairs from the given Properties object.
+     *
+     * @param properties
+     *            The key:value pairs.
+     * @return A newly-created map containing the key:value pairs.
+     */
+    public static Map<String, String> toMap(Properties properties) {
+        Map<String, String> res = new HashMap<>();
+        for (Property property : properties.getProperties()) {
+            res.put(property.getName(), property.getValue());
+        }
+        return res;
+    }
+
+    /**
+     * Create a Properties object from a map containing key:value pairs.
+     *
+     * @param properties
+     *            The map containing key:value pairs.
+     * @return A newly-created Properties object containing the key:value pairs.
+     */
+    public static Properties fromMap(Map<String, String> properties) {
+        Properties res = new Properties();
+        for (Map.Entry<String, String> entry : properties.entrySet()) {
+            Property property = new Property();
+            property.setName(entry.getKey());
+            property.setValue(entry.getValue());
+            res.getProperties().add(property);
+        }
+        return res;
     }
 }
