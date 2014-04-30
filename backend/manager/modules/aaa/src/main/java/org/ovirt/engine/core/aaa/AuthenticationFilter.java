@@ -24,7 +24,7 @@ import org.ovirt.engine.api.extensions.aaa.Authn;
  * This filter should be added to the {@code web.xml} file to the applications that want to use the authentication
  * mechanism implemented in this package.
  */
-public class NegotiationAuthnFilter implements Filter {
+public class AuthenticationFilter implements Filter {
 
     /**
      * The authentication profiles used to perform the authentication process.
@@ -35,18 +35,18 @@ public class NegotiationAuthnFilter implements Filter {
      * We store a boolean flag in the HTTP session that indicates if the user has been already authenticated, this is
      * the key for that flag.
      */
-    private static final String AUTHENTICATED_ATTR = NegotiationAuthnFilter.class.getName() + ".authenticated";
+    private static final String AUTHENTICATED_ATTR = AuthenticationFilter.class.getName() + ".authenticated";
 
     /**
      * When a user has been authenticated we store its login name in the HTTP session, this is the key for that name.
      */
-    private static final String NAME_ATTR = NegotiationAuthnFilter.class.getName() + ".name";
+    private static final String NAME_ATTR = AuthenticationFilter.class.getName() + ".name";
 
     /**
      * In order to support several alternative authenticators we store their names in a stack inside the HTTP session,
      * this is the key for that stack.
      */
-    private static final String STACK_ATTR = NegotiationAuthnFilter.class.getName() + ".stack";
+    private static final String STACK_ATTR = AuthenticationFilter.class.getName() + ".stack";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
