@@ -58,7 +58,7 @@ public class ExtUUID implements Comparable<ExtUUID>, Cloneable {
      */
     @Override
     public String toString() {
-        return uuid.toString();
+        return String.format("%s[%s]", name, uuid);
     }
 
     /**
