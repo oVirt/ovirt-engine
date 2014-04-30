@@ -58,15 +58,11 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     VersionTextBoxLabel glusterVersion = new VersionTextBoxLabel();
     @Path("IScsiInitiatorName")
     TextBoxLabel iScsiInitiatorName = new TextBoxLabel();
-    TextBoxLabel cpuType = new TextBoxLabel();
-    TextBoxLabel cpuModel = new TextBoxLabel();
-    TextBoxLabel threadsPerCore = new TextBoxLabel();
     VersionTextBoxLabel vdsmVersion = new VersionTextBoxLabel();
     PercentTextBoxLabel<Integer> sharedMemory = new PercentTextBoxLabel<Integer>();
     BooleanTextBoxLabel memoryPageSharing = new BooleanTextBoxLabel(constants.active(), constants.inactive());
     NullableNumberTextBoxLabel<Integer> activeVms = new NullableNumberTextBoxLabel<Integer>();
-    NullableNumberTextBoxLabel<Integer> numberOfSockets = new NullableNumberTextBoxLabel<Integer>(constants.unknown());
-    NullableNumberTextBoxLabel<Integer> coresPerSocket = new NullableNumberTextBoxLabel<Integer>(constants.unknown());
+    NullableNumberTextBoxLabel<Integer> logicalCores = new NullableNumberTextBoxLabel<Integer>();
     TextBoxLabel spmPriority = new TextBoxLabel();
     TextBoxLabel hostedEngineHa = new TextBoxLabel();
     FullDateTimeLabel bootTime = new FullDateTimeLabel();
@@ -146,16 +142,14 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formBuilder.addFormItem(new FormItem(constants.vdsmVersionHostGeneral(), vdsmVersion, 0).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.spiceVersionHostGeneral(), spiceVersion, 0, virtSupported).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.glusterVersionHostGeneral(), glusterVersion, 0, glusterSupported).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.hostedEngineHaHostGeneral(), hostedEngineHa, 0, virtSupported).withAutoPlacement());
 
         formBuilder.addFormItem(new FormItem(constants.spmPriority(), spmPriority, 0, 1, virtSupported).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.activeVmsHostGeneral(), activeVms, 1, virtSupported).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.cpuModelHostGeneral(), cpuModel, 2, 1));
-        formBuilder.addFormItem(new FormItem(constants.cpuTypeHostGeneral(), cpuType, 1).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.numOfSocketsHostGeneral(), numberOfSockets, 1).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.numOfCoresPerSocketHostGeneral(), coresPerSocket, 1).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.numOfThreadsPerCoreHostGeneral(), threadsPerCore, 1).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.logicalCores(), logicalCores, 1).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.bootTimeHostGeneral(), bootTime, 1).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.hostedEngineHaHostGeneral(), hostedEngineHa, 1, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 1, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.kdumpStatus(), kdumpStatus, 1).withAutoPlacement());
 
         formBuilder.addFormItem(new FormItem(constants.physMemHostGeneral(), physicalMemoryDetails, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.swapSizeHostGeneral(), swapSizeDetails, 2).withAutoPlacement());
@@ -163,8 +157,6 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formBuilder.addFormItem(new FormItem(constants.maxSchedulingMemory(), maxSchedulingMemory, 2, virtSupported).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 2).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 2, virtSupported).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.kdumpStatus(), kdumpStatus, 2).withAutoPlacement());
     }
 
     void initMemorySizeLabels() {

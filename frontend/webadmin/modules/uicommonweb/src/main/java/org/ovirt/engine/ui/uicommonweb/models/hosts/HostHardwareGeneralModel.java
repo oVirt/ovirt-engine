@@ -8,14 +8,20 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 @SuppressWarnings("unused")
 public class HostHardwareGeneralModel extends EntityModel
 {
+    private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
+    private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
+
     @Override
     public VDS getEntity()
     {
@@ -119,6 +125,88 @@ public class HostHardwareGeneralModel extends EntityModel
         }
     }
 
+
+    private String cpuType;
+
+    public String getCpuType()
+    {
+        return cpuType;
+    }
+
+    public void setCpuType(String value)
+    {
+        if (!ObjectUtils.objectsEqual(cpuType, value)) {
+            cpuType = value;
+            onPropertyChanged(new PropertyChangedEventArgs("CpuType")); //$NON-NLS-1$
+        }
+    }
+
+    private String cpuModel;
+
+    public String getCpuModel()
+    {
+        return cpuModel;
+    }
+
+    public void setCpuModel(String value)
+    {
+        if (!ObjectUtils.objectsEqual(cpuModel, value)) {
+            cpuModel = value;
+            onPropertyChanged(new PropertyChangedEventArgs("CpuModel")); //$NON-NLS-1$
+        }
+    }
+
+    private Integer numberOfSockets;
+
+    public Integer getNumberOfSockets()
+    {
+        return numberOfSockets;
+    }
+
+    public void setNumberOfSockets(Integer value)
+    {
+        if (numberOfSockets == null && value == null) {
+            return;
+        } if (numberOfSockets == null || !numberOfSockets.equals(value)) {
+            numberOfSockets = value;
+            onPropertyChanged(new PropertyChangedEventArgs("NumberOfSockets")); //$NON-NLS-1$
+        }
+    }
+
+    private Integer coresPerSocket;
+
+    public Integer getCoresPerSocket()
+    {
+        return coresPerSocket;
+    }
+
+    public void setCoresPerSocket(Integer value)
+    {
+        if (coresPerSocket == null && value == null) {
+            return;
+        } if (coresPerSocket == null || !coresPerSocket.equals(value)) {
+            coresPerSocket = value;
+            onPropertyChanged(new PropertyChangedEventArgs("CoresPerSocket")); //$NON-NLS-1$
+        }
+    }
+
+    private String threadsPerCore;
+
+    public String getThreadsPerCore()
+    {
+        return threadsPerCore;
+    }
+
+    public void setThreadsPerCore(String value)
+    {
+        if (threadsPerCore == null && value == null) {
+            return;
+        } if (threadsPerCore == null || !threadsPerCore.equals(value)) {
+            threadsPerCore = value;
+            onPropertyChanged(new PropertyChangedEventArgs("ThreadsPerCore")); //$NON-NLS-1$
+        }
+    }
+
     public enum HbaDeviceKeys { MODEL_NAME, // Model name field
                                 TYPE,       // Device type
                                 WWNN,       // WWNN of the NIC
@@ -158,6 +246,28 @@ public class HostHardwareGeneralModel extends EntityModel
         setHardwareUUID(vds.getHardwareUUID());
         setHardwareSerialNumber(vds.getHardwareSerialNumber());
         setHardwareFamily(vds.getHardwareFamily());
+
+        setCpuType(vds.getCpuName() != null ? vds.getCpuName().getCpuName() : null);
+        setCpuModel(vds.getCpuModel());
+        setNumberOfSockets(vds.getCpuSockets());
+
+        if (vds.getCpuCores() != null && vds.getCpuSockets() != null && vds.getCpuSockets() != 0) {
+            setCoresPerSocket(vds.getCpuCores() / vds.getCpuSockets());
+        } else {
+            setCoresPerSocket(null);
+        }
+
+        if (vds.getVdsGroupCompatibilityVersion() != null
+                && Version.v3_2.compareTo(vds.getVdsGroupCompatibilityVersion()) > 0) {
+            // Members of pre-3.2 clusters don't support SMT; here we act like a 3.1 engine
+            setThreadsPerCore(constants.unsupported());
+        } else if (vds.getCpuThreads() == null || vds.getCpuCores() == null || vds.getCpuCores() == 0) {
+            setThreadsPerCore(constants.unknown());
+        } else {
+            Integer threads = vds.getCpuThreads() / vds.getCpuCores();
+            setThreadsPerCore(messages.commonMessageWithBrackets(threads.toString(), threads > 1 ? constants.smtEnabled()
+                    : constants.smtDisabled()));
+        }
 
         /* Go through the list of HBA devices and transfer the necessary info
            to the GWT host hardware model */

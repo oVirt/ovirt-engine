@@ -353,98 +353,6 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
-    private String cpuType;
-
-    public String getCpuType()
-    {
-        return cpuType;
-    }
-
-    public void setCpuType(String value)
-    {
-        if (!ObjectUtils.objectsEqual(cpuType, value))
-        {
-            cpuType = value;
-            onPropertyChanged(new PropertyChangedEventArgs("CpuType")); //$NON-NLS-1$
-        }
-    }
-
-    private String cpuModel;
-
-    public String getCpuModel()
-    {
-        return cpuModel;
-    }
-
-    public void setCpuModel(String value)
-    {
-        if (!ObjectUtils.objectsEqual(cpuModel, value))
-        {
-            cpuModel = value;
-            onPropertyChanged(new PropertyChangedEventArgs("CpuModel")); //$NON-NLS-1$
-        }
-    }
-
-    private Integer numberOfSockets;
-
-    public Integer getNumberOfSockets()
-    {
-        return numberOfSockets;
-    }
-
-    public void setNumberOfSockets(Integer value)
-    {
-        if (numberOfSockets == null && value == null)
-        {
-            return;
-        }
-        if (numberOfSockets == null || !numberOfSockets.equals(value))
-        {
-            numberOfSockets = value;
-            onPropertyChanged(new PropertyChangedEventArgs("NumberOfSockets")); //$NON-NLS-1$
-        }
-    }
-
-    private Integer coresPerSocket;
-
-    public Integer getCoresPerSocket()
-    {
-        return coresPerSocket;
-    }
-
-    public void setCoresPerSocket(Integer value)
-    {
-        if (coresPerSocket == null && value == null)
-        {
-            return;
-        }
-        if (coresPerSocket == null || !coresPerSocket.equals(value))
-        {
-            coresPerSocket = value;
-            onPropertyChanged(new PropertyChangedEventArgs("CoresPerSocket")); //$NON-NLS-1$
-        }
-    }
-
-    private String threadsPerCore;
-
-    public String getThreadsPerCore()
-    {
-        return threadsPerCore;
-    }
-
-    public void setThreadsPerCore(String value)
-    {
-        if (threadsPerCore == null && value == null)
-        {
-            return;
-        }
-        if (threadsPerCore == null || !threadsPerCore.equals(value))
-        {
-            threadsPerCore = value;
-            onPropertyChanged(new PropertyChangedEventArgs("ThreadsPerCore")); //$NON-NLS-1$
-        }
-    }
-
     // 3rd column in General tab
 
     private Integer sharedMemory;
@@ -899,6 +807,21 @@ public class HostGeneralModel extends EntityModel
         onPropertyChanged(new PropertyChangedEventArgs("bootTime")); //$NON-NLS-1$
     }
 
+    private Integer logicalCores;
+
+    public Integer getLogicalCores() {
+        return logicalCores;
+    }
+
+    public void setLogicalCores(Integer value) {
+        if (logicalCores == null && value == null) {
+            return;
+        } if (logicalCores == null || !logicalCores.equals(value)) {
+            logicalCores = value;
+            onPropertyChanged(new PropertyChangedEventArgs("logicalCores")); //$NON-NLS-1$
+        }
+    }
+
     static
     {
         requestEditEventDefinition = new EventDefinition("RequestEditEvent", HostGeneralModel.class); //$NON-NLS-1$
@@ -994,25 +917,6 @@ public class HostGeneralModel extends EntityModel
 
         setSpmPriorityValue(vds.getVdsSpmPriority());
         setActiveVms(vds.getVmActive());
-        setCpuType(vds.getCpuName() != null ? vds.getCpuName().getCpuName() : null);
-        setCpuModel(vds.getCpuModel());
-        setNumberOfSockets(vds.getCpuSockets());
-        setCoresPerSocket((vds.getCpuCores() != null && vds.getCpuSockets() != null)
-                ? vds.getCpuCores() / vds.getCpuSockets() : null);
-
-        if (vds.getVdsGroupCompatibilityVersion() != null
-                && Version.v3_2.compareTo(vds.getVdsGroupCompatibilityVersion()) > 0) {
-            // Members of pre-3.2 clusters don't support SMT; here we act like a 3.1 engine
-            setThreadsPerCore(constants.unsupported());
-        } else if (vds.getCpuThreads() == null || vds.getCpuCores() == null) {
-            setThreadsPerCore(constants.unknown());
-        } else {
-            Integer threads = vds.getCpuThreads() / vds.getCpuCores();
-            setThreadsPerCore(messages
-                    .commonMessageWithBrackets(threads.toString(),
-                            threads > 1 ? constants.smtEnabled()
-                                    : constants.smtDisabled()));
-        }
 
         setPhysicalMemory(vds.getPhysicalMemMb());
         setSwapTotal(vds.getSwapTotal());
@@ -1038,6 +942,13 @@ public class HostGeneralModel extends EntityModel
             } else {
                 setHostedEngineHa(messages.haActive(vds.getHighlyAvailableScore()));
             }
+        }
+
+        if (vds.getVdsGroupCompatibilityVersion() != null
+                && Version.v3_2.compareTo(vds.getVdsGroupCompatibilityVersion()) > 0) {
+            setLogicalCores(vds.getCpuCores());
+        } else {
+            setLogicalCores(vds.getCpuThreads());
         }
     }
 

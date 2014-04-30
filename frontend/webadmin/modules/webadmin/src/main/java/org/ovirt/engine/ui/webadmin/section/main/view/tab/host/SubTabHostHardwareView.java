@@ -28,11 +28,14 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberTextBoxLabel;
 
 public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostListModel, HostHardwareGeneralModel> implements SubTabHostHardwarePresenter.ViewDef, Editor<HostHardwareGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<HostHardwareGeneralModel, SubTabHostHardwareView> {
     }
+
+    ApplicationConstants constants = GWT.create(ApplicationConstants.class);
 
     TextBoxLabel hardwareManufacturer = new TextBoxLabel();
     TextBoxLabel hardwareProductName = new TextBoxLabel();
@@ -40,6 +43,11 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
     TextBoxLabel hardwareVersion = new TextBoxLabel();
     TextBoxLabel hardwareUUID = new TextBoxLabel();
     TextBoxLabel hardwareFamily = new TextBoxLabel();
+    TextBoxLabel cpuType = new TextBoxLabel();
+    TextBoxLabel cpuModel = new TextBoxLabel();
+    NullableNumberTextBoxLabel<Integer> numberOfSockets = new NullableNumberTextBoxLabel<Integer>(constants.unknown());
+    NullableNumberTextBoxLabel<Integer> coresPerSocket = new NullableNumberTextBoxLabel<Integer>(constants.unknown());
+    TextBoxLabel threadsPerCore = new TextBoxLabel();
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
@@ -47,7 +55,6 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
     @UiField
     FlowPanel hbaInventory;
 
-    ApplicationConstants constants;
     FormBuilder formBuilder;
 
     private final Driver driver = GWT.create(Driver.class);
@@ -69,13 +76,19 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
         driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 3, 2);
+        formBuilder = new FormBuilder(formPanel, 3, 4);
         formBuilder.addFormItem(new FormItem(constants.hardwareManufacturerGeneral(), hardwareManufacturer, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.hardwareFamilyGeneral(), hardwareFamily, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.hardwareProductNameGeneral(), hardwareProductName, 0, 2));
         formBuilder.addFormItem(new FormItem(constants.hardwareVersionGeneral(), hardwareVersion, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.hardwareUUIDGeneral(), hardwareUUID, 1, 1));
         formBuilder.addFormItem(new FormItem(constants.hardwareSerialNumberGeneral(), hardwareSerialNumber, 1, 2));
+
+        formBuilder.addFormItem(new FormItem(constants.cpuModelHostGeneral(), cpuModel, 0).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.cpuTypeHostGeneral(), cpuType, 1).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.numOfSocketsHostGeneral(), numberOfSockets, 2).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.numOfCoresPerSocketHostGeneral(), coresPerSocket, 0).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.numOfThreadsPerCoreHostGeneral(), threadsPerCore, 1).withAutoPlacement());
 
     }
 

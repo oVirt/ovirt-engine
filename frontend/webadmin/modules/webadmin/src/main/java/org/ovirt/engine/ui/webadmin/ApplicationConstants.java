@@ -1428,6 +1428,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Active VMs")
     String activeVmsHostGeneral();
 
+    @DefaultStringValue("Logical CPU Cores")
+    String logicalCores();
+
     @DefaultStringValue("CPU Model")
     String cpuModelHostGeneral();
 
