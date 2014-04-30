@@ -1,13 +1,9 @@
 package org.ovirt.engine.ui.common.widget.dialog;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.widget.TooltipPanel;
 
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -15,7 +11,7 @@ import com.google.gwt.user.client.ui.Image;
 public class InfoIcon extends FocusPanel {
     private Image infoImage;
     private Image infoImageHover;
-    private final DecoratedPopupPanel infoPanel = new DecoratedPopupPanel(true);
+    private final TooltipPanel infoPanel;
 
     public InfoIcon(SafeHtml text, CommonApplicationResources resources) {
         super();
@@ -23,26 +19,21 @@ public class InfoIcon extends FocusPanel {
         initInfoImages(resources);
 
         setWidget(infoImage);
-        infoPanel.setWidget(new HTML(text));
-        infoPanel.getElement().getStyle().setZIndex(1);
-
-        addMouseOutHandler(new MouseOutHandler() {
+        infoPanel = new TooltipPanel(true, this) {
 
             @Override
-            public void onMouseOut(MouseOutEvent event) {
-                setWidget(infoImage);
-                infoPanel.hide(true);
-            }
-        });
-
-        addMouseOverHandler(new MouseOverHandler() {
-
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                setWidget(infoImageHover);
+            protected void onTooltipSourceMouseOver() {
+                InfoIcon.this.setWidget(infoImageHover);
                 infoPanel.showRelativeTo(InfoIcon.this);
             }
-        });
+
+            @Override
+            protected void onTooltipSourceMouseOut() {
+                InfoIcon.this.setWidget(infoImage);
+            }
+
+        };
+        setText(text);
     }
 
     private void initInfoImages(CommonApplicationResources resources) {

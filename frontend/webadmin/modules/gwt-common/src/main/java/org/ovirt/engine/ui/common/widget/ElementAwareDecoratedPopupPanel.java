@@ -10,12 +10,25 @@ import com.google.gwt.user.client.ui.DecoratedPopupPanel;
  */
 public class ElementAwareDecoratedPopupPanel extends DecoratedPopupPanel {
 
+    /**
+     * The offset below the element the tool-tip is associated with.
+     */
+    protected static final int TOOLTIP_HEIGHT_OFFSET = 10; //10px
+
+    public ElementAwareDecoratedPopupPanel() {
+        this(false);
+    }
+
+    public ElementAwareDecoratedPopupPanel(boolean autoHide) {
+        super(autoHide);
+    }
+
     public void showRelativeTo(final Element target) {
         setPopupPositionAndShow(new PositionCallback() {
             @Override
             public void setPosition(int offsetWidth, int offsetHeight) {
                 int left = target.getAbsoluteLeft();
-                int top = target.getAbsoluteTop() + target.getOffsetHeight();
+                int top = target.getAbsoluteTop() + target.getOffsetHeight() + TOOLTIP_HEIGHT_OFFSET;
 
                 setPopupPosition(left, top);
             }

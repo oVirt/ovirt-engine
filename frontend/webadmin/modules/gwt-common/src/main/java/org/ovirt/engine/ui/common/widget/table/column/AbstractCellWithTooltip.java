@@ -1,8 +1,9 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import org.ovirt.engine.ui.common.widget.TooltipPanel;
+
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
-import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 
@@ -16,6 +17,8 @@ import com.google.gwt.dom.client.NativeEvent;
  */
 public abstract class AbstractCellWithTooltip<C> extends AbstractCell<C> {
 
+    private final TooltipPanel tooltipPanel = new TooltipPanel();
+
     public AbstractCellWithTooltip(String... consumedEvents) {
         super(consumedEvents);
     }
@@ -25,25 +28,22 @@ public abstract class AbstractCellWithTooltip<C> extends AbstractCell<C> {
             NativeEvent event, ValueUpdater<C> valueUpdater) {
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
 
-        // Skip events other than 'mouseover'
-        if (!BrowserEvents.MOUSEOVER.equals(event.getType())) {
-            return;
-        }
-
+        tooltipPanel.applyTo(parent);
         if (value != null && showTooltip(parent, value)) {
-            parent.setTitle(getTooltip(value));
+            tooltipPanel.setText(getTooltip(value));
         } else {
-            parent.setTitle(""); //$NON-NLS-1$
+            tooltipPanel.setText(""); //$NON-NLS-1$
         }
+        tooltipPanel.handleNativeBrowserEvent(parent, event);
     }
 
     /**
-     * Returns tooltip to show for the given value.
+     * Returns tool-tip to show for the given value.
      */
     protected abstract String getTooltip(C value);
 
     /**
-     * Returns {@code true} if tooltip should be shown for the given {@code parent} element.
+     * Returns {@code true} if tool-tip should be shown for the given {@code parent} element.
      */
     protected boolean showTooltip(Element parent, C value) {
         return contentOverflows(parent);
