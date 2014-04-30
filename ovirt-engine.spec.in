@@ -814,9 +814,11 @@ fi
 %dir %{engine_data}/branding
 %dir %{engine_data}/conf
 %dir %{engine_data}/engine.ear
+%dir %{engine_data}/extensions.d
 %dir %{engine_data}/services
 %dir %{engine_etc}
 %dir %{engine_etc}/branding
+%dir %{engine_etc}/extensions.d
 %dir %{engine_java}
 %doc LICENSE
 %ghost %config(noreplace) %{engine_etc}/engine.conf

@@ -417,6 +417,8 @@ install-layout: \
 	install -d -m 755 "$(DESTDIR)$(DATA_DIR)/ui-plugins"
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding"
 	install -d -m 750 "$(DESTDIR)$(PKG_STATE_DIR)/backups"
+	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/extensions.d"
+	install -d -m 755 "$(DESTDIR)$(DATA_DIR)/extensions.d"
 
 	install -d -m 0755 "$(DESTDIR)$(DATA_DIR)/files"
 	-rm -f "$(DESTDIR)$(DATA_DIR)/files/usbfilter.txt"
