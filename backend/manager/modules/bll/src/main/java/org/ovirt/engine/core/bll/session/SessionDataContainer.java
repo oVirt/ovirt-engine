@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.session;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -144,12 +145,14 @@ public class SessionDataContainer {
     @OnTimerMethodAnnotation("cleanExpiredUsersSessions")
     public final void cleanExpiredUsersSessions() {
         Date now = new Date();
-        for (Entry<String, SessionInfo> entry : sessionInfoMap.entrySet()) {
+        Iterator<Entry<String, SessionInfo>>  iter = sessionInfoMap.entrySet().iterator();
+        while (iter.hasNext()) {
+            Entry<String, SessionInfo> entry = iter.next();
             ConcurrentMap<String, Object> sessionMap = entry.getValue().contentOfSession;
             Date hardLimit = (Date) sessionMap.get(HARD_LIMIT_PARAMETER_NAME);
             Date softLimit = (Date) sessionMap.get(SOFT_LIMIT_PARAMETER_NAME);
             if ((hardLimit != null && hardLimit.before(now)) || (softLimit != null && softLimit.before(now))) {
-                removeSessionImpl(entry.getKey());
+                iter.remove();
             }
         }
     }
@@ -268,10 +271,6 @@ public class SessionDataContainer {
             sessionInfo.contentOfSession.put(SOFT_LIMIT_PARAMETER_NAME,
                     DateUtils.addMinutes(new Date(), softLimitValue));
         }
-    }
-
-    private void removeSessionImpl(String sessionId) {
-        sessionInfoMap.remove(sessionId);
     }
 
 }
