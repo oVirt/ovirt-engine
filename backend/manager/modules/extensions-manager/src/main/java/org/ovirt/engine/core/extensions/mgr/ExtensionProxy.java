@@ -82,7 +82,8 @@ public class ExtensionProxy implements Extension {
                 throw new ExtensionInvokeCommandFailedException(
                     message == null ? "Invoke failed" : message,
                     input,
-                    output
+                    output,
+                    output.<Throwable>get(ExtensionsManager.CAUSE_OUTPUT_KEY)
                 );
             }
             break;
