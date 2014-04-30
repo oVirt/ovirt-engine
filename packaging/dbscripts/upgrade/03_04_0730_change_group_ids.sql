@@ -2,6 +2,10 @@ Create or replace FUNCTION __temp_change_group_ids_03_04_0730()
 RETURNS VOID
    AS $procedure$
 BEGIN
+
+--If there is no external_id set at users, populate it with content based on the id
+update ad_groups set external_id = decode(replace(CAST(id as text),'-',''),'HEX') where encode(external_id,'HEX') = '';
+
 --groups.external_id holds a hex representation of the id of groups at ldap directories.
 -- This script sets the guid representation at ad_groups.id, and modifies all relevant references,
 --using the following steps:
