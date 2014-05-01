@@ -130,6 +130,10 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
     @UiField
     @Ignore
+    Label displayNetworkChangeWarning;
+
+    @UiField
+    @Ignore
     DockLayoutPanel layoutPanel;
 
     @UiField
@@ -223,6 +227,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         info.setHTML(constants.changesTempHostPopup());
         isToSync.setLabel(constants.syncNetwork());
         commitChanges.setLabel(constants.saveNetConfigHostPopup());
+        displayNetworkChangeWarning.setText(constants.changeDisplayNetworkWarning());
 
         driver.initialize(this);
     }
@@ -283,6 +288,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
         isToSync.setVisible(false);
         isToSyncInfo.setVisible(false);
+        displayNetworkChangeWarning.setVisible(false);
     }
 
     protected void enableDisableBySync(HostInterfaceModel model) {

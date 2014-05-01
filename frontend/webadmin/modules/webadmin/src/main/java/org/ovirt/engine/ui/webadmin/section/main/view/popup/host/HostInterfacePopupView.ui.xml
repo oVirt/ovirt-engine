@@ -24,6 +24,15 @@
 		.customPropertiesStyle {
 			max-height: 100px;
 		}
+
+        .displayNetworkChangeWarning {
+			margin-top: 20px;
+			line-height: 20px;
+			color: red;
+			font-size: 12px;
+			margin-right: 5px;
+			margin-left: 5px;
+		}
 	</ui:style>
 
 	<d:SimpleDialogPanel width="400px" height="500px">
@@ -53,6 +62,7 @@
 							<ge:EntityModelCheckBoxEditor ui:field="isToSync" />
 							<d:InfoIcon ui:field="isToSyncInfo"/>
 						</g:HorizontalPanel>
+						<g:Label ui:field="displayNetworkChangeWarning" addStyleNames="{style.displayNetworkChangeWarning}" />
 						<ge:EntityModelCheckBoxEditor ui:field="checkConnectivity" />
 						<g:Label ui:field="message" />
 					</g:VerticalPanel>

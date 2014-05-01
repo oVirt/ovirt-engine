@@ -9,7 +9,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetwo
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SetupNetworksInterfacePopupView extends HostInterfacePopupView implements SetupNetworksInterfacePopupPresenterWidget.ViewDef {
+public class SetupNetworksInterfacePopupView extends HostInterfacePopupView
+        implements SetupNetworksInterfacePopupPresenterWidget.ViewDef {
 
     @Inject
     public SetupNetworksInterfacePopupView(EventBus eventBus,
@@ -31,7 +32,7 @@ public class SetupNetworksInterfacePopupView extends HostInterfacePopupView impl
         commitChanges.setVisible(false);
 
         isToSync.setVisible(true);
-        if (object.getIsToSync().getIsChangable()){
+        if (object.getIsToSync().getIsChangable()) {
             isToSyncInfo.setVisible(true);
         }
 
@@ -44,5 +45,9 @@ public class SetupNetworksInterfacePopupView extends HostInterfacePopupView impl
 
         customPropertiesPanel.setVisible(object.getCustomPropertiesModel().getIsAvailable());
         customPropertiesWidget.edit(object.getCustomPropertiesModel());
+
+        if (object.getNetwork().getSelectedItem().getCluster().isDisplay()) {
+            displayNetworkChangeWarning.setVisible(true);
+        }
     }
 }
