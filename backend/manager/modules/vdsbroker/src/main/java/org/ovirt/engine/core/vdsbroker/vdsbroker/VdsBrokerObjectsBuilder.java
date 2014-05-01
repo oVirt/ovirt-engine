@@ -1207,14 +1207,19 @@ public class VdsBrokerObjectsBuilder {
                 iface.setName(vlanDeviceName);
                 iface.setVdsId(vds.getId());
 
-                if (vlanDeviceName.contains(".")) {
+                Map<String, Object> vlan = (Map<String, Object>) entry.getValue();
+
+                if (vlan.get(VdsProperties.VLAN_ID) != null && vlan.get(VdsProperties.BASE_INTERFACE) != null) {
+                    iface.setVlanId((Integer) vlan.get(VdsProperties.VLAN_ID));
+                    iface.setBaseInterface((String) vlan.get(VdsProperties.BASE_INTERFACE));
+                } else if (vlanDeviceName.contains(".")) {
                     String[] names = vlanDeviceName.split("[.]", -1);
-                    String vlan = names[1];
-                    iface.setVlanId(Integer.parseInt(vlan));
-                    currVlans.put(vlanDeviceName, iface.getVlanId());
+                    String vlanId = names[1];
+                    iface.setVlanId(Integer.parseInt(vlanId));
+                    iface.setBaseInterface(names[0]);
                 }
 
-                Map<String, Object> vlan = (Map<String, Object>) entry.getValue();
+                currVlans.put(vlanDeviceName, iface.getVlanId());
 
                 iface.setAddress((String) vlan.get("addr"));
                 iface.setSubnet((String) vlan.get("netmask"));

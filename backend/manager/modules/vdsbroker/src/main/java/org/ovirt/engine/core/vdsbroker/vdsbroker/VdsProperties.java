@@ -86,6 +86,8 @@ public final class VdsProperties {
     public static final String BOOT_PROTOCOL = "BOOTPROTO";
     public static final String STP = "STP";
     public static final String MTU = "mtu";
+    public static final String VLAN_ID = "vlanid";
+    public static final String BASE_INTERFACE = "iface";
     public static final String BONDING_OPTIONS = "BONDING_OPTS";
     public static final String DHCP = "dhcp";
     public static final String FORCE = "force";
