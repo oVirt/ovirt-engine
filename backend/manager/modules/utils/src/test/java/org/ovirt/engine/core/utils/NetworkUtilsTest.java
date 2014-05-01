@@ -228,7 +228,7 @@ public class NetworkUtilsTest {
 
     @Test
     public void interfaceBasedOnNullProposedVlan() {
-        assertFalse(NetworkUtils.interfaceBasedOn(null, IFACE_NAME));
+        assertFalse(NetworkUtils.interfaceBasedOn((String)null, IFACE_NAME));
     }
 
     @Test

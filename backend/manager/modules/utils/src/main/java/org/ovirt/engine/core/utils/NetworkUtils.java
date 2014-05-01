@@ -24,6 +24,7 @@ public final class NetworkUtils {
         return Config.<String> getValue(ConfigValues.ManagementNetwork);
     }
 
+    // TODO this method should be removed at the end of accept vlan devices identified by any name
     // method return interface name without vlan:
     // input: eth0.5 output eth0
     // input" eth0 output eth0
@@ -40,6 +41,19 @@ public final class NetworkUtils {
         return StringUtils.stripEnd(sb.toString(), ".");
     }
 
+    /**
+    * Returns the underlying interface name of a given nic
+    *
+    * @param nic
+    *
+    * @return Base interface name if the nic is a vlan device.
+    *         Otherwise, the name of the nic
+    */
+    public static String stripVlan(VdsNetworkInterface nic) {
+        return NetworkUtils.isVlan(nic) ? nic.getBaseInterface() : nic.getName();
+    }
+
+    // TODO this method should be removed at the end of accept vlan devices identified by any name
     // method return interface name without vlan:
     // if the interface is not vlan it return null
     // input: eth0.5 returns eth0
@@ -57,6 +71,7 @@ public final class NetworkUtils {
         return StringUtils.stripEnd(sb.toString(), ".");
     }
 
+    // TODO this method should be removed at the end of accept vlan devices identified by any name
     // method return the vlan part of the interface name (if exists),
     // else - return null
     public static Integer getVlanId(String ifaceName) {
@@ -73,7 +88,7 @@ public final class NetworkUtils {
     public static boolean isBondVlan(List<VdsNetworkInterface> interfaces, VdsNetworkInterface iface) {
         if (isVlan(iface)) {
             for (VdsNetworkInterface i : interfaces) {
-                if (Boolean.TRUE.equals(i.getBonded()) && interfaceBasedOn(iface.getName(), i.getName())) {
+                if (Boolean.TRUE.equals(i.getBonded()) && i.getName().equals(iface.getBaseInterface())) {
                     return true;
                 }
             }
@@ -82,6 +97,7 @@ public final class NetworkUtils {
         return false;
     }
 
+    // TODO this method should be removed at the end of accept vlan devices identified by any name
     /**
      * Check if the proposed interface name represents a VLAN of the given interface name or is equal to it.<br>
      * If either of the parameters is null, <code>false</code> is returned.
@@ -98,9 +114,25 @@ public final class NetworkUtils {
         return iface != null && proposedIface != null && iface.equals(stripVlan(proposedIface));
     }
 
+    /**
+     * Check if the proposed interface represents a VLAN of the given interface name or is equal to it.<br>
+     * If either of the parameters is null, <code>false</code> is returned.
+     *
+     * @param proposedIface
+     *            The interface to check if it's a VLAN of the other interface or it is the other interface.
+     * @param iface
+     *            The interface to check for.
+     *
+     * @return <code>true</code> if the proposed interface is a VLAN on the interface or if it is the other interface,
+     *         <code>false</code> otherwise.
+     */
+    public static boolean interfaceBasedOn(VdsNetworkInterface proposedIface, String iface) {
+        return iface != null && proposedIface != null && iface.equals(stripVlan(proposedIface));
+    }
+
     public static boolean interfaceHasVlan(VdsNetworkInterface iface, List<VdsNetworkInterface> allIfaces) {
         for (VdsNetworkInterface i : allIfaces) {
-            if (isVlan(i) && interfaceBasedOn(i.getName(), iface.getName())) {
+            if (isVlan(i) && interfaceBasedOn(i, iface.getName())) {
                 return true;
             }
         }
