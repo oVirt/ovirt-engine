@@ -24,7 +24,7 @@ public class FirstMatchSimpleFilterTest {
      * This replaces the application message representation, the only request we have is to have getName() to return the
      * name based on which we filter.
      */
-    class E extends AuditLogEvent {
+    private static class E extends AuditLogEvent {
         private String e;
 
         public E(String e) {
@@ -37,7 +37,7 @@ public class FirstMatchSimpleFilterTest {
         }
     }
 
-    class T extends Transport {
+    private static class T extends Transport {
 
         private String t;
 
