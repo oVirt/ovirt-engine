@@ -76,7 +76,7 @@ public class RemoveNetworksByLabelParametersBuilder extends NetworkParametersBui
             if (nic != null) {
                 if (StringUtils.equals(nic.getName(), underlyingNic.getName())) {
                     underlyingNic.setNetworkName(null);
-                } else if (StringUtils.equals(NetworkUtils.stripVlan(nic.getName()), underlyingNic.getName())) {
+                } else if (NetworkUtils.interfaceBasedOn(nic, underlyingNic.getName())) {
                     nicsToRemove.add(nic);
                 }
             }
