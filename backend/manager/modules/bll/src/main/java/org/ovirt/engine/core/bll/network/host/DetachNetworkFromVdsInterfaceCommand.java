@@ -24,6 +24,9 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsParameters> extends VdsNetworkCommand<T> {
+
+    private VdsNetworkInterface iface;
+
     public DetachNetworkFromVdsInterfaceCommand(T paramenters) {
         super(paramenters);
     }
@@ -32,27 +35,25 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
     protected void executeCommand() {
         String bond = null;
         List<String> nics = new ArrayList<>();
-        nics.add(NetworkUtils.stripVlan(getParameters().getInterface().getName()));
-        Integer vlanId = NetworkUtils.getVlanId(getParameters().getInterface().getName());
+        String baseNicName = NetworkUtils.stripVlan(iface);
+        nics.add(baseNicName);
+        Integer vlanId = iface.getVlanId();
+        List<VdsNetworkInterface> interfaces = getDbFacade()
+                .getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
 
         // vlan with bond
-        boolean isBond = getParameters().getInterface().getName().startsWith("bond")
-                && getParameters().getInterface().getName().contains(".");
+        boolean isBond = NetworkUtils.isBondVlan(interfaces, iface);
         // or just a bond...
-        isBond = isBond
-                || (getParameters().getInterface().getBonded() != null && getParameters().getInterface().getBonded());
+        isBond = isBond || (iface.getBonded() != null && iface.getBonded());
 
         // check if bond...
         if (isBond) {
             nics.clear();
-            bond = NetworkUtils.stripVlan(getParameters().getInterface().getName());
-
-            List<VdsNetworkInterface> interfaces = getDbFacade()
-                    .getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
+            bond = baseNicName;
 
             for (VdsNetworkInterface i : interfaces) {
                 if (StringUtils.equals(i.getBondName(), bond)) {
-                    nics.add(NetworkUtils.stripVlan(i.getName()));
+                    nics.add(NetworkUtils.stripVlan(i));
                 }
             }
         }
@@ -82,7 +83,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
     protected boolean canDoAction() {
         List<VdsNetworkInterface> interfaces = getDbFacade().getInterfaceDao()
                 .getAllInterfacesForVds(getParameters().getVdsId());
-        VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
+        iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
             @Override
             public boolean eval(VdsNetworkInterface i) {
                 return i.getName().equals(getParameters().getInterface().getName());
