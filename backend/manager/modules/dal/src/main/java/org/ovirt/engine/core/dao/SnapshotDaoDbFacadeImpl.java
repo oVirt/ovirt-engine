@@ -224,6 +224,17 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
     }
 
     @Override
+    public Snapshot get(Guid vmId, SnapshotStatus status) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmId)
+                .addValue("status", EnumUtils.nameOrNull(status));
+
+        return getCallsHandler().executeRead("GetSnapshotByVmIdAndStatus",
+                createEntityRowMapper(),
+                parameterSource);
+    }
+
+    @Override
     public int getNumOfSnapshotsByMemory(String memoryVolume) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("memory_volume", getNullableRepresentation(memoryVolume));
