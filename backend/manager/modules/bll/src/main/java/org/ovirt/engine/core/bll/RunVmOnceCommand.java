@@ -19,9 +19,14 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.OsRepositoryImpl;
 
 @LockIdNameAttribute
@@ -29,6 +34,11 @@ import org.ovirt.engine.core.utils.OsRepositoryImpl;
 public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T> implements QuotaStorageDependent {
     public RunVmOnceCommand(T runVmParams) {
         super(runVmParams);
+
+        // Load payload if user didn't send via run-once
+        if (getParameters().getVmPayload() == null) {
+            loadPayload();
+        }
     }
 
     @Override
@@ -58,6 +68,21 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         }
 
         return true;
+    }
+
+    private void loadPayload() {
+        VmDeviceDAO dao = getDbFacade().getVmDeviceDao();
+        List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getParameters().getVmId(), VmDeviceGeneralType.DISK);
+
+        for (VmDevice disk : disks) {
+            if (VmPayload.isPayload(disk.getSpecParams())) {
+                VmPayload payload = new VmPayload(VmDeviceType.valueOf(disk.getType().name()),
+                        disk.getSpecParams());
+                payload.setType(VmDeviceType.valueOf(disk.getDevice().toUpperCase()));
+                getVm().setVmPayload(payload);
+                break;
+            }
+        }
     }
 
     @Override
