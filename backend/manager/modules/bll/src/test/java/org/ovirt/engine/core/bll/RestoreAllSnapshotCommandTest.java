@@ -150,6 +150,7 @@ public class RestoreAllSnapshotCommandTest {
         mockSnapshot.setType(SnapshotType.STATELESS);
         when(snapshotDao.get(any(Guid.class), any(SnapshotType.class), any(SnapshotStatus.class))).thenReturn(mockSnapshot);
         when(snapshotDao.get(any(Guid.class), any(SnapshotType.class))).thenReturn(mockSnapshot);
+        when(snapshotDao.get(any(Guid.class), any(SnapshotStatus.class))).thenReturn(mockSnapshot);
     }
 
     private void initSpyCommand() {

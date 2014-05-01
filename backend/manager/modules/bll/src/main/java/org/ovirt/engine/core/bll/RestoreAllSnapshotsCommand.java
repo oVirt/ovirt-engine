@@ -127,7 +127,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 snapshot = getSnapshotDao().get(getVmId(), SnapshotType.PREVIEW);
                 break;
             case COMMIT:
-                snapshot = getSnapshotDao().get(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW);
+                snapshot = getSnapshotDao().get(getVmId(), SnapshotStatus.IN_PREVIEW);
                 break;
             case RESTORE_STATELESS:
                 snapshot = getSnapshotDao().get(getVmId(), SnapshotType.STATELESS);
