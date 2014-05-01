@@ -261,10 +261,11 @@ class Provisioning(base.Base):
                     ),
                 )
 
-    def _updateMaxConnections(
+    def _updatePostgresConf(
         self,
         transaction,
         maxconn,
+        listenaddr,
     ):
         with open(
             self.environment[
@@ -274,13 +275,22 @@ class Provisioning(base.Base):
             content = f.read().splitlines()
 
         needUpdate = True
+        maxConnOK = False
+        listenAddrOK = False
         for l in content:
             m = self._RE_KEY_VALUE.match(l)
-            if (
-                m is not None and
-                m.group('key') == 'max_connections' and
-                int(m.group('value')) >= int(maxconn)
-            ):
+            if m is not None:
+                if m.group('key') == 'max_connections':
+                    if int(m.group('value')) >= int(maxconn):
+                        maxConnOK = True
+                    else:
+                        break
+                elif m.group('key') == 'listen_addresses':
+                    if m.group('value') == listenaddr:
+                        listenAddrOK = True
+                    else:
+                        break
+            if (maxConnOK and listenAddrOK):
                 needUpdate = False
                 break
 
@@ -289,6 +299,7 @@ class Provisioning(base.Base):
                 content=content,
                 params={
                     'max_connections': maxconn,
+                    'listen_addresses': listenaddr
                 },
             )
 
@@ -535,10 +546,13 @@ class Provisioning(base.Base):
 
         self.logger.info(_('Configuring PostgreSQL'))
         with transaction.Transaction() as localtransaction:
-            self._updateMaxConnections(
+            self._updatePostgresConf(
                 transaction=localtransaction,
                 maxconn=self.environment[
                     oengcommcons.ProvisioningEnv.POSTGRES_MAX_CONN
+                ],
+                listenaddr=self.environment[
+                    oengcommcons.ProvisioningEnv.POSTGRES_LISTEN_ADDRESS
                 ],
             )
             self._addPgHbaDatabaseAccess(

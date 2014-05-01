@@ -106,6 +106,7 @@ class Defaults(object):
 
     DEFAULT_POSTGRES_PROVISIONING_SERVICE = 'postgresql'
     DEFAULT_POSTGRES_PROVISIONING_MAX_CONN = 150
+    DEFAULT_POSTGRES_PROVISIONING_LISTEN_ADDRESS = "'*'"
 
 
 @util.export
@@ -276,6 +277,7 @@ class ProvisioningEnv(object):
     POSTGRES_PG_VERSION = 'OVESETUP_PROVISIONING/postgresPgVersion'
     POSTGRES_SERVICE = 'OVESETUP_PROVISIONING/postgresService'
     POSTGRES_MAX_CONN = 'OVESETUP_PROVISIONING/postgresMaxConn'
+    POSTGRES_LISTEN_ADDRESS = 'OVESETUP_PROVISIONING/postgresListenAddress'
 
 
 @util.export
