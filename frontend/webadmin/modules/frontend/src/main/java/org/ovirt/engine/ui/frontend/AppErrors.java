@@ -1324,12 +1324,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following LUNs are already used by DirectLUN disks: ${lunIds}.")
     String ACTION_TYPE_FAILED_LUNS_ALREADY_USED_BY_DISKS();
 
-    @DefaultStringValue("Cannot remove Data Center while it contains disks.\n-Please remove them first.")
-    String ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_IMAGES();
-
-    @DefaultStringValue("Cannot remove Data Center while there are VMs on it.\n-Please remove all VMs and Templates first.")
-    String ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_VMS();
-
     @DefaultStringValue("Cannot remove Data Center while there are more than one Storage Domains attached.")
     String ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_NONMASTER_DOMAINS();
 

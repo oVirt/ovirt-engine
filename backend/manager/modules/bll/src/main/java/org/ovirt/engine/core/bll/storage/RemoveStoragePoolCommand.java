@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
-import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
@@ -27,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
@@ -146,7 +144,6 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             }
         });
         final StorageDomain masterDomain = LinqUtils.first(temp);
-
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
             @Override
@@ -181,6 +178,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
             @Override
             public Void runInTransaction() {
+                detachStorageDomainWithEntities(masterDomain);
                 getCompensationContext().snapshotEntity(masterDomain.getStorageStaticData());
                 masterDomain.setStorageDomainType(StorageDomainType.Data);
                 getDbFacade().getStorageDomainStaticDao().update(masterDomain.getStorageStaticData());
@@ -325,18 +323,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             if(poolDomains.size() > 1) {
                 return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_NONMASTER_DOMAINS);
             }
-            for (StorageDomain domain : poolDomains) {
-                // check that there are no images on data domains
-                if (domain.getStorageDomainType().isDataDomain()) {
-                    StorageDomainValidator storageDomainValidator = new StorageDomainValidator(domain);
-                    if (!validate(storageDomainValidator.isDomainHasNoImages(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_IMAGES, true))) {
-                        return false;
-                    }
-                }
-            }
-            final List<VmStatic> vms = getVmStaticDAO().getAllByStoragePoolId(getStoragePool().getId());
-            if (!vms.isEmpty()) {
-                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_VMS);
+            if (!canDetachStorageDomainWithVmsAndDisks(poolDomains.get(0))) {
+                return false;
             }
         } else {
             List<VDS> poolHosts = getVdsDAO().getAllForStoragePool(getParameters().getStoragePoolId());
@@ -355,7 +343,6 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 }
             }
         }
-
         return true;
     }
 
