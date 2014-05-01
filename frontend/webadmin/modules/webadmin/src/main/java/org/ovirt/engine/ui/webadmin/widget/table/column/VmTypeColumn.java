@@ -17,7 +17,7 @@ public class VmTypeColumn extends WebAdminImageResourceColumn<VM> {
     @Override
     public ImageResource getValue(VM vm) {
             if (vm.getVmPoolId() == null) {
-                VmTypeConfig config = VmTypeConfig.from(vm.getVmType(), vm.isStateless());
+                VmTypeConfig config = VmTypeConfig.from(vm.getVmType(), vm.isStateless(), vm.isNextRunConfigurationExists());
                 setTitle(config.getTooltip(constants));
                 return config.getImageResource(getApplicationResources());
             } else {
@@ -28,7 +28,7 @@ public class VmTypeColumn extends WebAdminImageResourceColumn<VM> {
 }
 
 enum VmTypeConfig {
-    DESKTOP_STATELESS(VmType.Desktop, true) {
+    DESKTOP_STATELESS(VmType.Desktop, true, false) {
         @Override
         public ImageResource getImageResource(ApplicationResources resources) {
             return resources.desktopStateless();
@@ -40,7 +40,7 @@ enum VmTypeConfig {
         }
     },
 
-    DESKTOP_STATEFUL(VmType.Desktop, false) {
+    DESKTOP_STATEFUL(VmType.Desktop, false, false) {
         @Override
         public ImageResource getImageResource(ApplicationResources resources) {
             return resources.desktopImage();
@@ -52,7 +52,7 @@ enum VmTypeConfig {
         }
     },
 
-    SERVER_STATEFUL(VmType.Server, false) {
+    SERVER_STATEFUL(VmType.Server, false, false) {
         @Override
         public ImageResource getImageResource(ApplicationResources resources) {
             return resources.serverImage();
@@ -64,7 +64,7 @@ enum VmTypeConfig {
         }
     },
 
-    SERVER_STATELESS(VmType.Server, true) {
+    SERVER_STATELESS(VmType.Server, true, false) {
         @Override
         public ImageResource getImageResource(ApplicationResources resources) {
             return resources.serverStateless();
@@ -76,7 +76,55 @@ enum VmTypeConfig {
         }
     },
 
-    DEFAULT(null, false) {
+    DESKTOP_STATELESS_WITH_NEXT_RUN_CONFIG(VmType.Desktop, true, true) {
+        @Override
+        public ImageResource getImageResource(ApplicationResources resources) {
+            return resources.desktopStatelessChanges();
+        }
+
+        @Override
+        public String getTooltip(CommonApplicationConstants constants) {
+            return constants.statelessDesktopChanges();
+        }
+    },
+
+    DESKTOP_STATEFUL_WITH_NEXT_RUN_CONFIG(VmType.Desktop, false, true) {
+        @Override
+        public ImageResource getImageResource(ApplicationResources resources) {
+            return resources.desktopChanges();
+        }
+
+        @Override
+        public String getTooltip(CommonApplicationConstants constants) {
+            return constants.desktopChanges();
+        }
+    },
+
+    SERVER_STATEFUL_WITH_NEXT_RUN_CONFIG(VmType.Server, false, true) {
+        @Override
+        public ImageResource getImageResource(ApplicationResources resources) {
+            return resources.serverChanges();
+        }
+
+        @Override
+        public String getTooltip(CommonApplicationConstants constants) {
+            return constants.serverChanges();
+        }
+    },
+
+    SERVER_STATELESS_WITH_NEXT_RUN_CONFIG(VmType.Server, true, true) {
+        @Override
+        public ImageResource getImageResource(ApplicationResources resources) {
+            return resources.serverStatelessChanges();
+        }
+
+        @Override
+        public String getTooltip(CommonApplicationConstants constants) {
+            return constants.statelessServerChanges();
+        }
+    },
+
+    DEFAULT(null, false, false) {
         @Override
         public ImageResource getImageResource(ApplicationResources resources) {
             return resources.manyDesktopsImage();
@@ -90,15 +138,18 @@ enum VmTypeConfig {
 
     private final VmType vmType;
     private final boolean stateless;
+    private final boolean nextRunConfigurationExists;
 
-    VmTypeConfig(VmType vmType, boolean stateless) {
+    VmTypeConfig(VmType vmType, boolean stateless, boolean nextRunConfigurationExists) {
         this.vmType = vmType;
         this.stateless = stateless;
+        this.nextRunConfigurationExists = nextRunConfigurationExists;
     }
 
-    public static VmTypeConfig from(VmType vmType, boolean stateless) {
+    public static VmTypeConfig from(VmType vmType, boolean stateless, boolean nextRunConfigurationExists) {
         for (VmTypeConfig config : values()) {
-            if (config.stateless == stateless && config.vmType == vmType) {
+            if (config.stateless == stateless && config.vmType == vmType
+                    && config.nextRunConfigurationExists == nextRunConfigurationExists) {
                 return config;
             }
         }

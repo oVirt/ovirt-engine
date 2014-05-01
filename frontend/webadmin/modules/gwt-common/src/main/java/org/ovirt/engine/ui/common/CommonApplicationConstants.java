@@ -1616,6 +1616,18 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Server in Preview")
     String serverInPreview();
 
+    @DefaultStringValue("Server with newer configuration for next run")
+    String serverChanges();
+
+    @DefaultStringValue("Desktop with newer configuration for next run")
+    String desktopChanges();
+
+    @DefaultStringValue("Stateless Server with newer configuration for next run")
+    String statelessServerChanges();
+
+    @DefaultStringValue("Stateless Desktop with newer configuration for next run")
+    String statelessDesktopChanges();
+
     @DefaultStringValue("Run Once")
     String runOnce();
 

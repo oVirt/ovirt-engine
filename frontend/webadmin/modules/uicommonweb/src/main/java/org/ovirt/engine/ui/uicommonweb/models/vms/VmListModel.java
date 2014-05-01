@@ -765,7 +765,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 vmInitLoaded((VM) result);
             }
         };
-        AsyncDataProvider.getVmById(getVmInitQuery, vm.getId());
+        if (vm.isNextRunConfigurationExists()) {
+            AsyncDataProvider.getVmNextRunConfiguration(getVmInitQuery, vm.getId());
+        } else {
+            AsyncDataProvider.getVmById(getVmInitQuery, vm.getId());
+        }
 
     }
 

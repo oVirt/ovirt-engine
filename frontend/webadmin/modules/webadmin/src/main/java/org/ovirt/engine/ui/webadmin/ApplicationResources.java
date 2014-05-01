@@ -353,6 +353,18 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/vmType/vm_server_stateless.png")
     ImageResource serverStateless();
 
+    @Source("images/vmType/desktop_changes.png")
+    ImageResource desktopChanges();
+
+    @Source("images/vmType/server_changes.png")
+    ImageResource serverChanges();
+
+    @Source("images/vmType/vm_desktop_stateless_changes.png")
+    ImageResource desktopStatelessChanges();
+
+    @Source("images/vmType/vm_server_stateless_changes.png")
+    ImageResource serverStatelessChanges();
+
     // custom statuses
     @Source("images/vmStatus/running.png")
     ImageResource vmStatusRunning();

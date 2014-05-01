@@ -132,25 +132,17 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getName().setEntity(vm.getName());
         getModel().getDescription().setEntity(vm.getVmDescription());
         getModel().getComment().setEntity(vm.getComment());
-        getModel().getMemSize().setIsChangable(vm.isDown());
-
         getModel().getOSType().setSelectedItem(vm.getVmOsId());
         getModel().getAllowConsoleReconnect().setEntity(vm.getAllowConsoleReconnect());
-
-        getModel().getTotalCPUCores().setIsChangable(!vm.isRunning());
 
         getModel().getIsStateless().setEntity(vm.isStateless());
         getModel().getIsStateless().setIsAvailable(vm.getVmPoolId() == null);
 
         getModel().getIsRunAndPause().setEntity(vm.isRunAndPause());
-        getModel().getIsRunAndPause().setIsChangable(!vm.isRunning());
         getModel().getIsRunAndPause().setIsAvailable(vm.getVmPoolId() == null);
 
         getModel().getIsDeleteProtected().setEntity(vm.isDeleteProtected());
         getModel().selectSsoMethod(vm.getSsoMethod());
-
-        getModel().getNumOfSockets().setIsChangable(isHotSetCpuSupported() || !vm.isRunning());
-        getModel().getCoresPerSocket().setIsChangable(!vm.isRunning());
 
         getModel().getKernel_parameters().setEntity(vm.getKernelParams());
         getModel().getKernel_path().setEntity(vm.getKernelUrl());

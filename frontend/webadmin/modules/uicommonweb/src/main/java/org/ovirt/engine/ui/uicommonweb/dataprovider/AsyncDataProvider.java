@@ -646,6 +646,17 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetVmByVmId, new IdQueryParameters(vmId), aQuery);
     }
 
+    public static void getVmNextRunConfiguration(AsyncQuery aQuery, Guid vmId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmNextRunConfiguration, new IdQueryParameters(vmId), aQuery);
+    }
+
     public static void getDataCenterList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
