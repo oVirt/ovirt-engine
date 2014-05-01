@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -7,10 +9,12 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EnumRadioEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -25,8 +29,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS.NetworkQosWidget;
-import org.ovirt.engine.ui.common.widget.editor.EnumRadioEditor;
-import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -43,7 +45,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
-import java.util.Map;
 
 public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInterfaceModel> implements HostInterfacePopupPresenterWidget.ViewDef {
 
@@ -175,7 +176,6 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
         });
         bondingModeEditor = new ListModelListBoxEditor<Map.Entry<String, EntityModel<String>>>(new NullSafeRenderer<Map.Entry<String, EntityModel<String>>>() {
-            @SuppressWarnings("unchecked")
             @Override
             protected String renderNullSafe(Map.Entry<String, EntityModel<String>> pair) {
                 String key = pair.getKey();
@@ -253,8 +253,9 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         object.getBondingOptions().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                ListModel<Map.Entry<String, EntityModel<String>>> list = (ListModel<Map.Entry<String, EntityModel<String>>>) sender;
                 @SuppressWarnings("unchecked")
+                ListModel<Map.Entry<String, EntityModel<String>>> list =
+                        (ListModel<Map.Entry<String, EntityModel<String>>>) sender;
                 Map.Entry<String, EntityModel<String>> pair = list.getSelectedItem();
                 if ("custom".equals(pair.getKey())) { //$NON-NLS-1$
                     customEditor.setVisible(true);
@@ -267,7 +268,6 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         });
 
         customEditor.asValueBox().addValueChangeHandler(new ValueChangeHandler<String>() {
-            @SuppressWarnings("unchecked")
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
                 for (Map.Entry<String, EntityModel<String>> item : object.getBondingOptions().getItems()) {
