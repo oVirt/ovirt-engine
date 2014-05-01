@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 #
 
 
-"""Selinux plugin."""
+"""Apache selinux plugin."""
 
 
 import gettext
@@ -28,12 +28,12 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
 @util.export
 class Plugin(plugin.PluginBase):
-    """Selinux plugin."""
+    """Apache selinux plugin."""
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -55,7 +55,7 @@ class Plugin(plugin.PluginBase):
         priority=plugin.Stages.PRIORITY_HIGH
     )
     def _validation_enable(self):
-        if not self.environment[oenginecons.CoreEnv.ENABLE]:
+        if not self.environment[oengcommcons.ApacheEnv.ENABLE]:
             self._enabled = False
 
     @plugin.event(

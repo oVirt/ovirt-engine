@@ -58,12 +58,6 @@ class FileLocations(object):
         'bin',
     )
 
-    OVIRT_ENGINE_SYSCTL = os.path.join(
-        SYSCONFDIR,
-        'sysctl.d',
-        'ovirt-engine.conf',
-    )
-
     OVIRT_ENGINE_DB_DIR = os.path.join(
         OVIRT_ENGINE_DATADIR,
         'dbscripts',
@@ -143,10 +137,6 @@ class FileLocations(object):
         OVIRT_ENGINE_PKIKEYSDIR,
         'apache.p12',
     )
-    OVIRT_ENGINE_PKI_APACHE_KEY = os.path.join(
-        OVIRT_ENGINE_PKIKEYSDIR,
-        'apache.key.nopass',
-    )
     OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_STORE = os.path.join(
         OVIRT_ENGINE_PKIKEYSDIR,
         'websocket-proxy.p12',
@@ -154,6 +144,10 @@ class FileLocations(object):
     OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_KEY = os.path.join(
         OVIRT_ENGINE_PKIKEYSDIR,
         'websocket-proxy.key.nopass',
+    )
+    OVIRT_ENGINE_PKI_REPORTS_KEY = os.path.join(
+        OVIRT_ENGINE_PKIKEYSDIR,
+        'reports.key.nopass',
     )
     OVIRT_ENGINE_PKI_JBOSS_STORE = os.path.join(
         OVIRT_ENGINE_PKIKEYSDIR,
@@ -166,14 +160,6 @@ class FileLocations(object):
     OVIRT_ENGINE_PKI_ENGINE_CA_CERT = os.path.join(
         OVIRT_ENGINE_PKIDIR,
         'ca.pem',
-    )
-    OVIRT_ENGINE_PKI_APACHE_CA_CERT = os.path.join(
-        OVIRT_ENGINE_PKIDIR,
-        'apache-ca.pem',
-    )
-    OVIRT_ENGINE_PKI_APACHE_CERT = os.path.join(
-        OVIRT_ENGINE_PKICERTSDIR,
-        'apache.cer',
     )
     OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_CERT = os.path.join(
         OVIRT_ENGINE_PKICERTSDIR,
@@ -239,25 +225,11 @@ class FileLocations(object):
         'conf.d',
         'z-ovirt-engine-proxy.conf',
     )
-    HTTPD_CONF_OVIRT_ROOT = os.path.join(
-        DIR_HTTPD,
-        'conf.d',
-        'ovirt-engine-root-redirect.conf',
-    )
-    HTTPD_CONF_SSL = os.path.join(
-        DIR_HTTPD,
-        'conf.d',
-        'ssl.conf',
-    )
+
     HTTPD_CONF_OVIRT_ENGINE_TEMPLATE = os.path.join(
         osetupcons.FileLocations.OVIRT_SETUP_DATADIR,
         'conf',
         'ovirt-engine-proxy.conf.v2.in',
-    )
-    HTTPD_CONF_OVIRT_ROOT_TEMPLATE = os.path.join(
-        osetupcons.FileLocations.OVIRT_SETUP_DATADIR,
-        'conf',
-        'ovirt-engine-root-redirect.conf.in',
     )
 
     OVIRT_ENGINE_SERVICE_CONFIGD = '%s.d' % OVIRT_ENGINE_SERVICE_CONFIG
@@ -335,9 +307,6 @@ class Stages(object):
     CONFIG_ISO_DOMAIN_AVAILABLE = 'osetup.config.iso_domain.available'
 
     CORE_ENABLE = 'osetup.engine.core.enable'
-
-    DIALOG_TITLES_S_ENGINE = 'osetup.dialog.titles.engine.start'
-    DIALOG_TITLES_E_ENGINE = 'osetup.dialog.titles.engine.end'
 
     AIO_CONFIG_AVAILABLE = 'osetup.aio.config.available'
     AIO_CONFIG_NOT_AVAILABLE = 'osetup.aio.config.not.available'
@@ -521,9 +490,9 @@ class SystemEnv(object):
         answerfile=True,
         summary=True,
         description=_('NFS setup'),
-        summary_condition=lambda env: env[
+        summary_condition=lambda env: env.get(
             SystemEnv.NFS_CONFIG_ENABLED
-        ],
+        ),
     )
     def NFS_CONFIG_ENABLED(self):
         return 'OVESETUP_SYSTEM/nfsConfigEnabled'
@@ -690,34 +659,7 @@ class AIOConst(object):
 @osetupattrsclass
 class ApacheEnv(object):
 
-    HTTPD_CONF_SSL = 'OVESETUP_APACHE/configFileSsl'
     HTTPD_CONF_OVIRT_ENGINE = 'OVESETUP_APACHE/configFileOvirtEngine'
-    HTTPD_CONF_OVIRT_ROOT = 'OVESETUP_APACHE/configFileOvirtRoot'
-
-    CONFIGURE_ROOT_REDIRECTIOND_DEFAULT = \
-        'OVESETUP_APACHE/configureRootRedirectionDefault'
-
-    @osetupattrs(
-        postinstallfile=True,
-    )
-    def CONFIGURED(self):
-        return 'OVESETUP_APACHE/configured'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('Configure Apache SSL'),
-    )
-    def CONFIGURE_SSL(self):
-        return 'OVESETUP_APACHE/configureSsl'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('Set application as default page'),
-    )
-    def CONFIGURE_ROOT_REDIRECTION(self):
-        return 'OVESETUP_APACHE/configureRootRedirection'
 
 
 @util.export

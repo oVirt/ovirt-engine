@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2014 Red Hat, Inc.
+# Copyright (C) 2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,20 +16,35 @@
 #
 
 
-"""ovirt-host-setup apache plugin."""
+"""Apache enable plugin."""
+
+
+import gettext
+_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 from otopi import util
+from otopi import plugin
 
 
-from . import engine
-from . import root
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
 @util.export
-def createPlugins(context):
-    engine.Plugin(context=context)
-    root.Plugin(context=context)
+class Plugin(plugin.PluginBase):
+    """Apache enable plugin."""
+
+    def __init__(self, context):
+        super(Plugin, self).__init__(context=context)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+    )
+    def _init(self):
+        self.environment.setdefault(
+            oengcommcons.ApacheEnv.ENABLE,
+            False
+        )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

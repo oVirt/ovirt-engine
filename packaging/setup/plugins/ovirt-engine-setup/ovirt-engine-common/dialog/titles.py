@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common \
     import constants as oengcommcons
 
@@ -48,25 +47,6 @@ class Plugin(plugin.PluginBase):
         self._distribution = platform.linux_distribution(
             full_distribution_name=0
         )[0]
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
-    )
-    def _title_s_product_options(self):
-        self._title(
-            text=_('PRODUCT OPTIONS'),
-        )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
-        after=(
-            osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
-        ),
-    )
-    def _title_e_product_options(self):
-        pass
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -99,9 +79,6 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.DIALOG_TITLES_E_PACKAGES,
         ),
-        condition=lambda self: self.environment[
-            oenginecons.AIOEnv.ENABLE
-        ],
     )
     def _title_s_allinone(self):
         self._title(
@@ -164,7 +141,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=oenginecons.Stages.DIALOG_TITLES_S_ENGINE,
+        name=oengcommcons.Stages.DIALOG_TITLES_S_ENGINE,
         after=(
             oengcommcons.Stages.DIALOG_TITLES_E_DATABASE,
         ),
@@ -176,9 +153,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=oenginecons.Stages.DIALOG_TITLES_E_ENGINE,
+        name=oengcommcons.Stages.DIALOG_TITLES_E_ENGINE,
         after=(
-            oenginecons.Stages.DIALOG_TITLES_S_ENGINE,
+            oengcommcons.Stages.DIALOG_TITLES_S_ENGINE,
         ),
     )
     def _title_e_engine(self):
@@ -188,7 +165,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=oengcommcons.Stages.DIALOG_TITLES_S_PKI,
         after=(
-            oenginecons.Stages.DIALOG_TITLES_E_ENGINE,
+            oengcommcons.Stages.DIALOG_TITLES_E_ENGINE,
         ),
     )
     def _title_s_pki(self):

@@ -987,10 +987,6 @@ fi
 %{engine_data}/setup/ovirt_engine_setup/engine/
 %{engine_data}/setup/plugins/*/ovirt-engine/
 
-%if %{ovirt_provides_jboss}
-%config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf
-%endif
-
 # backward compatibility (pre-3.4)
 %ghost %config(noreplace) %{engine_etc}/sysprep/
 %ghost %config(noreplace) %{_sysconfdir}/firewalld/services/ovirt.xml
@@ -999,6 +995,11 @@ fi
 
 %{engine_data}/setup/ovirt_engine_setup/engine_common/
 %{engine_data}/setup/plugins/*/ovirt-engine-common/
+%{engine_data}/firewalld/ovirt-common/
+
+%if %{ovirt_provides_jboss}
+%config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf
+%endif
 
 %files setup-plugin-websocket-proxy
 

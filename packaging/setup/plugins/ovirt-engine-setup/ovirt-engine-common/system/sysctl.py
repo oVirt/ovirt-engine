@@ -30,7 +30,6 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common \
     import constants as oengcommcons
 from ovirt_engine_setup import dialog
@@ -100,7 +99,9 @@ class Plugin(plugin.PluginBase):
                             "Then execute the following command as root:\n"
                             "{sysctl} -p {file}"
                         ).format(
-                            file=oenginecons.FileLocations.OVIRT_ENGINE_SYSCTL,
+                            file=(
+                                oengcommcons.FileLocations.OVIRT_ENGINE_SYSCTL
+                            ),
                             content=self._content,
                             sysctl=self.command.get('sysctl'),
                         )
@@ -129,7 +130,7 @@ class Plugin(plugin.PluginBase):
     def _misc(self):
         if self._enabled:
             sysctl = filetransaction.FileTransaction(
-                name=oenginecons.FileLocations.OVIRT_ENGINE_SYSCTL,
+                name=oengcommcons.FileLocations.OVIRT_ENGINE_SYSCTL,
                 content=self._content,
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
@@ -137,7 +138,7 @@ class Plugin(plugin.PluginBase):
             )
             self.environment[
                 osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-            ].append(oenginecons.FileLocations.OVIRT_ENGINE_SYSCTL)
+            ].append(oengcommcons.FileLocations.OVIRT_ENGINE_SYSCTL)
 
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(sysctl)
 

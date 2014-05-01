@@ -61,6 +61,16 @@ class Plugin(plugin.PluginBase):
             )
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        after=(
+            osetupcons.Stages.REMOVE_CUSTOMIZATION_COMMON,
+        ),
+    )
+    def _customization(self):
+        if self.environment[osetupcons.RemoveEnv.REMOVE_ALL]:
+            self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE] = True
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
             self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE] and

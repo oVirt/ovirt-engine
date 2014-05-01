@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,8 +40,7 @@ from ovirt_engine import util as outil
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
-from ovirt_engine_setup.engine_common \
-    import constants as oengcommcons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup import dialog
 
 
@@ -100,7 +99,9 @@ class Plugin(plugin.PluginBase):
     def _late_setup(self):
         if (
             X509.load_cert(
-                file=oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT,
+                file=(
+                    oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
+                ),
                 format=X509.FORMAT_PEM,
             ).get_pubkey().get_rsa().pub() != X509.load_cert(
                 file=oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
@@ -116,7 +117,7 @@ class Plugin(plugin.PluginBase):
                     'for the new host name.\n'
                 ).format(
                     apache_ca=(
-                        oenginecons.FileLocations.
+                        oengcommcons.FileLocations.
                         OVIRT_ENGINE_PKI_APACHE_CA_CERT
                     ),
                     ca=(
@@ -133,8 +134,8 @@ class Plugin(plugin.PluginBase):
             ].extend(
                 (
                     oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_STORE,
-                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
-                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
+                    oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
+                    oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
                 )
             )
 
@@ -291,7 +292,7 @@ class Plugin(plugin.PluginBase):
         self.uninstall_files.extend(
             (
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_STORE,
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
+                oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
             )
         )
 
@@ -303,13 +304,13 @@ class Plugin(plugin.PluginBase):
                     self.environment[oenginecons.PKIEnv.STORE_PASS],
                 ),
                 '--key=%s' % (
-                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
+                    oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
                 ),
             ),
         )
 
         self.uninstall_files.append(
-            oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
+            oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
         )
 
         self.environment[

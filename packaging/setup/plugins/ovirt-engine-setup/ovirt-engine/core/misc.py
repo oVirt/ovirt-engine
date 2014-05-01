@@ -30,6 +30,7 @@ from otopi import plugin
 from ovirt_engine_setup import dialog
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
 @util.export
@@ -77,6 +78,8 @@ class Plugin(plugin.PluginBase):
                     prompt=True,
                     default=True,
                 )
+        if self.environment[oenginecons.CoreEnv.ENABLE]:
+            self.environment[oengcommcons.ApacheEnv.ENABLE] = True
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

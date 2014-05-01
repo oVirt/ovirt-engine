@@ -190,7 +190,6 @@ class Stages(object):
 
     SYSTEM_SYSCTL_CONFIG_AVAILABLE = 'osetup.system.sysctl.available'
     SYSTEM_HOSTILE_SERVICES_DETECTION = 'osetup.system.hostile.detection'
-    APACHE_RESTART = 'osetup.apache.core.restart'
     DISTRO_RPM_PACKAGE_UPDATE_CHECK = 'osetup.distro-rpm.package.update.check'
 
     DIALOG_TITLES_S_FIREWALL = 'osetup.dialog.titles.firewall.start'

@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -41,8 +41,7 @@ from ovirt_engine import util as outil
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
-from ovirt_engine_setup.engine_common \
-    import constants as oengcommcons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine import vdcoption
 from ovirt_engine_setup import util as osetuputil
 
@@ -259,7 +258,13 @@ class Plugin(plugin.PluginBase):
             },
         )
 
-        for name in ('engine', 'apache', 'jboss', 'websocket-proxy'):
+        for name in (
+            'engine',
+            'apache',
+            'jboss',
+            'websocket-proxy',
+            'reports'
+        ):
             self.execute(
                 (
                     oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
@@ -283,7 +288,7 @@ class Plugin(plugin.PluginBase):
 
         uninstall_files.extend(
             (
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
+                oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_STORE,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_KEY,
@@ -327,29 +332,48 @@ class Plugin(plugin.PluginBase):
         self.execute(
             args=(
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
-                '--name=apache',
+                '--name=reports',
                 '--passin=%s' % (
                     self.environment[oenginecons.PKIEnv.STORE_PASS],
                 ),
                 '--key=%s' % (
-                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
+                    oenginecons.FileLocations.
+                    OVIRT_ENGINE_PKI_REPORTS_KEY,
                 ),
             ),
             logStreams=False,
         )
         uninstall_files.append(
-            oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY
+            oenginecons.FileLocations.
+            OVIRT_ENGINE_PKI_REPORTS_KEY
+        )
+
+        self.execute(
+            args=(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                '--name=apache',
+                '--passin=%s' % (
+                    self.environment[oenginecons.PKIEnv.STORE_PASS],
+                ),
+                '--key=%s' % (
+                    oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
+                ),
+            ),
+            logStreams=False,
+        )
+        uninstall_files.append(
+            oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY
         )
 
         if not os.path.exists(
-            oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
+            oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
         ):
             os.symlink(
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
+                oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
             )
             uninstall_files.append(
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
+                oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
             )
 
         for f in (

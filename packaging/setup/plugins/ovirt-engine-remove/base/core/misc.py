@@ -33,9 +33,6 @@ from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import dialog
 
 
-from ovirt_engine_setup.engine import constants as oenginecons
-
-
 @util.export
 class Plugin(plugin.PluginBase):
     """Engine plugin."""
@@ -121,8 +118,6 @@ class Plugin(plugin.PluginBase):
                 false=_('No'),
                 default=True,
             )
-        if self.environment[osetupcons.RemoveEnv.REMOVE_ALL]:
-            self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,

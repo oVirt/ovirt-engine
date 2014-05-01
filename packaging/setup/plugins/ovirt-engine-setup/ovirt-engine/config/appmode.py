@@ -58,11 +58,11 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
-            oenginecons.Stages.DIALOG_TITLES_E_ENGINE,
+            oengcommcons.Stages.DIALOG_TITLES_E_ENGINE,
             osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
         ),
         after=(
-            oenginecons.Stages.DIALOG_TITLES_S_ENGINE,
+            oengcommcons.Stages.DIALOG_TITLES_S_ENGINE,
         ),
         condition=lambda self: self.environment[
             oenginecons.EngineDBEnv.NEW_DATABASE
@@ -75,10 +75,10 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
-            oenginecons.Stages.DIALOG_TITLES_E_ENGINE,
+            oengcommcons.Stages.DIALOG_TITLES_E_ENGINE,
         ),
         after=(
-            oenginecons.Stages.DIALOG_TITLES_S_ENGINE,
+            oengcommcons.Stages.DIALOG_TITLES_S_ENGINE,
         ),
         condition=lambda self: (
             self._enabled and

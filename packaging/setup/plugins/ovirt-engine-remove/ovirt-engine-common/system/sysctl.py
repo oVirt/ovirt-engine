@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
 @util.export
@@ -42,20 +42,18 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        condition=lambda self: (
-            self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE]
-        ),
     )
     def _misc(self):
         if (
-            oenginecons.FileLocations.OVIRT_ENGINE_SYSCTL in
+            oengcommcons.FileLocations.OVIRT_ENGINE_SYSCTL in
             self.environment[osetupcons.RemoveEnv.FILES_TO_REMOVE]
         ):
             self.environment[
                 osetupcons.RemoveEnv.FILES_TO_REMOVE
             ].remove(
-                oenginecons.FileLocations.OVIRT_ENGINE_SYSCTL
+                oengcommcons.FileLocations.OVIRT_ENGINE_SYSCTL
             )
+            self._enabled = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
@@ -65,13 +63,11 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
         ),
-        condition=lambda self: (
-            self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE]
-        ),
+        condition=lambda self: self._enabled,
     )
     def _closeup(self):
         if os.path.exists(
-            oenginecons.FileLocations.OVIRT_ENGINE_SYSCTL
+            oengcommcons.FileLocations.OVIRT_ENGINE_SYSCTL
         ):
             self.dialog.note(
                 text=_(
@@ -81,7 +77,7 @@ class Plugin(plugin.PluginBase):
                     'If you want to restore default kernel.shmmax '
                     'value please remove the file and reboot.'
                 ).format(
-                    filename=oenginecons.FileLocations.OVIRT_ENGINE_SYSCTL,
+                    filename=oengcommcons.FileLocations.OVIRT_ENGINE_SYSCTL,
                 ),
             )
 

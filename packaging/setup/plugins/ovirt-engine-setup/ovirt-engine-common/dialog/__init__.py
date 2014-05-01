@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2014 Red Hat, Inc.
+# Copyright (C) 2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,20 +16,18 @@
 #
 
 
-"""ovirt-host-setup apache plugin."""
+"""ovirt-host-setup dialog plugin."""
 
 
 from otopi import util
 
 
-from . import engine
-from . import root
+from . import titles
 
 
 @util.export
 def createPlugins(context):
-    engine.Plugin(context=context)
-    root.Plugin(context=context)
+    titles.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

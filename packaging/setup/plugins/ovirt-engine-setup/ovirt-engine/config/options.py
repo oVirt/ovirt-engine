@@ -66,11 +66,11 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
-            oenginecons.Stages.DIALOG_TITLES_E_ENGINE,
+            oengcommcons.Stages.DIALOG_TITLES_E_ENGINE,
         ),
         after=(
             oengcommcons.Stages.DB_CONNECTION_STATUS,
-            osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
+            oengcommcons.Stages.DIALOG_TITLES_S_ENGINE,
         ),
         condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )

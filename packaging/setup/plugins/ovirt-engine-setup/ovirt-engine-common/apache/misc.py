@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ from otopi import util
 from otopi import plugin
 
 
-from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
 @util.export
@@ -42,17 +42,19 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            oenginecons.ApacheEnv.CONFIGURED,
+            oengcommcons.ApacheEnv.CONFIGURED,
             False
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
+        condition=lambda self: self.environment[
+            oengcommcons.ApacheEnv.ENABLE
+        ],
         priority=plugin.Stages.PRIORITY_LOW,
     )
     def _misc(self):
-        self.environment[oenginecons.ApacheEnv.CONFIGURED] = True
+        self.environment[oengcommcons.ApacheEnv.CONFIGURED] = True
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

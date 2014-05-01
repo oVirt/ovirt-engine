@@ -37,11 +37,57 @@ from ovirt_engine_setup.constants import osetupattrs
 
 @util.export
 class FileLocations(object):
+    SYSCONFDIR = '/etc'
     OVIRT_ENGINE_COMMON_DATADIR = config.ENGINE_COMMON_DATADIR
+    OVIRT_ENGINE_PKIDIR = config.ENGINE_PKIDIR
+    OVIRT_ENGINE_PKICERTSDIR = os.path.join(
+        OVIRT_ENGINE_PKIDIR,
+        'certs',
+    )
+    OVIRT_ENGINE_PKIKEYSDIR = os.path.join(
+        OVIRT_ENGINE_PKIDIR,
+        'keys',
+    )
 
+    DIR_HTTPD = os.path.join(
+        osetupcons.FileLocations.SYSCONFDIR,
+        'httpd',
+    )
+    HTTPD_CONF_OVIRT_ROOT = os.path.join(
+        DIR_HTTPD,
+        'conf.d',
+        'ovirt-engine-root-redirect.conf',
+    )
+    HTTPD_CONF_OVIRT_ROOT_TEMPLATE = os.path.join(
+        osetupcons.FileLocations.OVIRT_SETUP_DATADIR,
+        'conf',
+        'ovirt-engine-root-redirect.conf.in',
+    )
+    HTTPD_CONF_SSL = os.path.join(
+        DIR_HTTPD,
+        'conf.d',
+        'ssl.conf',
+    )
     JBOSS_HOME = os.path.join(
         osetupcons.FileLocations.DATADIR,
         'jboss-as',
+    )
+    OVIRT_ENGINE_SYSCTL = os.path.join(
+        SYSCONFDIR,
+        'sysctl.d',
+        'ovirt-postgresql.conf',
+    )
+    OVIRT_ENGINE_PKI_APACHE_CA_CERT = os.path.join(
+        OVIRT_ENGINE_PKIDIR,
+        'apache-ca.pem',
+    )
+    OVIRT_ENGINE_PKI_APACHE_CERT = os.path.join(
+        OVIRT_ENGINE_PKICERTSDIR,
+        'apache.cer',
+    )
+    OVIRT_ENGINE_PKI_APACHE_KEY = os.path.join(
+        OVIRT_ENGINE_PKIKEYSDIR,
+        'apache.key.nopass',
     )
 
 
@@ -104,6 +150,8 @@ class Defaults(object):
 
 @util.export
 class Stages(object):
+    APACHE_RESTART = 'osetup.apache.core.restart'
+
     CORE_ENGINE_START = 'osetup.core.engine.start'
 
     DB_CONNECTION_SETUP = 'osetup.db.connection.setup'
@@ -126,6 +174,9 @@ class Stages(object):
     DIALOG_TITLES_E_APACHE = 'osetup.dialog.titles.apache.end'
     DIALOG_TITLES_E_DATABASE = 'osetup.dialog.titles.database.end'
     DIALOG_TITLES_E_PKI = 'osetup.dialog.titles.pki.end'
+
+    DIALOG_TITLES_S_ENGINE = 'osetup.dialog.titles.engine.start'
+    DIALOG_TITLES_E_ENGINE = 'osetup.dialog.titles.engine.end'
 
     RENAME_PKI_CONF_MISC = 'osetup.rename.pki.conf.misc'
 
@@ -162,6 +213,7 @@ class ConfigEnv(object):
     JBOSS_DIRECT_HTTP_PORT = 'OVESETUP_CONFIG/jbossDirectHttpPort'
     JBOSS_DIRECT_HTTPS_PORT = 'OVESETUP_CONFIG/jbossDirectHttpsPort'
     JBOSS_DEBUG_ADDRESS = 'OVESETUP_CONFIG/jbossDebugAddress'
+    JBOSS_NEEDED = 'OVESETUP_CONFIG/jbossNeeded'
 
 
 @util.export
@@ -189,8 +241,35 @@ class ProvisioningEnv(object):
 @util.codegen
 @osetupattrsclass
 class ApacheEnv(object):
-    HTTPD_SERVICE = 'OVESETUP_APACHE/httpdService'
 
+    @osetupattrs(
+        postinstallfile=True,
+    )
+    def CONFIGURED(self):
+        return 'OVESETUP_APACHE/configured'
+
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('Set application as default page'),
+    )
+    def CONFIGURE_ROOT_REDIRECTION(self):
+        return 'OVESETUP_APACHE/configureRootRedirection'
+
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('Configure Apache SSL'),
+    )
+    def CONFIGURE_SSL(self):
+        return 'OVESETUP_APACHE/configureSsl'
+
+    CONFIGURE_ROOT_REDIRECTIOND_DEFAULT = \
+        'OVESETUP_APACHE/configureRootRedirectionDefault'
+    ENABLE = 'OVESETUP_APACHE/enable'
+    HTTPD_CONF_OVIRT_ROOT = 'OVESETUP_APACHE/configFileOvirtRoot'
+    HTTPD_CONF_SSL = 'OVESETUP_APACHE/configFileSsl'
+    HTTPD_SERVICE = 'OVESETUP_APACHE/httpdService'
     NEED_RESTART = 'OVESETUP_APACHE/needRestart'
 
 

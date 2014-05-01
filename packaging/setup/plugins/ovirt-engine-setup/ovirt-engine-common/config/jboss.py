@@ -47,10 +47,17 @@ class Plugin(plugin.PluginBase):
             oengcommcons.ConfigEnv.JBOSS_HOME,
             oengcommcons.FileLocations.JBOSS_HOME
         )
+        self.environment.setdefault(
+            oengcommcons.ConfigEnv.JBOSS_NEEDED,
+            False
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         priority=plugin.Stages.PRIORITY_FIRST,
+        condition=lambda self: self.environment[
+            oengcommcons.ConfigEnv.JBOSS_NEEDED
+        ],
     )
     def _jboss(self):
         """

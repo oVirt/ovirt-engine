@@ -46,6 +46,28 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
+        before=(
+            osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
+        )
+    )
+    def _title_s_product_options(self):
+        self._title(
+            text=_('PRODUCT OPTIONS'),
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
+        ),
+    )
+    def _title_e_product_options(self):
+        pass
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=oengcommcons.Stages.DB_OWNERS_CONNECTIONS_CUSTOMIZED,
         before=(
             oengcommcons.Stages.DIALOG_TITLES_E_DATABASE,

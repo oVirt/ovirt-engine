@@ -23,7 +23,6 @@ from otopi import util
 
 
 from . import engine
-from . import sysctl
 from . import memcheck
 from . import nfs
 from . import exportfs
@@ -33,7 +32,6 @@ from . import selinux
 @util.export
 def createPlugins(context):
     engine.Plugin(context=context)
-    sysctl.Plugin(context=context)
     memcheck.Plugin(context=context)
     nfs.Plugin(context=context)
     exportfs.Plugin(context=context)

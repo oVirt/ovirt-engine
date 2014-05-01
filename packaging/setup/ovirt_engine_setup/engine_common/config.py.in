@@ -19,6 +19,7 @@
 """Engine Config."""
 
 ENGINE_COMMON_DATADIR = '@ENGINE_COMMON_USR@'
+ENGINE_PKIDIR = '@ENGINE_PKI@'
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

@@ -175,7 +175,7 @@ class Plugin(plugin.PluginBase):
         self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
             {
                 'name': 'ovirt-postgres',
-                'directory': 'ovirt-engine'
+                'directory': 'ovirt-common'
             },
         ])
 

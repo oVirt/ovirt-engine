@@ -32,8 +32,7 @@ from otopi import plugin
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
-from ovirt_engine_setup.engine_common \
-    import constants as oengcommcons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup import config as osetupconfig
 from ovirt_engine_setup.engine import vdcoption
 
@@ -188,7 +187,7 @@ class Plugin(plugin.PluginBase):
             oenginecons.Stages.AIO_CONFIG_STORAGE,
             oenginecons.Stages.AIO_CONFIG_SSH,
             oengcommcons.Stages.CORE_ENGINE_START,
-            osetupcons.Stages.APACHE_RESTART,
+            oengcommcons.Stages.APACHE_RESTART,
         ),
     )
     def _closeup(self):

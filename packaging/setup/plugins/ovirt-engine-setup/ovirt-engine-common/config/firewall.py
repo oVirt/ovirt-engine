@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2014 Red Hat, Inc.
+# Copyright (C) 2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -52,24 +52,24 @@ class Plugin(plugin.PluginBase):
         self.environment[
             osetupcons.NetEnv.FIREWALLD_SUBST
         ].update({
-            '@JBOSS_HTTP_PORT@': self.environment[
-                oengcommcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
+            '@HTTP_PORT@': self.environment[
+                oengcommcons.ConfigEnv.PUBLIC_HTTP_PORT
             ],
-            '@JBOSS_HTTPS_PORT@': self.environment[
-                oengcommcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT
+            '@HTTPS_PORT@': self.environment[
+                oengcommcons.ConfigEnv.PUBLIC_HTTPS_PORT
             ],
         })
         if self.environment[
-            oengcommcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
+            oengcommcons.ConfigEnv.JBOSS_AJP_PORT
         ] is not None:
             self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
                 {
-                    'name': 'ovirt-jboss-http',
-                    'directory': 'ovirt-engine'
+                    'name': 'ovirt-http',
+                    'directory': 'ovirt-common'
                 },
                 {
-                    'name': 'ovirt-jboss-https',
-                    'directory': 'ovirt-engine'
+                    'name': 'ovirt-https',
+                    'directory': 'ovirt-common'
                 },
             ])
 
