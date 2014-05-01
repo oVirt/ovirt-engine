@@ -3,10 +3,13 @@ package org.ovirt.engine.core.branding;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -300,28 +303,21 @@ public class BrandingTheme {
      */
     private String readWelcomeTemplateFile(final String fileName) throws IOException {
         StringBuilder templateBuilder = new StringBuilder();
-        BufferedReader bufferedReader = null;
 
-        try {
+        try (
+            InputStream in = new FileInputStream(fileName);
+            Reader reader = new InputStreamReader(in, Charset.forName("UTF-8"));
+            BufferedReader bufferedReader= new BufferedReader(reader);
+        ){
             String currentLine;
-            bufferedReader = new BufferedReader(new FileReader(fileName));
-
             while ((currentLine = bufferedReader.readLine()) != null) {
                 if (!currentLine.startsWith("#")) { // # is comment.
                     templateBuilder.append(currentLine);
                     templateBuilder.append("\n"); //$NON-NLS-1$
                 }
             }
-        } finally {
-            try {
-                if (bufferedReader != null) {
-                    bufferedReader.close();
-                }
-            } catch (IOException ex) {
-                log.error("Unable to close file reader", ex); //$NON-NLS-1$
-                // We have read the entire file, just can't close the reader, return the data.
-            }
         }
+
         return templateBuilder.toString();
     }
 
