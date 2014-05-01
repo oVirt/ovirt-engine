@@ -1009,11 +1009,11 @@ public class VdsBrokerObjectsBuilder {
 
         addHostNetworkInterfaces(vds, xmlRpcStruct);
 
-        Map<String, Integer> currVlans = addHostVlanDevices(vds, xmlRpcStruct);
+        addHostVlanDevices(vds, xmlRpcStruct);
 
         addHostBondDevices(vds, xmlRpcStruct);
 
-        addHostNetworksAndUpdateInterfaces(vds, xmlRpcStruct, currVlans);
+        addHostNetworksAndUpdateInterfaces(vds, xmlRpcStruct);
 
         // set bonding options
         setBondingOptions(vds, oldInterfaces);
@@ -1025,10 +1025,7 @@ public class VdsBrokerObjectsBuilder {
     }
 
     private static void addHostNetworksAndUpdateInterfaces(VDS vds,
-            Map<String, Object> xmlRpcStruct,
-            Map<String, Integer> currVlans) {
-
-        Map<String, Integer> networkVlans = new HashMap<String, Integer>();
+            Map<String, Object> xmlRpcStruct) {
 
         // Networks collection (name point to list of nics or bonds)
         Map<String, Object> networks = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NETWORKS);
@@ -1044,8 +1041,6 @@ public class VdsBrokerObjectsBuilder {
 
                     for (VdsNetworkInterface iface : interfaces) {
                         updateNetworkDetailsInInterface(iface,
-                                currVlans,
-                                networkVlans,
                                 network,
                                 vds,
                                 net);
@@ -1187,12 +1182,8 @@ public class VdsBrokerObjectsBuilder {
      *            The host to update
      * @param xmlRpcStruct
      *            a map contains pairs of vlan device name and vlan data
-     * @return a map of the added vlan device names and their vlan tag
      */
-    private static Map<String, Integer> addHostVlanDevices(VDS vds, Map<String, Object> xmlRpcStruct) {
-        // interface to vlan map
-        Map<String, Integer> currVlans = new HashMap<String, Integer>();
-
+    private static void addHostVlanDevices(VDS vds, Map<String, Object> xmlRpcStruct) {
         // vlans
         Map<String, Object> vlans = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NETWORK_VLANS);
         if (vlans != null) {
@@ -1219,8 +1210,6 @@ public class VdsBrokerObjectsBuilder {
                     iface.setBaseInterface(names[0]);
                 }
 
-                currVlans.put(vlanDeviceName, iface.getVlanId());
-
                 iface.setAddress((String) vlan.get("addr"));
                 iface.setSubnet((String) vlan.get("netmask"));
                 if (StringUtils.isNotBlank((String) vlan.get(VdsProperties.MTU))) {
@@ -1232,7 +1221,6 @@ public class VdsBrokerObjectsBuilder {
                 vds.getInterfaces().add(iface);
             }
         }
-        return currVlans;
     }
 
     /**
@@ -1297,28 +1285,18 @@ public class VdsBrokerObjectsBuilder {
      *
      * @param iface
      *            The interface to update.
-     * @param currVlans
-     *            Used for checking the VLANs later.
-     * @param networkVlans
-     *            Used for checking the VLANs later.
      * @param network
      *            Network struct to get details from.
      * @param net
      *            Network to get details from.
      */
     private static void updateNetworkDetailsInInterface(VdsNetworkInterface iface,
-            Map<String, Integer> currVlans,
-            Map<String, Integer> networkVlans,
             Map<String, Object> network,
             VDS host,
             Network net) {
 
         if (iface != null) {
             iface.setNetworkName(net.getName());
-
-            if (currVlans.containsKey(iface.getName())) {
-                networkVlans.put(net.getName(), currVlans.get(iface.getName()));
-            }
 
             // set the management ip
             if (StringUtils.equals(iface.getNetworkName(), NetworkUtils.getEngineNetwork())) {
