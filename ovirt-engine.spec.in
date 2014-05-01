@@ -613,11 +613,9 @@ done << __EOF__
 %{engine_restapi_war}/WEB-INF/lib/restapi-types.jar
 __EOF__
 
-# needed for compatibility if package is different than the directory structure
-# as we must install poms/files at %{name} we must set it to be the real path
+# Needed for compatibility if package is different than the directory structure
 %if "%{name}" != "%{engine_name}"
-mv "%{buildroot}%{engine_java}" "%{buildroot}%{engine_java}/../%{name}"
-ln -s "%{name}" "%{buildroot}%{engine_java}"
+ln -s "%{engine_name}" "%{buildroot}%{engine_java}/../%{name}"
 %endif
 
 #
@@ -661,6 +659,10 @@ restapi %{name}-restapi-parent.pom
 restapi %{name}-restapi-types.pom
 tools %{name}-tools.pom
 __EOF__
+
+%if "%{name}" != "%{engine_name}"
+sed -i 's#%{_javadir}/%{name}#%{engine_java}#' .mfiles*
+%endif
 
 %if !%{ovirt_install_poms}
 rm -fr "%{buildroot}%{_mavenpomdir}"
@@ -832,7 +834,7 @@ fi
 # than the directory structure
 #
 %if "%{name}" != "%{engine_name}"
-%{_javadir}/%{engine_name}
+%{_javadir}/%{name}
 %endif
 
 %files extensions-api-impl -f .mfiles-extensions-api
