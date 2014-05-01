@@ -79,8 +79,9 @@ public class Base {
          * Jboss module binding method.
          * Use Jboss module loading method and Java bindings.
          * <pre>
+         * {@code
+         * package extension1;
          * public class MyExtension implements Extension {
-         *     {@code
          *     private void doInit(ExtMap input, ExtMap output) {
          *         input.<ExtMap> get(Base.InvokeKeys.CONTEXT).mput(
          *             Base.ContextKeys.AUTHOR,
@@ -120,6 +121,26 @@ public class Base {
          *         }
          *     }
          * }
+         * }</pre>
+         * To publish the extension within the module, the
+         * <i>META-INF/services/org.ovirt.engine.api.extensions.Extension</i> resource with
+         * list of implementations must be added to module jar. For example:
+         * <pre>
+         * {@code
+         * extension1.MyExtension
+         * }</pre>
+         * Example of module.xml:
+         * <pre>
+         * {@code
+         * <?xml version="1.0" encoding="UTF-8"?>
+         * <module xmlns="urn:jboss:module:1.1" name="extension1">
+         *     <resources>
+         *         <resource-root path="extension1.jar"/>
+         *     </resources>
+         *     <dependencies>
+         *         <module name="org.ovirt.engine.api.ovirt-engine-extensions-api"/>
+         *     </dependencies>
+         * </module>
          * }</pre>
          */
         public static final String JBOSSMODULE = "jbossmodule";
