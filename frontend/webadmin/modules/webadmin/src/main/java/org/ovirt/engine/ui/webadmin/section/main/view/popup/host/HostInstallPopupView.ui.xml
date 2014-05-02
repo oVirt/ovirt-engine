@@ -56,9 +56,9 @@
 
     <d:SimpleDialogPanel width="700px" height="400px">
         <d:content>
-            <t:DialogTabPanel height="100%">
+            <t:DialogTabPanel ui:field="tabPanel" height="100%">
                 <t:tab>
-                    <t:DialogTab label="{constants.hostPopupGeneralTabLabel}">
+                    <t:DialogTab ui:field="hostPopupGeneralTab" label="{constants.hostPopupGeneralTabLabel}">
                         <t:content>
                             <g:VerticalPanel width="100%" addStyleNames="{style.content}">
                                 <g:Label ui:field="authLabel" addStyleNames="{style.headerAuthLabel}"/>

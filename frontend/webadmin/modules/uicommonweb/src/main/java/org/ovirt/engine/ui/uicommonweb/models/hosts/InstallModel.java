@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.HostNetworkProviderModel
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class InstallModel extends Model {
@@ -120,6 +121,16 @@ public class InstallModel extends Model {
         return vds;
     }
 
+    private EntityModel<Boolean> validationFailed;
+
+    public EntityModel<Boolean> getValidationFailed() {
+        return validationFailed;
+    }
+
+    public void setValidationFailed(EntityModel<Boolean> value) {
+        validationFailed = value;
+        onPropertyChanged(new PropertyChangedEventArgs("ValidationFailed")); //$NON-NLS-1$
+    }
 
     public InstallModel() {
         setUserPassword(new EntityModel<String>());
@@ -134,6 +145,7 @@ public class InstallModel extends Model {
         getUserName().setIsChangable(false);
         setPublicKey(new EntityModel<String>());
         getPublicKey().setEntity(constants.empty());
+        setValidationFailed(new EntityModel<Boolean>());
         fetchPublicKey();
 
         setNetworkProviderModel(new HostNetworkProviderModel());

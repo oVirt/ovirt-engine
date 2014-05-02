@@ -1323,6 +1323,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         final VDS host = (VDS) getSelectedItem();
         InstallModel model = (InstallModel) getWindow();
+        final boolean isOVirt = host.getVdsType() == VDSType.oVirtNode;
+
+        if (!model.validate(isOVirt)) {
+            model.setValidationFailed(new EntityModel<Boolean>(true));
+            return;
+        }
 
         UpdateVdsActionParameters param = new UpdateVdsActionParameters();
         param.setvds(host);

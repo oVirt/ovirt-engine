@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
@@ -17,6 +18,10 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.InstallModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
@@ -105,6 +110,14 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
 
     @UiField
     @Ignore
+    DialogTabPanel tabPanel;
+
+    @UiField
+    @Ignore
+    DialogTab hostPopupGeneralTab;
+
+    @UiField
+    @Ignore
     DialogTab networkProviderTab;
 
     private final Driver driver = GWT.create(Driver.class);
@@ -152,7 +165,19 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @Override
     public void edit(final InstallModel model) {
         driver.edit(model);
+        model.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                InstallModel installModel = (InstallModel) sender;
 
+                if ("ValidationFailed".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+                    if (installModel.getValidationFailed().getEntity() != null &&
+                            installModel.getValidationFailed().getEntity()) {
+                        tabPanel.switchTab(hostPopupGeneralTab);
+                    }
+                }
+            }
+        });
         boolean installedFailed = model.getVds().getStatus() == VDSStatus.InstallFailed;
         model.setAuthenticationMethod(installedFailed ? AuthenticationMethod.Password: AuthenticationMethod.PublicKey);
         displayPasswordField(installedFailed);
