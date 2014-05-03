@@ -42,6 +42,10 @@
 			margin: 2px;
 			height: 16px;
 		}
+
+        .tabWrapper {
+            outline: none;
+        }
 	</ui:style>
 	
 	<g:FlowPanel>
@@ -51,14 +55,14 @@
 		</g:VerticalPanel>
 		<t:DialogTabPanel ui:field="dialogTabPanel" height="340px" width="100%" addStyleNames="{style.tabPanel}">
 			<t:tab>
-				<t:DialogTab ui:field="targetsToLunTab">
+				<t:DialogTab ui:field="targetsToLunTab" addStyleNames="{style.tabWrapper}">
 					<t:content>
 					    <w:ValidatedPanelWidget ui:field="targetsToLunsPanel" addStyleNames="{style.tabContentPanel}" />
 					</t:content>
 				</t:DialogTab>
 			</t:tab>
 			<t:tab>
-				<t:DialogTab ui:field="lunToTargetsTab">
+				<t:DialogTab ui:field="lunToTargetsTab" addStyleNames="{style.tabWrapper}">
 					<t:content>
 					    <w:ValidatedPanelWidget ui:field="lunsListPanel" addStyleNames="{style.tabContentPanel}" />
 					</t:content>
