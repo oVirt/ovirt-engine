@@ -22,6 +22,7 @@ import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
+import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
 import org.ovirt.engine.core.bll.provider.ExternalTrustStoreInitializer;
 import org.ovirt.engine.core.bll.scheduling.MigrationHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
@@ -112,6 +113,10 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         SchedulingManager.getInstance().init();
 
         new DwhHeartBeat().init();
+
+        // Initialize Power Management Health Check
+        PmHealthCheckManager.getInstance().initialize();
+
     }
 
     private void createInternalAAAConfigurations() {

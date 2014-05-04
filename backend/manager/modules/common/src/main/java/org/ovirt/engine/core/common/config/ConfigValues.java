@@ -1715,5 +1715,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("0")
     UserSessionHardLimit,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    PMHealthCheckEnabled,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("3600")
+    PMHealthCheckIntervalInSec,
+
     Invalid
 }

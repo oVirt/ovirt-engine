@@ -447,6 +447,9 @@ select fn_db_add_config_value('oVirtUploadPath','/data/updates/ovirt-node-image.
 select fn_db_add_config_value('OvfUpdateIntervalInMinutes','60','general');
 select fn_db_add_config_value('OvfItemsCountPerUpdate','100','general');
 select fn_db_add_config_value('PayloadSize','8192','general');
+-- Power management health check
+select fn_db_add_config_value('PMHealthCheckEnabled','false','general');
+select fn_db_add_config_value('PMHealthCheckIntervalInSec','3600','general');
 select fn_db_add_config_value('PosixStorageEnabled','false','3.0');
 select fn_db_add_config_value('PostgresI18NPrefix','','general');
 select fn_db_add_config_value('PostgresLikeSyntax','ILIKE','general');

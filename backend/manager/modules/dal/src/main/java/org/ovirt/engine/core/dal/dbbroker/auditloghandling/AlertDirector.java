@@ -25,6 +25,16 @@ public final class AlertDirector {
     }
 
     /**
+     * Adds an alert
+     * @param vdsId
+     * @param type
+     */
+    public static void AddVdsAlert(Guid vdsId, AuditLogType type) {
+        AuditLogableBase alert = new AuditLogableBase();
+        alert.setVdsId(vdsId);
+        AlertDirector.Alert(alert, type);
+    }
+    /**
      * Removes the alert.
      *
      * @param vdsId
