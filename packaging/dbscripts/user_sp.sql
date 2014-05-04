@@ -60,7 +60,8 @@ BEGIN
       username = v_username,
       last_admin_check_status = v_last_admin_check_status,
       group_ids = v_group_ids,
-      external_id = v_external_id
+      external_id = v_external_id,
+      _update_date = CURRENT_TIMESTAMP
       WHERE user_id = v_user_id;
 END; $procedure$
 LANGUAGE plpgsql;

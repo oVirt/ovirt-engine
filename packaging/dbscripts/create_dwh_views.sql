@@ -239,8 +239,7 @@ SELECT     	a.vm_guid AS vm_id,
 			a.time_zone,
 			c.vm_pool_id,
 			d.vm_pool_name,
-			a.created_by_user_id,
-            e.username as created_by_user_name,
+			e.user_id AS created_by_user_id,
 			a._create_date AS create_date,
             a._update_date AS update_date
 FROM        vm_static as a
@@ -275,7 +274,7 @@ SELECT
 	b.vm_ip,
 	b.vm_fqdn,
 	b.client_ip as vm_client_ip,
-	b.console_cur_user_name as current_user_name,
+	b.console_user_id as current_user_id,
 	CASE
 		WHEN b.guest_cur_user_name IS NULL THEN FALSE
 		ELSE TRUE
@@ -513,4 +512,19 @@ WHERE     (_create_date >(SELECT     var_datetime as var_datetime
 						  FROM       dwh_history_timekeeping AS history_timekeeping_1
 						  WHERE      (var_name = 'lastSync')));
 
-
+CREATE OR REPLACE VIEW dwh_users_history_view
+AS
+SELECT
+    user_id,
+    name AS first_name,
+    surname AS last_name,
+    domain,
+    username,
+    department,
+    role AS user_role_title,
+    email,
+    external_id,
+    active,
+    _create_date AS create_date,
+    _update_date AS update_date
+FROM users;
