@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -21,7 +27,7 @@ import org.ovirt.engine.core.vdsbroker.SetNumberOfCpusVDSCommand;
  * The execute will never throw an exception. it will rather wrap a return value in case of failure.
  */
 @NonTransactiveCommandAttribute
-public class HotSetNumberOfCpusCommand<T extends HotSetNumerOfCpusParameters> extends VmManagementCommandBase<T> {
+public class HotSetNumberOfCpusCommand<T extends HotSetNumerOfCpusParameters> extends VmManagementCommandBase<T> implements QuotaVdsDependent {
 
     public static final String LOGABLE_FIELD_NUMBER_OF_CPUS = "numberOfCpus";
     public static final String LOGABLE_FIELD_ERROR_MESSAGE = "ErrorMessage";
@@ -97,5 +103,36 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumerOfCpusParameters> ex
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
         addCanDoActionMessage(String.format("$clusterVersion %1$s", getVm().getVdsGroupCompatibilityVersion() ));
         addCanDoActionMessage(String.format("$architecture %1$s", getVm().getClusterArch()));
+    }
+
+    @Override
+    public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
+
+        // Calculate the change in CPU consumption, result above Zero means we add CPUs to
+        // the VM
+        // result bellow Zero means we subtracted CPUs from the VM
+        int cpuToConsume =
+                getParameters().getVm().getNumOfCpus() - getVm().getNumOfCpus();
+
+        if (cpuToConsume > 0) {
+            // Consume CPU quota
+            list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
+                    null,
+                    QuotaConsumptionParameter.QuotaAction.CONSUME,
+                    getVm().getVdsGroupId(),
+                    getVm().getCpuPerSocket() * cpuToConsume,
+                    0));
+
+        } else if (cpuToConsume < 0) {
+            // Release CPU quota
+            list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
+                    null,
+                    QuotaConsumptionParameter.QuotaAction.RELEASE,
+                    getVm().getVdsGroupId(),
+                    getVm().getCpuPerSocket() * Math.abs(cpuToConsume),
+                    0));
+        }
+        return list;
     }
 }
