@@ -763,7 +763,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private boolean internalValidateAndSetQuota() {
         // Quota accounting is done only in the most external Command.
-        if (isInternalExecution() || !isQuotaDependant()) {
+        if (!isQuotaDependant()) {
             return true;
         }
 
@@ -795,7 +795,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected boolean isQuotaDependant() {
-        return getActionType().getQuotaDependency() != VdcActionType.QuotaDependency.NONE;
+        boolean result;
+        if (getActionType().getQuotaDependency() == VdcActionType.QuotaDependency.NONE)
+            result = false;
+        else if (!isInternalExecution())
+            result = true;
+        else if (getActionType().isQuotaDependentAsInternalCommand())
+            result = true;
+        else
+            result = false;
+
+        return result;
     }
 
     /**

@@ -351,6 +351,7 @@ public enum VdcActionType {
     private boolean isActionMonitored;
     private static final HashMap<Integer, VdcActionType> mappings = new HashMap<Integer, VdcActionType>();
     private QuotaDependency quotaDependency;
+    private boolean quotaDependentAsInternalCommand = false;
 
     static {
         for (VdcActionType action : values()) {
@@ -377,6 +378,14 @@ public enum VdcActionType {
         this.quotaDependency = quotaDependency;
     }
 
+    private VdcActionType(int value,
+            ActionGroup actionGroupValue,
+            boolean isActionMonitored,
+            QuotaDependency quotaDependency,
+            boolean quotaDependentAsInternalCommand) {
+        this(value, actionGroupValue, isActionMonitored, quotaDependency);
+        this.quotaDependentAsInternalCommand = quotaDependentAsInternalCommand;
+    }
 
 
     public int getValue() {
@@ -397,6 +406,10 @@ public enum VdcActionType {
 
     public QuotaDependency getQuotaDependency() {
         return quotaDependency;
+    }
+
+    public boolean isQuotaDependentAsInternalCommand() {
+        return quotaDependentAsInternalCommand;
     }
 
     /**
