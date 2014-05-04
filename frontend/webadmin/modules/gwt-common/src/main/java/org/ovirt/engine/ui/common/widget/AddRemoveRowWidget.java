@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Clear;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -26,6 +27,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -232,6 +234,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     private class AddRemoveRowPanel extends FlowPanel {
 
         private List<PushButton> buttons = new LinkedList<PushButton>();
+        private SimplePanel div = new SimplePanel();
 
         public AddRemoveRowPanel(Widget widget, PushButton... buttons) {
             append(widget);
@@ -240,6 +243,8 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
                 append(button);
                 this.buttons.add(button);
             }
+            div.getElement().getStyle().setClear(Clear.BOTH);
+            add(div);
         }
 
         private void append(Widget widget) {
