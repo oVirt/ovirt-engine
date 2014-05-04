@@ -6,10 +6,10 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.ovirt.engine.core.common.utils.customprop.PropertiesUtilsTestHelper.validateFailure;
+import static org.ovirt.engine.core.common.utils.customprop.PropertiesUtilsTestHelper.validatePropertyMap;
+import static org.ovirt.engine.core.common.utils.customprop.PropertiesUtilsTestHelper.validatePropertyValue;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
-import static org.ovirt.engine.core.utils.customprop.PropertiesUtilsTestHelper.validateFailure;
-import static org.ovirt.engine.core.utils.customprop.PropertiesUtilsTestHelper.validatePropertyMap;
-import static org.ovirt.engine.core.utils.customprop.PropertiesUtilsTestHelper.validatePropertyValue;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,9 +23,11 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.customprop.ValidationError;
+import org.ovirt.engine.core.common.utils.customprop.ValidationFailureReason;
+import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils.customprop;
+package org.ovirt.engine.core.common.utils.customprop;
 
 /**
  * Class describing errors appear during custom properties validation

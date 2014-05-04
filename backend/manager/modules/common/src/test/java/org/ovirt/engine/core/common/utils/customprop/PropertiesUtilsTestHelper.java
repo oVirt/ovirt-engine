@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils.customprop;
+package org.ovirt.engine.core.common.utils.customprop;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

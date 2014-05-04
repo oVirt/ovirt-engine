@@ -1,10 +1,10 @@
-package org.ovirt.engine.core.utils.customprop;
+package org.ovirt.engine.core.common.utils.customprop;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.ovirt.engine.core.utils.customprop.PropertiesUtilsTestHelper.validatePropertyMap;
-import static org.ovirt.engine.core.utils.customprop.PropertiesUtilsTestHelper.validatePropertyValue;
+import static org.ovirt.engine.core.common.utils.customprop.PropertiesUtilsTestHelper.validatePropertyMap;
+import static org.ovirt.engine.core.common.utils.customprop.PropertiesUtilsTestHelper.validatePropertyValue;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

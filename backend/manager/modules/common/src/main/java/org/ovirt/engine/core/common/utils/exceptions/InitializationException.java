@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils.exceptions;
+package org.ovirt.engine.core.common.utils.exceptions;
 
 /**
  * Exception marking failure in initialization flow

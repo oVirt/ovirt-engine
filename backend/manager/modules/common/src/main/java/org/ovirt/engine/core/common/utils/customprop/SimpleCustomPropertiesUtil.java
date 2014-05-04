@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils.customprop;
+package org.ovirt.engine.core.common.utils.customprop;
 
 public class SimpleCustomPropertiesUtil extends CustomPropertiesUtils {
 

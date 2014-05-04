@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils.customprop;
+package org.ovirt.engine.core.common.utils.customprop;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +72,7 @@ public class CustomPropertiesUtils {
     /**
      * Constructor has package access to enable testing, but class cannot be instantiated outside package
      */
-    CustomPropertiesUtils() {
+    protected CustomPropertiesUtils() {
         invalidSyntaxValidationError = Arrays.asList(new ValidationError(ValidationFailureReason.SYNTAX_ERROR, ""));
     }
 

@@ -48,15 +48,15 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.utils.customprop.ValidationError;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils.VMCustomProperties;
 import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.utils.customprop.ValidationError;
-import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
-import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils.VMCustomProperties;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 

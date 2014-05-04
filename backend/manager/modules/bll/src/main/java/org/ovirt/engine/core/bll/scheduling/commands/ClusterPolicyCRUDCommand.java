@@ -14,9 +14,9 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
+import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.customprop.SimpleCustomPropertiesUtil;
-import org.ovirt.engine.core.utils.customprop.ValidationError;
 
 public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicyCRUDParameters> {
     private ClusterPolicy clusterPolicy;

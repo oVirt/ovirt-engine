@@ -14,10 +14,10 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
+import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
+import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.utils.customprop.SimpleCustomPropertiesUtil;
-import org.ovirt.engine.core.utils.customprop.ValidationError;
 
 public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationParameters> extends
         VdsGroupCommandBase<T> {

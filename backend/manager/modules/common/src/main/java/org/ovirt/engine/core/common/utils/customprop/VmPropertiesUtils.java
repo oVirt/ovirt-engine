@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils.customprop;
+package org.ovirt.engine.core.common.utils.customprop;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,9 +9,9 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.exceptions.InitializationException;
 
 /**
  * Helper methods to help parse and validate custom VM (predefined and user defined) properties. These methods are used

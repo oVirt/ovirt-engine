@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.config.entity.helper;
 
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.config.entity.ConfigKey;
-import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 
 /**
  * Validates user defined VM properties definition entered through engine-config tool

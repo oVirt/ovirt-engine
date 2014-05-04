@@ -17,8 +17,11 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.customprop.CustomPropertiesUtils;
+import org.ovirt.engine.core.common.utils.customprop.ValidationError;
+import org.ovirt.engine.core.common.utils.customprop.ValidationFailureReason;
+import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.exceptions.InitializationException;
 
 /**
  * A class providing helper methods to work with device custom properties

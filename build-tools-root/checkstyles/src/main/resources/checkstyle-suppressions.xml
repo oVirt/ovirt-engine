@@ -21,4 +21,6 @@
          field serializers to overcome the GWT serialization limitations. All
          in all they don't need to have a no args constructor: -->
     <suppress checks="checks.NoArgConstructorCheck" files="org[\\/]ovirt[\\/]engine[\\/]core[\\/]aaa[\\/].*"/>
+    <!-- The customprop package only includes common logic, nothing to serialize -->
+    <suppress checks="checks.NoArgConstructorCheck" files="org[\\/]ovirt[\\/]engine[\\/]core[\\/]common[\\/]utils[\\/]customprop[\\/].*"/>
 </suppressions>
