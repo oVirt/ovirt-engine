@@ -371,7 +371,7 @@ public class HostSetupNetworksModel extends EntityModel {
              *****************/
             final LogicalNetworkModel logicalNetwork = (LogicalNetworkModel) item;
             final VdsNetworkInterface entity =
-                    logicalNetwork.hasVlan() ? logicalNetwork.getVlanNic().getEntity()
+                    logicalNetwork.hasVlan() ? logicalNetwork.getVlanNicModel().getEntity()
                             : logicalNetwork.getAttachedToNic().getEntity();
 
             final HostInterfaceModel networkDialogModel;
@@ -671,10 +671,9 @@ public class HostSetupNetworksModel extends EntityModel {
             final String nicName = nic.getName();
             final String networkName = nic.getNetworkName();
             final String bondName = nic.getBondName();
-            final Integer vlanId = nic.getVlanId();
-            final int dotpos = nicName.indexOf('.');
+            final boolean isVlan = nic.getVlanId() != null;
 
-            if (vlanId == null) { // physical interface (rather than virtual VLAN interface)
+            if (!isVlan) { // physical interface (rather than virtual VLAN interface)
                 physicalNics.add(nic);
             }
 
@@ -691,8 +690,8 @@ public class HostSetupNetworksModel extends EntityModel {
 
             // bridge name is either <nic>, <nic.vlanid> or <bond.vlanid>
             String ifName;
-            if (dotpos > 0) {
-                ifName = nicName.substring(0, dotpos);
+            if (isVlan) {
+                ifName = nic.getBaseInterface();
             } else {
                 ifName = nicName;
             }
@@ -724,11 +723,12 @@ public class HostSetupNetworksModel extends EntityModel {
 
                 Collection<LogicalNetworkModel> nicNetworks = new ArrayList<LogicalNetworkModel>();
                 nicNetworks.add(networkModel);
-                // set iface bridge to network
-                NetworkInterfaceModel existingEridge = networkModel.getVlanNic();
-                assert existingEridge == null : "should have only one bridge, but found " + existingEridge; //$NON-NLS-1$
-                networkModel.setBridge(new NetworkInterfaceModel(nic, nicNetworks, null, this));
-
+                // set vlan device on the network
+                if (networkModel.hasVlan()) {
+                    NetworkInterfaceModel existingEridge = networkModel.getVlanNicModel();
+                    assert existingEridge == null : "should have only one bridge, but found " + existingEridge; //$NON-NLS-1$
+                    networkModel.setVlanNicModel(new NetworkInterfaceModel(nic, nicNetworks, null, this));
+                }
                 nicToNetwork.get(ifName).add(networkModel);
 
                 if (!networkModel.isInSync() && networkModel.isManaged()) {

@@ -121,10 +121,13 @@ public enum NetworkOperation {
                     VdsNetworkInterface vlanBridge = networkToAttach.attach(targetNic, true);
                     if (vlanBridge != null) {
                         Iterator<VdsNetworkInterface> i = allNics.iterator();
-                        // If a vlan device with the same name as the new one already exists- remove it
+                        // If a vlan device with the same vlan id as the new one already exists- remove it
                         while (i.hasNext()) {
                             VdsNetworkInterface nic = i.next();
-                            if (nic.getName().equals(vlanBridge.getName())) {
+                            if (vlanBridge.getVlanId().equals(nic.getVlanId())) {
+                                if (vlanBridge.getBaseInterface().equals(nic.getBaseInterface())) {
+                                    vlanBridge.setName(nic.getName());
+                                }
                                 i.remove();
                                 break;
                             }
@@ -509,10 +512,9 @@ public enum NetworkOperation {
 
     private static void detachNetwork(List<VdsNetworkInterface> allNics,
             LogicalNetworkModel networkToDetach) {
-        // get the bridge and remove it
-        NetworkInterfaceModel bridge = networkToDetach.getVlanNic();
-        if (bridge.getName().indexOf('.') > 0) {
-            allNics.remove(bridge.getEntity());
+        // remove the vlan device
+        if (networkToDetach.hasVlan()) {
+            allNics.remove(networkToDetach.getVlanNicModel().getEntity());
         }
         networkToDetach.detach();
     }

@@ -516,7 +516,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     }
                 }
             } else if (nic instanceof Vlan) {
-                String nameWithoutVlan = nic.getName().substring(0, nic.getName().lastIndexOf('.'));
+                String nameWithoutVlan = nic.getBaseInterface();
                 if (nicToVlans.containsKey(nameWithoutVlan)) {
                     nicToVlans.get(nameWithoutVlan).add((Vlan) nic);
                 } else {

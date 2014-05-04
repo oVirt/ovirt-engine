@@ -22,7 +22,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
     private boolean attachedViaLabel;
     private String errorMessage;
     private NetworkInterfaceModel attachedToNic;
-    private NetworkInterfaceModel vlanNic;
+    private NetworkInterfaceModel vlanNicModel;
 
     public LogicalNetworkModel(HostSetupNetworksModel setupModel) {
         super(setupModel);
@@ -80,6 +80,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             VdsNetworkInterface bridge = new VdsNetworkInterface();
             bridge.setName(targetNic.getName() + "." + getVlanId()); //$NON-NLS-1$
             bridge.setNetworkName(getName());
+            bridge.setBaseInterface(targetNic.getName());
             bridge.setVlanId(getVlanId());
             bridge.setMtu(getEntity().getMtu());
             bridge.setVdsId(targetNicEntity.getVdsId());
@@ -131,10 +132,10 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             netParams.setSubnet(nicEntity.getSubnet());
             netParams.setGateway(nicEntity.getGateway());
         } else {
-            netParams.setBootProtocol(vlanNic.getEntity().getBootProtocol());
-            netParams.setAddress(vlanNic.getEntity().getAddress());
-            netParams.setSubnet(vlanNic.getEntity().getSubnet());
-            netParams.setGateway(vlanNic.getEntity().getGateway());
+            netParams.setBootProtocol(vlanNicModel.getEntity().getBootProtocol());
+            netParams.setAddress(vlanNicModel.getEntity().getAddress());
+            netParams.setSubnet(vlanNicModel.getEntity().getSubnet());
+            netParams.setGateway(vlanNicModel.getEntity().getGateway());
         }
 
         getSetupModel().getNetworkToLastDetachParams().put(getName(), netParams);
@@ -147,7 +148,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             nicEntity.setGateway(null);
             nicEntity.setNetworkImplementationDetails(null);
         }
-        setBridge(null);
+        setVlanNicModel(null);
         // is this a management nic?
         if (nicEntity.getIsManagement()) {
             nicEntity.setType(0);
@@ -174,8 +175,8 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         return attachedToNic;
     }
 
-    public NetworkInterfaceModel getVlanNic() {
-        return vlanNic;
+    public NetworkInterfaceModel getVlanNicModel() {
+        return vlanNicModel;
     }
 
     @Override
@@ -230,8 +231,8 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         return selected;
     }
 
-    public void setBridge(NetworkInterfaceModel bridge) {
-        this.vlanNic = bridge;
+    public void setVlanNicModel(NetworkInterfaceModel vlanNicmodel) {
+        this.vlanNicModel = vlanNicmodel;
     }
 
     public void setManagement(boolean management) {
@@ -257,7 +258,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             return null;
         }
 
-        VdsNetworkInterface nic = hasVlan() ? getVlanNic().getEntity() : getAttachedToNic().getEntity();
+        VdsNetworkInterface nic = hasVlan() ? getVlanNicModel().getEntity() : getAttachedToNic().getEntity();
         return nic.getNetworkImplementationDetails();
     }
 
