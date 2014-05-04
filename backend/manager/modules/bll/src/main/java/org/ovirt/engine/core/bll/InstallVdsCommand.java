@@ -182,7 +182,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 if (provider.getType() == ProviderType.OPENSTACK_NETWORK) {
                     OpenstackNetworkProviderProperties agentProperties =
                             (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
-                    if (parameters.getNetworkMappings() != null) {
+                    if (StringUtils.isNotBlank(parameters.getNetworkMappings())) {
                         agentProperties.getAgentConfiguration().setNetworkMappings(
                             parameters.getNetworkMappings()
                         );
