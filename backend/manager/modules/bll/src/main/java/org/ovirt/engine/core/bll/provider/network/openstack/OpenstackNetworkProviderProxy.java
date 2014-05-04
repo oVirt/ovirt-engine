@@ -31,7 +31,6 @@ import com.woorea.openstack.base.client.HttpMethod;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
 import com.woorea.openstack.quantum.Quantum;
-import com.woorea.openstack.quantum.model.NetworkForCreate;
 import com.woorea.openstack.quantum.model.Networks;
 import com.woorea.openstack.quantum.model.Port;
 import com.woorea.openstack.quantum.model.Subnet;
@@ -80,7 +79,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
 
     @Override
     public String add(Network network) {
-        NetworkForCreate networkForCreate = new NetworkForCreate();
+        com.woorea.openstack.quantum.model.Network networkForCreate = new com.woorea.openstack.quantum.model.Network();
         networkForCreate.setAdminStateUp(true);
         networkForCreate.setName(network.getName());
         if (NetworkUtils.isLabeled(network)) {
@@ -219,9 +218,9 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
             network.setVmNetwork(true);
             network.setProvidedBy(new ProviderNetwork(provider.getId(), externalNetwork.getId()));
             network.setName(externalNetwork.getName());
-            network.setLabel(externalNetwork.getProviderPhyNet());
-            if (VLAN_NETWORK.equals(externalNetwork.getNetType())) {
-                network.setVlanId(Integer.valueOf(externalNetwork.getProviderSegID()));
+            network.setLabel(externalNetwork.getProviderPhysicalNetwork());
+            if (VLAN_NETWORK.equals(externalNetwork.getProviderNetworkType())) {
+                network.setVlanId(externalNetwork.getProviderSegmentationId());
             }
             networks.add(network);
         }
