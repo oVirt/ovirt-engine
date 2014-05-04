@@ -124,6 +124,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                 .addValue("type", nic.getType())
                 .addValue("vds_id", nic.getVdsId())
                 .addValue("vlan_id", nic.getVlanId())
+                .addValue("base_interface", nic.getBaseInterface())
                 .addValue("mtu", nic.getMtu())
                 .addValue("bridged", nic.isBridged())
                 .addValue("qos_overridden", nic.isQosOverridden())
@@ -330,6 +331,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
 
                     String macAddress = rs.getString("mac_addr");
                     Integer vlanId = (Integer) rs.getObject("vlan_id");
+                    String baseInterface = rs.getString("base_interface");
                     Integer bondType = (Integer) rs.getObject("bond_type");
                     String bondName = rs.getString("bond_name");
                     Boolean isBond = (Boolean) rs.getObject("is_bond");
@@ -340,6 +342,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                         iface = new VdsNetworkInterface();
                         iface.setMacAddress(macAddress);
                         iface.setVlanId(vlanId);
+                        iface.setBaseInterface(baseInterface);
                         iface.setBondType(bondType);
                         iface.setBondName(bondName);
                         iface.setBonded(isBond);
@@ -348,7 +351,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                     } else if (Boolean.TRUE.equals(isBond)) {
                         iface = new Bond(macAddress, bondOptions, bondType);
                     } else if (vlanId != null) {
-                        iface = new Vlan(vlanId);
+                        iface = new Vlan(vlanId, baseInterface);
                     } else {
                         iface = new Nic(macAddress, speed, bondName);
                     }

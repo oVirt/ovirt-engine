@@ -8,8 +8,10 @@ public class Vlan extends VdsNetworkInterface {
     public Vlan() {
     }
 
-    public Vlan(int vlanId) {
+    public Vlan(int vlanId, String baseInterface) {
         setVlanId(vlanId);
+        setBaseInterface(baseInterface);
+        setName(baseInterface + "." + vlanId);
     }
 
     @Override

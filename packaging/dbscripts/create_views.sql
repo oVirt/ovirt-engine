@@ -904,7 +904,7 @@ INNER JOIN roles ON permissions.role_id = roles.id;
 CREATE OR REPLACE VIEW vds_interface_view AS
   SELECT vds_interface_statistics.rx_rate, vds_interface_statistics.tx_rate, vds_interface_statistics.rx_drop,
       vds_interface_statistics.tx_drop, vds_interface_statistics.iface_status, vds_interface.type, vds_interface.gateway,
-      vds_interface.subnet, vds_interface.addr, vds_interface.speed, vds_interface.vlan_id, vds_interface.bond_type,
+      vds_interface.subnet, vds_interface.addr, vds_interface.speed, vds_interface.base_interface, vds_interface.vlan_id, vds_interface.bond_type,
       vds_interface.bond_name, vds_interface.is_bond, vds_interface.bond_opts, vds_interface.mac_addr,
       vds_interface.network_name, vds_interface.name, vds_static.vds_id, vds_static.vds_name,  vds_interface.id,
       vds_interface.boot_protocol, vds_interface.mtu as mtu, vds_interface.bridged, 1 AS is_vds, vds_interface.qos_overridden AS qos_overridden,

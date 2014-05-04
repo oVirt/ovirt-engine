@@ -54,7 +54,8 @@ public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetwo
      * Validate the slave is configured properly by the following traits:
      * <ul>
      * <li>No network name</li>
-     * <li>No vlan configured, either as part of the name or explicitly by {@link VdsNetworkInterface#getVlanId()}</li>
+     * <li>No vlan configured: {@link VdsNetworkInterface#getBaseInterface()} and
+     * {@link VdsNetworkInterface#getVlanId()} are <code>null</code></li>
      * </ul>
      *
      * @param slave
@@ -63,7 +64,7 @@ public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetwo
      */
     private boolean validateSlave(VdsNetworkInterface slave) {
         return isEmpty(slave.getNetworkName())
-                && (slave.getName() == null || !slave.getName().contains("."))
+                && isEmpty(slave.getBaseInterface())
                 && slave.getVlanId() == null;
     }
 

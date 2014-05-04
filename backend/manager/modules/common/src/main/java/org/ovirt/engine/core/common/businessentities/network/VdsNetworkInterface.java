@@ -36,6 +36,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
 
     @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT")
     private String gateway;
+    private String baseInterface;
     private Integer vlanId;
     private Boolean bonded;
     private String bondName;
@@ -203,6 +204,25 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      */
     public String getGateway() {
         return gateway;
+    }
+
+    /**
+     * If the interface is vlan set its base interface name
+     *
+     * @param baseInterface
+     *            the base interface name
+     */
+    public void setBaseInterface(String baseInterface) {
+        this.baseInterface = baseInterface;
+    }
+
+    /**
+     * Returns the base interface name.
+     *
+     * @return baseInterface
+     */
+    public String getBaseInterface() {
+        return baseInterface;
     }
 
     /**
@@ -390,6 +410,8 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 .append(getMacAddress())
                 .append(", networkName=")
                 .append(getNetworkName())
+                .append(", baseInterface=")
+                .append(getBaseInterface())
                 .append(", vlanId=")
                 .append(getVlanId())
                 .append(", bonded=")
@@ -444,6 +466,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         result = prime * result + mtu;
         result = prime * result + ((subnet == null) ? 0 : subnet.hashCode());
         result = prime * result + ((vdsId == null) ? 0 : vdsId.hashCode());
+        result = prime * result + ((baseInterface == null) ? 0 : baseInterface.hashCode());
         result = prime * result + ((vlanId == null) ? 0 : vlanId.hashCode());
         result = prime * result + ((qos == null) ? 0 : qos.hashCode());
         result = prime * result + (qosOverridden ? 1231 : 1237);
@@ -530,6 +553,13 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 return false;
             }
         } else if (!vdsId.equals(other.vdsId)) {
+            return false;
+        }
+        if (baseInterface == null) {
+            if (other.baseInterface != null) {
+                return false;
+            }
+        } else if (!baseInterface.equals(other.baseInterface)) {
             return false;
         }
         if (vlanId == null) {

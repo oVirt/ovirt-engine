@@ -4502,6 +4502,7 @@
         <column>is_bond</column>
         <column>bond_name</column>
         <column>bond_type</column>
+        <column>base_interface</column>
         <column>vlan_id</column>
         <column>speed</column>
         <column>addr</column>
@@ -4519,6 +4520,7 @@
             <value>engine</value>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>78:E7:D1:E4:8C:70</value>
+            <null />
             <null />
             <null />
             <null />
@@ -4544,6 +4546,7 @@
             <null />
             <null />
             <null />
+            <null />
             <value>1000</value>
             <value>10.35.110.13</value>
             <value>255.255.255.0</value>
@@ -4565,6 +4568,7 @@
             <null />
             <null />
             <null />
+            <null />
             <value>1000</value>
             <value>10.35.110.11</value>
             <value>255.255.255.0</value>
@@ -4582,6 +4586,7 @@
             <value>engine</value>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
             <value>78:E7:D1:E4:8C:72</value>
+            <null />
             <null />
             <null />
             <null />
