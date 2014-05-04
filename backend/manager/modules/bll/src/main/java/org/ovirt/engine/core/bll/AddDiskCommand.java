@@ -157,6 +157,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return false;
         }
 
+        if (!validate(diskValidator.isReadOnlyPropertyCompatibleWithLunInterface())) {
+            return false;
+        }
+
         return true;
     }
 

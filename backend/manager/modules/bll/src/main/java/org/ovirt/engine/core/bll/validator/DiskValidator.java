@@ -107,6 +107,15 @@ public class DiskValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult isReadOnlyPropertyCompatibleWithLunInterface() {
+        if (Boolean.TRUE.equals(disk.getReadOnly()) && disk.getDiskInterface() == DiskInterface.VirtIO_SCSI) {
+            return new ValidationResult(
+                    VdcBllMessages.ACTION_TYPE_FAILED_VIRT_IO_SCSI_INTERFACE_FOR_LUN_DISKS_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
+        }
+
+        return ValidationResult.VALID;
+    }
+
     protected VmDAO getVmDAO() {
         return DbFacade.getInstance().getVmDao();
     }
