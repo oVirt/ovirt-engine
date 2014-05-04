@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils.customprop;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -174,6 +176,52 @@ public class CustomPropertiesUtils {
     }
 
     /**
+     * validate a map of specific custom properties against provided regex map
+     * @param regExMap
+     *      <key, regex> map
+     * @param properties
+     *      <key, value> map, custom properties to validate
+     * @return
+     */
+    public List<ValidationError> validateProperties(Map<String, String> regExMap,
+            Map<String, String> properties) {
+
+        if (properties == null || properties.isEmpty()) {
+            // No errors in case of empty value
+            return Collections.emptyList();
+        }
+
+        if (syntaxErrorInProperties(properties)) {
+            return invalidSyntaxValidationError;
+        }
+
+        Set<ValidationError> errorsSet = new HashSet<ValidationError>();
+        Set<String> foundKeys = new HashSet<String>();
+        for (Entry<String, String> e : properties.entrySet()) {
+            String key = e.getKey();
+            if (foundKeys.contains(key)) {
+                errorsSet.add(new ValidationError(ValidationFailureReason.DUPLICATE_KEY, key));
+                continue;
+            }
+            foundKeys.add(key);
+
+            if (key == null || !regExMap.containsKey(key)) {
+                errorsSet.add(new ValidationError(ValidationFailureReason.KEY_DOES_NOT_EXIST, key));
+                continue;
+            }
+
+            String value = e.getValue() == null ? "" : e.getValue();
+            if (!value.matches(regExMap.get(key))) {
+                errorsSet.add(new ValidationError(ValidationFailureReason.INCORRECT_VALUE, key));
+                continue;
+            }
+        }
+        List<ValidationError> results = new ArrayList<ValidationError>();
+        results.addAll(errorsSet);
+        return results;
+    }
+
+    /**
      * Generates an error message to be displayed by frontend
      *
      * @param validationErrors
@@ -233,6 +281,27 @@ public class CustomPropertiesUtils {
         return sb.toString();
     }
 
+    protected Map<String, String> convertProperties(String properties, Map<String, String> regExMap) {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        if (!StringHelper.isNullOrEmpty(properties)) {
+            String keyValuePairs[] = properties.split(PROPERTIES_DELIMETER);
+            for (String keyValuePairStr : keyValuePairs) {
+                String[] pairParts = keyValuePairStr.split(KEY_VALUE_DELIMETER, 2);
+                String key = pairParts[0];
+                String value = pairParts[1];
+                map.put(key, value);
+            }
+        }
+
+        if (regExMap != null) {
+            for (ValidationError error : validateProperties(regExMap, map)) {
+                map.remove(error.getKeyName());
+            }
+        }
+
+        return map;
+    }
+
     /**
      * Converts device custom properties from string to map.
      *
@@ -244,22 +313,7 @@ public class CustomPropertiesUtils {
      *         constant)
      */
     public Map<String, String> convertProperties(String properties) {
-        if (syntaxErrorInProperties(properties)) {
-            throw new IllegalArgumentException("Invalid properties syntax!");
-        }
-
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        if (!StringHelper.isNullOrEmpty(properties)) {
-            String keyValuePairs[] = properties.split(PROPERTIES_DELIMETER);
-            for (String keyValuePairStr : keyValuePairs) {
-                String[] pairParts = keyValuePairStr.split(KEY_VALUE_DELIMETER, 2);
-                String key = pairParts[0];
-                // property value may be null
-                String value = pairParts[1];
-                map.put(key, value);
-            }
-        }
-        return map;
+        return convertProperties(properties, null);
     }
 
     /**
@@ -272,10 +326,6 @@ public class CustomPropertiesUtils {
      * @return string containing all properties in map
      */
     public String convertProperties(Map<String, String> properties) {
-        if (syntaxErrorInProperties(properties)) {
-            throw new IllegalArgumentException("Invalid properties syntax!");
-        }
-
         StringBuilder sb = new StringBuilder();
         if (properties != null && !properties.isEmpty()) {
             for (Map.Entry<String, String> e : properties.entrySet()) {

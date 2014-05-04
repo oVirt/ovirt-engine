@@ -1,10 +1,6 @@
 package org.ovirt.engine.core.utils.customprop;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,7 +28,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
 
     private Map<Version, Map<String, String>> predefinedProperties;
     private Map<Version, Map<String, String>> userdefinedProperties;
-    private Map<Version, String> allVmProperties;
+    private Map<Version, Map<String, String>> allVmProperties;
 
     public static VmPropertiesUtils getInstance() {
         return vmPropertiesUtils;
@@ -42,25 +38,16 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         try {
             predefinedProperties = new HashMap<Version, Map<String, String>>();
             userdefinedProperties = new HashMap<Version, Map<String, String>>();
-            allVmProperties = new HashMap<Version, String>();
+            allVmProperties = new HashMap<Version, Map<String, String>>();
             Set<Version> versions = getSupportedClusterLevels();
-            String predefinedVMPropertiesStr, userDefinedVMPropertiesStr;
-            StringBuilder sb;
             for (Version version : versions) {
-                predefinedVMPropertiesStr = getPredefinedVMProperties(version);
-                userDefinedVMPropertiesStr = getUserdefinedVMProperties(version);
-                sb = new StringBuilder("");
-                sb.append(predefinedVMPropertiesStr);
-                if (!predefinedVMPropertiesStr.isEmpty() && !userDefinedVMPropertiesStr.isEmpty()) {
-                    sb.append(";");
-                }
-                sb.append(userDefinedVMPropertiesStr);
-                allVmProperties.put(version, sb.toString());
-
                 predefinedProperties.put(version, new HashMap<String, String>());
                 userdefinedProperties.put(version, new HashMap<String, String>());
-                parsePropertiesRegex(predefinedVMPropertiesStr, predefinedProperties.get(version));
-                parsePropertiesRegex(userDefinedVMPropertiesStr, userdefinedProperties.get(version));
+                allVmProperties.put(version, new HashMap<String, String>());
+                parsePropertiesRegex(getPredefinedVMProperties(version), predefinedProperties.get(version));
+                parsePropertiesRegex(getUserdefinedVMProperties(version), userdefinedProperties.get(version));
+                allVmProperties.get(version).putAll(predefinedProperties.get(version));
+                allVmProperties.get(version).putAll(userdefinedProperties.get(version));
             }
         } catch (Throwable ex) {
             throw new InitializationException(ex);
@@ -106,8 +93,8 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         HashMap<String, String> predefinedPropertiesMap = new HashMap<String, String>();
 
         convertCustomPropertiesStrToMaps(version, propertiesStr, predefinedPropertiesMap, userDefinedPropertiesMap);
-        return new VMCustomProperties(vmPropertiesToString(predefinedPropertiesMap),
-                vmPropertiesToString(userDefinedPropertiesMap));
+        return new VMCustomProperties(convertProperties(predefinedPropertiesMap),
+                convertProperties(userDefinedPropertiesMap));
     }
 
     /**
@@ -117,29 +104,10 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
      * @return a list of validation errors. if there are no errors - the list will be empty
      */
     public List<ValidationError> validateVmProperties(Version version, String properties) {
-        if (StringHelper.isNullOrEmpty(properties)) { // No errors in case of empty value
-            return Collections.emptyList();
-        }
         if (syntaxErrorInProperties(properties)) {
             return invalidSyntaxValidationError;
         }
-        // Transform the VM custom properties from string value to hash map
-        // check the following for each one of the keys:
-        // 1. Check if the key exists in either the predefined or the userdefined key sets
-        // 2. Check if the value of the key is valid
-        // In case either 1 or 2 fails, add an error to the errors list
-        Map<String, String> map = new HashMap<String, String>();
-        return populateVMProperties(version, properties, map);
-    }
-
-    private boolean isValueValid(Version version, String key, String value) {
-        // Checks that the value for the given property is valid by running by trying to perform
-        // regex validation
-        String userDefinedPattern = userdefinedProperties.get(version).get(key);
-        String predefinedPattern = predefinedProperties.get(version).get(key);
-
-        return (userDefinedPattern != null && value.matches(userDefinedPattern))
-                || (predefinedPattern != null && value.matches(predefinedPattern));
+        return validateProperties(allVmProperties.get(version), convertProperties(properties));
     }
 
     /**
@@ -157,33 +125,11 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
     }
 
     public Map<Version, String> getAllVmProperties() {
-        return allVmProperties;
-    }
-
-    /**
-     * Get a map containing user defined properties from VM
-     *
-     * @param vm
-     *            vm to get the map for
-     * @return map containing the UserDefined properties
-     */
-    public Map<String, String> getUserDefinedProperties(Version version, VmStatic vmStatic) {
-        Map<String, String> map = new HashMap<String, String>();
-        getUserDefinedProperties(version, vmStatic, map);
-        return map;
-    }
-
-    /**
-     * Gets a map containing the predefined properties from VM
-     *
-     * @param vm
-     *            vm to get the map for
-     * @return map containing the vm properties
-     */
-    public Map<String, String> getPredefinedProperties(Version version, VmStatic vmStatic) {
-        Map<String, String> map = new HashMap<String, String>();
-        getPredefinedProperties(version, vmStatic, map);
-        return map;
+        Map<Version, String> allVmPropertiesString = new HashMap<Version, String>();
+        for (Map.Entry<Version, Map<String, String>> entry : allVmProperties.entrySet()) {
+            allVmPropertiesString.put(entry.getKey(), convertProperties(entry.getValue()));
+        }
+        return allVmPropertiesString;
     }
 
     private void getPredefinedProperties(Version version, VmStatic vmStatic, Map<String, String> propertiesMap) {
@@ -204,89 +150,23 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
      * @param vmPropertiesFieldValue
      *            the string value that contains the properties
      */
-    public void getVMProperties(Version version, Map<String, String> propertiesMap, String vmPropertiesFieldValue) {
+    private void getVMProperties(Version version, Map<String, String> propertiesMap, String vmPropertiesFieldValue) {
         // format of properties is key1=val1,key2=val2,key3=val3,key4=val4
         if (StringHelper.isNullOrEmpty(vmPropertiesFieldValue)) {
             return;
         }
 
-        populateVMProperties(version, vmPropertiesFieldValue, propertiesMap);
-
-    }
-
-    /**
-     * Parses a string of VM properties to a map of key,value
-     *
-     * @param vmPropertiesFieldValue
-     *            the string to parse
-     * @param propertiesMap
-     *            the filled map
-     * @return list of errors during parsing (currently holds list of duplicate keys)
-     */
-    private List<ValidationError> populateVMProperties(Version version, String vmPropertiesFieldValue,
-            Map<String, String> propertiesMap) {
-        Set<ValidationError> errorsSet = new HashSet<ValidationError>();
-        List<ValidationError> results = new ArrayList<ValidationError>();
-        if (!StringHelper.isNullOrEmpty(vmPropertiesFieldValue)) {
-            String keyValuePairs[] = vmPropertiesFieldValue.split(PROPERTIES_DELIMETER);
-
-            for (String keyValuePairStr : keyValuePairs) {
-                String[] pairParts = keyValuePairStr.split(KEY_VALUE_DELIMETER, 2);
-                String key = pairParts[0];
-                String value = StringHelper.defaultString(pairParts[1]);
-                if (propertiesMap.containsKey(key)) {
-                    errorsSet.add(new ValidationError(ValidationFailureReason.DUPLICATE_KEY, key));
-                    continue;
-                }
-                if (!keyExistsInVersion(predefinedProperties, version, key)
-                        && !keyExistsInVersion(userdefinedProperties, version, key)) {
-                    errorsSet.add(new ValidationError(ValidationFailureReason.KEY_DOES_NOT_EXIST, key));
-                    continue;
-                }
-
-                if (!isValueValid(version, key, value)) {
-                    errorsSet.add(new ValidationError(ValidationFailureReason.INCORRECT_VALUE, key));
-                    continue;
-                }
-                propertiesMap.put(key, value);
-            }
-        }
-        results.addAll(errorsSet);
-        return results;
+        propertiesMap.putAll(convertProperties(vmPropertiesFieldValue, allVmProperties.get(version)));
     }
 
     protected boolean keyExistsInVersion(Map<Version, Map<String, String>> propertiesMap, Version version, String key) {
         return propertiesMap.get(version).containsKey(key);
     }
 
-    private static String vmPropertiesToString(Map<String, String> propertiesMap) {
-        if (propertiesMap == null || propertiesMap.size() == 0) {
-            return "";
-        }
-
-        StringBuilder result = new StringBuilder();
-        Set<Entry<String, String>> entries = propertiesMap.entrySet();
-        Iterator<Entry<String, String>> iterator = entries.iterator();
-        Entry<String, String> entry = iterator.next();
-        result.append(entry.getKey())
-                .append("=")
-                .append(StringHelper.defaultString(entry.getValue()));
-        while (iterator.hasNext()) {
-            result.append(";");
-            entry = iterator.next();
-            if (entry != null) {
-                result.append(entry.getKey())
-                        .append("=")
-                        .append(StringHelper.defaultString(entry.getValue()));
-            }
-        }
-        return result.toString();
-    }
-
     private void convertCustomPropertiesStrToMaps(Version version, String propertiesValue,
             Map<String, String> predefinedPropertiesMap, Map<String, String> userDefinedPropertiesMap) {
-        Map<String, String> propertiesMap = new HashMap<String, String>();
-        populateVMProperties(version, propertiesValue, propertiesMap);
+        Map<String, String> propertiesMap =
+                convertProperties(propertiesValue, allVmProperties.get(version));
         Set<Entry<String, String>> propertiesEntries = propertiesMap.entrySet();
 
         // Go over all the properties - if the key of the property exists in the
