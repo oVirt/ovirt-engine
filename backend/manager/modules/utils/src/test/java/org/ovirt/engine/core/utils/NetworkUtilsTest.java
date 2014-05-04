@@ -10,8 +10,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
+import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
+import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.common.config.ConfigValues;
 
 public class NetworkUtilsTest {
@@ -203,32 +205,32 @@ public class NetworkUtilsTest {
 
     @Test
     public void interfaceBasedOn() {
-        assertTrue(NetworkUtils.interfaceBasedOn(generateVlanName(IFACE_NAME), IFACE_NAME));
+        assertTrue(NetworkUtils.interfaceBasedOn(createVlan(IFACE_NAME), IFACE_NAME));
     }
 
     @Test
     public void interfaceBasedOnSameName() {
-        assertTrue(NetworkUtils.interfaceBasedOn(IFACE_NAME, IFACE_NAME));
+        assertTrue(NetworkUtils.interfaceBasedOn(createNic(IFACE_NAME), IFACE_NAME));
     }
 
     @Test
     public void interfaceBasedOnNotAVlanOfIface() {
-        assertFalse(NetworkUtils.interfaceBasedOn(generateVlanName(IFACE_NAME + "1"), IFACE_NAME));
+        assertFalse(NetworkUtils.interfaceBasedOn(createVlan(IFACE_NAME + "1"), IFACE_NAME));
     }
 
     @Test
     public void interfaceBasedOnNotAVlanAtAll() {
-        assertFalse(NetworkUtils.interfaceBasedOn(IFACE_NAME + "1", IFACE_NAME));
+        assertFalse(NetworkUtils.interfaceBasedOn(createNic(IFACE_NAME + "1"), IFACE_NAME));
     }
 
     @Test
     public void interfaceBasedOnNullIface() {
-        assertFalse(NetworkUtils.interfaceBasedOn(generateVlanName(IFACE_NAME), null));
+        assertFalse(NetworkUtils.interfaceBasedOn(createVlan(IFACE_NAME), null));
     }
 
     @Test
     public void interfaceBasedOnNullProposedVlan() {
-        assertFalse(NetworkUtils.interfaceBasedOn((String)null, IFACE_NAME));
+        assertFalse(NetworkUtils.interfaceBasedOn(null, IFACE_NAME));
     }
 
     @Test
@@ -262,8 +264,15 @@ public class NetworkUtilsTest {
         assertFalse(NetworkUtils.isManagementNetwork(net));
     }
 
-    private String generateVlanName(String iface) {
-        return iface + "." + RandomUtils.instance().nextInt(100);
+    private VdsNetworkInterface createVlan(String baseIfaceName) {
+        VdsNetworkInterface iface = new Vlan(RandomUtils.instance().nextInt(100), baseIfaceName);
+        return iface;
+    }
+
+    private VdsNetworkInterface createNic(String ifaceName) {
+        VdsNetworkInterface iface = new Nic();
+        iface.setName(ifaceName);
+        return iface;
     }
 
     private void calculateNetworkImplementationDetailsAndAssertManaged(VdsNetworkInterface iface,
