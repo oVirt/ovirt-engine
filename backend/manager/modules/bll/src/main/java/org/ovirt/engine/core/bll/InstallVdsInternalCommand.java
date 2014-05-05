@@ -152,7 +152,11 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     if (!configureNetworkUsingHostDeploy) {
                         configureManagementNetwork();
                     }
-                    setVdsStatus(VDSStatus.Initializing);
+                    if (VDSStatus.Maintenance.equals(vdsInitialStatus)) {
+                        setVdsStatus(VDSStatus.Maintenance);
+                    } else {
+                        setVdsStatus(VDSStatus.Initializing);
+                    }
                 break;
             }
 

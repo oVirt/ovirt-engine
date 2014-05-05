@@ -169,7 +169,11 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
                     RunSleepOnReboot(getStatusOnReboot());
                 break;
                 case Complete:
-                    setVdsStatus(VDSStatus.Initializing);
+                    if (VDSStatus.Maintenance.equals(vdsInitialStatus)) {
+                        setVdsStatus(VDSStatus.Maintenance);
+                    } else {
+                        setVdsStatus(VDSStatus.Initializing);
+                    }
                 break;
             }
 
