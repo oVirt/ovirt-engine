@@ -173,6 +173,7 @@ public class BackendVmsResourceTest
                 new String[] { "Id" },
                 new Object[] { NON_EXISTANT_GUID },
                 null);
+        setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
             collection.remove(NON_EXISTANT_GUID.toString());

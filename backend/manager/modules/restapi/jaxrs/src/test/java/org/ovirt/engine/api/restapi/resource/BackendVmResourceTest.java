@@ -144,6 +144,19 @@ public class BackendVmResourceTest
     }
 
     @Test
+    public void testGetNextConfiguration() throws Exception {
+        setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendVmResource.NEXT_RUN));
+        setUpGetEntityNextRunExpectations();
+        setUpGetPayloadExpectations(0, 1);
+        setUpGetBallooningExpectations();
+        setUpGetCertuficateExpectations();
+        control.replay();
+        VM response = resource.get();
+        verifyModel(response, 0);
+        verifyCertificate(response);
+    }
+
+    @Test
     public void testGetIncludeStatistics() throws Exception {
         try {
             accepts.add("application/xml; detail=statistics");
@@ -957,6 +970,14 @@ public class BackendVmResourceTest
                                        new Object[] { GUIDS[0] },
                                        notFound ? null : entity);
         }
+    }
+
+    protected void setUpGetEntityNextRunExpectations() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.GetVmNextRunConfiguration,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                getEntity(0));
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,

@@ -13,6 +13,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.DetailHelper.Detail;
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.AuthorizedKey;
 import org.ovirt.engine.api.model.CdRom;
@@ -84,14 +85,25 @@ public class BackendVmResource extends
     private static final long DEFAULT_TICKET_EXPIRY = 120 * 60; // 2 hours
     private BackendVmsResource parent;
 
+    public static final String NEXT_RUN = "next_run";
+
     public BackendVmResource(String id, BackendVmsResource parent) {
         super(id, VM.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
         this.parent = parent;
     }
 
+    private boolean isNextRunRequested() {
+        return QueryHelper.getMatrixConstraints(getUriInfo(), NEXT_RUN).containsKey(NEXT_RUN);
+    }
+
     @Override
     public VM get() {
-        VM vm = performGet(VdcQueryType.GetVmByVmId, new IdQueryParameters(guid));
+        VM vm;
+        if (isNextRunRequested()) {
+            vm  = performGet(VdcQueryType.GetVmNextRunConfiguration, new IdQueryParameters(guid));
+        } else {
+            vm = performGet(VdcQueryType.GetVmByVmId, new IdQueryParameters(guid));
+        }
         return removeRestrictedInfo(vm);
     }
 
@@ -483,6 +495,8 @@ public class BackendVmResource extends
                     lookupCluster(updated.getVdsGroupId())));
 
             VmManagementParametersBase params = new VmManagementParametersBase(updated);
+
+            params.setApplyChangesLater(isNextRunRequested());
 
             if (incoming.isSetPayloads()) {
                 if (incoming.isSetPayloads() && incoming.getPayloads().isSetPayload()) {

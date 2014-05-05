@@ -552,6 +552,7 @@ public class VmMapper {
         if (entity.getSerialNumberPolicy() != null) {
             model.setSerialNumber(SerialNumberMapper.map(entity.getStaticData(), null));
         }
+        model.setNextRunConfigurationExists(entity.isNextRunConfigurationExists());
         return model;
     }
 
