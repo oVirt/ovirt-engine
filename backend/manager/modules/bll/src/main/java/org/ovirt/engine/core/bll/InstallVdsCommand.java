@@ -253,7 +253,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     if (!configureNetworkUsingHostDeploy) {
                         configureManagementNetwork();
                     }
-                    setVdsStatus(VDSStatus.Initializing);
+                    setCompletedVdsStatus();
                 break;
             }
 
@@ -294,7 +294,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     RunSleepOnReboot(getStatusOnReboot());
                 break;
                 case Complete:
-                    setVdsStatus(VDSStatus.Initializing);
+                    setCompletedVdsStatus();
                 break;
             }
 
@@ -308,6 +308,14 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             handleError(e, e.getStatus());
         } catch (Exception e) {
             handleError(e, VDSStatus.InstallFailed);
+        }
+    }
+
+    private void setCompletedVdsStatus() {
+        if (VDSStatus.Maintenance.equals(vdsInitialStatus)) {
+            setVdsStatus(VDSStatus.Maintenance);
+        } else {
+            setVdsStatus(VDSStatus.Initializing);
         }
     }
 
