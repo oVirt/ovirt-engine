@@ -88,4 +88,6 @@ public interface JobDao extends GenericDao<Job, Guid> {
      * @return true if the job contains a step associated with VDSM task, else false
      */
     boolean checkIfJobHasTasks(Guid jobId);
+
+    void deleteRunningJobsOfTasklessCommands();
 }

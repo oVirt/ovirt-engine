@@ -95,6 +95,12 @@ public class JobDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Job, Guid> imp
     }
 
     @Override
+    public void deleteRunningJobsOfTasklessCommands() {
+        getCallsHandler().executeModification("DeleteRunningJobsOfTasklessCommands",
+                getCustomMapSqlParameterSource());
+    }
+
+    @Override
     public void deleteCompletedJobs(Date succeededJobs, Date failedJobs) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("succeeded_end_time", succeededJobs)

@@ -468,6 +468,19 @@ and job_id not in (select step.job_id
 END; $procedure$
 LANGUAGE plpgsql;
 
+------------------------------------------------
+-- Cleanup Jobs of async commands without task
+------------------------------------------------
+Create or replace FUNCTION DeleteRunningJobsOfTasklessCommands()
+RETURNS VOID
+AS $procedure$
+BEGIN
+    DELETE FROM job
+    WHERE (status = 'STARTED'
+    AND    action_type IN ('MigrateVm', 'MigrateVmToServer', 'InternalMigrateVm', 'RunVm', 'RunVmOnce'));
+END; $procedure$
+LANGUAGE plpgsql;
+
 --------------------------------------------
 -- Cleanup Jobs entities by end time
 --------------------------------------------
