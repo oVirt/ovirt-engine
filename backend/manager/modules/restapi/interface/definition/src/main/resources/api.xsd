@@ -1378,6 +1378,7 @@
           <xs:element ref="display" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="ksm" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="serial_number" minOccurs="0" maxOccurs="1" />
+          <xs:element name="required_rng_sources" type="RngSources" minOccurs="0" maxOccurs="1" />
           <!-- Also a rel="networks" link -->
         </xs:sequence>
       </xs:extension>
@@ -1469,6 +1470,7 @@
       <xs:element name="product_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="uuid" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="family" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="supported_rng_sources" type="RngSources" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
 

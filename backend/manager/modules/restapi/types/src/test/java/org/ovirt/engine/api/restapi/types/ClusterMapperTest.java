@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.ErrorHandling;
 import org.ovirt.engine.api.model.MigrateOnError;
+import org.ovirt.engine.api.model.RngSource;
 import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
@@ -28,6 +29,8 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         policy.setPolicy("power_saving");
         model.setSchedulingPolicy(policy);
         model.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
+        model.getRequiredRngSources().getRngSources().clear();
+        model.getRequiredRngSources().getRngSources().add(RngSource.RANDOM.name());
         return model;
     }
 

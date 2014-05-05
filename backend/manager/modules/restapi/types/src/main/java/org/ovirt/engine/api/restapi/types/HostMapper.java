@@ -488,6 +488,7 @@ public class HostMapper {
         model.setSerialNumber(entity.getHardwareSerialNumber());
         model.setUuid(entity.getHardwareUUID());
         model.setVersion(entity.getHardwareVersion());
+        model.setSupportedRngSources(RngDeviceMapper.mapRngSources(entity.getSupportedRngSources(), null));
         return model;
     }
 

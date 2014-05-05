@@ -108,6 +108,10 @@ public class ClusterMapper {
         if (model.isSetSerialNumber()) {
             SerialNumberMapper.copySerialNumber(model.getSerialNumber(), entity);
         }
+        if (model.isSetRequiredRngSources()) {
+            entity.getRequiredRngSources().clear();
+            entity.getRequiredRngSources().addAll(RngDeviceMapper.mapRngSources(model.getRequiredRngSources(), null));
+        }
 
         return entity;
     }
@@ -157,6 +161,10 @@ public class ClusterMapper {
         }
         if (entity.getSerialNumberPolicy() != null) {
             model.setSerialNumber(SerialNumberMapper.map(entity, null));
+        }
+
+        if (entity.getRequiredRngSources() != null) {
+            model.setRequiredRngSources(RngDeviceMapper.mapRngSources(entity.getRequiredRngSources(), null));
         }
 
         return model;
