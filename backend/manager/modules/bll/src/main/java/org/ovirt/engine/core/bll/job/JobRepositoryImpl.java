@@ -216,6 +216,7 @@ public class JobRepositoryImpl implements JobRepository {
 
             @Override
             public Void runInTransaction() {
+                jobDao.deleteRunningJobsOfTasklessCommands();
                 jobDao.updateStartedExecutionEntitiesToUnknown(new Date());
                 return null;
             }
