@@ -18,12 +18,17 @@ public class LinkBuilder {
         return this;
     }
     public LinkBuilder requestParameter(final String requestParameter) {
-        detailedLink.setRequest(new Request());
-        detailedLink.getRequest().setBody(new Body(){{setType(requestParameter);}});
+        Body body = new Body();
+        body.setType(requestParameter);
+        Request request = new Request();
+        request.setBody(body);
+        detailedLink.setRequest(request);
         return this;
     }
     public LinkBuilder responseType(final String responseType) {
-        detailedLink.setResponse(new Response(){{setType(responseType);}});
+        Response response = new Response();
+        response.setType(responseType);
+        detailedLink.setResponse(response);
         return this;
     }
     public LinkBuilder httpMethod(HttpMethod httpMethod) {
