@@ -9,7 +9,9 @@ import java.util.UUID;
  * Extension UUID.
  * Provides named GUID.
  */
-public class ExtUUID implements Comparable<ExtUUID>, Cloneable {
+public class ExtUUID implements Comparable<ExtUUID>, Cloneable, Serializable {
+
+    private static final long serialVersionUID = -1381185377164713737L;
 
     private String name;
     private UUID uuid;

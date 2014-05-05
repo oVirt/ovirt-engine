@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.extensions;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +12,9 @@ import java.util.concurrent.ConcurrentMap;
  * Keys are bundle of uuid and type, each value added is checked against key
  * type.
  */
-public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable {
+public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Serializable {
+
+    private static final long serialVersionUID = 4065309872012801647L;
 
     /**
      * Wrapped map.

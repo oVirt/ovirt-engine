@@ -1,16 +1,34 @@
 package org.ovirt.engine.api.extensions;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * Extension map key.
  * Provides type safe mapping between key and value.
  */
-public class ExtKey implements Cloneable {
+public class ExtKey implements Cloneable, Serializable {
 
-    private Class type;
+    private static final long serialVersionUID = 7373830750276947742L;
+
+    private transient Class type;
+    private String typeName;
     private ExtUUID uuid;
     private boolean sensitive;
+
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        ois.defaultReadObject();
+        try {
+            type = Class.forName(typeName);
+        } catch(ClassNotFoundException e) {
+            throw new IOException(
+                String.format("Cannot resolve ExtKey type '%s'", typeName),
+                e
+            );
+        }
+    }
 
     /**
      * Constructor.
@@ -22,6 +40,8 @@ public class ExtKey implements Cloneable {
         this.type = type;
         this.uuid = uuid;
         this.sensitive = sensitive;
+
+        this.typeName = this.type.getName();
     }
 
     /**
