@@ -166,6 +166,10 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
         if (isVmRunningOnHost(vds.getId())) {
             final Network engineDisplayNetwork = findDisplayNetwork(engineHostNetworks);
 
+            if (engineDisplayNetwork == null) {
+                return;
+            }
+
             final IsNetworkOnInterfacePredicate isNetworkOnInterfacePredicate =
                     new IsNetworkOnInterfacePredicate(engineDisplayNetwork.getName());
             final VdsNetworkInterface vdsmDisplayInterface = LinqUtils.firstOrNull(
