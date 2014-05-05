@@ -227,12 +227,17 @@ public class RsdlBuilder {
             return this;
         }
         public LinkBuilder requestParameter(final String requestParameter) {
-            link.setRequest(new Request());
-            link.getRequest().setBody(new Body(){{setType(requestParameter);}});
+            Body body = new Body();
+            body.setType(requestParameter);
+            Request request = new Request();
+            request.setBody(body);
+            link.setRequest(request);
             return this;
         }
         public LinkBuilder responseType(final String responseType) {
-            link.setResponse(new Response(){{setType(responseType);}});
+            Response response = new Response();
+            response.setType(responseType);
+            link.setResponse(response);
             return this;
         }
         public LinkBuilder httpMethod(HttpMethod httpMethod) {
