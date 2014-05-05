@@ -12,6 +12,7 @@ public class TemplateValidator implements Validator<Template> {
     private OsValidator osValidator = new OsValidator();
     private DisplayValidator displayValidator = new DisplayValidator();
     private CPUValidator cpuValidator = new CPUValidator();
+    private RngDeviceValidator rngDeviceValidator = new RngDeviceValidator();
 
     @Override
     public void validateEnums(Template template) {
@@ -29,6 +30,9 @@ public class TemplateValidator implements Validator<Template> {
         }
         if (template.isSetCpu()) {
             cpuValidator.validateEnums(template.getCpu());
+        }
+        if (template.isSetRngDevice()) {
+            rngDeviceValidator.validateEnums(template.getRngDevice());
         }
     }
 

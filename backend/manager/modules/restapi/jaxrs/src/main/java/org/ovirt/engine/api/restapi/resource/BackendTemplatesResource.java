@@ -15,6 +15,7 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
+import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmInit;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -96,6 +98,12 @@ public class BackendTemplatesResource
                         !getConsoleDevicesForEntity(staticVm.getId()).isEmpty());
         params.setVirtioScsiEnabled(template.isSetVirtioScsi() && template.getVirtioScsi().isSetEnabled() ?
                 template.getVirtioScsi().isEnabled() : null);
+
+        if (template.isSetRngDevice()) {
+            params.setUpdateRngDevice(true);
+            params.setRngDevice(RngDeviceMapper.map(template.getRngDevice(), null));
+        }
+
         boolean isDomainSet = false;
         if (template.isSetStorageDomain() && template.getStorageDomain().isSetId()) {
             params.setDestinationStorageDomainId(asGuid(template.getStorageDomain().getId()));
@@ -213,7 +221,18 @@ public class BackendTemplatesResource
             model.setVirtioScsi(new VirtIOSCSI());
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(entity.getId()).isEmpty());
+        List<VmRngDevice> rngDevices = getRngDevices(entity.getId());
+        if (rngDevices != null && !rngDevices.isEmpty()) {
+            model.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));
+        }
         return model;
+    }
+
+    private List<VmRngDevice> getRngDevices(Guid id) {
+        return getEntity(List.class,
+            VdcQueryType.GetRngDevice,
+            new IdQueryParameters(id),
+            "GetRngDevice", true);
     }
 
     private List<String> getConsoleDevicesForEntity(Guid id) {

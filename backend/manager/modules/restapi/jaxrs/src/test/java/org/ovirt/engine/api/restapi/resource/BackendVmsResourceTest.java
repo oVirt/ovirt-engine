@@ -241,6 +241,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 0);
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[]{0});
+        setUpGetRngDeviceExpectations(new int[]{0});
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetCertuficateExpectations(1, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
@@ -291,6 +292,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{0, 0});
         setUpGetVmOvfExpectations(new int[]{0, 0});
         setUpGetVirtioScsiExpectations(new int[]{0, 0});
+        setUpGetRngDeviceExpectations(new int[]{0, 0});
         setUpGetBallooningExpectations(2, 0);
         setUpGetCertuficateExpectations(2, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
@@ -348,6 +350,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{0, 0});
         setUpGetVmOvfExpectations(new int[]{0, 0});
         setUpGetVirtioScsiExpectations(new int[]{0, 0});
+        setUpGetRngDeviceExpectations(new int[]{0, 0});
         setUpGetCertuficateExpectations(2, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
                                      IdQueryParameters.class,
@@ -400,6 +403,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{0, 0});
         setUpGetVmOvfExpectations(new int[]{0, 0});
         setUpGetVirtioScsiExpectations(new int[]{0, 0});
+        setUpGetRngDeviceExpectations(new int[]{0, 0});
         setUpGetCertuficateExpectations(2, 0);
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
@@ -502,6 +506,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{1, 2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
+        setUpGetRngDeviceExpectations(new int[]{2});
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -551,6 +556,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{0, 2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
+        setUpGetRngDeviceExpectations(new int[]{2});
         setUpEntityQueryExpectations(VdcQueryType.GetVmConfigurationBySnapshot,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -586,6 +592,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{1, 2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
+        setUpGetRngDeviceExpectations(new int[]{2});
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -625,6 +632,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{1, 2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
+        setUpGetRngDeviceExpectations(new int[]{2});
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -671,6 +679,7 @@ public class BackendVmsResourceTest
         setUpGetCertuficateExpectations(1, 2);
         setUpGetConsoleExpectations(new int[] { 1, 2 });
         setUpGetVirtioScsiExpectations(new int[] { 2 });
+        setUpGetRngDeviceExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[] { 2 });
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
@@ -709,6 +718,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[] { 3 });
         setUpGetVmOvfExpectations(new int[] { 3 });
         setUpGetVirtioScsiExpectations(new int[] { 3 });
+        setUpGetRngDeviceExpectations(new int[]{3});
         VM model = createModel(null);
         org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
         model.setInitialization(new Initialization());
@@ -752,6 +762,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
+        setUpGetRngDeviceExpectations(new int[]{2});
         VM model = createModel(null);
         org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
         model.setInitialization(new Initialization());
@@ -790,6 +801,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
+        setUpGetRngDeviceExpectations(new int[]{2});
         VM model = createModel(null);
         org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
         model.setInitialization(new Initialization());
@@ -887,6 +899,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{1, 2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
+        setUpGetRngDeviceExpectations(new int[]{2});
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsStaticByName,
                 NameQueryParameters.class,
@@ -941,6 +954,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{1, 2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
+        setUpGetRngDeviceExpectations(new int[]{2});
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -982,6 +996,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{1, 2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
+        setUpGetRngDeviceExpectations(new int[]{2});
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -1046,6 +1061,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{1, 2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
+        setUpGetRngDeviceExpectations(new int[]{2});
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -1098,6 +1114,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{1, 2});
         setUpGetVmOvfExpectations(new int[]{2});
         setUpGetVirtioScsiExpectations(new int[]{2});
+        setUpGetRngDeviceExpectations(new int[]{2});
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[]{"Id"},
@@ -1169,6 +1186,7 @@ public class BackendVmsResourceTest
             setUpGetConsoleExpectations(new int[]{0, 1, 2});
             setUpGetVmOvfExpectations(new int[]{0, 1, 2});
             setUpGetVirtioScsiExpectations(new int[]{0, 1, 2});
+            setUpGetRngDeviceExpectations(new int[]{0, 1, 2});
             setUpGetCertuficateExpectations(3);
         }
 
@@ -1188,6 +1206,7 @@ public class BackendVmsResourceTest
         setUpGetConsoleExpectations(new int[]{0, 1, 2});
         setUpGetVmOvfExpectations(new int[]{0, 1, 2});
         setUpGetVirtioScsiExpectations(new int[]{0, 1, 2});
+        setUpGetRngDeviceExpectations(new int[]{0, 1, 2});
         setUpGetCertuficateExpectations(3);
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);

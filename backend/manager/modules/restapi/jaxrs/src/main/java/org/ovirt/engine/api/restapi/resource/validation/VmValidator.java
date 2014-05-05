@@ -17,6 +17,7 @@ public class VmValidator implements Validator<VM> {
     private ConfigurationValidator configurationValidator = new ConfigurationValidator();
     private CloudInitValidator cloudInitValidator = new CloudInitValidator();
     private CPUValidator cpuValidator = new CPUValidator();
+    private RngDeviceValidator rngDeviceValidator = new RngDeviceValidator();
 
     @Override
     public void validateEnums(VM vm) {
@@ -50,6 +51,9 @@ public class VmValidator implements Validator<VM> {
             if (vm.getInitialization().isSetCloudInit()) {
                 cloudInitValidator.validateEnums(vm.getInitialization().getCloudInit());
             }
+        }
+        if (vm.isSetRngDevice()) {
+            rngDeviceValidator.validateEnums(vm.getRngDevice());
         }
     }
 }

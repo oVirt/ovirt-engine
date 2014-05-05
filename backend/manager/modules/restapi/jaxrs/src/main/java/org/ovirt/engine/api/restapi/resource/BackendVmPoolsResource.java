@@ -9,6 +9,7 @@ import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VmPools;
 import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.api.resource.VmPoolsResource;
+import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -91,7 +93,19 @@ public class BackendVmPoolsResource
 
     @Override
     public VmPool doPopulate(VmPool pool, org.ovirt.engine.core.common.businessentities.VmPool entity) {
+        setRngDevice(pool);
         return pool;
+    }
+
+    protected void setRngDevice(VmPool model) {
+        List<VmRngDevice> rngDevices = getEntity(List.class,
+                VdcQueryType.GetRngDevice,
+                new IdQueryParameters(Guid.createGuidFromString(model.getId())),
+                "GetRngDevice", true);
+
+        if (rngDevices != null && !rngDevices.isEmpty()) {
+            model.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));
+        }
     }
 
     @Override

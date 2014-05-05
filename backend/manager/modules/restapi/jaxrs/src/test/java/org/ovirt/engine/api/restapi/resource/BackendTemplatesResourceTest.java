@@ -77,6 +77,7 @@ public class BackendTemplatesResourceTest
         setUpGetEntityExpectations(0);
         setUpGetConsoleExpectations(new int[]{0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[]{0, 0});
+        setUpGetRngDeviceExpectations(new int[]{0, 0});
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -198,6 +199,7 @@ public class BackendTemplatesResourceTest
 
         setUpGetConsoleExpectations(new int[]{0, 0});
         setUpGetVirtioScsiExpectations(new int[]{0});
+        setUpGetRngDeviceExpectations(new int[]{0});
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
@@ -235,6 +237,7 @@ public class BackendTemplatesResourceTest
 
         setUpGetConsoleExpectations(new int[]{0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[]{0, 0});
+        setUpGetRngDeviceExpectations(new int[]{0, 0});
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
@@ -292,6 +295,7 @@ public class BackendTemplatesResourceTest
 
             setUpGetConsoleExpectations(new int[]{2, 0, 2});
             setUpGetVirtioScsiExpectations(new int[]{2, 2});
+            setUpGetRngDeviceExpectations(new int[]{2, 2});
             setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
@@ -347,6 +351,7 @@ public class BackendTemplatesResourceTest
         setUpGetEntityExpectations(0);
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[] {0, 0});
+        setUpGetRngDeviceExpectations(new int[]{0, 0});
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
@@ -395,7 +400,7 @@ public class BackendTemplatesResourceTest
         setUpGetEntityExpectations(0);
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[] {0, 0});
-
+        setUpGetRngDeviceExpectations(new int[] {0, 0});
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
@@ -442,6 +447,7 @@ public class BackendTemplatesResourceTest
 
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[] {0, 0});
+        setUpGetRngDeviceExpectations(new int[]{0, 0});
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
@@ -488,6 +494,7 @@ public class BackendTemplatesResourceTest
 
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[] {0, 0});
+        setUpGetRngDeviceExpectations(new int[]{0, 0});
 
         setUpGetEntityExpectations(VdcQueryType.GetVdsGroupByName,
                 NameQueryParameters.class,
@@ -663,6 +670,7 @@ public class BackendTemplatesResourceTest
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
             setUpGetConsoleExpectations(new int[]{0, 1, 2});
             setUpGetVirtioScsiExpectations(new int[] {0, 1, 2});
+            setUpGetRngDeviceExpectations(new int[]{0, 1, 2});
         }
 
         setUpQueryExpectations("");

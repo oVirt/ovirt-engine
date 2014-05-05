@@ -192,6 +192,7 @@ public class BackendVmResourceTest
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
             setUpGetConsoleExpectations(new int[]{0});
             setUpGetVirtioScsiExpectations(new int[]{0});
+            setUpGetRngDeviceExpectations(new int[]{0});
             setUpGetVmOvfExpectations(new int[]{0});
         }
         setUpGetEntityExpectations(1);
@@ -236,6 +237,7 @@ public class BackendVmResourceTest
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
+        setUpGetRngDeviceExpectations(new int[]{0});
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
                                            new String[] {},
@@ -263,6 +265,7 @@ public class BackendVmResourceTest
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
+        setUpGetRngDeviceExpectations(new int[]{0});
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
@@ -305,6 +308,7 @@ public class BackendVmResourceTest
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
+        setUpGetRngDeviceExpectations(new int[]{0});
         setUpEntityQueryExpectations(VdcQueryType.GetVdsStaticByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
@@ -345,6 +349,7 @@ public class BackendVmResourceTest
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
+        setUpGetRngDeviceExpectations(new int[]{0});
         setUriInfo(setUpActionExpectations(VdcActionType.ChangeVMCluster,
                                            ChangeVMClusterParameters.class,
                                            new String[] {"ClusterId", "VmId"},

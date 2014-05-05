@@ -260,6 +260,16 @@ public abstract class AbstractBackendBaseTest extends Assert {
         }
     }
 
+    protected void setUpGetRngDeviceExpectations(int ... idxs) throws Exception {
+        for (int i = 0; i < idxs.length; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetRngDevice,
+                        IdQueryParameters.class,
+                        new String[] { "Id" },
+                        new Object[] { GUIDS[idxs[i]] },
+            new ArrayList<>());
+        }
+    }
+
     protected UriInfo setUpActionExpectations(VdcActionType task,
             Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
             boolean canDo, boolean success) {

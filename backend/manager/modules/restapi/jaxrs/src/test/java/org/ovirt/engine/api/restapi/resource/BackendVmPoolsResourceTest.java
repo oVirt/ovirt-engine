@@ -98,6 +98,8 @@ public class BackendVmPoolsResourceTest extends
                 new Object[] { GUIDS[1] },
                 new ArrayList<>());
 
+        setUpGetRngDeviceExpectations(new int[] {0});
+
         setUpCreationExpectations(VdcActionType.AddVmPoolWithVms,
              VmPoolParametersBase.class,
              new String[] { "StorageDomainId" },
@@ -128,6 +130,7 @@ public class BackendVmPoolsResourceTest extends
                 getTemplateEntity());
 
         setUpGetConsoleExpectations(new int[] { 1 });
+        setUpGetRngDeviceExpectations(new int[] {0});
 
         setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
                 IdQueryParameters.class,

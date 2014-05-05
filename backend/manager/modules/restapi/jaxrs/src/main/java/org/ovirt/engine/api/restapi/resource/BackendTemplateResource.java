@@ -22,6 +22,7 @@ import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
+import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -126,7 +128,12 @@ public class BackendTemplateResource
             updated.setUsbPolicy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy(),
                     lookupCluster(updated.getVdsGroupId())));
 
-            return getMapper(modelType, UpdateVmTemplateParameters.class).map(incoming, new UpdateVmTemplateParameters(updated));
+            UpdateVmTemplateParameters params = new UpdateVmTemplateParameters(updated);
+            if (incoming.isSetRngDevice()) {
+                params.setUpdateRngDevice(true);
+                params.setRngDevice(RngDeviceMapper.map(incoming.getRngDevice(), null));
+            }
+            return getMapper(modelType, UpdateVmTemplateParameters.class).map(incoming, params);
         }
     }
 
@@ -144,7 +151,19 @@ public class BackendTemplateResource
             model.setVirtioScsi(new VirtIOSCSI());
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(entity.getId()).isEmpty());
+        setRngDevice(model);
         return model;
+    }
+
+    private void setRngDevice(Template model) {
+        List<VmRngDevice> rngDevices = getEntity(List.class,
+            VdcQueryType.GetRngDevice,
+            new IdQueryParameters(Guid.createGuidFromString(model.getId())),
+            "GetRngDevice", true);
+
+        if (rngDevices != null && !rngDevices.isEmpty()) {
+            model.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));
+        }
     }
 
     @Override

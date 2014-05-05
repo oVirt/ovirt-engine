@@ -34,6 +34,7 @@ import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
+import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -49,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -284,6 +286,11 @@ public class BackendVmsResource extends
                 ? vm.getConsole().isEnabled()
                 : !getConsoleDevicesForEntity(staticVm.getId()).isEmpty());
 
+        if (vm.isSetRngDevice()) {
+            params.setUpdateRngDevice(true);
+            params.setRngDevice(RngDeviceMapper.map(vm.getRngDevice(), null));
+        }
+
         return performCreate(VdcActionType.AddVmFromSnapshot,
                                 params,
                                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
@@ -301,6 +308,11 @@ public class BackendVmsResource extends
         params.setConsoleEnabled(vm.isSetConsole() && vm.getConsole().isSetEnabled()
                 ? vm.getConsole().isEnabled()
                 : !getConsoleDevicesForEntity(templateId).isEmpty());
+
+        if (vm.isSetRngDevice()) {
+            params.setUpdateRngDevice(true);
+            params.setRngDevice(RngDeviceMapper.map(vm.getRngDevice(), null));
+        }
 
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         setupCloneTemplatePermissions(vm, params);
@@ -360,6 +372,11 @@ public class BackendVmsResource extends
         params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
                 vm.getVirtioScsi().isEnabled() : null);
 
+        if (vm.isSetRngDevice()) {
+            params.setUpdateRngDevice(true);
+            params.setRngDevice(RngDeviceMapper.map(vm.getRngDevice(), null));
+        }
+
         return performCreate(VdcActionType.AddVm,
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
@@ -384,6 +401,11 @@ public class BackendVmsResource extends
 
         if (vm.isSetConsole() && vm.getConsole().isSetEnabled()) {
             params.setConsoleEnabled(vm.getConsole().isEnabled());
+        }
+
+        if (vm.isSetRngDevice()) {
+            params.setUpdateRngDevice(true);
+            params.setRngDevice(RngDeviceMapper.map(vm.getRngDevice(), null));
         }
 
         return performCreate(VdcActionType.AddVmFromScratch,
@@ -626,7 +648,19 @@ public class BackendVmsResource extends
         setVirtioScsiController(model);
         setCertificateInfo(model);
         setVmOvfConfiguration(model, entity);
+        setRngDevice(model);
         return model;
+    }
+
+    protected void setRngDevice(VM model) {
+        List<VmRngDevice> rngDevices = getEntity(List.class,
+                VdcQueryType.GetRngDevice,
+                new IdQueryParameters(Guid.createGuidFromString(model.getId())),
+                "GetRngDevice", true);
+
+        if (rngDevices != null && !rngDevices.isEmpty()) {
+            model.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));
+        }
     }
 
     private List<String> getConsoleDevicesForEntity(Guid id) {

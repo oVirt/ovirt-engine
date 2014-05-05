@@ -41,7 +41,7 @@ import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmSessionsResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendResource.QueryIdResolver;
+import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -456,6 +456,7 @@ public class BackendVmResource extends
         parent.setConsoleDevice(model);
         parent.setVirtioScsiController(model);
         parent.setVmOvfConfiguration(model, entity);
+        parent.setRngDevice(model);
         return model;
     }
 
@@ -513,6 +514,10 @@ public class BackendVmResource extends
             }
             if (incoming.isSetVirtioScsi()) {
                 params.setVirtioScsiEnabled(incoming.getVirtioScsi().isEnabled());
+            }
+            if (incoming.isSetRngDevice()) {
+                params.setUpdateRngDevice(true);
+                params.setRngDevice(RngDeviceMapper.map(incoming.getRngDevice(), null));
             }
             return params;
         }

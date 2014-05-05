@@ -75,6 +75,8 @@ import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.api.model.ReportedDeviceTypes;
 import org.ovirt.engine.api.model.SELinuxMode;
 import org.ovirt.engine.api.model.SELinuxModes;
+import org.ovirt.engine.api.model.RngSource;
+import org.ovirt.engine.api.model.RngSources;
 import org.ovirt.engine.api.model.SchedulingPolicies;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.ScsiGenericIO;
@@ -262,6 +264,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addArchitectureCapabilities(version);
         addSerialNumberPolicies(version, SerialNumberPolicy.values());
         addSELinuxModes(version, SELinuxMode.values());
+        addRngSources(version, RngSource.values());
 
         // External tasks types
         addStepEnumTypes(version, StepEnum.values());
@@ -843,6 +846,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             version.setSelinuxModes(new SELinuxModes());
             for (SELinuxMode mode: values) {
                 version.getSelinuxModes().getSELinuxModes().add(mode.value());
+            }
+        }
+    }
+
+    private void addRngSources(VersionCaps ver, RngSource[] vals) {
+        if (VersionUtils.greaterOrEqual(ver, VERSION_3_5)) {
+            ver.setRngSources(new RngSources());
+            for (RngSource src : vals) {
+                ver.getRngSources().getRngSources().add(src.name());
             }
         }
     }

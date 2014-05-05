@@ -650,6 +650,7 @@
           <xs:element ref="architecture_capabilities" minOccurs="0"/>
           <xs:element ref="serial_number_policies" minOccurs="0" />
           <xs:element ref="selinux_modes" minOccurs="0" />
+          <xs:element ref="rng_sources" minOccurs="0" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2420,6 +2421,7 @@
           <xs:element name="stateless" type="xs:boolean" minOccurs="0"/>
           <xs:element name="delete_protected" type="xs:boolean" minOccurs="0"/>
           <xs:element ref="sso" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="rng_device" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="console" minOccurs="0" maxOccurs="1"/>
           <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
@@ -2522,6 +2524,39 @@
 
   <xs:complexType name="Method">
     <xs:attribute name="id" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Random Number Genertor device -->
+  <xs:complexType name="Rate">
+    <xs:sequence>
+      <xs:element name="bytes" type="xs:int" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="period" type="xs:int" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="rng_sources" type="RngSources" />
+
+  <xs:element name="source" type="xs:string" />
+
+  <xs:complexType name="RngSources">
+    <xs:sequence>
+      <xs:element ref="source" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="RngSources" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="rng_device" type="RngDevice"/>
+
+  <xs:complexType name="RngDevice">
+    <xs:sequence>
+      <xs:element name="rate" type="Rate" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="source" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="HighAvailability">
@@ -2790,6 +2825,7 @@
           <xs:element name="stateless" type="xs:boolean" minOccurs="0"/>
           <xs:element name="delete_protected" type="xs:boolean" minOccurs="0"/>
           <xs:element ref="sso" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="rng_device" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="console" minOccurs="0" maxOccurs="1"/>
           <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
@@ -2991,6 +3027,7 @@
           <xs:element name="prestarted_vms" type="xs:int" minOccurs="0"/>
           <xs:element name="max_user_vms" type="xs:int" minOccurs="0"/>
           <xs:element ref="display" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="rng_device" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
