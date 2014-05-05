@@ -309,6 +309,7 @@ public class SetupNetworksVDSCommandTest {
             String bondOptions,
             NetworkBootProtocol bootProtocol,
             String networkName,
+            String baseInterfaceName,
             Integer vlanId) {
         VdsNetworkInterface iface = new VdsNetworkInterface();
         iface.setId(Guid.newGuid());
@@ -318,19 +319,20 @@ public class SetupNetworksVDSCommandTest {
         iface.setBondOptions(bondOptions);
         iface.setBootProtocol(bootProtocol);
         iface.setNetworkName(networkName);
+        iface.setBaseInterface(baseInterfaceName);
         iface.setVlanId(vlanId);
         return iface;
     }
 
     private VdsNetworkInterface createBond() {
-        return createVdsInterface("bond0", true, null, RandomUtils.instance().nextString(100), null, null, null);
+        return createVdsInterface("bond0", true, null, RandomUtils.instance().nextString(100), null, null, null, null);
     }
 
     private VdsNetworkInterface createNic(String name,
             String bondName,
             NetworkBootProtocol bootProtocol,
             String network) {
-        return createVdsInterface(name, false, bondName, null, bootProtocol, network, null);
+        return createVdsInterface(name, false, bondName, null, bootProtocol, network, null, null);
     }
 
     private VdsNetworkInterface createVlan(VdsNetworkInterface iface, Network net) {
@@ -340,6 +342,7 @@ public class SetupNetworksVDSCommandTest {
                 null,
                 NetworkBootProtocol.NONE,
                 net.getName(),
+                iface.getName(),
                 net.getVlanId());
     }
 

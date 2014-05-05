@@ -674,11 +674,13 @@ public class SetupNetworksHelperTest {
     @Test
     public void syncNetworkOnVlan() {
         Network net = createNetwork("net");
+        VdsNetworkInterface baseNic = createNic("baseNic", null);
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
+        nic.setBaseInterface(baseNic.getName());
         nic.setVlanId(RandomUtils.instance().nextInt());
 
         mockExistingNetworks(net);
-        mockExistingIfaces(nic);
+        mockExistingIfaces(nic, baseNic);
 
         SetupNetworksHelper helper = createHelper(createParametersForSync(nic));
 
@@ -767,13 +769,13 @@ public class SetupNetworksHelperTest {
     public void fakeVlanNicWithVmNetworkDenied() {
         Network net1 = createNetwork("net1");
         Network net2 = createNetwork("net2");
+        net2.setVlanId(100);
         mockExistingNetworks(net1, net2);
 
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net1);
         mockExistingIfaces(nic);
 
         VdsNetworkInterface fakeVlanNic = createVlan(nic.getName(), 100, net2.getName());
-        fakeVlanNic.setVlanId(null);
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic, fakeVlanNic));
 
@@ -1064,6 +1066,7 @@ public class SetupNetworksHelperTest {
     @Test
     public void vlanOverBond() {
         Network network = createNetwork("net");
+        network.setVlanId(100);
         VdsNetworkInterface bond = createBond(BOND_NAME, null);
         List<VdsNetworkInterface> ifacesToBond = createNics(null);
 
@@ -1627,6 +1630,7 @@ public class SetupNetworksHelperTest {
      * @param name
      * @param bonded
      * @param bondName
+     * @param baseInterfaceName
      * @param vlanId
      * @param networkName
      * @param bridged
@@ -1637,6 +1641,7 @@ public class SetupNetworksHelperTest {
             String name,
             Boolean bonded,
             String bondName,
+            String baseInterfaceName,
             Integer vlanId,
             String networkName,
             boolean bridged,
@@ -1648,6 +1653,7 @@ public class SetupNetworksHelperTest {
         iface.setName(name);
         iface.setBonded(bonded);
         iface.setBondName(bondName);
+        iface.setBaseInterface(baseInterfaceName);
         iface.setVlanId(vlanId);
         iface.setNetworkName(networkName);
         iface.setBridged(bridged);
@@ -1665,7 +1671,7 @@ public class SetupNetworksHelperTest {
      * @return {@link VdsNetworkInterface} representing a regular NIC with the given parameters.
      */
     private VdsNetworkInterface createNic(String nicName, String networkName) {
-        return createVdsInterface(Guid.newGuid(), nicName, false, null, null, networkName, true, null, false, null);
+        return createVdsInterface(Guid.newGuid(), nicName, false, null, null, null, networkName, true, null, false, null);
     }
 
     /**
@@ -1694,6 +1700,7 @@ public class SetupNetworksHelperTest {
         VdsNetworkInterface nic = createVdsInterface(Guid.newGuid(),
                 nicName,
                 false,
+                null,
                 null,
                 network.getVlanId(),
                 network.getName(),
@@ -1726,7 +1733,7 @@ public class SetupNetworksHelperTest {
      * @return Bond with the given parameters.
      */
     private VdsNetworkInterface createBond(String name, String networkName) {
-        return createVdsInterface(Guid.newGuid(), name, true, null, null, networkName, true, null, false, null);
+        return createVdsInterface(Guid.newGuid(), name, true, null, null, null, networkName, true, null, false, null);
     }
 
     /**
@@ -1743,6 +1750,7 @@ public class SetupNetworksHelperTest {
                 baseIfaceName + "." + vlanId,
                 false,
                 null,
+                baseIfaceName,
                 vlanId,
                 networkName,
                 true,
@@ -1761,7 +1769,7 @@ public class SetupNetworksHelperTest {
      * @return NIC from given NIC which is either enslaved or freed.
      */
     private VdsNetworkInterface enslaveOrReleaseNIC(VdsNetworkInterface iface, String bondName) {
-        return createVdsInterface(iface.getId(), iface.getName(), false, bondName, null, null, true, null, false, null);
+        return createVdsInterface(iface.getId(), iface.getName(), false, bondName, null, null, null, true, null, false, null);
     }
 
     /**
@@ -1894,6 +1902,7 @@ public class SetupNetworksHelperTest {
                     nics[i].getName(),
                     nics[i].getBonded(),
                     nics[i].getBondName(),
+                    nics[i].getBaseInterface(),
                     nics[i].getVlanId(),
                     nics[i].getNetworkName(),
                     nics[i].isBridged(),

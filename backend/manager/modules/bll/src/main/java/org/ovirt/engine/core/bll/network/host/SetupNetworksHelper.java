@@ -135,7 +135,7 @@ public class SetupNetworksHelper {
             VdsNetworkInterface nic = hostInterfacesByNetworkName.get(network);
             if (nic != null && !removedBonds.containsKey(nic.getName())) {
                 if (NetworkUtils.isVlan(nic)) {
-                    nic = nicsByName.get(NetworkUtils.stripVlan(nic.getName()));
+                    nic = nicsByName.get(NetworkUtils.stripVlan(nic));
                     if (nic == null) {
                         continue;
                     }
@@ -173,11 +173,31 @@ public class SetupNetworksHelper {
      * Validates that all interfaces exist on the host, except bonds that may be created.
      */
     private void validateInterfacesExist() {
+
         for (VdsNetworkInterface iface : params.getInterfaces()) {
-            String nameWithoutVlanId = NetworkUtils.stripVlan(iface.getName());
+            updateBaseInterface(iface);
+
+            String nameWithoutVlanId = NetworkUtils.stripVlan(iface);
+
             if (!getExistingIfaces().containsKey(nameWithoutVlanId) && !bonds.containsKey(nameWithoutVlanId)) {
                 addViolation(VdcBllMessages.NETWORK_INTERFACES_DONT_EXIST, nameWithoutVlanId);
             }
+        }
+    }
+
+    private void updateBaseInterface(VdsNetworkInterface nic) {
+        if (StringUtils.isNotEmpty(nic.getBaseInterface())) {
+            return;
+        }
+
+        if (NetworkUtils.isVlan(nic)) {
+            String[] tokens = nic.getName().split("[.]", -1);
+            if (tokens.length == 1) {
+                nic.setBaseInterface(nic.getName());
+                return;
+            }
+
+            nic.setBaseInterface(StringUtils.join(tokens, '.', 0, tokens.length -1));
         }
     }
 
@@ -284,10 +304,10 @@ public class SetupNetworksHelper {
      * @return a list of attached networks to the given underlying interface
      */
     private List<Network> findNetworksOnInterface(VdsNetworkInterface iface) {
-        String nameWithoutVlanId = NetworkUtils.stripVlan(iface.getName());
+        String nameWithoutVlanId = NetworkUtils.stripVlan(iface);
         List<Network> networks = new ArrayList<Network>();
         for (VdsNetworkInterface tmp : params.getInterfaces()) {
-            if (NetworkUtils.stripVlan(tmp.getName()).equals(nameWithoutVlanId) && tmp.getNetworkName() != null) {
+            if (NetworkUtils.stripVlan(tmp).equals(nameWithoutVlanId) && tmp.getNetworkName() != null) {
                 if (getExistingClusterNetworks().containsKey(tmp.getNetworkName())) {
                     networks.add(getExistingClusterNetworks().get(tmp.getNetworkName()));
                 }
@@ -423,6 +443,7 @@ public class SetupNetworksHelper {
             // check if network exists on cluster
             if (getExistingClusterNetworks().containsKey(networkName)) {
                 Network network = getExistingClusterNetworks().get(networkName);
+                iface.setVlanId(network.getVlanId());
                 validateNetworkInternal(network);
                 validateNetworkExclusiveOnIface(iface,
                         determineNetworkType(network.getVlanId(), network.isVmNetwork()));
@@ -451,6 +472,7 @@ public class SetupNetworksHelper {
             } else {
                 VdsNetworkInterface existingIface = getExistingIfaces().get(iface.getName());
                 existingIface = (existingIface == null ? iface : existingIface);
+                iface.setVlanId(existingIface.getVlanId());
                 validateNetworkExclusiveOnIface(iface,
                         determineNetworkType(existingIface.getVlanId(), existingIface.isBridged()));
 
@@ -500,7 +522,7 @@ public class SetupNetworksHelper {
      *            The type of the network.
      */
     private void validateNetworkExclusiveOnIface(VdsNetworkInterface iface, NetworkType networkType) {
-        String ifaceName = NetworkUtils.stripVlan(iface.getName());
+        String ifaceName = NetworkUtils.stripVlan(iface);
         List<NetworkType> networksOnIface = ifacesWithExclusiveNetwork.get(ifaceName);
 
         if (networksOnIface == null) {
