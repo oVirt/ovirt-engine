@@ -124,12 +124,8 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         return map;
     }
 
-    public Map<Version, String> getAllVmProperties() {
-        Map<Version, String> allVmPropertiesString = new HashMap<Version, String>();
-        for (Map.Entry<Version, Map<String, String>> entry : allVmProperties.entrySet()) {
-            allVmPropertiesString.put(entry.getKey(), convertProperties(entry.getValue()));
-        }
-        return allVmPropertiesString;
+    public Map<Version, Map<String, String>> getAllVmProperties() {
+        return allVmProperties;
     }
 
     private void getPredefinedProperties(Version version, VmStatic vmStatic, Map<String, String> propertiesMap) {

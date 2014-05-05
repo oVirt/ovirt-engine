@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -266,13 +265,8 @@ public abstract class VnicProfileModel extends Model {
                                     Map<String, String> customPropertiesList =
                                             ((VdcQueryReturnValue) returnValue).getReturnValue();
 
-                                    List<String> lines = new ArrayList<String>();
-
-                                    for (Map.Entry<String, String> keyValue : customPropertiesList.entrySet()) {
-                                        lines.add(keyValue.getKey() + '=' + keyValue.getValue());
-                                    }
-                                    getCustomPropertySheet().setKeyValueString(lines);
-                                    getCustomPropertySheet().setIsChangable(!lines.isEmpty());
+                                    getCustomPropertySheet().setKeyValueMap(customPropertiesList);
+                                    getCustomPropertySheet().setIsChangable(!customPropertiesList.isEmpty());
 
                                     initCustomProperties();
                                 }

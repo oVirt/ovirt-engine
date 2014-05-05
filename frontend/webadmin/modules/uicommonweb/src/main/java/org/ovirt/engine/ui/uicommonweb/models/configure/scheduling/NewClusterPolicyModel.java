@@ -83,7 +83,7 @@ public class NewClusterPolicyModel extends Model {
         if (!customPropertiesInitialized) {
             return;
         }
-        ArrayList<String> lines = new ArrayList<String>();
+        Map<String, String> policyProperties = new HashMap<String, String>();
         Map<Guid, PolicyUnit> allPolicyUnits = new HashMap<Guid, PolicyUnit>();
         for (PolicyUnit policyUnit : getUsedFilters()) {
             allPolicyUnits.put(policyUnit.getId(), policyUnit);
@@ -103,16 +103,14 @@ public class NewClusterPolicyModel extends Model {
         allPolicyUnits.put(selectedItem.getId(), selectedItem);
         for (PolicyUnit policyUnit : allPolicyUnits.values()) {
             if (policyUnit.getParameterRegExMap() != null) {
-                for (Map.Entry<String, String> keyValue : policyUnit.getParameterRegExMap().entrySet()) {
-                    lines.add(keyValue.getKey() + '=' + keyValue.getValue());
-                }
+                policyProperties.putAll(policyUnit.getParameterRegExMap());
             }
         }
         Map<String, String> defaultMap = new HashMap<String, String>(getCustomProperties());
         if(!reset) {
             defaultMap.putAll(KeyValueModel.convertProperties(getCustomPropertySheet().serialize()));
         }
-        getCustomPropertySheet().setKeyValueString(lines);
+        getCustomPropertySheet().setKeyValueMap(policyProperties);
         getCustomPropertySheet().deserialize(KeyValueModel.convertProperties(defaultMap));
     }
 

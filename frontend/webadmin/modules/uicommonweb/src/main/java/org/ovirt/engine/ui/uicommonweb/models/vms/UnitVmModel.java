@@ -1135,14 +1135,14 @@ public class UnitVmModel extends Model {
         this.customPropertySheet = customPropertySheet;
     }
 
-    private Map<Version, List<String>> privateCustomPropertiesKeysList;
+    private Map<Version, Map<String, String>> privateCustomPropertiesKeysList;
 
-    public Map<Version, List<String>> getCustomPropertiesKeysList()
+    public Map<Version, Map<String, String>> getCustomPropertiesKeysList()
     {
         return privateCustomPropertiesKeysList;
     }
 
-    public void setCustomPropertiesKeysList(Map<Version, List<String>> value)
+    public void setCustomPropertiesKeysList(Map<Version, Map<String, String>> value)
     {
         privateCustomPropertiesKeysList = value;
     }

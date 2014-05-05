@@ -472,7 +472,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateCustomPropertySheet(Version clusterVersion) {
-        getModel().getCustomPropertySheet().setKeyValueString(
+        getModel().getCustomPropertySheet().setKeyValueMap(
                 getModel().getCustomPropertiesKeysList().get(clusterVersion)
         );
     }

@@ -1575,7 +1575,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
     private void clusterPolicyChanged() {
         ClusterPolicy clusterPolicy = getClusterPolicy().getSelectedItem();
-        ArrayList<String> lines = new ArrayList<String>();
+        Map<String, String> policyProperties = new HashMap<String, String>();
         Map<Guid, PolicyUnit> allPolicyUnits = new HashMap<Guid, PolicyUnit>();
         if (clusterPolicy.getFilters() != null) {
             for (Guid policyUnitId : clusterPolicy.getFilters()) {
@@ -1593,12 +1593,10 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
         for (PolicyUnit policyUnit : allPolicyUnits.values()) {
             if (policyUnit.getParameterRegExMap() != null) {
-                for (Map.Entry<String, String> keyValue : policyUnit.getParameterRegExMap().entrySet()) {
-                    lines.add(keyValue.getKey() + '=' + keyValue.getValue());
-                }
+                policyProperties.putAll(policyUnit.getParameterRegExMap());
             }
         }
-        getCustomPropertySheet().setKeyValueString(lines);
+        getCustomPropertySheet().setKeyValueMap(policyProperties);
         if (getIsEdit() &&
                 clusterPolicy.getId().equals(getEntity().getClusterPolicyId())) {
             getCustomPropertySheet().deserialize(KeyValueModel.convertProperties(getEntity().getClusterPolicyProperties()));
