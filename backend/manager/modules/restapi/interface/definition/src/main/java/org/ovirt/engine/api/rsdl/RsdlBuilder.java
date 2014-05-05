@@ -199,16 +199,17 @@ public class RsdlBuilder {
             return this;
         }
         public LinkBuilder requestParameter(final String requestParameter) {
-            link.setRequest(new Request());
-            link.getRequest().setBody(new org.ovirt.engine.api.model.Body() {
-                {
-                    setType(requestParameter);
-                }
-            });
+            org.ovirt.engine.api.model.Body body = new org.ovirt.engine.api.model.Body();
+            body.setType(requestParameter);
+            Request request = new Request();
+            request.setBody(body);
+            link.setRequest(request);
             return this;
         }
         public LinkBuilder responseType(final String responseType) {
-            link.setResponse(new Response(){{setType(responseType);}});
+            Response response = new Response();
+            response.setType(responseType);
+            link.setResponse(response);
             return this;
         }
         public LinkBuilder httpMethod(HttpMethod httpMethod) {
