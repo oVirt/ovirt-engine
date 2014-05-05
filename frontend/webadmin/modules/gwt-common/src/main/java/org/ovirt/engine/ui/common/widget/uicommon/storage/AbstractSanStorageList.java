@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.core.client.Scheduler;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -97,7 +98,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         }
     }
 
-    protected void addRootNode(TreeItem rootItem, TreeItem leafItem) {
+    protected void addRootNode(final TreeItem rootItem, final TreeItem leafItem) {
         rootItem.getElement().getStyle().setBackgroundColor("#eff3ff"); //$NON-NLS-1$
         rootItem.getElement().getStyle().setMarginBottom(1, Unit.PX);
         rootItem.getElement().getStyle().setPadding(0, Unit.PX);
@@ -105,15 +106,22 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         if (leafItem != null) {
             rootItem.addItem(leafItem);
 
-            leafItem.getElement().getStyle().setBackgroundColor("#ffffff"); //$NON-NLS-1$
-            leafItem.getElement().getStyle().setMarginLeft(0, Unit.PX);
-            leafItem.getElement().getStyle().setPadding(0, Unit.PX);
+            // Defer styling in order to override padding done in:
+            // com.google.gwt.user.client.ui.Tree -> showLeafImage
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    leafItem.getElement().getStyle().setBackgroundColor("#ffffff"); //$NON-NLS-1$
+                    leafItem.getElement().getStyle().setMarginLeft(20, Unit.PX);
+                    leafItem.getElement().getStyle().setPadding(0, Unit.PX);
 
-            Boolean isLeafEmpty = (Boolean) leafItem.getUserObject();
-            if (isLeafEmpty != null && isLeafEmpty.equals(Boolean.TRUE)) {
-                rootItem.getElement().getElementsByTagName("td").getItem(0).getStyle().setVisibility(Visibility.HIDDEN); //$NON-NLS-1$
-            }
-            rootItem.getElement().getElementsByTagName("td").getItem(1).getStyle().setWidth(100, Unit.PCT); //$NON-NLS-1$
+                    Boolean isLeafEmpty = (Boolean) leafItem.getUserObject();
+                    if (isLeafEmpty != null && isLeafEmpty.equals(Boolean.TRUE)) {
+                        rootItem.getElement().getElementsByTagName("td").getItem(0).getStyle().setVisibility(Visibility.HIDDEN); //$NON-NLS-1$
+                    }
+                    rootItem.getElement().getElementsByTagName("td").getItem(1).getStyle().setWidth(100, Unit.PCT); //$NON-NLS-1$
+                }
+            });
         }
 
         tree.addItem(rootItem);
