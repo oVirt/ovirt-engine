@@ -1903,6 +1903,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
+     * Add a variable to the {@link CommandBase#canDoAction()}'s return value.
+     * The variable will be formatted as "$varName varValue" and will be used to parse the placeholders defined
+     * in the canDo message itself
+     *
+     * @param varName the variable name
+     * @param varValue the variable value
+     */
+    protected void addCanDoActionMessageVariable(String varName, Object varValue) {
+        getReturnValue().getCanDoActionMessages().add(String.format("$%s %s", varName, varValue));
+    }
+
+    /**
      * Run the given command in the VDS and return the VDS's response.
      *
      * @param commandType
