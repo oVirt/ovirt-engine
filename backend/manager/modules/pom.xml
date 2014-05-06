@@ -29,6 +29,7 @@
     <module>extensions-manager</module>
     <module>bll</module>
     <module>restapi</module>
+    <module>logger</module>
     <module>root</module>
     <module>branding</module>
     <module>services</module>

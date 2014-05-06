@@ -61,6 +61,10 @@
 
     <subsystem xmlns="urn:jboss:domain:logging:1.1">
 
+      <custom-handler name="ovirt-logger" class="org.ovirt.engine.core.logger.LoggerHandler" module="org.ovirt.engine.core.logger">
+        <level name="DEBUG"/>
+      </custom-handler>
+
       <!-- All the application server messages go here: -->
       <file-handler name="SERVER">
         <level name="INFO"/>
@@ -105,6 +109,7 @@
         <level name="INFO"/>
         <handlers>
           <handler name="ENGINE"/>
+          <handler name="ovirt-logger"/>
           #if $getboolean('ENGINE_LOG_TO_CONSOLE')
               <handler name="CONSOLE"/>
           #end if
@@ -123,6 +128,7 @@
       <root-logger>
         <level name="INFO"/>
         <handlers>
+          <handler name="ovirt-logger"/>
           <handler name="SERVER"/>
         </handlers>
       </root-logger>
