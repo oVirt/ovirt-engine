@@ -229,7 +229,7 @@ class Plugin(plugin.PluginBase):
         self.dialog.note(
             text=_(
                 'Please use the user "admin" and password specified in '
-                'order to login into oVirt Engine'
+                'order to login'
             ),
         )
 
