@@ -38,7 +38,7 @@ public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterV
         GlusterVolumeEntity volume = getGlusterVolume();
         if (volume.isOnline()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ALREADY_STARTED);
-            addCanDoActionMessage(String.format("$volumeName %1$s", volume.getName()));
+            addCanDoActionMessageVariable("volumeName", volume.getName());
             return false;
         }
         return true;

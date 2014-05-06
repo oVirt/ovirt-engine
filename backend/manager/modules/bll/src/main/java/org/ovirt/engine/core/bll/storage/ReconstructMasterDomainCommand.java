@@ -88,7 +88,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
     protected void addInvalidSDStatusMessage(StorageDomainStatus status) {
         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
-        addCanDoActionMessage(String.format("$status %1$s", status));
+        addCanDoActionMessageVariable("status", status);
     }
 
 

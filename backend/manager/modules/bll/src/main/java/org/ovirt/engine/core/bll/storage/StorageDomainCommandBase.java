@@ -258,7 +258,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             for (LUNs lun : lunsUsedBySDs) {
                 formattedIds.add(getFormattedLunId(lun, lun.getStorageDomainName()));
             }
-            addCanDoActionMessage(String.format("$lunIds %1$s", StringUtils.join(formattedIds, ", ")));
+            addCanDoActionMessageVariable("lunIds", StringUtils.join(formattedIds, ", "));
         }
 
         if (!lunsUsedByDisks.isEmpty()) {
@@ -267,7 +267,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             for (LUNs lun : lunsUsedByDisks) {
                 formattedIds.add(getFormattedLunId(lun, lun.getDiskAlias()));
             }
-            addCanDoActionMessage(String.format("$lunIds %1$s", StringUtils.join(formattedIds, ", ")));
+            addCanDoActionMessageVariable("lunIds", StringUtils.join(formattedIds, ", "));
         }
 
        return !lunsUsedBySDs.isEmpty() || !lunsUsedByDisks.isEmpty();
@@ -411,7 +411,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected void addStorageDomainStatusIllegalMessage() {
         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
-        addCanDoActionMessage(String.format("$status %1$s", getStorageDomainStatus()));
+        addCanDoActionMessageVariable("status", getStorageDomainStatus());
     }
 
     protected BaseDiskDao getBaseDiskDao() {

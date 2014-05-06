@@ -101,7 +101,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
         if (volumeNameExists(volume.getName())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NAME_ALREADY_EXISTS);
-            addCanDoActionMessage(String.format("$volumeName %1$s", volume.getName()));
+            addCanDoActionMessageVariable("volumeName", volume.getName());
             return false;
         }
 

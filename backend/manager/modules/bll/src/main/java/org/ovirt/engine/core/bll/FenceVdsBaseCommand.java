@@ -126,7 +126,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     }
                 } else {
                     addCanDoActionMessage(VdcBllMessages.VDS_FENCE_DISABLED_AT_QUIET_TIME);
-                    addCanDoActionMessage(String.format("$seconds %1$s", secondsLeftToNextPmOp));
+                    addCanDoActionMessageVariable("seconds", secondsLeftToNextPmOp);
                 }
             } else {
                 addCanDoActionMessage(VdcBllMessages.VDS_FENCE_DISABLED_AT_SYSTEM_STARTUP_INTERVAL);

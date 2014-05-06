@@ -451,7 +451,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         }
 
         if (!vmsWithBoot.isEmpty()) {
-            addCanDoActionMessage(String.format("$VmsName %1$s", StringUtils.join(vmsWithBoot.toArray(), ", ")));
+            addCanDoActionMessageVariable("VmsName", StringUtils.join(vmsWithBoot.toArray(), ", "));
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VMS_BOOT_IN_USE);
         }
 

@@ -82,15 +82,14 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
     private void addDisksDeactivatedMessage(List<MoveDiskParameters> moveDiskParamsList) {
         setActionMessageParameters();
-        addCanDoActionMessage(String.format("$%1$s %2$s", "diskAliases",
-                StringUtils.join(getDisksAliases(moveDiskParamsList), ", ")));
+        addCanDoActionMessageVariable("diskAliases", StringUtils.join(getDisksAliases(moveDiskParamsList), ", "));
         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MOVE_DISKS_MIXED_PLUGGED_STATUS);
         getReturnValue().setCanDoAction(false);
     }
 
     private void addInvalidVmStateMessage(VM vm){
         setActionMessageParameters();
-        addCanDoActionMessage(String.format("$%1$s %2$s", "VmName", vm.getName()));
+        addCanDoActionMessageVariable("VmName", vm.getName());
         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
         getReturnValue().setCanDoAction(false);
     }

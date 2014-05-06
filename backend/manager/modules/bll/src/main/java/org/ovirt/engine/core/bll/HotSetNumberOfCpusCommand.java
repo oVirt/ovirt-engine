@@ -101,8 +101,8 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumerOfCpusParameters> ex
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__HOT_SET_CPUS);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-        addCanDoActionMessage(String.format("$clusterVersion %1$s", getVm().getVdsGroupCompatibilityVersion() ));
-        addCanDoActionMessage(String.format("$architecture %1$s", getVm().getClusterArch()));
+        addCanDoActionMessageVariable("clusterVersion", getVm().getVdsGroupCompatibilityVersion());
+        addCanDoActionMessageVariable("architecture", getVm().getClusterArch());
     }
 
     @Override

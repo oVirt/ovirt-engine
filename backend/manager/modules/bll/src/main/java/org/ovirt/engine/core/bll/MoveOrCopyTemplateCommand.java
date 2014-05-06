@@ -282,7 +282,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     imagesOnStorageDomain = (List<Guid>) returnValue.getReturnValue();
                     alreadyRetrieved.put(targetStorageDomainId, imagesOnStorageDomain);
                 } else {
-                    addCanDoActionMessage(String.format("$sdName %1$s", getStorageDomain(targetStorageDomainId).getName()));
+                    addCanDoActionMessageVariable("sdName", getStorageDomain(targetStorageDomainId).getName());
                     addCanDoActionMessage(VdcBllMessages.ERROR_GET_IMAGE_LIST);
                     return false;
                 }
@@ -399,8 +399,8 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         for (VmNic iface : ifaces) {
             if (!StringUtils.isEmpty(iface.getMacAddress())) {
                 if(!VALIDATE_MAC_ADDRESS.matcher(iface.getMacAddress()).matches()) {
-                    addCanDoActionMessage("$IfaceName " + iface.getName());
-                    addCanDoActionMessage("$MacAddress " + iface.getMacAddress());
+                    addCanDoActionMessageVariable("IfaceName ", iface.getName());
+                    addCanDoActionMessageVariable("MacAddress ", iface.getMacAddress());
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID);
                     return false;
                 }

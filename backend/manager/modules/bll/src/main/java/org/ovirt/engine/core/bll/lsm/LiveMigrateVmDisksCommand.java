@@ -345,7 +345,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         DiskImage diskImage = getDiskImageByImageId(imageId);
 
         if (diskImage.isShareable()) {
-            addCanDoActionMessage(String.format("$%1$s %2$s", "diskAliases", diskImage.getDiskAlias()));
+            addCanDoActionMessageVariable("diskAliases", diskImage.getDiskAlias());
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SHAREABLE_DISK_NOT_SUPPORTED);
         }
 

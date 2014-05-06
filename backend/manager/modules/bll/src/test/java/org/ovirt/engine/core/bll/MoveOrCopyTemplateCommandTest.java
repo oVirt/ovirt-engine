@@ -73,7 +73,7 @@ public class MoveOrCopyTemplateCommandTest {
 
         assertFalse(cmd.checkIfDisksExist(createImageList()));
         verify(cmd, times(1)).addCanDoActionMessage(VdcBllMessages.ERROR_GET_IMAGE_LIST);
-        verify(cmd, times(1)).addCanDoActionMessage("$sdName SD");
+        verify(cmd, times(1)).addCanDoActionMessageVariable("sdName", "SD");
         verify(cmd, times(1)).runVdsCommand(any(VDSCommandType.class), any(GetImagesListVDSCommandParameters.class));
     }
 

@@ -314,7 +314,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         if (getVdsGroup().supportsGlusterService()
                 && !GlusterFeatureSupported.gluster(getVdsGroup().getcompatibility_version())) {
             addCanDoActionMessage(VdcBllMessages.GLUSTER_NOT_SUPPORTED);
-            addCanDoActionMessage(String.format("$compatibilityVersion %1$s", getVdsGroup().getcompatibility_version().getValue()));
+            addCanDoActionMessageVariable("compatibilityVersion", getVdsGroup().getcompatibility_version().getValue());
             result = false;
         }
 

@@ -194,17 +194,17 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         boolean succeeded = true;
         if (!entitiesDeleteProtected.isEmpty()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DELETE_PROTECTED);
-            addCanDoActionMessage(String.format("$vms %1$s", StringUtils.join(entitiesDeleteProtected, ",")));
+            addCanDoActionMessageVariable("vms", StringUtils.join(entitiesDeleteProtected, ","));
             succeeded = false;
         }
         if (!vmsInPool.isEmpty()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_VMS_IN_POOL);
-            addCanDoActionMessage(String.format("$vms %1$s", StringUtils.join(vmsInPool, ",")));
+            addCanDoActionMessageVariable("vms", StringUtils.join(vmsInPool, ","));
             succeeded = false;
         }
         if (!vmsInPreview.isEmpty()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DELETE_VMS_IN_PREVIEW);
-            addCanDoActionMessage(String.format("$vms %1$s", StringUtils.join(vmsInPreview, ",")));
+            addCanDoActionMessageVariable("vms", StringUtils.join(vmsInPreview, ","));
             succeeded = false;
         }
         return succeeded;

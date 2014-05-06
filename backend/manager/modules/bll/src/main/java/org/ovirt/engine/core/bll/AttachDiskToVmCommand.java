@@ -78,7 +78,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
             if (((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
-                addCanDoActionMessage(String.format("$%1$s %2$s", "diskAliases", disk.getDiskAlias()));
+                addCanDoActionMessageVariable("diskAliases", disk.getDiskAlias());
                 return false;
             }
         }

@@ -30,8 +30,8 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__STOP);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_VOLUME);
-        addCanDoActionMessage(String.format("$volumeName %1$s", getGlusterVolumeName()));
-        addCanDoActionMessage(String.format("$vdsGroup %1$s", getVdsGroupName()));
+        addCanDoActionMessageVariable("volumeName", getGlusterVolumeName());
+        addCanDoActionMessageVariable("vdsGroup", getVdsGroupName());
     }
 
     @Override
@@ -43,7 +43,7 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
         GlusterVolumeEntity volume = getGlusterVolume();
         if (!volume.isOnline()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ALREADY_STOPPED);
-            addCanDoActionMessage(String.format("$volumeName %1$s", volume.getName()));
+            addCanDoActionMessageVariable("volumeName", volume.getName());
             return false;
         }
 

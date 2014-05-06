@@ -50,8 +50,8 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(String.format("$volumeName %1$s", getGlusterVolumeName()));
-        addCanDoActionMessage(String.format("$vdsGroup %1$s", getVdsGroupName()));
+        addCanDoActionMessageVariable("volumeName", getGlusterVolumeName());
+        addCanDoActionMessageVariable("vdsGroup", getVdsGroupName());
     }
 
     protected Map<String, String> getStepMessageMap(JobExecutionStatus status, String jobInfo) {

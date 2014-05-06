@@ -100,7 +100,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
         upServer = getUpServer();
         if (upServer == null) {
-            addCanDoActionMessage(String.format("$clusterName %1$s", getVdsGroup().getName()));
+            addCanDoActionMessageVariable("clusterName", getVdsGroup().getName());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
             return false;
         }
@@ -151,7 +151,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         for (GlusterBrickEntity brick : newBricks) {
             if (bricks.contains(brick.getQualifiedName())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);
-                addCanDoActionMessage(String.format("$brick %1$s", brick.getQualifiedName()));
+                addCanDoActionMessageVariable("brick", brick.getQualifiedName());
                 return false;
             }
             bricks.add(brick.getQualifiedName());
@@ -160,9 +160,9 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
                     getGlusterBrickDao().getBrickByServerIdAndDirectory(brick.getServerId(), brick.getBrickDirectory());
             if (existingBrick != null) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME);
-                addCanDoActionMessage(String.format("$brick %1$s", brick.getQualifiedName()));
-                addCanDoActionMessage(String.format("$volumeName %1$s",
-                        getGlusterVolumeDao().getById(existingBrick.getVolumeId()).getName()));
+                addCanDoActionMessageVariable("brick", brick.getQualifiedName());
+                addCanDoActionMessageVariable("volumeName",
+                        getGlusterVolumeDao().getById(existingBrick.getVolumeId()).getName());
                 return false;
             }
         }

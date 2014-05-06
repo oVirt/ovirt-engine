@@ -56,7 +56,7 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
     }
 
     protected boolean prepareFailureMessageForDomains(String domainNames) {
-        addCanDoActionMessage(String.format("$domainNames %1$s", domainNames));
+        addCanDoActionMessageVariable("domainNames", domainNames);
         return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
 

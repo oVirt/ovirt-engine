@@ -84,7 +84,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
-        addCanDoActionMessage(String.format("$server %1$s", getParameters().getvds().getHostName()));
+        addCanDoActionMessageVariable("server", getParameters().getvds().getHostName());
     }
 
     protected Provider getHostProvider() {
@@ -447,7 +447,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         e
                         );
                 addCanDoActionMessage(VdcBllMessages.VDS_SECURITY_CONNECTION_ERROR);
-                addCanDoActionMessage(String.format("$ErrorMessage %1$s", e.getMessage()));
+                addCanDoActionMessageVariable("ErrorMessage", e.getMessage());
                 return failCanDoAction(VdcBllMessages.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
             } catch (Exception e) {
                 log.errorFormat(

@@ -37,7 +37,7 @@ public class DeleteGlusterVolumeCommand extends GlusterVolumeCommandBase<Gluster
         GlusterVolumeEntity volume = getGlusterVolume();
         if (volume.isOnline()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_UP);
-            addCanDoActionMessage(String.format("$volumeName %1$s", volume.getName()));
+            addCanDoActionMessageVariable("volumeName", volume.getName());
             return false;
         }
         return true;

@@ -101,7 +101,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         if (doDomainsUseConnection(newConnectionDetails) || doLunsUseConnection()) {
             if (storageType.isFileDomain() && domains.size() > 1) {
                 String domainNames = createDomainNamesList(domains);
-                addCanDoActionMessage(String.format("$domainNames %1$s", domainNames));
+                addCanDoActionMessageVariable("domainNames", domainNames);
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
             }
             // Check that the storage domain is in proper state to be edited
@@ -135,7 +135,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         if (connection.getstorage_type().isFileDomain()) {
             boolean isConnectionEditable = isDomainInEditState(domains.get(0));
             if (!isConnectionEditable) {
-                addCanDoActionMessage(String.format("$domainNames %1$s", domains.get(0).getStorageName()));
+                addCanDoActionMessageVariable("domainNames", domains.get(0).getStorageName());
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_STATUS);
             }
             return isConnectionEditable;
@@ -177,18 +177,18 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             }
             if (!problematicVMNames.isEmpty()) {
                 if (problematicDomainNames.isEmpty()) {
-                    addCanDoActionMessage(String.format("$vmNames %1$s", prepareEntityNamesForMessage(problematicVMNames)));
+                    addCanDoActionMessageVariable("vmNames", prepareEntityNamesForMessage(problematicVMNames));
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS);
                 } else {
-                    addCanDoActionMessage(String.format("$vmNames %1$s", prepareEntityNamesForMessage(problematicVMNames)));
-                    addCanDoActionMessage(String.format("$domainNames %1$s", prepareEntityNamesForMessage(problematicDomainNames)));
+                    addCanDoActionMessageVariable("vmNames", prepareEntityNamesForMessage(problematicVMNames));
+                    addCanDoActionMessageVariable("domainNames", prepareEntityNamesForMessage(problematicDomainNames));
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_STATUS);
                 }
                 return false;
             }
 
             if (!problematicDomainNames.isEmpty()) {
-                addCanDoActionMessage(String.format("$domainNames %1$s", prepareEntityNamesForMessage(problematicDomainNames)));
+                addCanDoActionMessageVariable("domainNames", prepareEntityNamesForMessage(problematicDomainNames));
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_STATUS);
                 return false;
             }

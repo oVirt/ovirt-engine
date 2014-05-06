@@ -197,7 +197,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         List<String> vmNames = getNamesOfDerivedVmsFromTemplate(diskImage);
         if (!vmNames.isEmpty()) {
             addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM);
-            addCanDoActionMessage(String.format("$vmsList %1$s", StringUtils.join(vmNames, ",")));
+            addCanDoActionMessageVariable("vmsList", StringUtils.join(vmNames, ","));
             return false;
         }
         return true;

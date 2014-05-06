@@ -74,7 +74,7 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__FORCE_SELECT);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SPM);
-        addCanDoActionMessage(String.format("$%1$s %2$s", "VdsName", getVds().getName()));
+        addCanDoActionMessageVariable("VdsName", getVds().getName());
     }
 
     private boolean isAsyncTasksRunningOnPool(Guid storagePoolId) {

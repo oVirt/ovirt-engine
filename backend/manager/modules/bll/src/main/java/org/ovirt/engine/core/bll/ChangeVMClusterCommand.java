@@ -177,7 +177,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         }
         if (missingNets.length() > 0) {
             addCanDoActionMessage(VdcBllMessages.MOVE_VM_CLUSTER_MISSING_NETWORK);
-            addCanDoActionMessage(String.format("$networks %1$s", missingNets.toString()));
+            addCanDoActionMessageVariable("networks", missingNets.toString());
             return false;
         }
 

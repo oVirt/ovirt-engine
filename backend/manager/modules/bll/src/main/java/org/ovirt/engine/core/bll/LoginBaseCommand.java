@@ -396,14 +396,14 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 boolean addedUserPasswordExpiredCDA = false;
                 if (outputMap.<String> get(Authn.InvokeKeys.CREDENTIALS_CHANGE_URL) != null) {
                     addCanDoActionMessage(VdcBllMessages.USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED);
-                    addCanDoActionMessage(String.format("$URL %1$s",
-                            outputMap.<String> get(Authn.InvokeKeys.CREDENTIALS_CHANGE_URL)));
+                    addCanDoActionMessageVariable("URL",
+                            outputMap.<String>get(Authn.InvokeKeys.CREDENTIALS_CHANGE_URL));
                     addedUserPasswordExpiredCDA = true;
                 }
                 if (outputMap.<String> get(Authn.InvokeKeys.USER_MESSAGE) != null) {
                     addCanDoActionMessage(VdcBllMessages.USER_PASSWORD_EXPIRED_CHANGE_MSG_PROVIDED);
-                    addCanDoActionMessage(String.format("$MSG %1$s",
-                            outputMap.<String> get(Authn.InvokeKeys.USER_MESSAGE)));
+                    addCanDoActionMessageVariable("MSG",
+                            outputMap.<String>get(Authn.InvokeKeys.USER_MESSAGE));
                     addedUserPasswordExpiredCDA = true;
                 }
                 if (!addedUserPasswordExpiredCDA) {

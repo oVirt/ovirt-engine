@@ -116,8 +116,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         vmFromConfiguration = getVmFromConfiguration();
         if (vmFromConfiguration == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION);
-            addCanDoActionMessage(String.format("$VmName %1$s", getVmName()));
-            addCanDoActionMessage(String.format("$SnapshotName %1$s", getSnapshotName()));
+            addCanDoActionMessageVariable("VmName", getVmName());
+            addCanDoActionMessageVariable("SnapshotName", getSnapshotName());
 
             return false;
         }

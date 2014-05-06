@@ -101,7 +101,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
                 } else if (upServer == null && clusterHasMultipleHosts()) {
                     // fail if there is no up server in cluster, and if host being removed is not
                     // the last server in cluster
-                    addCanDoActionMessage(String.format("$clusterName %1$s", getVdsGroup().getName()));
+                    addCanDoActionMessageVariable("clusterName", getVdsGroup().getName());
                     returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
                 }
             } else {

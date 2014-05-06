@@ -109,7 +109,7 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
             RpmVersion ovirtHostOsVersion = VdsHandler.getOvirtHostOsVersion(getVds());
             if (!isISOCompatible(iso, ovirtHostOsVersion)) {
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION);
-                    addCanDoActionMessage(String.format("$IsoVersion %1$s", ovirtHostOsVersion.getMajor()));
+                    addCanDoActionMessageVariable("IsoVersion", ovirtHostOsVersion.getMajor());
                     return false;
             }
             _iso = iso;

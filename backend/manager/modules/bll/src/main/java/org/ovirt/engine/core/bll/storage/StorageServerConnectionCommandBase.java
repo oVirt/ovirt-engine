@@ -91,7 +91,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
     protected boolean checkIsConnectionFieldEmpty(StorageServerConnections connection) {
         if (StringUtils.isEmpty(connection.getconnection())) {
             String fieldName = getFieldName(connection);
-            addCanDoActionMessage(String.format("$fieldName %1$s", fieldName));
+            addCanDoActionMessageVariable("fieldName", fieldName);
             addCanDoActionMessage(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION);
             return true;
         }

@@ -526,7 +526,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 if (!VmPayload.isPayloadSizeLegal(content)) {
                     Integer lengthInKb = 2 * Config.<Integer> getValue(ConfigValues.PayloadSize) / Kb;
                     addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_SIZE_EXCEEDED);
-                    addCanDoActionMessage(String.format("$size %1$s", lengthInKb.toString()));
+                    addCanDoActionMessageVariable("size", lengthInKb.toString());
                     returnValue = false;
                     break;
                 }

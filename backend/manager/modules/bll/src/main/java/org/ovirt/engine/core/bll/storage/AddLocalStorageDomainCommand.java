@@ -67,7 +67,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
                 String rhevhLocalFSPath = Config.<String> getValue(ConfigValues.RhevhLocalFSPath);
                 if (!conn.getconnection().equals(rhevhLocalFSPath)) {
                     addCanDoActionMessage(VdcBllMessages.RHEVH_LOCALFS_WRONG_PATH_LOCATION);
-                    addCanDoActionMessage(String.format("$path %1$s", rhevhLocalFSPath));
+                    addCanDoActionMessageVariable("path", rhevhLocalFSPath);
                     retVal = false;
                 }
             }

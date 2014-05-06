@@ -34,22 +34,22 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
     protected boolean canDoAction() {
         // Currently this only supports importing images and does not work with luns.
         if (getParameters().getDiskImage().getDiskStorageType() != DiskStorageType.IMAGE) {
-            addCanDoActionMessage("$diskId " + getParameters().getDiskImage().getId());
-            addCanDoActionMessage("$storageType " + getParameters().getDiskImage().getDiskStorageType());
+            addCanDoActionMessageVariable("diskId", getParameters().getDiskImage().getId());
+            addCanDoActionMessageVariable("storageType", getParameters().getDiskImage().getDiskStorageType());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_DISK_STORAGE_TYPE);
             return false;
         }
 
         if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive())) {
-            addCanDoActionMessage("$diskId " + getParameters().getDiskImage().getId());
-            addCanDoActionMessage("$domainId " + getStorageDomainId());
+            addCanDoActionMessageVariable("diskId", getParameters().getDiskImage().getId());
+            addCanDoActionMessageVariable("domainId", getStorageDomainId());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_UNAVAILABLE);
             return false;
         }
 
         if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
-            addCanDoActionMessage("$domainId " + getParameters().getStorageDomainId());
-            addCanDoActionMessage("$domainType " + getStorageDomain().getStorageDomainType());
+            addCanDoActionMessageVariable("domainId", getParameters().getStorageDomainId());
+            addCanDoActionMessageVariable("domainType", getStorageDomain().getStorageDomainType());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED);
             return false;
         }

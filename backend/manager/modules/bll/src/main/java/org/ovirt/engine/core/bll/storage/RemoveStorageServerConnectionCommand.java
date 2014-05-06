@@ -143,18 +143,18 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
     }
 
     protected boolean prepareFailureMessageForDomains(String domainNames) {
-        addCanDoActionMessage(String.format("$domainNames %1$s", domainNames));
+        addCanDoActionMessageVariable("domainNames", domainNames);
         return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
 
     protected boolean prepareFailureMessageForDisks(String diskNames) {
-        addCanDoActionMessage(String.format("$diskNames %1$s", diskNames));
+        addCanDoActionMessageVariable("diskNames", diskNames);
         return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_DISKS);
     }
 
     protected boolean prepareFailureMessageForDomainsAndDisks(String domainNames, String diskNames) {
-        addCanDoActionMessage(String.format("$domainNames %1$s", domainNames));
-        addCanDoActionMessage(String.format("$diskNames %1$s", diskNames));
+        addCanDoActionMessageVariable("domainNames", domainNames);
+        addCanDoActionMessageVariable("diskNames", diskNames);
         return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS_AND_DISKS);
     }
 
