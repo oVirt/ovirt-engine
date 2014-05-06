@@ -62,7 +62,12 @@ public class Domain {
     }
 
     public void addLDAPServer(URI uri) {
-        ldapServers.add(uri);
+        try {
+            lock.readLock().lock();
+            ldapServers.add(uri);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
 

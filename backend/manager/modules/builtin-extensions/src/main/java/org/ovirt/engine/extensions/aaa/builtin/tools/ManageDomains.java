@@ -22,20 +22,20 @@ import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArgumen
 import static org.ovirt.engine.extensions.aaa.builtin.tools.ManageDomainsArguments.ARG_USER;
 
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -153,7 +153,7 @@ public class ManageDomains {
     }
 
     private String convertStreamToString(InputStream is) {
-        return new Scanner(is).useDelimiter("\\A").next().replace("\n", "");
+        return new Scanner(is, Charset.forName("UTF-8").toString()).useDelimiter("\\A").next().replace("\n", "");
     }
 
     public String getConfigValue(String engineConfigExecutable, String engineConfigProperties, ConfigValues enumValue)
@@ -319,11 +319,10 @@ public class ManageDomains {
     }
 
     private String readPasswordFile(String passwordFile) throws FileNotFoundException, IOException {
-        FileReader in = new FileReader(passwordFile);
-        BufferedReader bufferedReader = new BufferedReader(in);
-        String readLine = bufferedReader.readLine();
-        closeQuietly(in, bufferedReader);
-        return readLine;
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(passwordFile), "UTF-8"))) {
+            String readLine = bufferedReader.readLine();
+            return readLine;
+        }
     }
 
     private String getDomainAuthMode(String domainName) {
@@ -1037,16 +1036,6 @@ public class ManageDomains {
             response = System.console().readLine();
         }
         return response.equals("yes");
-    }
-
-    private static void closeQuietly(Closeable... closeables) {
-        for (Closeable c : closeables) {
-            try {
-                c.close();
-            } catch (Exception e) {
-                // Ignore
-            }
-        }
     }
 
     private static void copyFile(String srcFilePath, String dstFilePath) throws IOException {

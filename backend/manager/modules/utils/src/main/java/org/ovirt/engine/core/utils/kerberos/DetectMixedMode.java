@@ -4,7 +4,7 @@ import static org.ovirt.engine.core.utils.kerberos.KrbConfCreator.DEFAULT_TKT_EN
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Scanner;
 
 public class DetectMixedMode {
@@ -18,18 +18,17 @@ public class DetectMixedMode {
      * @throws FileNotFoundException
      */
     public boolean detect(String krbConfPath) throws FileNotFoundException {
-        InputStream sourceFile = new FileInputStream(krbConfPath);
         System.out.println("Searching " + krbConfPath + "\n for property " + DEFAULT_TKT_ENCTYPES_ARCFOUR_HMAC_MD5);
-        Scanner scanner = new Scanner(sourceFile);
-
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            if (line.matches(DEFAULT_TKT_ENCTYPES_ARCFOUR_HMAC_MD5)) {
+        try (Scanner scanner = new Scanner(new FileInputStream(krbConfPath), Charset.forName("UTF-8").toString())) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line.matches(DEFAULT_TKT_ENCTYPES_ARCFOUR_HMAC_MD5)) {
                 // Bingo! mixed-mode flag is there.
-                return true;
-            } else if (line.matches("#+" + DEFAULT_TKT_ENCTYPES_ARCFOUR_HMAC_MD5)) {
+                    return true;
+                } else if (line.matches("#+" + DEFAULT_TKT_ENCTYPES_ARCFOUR_HMAC_MD5)) {
                 // Bingo! mixed-mode is remarked, so we have the answer. Leaving the loop.
-                break;
+                    break;
+                }
             }
         }
         return false;

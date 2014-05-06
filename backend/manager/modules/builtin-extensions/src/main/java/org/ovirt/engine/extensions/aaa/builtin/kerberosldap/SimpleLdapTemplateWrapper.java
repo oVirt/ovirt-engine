@@ -5,6 +5,7 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import javax.naming.directory.SearchControls;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.springframework.ldap.core.NameClassPairCallbackHandler;
 import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
@@ -49,7 +50,7 @@ public class SimpleLdapTemplateWrapper extends LDAPTemplateWrapper {
             userDNSb.append("uid=").append(userName).append(",cn=Users").append(",cn=Accounts");
         }
 
-        if (!baseDN.isEmpty()) {
+        if (StringUtils.isNotEmpty(baseDN)) {
             String dcDN = getDcDN(baseDN);
             if (!dcDN.isEmpty()) {
                 userDNSb.append(",").append(dcDN);

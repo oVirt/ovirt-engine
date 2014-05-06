@@ -1,10 +1,14 @@
 package org.ovirt.engine.core.ldap;
 
+import java.util.Hashtable;
+
+import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
@@ -44,19 +48,32 @@ public class RootDSEData {
 
         return retVal;
     }
-    public RootDSEData(DirContext dirContext) throws NamingException {
+
+    public RootDSEData(String url) throws NamingException {
         // Queries the rootDSE and get the "defaultNamingContext" attribute value -
         // this attribute will be a part of the LDAP URL to perform users queries (i.e - search for a user)
-        SearchControls controls = RootDSEQueryInfo.createSearchControls();
-        String query = RootDSEQueryInfo.ROOT_DSE_LDAP_QUERY;
-        NamingEnumeration<SearchResult> searchResults = dirContext.search("", query, controls);
+        DirContext dirContext = null;
+        Hashtable<String, String> env = new Hashtable<>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, url.toString());
+        try {
+            dirContext = new InitialDirContext(env);
+            SearchControls controls = RootDSEQueryInfo.createSearchControls();
+            String query = RootDSEQueryInfo.ROOT_DSE_LDAP_QUERY;
+            NamingEnumeration<SearchResult> searchResults = dirContext.search("", query, controls);
 
-        boolean succeeded = false;
-        // The information on base DN is located in the attribute "defaultNamingContext"
-        while (searchResults.hasMoreElements() && !succeeded) {
-            SearchResult searchResult = searchResults.nextElement();
-            Attributes attributes = searchResult.getAttributes();
-            succeeded = applyDomainAttributes(attributes);
+            boolean succeeded = false;
+            // The information on base DN is located in the attribute "defaultNamingContext"
+            while (searchResults.hasMoreElements() && !succeeded) {
+                SearchResult searchResult = searchResults.nextElement();
+                Attributes attributes = searchResult.getAttributes();
+                succeeded = applyDomainAttributes(attributes);
+            }
+
+        } finally {
+            if (dirContext != null) {
+                dirContext.close();
+            }
         }
     }
 

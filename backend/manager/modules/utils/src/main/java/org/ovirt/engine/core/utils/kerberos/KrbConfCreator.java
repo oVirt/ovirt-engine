@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,7 +62,7 @@ public class KrbConfCreator {
 
     public StringBuffer parse(String mixedMode) throws AuthenticationException {
         StringBuffer sb = new StringBuffer();
-        Scanner scanner = new Scanner(sourceFile);
+        Scanner scanner = new Scanner(sourceFile, Charset.forName("UTF-8").toString());
 
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();

@@ -64,7 +64,6 @@ public class JndiAction implements PrivilegedAction {
             }
         }
 
-        DirContext ctx = null;
 
         String currentLdapServer = null;
 
@@ -74,6 +73,7 @@ public class JndiAction implements PrivilegedAction {
 
         // Goes over all the retrieved LDAP servers
         for (String address : ldapServers) {
+            DirContext ctx = null;
             try {
                 // Constructs an LDAP url in a format of ldap://hostname:port (based on the data in the SRV record
                 // This URL is not enough in order to query for user - as for querying users, we should also provide a
@@ -81,47 +81,55 @@ public class JndiAction implements PrivilegedAction {
                 // suffices for
                 // getting the rootDSE information, which includes the baseDN.
                 URI uri = locator.constructURI("LDAP", address, defaultLdapServerPort);
-                env.put(Context.PROVIDER_URL, uri.toString());
-                ctx = new InitialDirContext(env);
 
-                // Get the base DN from rootDSE
-                String domainDN = getDomainDN(ctx);
-                if (domainDN != null) {
+                try {
+                    // Get the base DN from rootDSE
+                    env.put(Context.PROVIDER_URL, uri.toString());
 
-                    // Append the base DN to the ldap URL in order to construct a full ldap URL (in form of
-                    // ldap:hostname:port/baseDN ) to query for the user
-                    StringBuilder ldapQueryPath = new StringBuilder(uri.toString());
-                    ldapQueryPath.append("/").append(domainDN);
-                    SearchControls controls = new SearchControls();
-                    controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-                    // Adding all the three attributes possible, as RHDS doesn't return the nsUniqueId by default
-                    controls.setReturningAttributes(new String[]{"nsUniqueId", "ipaUniqueId", "objectGuid", "uniqueIdentifier", "entryuuid"});
-                    // Added this in order to prevent a warning saying: "the returning obj flag wasn't set, setting it to true"
-                    controls.setReturningObjFlag(true);
-                    currentLdapServer = ldapQueryPath.toString();
-                    env.put(Context.PROVIDER_URL, currentLdapServer);
+                    String domainDN = getDomainDN(uri.toString());
+                    if (domainDN != null) {
 
-                    // Run the LDAP query to get the user
-                    ctx = new InitialDirContext(env);
-                    NamingEnumeration<SearchResult> answer = executeQuery(ctx, controls, prepareQuery());
+                        // Append the base DN to the ldap URL in order to construct a full ldap URL (in form of
+                        // ldap:hostname:port/baseDN ) to query for the user
+                        StringBuilder ldapQueryPath = new StringBuilder(uri.toString());
+                        ldapQueryPath.append("/").append(domainDN);
+                        SearchControls controls = new SearchControls();
+                        controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+                        // Adding all the three attributes possible, as RHDS doesn't return the nsUniqueId by default
+                        controls.setReturningAttributes(new String[] { "nsUniqueId", "ipaUniqueId", "objectGuid",
+                                "uniqueIdentifier", "entryuuid" });
+                        // Added this in order to prevent a warning saying:
+                        // "the returning obj flag wasn't set, setting it to true"
+                        controls.setReturningObjFlag(true);
+                        currentLdapServer = ldapQueryPath.toString();
+                        env.put(Context.PROVIDER_URL, currentLdapServer);
 
-                    if (answer.hasMoreElements()) {
-                        // Print the objectGUID for the user as well as URI and query path
-                        String guid = guidFromResults(answer.next());
-                        if (guid != null) {
-                            userGuid.append(guid);
-                            logQueryContext(userGuid.toString(), uri.toString(), currentLdapServer);
-                            return AuthenticationResult.OK;
+                        // Run the LDAP query to get the user
+                        ctx = new InitialDirContext(env);
+                        NamingEnumeration<SearchResult> answer = executeQuery(ctx, controls, prepareQuery());
+
+                        if (answer.hasMoreElements()) {
+                            // Print the objectGUID for the user as well as URI and query path
+                            String guid = guidFromResults(answer.next());
+                            if (guid != null) {
+                                userGuid.append(guid);
+                                logQueryContext(userGuid.toString(), uri.toString(), currentLdapServer);
+                                return AuthenticationResult.OK;
+                            }
                         }
+                        // Print user GUID and another logging info only if it was not printed previously already
+                        logQueryContext(userGuid.toString(), uri.toString(), currentLdapServer);
+                        System.out.println("No user in Directory was found for " + userName
+                                + ". Trying next LDAP server in list");
+                    } else {
+                        System.out.println(InstallerConstants.ERROR_PREFIX
+                                + " Failed to query rootDSE in order to get the baseDN. Could not query for user "
+                                + userName + " in domain " + domainName);
                     }
-                    // Print user GUID and another logging info only if it was not printed previously already
-                    logQueryContext(userGuid.toString(), uri.toString(), currentLdapServer);
-                    System.out.println("No user in Directory was found for " + userName
-                            + ". Trying next LDAP server in list");
-                } else {
-                    System.out.println(InstallerConstants.ERROR_PREFIX
-                            + " Failed to query rootDSE in order to get the baseDN. Could not query for user "
-                            + userName + " in domain " + domainName);
+                } finally {
+                    if (ctx != null) {
+                        ctx.close();
+                    }
                 }
             } catch (CommunicationException ex) {
                 handleCommunicationException(currentLdapServer, address);
@@ -133,15 +141,6 @@ public class JndiAction implements PrivilegedAction {
             } catch (Exception ex) {
                 handleGeneralException(ex);
                 break;
-            } finally {
-                if (ctx != null) {
-                    try {
-                        ctx.close();
-                    } catch (Exception exception) {
-                        log.warn("Unexpected exception while closing LDAP context.", exception);
-                    }
-                }
-
             }
         } // end of loop on addresses
 
@@ -253,8 +252,8 @@ public class JndiAction implements PrivilegedAction {
         return answer;
     }
 
-    private String getDomainDN(DirContext ctx) throws NamingException {
-        RootDSEData rootDSEData = new RootDSEData(ctx);
+    private String getDomainDN(String url) throws NamingException {
+        RootDSEData rootDSEData = new RootDSEData(url);
         return rootDSEData.getDomainDN();
     }
 
