@@ -426,6 +426,8 @@ public enum HelpTag {
 
     volume_rebalance_status("volume_rebalance_status", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Show Rebalance Status dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    volume_profile_statistics("volume_profile_statistics", HelpTagType.WEBADMIN, "[gluster] Volumes Main tab -> Profiling -> Details"), //$NON-NLS-1$ //$NON-NLS-2$
+
     volume_rebalance_stop("volume_rebalance_stop", HelpTagType.WEBADMIN, "Volumes main tab -> 'Stop Rebalance' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
     volume_remove_bricks("volume_remove_bricks", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Bricks sub-tab -> 'Remove Bricks' dialog"), //$NON-NLS-1$ //$NON-NLS-2$

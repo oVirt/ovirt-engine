@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
+
+    <ui:style>
+		.tablePanel {
+		padding: 5px;
+		border: 1px solid #CED8DF;
+		height: 400px;
+		}
+
+        .messageLabel {
+			color: #FF0000;
+			left: 10px;
+			padding-left: 5px;
+		}
+    </ui:style>
+
+    <d:SimpleDialogPanel width="840px" height="600px">
+        <d:content>
+        <t:DialogTabPanel height="100%" width="100%">
+        <t:tab>
+        <t:DialogTab ui:field="bricksTab">
+        <t:content>
+        <g:SimplePanel>
+            <g:VerticalPanel>
+                <g:Label ui:field="bricksErrorLabel" addStyleNames="{style.messageLabel}"/>
+                <g:HorizontalPanel>
+                    <e:ListModelListBoxEditor ui:field="bricks"/>
+                    <d:RefreshActionIcon ui:field="brickRefreshIcon"></d:RefreshActionIcon>
+                </g:HorizontalPanel>
+                <g:HorizontalPanel>
+                    <g:Label ui:field="cummulativeStatsLabel"/>
+                    <g:ScrollPanel addStyleNames="{style.tablePanel}">
+                        <e:EntityModelCellTable ui:field="volumeProfileStats" />
+                    </g:ScrollPanel>
+                </g:HorizontalPanel>
+                <g:VerticalPanel>
+                    <g:Label ui:field="profileRunTime" />
+                    <g:Label ui:field="bytesRead" />
+                    <g:Label ui:field="bytesWritten" />
+                </g:VerticalPanel>
+            </g:VerticalPanel>
+            </g:SimplePanel>
+            </t:content>
+            </t:DialogTab>
+            </t:tab>
+            <t:tab>
+            <t:DialogTab ui:field="nfsTab">
+            <t:content>
+            <g:SimplePanel>
+            <g:VerticalPanel>
+                <g:Label ui:field="nfsErrorLabel" addStyleNames="{style.messageLabel}"/>
+                <g:HorizontalPanel>
+                    <e:ListModelListBoxEditor ui:field="nfsServers"/>
+                    <d:RefreshActionIcon ui:field="nfsRefreshIcon"></d:RefreshActionIcon>
+                </g:HorizontalPanel>
+                <g:HorizontalPanel>
+                    <g:Label ui:field="nfsCummulativeStatsLabel"/>
+                    <g:ScrollPanel addStyleNames="{style.tablePanel}">
+                        <e:EntityModelCellTable ui:field="nfsServerProfileStats" />
+                    </g:ScrollPanel>
+                </g:HorizontalPanel>
+                <g:VerticalPanel>
+                    <g:Label ui:field="nfsProfileRunTime" />
+                    <g:Label ui:field="nfsBytesRead" />
+                    <g:Label ui:field="nfsBytesWritten" />
+                </g:VerticalPanel>
+            </g:VerticalPanel>
+            </g:SimplePanel>
+            </t:content>
+            </t:DialogTab>
+            </t:tab>
+            </t:DialogTabPanel>
+        </d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

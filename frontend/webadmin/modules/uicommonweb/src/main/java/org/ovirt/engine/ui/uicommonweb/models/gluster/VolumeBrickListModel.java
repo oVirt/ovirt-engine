@@ -998,7 +998,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         UICommand removeBrickStatusOk = new UICommand("CancelConfirmation", VolumeBrickListModel.this);//$NON-NLS-1$
         removeBrickStatusOk.setTitle(ConstantsManager.getInstance().getConstants().ok());
         removeBrickStatusOk.setIsCancel(true);
-        cModel.startProgress(ConstantsManager.getInstance().getConstants().rebalanceStatusFetchMessage());
+        cModel.startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage());
         cModel.getCommands().add(removeBrickStatusOk);
         cModel.setTitle(ConstantsManager.getInstance().getConstants().removeBricksStatusTitle());
         setConfirmWindow(cModel);

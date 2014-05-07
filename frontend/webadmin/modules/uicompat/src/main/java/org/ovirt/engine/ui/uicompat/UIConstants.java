@@ -2169,7 +2169,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     String rebalanceStatusTitle();
 
     @DefaultStringValue("Fetching Data")
-    String rebalanceStatusFetchMessage();
+    String fetchingDataMessage();
 
     @DefaultStringValue("Stop Rebalance")
     String stopRebalance();

@@ -307,6 +307,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Could not fetch rebalance status of volume :  {0}")
     String rebalanceStatusFailed(String name);
 
+    @DefaultMessage("Could not fetch profile statistics of volume : {0}")
+    String volumeProfileStatisticsFailed(String volName);
+
     @DefaultMessage("Could not fetch remove brick status of volume :  {0}")
     String removeBrickStatusFailed(String name);
 
@@ -353,6 +356,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Active (Score: {0})")
     String haActive(int score);
 
+    @DefaultMessage("Volume Profile Statistics - {0}")
+    String volumeProfilingStatsTitle(String volumeName);
+
     @DefaultMessage("Network couldn''t be assigned to ''{0}'' via label ''{1}''.")
     String networkLabelConflict(String nicName, String labelName);
 
@@ -373,4 +379,13 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Random Number Generator source ''{0}'' is not supported by the cluster")
     String rngSourceNotSupportedByCluster(String source);
+
+    @DefaultMessage("Current interval of profiling has been running for {0} {1} of the total {2} {3} profiling time")
+    String glusterVolumeCurrentProfileRunTime(int currentRunTime, String currentRunTimeUnit, int totalRunTime, String totalRunTimeUnit);
+
+    @DefaultMessage("{0} {1} have been read in the current profiling interval out of {2} {3} during profiling")
+    String bytesReadInCurrentProfileInterval(String currentBytesRead, String currentBytesReadUnit, String totalBytes, String totalBytesUnit);
+
+    @DefaultMessage("{0} {1} have been written in the current profiling interval out of {2} {3} during profiling")
+    String bytesWrittenInCurrentProfileInterval(String currentBytesWritten, String currentBytesWrittenUnit, String totalBytes, String totalBytesUnit);
 }

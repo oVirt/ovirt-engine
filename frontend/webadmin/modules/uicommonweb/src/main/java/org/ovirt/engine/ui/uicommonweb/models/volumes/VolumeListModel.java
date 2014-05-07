@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
+import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
@@ -51,6 +52,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeProfileStatisticsModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeRebalanceStatusModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -94,6 +96,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     private UICommand startRebalanceCommand;
     private UICommand stopRebalanceCommand;
     private UICommand optimizeForVirtStoreCommand;
+    private UICommand startVolumeProfilingCommand;
+    private UICommand showVolumeProfileDetailsCommand;
+    private UICommand stopVolumeProfilingCommand;
 
     public UICommand getStartRebalanceCommand() {
         return startRebalanceCommand;
@@ -154,6 +159,30 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         this.brickListModel = brickListModel;
     }
 
+    public UICommand getStartVolumeProfilingCommand() {
+        return startVolumeProfilingCommand;
+    }
+
+    public void setStartVolumeProfilingCommand(UICommand startVolumeProfilingCommand) {
+        this.startVolumeProfilingCommand = startVolumeProfilingCommand;
+    }
+
+    public UICommand getShowVolumeProfileDetailsCommand() {
+        return showVolumeProfileDetailsCommand;
+    }
+
+    public void setShowVolumeProfileDetailsCommand(UICommand showVolumeProfileDetailsCommand) {
+        this.showVolumeProfileDetailsCommand = showVolumeProfileDetailsCommand;
+    }
+
+    public UICommand getStopVolumeProfilingCommand() {
+        return stopVolumeProfilingCommand;
+    }
+
+    public void setStopVolumeProfilingCommand(UICommand stopVolumeProfilingCommand) {
+        this.stopVolumeProfilingCommand = stopVolumeProfilingCommand;
+    }
+
     public VolumeListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().volumesTitle());
 
@@ -169,6 +198,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         setStartRebalanceCommand(new UICommand("StartRebalance", this)); //$NON-NLS-1$
         setStopRebalanceCommand(new UICommand("StopRebalace", this)); //$NON-NLS-1$
         setStatusRebalanceCommand(new UICommand("StatusRebalance", this)); //$NON-NLS-1$
+        setStartVolumeProfilingCommand(new UICommand("startProfiling", this));//$NON-NLS-1$
+        setShowVolumeProfileDetailsCommand(new UICommand("showProfileDetails", this));//$NON-NLS-1$
+        setStopVolumeProfilingCommand(new UICommand("stopProfiling", this));//$NON-NLS-1$
         setOptimizeForVirtStoreCommand(new UICommand("OptimizeForVirtStore", this)); //$NON-NLS-1$
 
         getRemoveVolumeCommand().setIsExecutionAllowed(false);
@@ -176,6 +208,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         getStopCommand().setIsExecutionAllowed(false);
         getStartRebalanceCommand().setIsExecutionAllowed(false);
         getStopRebalanceCommand().setIsExecutionAllowed(false);
+        getStartVolumeProfilingCommand().setIsExecutionAllowed(false);
+        getStopVolumeProfilingCommand().setIsExecutionAllowed(false);
+        getShowVolumeProfileDetailsCommand().setIsExecutionAllowed(true);
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
@@ -383,6 +418,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         boolean allowStopRebalance = true;
         boolean allowStatusRebalance = true;
         boolean allowOptimize = true;
+        boolean allowStartProfiling = false;
+        boolean allowStopProfiling = false;
+        boolean allowProfileStatisticsDetails = false;
 
         if (getSelectedItems() == null || getSelectedItems().size() == 0) {
             allowStart = false;
@@ -395,6 +433,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         }
         else {
             List<GlusterVolumeEntity> list = Linq.<GlusterVolumeEntity> cast(getSelectedItems());
+            allowStartProfiling = isStartProfileAvailable(list);
+            allowStopProfiling = isStopProfileAvailable(list);
             for (GlusterVolumeEntity volume : list) {
                 if (volume.getStatus() == GlusterStatus.UP) {
                     allowStart = false;
@@ -426,6 +466,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 allowStopRebalance = false;
             }
             allowStatusRebalance = getRebalanceStatusAvailability(getSelectedItems());
+            allowProfileStatisticsDetails = getProfileStatisticsAvailability(list);
         }
         getStartCommand().setIsExecutionAllowed(allowStart);
         getStopCommand().setIsExecutionAllowed(allowStop);
@@ -441,6 +482,41 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         getNewVolumeCommand().setIsAvailable(isAvailable);
         getRemoveVolumeCommand().setIsAvailable(isAvailable);
+        getStartVolumeProfilingCommand().setIsExecutionAllowed(allowStartProfiling);
+        getStopVolumeProfilingCommand().setIsExecutionAllowed(allowStopProfiling);
+        getShowVolumeProfileDetailsCommand().setIsExecutionAllowed(allowProfileStatisticsDetails);
+    }
+
+    private boolean isStopProfileAvailable(List<GlusterVolumeEntity> list) {
+        if (getSelectedItems().size() == 0) {
+            return false;
+        } else {
+            for (GlusterVolumeEntity volumeEntity : list) {
+                if (volumeEntity.getStatus() == GlusterStatus.DOWN) {
+                    return false;
+                }
+                if ((volumeEntity.getOptionValue("diagnostics.latency-measurement") == null)|| (!(volumeEntity.getOptionValue("diagnostics.latency-measurement").equals("on")))) {//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    private boolean isStartProfileAvailable(List<GlusterVolumeEntity> list) {
+        if (getSelectedItems().size() == 0) {
+            return false;
+        } else {
+            for (GlusterVolumeEntity volumeEntity : list) {
+                if (volumeEntity.getStatus() == GlusterStatus.DOWN) {
+                    return false;
+                }
+                if ((volumeEntity.getOptionValue("diagnostics.latency-measurement") != null) && (volumeEntity.getOptionValue("diagnostics.latency-measurement").equals("on"))) {//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     private boolean getRebalanceStatusAvailability(List<GlusterVolumeEntity> selectedVolumes) {
@@ -448,6 +524,16 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             GlusterVolumeEntity selectedVolume = selectedVolumes.get(0);
             if (selectedVolume.getStatus() == GlusterStatus.UP && selectedVolume.getVolumeType().isDistributedType()
                     && selectedVolume.getBricks().size() > 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean getProfileStatisticsAvailability(List<GlusterVolumeEntity> selectedVolumes) {
+        if(selectedVolumes.size() == 1) {
+            GlusterVolumeEntity selectedVolume = selectedVolumes.get(0);
+            if(selectedVolume.getStatus() == GlusterStatus.UP) {
                 return true;
             }
         }
@@ -497,7 +583,41 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             onRemoveVolume();
         } else if(command.getName().equals("stop_rebalance_from_status")) {//$NON-NLS-1$
             stopRebalance();
+        } else if(command.equals(getStartVolumeProfilingCommand()) || command.getName().equals("startProfiling")) {//$NON-NLS-1$
+            startVolumeProfiling();
+        } else if(command.equals(getStopVolumeProfilingCommand()) || command.getName().equals("stopProfiling")) {//$NON-NLS-1$
+            stopVolumeProfiling();
+        } else if(command.equals(getShowVolumeProfileDetailsCommand()) || command.getName().equals("showProfileDetails")) {//$NON-NLS-1$
+            showVolumeProfiling();
+        }else if(command.getName().equalsIgnoreCase("closeProfileStats")) {//$NON-NLS-1$
+            setWindow(null);
         }
+    }
+
+    private void startVolumeProfiling() {
+        if (getSelectedItems() == null) {
+            return;
+        }
+        List<GlusterVolumeEntity> selectedVolumesList = Linq.<GlusterVolumeEntity> cast(getSelectedItems());
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        for (GlusterVolumeEntity currentSelectedVolume : selectedVolumesList) {
+            GlusterVolumeParameters parameter = new GlusterVolumeParameters(currentSelectedVolume.getId());
+            parameters.add(parameter);
+        }
+        Frontend.getInstance().runMultipleAction(VdcActionType.StartGlusterVolumeProfile, parameters);
+    }
+
+    private void stopVolumeProfiling() {
+        if (getSelectedItems() == null) {
+            return;
+        }
+        List<GlusterVolumeEntity> selectedVolumesList = Linq.<GlusterVolumeEntity> cast(getSelectedItems());
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        for (GlusterVolumeEntity currentSelectedVolume : selectedVolumesList) {
+            GlusterVolumeParameters parameter = new GlusterVolumeParameters(currentSelectedVolume.getId());
+            parameters.add(parameter);
+        }
+        Frontend.getInstance().runMultipleAction(VdcActionType.StopGlusterVolumeProfile, parameters);
     }
 
     private void closeConfirmationWindow() {
@@ -584,7 +704,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         final GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getSelectedItem();
         setConfirmWindow(cModel);
         cModel.setTitle(ConstantsManager.getInstance().getConstants().rebalanceStatusTitle());
-        cModel.startProgress(ConstantsManager.getInstance().getConstants().rebalanceStatusFetchMessage());//$NON-NLS-1$
+        cModel.startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage());//$NON-NLS-1$
         cModel.setHelpTag(HelpTag.volume_rebalance_status);
         cModel.setHashName("volume_rebalance_status"); //$NON-NLS-1$
 
@@ -637,6 +757,28 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         }),
                 volumeEntity.getClusterId(),
                 volumeEntity.getId());
+    }
+
+    private void showVolumeProfiling() {
+        if(getSelectedItem() == null || getWindow()!= null) {
+            return;
+        }
+        GlusterVolumeEntity selectedVolume = (GlusterVolumeEntity)getSelectedItem();
+        VolumeProfileStatisticsModel profileStatsModel = new VolumeProfileStatisticsModel(selectedVolume.getClusterId(), selectedVolume.getId(), selectedVolume.getName());
+
+        setWindow(profileStatsModel);
+        setHelpTag(HelpTag.volume_profile_statistics);
+        setHashName("volume_profile_statistics"); //$NON-NLS-1$
+
+        profileStatsModel.startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage());//$NON-NLS-1$
+
+        UICommand closeProfilingStats = new UICommand("closeProfileStats", VolumeListModel.this);//$NON-NLS-1$
+        closeProfilingStats.setTitle(ConstantsManager.getInstance().getConstants().close());
+        closeProfilingStats.setIsCancel(true);
+        profileStatsModel.getCommands().add(closeProfilingStats);
+
+        profileStatsModel.queryBackend(true);
+        profileStatsModel.queryBackend(false);
     }
 
     private void cancelRebalanceStatus() {

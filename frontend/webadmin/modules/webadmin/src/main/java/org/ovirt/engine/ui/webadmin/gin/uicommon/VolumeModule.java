@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveB
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeProfileStatisticsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeRebalanceStatusPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
@@ -51,7 +52,8 @@ public class VolumeModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VolumePopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<VolumeRebalanceStatusPopupPresenterWidget> rebalanceStatusPopupProvider) {
+            final Provider<VolumeRebalanceStatusPopupPresenterWidget> rebalanceStatusPopupProvider,
+            final Provider<VolumeProfileStatisticsPopupPresenterWidget> volumeProfileStatsPopupProvider) {
         return new MainTabModelProvider<GlusterVolumeEntity, VolumeListModel>(eventBus, defaultConfirmPopupProvider, VolumeListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeListModel source,
@@ -61,6 +63,9 @@ public class VolumeModule extends AbstractGinModule {
                 }
                 else if (lastExecutedCommand == getModel().getStatusRebalanceCommand() || lastExecutedCommand.getName().equals("onStopRebalance")) {//$NON-NLS-1$
                     return rebalanceStatusPopupProvider.get();
+                }
+                else if(lastExecutedCommand == getModel().getShowVolumeProfileDetailsCommand() || lastExecutedCommand.getName().equals("showProfileDetails")) {//$NON-NLS-1$
+                    return volumeProfileStatsPopupProvider.get();
                 }
                 else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);

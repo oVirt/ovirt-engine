@@ -3661,4 +3661,53 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Attached by label")
     String attachedByLabel();
+
+    //Gluster Volume Profiling
+    @DefaultStringValue("File operation")
+    String fileOperation();
+
+    @DefaultStringValue("No. of Invocations")
+    String fOpInvocationCount();
+
+    @DefaultStringValue("Latency contribution")
+    String fOpLatency();
+
+    @DefaultStringValue("Max-Latency")
+    String fOpMaxLatency();
+
+    @DefaultStringValue("Min-Latency")
+    String fOpMinLatency();
+
+    @DefaultStringValue("Avg-Latency")
+    String fOpAvgLatency();
+
+    @DefaultStringValue("Select Brick")
+    String selectBrickToViewFopStats();
+
+    @DefaultStringValue("Select Server")
+    String selectServerToViewFopStats();
+
+    @DefaultStringValue("BRICKS")
+    String volumeProfileBricksTab();
+
+    @DefaultStringValue("NFS SERVER")
+    String volumeProfileNfsTab();
+
+    @DefaultStringValue("Start")
+    String startVolumeProfiling();
+
+    @DefaultStringValue("Details")
+    String volumeProfileDetails();
+
+    @DefaultStringValue("Stop")
+    String stopVolumeProfiling();
+
+    @DefaultStringValue("Profiling")
+    String volumeProfilingAction();
+
+    @DefaultStringValue("Could not fetch nfs profile stats")
+    String nfsProfileErrorMessage();
+
+    @DefaultStringValue("Could not fetch brick profile stats")
+    String brickProfileErrorMessage();
 }

@@ -46,6 +46,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveB
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeProfileStatisticsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeRebalanceStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.MoveHostPopupPresenterWidget;
@@ -268,6 +269,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.RemoveBrickS
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.ReplaceBrickPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumeParameterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumeProfileStatisticsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumeRebalanceStatusPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.guide.GuidePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.guide.MoveHostPopupView;
@@ -1105,6 +1107,9 @@ public class PresenterModule extends BasePresenterModule {
                 ManageGlusterSwiftPopupPresenterWidget.ViewDef.class,
                 ManageGlusterSwiftPopupView.class);
 
+        bindPresenterWidget(VolumeProfileStatisticsPopupPresenterWidget.class,
+                VolumeProfileStatisticsPopupPresenterWidget.ViewDef.class,
+                VolumeProfileStatisticsPopupView.class);
         // Host
         bindPresenterWidget(HostPopupPresenterWidget.class,
                 HostPopupPresenterWidget.ViewDef.class,
