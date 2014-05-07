@@ -420,6 +420,22 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private ErrorPopupManager errorPopupManager;
 
+    VmInterfaceCreatingManager defaultNetworkCreatingManager =
+            new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
+                @Override
+                public void vnicCreated(Guid vmId) {
+                    getWindow().stopProgress();
+                    cancel();
+                    updateActionAvailability();
+                }
+
+                @Override
+                public void queryFailed() {
+                    getWindow().stopProgress();
+                    cancel();
+                }
+            });
+
     public VmListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
@@ -791,14 +807,13 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         switchModeCommand.init(model);
         model.getCommands().add(switchModeCommand);
 
-        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
+        model.getCommands().add(new UICommand("OnSave", this) //$NON-NLS-1$
+          .setTitle(ConstantsManager.getInstance().getConstants().ok())
+          .setIsDefault(true));
+
+        model.getCommands().add(new UICommand("Cancel", this) //$NON-NLS-1$
+          .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+          .setIsCancel(true));
     }
 
     private Map<Guid, EntityModel> vmsRemoveMap;
@@ -1964,24 +1979,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     private void onSave() {
-        final VmInterfaceCreatingManager defaultNetworkCreatingManager =
-                new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
-                    @Override
-                    public void vnicCreated(Guid vmId) {
-                        getWindow().stopProgress();
-                        cancel();
-                        updateActionAvailability();
-                    }
-
-                    @Override
-                    public void queryFailed() {
-                        getWindow().stopProgress();
-                        cancel();
-                    }
-                });
-
         final UnitVmModel model = (UnitVmModel) getWindow();
-        VM selectedItem = (VM) getSelectedItem();
 
         // Save changes.
         buildVmOnSave(model, getcurrentVm());
@@ -2000,173 +1998,173 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         if (model.getIsNew())
         {
-            if (getcurrentVm().getVmtGuid().equals(Guid.Empty))
-            {
-                if (model.getProgress() != null)
-                {
-                    return;
-                }
-
-                VmInterfaceCreatingManager addVmFromScratchNetworkManager =
-                        new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
-                            @Override
-                            public void vnicCreated(Guid vmId) {
-                                // do nothing
-                            }
-
-                            @Override
-                            public void queryFailed() {
-                                // do nothing
-                            }
-                        });
-
-                model.startProgress(null);
-
-                AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(getcurrentVm(),
-                        new ArrayList<DiskImage>(),
-                        Guid.Empty);
-                parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-                parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-                parameters.setBalloonEnabled(balloonEnabled(model));
-
-                setVmWatchdogToParams(model, parameters);
-
-                Frontend.getInstance().runAction(VdcActionType.AddVmFromScratch,
-                        parameters,
-                        new UnitVmModelNetworkAsyncCallback(model, addVmFromScratchNetworkManager) {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        getWindow().stopProgress();
-                        VdcReturnValueBase returnValue = result.getReturnValue();
-                        if (returnValue != null && returnValue.getSucceeded()) {
-                            setWindow(null);
-                            setGuideContext(returnValue.getActionReturnValue());
-                            updateActionAvailability();
-                            getGuideCommand().execute();
-                        } else {
-                            cancel();
-                        }
-                        super.executed(result);
-                    }
-                }, this);
-            }
-            else
-            {
-                if (model.getProgress() != null)
-                {
-                    return;
-                }
-
-                if (model.getProvisioning().getEntity())
-                {
-                    model.startProgress(null);
-
-                    AsyncQuery _asyncQuery = new AsyncQuery();
-                    _asyncQuery.setModel(this);
-                    _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object model1, Object result1)
-                        {
-                            VmListModel vmListModel = (VmListModel) model1;
-                            UnitVmModel unitVmModel = (UnitVmModel) vmListModel.getWindow();
-
-                            VM vm = vmListModel.getcurrentVm();
-                            vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(unitVmModel.getTemplate().getSelectedItem().getTemplateVersionName()));
-
-                            AddVmFromTemplateParameters param = new AddVmFromTemplateParameters(vm,
-                                    unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
-                                    Guid.Empty);
-                            param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-                            param.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-                            param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                            param.setBalloonEnabled(balloonEnabled(model));
-                            param.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
-
-                            Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
-                        }
-                    };
-                    AsyncDataProvider.getTemplateDiskList(_asyncQuery, getcurrentVm().getVmtGuid());
-                }
-                else
-                {
-                    if (model.getProgress() != null)
-                    {
-                        return;
-                    }
-
-                    model.startProgress(null);
-
-                    VM vm = getcurrentVm();
-                    vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
-
-                    VmManagementParametersBase params = new VmManagementParametersBase(vm);
-                    params.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
-                    params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                    params.setBalloonEnabled(balloonEnabled(model));
-                    params.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
-
-                    ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-                    parameters.add(params);
-                    params.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-                    params.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-                    setVmWatchdogToParams(model, params);
-
-                    Frontend.getInstance().runAction(VdcActionType.AddVm, params, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
-                }
-            }
+            saveNewVm(model);
         }
         else // Update existing VM -> consists of editing VM cluster, and if succeeds - editing VM:
+        {
+            VM selectedItem = (VM) getSelectedItem();
+            // explicitly pass non-editable field from the original VM
+            getcurrentVm().setCreatedByUserId(selectedItem.getCreatedByUserId());
+            getcurrentVm().setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+
+            updateExistingVm(model);
+        }
+    }
+
+    private void updateExistingVm(final UnitVmModel model) {
+        if (model.getProgress() != null)
+        {
+            return;
+        }
+
+        // runEditVM: should be true if Cluster hasn't changed or if
+        // Cluster has changed and Editing it in the Backend has succeeded:
+        VM selectedItem = (VM) getSelectedItem();
+        Guid oldClusterID = selectedItem.getVdsGroupId();
+        Guid newClusterID = model.getSelectedCluster().getId();
+        if (oldClusterID.equals(newClusterID) == false)
+        {
+            ChangeVMClusterParameters parameters =
+                    new ChangeVMClusterParameters(newClusterID, getcurrentVm().getId());
+
+            model.startProgress(null);
+
+            Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster, parameters,
+                    new IFrontendActionAsyncCallback() {
+                        @Override
+                        public void executed(FrontendActionAsyncResult result) {
+
+                            final VmListModel vmListModel = (VmListModel) result.getState();
+                            VdcReturnValueBase returnValueBase = result.getReturnValue();
+                            if (returnValueBase != null && returnValueBase.getSucceeded())
+                            {
+                                VM vm = vmListModel.getcurrentVm();
+
+                                VmManagementParametersBase updateVmParams = new VmManagementParametersBase(vm);
+                                setVmWatchdogToParams(model, updateVmParams);
+                                updateVmParams.setSoundDeviceEnabled(model.getIsSoundcardEnabled()
+                                        .getEntity());
+                                updateVmParams.setBalloonEnabled(balloonEnabled(model));
+                                updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+
+                                Frontend.getInstance().runAction(VdcActionType.UpdateVm,
+                                        updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), vmListModel);
+                            }
+                            else
+                            {
+                                vmListModel.getWindow().stopProgress();
+                            }
+
+                        }
+                    },
+                    this);
+        }
+        else
+        {
+            model.startProgress(null);
+
+            VM vm = getcurrentVm();
+
+            VmManagementParametersBase updateVmParams = new VmManagementParametersBase(vm);
+
+            setVmWatchdogToParams(model, updateVmParams);
+            updateVmParams.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+            updateVmParams.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+            updateVmParams.setBalloonEnabled(balloonEnabled(model));
+            updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+
+            Frontend.getInstance().runAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
+        }
+    }
+
+    private void saveNewVm(final UnitVmModel model) {
+        if (getcurrentVm().getVmtGuid().equals(Guid.Empty))
         {
             if (model.getProgress() != null)
             {
                 return;
             }
 
-            // explicitly pass non-editable field from the original VM
-            getcurrentVm().setCreatedByUserId(selectedItem.getCreatedByUserId());
+            VmInterfaceCreatingManager addVmFromScratchNetworkManager =
+                    new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
+                        @Override
+                        public void vnicCreated(Guid vmId) {
+                            // do nothing
+                        }
 
-            // runEditVM: should be true if Cluster hasn't changed or if
-            // Cluster has changed and Editing it in the Backend has succeeded:
-            Guid oldClusterID = selectedItem.getVdsGroupId();
-            Guid newClusterID = model.getSelectedCluster().getId();
-            if (oldClusterID.equals(newClusterID) == false)
+                        @Override
+                        public void queryFailed() {
+                            // do nothing
+                        }
+                    });
+
+            model.startProgress(null);
+
+            AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(getcurrentVm(),
+                    new ArrayList<DiskImage>(),
+                    Guid.Empty);
+            parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+            parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+            parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+            parameters.setBalloonEnabled(balloonEnabled(model));
+
+            setVmWatchdogToParams(model, parameters);
+
+            Frontend.getInstance().runAction(VdcActionType.AddVmFromScratch,
+                    parameters,
+                    new UnitVmModelNetworkAsyncCallback(model, addVmFromScratchNetworkManager) {
+                @Override
+                public void executed(FrontendActionAsyncResult result) {
+                    getWindow().stopProgress();
+                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    if (returnValue != null && returnValue.getSucceeded()) {
+                        setWindow(null);
+                        setGuideContext(returnValue.getActionReturnValue());
+                        updateActionAvailability();
+                        getGuideCommand().execute();
+                    } else {
+                        cancel();
+                    }
+                    super.executed(result);
+                }
+            }, this);
+        }
+        else
+        {
+            if (model.getProgress() != null)
             {
-                ChangeVMClusterParameters parameters =
-                        new ChangeVMClusterParameters(newClusterID, getcurrentVm().getId());
+                return;
+            }
 
+            if (model.getProvisioning().getEntity())
+            {
                 model.startProgress(null);
 
-                Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster, parameters,
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult result) {
+                AsyncQuery _asyncQuery = new AsyncQuery();
+                _asyncQuery.setModel(this);
+                _asyncQuery.asyncCallback = new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model1, Object result1)
+                    {
+                        VmListModel vmListModel = (VmListModel) model1;
+                        UnitVmModel unitVmModel = (UnitVmModel) vmListModel.getWindow();
 
-                                final VmListModel vmListModel = (VmListModel) result.getState();
-                                VdcReturnValueBase returnValueBase = result.getReturnValue();
-                                if (returnValueBase != null && returnValueBase.getSucceeded())
-                                {
-                                    VM vm = vmListModel.getcurrentVm();
-                                    vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+                        VM vm = vmListModel.getcurrentVm();
+                        vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(unitVmModel.getTemplate().getSelectedItem().getTemplateVersionName()));
 
-                                    VmManagementParametersBase updateVmParams = new VmManagementParametersBase(vm);
-                                    setVmWatchdogToParams(model, updateVmParams);
-                                    updateVmParams.setSoundDeviceEnabled(model.getIsSoundcardEnabled()
-                                            .getEntity());
-                                    updateVmParams.setBalloonEnabled(balloonEnabled(model));
-                                    updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+                        AddVmFromTemplateParameters param = new AddVmFromTemplateParameters(vm,
+                                unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
+                                Guid.Empty);
+                        param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+                        param.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+                        param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+                        param.setBalloonEnabled(balloonEnabled(model));
+                        param.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
 
-                                    Frontend.getInstance().runAction(VdcActionType.UpdateVm,
-                                            updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), vmListModel);
-                                }
-                                else
-                                {
-                                    vmListModel.getWindow().stopProgress();
-                                }
-
-                            }
-                        },
-                        this);
+                        Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
+                    }
+                };
+                AsyncDataProvider.getTemplateDiskList(_asyncQuery, getcurrentVm().getVmtGuid());
             }
             else
             {
@@ -2180,15 +2178,19 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 VM vm = getcurrentVm();
                 vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
-                VmManagementParametersBase updateVmParams = new VmManagementParametersBase(vm);
+                VmManagementParametersBase params = new VmManagementParametersBase(vm);
+                params.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
+                params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+                params.setBalloonEnabled(balloonEnabled(model));
+                params.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
 
-                setVmWatchdogToParams(model, updateVmParams);
-                updateVmParams.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-                updateVmParams.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                updateVmParams.setBalloonEnabled(balloonEnabled(model));
-                updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+                ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+                parameters.add(params);
+                params.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+                params.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+                setVmWatchdogToParams(model, params);
 
-                Frontend.getInstance().runAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
+                Frontend.getInstance().runAction(VdcActionType.AddVm, params, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
             }
         }
     }
