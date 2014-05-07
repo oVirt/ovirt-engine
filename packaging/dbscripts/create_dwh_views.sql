@@ -268,8 +268,16 @@ SELECT
 	cast(b.status as smallint) as vm_status,
 	cast(c.usage_cpu_percent as smallint) as cpu_usage_percent,
 	cast(c.usage_mem_percent as smallint) as memory_usage_percent,
-	cast(c.cpu_sys as smallint) as system_cpu_usage_percent,
-	cast(c.cpu_user as smallint) as user_cpu_usage_percent,
+	cast(
+		(c.cpu_sys / (vm_static.cpu_per_socket * vm_static.num_of_sockets))
+		as smallint
+	)
+	as system_cpu_usage_percent,
+	cast(
+		(c.cpu_user / (vm_static.cpu_per_socket * vm_static.num_of_sockets))
+		as smallint
+	)
+	as user_cpu_usage_percent,
 	c.disks_usage,
 	b.vm_ip,
 	b.vm_fqdn,
@@ -280,9 +288,11 @@ SELECT
 		ELSE TRUE
 	END as user_logged_in_to_guest,
 	b.run_on_vds as currently_running_on_host
-FROM vm_dynamic b, vm_statistics c
-where
-	c.vm_guid = b.vm_guid;
+FROM vm_dynamic b
+    LEFT OUTER JOIN
+        vm_statistics c ON  c.vm_guid = b.vm_guid
+    INNER JOIN
+        vm_static ON c.vm_guid = vm_static.vm_guid;
 
 CREATE OR REPLACE VIEW dwh_vm_interface_configuration_history_view
 AS
