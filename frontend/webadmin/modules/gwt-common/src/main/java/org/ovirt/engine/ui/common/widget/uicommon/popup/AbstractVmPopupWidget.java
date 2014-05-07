@@ -1320,6 +1320,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (!(args instanceof PropertyChangedEventArgs)) {
+                    return;
+                }
+
                 String propName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("IsHostTabValid".equals(propName)) { //$NON-NLS-1$
                     if (object.getIsHostTabValid()) {
@@ -1380,6 +1384,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (!(args instanceof PropertyChangedEventArgs)) {
+                    return;
+                }
+
                 PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
 
                 if (e.propertyName == "SelectedItem") { //$NON-NLS-1$
@@ -1404,6 +1412,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         object.getCpuSharesAmountSelection().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (!(args instanceof PropertyChangedEventArgs)) {
+                    return;
+                }
+
                 if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     changeApplicationLevelVisibility(cpuSharesEditor, object.getCpuSharesAmountSelection().getIsAvailable());
                 }
@@ -1532,6 +1544,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         vm.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (!(args instanceof PropertyChangedEventArgs)) {
+                    return;
+                }
+
                 String propName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("IsLinuxOS".equals(propName)) { //$NON-NLS-1$
                     changeApplicationLevelVisibility(linuxBootOptionsPanel, vm.getIsLinuxOS());

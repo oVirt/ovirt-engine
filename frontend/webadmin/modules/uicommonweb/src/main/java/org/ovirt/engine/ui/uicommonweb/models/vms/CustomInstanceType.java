@@ -115,7 +115,8 @@ public class CustomInstanceType implements InstanceType {
 
     @Override
     public BootSequence getDefaultBootSequence() {
-        return null;
+        // default boot sequence
+        return BootSequence.C;
     }
 
     @Override
