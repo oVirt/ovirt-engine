@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.IOException;
 import java.io.File;
 import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -64,17 +66,28 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
 
         for (OVirtNodeInfo.Entry info : OVirtNodeInfo.getInstance().get()) {
             if (info.path.equals(iso.getParentFile())) {
-                Matcher matcher = info.isoPattern.matcher(iso.getName());
-                if (matcher.find()) {
-                    String rpmLike = matcher.group(1).replaceAll("-", ".");
-                    log.debugFormat("ISO version: {0} {1} {3}", iso, rpmLike, ovirtHostOsVersion);
-                    RpmVersion isoVersion = new RpmVersion(rpmLike, "", true);
-                    if (VdsHandler.isIsoVersionCompatibleForUpgrade(ovirtHostOsVersion, isoVersion)) {
-                        log.debugFormat("ISO compatible: {0}", iso);
-                        ret = true;
-                        break;
+                try {
+                    Matcher matcher = info.isoPattern.matcher(
+                        iso.getCanonicalFile().getName()
+                    );
+                    if (matcher.find()) {
+                        String rpmLike = matcher.group(1).replaceAll("-", ".");
+                        log.debugFormat("ISO version: {0} {1} {2}", iso, rpmLike, ovirtHostOsVersion);
+                        RpmVersion isoVersion = new RpmVersion(rpmLike, "", true);
+                        if (VdsHandler.isIsoVersionCompatibleForUpgrade(ovirtHostOsVersion, isoVersion)) {
+                            log.debugFormat("ISO compatible: {0}", iso);
+                            ret = true;
+                            break;
+                        }
                     }
+                } catch (IOException e) {
+                    log.errorFormat(
+                        "Cannot get canonical path to {0} with error {1}",
+                        iso.getName(),
+                        ExceptionUtils.getMessage(e)
+                    );
                 }
+
             }
         }
 
