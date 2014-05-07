@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +67,9 @@ public class SetupNetworksVDSCommandTest {
 
     @Before
     public void mockConfig() {
+        HashSet<Version> supportedClusters = new HashSet<>();
+        supportedClusters.add(version);
+        when(host.getSupportedClusterVersionsSet()).thenReturn(supportedClusters);
         when(host.getVdsGroupCompatibilityVersion()).thenReturn(version);
         configRule.mockConfigValue(ConfigValues.DefaultRouteSupported, version, Boolean.FALSE);
     }

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -62,8 +63,8 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 opts.put(VdsProperties.STP, network.getStp() ? "yes" : "no");
             }
 
-            Version version =
-                    getDbFacade().getVdsDao().get(getParameters().getVdsId()).getVdsGroupCompatibilityVersion();
+            VDS host = getDbFacade().getVdsDao().get(getParameters().getVdsId());
+            Version version = host.getVdsGroupCompatibilityVersion();
             if (qosConfiguredOnInterface(iface, network)
                     && FeatureSupported.hostNetworkQos(version)) {
                 NetworkQosMapper qosMapper =
@@ -71,7 +72,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 qosMapper.serialize(iface.isQosOverridden() ? iface.getQos() : qosDao.get(network.getQosId()));
             }
 
-            if (FeatureSupported.defaultRoute(version)
+            if (FeatureSupported.defaultRoute(Collections.max(host.getSupportedClusterVersionsSet()))
                     && NetworkUtils.isManagementNetwork(network)
                     && (iface.getBootProtocol() == NetworkBootProtocol.DHCP
                     || (iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP
