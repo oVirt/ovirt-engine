@@ -19,26 +19,25 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.ExternalNetworkPanel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.ExternalNetworksPanel;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.InternalNetworkPanel;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.InternalNetworksPanel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkGroup;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkPanel;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.InternalNetworkPanel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkPanelsStyle;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.InternalNetworksPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.AnimatedVerticalPanel;
-import org.ovirt.engine.ui.webadmin.widget.footer.StatusLabel;
+import org.ovirt.engine.ui.webadmin.widget.footer.StatusPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 
 public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<HostSetupNetworksModel> implements HostSetupNetworksPopupPresenterWidget.ViewDef {
@@ -49,9 +48,6 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostSetupNetworksPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
-
-    private static ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
-    private static final String EMPTY_STATUS = constants.dragToMakeChangesSetupNetwork();
 
     @UiField
     InternalNetworksPanel internalNetworkList;
@@ -66,11 +62,8 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     AnimatedVerticalPanel nicList;
 
     @UiField
-    SimplePanel statusPanel;
-
-    @UiField(provided = true)
     @Ignore
-    StatusLabel status;
+    StatusPanel statusPanel;
 
     @UiField
     NetworkPanelsStyle style;
@@ -93,17 +86,28 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
 
     private boolean rendered = false;
 
+    private final ApplicationConstants constants;
+    private final ApplicationMessages applicationMessages;
+
     @Inject
-    public HostSetupNetworksPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
+    public HostSetupNetworksPopupView(EventBus eventBus,
+                                      ApplicationResources resources,
+                                      ApplicationConstants constants,
+                                      ApplicationTemplates templates,
+                                      ApplicationMessages applicationMessages) {
         super(eventBus, resources);
-        status = new StatusLabel(EMPTY_STATUS);
+
+        this.constants = constants;
+        this.applicationMessages = applicationMessages;
+
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
         externalNetworksInfo = new InfoIcon(templates.italicText(constants.externalNetworksInfo()), resources);
         checkConnInfo = new InfoIcon(templates.italicTwoLines(constants.checkConnectivityInfoPart1(), constants.checkConnectivityInfoPart2()), resources);
         commitChangesInfo = new InfoIcon(templates.italicTwoLines(constants.commitChangesInfoPart1(), constants.commitChangesInfoPart2()), resources);
+
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        setStatusStyle(true);
+
         checkConnectivity.setContentWidgetStyleName(style.checkCon());
         commitChanges.setContentWidgetStyleName(style.commitChanges());
         initUnassignedNetworksPanel();
@@ -116,19 +120,9 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         externalNetworkList.setStyle(style);
     }
 
-    private void localize(){
-        checkConnectivity.setLabel(constants.checkConHostPopup()); //$NON-NLS-1$
+    private void localize() {
+        checkConnectivity.setLabel(constants.checkConHostPopup());
         commitChanges.setLabel(constants.saveNetConfigHostPopup());
-    }
-
-    private void setStatusStyle(boolean valid) {
-        if (valid) {
-            statusPanel.setStylePrimaryName(style.statusPanel());
-            status.setStylePrimaryName(style.statusLabel());
-        } else {
-            statusPanel.setStylePrimaryName(style.errorPanel());
-            status.setStylePrimaryName(style.errorLabel());
-        }
     }
 
     @Override
@@ -141,7 +135,6 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
                 HostSetupNetworksModel model = (HostSetupNetworksModel) sender;
                 List<LogicalNetworkModel> networks = model.getNetworks();
                 List<NetworkInterfaceModel> nics = model.getNics();
-                status.setFadeText(EMPTY_STATUS);
                 updateNetworks(networks);
                 updateNics(nics);
                 // mark as rendered
@@ -156,11 +149,21 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
                 NetworkOperation candidate = evtArgs.getCandidate();
                 NetworkItemModel<?> op1 = evtArgs.getOp1();
                 NetworkItemModel<?> op2 = evtArgs.getOp2();
-                boolean drop = evtArgs.isDrop();
-                if (!drop) {
-                    status.setFadeText(candidate != null ? candidate.getMessage(op1, op2) : constants.noValidActionSetupNetwork());
+
+                if (candidate == null) {
+                    setErrorStatus(constants.noValidActionSetupNetwork());
+                } else {
+                    if (candidate.isErroneousOperation()) {
+                        setErrorStatus(candidate.getMessage(op1, op2));
+                    } else {
+                        if (candidate.isDisplayNetworkAffected(op1, op2)) {
+                            setWarningStatus(applicationMessages.moveDisplayNetworkWarning(candidate.getMessage(op1,
+                                    op2)));
+                        } else {
+                            setValidStatus(candidate.getMessage(op1, op2));
+                        }
+                    }
                 }
-                setStatusStyle(!drop || !candidate.isNullOperation() || candidate == NetworkOperation.NULL_OPERATION);
             }
         });
 
@@ -200,4 +203,15 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         nicList.addAll(groups, !rendered);
     }
 
+    private void setValidStatus(String message) {
+        statusPanel.setTextAndStyle(message, style.statusPanel(), style.statusLabel());
+    }
+
+    private void setWarningStatus(String message) {
+        statusPanel.setTextAndStyle(message, style.warningPanel(), style.warningLabel());
+    }
+
+    private void setErrorStatus(String message) {
+        statusPanel.setTextAndStyle(message, style.errorPanel(), style.errorLabel());
+    }
 }

@@ -65,6 +65,12 @@ public enum NetworkOperation {
             };
         }
 
+        @Override
+        public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+
+            return isDisplayNetworkAttached((BondNetworkInterfaceModel) op1);
+        }
+
     },
     DETACH_NETWORK {
 
@@ -92,6 +98,13 @@ public enum NetworkOperation {
                     detachNetwork(allNics, networkToDetach);
                 }
             };
+        }
+
+        @Override
+        public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+
+            final LogicalNetworkModel logicalNetworkModel = (LogicalNetworkModel) op1;
+            return isDisplayNetwork(logicalNetworkModel);
         }
 
     },
@@ -138,6 +151,12 @@ public enum NetworkOperation {
             };
         }
 
+        @Override
+        public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            LogicalNetworkModel networkToBeAttached = (LogicalNetworkModel) op1;
+            return isDisplayNetwork(networkToBeAttached) && networkToBeAttached.isAttached();
+        }
+
     },
     BOND_WITH {
 
@@ -177,6 +196,10 @@ public enum NetworkOperation {
             };
         }
 
+        @Override
+        public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return isDisplayNetworkAttached((NetworkInterfaceModel) op1, (NetworkInterfaceModel) op2);
+        }
     },
     JOIN_BONDS {
 
@@ -217,6 +240,11 @@ public enum NetworkOperation {
             };
         }
 
+        @Override
+        public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return isDisplayNetworkAttached((NetworkInterfaceModel) op1, (NetworkInterfaceModel) op2);
+        }
+
     },
     ADD_TO_BOND {
 
@@ -254,6 +282,11 @@ public enum NetworkOperation {
             };
         }
 
+        @Override
+        public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return isDisplayNetworkAttached((NetworkInterfaceModel) op1);
+        }
+
     },
     EXTEND_BOND_WITH {
 
@@ -269,9 +302,14 @@ public enum NetworkOperation {
                 protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
                         List<VdsNetworkInterface> allNics, Object... params) {
-                    NetworkOperation.ADD_TO_BOND.getCommand(op2, op1, allNics).execute();
+                    ADD_TO_BOND.getCommand(op2, op1, allNics).execute();
                 }
             };
+        }
+
+        @Override
+        public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return isDisplayNetworkAttached((BondNetworkInterfaceModel) op2);
         }
 
     },
@@ -305,6 +343,15 @@ public enum NetworkOperation {
                     }
                 }
             };
+        }
+
+        @Override
+        public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            final BondNetworkInterfaceModel bond = ((NetworkInterfaceModel) op1).getBond();
+            if (bond.getBonded().size() == 2) {
+                return isDisplayNetworkAttached(bond);
+            }
+            return false;
         }
 
     },
@@ -602,5 +649,40 @@ public enum NetworkOperation {
 
     public boolean isNullOperation(){
         return false;
+    }
+
+    @SuppressWarnings("unused")
+    public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+        return false;
+    }
+
+    public boolean isErroneousOperation() {
+        return isNullOperation() && this != NULL_OPERATION;
+    }
+
+    private static boolean isDisplayNetworkAttached(Iterable<LogicalNetworkModel> logicalNetworkInterfaces) {
+        if (logicalNetworkInterfaces == null) {
+            return false;
+        }
+        for (LogicalNetworkModel logicalNetworkModel : logicalNetworkInterfaces) {
+            if (isDisplayNetwork(logicalNetworkModel)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isDisplayNetworkAttached(NetworkInterfaceModel networkItemModel) {
+        return isDisplayNetworkAttached(networkItemModel.getItems());
+    }
+
+    private static boolean isDisplayNetworkAttached(NetworkInterfaceModel op1, NetworkInterfaceModel op2) {
+        return isDisplayNetworkAttached(op1) ||
+                isDisplayNetworkAttached(op2);
+    }
+
+    private static boolean isDisplayNetwork(LogicalNetworkModel logicalNetworkModel) {
+        return logicalNetworkModel.getEntity().getCluster().isDisplay();
     }
 }

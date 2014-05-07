@@ -101,4 +101,8 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("{0} GB")
     String rebalanceFileSizeGb(String size);
+
+    @DefaultMessage("{0}. Moving the display network will drop VM console connectivity until they are restarted.")
+    String moveDisplayNetworkWarning(String networkOperationMessage);
+
 }

@@ -3,22 +3,27 @@ package org.ovirt.engine.ui.webadmin.widget.footer;
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.user.client.ui.Label;
 
-public class StatusLabel extends Label {
+abstract class StatusLabel extends Label {
 
-    protected static final int DURATION = 200;
+    private static final int DURATION = 200;
 
     private String pendingText = ""; //$NON-NLS-1$
 
-    private Animation fadeInAnimation = new Animation() {
+    private final Animation fadeInAnimation = new Animation() {
 
         @Override
         protected void onUpdate(double progress) {
             getElement().getStyle().setOpacity(progress);
         }
 
+        @Override
+        protected void onComplete() {
+            super.onComplete();
+            onFadeInComplete();
+        }
     };
 
-    private Animation fadeOutAnimation = new Animation() {
+    private final Animation fadeOutAnimation = new Animation() {
 
         @Override
         protected void onComplete() {
@@ -37,20 +42,19 @@ public class StatusLabel extends Label {
         protected void onUpdate(double progress) {
             getElement().getStyle().setOpacity(1 - progress);
         }
-
     };
 
-    public StatusLabel() {
-        super();
-    }
-
-    public StatusLabel(String text) {
+    StatusLabel(String text, String style) {
         super(text);
+        setStylePrimaryName(style);
     }
 
     public void setFadeText(String text) {
         pendingText = text;
         fadeInAnimation.cancel();
         fadeOutAnimation.run(DURATION);
+    }
+
+    protected void onFadeInComplete() {
     }
 }

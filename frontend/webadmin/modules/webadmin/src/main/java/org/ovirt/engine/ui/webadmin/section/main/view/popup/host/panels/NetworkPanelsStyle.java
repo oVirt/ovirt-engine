@@ -39,6 +39,10 @@ public interface NetworkPanelsStyle extends CssResource {
 
     String errorLabel();
 
+    String warningPanel();
+
+    String warningLabel();
+
     String checkCon();
 
     String commitChanges();
