@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -194,7 +195,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             returnValue = true;
             connectPoolSucceeded = true;
         } else {
-            HostStoragePoolParametersBase params = new HostStoragePoolParametersBase(getStoragePool(), getVds());
+            ConnectHostToStoragePoolServersParameters params = new ConnectHostToStoragePoolServersParameters(getStoragePool(), getVds());
             Backend.getInstance().runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, params);
             returnValue = connectHostToPool();
             connectPoolSucceeded = returnValue;

@@ -27,7 +27,7 @@ public class DisconnectHostFromStoragePoolServersCommand extends
 
     @Override
     protected void executeCommand() {
-        initConnectionList();
+        initConnectionList(true);
 
         for (Map.Entry<StorageType, List<StorageServerConnections>> connectionToType : getConnectionsTypeMap().entrySet()) {
             disconnectStorageByType(connectionToType.getKey(), connectionToType.getValue());

@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -25,8 +28,19 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
         return connectionsTypeMap;
     }
 
-    protected void initConnectionList() {
-        _connections = DbFacade.getInstance().getStorageServerConnectionDao().getAllConnectableStorageSeverConnection(getStoragePool().getId());
+    protected void initConnectionList(boolean includeInactiveDomains) {
+        Set<StorageDomainStatus> statuses;
+
+        statuses = includeInactiveDomains ?
+                EnumSet.of(StorageDomainStatus.Active, StorageDomainStatus.Unknown, StorageDomainStatus.Inactive) :
+                EnumSet.of(StorageDomainStatus.Active, StorageDomainStatus.Unknown);
+
+        _connections =
+                DbFacade.getInstance()
+                        .getStorageServerConnectionDao()
+                        .getStorageConnectionsByStorageTypeAndStatus(getStoragePool().getId(),
+                                null,
+                                statuses);
         updateConnectionsTypeMap();
     }
 

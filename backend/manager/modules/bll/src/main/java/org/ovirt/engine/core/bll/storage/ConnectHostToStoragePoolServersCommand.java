@@ -6,9 +6,9 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
-import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -21,9 +21,9 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class ConnectHostToStoragePoolServersCommand extends
-        ConnectHostToStoragePoolServerCommandBase<HostStoragePoolParametersBase> {
+        ConnectHostToStoragePoolServerCommandBase<ConnectHostToStoragePoolServersParameters> {
 
-    public ConnectHostToStoragePoolServersCommand(HostStoragePoolParametersBase parameters) {
+    public ConnectHostToStoragePoolServersCommand(ConnectHostToStoragePoolServersParameters parameters) {
         super(parameters);
         setStoragePool(parameters.getStoragePool());
         setVds(parameters.getVds());
@@ -31,7 +31,7 @@ public class ConnectHostToStoragePoolServersCommand extends
 
     @Override
     protected void executeCommand() {
-        initConnectionList();
+        initConnectionList(getParameters().isConnectToInactiveDomains());
         setSucceeded(connectStorageServer(getConnectionsTypeMap()));
 
         if (!getSucceeded()) {
