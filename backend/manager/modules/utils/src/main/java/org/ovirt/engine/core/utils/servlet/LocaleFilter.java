@@ -77,7 +77,6 @@ public class LocaleFilter implements Filter {
         Cookie cookie = new Cookie(LocaleFilter.LOCALE, userLocale.toString());
         cookie.setPath(ROOT_PATH);
         cookie.setMaxAge(Integer.MAX_VALUE); // Doesn't expire.
-        cookie.setHttpOnly(true);
         response.addCookie(cookie);
     }
 

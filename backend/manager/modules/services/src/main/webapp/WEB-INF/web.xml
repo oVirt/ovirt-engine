@@ -120,10 +120,4 @@
     <location>/404.html</location>
   </error-page>
 
-  <session-config>
-    <cookie-config>
-      <http-only>true</http-only>
-    </cookie-config>
-  </session-config>
-
 </web-app>
