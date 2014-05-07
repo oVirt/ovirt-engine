@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -44,10 +45,17 @@ public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> ex
             tasks.add(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    final List<StorageServerConnections> conns = ISCSIStorageHelper.updateIfaces(connections, host.getId());
-                    runVdsCommand(VDSCommandType.ConnectStorageServer,
-                            new StorageServerConnectionManagementVDSParameters(host.getId(), Guid.Empty, StorageType.ISCSI, conns)
-                    );
+                    try {
+                        final List<StorageServerConnections> conns = ISCSIStorageHelper.updateIfaces(connections, host.getId());
+                        runVdsCommand(VDSCommandType.ConnectStorageServer,
+                                new StorageServerConnectionManagementVDSParameters(host.getId(), Guid.Empty, StorageType.ISCSI, conns)
+                        );
+                    } catch (VdcBLLException e) {
+                        log.errorFormat("Could not connect Host {0} - {1} to Iscsi Storage Server. The exception is: {2}",
+                                host.getName(),
+                                host.getId(),
+                                e);
+                    }
                     return null;
                 }
             });
