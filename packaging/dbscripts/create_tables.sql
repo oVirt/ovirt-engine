@@ -1246,7 +1246,6 @@ CREATE TABLE vm_statistics (
     _update_date timestamp with time zone
 );
 
-
 --
 -- Name: disk_lun_map_pk; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
 --
@@ -2732,4 +2731,3 @@ ALTER TABLE ONLY vm_statistics
 
 ALTER TABLE ONLY vm_static
     ADD CONSTRAINT vm_templates_vm_static FOREIGN KEY (vmt_guid) REFERENCES vm_static(vm_guid);
-

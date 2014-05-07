@@ -47,7 +47,6 @@ public class JsonObjectSerializationEntitiesTest {
         RandomUtils random = RandomUtils.instance();
         VdsStatic vdsStatic = new VdsStatic(random.nextString(10),
                                     random.nextString(10),
-                                    random.nextString(10),
                                     random.nextInt(),
                                     random.nextInt(),
                                     random.nextString(10),
@@ -57,7 +56,6 @@ public class JsonObjectSerializationEntitiesTest {
                                     random.nextBoolean(),
                                     random.nextEnum(VDSType.class),
                                     Guid.newGuid());
-        vdsStatic.setPmOptions("option1=value1,option2=value2");
         Object[][] data =
                 new Object[][] {
                         { vdsStatic },

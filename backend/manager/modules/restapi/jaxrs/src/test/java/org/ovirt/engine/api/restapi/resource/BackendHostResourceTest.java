@@ -54,6 +54,7 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostResourceTest
@@ -269,7 +270,6 @@ public class BackendHostResourceTest
 
     private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityWithNoCertificateInfoExpectations(1);
-
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
                                            new String[] { "RootPassword" },
@@ -557,7 +557,14 @@ public class BackendHostResourceTest
 
     @Test
     public void testFenceStatus() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsFenceStatus, VdsIdParametersBase.class, new String[] {"VdsId"}, new Object[] {GUIDS[0]}, new FenceStatusReturnValue("on", ""));
+        VDSReturnValue retVal = new VDSReturnValue();
+        retVal.setSucceeded(true);
+        retVal.setReturnValue(new FenceStatusReturnValue("on", ""));
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsFenceStatus,
+                VdsIdParametersBase.class,
+                new String[] { "VdsId" },
+                new Object[] { GUIDS[0] },
+                retVal);
         control.replay();
         Action action = new Action();
         action.setFenceType(FenceType.STATUS.value());
@@ -568,7 +575,14 @@ public class BackendHostResourceTest
 
     @Test
     public void testFenceStatusFailure() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsFenceStatus, VdsIdParametersBase.class, new String[] {"VdsId"}, new Object[] {GUIDS[0]}, new FenceStatusReturnValue("unknown", "some_error"));
+        VDSReturnValue retVal = new VDSReturnValue();
+        retVal.setSucceeded(true);
+        retVal.setReturnValue(new FenceStatusReturnValue("unknown", "some_error"));
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsFenceStatus,
+                VdsIdParametersBase.class,
+                new String[] { "VdsId" },
+                new Object[] { GUIDS[0] },
+                retVal);
         control.replay();
         Action action = new Action();
         action.setFenceType(FenceType.STATUS.value());

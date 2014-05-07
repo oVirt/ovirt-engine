@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.MacPool;
@@ -74,6 +75,7 @@ import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.EventDAO;
 import org.ovirt.engine.core.dao.ExternalVariableDao;
+import org.ovirt.engine.core.dao.FenceAgentDAO;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
@@ -205,6 +207,7 @@ public class DbFacade {
             put(VmJob.class, VmJobDao.class);
             put(MacPool.class, MacPoolDao.class);
             put(DiskProfile.class, DiskProfileDao.class);
+            put(FenceAgent.class, FenceAgentDAO.class);
         }
     };
 
@@ -1155,5 +1158,9 @@ public class DbFacade {
      */
     public CpuProfileDao getCpuProfileDao() {
         return getDao(CpuProfileDao.class);
+    }
+
+    public FenceAgentDAO getFenceAgentDao() {
+        return getDao(FenceAgentDAO.class);
     }
 }

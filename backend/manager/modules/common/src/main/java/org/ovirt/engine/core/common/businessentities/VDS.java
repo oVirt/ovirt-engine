@@ -3,8 +3,8 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +26,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     private String activeNic;
     private boolean balloonEnabled;
     private boolean countThreadsAsCores;
+    private List<FenceAgent> fenceAgents;
 
     /**
      * This map holds the disk usage reported by the host. The mapping is path to usage (in MB).
@@ -41,6 +42,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         mInterfaceList = new ArrayList<VdsNetworkInterface>();
         mNetworkList = new ArrayList<Network>();
         this.setNumaNodeList(new ArrayList<VdsNumaNode>());
+        fenceAgents = new LinkedList<FenceAgent>();
     }
 
     @Override
@@ -112,7 +114,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setVdsGroupDescription(getVdsGroupDescription());
         vds.setId(getId());
         vds.setVdsName(getName());
-        vds.setManagementIp(getManagementIp());
         vds.setHostName(getHostName());
         vds.setComment(getComment());
         vds.setPort(getPort());
@@ -157,19 +158,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setCpuFlags(getCpuFlags());
         vds.setNetConfigDirty(getNetConfigDirty());
         vds.setpm_enabled(getpm_enabled());
-        vds.setPmPassword(getPmPassword());
-        vds.setPmPort(getPort());
-        vds.setPmOptions(getPmOptions());
-        vds.setPmType(getPmType());
-        vds.setPmUser(getPmUser());
-        vds.setPmSecondaryIp(getPmSecondaryIp());
-        vds.setPmSecondaryType(getPmSecondaryType());
-        vds.setPmSecondaryPort(getPmSecondaryPort());
-        vds.setPmSecondaryOptions(getPmSecondaryOptions());
-        vds.setPmSecondaryUser(getPmSecondaryUser());
-        vds.setPmSecondaryPassword(getPmSecondaryPassword());
-        vds.setPmSecondaryConcurrent(isPmSecondaryConcurrent());
-        vds.setPmPort(getPmPort());
         vds.setPmKdumpDetection(isPmKdumpDetection());
         vds.setConsoleAddress(getConsoleAddress());
         vds.setHBAs(getHBAs());
@@ -191,7 +179,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setBalloonEnabled(isBalloonEnabled());
         vds.setNumaNodeList(getNumaNodeList());
         vds.setAutoNumaBalancing(getAutoNumaBalancing());
-
+        vds.setFenceAgents(getFenceAgents());
         return vds;
     }
 
@@ -302,14 +290,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public void setVdsName(String value) {
         this.mVdsStatic.setVdsName(value);
-    }
-
-    public String getManagementIp() {
-        return this.mVdsStatic.getManagementIp();
-    }
-
-    public void setManagementIp(String value) {
-        this.mVdsStatic.setManagementIp(value);
     }
 
     public String getUniqueId() {
@@ -928,68 +908,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         mVdsDynamic.setnet_config_dirty(value);
     }
 
-    public String getPmType() {
-        return mVdsStatic.getPmType();
-    }
-
-    public void setPmType(String value) {
-        mVdsStatic.setPmType(value);
-    }
-
-    public String getPmUser() {
-        return mVdsStatic.getPmUser();
-    }
-
-    public void setPmUser(String value) {
-        mVdsStatic.setPmUser(value);
-    }
-
-    public String getPmPassword() {
-        return mVdsStatic.getPmPassword();
-    }
-
-    public void setPmPassword(String value) {
-        mVdsStatic.setPmPassword(value);
-    }
-
-    public Integer getPmPort() {
-        return mVdsStatic.getPmPort();
-    }
-
-    public void setPmPort(Integer value) {
-        mVdsStatic.setPmPort(value);
-    }
-
-    public String getPmOptions() {
-        return mVdsStatic.getPmOptions();
-    }
-
-    public void setPmOptions(String value) {
-        mVdsStatic.setPmOptions(value);
-    }
-
-    public HashMap<String, String> getPmOptionsMap() {
-        return mVdsStatic.getPmOptionsMap();
-    }
-
-    public HashMap<String, String> getPmSecondaryOptionsMap() {
-        return mVdsStatic.getPmSecondaryOptionsMap();
-    }
-
-    public void setPmSecondaryOptionsMap(HashMap<String, String> value) {
-        mVdsStatic.setPmSecondaryOptionsMap(value);
-    }
-
     public boolean isPmKdumpDetection() {
         return mVdsStatic.isPmKdumpDetection();
     }
 
     public void setPmKdumpDetection(boolean pmKdumpDetection) {
         mVdsStatic.setPmKdumpDetection(pmKdumpDetection);
-    }
-
-    public void setPmOptionsMap(HashMap<String, String> value) {
-        mVdsStatic.setPmOptionsMap(value);
     }
 
     public boolean getpm_enabled() {
@@ -1006,66 +930,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public void setPmProxyPreferences(String pmProxyPreferences) {
         mVdsStatic.setPmProxyPreferences(pmProxyPreferences);
-    }
-
-    public String getPmSecondaryIp() {
-        return mVdsStatic.getPmSecondaryIp();
-    }
-
-    public void setPmSecondaryIp(String value) {
-        mVdsStatic.setPmSecondaryIp(value);
-    }
-
-    public String getPmSecondaryType() {
-        return mVdsStatic.getPmSecondaryType();
-    }
-
-    public void setPmSecondaryType(String value) {
-        mVdsStatic.setPmSecondaryType(value);
-    }
-
-    public String getPmSecondaryUser() {
-        return mVdsStatic.getPmSecondaryUser();
-    }
-
-    public void setPmSecondaryUser(String value) {
-        mVdsStatic.setPmSecondaryUser(value);
-    }
-
-    public String getPmSecondaryPassword() {
-        return mVdsStatic.getPmSecondaryPassword();
-    }
-
-    public void setPmSecondaryPassword(String value) {
-        mVdsStatic.setPmSecondaryPassword(value);
-    }
-
-    public Integer getPmSecondaryPort() {
-        return mVdsStatic.getPmSecondaryPort();
-    }
-
-    public void setPmSecondaryPort(Integer value) {
-        mVdsStatic.setPmSecondaryPort(value);
-    }
-
-    public String getPmSecondaryOptions() {
-        return mVdsStatic.getPmSecondaryOptions();
-    }
-
-    public void setPmSecondaryOptions(String value) {
-        mVdsStatic.setPmSecondaryOptions(value);
-    }
-
-    public void setPmSecondaryPort(String value) {
-        mVdsStatic.setPmSecondaryOptions(value);
-    }
-
-    public boolean isPmSecondaryConcurrent() {
-        return mVdsStatic.isPmSecondaryConcurrent();
-    }
-
-    public void setPmSecondaryConcurrent(boolean value) {
-        mVdsStatic.setPmSecondaryConcurrent(value);
     }
 
     public String getHostOs() {
@@ -1316,6 +1180,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         mVdsStatic.setHostProviderId(hostProviderId);
     }
 
+    public List<FenceAgent> getFenceAgents() {
+        return fenceAgents;
+    }
+
+    public void setFenceAgents(List<FenceAgent> fenceAgents) {
+        this.fenceAgents = fenceAgents;
+    }
+
     private float maxSchedulingMemory;
 
     public void calculateFreeVirtualMemory() {
@@ -1454,4 +1326,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         return countThreadsAsCores;
     }
 
+    public boolean isFenceAgentsExist() {
+        return !this.getFenceAgents().isEmpty();
+    }
 }

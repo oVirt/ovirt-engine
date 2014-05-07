@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils.threadpool;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
@@ -122,7 +123,7 @@ public class ThreadPoolUtil {
      * execution results
      * @return
      */
-    private static <V> ExecutorCompletionService<V> createCompletionService() {
+    public static <V> ExecutorCompletionService<V> createCompletionService() {
         return new ExecutorCompletionService<V>(es);
     }
 
@@ -142,12 +143,18 @@ public class ThreadPoolUtil {
      */
     public static <V> ExecutorCompletionService<V> createCompletionService(Iterable<Callable<V>> tasks) {
          ExecutorCompletionService<V> ecs =  createCompletionService();
-         if (tasks != null) {
-             for (Callable<V> callable : tasks) {
-                 ecs.submit(callable);
-             }
-         }
+         submitTasks(ecs, tasks);
          return ecs;
+    }
+
+    public static <V> List<Future<V>> submitTasks(ExecutorCompletionService<V> ecs, Iterable<Callable<V>> tasks) {
+        List<Future<V>> futures = new LinkedList<Future<V>>();
+        if (tasks != null) {
+            for (Callable<V> callable : tasks) {
+                futures.add(ecs.submit(callable));
+            }
+        }
+        return futures;
     }
 
     public static void execute(Runnable command) {

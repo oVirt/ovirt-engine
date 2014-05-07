@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.ActionsBuilder;
 import org.ovirt.engine.api.model.AffinityGroup;
+import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Application;
 import org.ovirt.engine.api.model.Balance;
 import org.ovirt.engine.api.model.BaseResource;
@@ -138,6 +139,8 @@ import org.ovirt.engine.api.resource.DiskSnapshotsResource;
 import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.EventResource;
 import org.ovirt.engine.api.resource.EventsResource;
+import org.ovirt.engine.api.resource.FenceAgentResource;
+import org.ovirt.engine.api.resource.FenceAgentsResource;
 import org.ovirt.engine.api.resource.FileResource;
 import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.api.resource.FilterResource;
@@ -553,6 +556,9 @@ public class LinkHelper {
         map = new ParentToCollectionMap(OpenStackSubnetResource.class, OpenStackSubnetsResource.class);
         map.add(OpenStackSubnetResource.class, OpenStackSubnetsResource.class, OpenStackNetwork.class);
         TYPES.put(OpenStackSubnet.class, map);
+
+        map = new ParentToCollectionMap(FenceAgentResource.class, FenceAgentsResource.class, Host.class);
+        TYPES.put(Agent.class, map);
     }
 
     /**

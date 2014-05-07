@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
@@ -8,6 +10,7 @@ import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -496,22 +499,8 @@ public class ClusterGuideModel extends GuideModel
         host.setVdsGroupId(model.getCluster().getSelectedItem().getId());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
 
-        // Save primary PM parameters.
-        host.setManagementIp(model.getManagementIp().getEntity());
-        host.setPmUser(model.getPmUserName().getEntity());
-        host.setPmPassword(model.getPmPassword().getEntity());
-        host.setPmType(model.getPmType().getSelectedItem());
-        host.setPmOptionsMap(model.getPmOptionsMap());
-
-        // Save secondary PM parameters.
-        host.setPmSecondaryIp(model.getPmSecondaryIp().getEntity());
-        host.setPmSecondaryUser(model.getPmSecondaryUserName().getEntity());
-        host.setPmSecondaryPassword(model.getPmSecondaryPassword().getEntity());
-        host.setPmSecondaryType(model.getPmSecondaryType().getSelectedItem());
-        host.setPmSecondaryOptionsMap(model.getPmSecondaryOptionsMap());
         // Save other PM parameters.
         host.setpm_enabled(model.getIsPm().getEntity());
-        host.setPmSecondaryConcurrent(model.getPmSecondaryConcurrent().getEntity());
         host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
         host.setPmKdumpDetection(model.getPmKdumpDetection().getEntity());
 
@@ -524,7 +513,7 @@ public class ClusterGuideModel extends GuideModel
         vdsActionParams.setAuthMethod(model.getAuthenticationMethod());
         vdsActionParams.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         vdsActionParams.setRebootAfterInstallation(model.getCluster().getSelectedItem().supportsVirtService());
-
+        vdsActionParams.setFenceAgents(getFenceAgents(model));
         model.startProgress(null);
 
         Frontend.getInstance().runAction(VdcActionType.AddVds, vdsActionParams,
@@ -537,6 +526,37 @@ public class ClusterGuideModel extends GuideModel
 
                     }
                 }, this);
+    }
+
+    private List<FenceAgent> getFenceAgents(HostModel model) {
+        List<FenceAgent> agents = new LinkedList<FenceAgent>();
+        if (model.getManagementIp() != null && model.getManagementIp().getEntity() != null) {
+            // Save primary PM parameters.
+            FenceAgent primaryAgent = new FenceAgent();
+            primaryAgent.setIp(model.getManagementIp().getEntity());
+            primaryAgent.setUser(model.getPmUserName().getEntity());
+            primaryAgent.setPassword(model.getPmPassword().getEntity());
+            primaryAgent.setType(model.getPmType().getSelectedItem());
+            primaryAgent.setOptionsMap((model.getPmOptionsMap()));
+            primaryAgent.setPort(model.getPort().getEntity());
+            primaryAgent.setOrder(1);
+            agents.add(primaryAgent);
+            if (model.getPmSecondaryIp() != null && model.getPmSecondaryIp().getEntity() != null) {
+                FenceAgent secondaryAgent = new FenceAgent();
+                secondaryAgent.setIp(model.getPmSecondaryIp().getEntity());
+                secondaryAgent.setUser(model.getPmSecondaryUserName().getEntity());
+                secondaryAgent.setPassword(model.getPmSecondaryPassword().getEntity());
+                secondaryAgent.setType(model.getPmSecondaryType().getSelectedItem());
+                secondaryAgent.setOptionsMap(model.getPmSecondaryOptionsMap());
+                secondaryAgent.setOrder(model.getPmSecondaryConcurrent().getEntity() ? primaryAgent.getOrder()
+                        : primaryAgent.getOrder() + 1);
+                if (model.getPmSecondaryPort() != null) {
+                    secondaryAgent.setPort(Integer.valueOf(model.getPmSecondaryPort().getEntity()));
+                }
+                agents.add(secondaryAgent);
+            }
+        }
+        return agents;
     }
 
     public void postOnAddHost(VdcReturnValueBase returnValue)

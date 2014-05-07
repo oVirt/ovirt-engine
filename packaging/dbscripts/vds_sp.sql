@@ -400,7 +400,6 @@ Create or replace FUNCTION InsertVdsStatic(
     v_free_text_comment text,
     v_vds_id UUID,
     v_host_name VARCHAR(255),
-    v_ip VARCHAR(255) ,
     v_vds_unique_id VARCHAR(128) ,
     v_port INTEGER,
     v_protocol SMALLINT,
@@ -409,20 +408,8 @@ Create or replace FUNCTION InsertVdsStatic(
     v_server_SSL_enabled BOOLEAN ,
     v_vds_type INTEGER,
     v_vds_strength INTEGER,
-    v_pm_type VARCHAR(20) ,
-    v_pm_user VARCHAR(50) ,
-    v_pm_password VARCHAR(50) ,
-    v_pm_port INTEGER ,
-    v_pm_options VARCHAR(4000) ,
     v_pm_enabled BOOLEAN,
     v_pm_proxy_preferences VARCHAR(255),
-    v_pm_secondary_ip VARCHAR(255),
-    v_pm_secondary_type VARCHAR(20),
-    v_pm_secondary_user VARCHAR(50),
-    v_pm_secondary_password text,
-    v_pm_secondary_port INTEGER,
-    v_pm_secondary_options VARCHAR(4000),
-    v_pm_secondary_concurrent BOOLEAN,
     v_pm_detect_kdump BOOLEAN,
     v_vds_spm_priority INTEGER,
     v_sshKeyFingerprint VARCHAR(128),
@@ -437,16 +424,12 @@ RETURNS VOID
 BEGIN
    IF v_vds_unique_id IS NULL OR NOT EXISTS(SELECT vds_name FROM vds_static WHERE vds_unique_id = v_vds_unique_id) then
       BEGIN
-         INSERT INTO vds_static(vds_id,host_name, free_text_comment, ip, vds_unique_id, port, protocol, vds_group_id, vds_name, server_SSL_enabled,
-                               vds_type,vds_strength,pm_type,pm_user,pm_password,pm_port,pm_options,pm_enabled,
-                               pm_proxy_preferences, pm_secondary_ip, pm_secondary_type, pm_secondary_user,
-                               pm_secondary_password, pm_secondary_port, pm_secondary_options, pm_secondary_concurrent, pm_detect_kdump,
-                               vds_spm_priority, sshKeyFingerprint, console_address, ssh_port, ssh_username, disable_auto_pm, host_provider_id)
-			VALUES(v_vds_id,v_host_name, v_free_text_comment, v_ip, v_vds_unique_id, v_port, v_protocol, v_vds_group_id, v_vds_name, v_server_SSL_enabled,
-                               v_vds_type,v_vds_strength,v_pm_type,v_pm_user,v_pm_password,v_pm_port,v_pm_options,v_pm_enabled,
-                               v_pm_proxy_preferences, v_pm_secondary_ip, v_pm_secondary_type, v_pm_secondary_user,
-                               v_pm_secondary_password, v_pm_secondary_port, v_pm_secondary_options, v_pm_secondary_concurrent, v_pm_detect_kdump,
-                               v_vds_spm_priority, v_sshKeyFingerprint, v_console_address, v_ssh_port, v_ssh_username, v_disable_auto_pm, v_host_provider_id);
+         INSERT INTO vds_static(vds_id,host_name, free_text_comment, vds_unique_id, port, protocol, vds_group_id, vds_name, server_SSL_enabled,
+                               vds_type,vds_strength,pm_enabled, pm_proxy_preferences, pm_detect_kdump, vds_spm_priority, sshKeyFingerprint, console_address, 
+                               ssh_port, ssh_username, disable_auto_pm, host_provider_id)
+			VALUES(v_vds_id,v_host_name, v_free_text_comment, v_vds_unique_id, v_port, v_protocol, v_vds_group_id, v_vds_name, v_server_SSL_enabled,
+                               v_vds_type,v_vds_strength,v_pm_enabled, v_pm_proxy_preferences, v_pm_detect_kdump, v_vds_spm_priority, v_sshKeyFingerprint, 
+                               v_console_address, v_ssh_port, v_ssh_username, v_disable_auto_pm, v_host_provider_id);
       END;
    end if;
    RETURN;
@@ -459,7 +442,6 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION UpdateVdsStatic(v_host_name VARCHAR(255),
     v_free_text_comment text,
-	v_ip VARCHAR(255) ,
     v_vds_unique_id VARCHAR(128),
     v_port INTEGER,
     v_protocol SMALLINT,
@@ -469,20 +451,8 @@ Create or replace FUNCTION UpdateVdsStatic(v_host_name VARCHAR(255),
     v_server_SSL_enabled BOOLEAN ,
     v_vds_type INTEGER,
     v_vds_strength INTEGER,
-    v_pm_type VARCHAR(20) ,
-    v_pm_user VARCHAR(50) ,
-    v_pm_password VARCHAR(50) ,
-    v_pm_port INTEGER ,
-    v_pm_options VARCHAR(4000) ,
     v_pm_enabled BOOLEAN,
     v_pm_proxy_preferences VARCHAR(255),
-    v_pm_secondary_ip VARCHAR(255),
-    v_pm_secondary_type VARCHAR(20),
-    v_pm_secondary_user VARCHAR(50),
-    v_pm_secondary_password text,
-    v_pm_secondary_port INTEGER,
-    v_pm_secondary_options VARCHAR(4000),
-    v_pm_secondary_concurrent BOOLEAN,
     v_pm_detect_kdump BOOLEAN,
     v_otp_validity BIGINT,
     v_vds_spm_priority INTEGER,
@@ -500,16 +470,10 @@ BEGIN
 
    BEGIN
       UPDATE vds_static
-      SET host_name = v_host_name, free_text_comment = v_free_text_comment, ip = v_ip,vds_unique_id = v_vds_unique_id,
+      SET host_name = v_host_name, free_text_comment = v_free_text_comment,vds_unique_id = v_vds_unique_id,
       port = v_port, protocol = v_protocol, vds_group_id = v_vds_group_id,vds_name = v_vds_name,server_SSL_enabled = v_server_SSL_enabled,
-      vds_type = v_vds_type,
-      _update_date = LOCALTIMESTAMP,vds_strength = v_vds_strength,
-      pm_type = v_pm_type,pm_user = v_pm_user,pm_password = v_pm_password,
-      pm_port = v_pm_port,pm_options = v_pm_options,pm_enabled = v_pm_enabled, pm_proxy_preferences = v_pm_proxy_preferences,
-      pm_secondary_ip = v_pm_secondary_ip, pm_secondary_type = v_pm_secondary_type,
-      pm_secondary_user = v_pm_secondary_user, pm_secondary_password = v_pm_secondary_password,
-      pm_secondary_port = v_pm_secondary_port, pm_secondary_options = v_pm_secondary_options,
-      pm_secondary_concurrent = v_pm_secondary_concurrent, pm_detect_kdump = v_pm_detect_kdump,
+      vds_type = v_vds_type, _update_date = LOCALTIMESTAMP,vds_strength = v_vds_strength,
+      pm_enabled = v_pm_enabled, pm_proxy_preferences = v_pm_proxy_preferences, pm_detect_kdump = v_pm_detect_kdump,
       otp_validity = v_otp_validity, vds_spm_priority = v_vds_spm_priority, sshKeyFingerprint = v_sshKeyFingerprint, host_provider_id = v_host_provider_id,
       console_address = v_console_address, ssh_port = v_ssh_port, ssh_username = v_ssh_username, disable_auto_pm = v_disable_auto_pm
       WHERE vds_id = v_vds_id;
@@ -562,20 +526,18 @@ LANGUAGE plpgsql;
 
 
 
-
-Create or replace FUNCTION GetVdsStaticByVdsId(v_vds_id UUID) RETURNS SETOF vds_static STABLE
+Create or replace FUNCTION GetVdsStaticByIp(v_ip VARCHAR(40)) RETURNS SETOF vds_static STABLE
    AS $procedure$
 BEGIN
 BEGIN
       RETURN QUERY SELECT vds_static.*
-      FROM vds_static
-      WHERE vds_id = v_vds_id;
+      FROM vds_static vds_static, fence_agents fence_agents
+      WHERE fence_agents.ip = v_ip AND fence_agents.vds_id = vds_static.vds_id;
    END;
 
    RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
-
 
 
 Create or replace FUNCTION GetVdsStaticByHostName(v_host_name VARCHAR(255)) RETURNS SETOF vds_static STABLE
@@ -589,6 +551,18 @@ RETURN QUERY SELECT vds_static.*
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetVdsStaticByVdsId(v_vds_id UUID) RETURNS SETOF vds_static STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT vds_static.*
+   FROM vds_static
+   WHERE vds_id = v_vds_id;
+
+   RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION GetVdsStaticByVdsName(v_host_name VARCHAR(255)) RETURNS SETOF vds_static STABLE
    AS $procedure$
 BEGIN
@@ -599,26 +573,6 @@ RETURN QUERY SELECT vds_static.*
    RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
-
-
-
-
-Create or replace FUNCTION GetVdsStaticByIp(v_ip VARCHAR(40)) RETURNS SETOF vds_static STABLE
-   AS $procedure$
-BEGIN
-BEGIN
-      RETURN QUERY SELECT vds_static.*
-      FROM vds_static
-      WHERE ip = v_ip;
-   END;
-
-   RETURN;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
 
 Create or replace FUNCTION GetVdsByUniqueID(v_vds_unique_id VARCHAR(128)) RETURNS SETOF vds STABLE
    AS $procedure$
@@ -816,23 +770,6 @@ BEGIN
    RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
-
-
-
-
-Create or replace FUNCTION GetVdsByIp(v_ip VARCHAR(40)) RETURNS SETOF vds STABLE
-   AS $procedure$
-BEGIN
-BEGIN
-      RETURN QUERY SELECT DISTINCT vds.*
-      FROM vds
-      WHERE ip = v_ip;
-   END;
-
-   RETURN;
-END; $procedure$
-LANGUAGE plpgsql;
-
 
 
 

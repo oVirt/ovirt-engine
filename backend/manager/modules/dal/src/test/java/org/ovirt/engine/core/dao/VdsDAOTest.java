@@ -144,17 +144,6 @@ public class VdsDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures that the right set of VDS instances are returned.
-     */
-    @Test
-    public void testGetAllWithIpAddress() {
-        List<VDS> result = dao.getAllWithIpAddress(IP_ADDRESS);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-    }
-
-    /**
      * Ensures the right set of VDS instances are returned.
      */
     @Test

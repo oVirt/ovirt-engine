@@ -13,6 +13,7 @@ public class VDSReturnValue {
     private VDSError vdsError;
 
     public VDSReturnValue() {
+        exceptionString = "";
     }
 
     public Object getReturnValue() {

@@ -29,56 +29,55 @@ public class VdsFenceOptions implements Serializable {
     private static final String YES = "yes";
     private static final String NO = "no";
     private static final String AGENT_ERROR = "Cannot find fence agent named '{}' in fence option mapping";
-    private static final String MAPPING_FORMAT_ERROR = "Illegal fencing mapping format '{}'";
+    private static final String MAPPING_FORMAT_ERROR = "Illegal fence mapping format '{}'";
 
     private static final Logger log = LoggerFactory.getLogger(VdsFenceOptions.class);
-    private HashMap<String, HashMap<String, String>> fencingOptionMapping;
-    private static HashMap<String, String> fencingOptionTypes;
+    private HashMap<String, HashMap<String, String>> fenceOptionMapping;
+    private static HashMap<String, String> fenceOptionTypes;
 
     private String fenceAgent = "";
-    private String fencingOptions;
-    private static HashMap<String, String> fencingAgentInstanceOptions;
-    private static HashSet<String> fencingSpecialParams;
+    private String fenceOptions;
+    private static HashMap<String, String> fenceAgentInstanceOptions;
+    private static HashSet<String> fenceSpecialParams;
     private String version;
 
     /**
-     * Initializes a new instance of the <see cref="VdsFencingOptions"/> class.
+     * Initializes a new instance of the <see cref="VdsFenceOptions"/> class.
      */
     public VdsFenceOptions(String version) {
         this(null, null, version);
     }
 
     /**
-     * Initializes a new instance of the <see cref="VdsFencingOptions"/> class.
-     *
+     * Initializes a new instance of the <see cref="VdsFenceOptions"/> class.
      * @param agent
      *            The agent.
-     * @param fencingOptions
-     *            The fencing options.
+     * @param fenceOptions
+     *            The fence options.
      */
-    public VdsFenceOptions(String agent, String fencingOptions, String version) {
+    public VdsFenceOptions(String agent, String fenceOptions, String version) {
         if (StringUtils.isNotEmpty(agent)) {
             this.fenceAgent = agent;
-            this.fencingOptions = fencingOptions;
+            this.fenceOptions = fenceOptions;
         }
         this.version = version;
         InitCache();
         Init();
     }
 
-    public HashMap<String, HashMap<String, String>> getFencingOptionMappingMap() {
-        return fencingOptionMapping;
+    public HashMap<String, HashMap<String, String>> getFenceOptionMappingMap() {
+        return fenceOptionMapping;
     }
 
 
     /**
-     * Caches the fencing agents options mapping. Mapping are stored in the following format <!--
+     * Caches the fence agents options mapping. Mapping are stored in the following format <!--
      * <agent>:{var=value}{[,]var=value}*; --> for example :
      * alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port
      */
-    private void CacheFencingAgentsOptionMapping() {
-        String localFencingOptionMapping = FenceConfigHelper.getFenceConfigurationValue(ConfigValues.VdsFenceOptionMapping.name(), version);
-        String[] agentsOptionsStr = localFencingOptionMapping.split(Pattern.quote(SEMICOLON), -1);
+    private void cacheFenceAgentsOptionMapping() {
+        String localFenceOptionMapping = FenceConfigHelper.getFenceConfigurationValue(ConfigValues.VdsFenceOptionMapping.name(), version);
+        String[] agentsOptionsStr = localFenceOptionMapping.split(Pattern.quote(SEMICOLON), -1);
         for (String agentOptionsStr : agentsOptionsStr) {
             String[] parts = agentOptionsStr.split(Pattern.quote(COLON), -1);
             if (parts.length == 2) {
@@ -91,10 +90,10 @@ public class VdsFenceOptions implements Serializable {
                         String[] optionKeyVal = option.split(Pattern.quote(EQUAL), -1);
                         agentOptions.put(optionKeyVal[0], optionKeyVal[1]);
                         // add mapped keys to special params
-                        fencingSpecialParams.add(optionKeyVal[1]);
+                        fenceSpecialParams.add(optionKeyVal[1]);
                     }
                 }
-                fencingOptionMapping.put(agent, agentOptions);
+                fenceOptionMapping.put(agent, agentOptions);
             } else {
                 log.error(MAPPING_FORMAT_ERROR, agentOptionsStr);
                 break;
@@ -103,15 +102,15 @@ public class VdsFenceOptions implements Serializable {
     }
 
     /**
-     * Caches the fencing agents option types. Types are stored in the following format <!-- [key=type][,][key=type]*-->
+     * Caches the fence agents option types. Types are stored in the following format <!-- [key=type][,][key=type]*-->
      * for example : secure=bool,port=int,slot=int
      */
-    private void CacheFencingAgentsOptionTypes() {
-        String localfencingOptionTypes = Config.<String> getValue(ConfigValues.VdsFenceOptionTypes);
-        String[] types = localfencingOptionTypes.split(Pattern.quote(COMMA), -1);
+    private void cacheFenceAgentsOptionTypes() {
+        String localfenceOptionTypes = Config.<String> getValue(ConfigValues.VdsFenceOptionTypes);
+        String[] types = localfenceOptionTypes.split(Pattern.quote(COMMA), -1);
         for (String entry : types) {
             String[] optionKeyVal = entry.split(Pattern.quote(EQUAL), -1);
-            fencingOptionTypes.put(optionKeyVal[0], optionKeyVal[1]);
+            fenceOptionTypes.put(optionKeyVal[0], optionKeyVal[1]);
         }
     }
 
@@ -127,8 +126,8 @@ public class VdsFenceOptions implements Serializable {
     private String GetRealKey(String agent, String displayedKey) {
         String result = "";
         if (StringUtils.isNotEmpty(agent) && StringUtils.isNotEmpty(displayedKey)) {
-            if (fencingOptionMapping.containsKey(agent)) {
-                HashMap<String, String> agentOptions = fencingOptionMapping.get(agent);
+            if (fenceOptionMapping.containsKey(agent)) {
+                HashMap<String, String> agentOptions = fenceOptionMapping.get(agent);
                 result = agentOptions.containsKey(displayedKey) ? agentOptions.get(displayedKey)
                         : displayedKey;
             } else {
@@ -150,8 +149,8 @@ public class VdsFenceOptions implements Serializable {
     private String GetDisplayedKey(String agent, String realKey) {
         String result = "";
         if (StringUtils.isNotEmpty(agent) && StringUtils.isNotEmpty(realKey)) {
-            if (fencingOptionMapping.containsKey(agent)) {
-                HashMap<String, String> agentOptions = fencingOptionMapping.get(agent);
+            if (fenceOptionMapping.containsKey(agent)) {
+                HashMap<String, String> agentOptions = fenceOptionMapping.get(agent);
                 if (agentOptions.containsValue(realKey)) {
                     for (Map.Entry<String, String> pair : agentOptions.entrySet()) {
                         if (StringUtils.equals(pair.getValue(), realKey)) {
@@ -180,8 +179,8 @@ public class VdsFenceOptions implements Serializable {
      */
     private String GetOptionType(String key) {
         String result = "";
-        if (StringUtils.isNotEmpty(key) && fencingOptionTypes.containsKey(key)) {
-            result = fencingOptionTypes.get(key);
+        if (StringUtils.isNotEmpty(key) && fenceOptionTypes.containsKey(key)) {
+            result = fenceOptionTypes.get(key);
         }
         return result;
     }
@@ -213,7 +212,7 @@ public class VdsFenceOptions implements Serializable {
      */
     private void Init() {
         InitCache();
-        CacheFencingAgentInstanceOptions();
+        cacheFenceAgentInstanceOptions();
     }
 
     /**
@@ -221,12 +220,12 @@ public class VdsFenceOptions implements Serializable {
      */
     private void CleanUp() {
 
-        if (fencingAgentInstanceOptions != null && fencingOptionMapping != null
-                && fencingOptionTypes != null) {
-            fencingAgentInstanceOptions.clear();
-            fencingOptionMapping.clear();
-            fencingOptionTypes.clear();
-            fencingSpecialParams.clear();
+        if (fenceAgentInstanceOptions != null && fenceOptionMapping != null
+                && fenceOptionTypes != null) {
+            fenceAgentInstanceOptions.clear();
+            fenceOptionMapping.clear();
+            fenceOptionTypes.clear();
+            fenceSpecialParams.clear();
         }
         Init();
     }
@@ -235,24 +234,24 @@ public class VdsFenceOptions implements Serializable {
      * Inits the cache.
      */
     private void InitCache() {
-        if (fencingOptionMapping == null) {
-            fencingAgentInstanceOptions = new HashMap<String, String>();
-            fencingOptionMapping = new HashMap<String, HashMap<String, String>>();
-            fencingOptionTypes = new HashMap<String, String>();
-            fencingSpecialParams = new HashSet<String>();
-            CacheFencingAgentsOptionMapping();
-            CacheFencingAgentsOptionTypes();
+        if (fenceOptionMapping == null) {
+            fenceAgentInstanceOptions = new HashMap<String, String>();
+            fenceOptionMapping = new HashMap<String, HashMap<String, String>>();
+            fenceOptionTypes = new HashMap<String, String>();
+            fenceSpecialParams = new HashSet<String>();
+            cacheFenceAgentsOptionMapping();
+            cacheFenceAgentsOptionTypes();
         }
     }
 
     /**
-     * Caches the fencing agent instance options.
+     * Caches the fence agent instance options.
      */
-    private void CacheFencingAgentInstanceOptions() {
+    private void cacheFenceAgentInstanceOptions() {
         if (StringUtils.isNotEmpty(getAgent())
-                && StringUtils.isNotEmpty(getFencingOptions())) {
-            String[] options = getFencingOptions().split(Pattern.quote(COMMA), -1);
-            fencingAgentInstanceOptions.clear();
+                && StringUtils.isNotEmpty(getFenceOptions())) {
+            String[] options = getFenceOptions().split(Pattern.quote(COMMA), -1);
+            fenceAgentInstanceOptions.clear();
             for (String option : options) {
                 String[] optionKeyVal = option.split(Pattern.quote(EQUAL), -1);
                 if (optionKeyVal.length == 1) {
@@ -371,12 +370,12 @@ public class VdsFenceOptions implements Serializable {
         CleanUp();
     }
 
-    public String getFencingOptions() {
-        return fencingOptions;
+    public String getFenceOptions() {
+        return fenceOptions;
     }
 
-    public void setFencingOptions(String value) {
-        fencingOptions = value;
+    public void setFenceOptions(String value) {
+        fenceOptions = value;
         CleanUp();
     }
 
@@ -404,7 +403,7 @@ public class VdsFenceOptions implements Serializable {
      */
     public void add(String agent, String key, String value) {
         key = GetRealKey(agent, key);
-        fencingAgentInstanceOptions.put(key, value);
+        fenceAgentInstanceOptions.put(key, value);
     }
 
     /**
@@ -433,8 +432,8 @@ public class VdsFenceOptions implements Serializable {
     public boolean IsSupported(String agent, String key) {
         boolean result = false;
         if (StringUtils.isNotEmpty(agent) && StringUtils.isNotEmpty(key)
-                && fencingOptionMapping.containsKey(agent)) {
-            HashMap<String, String> agentOptions = fencingOptionMapping.get(agent);
+                && fenceOptionMapping.containsKey(agent)) {
+            HashMap<String, String> agentOptions = fenceOptionMapping.get(agent);
             result = (agentOptions == null) ? false : agentOptions.containsKey(key);
         } else {
             log.error(AGENT_ERROR, agent);
@@ -451,7 +450,7 @@ public class VdsFenceOptions implements Serializable {
      */
 
     public boolean isAgentSupported(String agent) {
-        return fencingOptionMapping.containsKey(agent);
+        return fenceOptionMapping.containsKey(agent);
     }
 
     /**
@@ -475,8 +474,8 @@ public class VdsFenceOptions implements Serializable {
 
     public ArrayList<String> GetSupportedOptions(String agent) {
         ArrayList<String> agentOptions = new ArrayList<String>();
-        if (fencingOptionMapping.containsKey(agent)) {
-            HashMap<String, String> options = fencingOptionMapping.get(agent);
+        if (fenceOptionMapping.containsKey(agent)) {
+            HashMap<String, String> options = fenceOptionMapping.get(agent);
             for (Map.Entry<String, String> pair : options.entrySet()) {
                 agentOptions.add(pair.getKey());
             }
@@ -504,15 +503,15 @@ public class VdsFenceOptions implements Serializable {
         if (StringUtils.isNotEmpty(key)) {
             String type = GetOptionType(key);
             key = GetRealKey(getAgent(), key);
-            if (fencingAgentInstanceOptions != null
-                    && fencingAgentInstanceOptions.containsKey(key)) {
+            if (fenceAgentInstanceOptions != null
+                    && fenceAgentInstanceOptions.containsKey(key)) {
                 if (StringUtils.isNotEmpty(type)) {
                     // Convert to the suitable type according to metadata.
                     if (type.equalsIgnoreCase(BOOL)) {
-                        result = Boolean.parseBoolean(fencingAgentInstanceOptions.get(key));
+                        result = Boolean.parseBoolean(fenceAgentInstanceOptions.get(key));
                     }
                     else if (type.equalsIgnoreCase(INT)) {
-                        Integer intVal = IntegerCompat.tryParse(fencingAgentInstanceOptions
+                        Integer intVal = IntegerCompat.tryParse(fenceAgentInstanceOptions
                                 .get(key));
                         if (intVal != null) {
                             result = intVal;
@@ -520,21 +519,21 @@ public class VdsFenceOptions implements Serializable {
                     }
                     else if (type.equalsIgnoreCase(LONG)) {
                         try {
-                            result = Long.parseLong(fencingAgentInstanceOptions.get(key));
+                            result = Long.parseLong(fenceAgentInstanceOptions.get(key));
                         } catch (NumberFormatException e) {
                         }
                     }
                     else if (type.equalsIgnoreCase(DOUBLE)) {
                         try {
-                            result = Double.parseDouble(fencingAgentInstanceOptions.get(key));
+                            result = Double.parseDouble(fenceAgentInstanceOptions.get(key));
                         } catch (NumberFormatException e) {
                         }
                     } else { // return as string
-                        result = fencingAgentInstanceOptions.get(key);
+                        result = fenceAgentInstanceOptions.get(key);
                     }
                 } else {
                     // return value as an object
-                    result = fencingAgentInstanceOptions.get(key);
+                    result = fenceAgentInstanceOptions.get(key);
                 }
             }
         }
@@ -551,7 +550,7 @@ public class VdsFenceOptions implements Serializable {
     public String toString() {
         StringBuilder value = new StringBuilder();
         String delimiter = "";
-        for (Map.Entry<String, String> pair : fencingAgentInstanceOptions.entrySet()) {
+        for (Map.Entry<String, String> pair : fenceAgentInstanceOptions.entrySet()) {
             value.append(delimiter)
                     .append(GetDisplayedKey(getAgent(), pair.getKey()))
                     .append(pair.getValue().length() > 0 ? EQUAL + pair.getValue() : "");
@@ -568,7 +567,7 @@ public class VdsFenceOptions implements Serializable {
     public String ToUnsupportedOptionsString() {
         String delimiter = "";
         StringBuilder value = new StringBuilder();
-        for (Map.Entry<String, String> pair : fencingAgentInstanceOptions.entrySet()) {
+        for (Map.Entry<String, String> pair : fenceAgentInstanceOptions.entrySet()) {
             String displayedKey = GetDisplayedKey(getAgent(), pair.getKey());
             if (!IsSupported(displayedKey)) {
                 value.append(delimiter)
@@ -589,11 +588,11 @@ public class VdsFenceOptions implements Serializable {
     public String ToInternalString() {
         StringBuilder value = new StringBuilder();
         String delimiter = "";
-        for (Map.Entry<String, String> pair : fencingAgentInstanceOptions.entrySet()) {
+        for (Map.Entry<String, String> pair : fenceAgentInstanceOptions.entrySet()) {
             if (pair.getValue().trim().length() > 0) {
                 value.append(delimiter).append(pair.getKey()).append(EQUAL).append(TranslateBoolValue(pair.getValue()));
                 // special params should not be sent if value is empty
-            } else if (!fencingSpecialParams.contains(pair.getKey())) {
+            } else if (!fenceSpecialParams.contains(pair.getKey())) {
                 value.append(delimiter).append(pair.getKey());
             }
             delimiter = NEWLINE;

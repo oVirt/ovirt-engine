@@ -793,15 +793,12 @@ WHERE vm_type = '0';
 CREATE OR REPLACE VIEW vds
 as
 SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group_name, vds_groups.description as vds_group_description, vds_groups.architecture as architecture, vds_groups.enable_balloon as enable_balloon,
-                      vds_static.vds_id as vds_id, vds_static.vds_name as vds_name, vds_static.ip as ip, vds_static.vds_unique_id as vds_unique_id,
+                      vds_static.vds_id as vds_id, vds_static.vds_name as vds_name, vds_static.vds_unique_id as vds_unique_id,
                       vds_static.host_name as host_name, vds_static.free_text_comment as free_text_comment,
                       vds_static.port as port, vds_static.vds_strength as vds_strength, vds_static.server_SSL_enabled as server_SSL_enabled, vds_static.vds_type as vds_type,
-                      vds_static.pm_type as pm_type, vds_static.pm_user as pm_user, vds_static.pm_password as pm_password, vds_static.pm_port as pm_port,
-                      vds_static.pm_options as pm_options, vds_static.pm_enabled as pm_enabled,
-                      vds_static.pm_proxy_preferences as pm_proxy_preferences,vds_static.pm_secondary_ip as pm_secondary_ip,
-                      vds_static.pm_secondary_options as pm_secondary_options, vds_static.pm_secondary_port as pm_secondary_port,
-                      vds_static.pm_secondary_password as pm_secondary_password, vds_static.pm_secondary_user as pm_secondary_user,
-                      vds_static.pm_secondary_type as pm_secondary_type, vds_static.pm_secondary_concurrent as pm_secondary_concurrent, vds_static.pm_detect_kdump as pm_detect_kdump,
+                      vds_static.pm_enabled as pm_enabled,
+                      vds_static.pm_proxy_preferences as pm_proxy_preferences,
+                      vds_static.pm_detect_kdump as pm_detect_kdump,
                       vds_static.vds_spm_priority as vds_spm_priority, vds_dynamic.hooks as hooks,vds_dynamic.status as status,
                       vds_dynamic.cpu_cores as cpu_cores, vds_dynamic.cpu_threads as cpu_threads, vds_dynamic.cpu_model as cpu_model, vds_dynamic.cpu_speed_mh as cpu_speed_mh,
                       vds_dynamic.if_total_speed as if_total_speed, vds_dynamic.kvm_enabled as kvm_enabled, vds_dynamic.physical_mem_mb as physical_mem_mb,
@@ -825,13 +822,14 @@ SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group
                       vds_statistics.ha_configured as ha_configured, vds_statistics.ha_active as ha_active, vds_statistics.ha_global_maintenance as ha_global_maintenance,
                       vds_statistics.ha_local_maintenance as ha_local_maintenance, vds_static.disable_auto_pm as disable_auto_pm, vds_dynamic.controlled_by_pm_policy as controlled_by_pm_policy, vds_statistics.boot_time as boot_time,
                       vds_dynamic.kdump_status as kdump_status, vds_dynamic.selinux_enforce_mode as selinux_enforce_mode,
-                      vds_dynamic.auto_numa_balancing as auto_numa_balancing, vds_dynamic.is_numa_supported as is_numa_supported, vds_dynamic.is_live_snapshot_supported as is_live_snapshot_supported, vds_static.protocol as protocol,
-                      vds_dynamic.is_live_merge_supported as is_live_merge_supported, vds_dynamic.online_cpus as online_cpus
+                      vds_dynamic.auto_numa_balancing as auto_numa_balancing, vds_dynamic.is_numa_supported as is_numa_supported, vds_dynamic.is_live_snapshot_supported as is_live_snapshot_supported, vds_static.protocol as protocol, vds_dynamic.is_live_merge_supported as is_live_merge_supported,
+                      vds_dynamic.online_cpus as online_cpus, fence_agents.id as agent_id, fence_agents.agent_order as agent_order, fence_agents.ip as agent_ip, fence_agents.type as agent_type, fence_agents.agent_user as agent_user, fence_agents.agent_password as agent_password, fence_agents.port as agent_port, fence_agents.options as agent_options
 FROM         vds_groups INNER JOIN
 vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id INNER JOIN
 vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id INNER JOIN
 vds_statistics ON vds_static.vds_id = vds_statistics.vds_id LEFT OUTER JOIN
 storage_pool ON vds_groups.storage_pool_id = storage_pool.id LEFT OUTER JOIN
+fence_agents ON vds_static.vds_id = fence_agents.vds_id LEFT OUTER JOIN
 vds_spm_id_map ON vds_static.vds_id = vds_spm_id_map.vds_id;
 
 
@@ -839,15 +837,11 @@ vds_spm_id_map ON vds_static.vds_id = vds_spm_id_map.vds_id;
 CREATE OR REPLACE VIEW vds_with_tags
 as
 SELECT     vds_groups.vds_group_id, vds_groups.name AS vds_group_name, vds_groups.description AS vds_group_description, vds_groups.architecture as architecture,
-                      vds_static.vds_id, vds_static.vds_name, vds_static.ip, vds_static.vds_unique_id,
+                      vds_static.vds_id, vds_static.vds_name, vds_static.vds_unique_id,
                       vds_static.host_name, vds_static.free_text_comment, vds_static.port, vds_static.vds_strength, vds_static.server_SSL_enabled, vds_static.vds_type,
-                      vds_static.pm_type, vds_static.pm_user, vds_static.pm_password, vds_static.pm_port,
                       vds_dynamic.hw_product_name, vds_dynamic.hw_version, vds_dynamic.hw_serial_number, vds_dynamic.hw_uuid, vds_dynamic.hw_family,
-                      vds_static.pm_options, vds_static.pm_enabled, vds_static.pm_proxy_preferences as pm_proxy_preferences,
-                      vds_static.pm_secondary_ip as pm_secondary_ip,
-                      vds_static.pm_secondary_options as pm_secondary_options, vds_static.pm_secondary_port as pm_secondary_port,
-                      vds_static.pm_secondary_password as pm_secondary_password, vds_static.pm_secondary_user as pm_secondary_user,
-                      vds_static.pm_secondary_type as pm_secondary_type, vds_static.pm_secondary_concurrent as pm_secondary_concurrent, vds_static.pm_detect_kdump as pm_detect_kdump,
+                      vds_static.pm_enabled, vds_static.pm_proxy_preferences as pm_proxy_preferences,
+                      vds_static.pm_detect_kdump as pm_detect_kdump,
                       vds_dynamic.hooks, vds_dynamic.status, vds_dynamic.cpu_cores,
                       vds_dynamic.cpu_threads, vds_dynamic.cpu_model, vds_dynamic.cpu_speed_mh, vds_dynamic.if_total_speed, vds_dynamic.kvm_enabled,
                       vds_dynamic.physical_mem_mb, vds_dynamic.pending_vcpus_count, vds_dynamic.pending_vmem_size,
@@ -875,13 +869,22 @@ spm_status, vds_dynamic.supported_cluster_levels, vds_dynamic.supported_engines,
                       vds_dynamic.supported_rng_sources as supported_rng_sources,
                       vds_dynamic.is_live_snapshot_supported as is_live_snapshot_supported, vds_static.protocol as protocol,
                       vds_dynamic.is_live_merge_supported as is_live_merge_supported,
-                      vds_dynamic.online_cpus as online_cpus
+                      vds_dynamic.online_cpus as online_cpus,
+		      fence_agents.id as agent_id,
+		      fence_agents.agent_order as agent_order,
+		      fence_agents.ip as agent_ip,
+		      fence_agents.type as agent_type,
+		      fence_agents.agent_user as agent_user,
+		      fence_agents.agent_password as agent_password,
+		      fence_agents.port as agent_port,
+		      fence_agents.options as agent_options
 FROM         vds_groups INNER JOIN
 vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id INNER JOIN
 vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id INNER JOIN
 vds_statistics ON vds_static.vds_id = vds_statistics.vds_id LEFT OUTER JOIN
 storage_pool ON vds_groups.storage_pool_id = storage_pool.id LEFT OUTER JOIN
 tags_vds_map_view ON vds_static.vds_id = tags_vds_map_view.vds_id LEFT OUTER JOIN
+fence_agents ON vds_static.vds_id = fence_agents.vds_id LEFT OUTER JOIN
 vds_spm_id_map ON vds_static.vds_id = vds_spm_id_map.vds_id LEFT OUTER JOIN
 storage_pool_iso_map ON storage_pool_iso_map.storage_pool_id = storage_pool.id;
 

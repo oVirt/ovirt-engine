@@ -1,35 +1,23 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
-import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
-import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.utils.FencingPolicyHelper;
 import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SpmStopVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,18 +26,9 @@ public class FenceExecutor {
     private static final Logger log = LoggerFactory.getLogger(FenceExecutor.class);
 
     private final VDS _vds;
-    private FenceActionType _action = FenceActionType.forValue(0);
-    private Guid proxyHostId;
-    private String proxyHostName;
-    private Guid skippedProxyHostId=null;
     private FencingPolicy fencingPolicy;
-    private Version minVersionSupportingFencingPol;
 
-    public FenceExecutor(VDS vds, FenceActionType actionType) {
-        this(vds, actionType, null);
-    }
-
-    public FenceExecutor(VDS vds, FenceActionType actionType, FencingPolicy fencingPolicy) {
+    public FenceExecutor(VDS vds) {
         // TODO remove if block after UI patch that should set also cluster & proxy preferences in GetNewVdsFenceStatusParameters
         if (! vds.getId().equals(Guid.Empty)) {
             VDS dbVds =  DbFacade.getInstance().getVdsDao().get(vds.getId());
@@ -60,157 +39,103 @@ public class FenceExecutor {
                 vds.setPmProxyPreferences(dbVds.getPmProxyPreferences());
             }
         }
-        _vds = vds;
-        _action = actionType;
+        this._vds = vds;
+    }
+
+    public FenceExecutor(VDS vds, FencingPolicy fencingPolicy) {
+        this(vds);
         this.fencingPolicy = fencingPolicy;
-        if (fencingPolicy != null) {
-            minVersionSupportingFencingPol = FencingPolicyHelper.getMinimalSupportedVersion(fencingPolicy);
-        }
     }
 
-    public boolean findProxyHost() {
-        return findProxyHost(skippedProxyHostId);
-    }
-
-    public boolean findProxyHost(Guid exclude) {
-        PMProxyOptions proxyOption=null;
-        final Guid NO_VDS = Guid.Empty;
-        int count;
-        // make sure that loop is executed at least once , no matter what is the
-        // value in config
-        int retries = Math.max(Config.<Integer> getValue(ConfigValues.FindFenceProxyRetries), 1);
-        int delayInMs = 1000 * Config.<Integer> getValue(ConfigValues.FindFenceProxyDelayBetweenRetriesInSec);
-        proxyHostId = NO_VDS;
-        VDS proxyHost = null;
-        boolean proxyFound = false;
-        // get PM Proxy preferences or use defaults if not defined
-        String pmProxyPreferences = (StringUtils.isEmpty(_vds.getPmProxyPreferences()))
-                ?
-                Config.<String> getValue(ConfigValues.FenceProxyDefaultPreferences)
-                : _vds.getPmProxyPreferences();
-        String[] pmProxyOptions = pmProxyPreferences.split(",");
-        for (String pmProxyOption : pmProxyOptions) {
-            count = 0;
-            if (pmProxyOption.equalsIgnoreCase(PMProxyOptions.CLUSTER.name())) {
-                proxyOption = PMProxyOptions.CLUSTER;
-            }
-            else if (pmProxyOption.equalsIgnoreCase(PMProxyOptions.DC.name())) {
-                proxyOption = PMProxyOptions.DC;
-            }
-            else if (pmProxyOption.equalsIgnoreCase(PMProxyOptions.OTHER_DC.name())) {
-                proxyOption = PMProxyOptions.OTHER_DC;
-            }
-            else {
-                log.error("Illegal value in PM Proxy Preferences string '{}', skipped.", pmProxyOption);
-                continue;
-            }
-            // check if this is a new host, no need to retry , only status is
-            // available on new host.
-            if (_vds.getId().equals(NO_VDS)) {
-                // try first to find a Host in UP status
-                proxyHost = getFenceProxy(true, false, proxyOption, exclude);
-                // trying other Hosts that are not in UP since they can be a proxy for fence operations
-                if (proxyHost == null) {
-                    proxyHost = getFenceProxy(false, false, proxyOption, exclude);
-                }
-                if (proxyHost != null) {
-                    proxyHostId = proxyHost.getId();
-                    proxyHostName = proxyHost.getName();
-                    proxyFound=true;
-                }
-            } else {
-                // If can not find a proxy host retry and delay between retries
-                // as configured.
-                while (count < retries) {
-                    proxyHost = getFenceProxy(true, true, proxyOption, exclude);
-                    if (proxyHost == null) {
-                        proxyHost = getFenceProxy(false, true, proxyOption, exclude);
-                    }
-                    if (proxyHost != null) {
-                        proxyHostId = proxyHost.getId();
-                        proxyHostName = proxyHost.getName();
-                        proxyFound=true;
-                        break;
-                    }
-                    // do not retry getting proxy for Status operation.
-                    if (_action == FenceActionType.Status)
-                        break;
-                    log.info("Attempt {} to find fence proxy host failed...", ++count);
-                    try {
-                        Thread.sleep(delayInMs);
-                    } catch (Exception e) {
-                        log.error("Exception: {}", e.getMessage());
-                        log.debug("Exception", e);
-                        break;
-                    }
+    /**
+     * Use all fencing agents of this host sequentially, until one succeeds, to check the status of the host.
+     *
+     */
+    public VDSFenceReturnValue checkStatus() {
+        VDSFenceReturnValue returnValue = null;
+        VDS proxyHost = new FenceProxyLocator(_vds, fencingPolicy).findProxyHost(false);
+        if (proxyHost == null) {
+            returnValue = proxyNotFound();
+        } else {
+            for (FenceAgent agent : _vds.getFenceAgents()) {
+                returnValue = fence(FenceActionType.Status, agent, proxyHost);
+                if (returnValue.getSucceeded()) {
+                    returnValue.setProxyHostUsed(proxyHost);
+                    returnValue.setFenceAgentUsed(agent);
+                    break;
                 }
             }
-            if (proxyFound) {
-                break;
-            }
         }
-        if (NO_VDS.equals(proxyHostId)) {
-            log.error("Failed to run Power Management command on Host '{}', no running proxy Host was found.",
-                    _vds.getName());
-        }
-        else {
-            logProxySelection(proxyHost.getName(), proxyOption.createLogEntry(proxyHost), _action.name());
-        }
-        return !NO_VDS.equals(proxyHostId);
+        return returnValue;
     }
 
-    private void logProxySelection(String proxy, String origin, String command) {
-        AuditLogableBase logable = new AuditLogableBase();
-        logable.addCustomValue("Proxy", proxy);
-        logable.addCustomValue("Origin", origin);
-        logable.addCustomValue("Command", command);
-        logable.setVdsId(_vds.getId());
-        AuditLogDirector.log(logable, AuditLogType.PROXY_HOST_SELECTION);
-        log.info("Using Host '{}' from '{}' as proxy to execute '{}' command on Host '{}'",
-                proxy, origin, command, _vds.getName());
+
+    public VDSFenceReturnValue fence(FenceActionType action, FenceAgent agent) {
+        boolean withRetries = action != FenceActionType.Status; // for status check, no retries on proxy-host selection.
+        VDS proxyHost = new FenceProxyLocator(_vds, fencingPolicy).findProxyHost(withRetries);
+        if (proxyHost == null) {
+            return proxyNotFound();
+        } else {
+            return fence(action, agent, proxyHost);
+        }
     }
 
-    public VDSReturnValue fence() {
-        return fence(FenceAgentOrder.Primary);
+    private VDSFenceReturnValue proxyNotFound() {
+        VDSFenceReturnValue returnValue = new VDSFenceReturnValue();
+        returnValue.setSucceeded(false);
+        returnValue.setExceptionString("Failed to run Power Management command on Host " + getNameOrId(_vds)
+                + " no running proxy Host was found");
+        return returnValue;
     }
 
-    public VDSReturnValue fence(FenceAgentOrder order) {
-        VDSReturnValue retValue = null;
+    public VDSFenceReturnValue fence(FenceActionType action, FenceAgent agent, VDS proxyHost) {
+        VDSReturnValue result = null;
         try {
-            // skip following code in case of testing a new host status
-            if (_vds.getId() != null && !_vds.getId().equals(Guid.Empty)) {
-                // get the host spm status again from the database in order to test it's current state.
-                _vds.setSpmStatus((DbFacade.getInstance().getVdsDao().get(_vds.getId()).getSpmStatus()));
-                // try to stop SPM if action is Restart or Stop and the vds is SPM
-                if ((_action == FenceActionType.Restart || _action == FenceActionType.Stop)
-                        && (_vds.getSpmStatus() != VdsSpmStatus.None)) {
-                    Backend.getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(VDSCommandType.SpmStop,
-                                    new SpmStopVDSCommandParameters(_vds.getId(), _vds.getStoragePoolId()));
-                }
+            if (action == FenceActionType.Restart || action == FenceActionType.Stop) {
+                stopSPM(action);
             }
-            retValue = runFenceAction(_action, order);
-            // if fence failed, retry with another proxy
-            if (!retValue.getSucceeded()) {
-                log.warn("Fencing operation failed with proxy host '{}', trying another proxy...", proxyHostId);
-                Guid failedProxyHostId = proxyHostId;
-                if (!findProxyHost(proxyHostId)) {
+            result = runFenceAction(action, agent, proxyHost);
+            // if fence failed, retry with another proxy.
+            if (!result.getSucceeded()) {
+                log.warn("Fence operation failed with proxy host {}, trying another proxy...",
+                        proxyHost.getId());
+                boolean withRetries = action != FenceActionType.Status;
+                VDS alternativeProxy =
+                        new FenceProxyLocator(_vds, fencingPolicy).findProxyHost(withRetries, proxyHost.getId());
+                if (alternativeProxy != null) {
+                    result = runFenceAction(action, agent, alternativeProxy);
+                } else {
                     log.warn("Failed to find other proxy to re-run failed fence operation, retrying with the same proxy...");
-                    findProxyHost();
+                    AuditLogDirector.log(getAuditParams(action, agent, proxyHost),
+                            AuditLogType.FENCE_OPERATION_FAILED_USING_PROXY);
+                    result = runFenceAction(action, agent, proxyHost);
                 }
-                else {
-                    skippedProxyHostId = failedProxyHostId;
-                }
-                retValue = runFenceAction(_action, order);
             }
         } catch (VdcBLLException e) {
-            retValue = new VDSReturnValue();
-            retValue.setReturnValue(new FenceStatusReturnValue("unknown", e.getMessage()));
-            retValue.setExceptionString(e.getMessage());
-            retValue.setSucceeded(false);
+            result = new VDSReturnValue();
+            result.setReturnValue(new FenceStatusReturnValue("unknown", e.getMessage()));
+            result.setExceptionString(e.getMessage());
+            result.setSucceeded(false);
         }
-        return retValue;
+        VDSFenceReturnValue returnVal = new VDSFenceReturnValue(result);
+        returnVal.setFenceAgentUsed(agent);
+        returnVal.setSucceeded(result.getSucceeded() || returnVal.isSkipped()); // skipping due to policy
+        return returnVal;
+    }
+
+    private void stopSPM(FenceActionType action) {
+        // skip following code in case of testing a new host status
+        if (_vds.getId() != null && !_vds.getId().equals(Guid.Empty)) {
+            // get the host spm status again from the database in order to test it's current state.
+            VdsSpmStatus spmStatus = DbFacade.getInstance().getVdsDao().get(_vds.getId()).getSpmStatus();
+            // try to stop SPM if action is Restart or Stop and the vds is SPM
+            if (spmStatus != VdsSpmStatus.None) {
+                Backend.getInstance()
+                        .getResourceManager()
+                        .RunVdsCommand(VDSCommandType.SpmStop,
+                                new SpmStopVDSCommandParameters(_vds.getId(), _vds.getStoragePoolId()));
+            }
+        }
     }
 
     /**
@@ -218,257 +143,78 @@ public class FenceExecutor {
      * @param actionType The action to run.
      * @return The result of running the fence command.
      */
-    private VDSReturnValue runFenceAction(FenceActionType actionType, FenceAgentOrder order) {
-        String managementIp = getManagementIp(order);
-        String managementPort = getManagementPort(order);
-        String managementAgent = getManagementAgent(order);
-        String managementUser = getManagementUser(order);
-        String managementPassword = getManagementPassword(order);
-        String managementOptions = getManagementOptions(order);
-
-        log.info("Executing <{}> Power Management command, Proxy Host '{}', "
-                + "Agent '{}', Target Host '{}', Management IP '{}', User '{}', Options '{}', Fencing policy '{}'",
-                actionType, proxyHostName, managementAgent, _vds.getName(), managementIp, managementUser,
-                managementOptions,
-                fencingPolicy);
+    private VDSReturnValue runFenceAction(FenceActionType action, FenceAgent agent, VDS proxyHost) {
+        auditFenceAction(action, agent, proxyHost);
         return Backend
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.FenceVds,
-                        new FenceVdsVDSCommandParameters(proxyHostId, _vds.getId(), managementIp,
-                                    managementPort, managementAgent, managementUser, managementPassword,
-                                    managementOptions, actionType, fencingPolicy));
+                        new FenceVdsVDSCommandParameters(proxyHost.getId(), _vds.getId(), agent.getIp(),
+                                String.valueOf(agent.getPort()),
+                                VdsFenceOptions.getRealAgent(agent.getType()),
+                                agent.getUser(),
+                                agent.getPassword(),
+                                getOptions(agent), action, fencingPolicy));
     }
 
-    private String getManagementOptions(FenceAgentOrder order) {
-        String managementOptions = "";
+    private void auditFenceAction(FenceActionType action, FenceAgent agent, VDS proxyHost) {
+        log.info("Executing <{}> Power Management command, Proxy Host:{}, "
+                + "Agent:{}, Agent Type:{}, Target Host:{}, Management IP:{}, User:{}, Options:{}, Fencing policy:{}",
+                action,
+                getNameOrId(proxyHost),
+                agent.getId(),
+                VdsFenceOptions.getRealAgent(agent.getType()),
+                getNameOrId(_vds),
+                agent.getIp(),
+                agent.getUser(),
+                getOptions(agent),
+                fencingPolicy);
+        AuditLogableBase logable = getAuditParams(action, agent, proxyHost);
+        AuditLogDirector.log(logable, AuditLogType.FENCE_USING_AGENT_AND_PROXY_HOST);
+    }
+
+    private AuditLogableBase getAuditParams(FenceActionType action, FenceAgent agent, VDS proxyHost) {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.addCustomValue("Action", getActionPresentTense(action));
+        logable.addCustomValue("Host", getNameOrId(_vds));
+        logable.addCustomValue("Agent", agent.getId() == null ? "New Agent (no ID)" : agent.getId().toString());
+        logable.addCustomValue("ProxyHost", getNameOrId(proxyHost));
+        logable.setVdsId(_vds.getId());
+        return logable;
+    }
+
+    private String getActionPresentTense(FenceActionType action) {
+        switch (action) {
+        case Start:
+            return "Starting";
+        case Restart:
+            return "Restarting";
+        case Stop:
+            return "Stopping";
+        case Status:
+            return "Checking status of";
+        default:
+            return "";// should never get here.
+        }
+    }
+
+    private String getOptions(FenceAgent agent) {
         ArchitectureType architectureType = VdsArchitectureHelper.getArchitecture(_vds.getStaticData());
-        if (order == FenceAgentOrder.Primary) {
-            managementOptions = VdsFenceOptions.getDefaultAgentOptions(_vds.getPmType(), _vds.getPmOptions(), architectureType);
-        }
-        else if (order == FenceAgentOrder.Secondary) {
-            managementOptions =
-                    VdsFenceOptions.getDefaultAgentOptions(_vds.getPmSecondaryType(), _vds.getPmSecondaryOptions(), architectureType);
-        }
+        String managementOptions =
+                VdsFenceOptions.getDefaultAgentOptions(agent.getType(), agent.getOptions(), architectureType);
         return managementOptions;
     }
 
-    private String getManagementPassword(FenceAgentOrder order) {
-        String managementPassword = "";
-        if (order == FenceAgentOrder.Primary) {
-            managementPassword = _vds.getPmPassword();
+    /**
+     * We prefer to log the host name, if it's available, but we won't query the database especially for it. So return
+     * the host name if it's available, otherwise the host-ID.
+     */
+    private String getNameOrId(VDS host) {
+        if (host.getName() != null && !host.getName().isEmpty()) {
+            return host.getName();
+        } else {
+            return host.getId().toString();
         }
-        else if (order == FenceAgentOrder.Secondary) {
-            managementPassword = _vds.getPmSecondaryPassword();
-        }
-        return managementPassword;
     }
-
-    private String getManagementUser(FenceAgentOrder order) {
-        String managementUser = "";
-        if (order == FenceAgentOrder.Primary) {
-            managementUser = _vds.getPmUser();
-        }
-        else if (order == FenceAgentOrder.Secondary) {
-            managementUser = _vds.getPmSecondaryUser();
-        }
-        return managementUser;
-    }
-
-    private String getManagementAgent(FenceAgentOrder order) {
-        String agent = "";
-     // get real agent and default parameters
-        if (order == FenceAgentOrder.Primary) {
-            agent = VdsFenceOptions.getRealAgent(_vds.getPmType());
-        }
-        else if (order == FenceAgentOrder.Secondary) {
-            agent = VdsFenceOptions.getRealAgent(_vds.getPmSecondaryType());
-        }
-        return agent;
-    }
-
-    private String getManagementPort(FenceAgentOrder order) {
-        String managementPort = "";
-        if (order == FenceAgentOrder.Primary) {
-            if (_vds.getPmPort() != null && _vds.getPmPort() != 0) {
-                managementPort = _vds.getPmPort().toString();
-            }
-        }
-        else if (order == FenceAgentOrder.Secondary) {
-            if (_vds.getPmSecondaryPort() != null && _vds.getPmSecondaryPort() != 0) {
-                managementPort = _vds.getPmSecondaryPort().toString();
-            }
-        }
-        return managementPort;
-    }
-
-    private String getManagementIp(FenceAgentOrder order) {
-        String managementIp = "";
-        if (order == FenceAgentOrder.Primary) {
-            managementIp = _vds.getManagementIp();
-        }
-        else if (order == FenceAgentOrder.Secondary) {
-            managementIp = _vds.getPmSecondaryIp();
-        }
-        return managementIp;
-    }
-
-    private boolean isHostNetworkUnreacable(VDS vds) {
-        VdsDynamic vdsDynamic = vds.getDynamicData();
-        return (vdsDynamic.getStatus() == VDSStatus.Down
-                 || vdsDynamic.getStatus() == VDSStatus.Reboot
-                 || vdsDynamic.getStatus() == VDSStatus.Kdumping
-                 || (vdsDynamic.getStatus() == VDSStatus.NonOperational
-                     && vdsDynamic.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE)
-                 || vdsDynamic.getStatus() == VDSStatus.NonResponsive);
-    }
-
-    private VDS getFenceProxy(final boolean onlyUpHost, final boolean filterSelf, final PMProxyOptions proxyOptions, Guid exclude) {
-        List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
-        synchronized (this) {
-            // If a exclude was given, try to use another proxy
-            if (exclude != null) {
-                Iterator<VDS> iter = hosts.iterator();
-                while (iter.hasNext()) {
-                    if (iter.next().getId().equals(exclude)) {
-                        iter.remove();
-                        break;
-                    }
-                }
-            }
-        }
-        VDS proxyHost = LinqUtils.firstOrNull(hosts, new Predicate<VDS>() {
-            @Override
-            public boolean eval(VDS vds) {
-                if (!isAgentSupported(vds)) {
-                    return false;
-                }
-                if (proxyOptions == PMProxyOptions.CLUSTER) {
-                    if (! vds.getVdsGroupId().equals(_vds.getVdsGroupId())) {
-                        return false;
-                    }
-                    if (onlyUpHost) {
-                        if (filterSelf) {
-                            return !vds.getId().equals(_vds.getId())
-                                    && vds.getStatus() == VDSStatus.Up;
-                        }
-                        else {
-                            return vds.getStatus() == VDSStatus.Up;
-                        }
-                    }
-                    else {
-                        if (filterSelf) {
-                            return !isHostNetworkUnreacable(vds) &&
-                                    !vds.getId().equals(_vds.getId());
-                        }
-                        else {
-                            return !isHostNetworkUnreacable(vds);
-                        }
-                    }
-                }
-                else if (proxyOptions == PMProxyOptions.DC) {
-                    if(! vds.getStoragePoolId().equals(_vds.getStoragePoolId())) {
-                        return false;
-                    }
-                    if (onlyUpHost) {
-                        if (filterSelf) {
-                            return !vds.getId().equals(_vds.getId())
-                                    && vds.getStatus() == VDSStatus.Up;
-                        }
-                        else {
-                            return vds.getStatus() == VDSStatus.Up;
-                        }
-                    }
-                    else {
-                        if (filterSelf) {
-                            return !isHostNetworkUnreacable(vds)
-                                    && !vds.getId().equals(_vds.getId());
-                        }
-                        else {
-                            return !isHostNetworkUnreacable(vds);
-                        }
-                    }
-                }
-                else if (proxyOptions == PMProxyOptions.OTHER_DC) {
-                    if (vds.getStoragePoolId().equals(_vds.getStoragePoolId())) {
-                        return false;
-                    }
-                    if (onlyUpHost) {
-                        if (filterSelf) {
-                            return !vds.getId().equals(_vds.getId())
-                                    && vds.getStatus() == VDSStatus.Up;
-                        }
-                        else {
-                            return vds.getStatus() == VDSStatus.Up;
-                        }
-                    }
-                    else {
-                        if (filterSelf) {
-                            return !isHostNetworkUnreacable(vds)
-                                    && !vds.getId().equals(_vds.getId());
-                        }
-                        else {
-                            return !isHostNetworkUnreacable(vds);
-                        }
-                    }
-                }
-                return false;
-            }
-
-            private boolean isAgentSupported(VDS vds) {
-                boolean ret = false;
-                // Checks if the requested _vds PM agent is supported by the candidate proxy (vds)
-                VdsFenceOptions options = new VdsFenceOptions(vds.getVdsGroupCompatibilityVersion().getValue());
-                if (StringUtils.isNotEmpty(_vds.getManagementIp())) {
-                    ret = options.isAgentSupported(_vds.getPmType());
-                }
-                // In a case that a secondary agent is defined, require the proxy host to be
-                // in a cluster that supports both Primary & Secondary agents since in concurrent
-                // PM devices we need both, and in sequential PM devices Primary might fail and then
-                // Secondary PM agent should attempt to fence the Host
-                if (StringUtils.isNotEmpty(_vds.getPmSecondaryIp())) {
-                    ret = options.isAgentSupported(_vds.getPmSecondaryType());
-                }
-
-                // check if host supports minimal cluster level needed by fencing policy
-                if (fencingPolicy != null) {
-                    ret = ret && _vds.getSupportedClusterVersionsSet().contains(minVersionSupportingFencingPol);
-                }
-
-                return ret;
-            }
-        });
-        return proxyHost;
-    }
-
-    private enum PMProxyOptions {
-        CLUSTER("cluster "),
-        DC("data center "),
-        OTHER_DC("other data center");
-
-        private final String logEntry;
-
-        private PMProxyOptions(String logEntry) {
-            this.logEntry = logEntry;
-        }
-
-        public String createLogEntry(VDS vds) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(logEntry);
-            switch (this) {
-            case CLUSTER:
-                sb.append(vds.getVdsGroupName());
-                break;
-
-            case DC:
-                sb.append(vds.getStoragePoolName());
-                break;
-
-            default:
-                break;
-            }
-            return sb.toString();
-        }
-     };
 }

@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -979,23 +981,9 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         host.setVdsSpmPriority(model.getSpmPriorityValue());
         host.setPmProxyPreferences(model.getPmProxyPreferences());
 
-        // Save primary PM parameters.
-        host.setManagementIp(model.getManagementIp().getEntity());
-        host.setPmUser(model.getPmUserName().getEntity());
-        host.setPmPassword(model.getPmPassword().getEntity());
-        host.setPmType(model.getPmType().getSelectedItem());
-        host.setPmOptionsMap((model.getPmOptionsMap()));
-
-        // Save secondary PM parameters.
-        host.setPmSecondaryIp(model.getPmSecondaryIp().getEntity());
-        host.setPmSecondaryUser(model.getPmSecondaryUserName().getEntity());
-        host.setPmSecondaryPassword(model.getPmSecondaryPassword().getEntity());
-        host.setPmSecondaryType(model.getPmSecondaryType().getSelectedItem());
-        host.setPmSecondaryOptionsMap(model.getPmSecondaryOptionsMap());
 
         // Save other PM parameters.
         host.setpm_enabled(model.getIsPm().getEntity());
-        host.setPmSecondaryConcurrent(model.getPmSecondaryConcurrent().getEntity());
         host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
         host.setPmKdumpDetection(model.getPmKdumpDetection().getEntity());
 
@@ -1010,6 +998,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             AddVdsActionParameters parameters = new AddVdsActionParameters();
             parameters.setVdsId(host.getId());
             parameters.setvds(host);
+            parameters.setFenceAgents(getFenceAgents(model));
             if (model.getUserPassword().getEntity() != null) {
                 parameters.setPassword(model.getUserPassword().getEntity());
             }
@@ -1059,6 +1048,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             parameters.setInstallVds(false);
             parameters.setRebootAfterInstallation(isVirt);
             parameters.setAuthMethod(model.getAuthenticationMethod());
+            parameters.setFenceAgents(getFenceAgents(model));
 
             if (!oldClusterId.equals(newClusterId))
             {
@@ -1093,6 +1083,39 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         }
     }
 
+    private List<FenceAgent> getFenceAgents(HostModel model) {
+        List<FenceAgent> agents = new LinkedList<FenceAgent>();
+        if (model.getManagementIp() != null && model.getManagementIp().getEntity() != null) {
+            // Save primary PM parameters.
+            FenceAgent primaryAgent = new FenceAgent();
+            primaryAgent.setIp(model.getManagementIp().getEntity());
+            primaryAgent.setUser(model.getPmUserName().getEntity());
+            primaryAgent.setPassword(model.getPmPassword().getEntity());
+            primaryAgent.setType(model.getPmType().getSelectedItem());
+            primaryAgent.setOptionsMap((model.getPmOptionsMap()));
+            if (model.getPmPort() != null && model.getPmPort().getEntity() != null) {
+                primaryAgent.setPort(Integer.valueOf(model.getPmPort().getEntity()));
+            }
+            primaryAgent.setOrder(1);
+            agents.add(primaryAgent);
+            if (model.getPmSecondaryIp() != null && model.getPmSecondaryIp().getEntity() != null) {
+                FenceAgent secondaryAgent = new FenceAgent();
+                secondaryAgent.setIp(model.getPmSecondaryIp().getEntity());
+                secondaryAgent.setUser(model.getPmSecondaryUserName().getEntity());
+                secondaryAgent.setPassword(model.getPmSecondaryPassword().getEntity());
+                secondaryAgent.setType(model.getPmSecondaryType().getSelectedItem());
+                secondaryAgent.setOptionsMap(model.getPmSecondaryOptionsMap());
+                secondaryAgent.setPort(Integer.valueOf(model.getPmSecondaryPort().getEntity()));
+                secondaryAgent.setOrder(model.getPmSecondaryConcurrent().getEntity() ? primaryAgent.getOrder()
+                        : primaryAgent.getOrder() + 1);
+                if (model.getPmSecondaryPort() != null && model.getPmSecondaryPort().getEntity() != null) {
+                    secondaryAgent.setPort(Integer.valueOf(model.getPmSecondaryPort().getEntity()));
+                }
+                agents.add(secondaryAgent);
+            }
+        }
+        return agents;
+    }
     public void postOnSaveInternalChangeCluster(UpdateVdsActionParameters parameters, boolean approveInitiated)
     {
         Frontend.getInstance().runAction(VdcActionType.UpdateVds, parameters,
@@ -1422,6 +1445,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         param.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         param.setActivateHost(model.getActivateHostAfterInstall().getEntity());
         param.setAuthMethod(model.getAuthenticationMethod());
+        param.setFenceAgents(host.getFenceAgents());
 
         Provider<?> networkProvider = (Provider<?>) model.getNetworkProviders().getSelectedItem();
         if (networkProvider != null) {

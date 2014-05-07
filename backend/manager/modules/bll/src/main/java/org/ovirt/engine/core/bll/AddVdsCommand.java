@@ -164,8 +164,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             @Override
             public Void runInTransaction() {
                 initializeVds(true);
-                AlertIfPowerManagementNotConfigured(getParameters().getVdsStaticData());
-                TestVdsPowerManagementStatus(getParameters().getVdsStaticData());
+                alertIfPowerManagementNotConfigured(getParameters().getVdsStaticData());
+                testVdsPowerManagementStatus(getParameters().getVdsStaticData());
                 setSucceeded(true);
                 setActionReturnValue(getVdsIdRef());
 
@@ -359,7 +359,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     // We block vds installations if it's not a RHEV-H and password is empty
                     // Note that this may override local host SSH policy. See BZ#688718.
                     returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
-                } else if (!isPowerManagementLegal()) {
+                } else if (!isPowerManagementLegal(getParameters().getVdsStaticData().isPmEnabled(),
+                        getParameters().getFenceAgents(),
+                        getVdsGroup().getcompatibility_version().toString())) {
                     returnValue = false;
                 } else {
                     returnValue = returnValue && canConnect(vds);
@@ -381,11 +383,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
         }
         return returnValue;
-    }
-
-    protected boolean isPowerManagementLegal() {
-        return IsPowerManagementLegal(getParameters().getVdsStaticData(), getVdsGroup()
-                .getcompatibility_version().toString());
     }
 
     private boolean clusterHasServers() {

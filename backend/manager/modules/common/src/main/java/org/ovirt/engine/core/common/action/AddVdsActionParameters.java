@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -19,6 +22,7 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
     private ExternalComputeResource computeResource;
     private String discoverIp;
     public String getDiscoverIp() { return discoverIp; }
+    private List<FenceAgent> fenceAgents;
     public Guid getProviderId() { return providerId; };
     public ExternalHostGroup getHostGroup() { return hostGroup; };
     public String getHostMac() { return hostMac; };
@@ -74,5 +78,13 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
 
     public void setAddPending(boolean value) {
         privateAddPending = value;
+    }
+
+    public List<FenceAgent> getFenceAgents() {
+        return fenceAgents;
+    }
+
+    public void setFenceAgents(List<FenceAgent> fenceAgents) {
+        this.fenceAgents = fenceAgents;
     }
 }

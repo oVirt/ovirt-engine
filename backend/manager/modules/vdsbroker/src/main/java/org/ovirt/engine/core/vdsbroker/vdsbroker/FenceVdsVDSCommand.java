@@ -79,13 +79,15 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
     protected void executeVdsBrokerCommand() {
         // We have to pass here the proxy host cluster compatibility version
         VDS vds = getProxyVds();
-        VdsFenceOptions vdsFencingOptions = new VdsFenceOptions(getParameters().getType(),
+        VdsFenceOptions vdsFenceOptions = new VdsFenceOptions(getParameters().getType(),
                 getParameters().getOptions(), vds.getVdsGroupCompatibilityVersion().toString());
-        String options = vdsFencingOptions.ToInternalString();
+        String options = vdsFenceOptions.ToInternalString();
 
         // ignore starting already started host or stopping already stopped host.
         if (!isAlreadyInRequestedStatus(options)) {
-            _result = getBroker().fenceNode(getParameters().getIp(), "",
+            _result =
+                    getBroker().fenceNode(getParameters().getIp(),
+                            getParameters().getPort() == null ? "" : getParameters().getPort(),
                     getParameters().getType(), getParameters().getUser(),
                     getParameters().getPassword(), getActualActionName(), "", options,
                     convertFencingPolicy()
@@ -119,8 +121,8 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
     }
 
     /**
-    * Handles cases where fencing operation was skipped (host is already in requested state)
-    */
+     * Handles cases where fence operation was skipped (host is already in requested state)
+     */
     private void handleSkippedOperation() {
         FenceStatusReturnValue fenceStatusReturnValue = new FenceStatusReturnValue(FenceStatusReturnValue.SKIPPED, "");
         AuditLogableBase auditLogable = new AuditLogableBase();
@@ -134,19 +136,19 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
     }
 
     /**
-     * Checks if Host is already in the requested status.
-     * If Host is Down and a Stop command is issued or
-     * if Host is Up and a Start command is issued
-     * command should do nothing.
+     * Checks if Host is already in the requested status. If Host is Down and a Stop command is issued or if Host is Up
+     * and a Start command is issued command should do nothing.
      *
      * @param options
-     *            Fencing options passed to the agent
+     *            Fence options passed to the agent
      * @return
      */
     private boolean isAlreadyInRequestedStatus(String options) {
         boolean ret = false;
         FenceActionType action = getParameters().getAction();
-        _result = getBroker().fenceNode(getParameters().getIp(), "",
+        _result =
+                getBroker().fenceNode(getParameters().getIp(),
+                        getParameters().getPort() == null ? "" : getParameters().getPort(),
                 getParameters().getType(), getParameters().getUser(),
                 getParameters().getPassword(), "status", "", options,
                 null

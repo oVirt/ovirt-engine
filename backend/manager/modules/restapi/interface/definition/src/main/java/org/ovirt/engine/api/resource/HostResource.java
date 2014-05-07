@@ -94,4 +94,7 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
 
     @Path("permissions")
     public AssignedPermissionsResource getPermissionsResource();
+
+    @Path("fenceagents")
+    public FenceAgentsResource getFenceAgentsResource();
 }

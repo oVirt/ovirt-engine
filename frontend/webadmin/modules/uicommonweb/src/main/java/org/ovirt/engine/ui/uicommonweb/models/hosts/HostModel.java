@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,8 +10,8 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
-import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -1412,10 +1413,10 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
         HashMap<String, String> dict = new HashMap<String, String>();
 
-        // Add well known pm options.
         if (port.getIsAvailable() && port.getEntity() != null) {
             dict.put(PmPortKey, port.getEntity());
         }
+        // Add well known pm options.
         if (slot.getIsAvailable() && slot.getEntity() != null) {
             dict.put(PmSlotKey, slot.getEntity());
         }
@@ -1578,49 +1579,62 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         VDSGroup cluster = getCluster().getSelectedItem();
 
         GetNewVdsFenceStatusParameters param = new GetNewVdsFenceStatusParameters();
+        FenceAgent agent = new FenceAgent();
         if (getHostId() != null)
         {
             param.setVdsId(getHostId());
         }
-        param.setOrder(isPrimary ? FenceAgentOrder.Primary : FenceAgentOrder.Secondary);
-        param.setManagementIp(isPrimary ? getManagementIp().getEntity() : getPmSecondaryIp().getEntity());
-        param.setPmType(isPrimary ? getPmType().getSelectedItem() : getPmSecondaryType().getSelectedItem());
-        param.setUser(isPrimary ? getPmUserName().getEntity() : getPmSecondaryUserName().getEntity());
-        param.setPassword(isPrimary ? getPmPassword().getEntity() : getPmSecondaryPassword().getEntity());
-        param.setStoragePoolId(cluster.getStoragePoolId() != null ? cluster.getStoragePoolId() : Guid.Empty);
-        param.setFencingOptions(getPmOptionsMap());
-        param.setPmProxyPreferences(getPmProxyPreferences());
 
+        agent.setOrder(isPrimary ? 1 : 2);
+        agent.setIp(isPrimary ? getManagementIp().getEntity() : getPmSecondaryIp().getEntity());
+        agent.setType(isPrimary ? getPmType().getSelectedItem() : getPmSecondaryType().getSelectedItem());
+        agent.setUser(isPrimary ? getPmUserName().getEntity() : getPmSecondaryUserName().getEntity());
+        agent.setPassword(isPrimary ? getPmPassword().getEntity() : getPmSecondaryPassword().getEntity());
+        agent.setPort(isPrimary ? getPmPrimaryPortAsInteger() : getPmSecondaryPortAsIngeter());
+        param.setStoragePoolId(cluster.getStoragePoolId() != null ? cluster.getStoragePoolId() : Guid.Empty);
+        param.setPmProxyPreferences(getPmProxyPreferences());
+        agent.setOptionsMap(isPrimary ? getPmOptionsMap() : getPmSecondaryOptionsMap());
+
+        param.setAgent(agent);
         Frontend.getInstance().runQuery(VdcQueryType.GetNewVdsFenceStatus, param, new AsyncQuery(this, new INewAsyncCallback() {
 
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
-                if (response == null || !response.getSucceeded()) {
-                    String message;
-                    if (response != null && response.getReturnValue() != null) {
-                        FenceStatusReturnValue fenceStatusReturnValue =
-                                response.getReturnValue();
-                        message = fenceStatusReturnValue.toString();
-                    } else {
-                        message = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
-                    }
-                    setMessage(message);
-                    getTestCommand().setIsExecutionAllowed(true);
-                } else {
-
-                    if (response.getReturnValue() != null) {
-                        FenceStatusReturnValue fenceStatusReturnValue =
-                                response.getReturnValue();
-                        String message = fenceStatusReturnValue.toString();
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        String message;
+                        if (returnValue == null) {
+                            message = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
+                        } else {
+                            VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
+                            if (response.getReturnValue() == null) {
+                                message = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
+                            } else {
+                                FenceStatusReturnValue fenceStatusReturnValue =
+                                        (FenceStatusReturnValue) response.getReturnValue();
+                                message = fenceStatusReturnValue.toString();
+                            }
+                        }
                         setMessage(message);
                         getTestCommand().setIsExecutionAllowed(true);
                     }
-
                 }
-            }
+                        ,
+                        true));
+    }
+
+    private Integer getPmPrimaryPortAsInteger() {
+        if (getPmPort() != null && getPmPort().getEntity() != null) {
+            return Integer.valueOf(getPmPort().getEntity());
+        } else {
+            return null;
         }
-                , true));
+    }
+
+    private Integer getPmSecondaryPortAsIngeter() {
+        if (getPmSecondaryPort() != null && getPmSecondaryPort().getEntity() != null) {
+            return Integer.valueOf(getPmSecondaryPort().getEntity());
+        } else {
+            return null;
+        }
     }
 
     private void validatePmModels(boolean primary)
@@ -1769,21 +1783,36 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         }
 
         setAllowChangeHost(vds);
+        if (vds.isFenceAgentsExist()) {
+            orderAgents(vds.getFenceAgents());
+            FenceAgent primaryAgent = vds.getFenceAgents().get(0);
 
-        // Set primary PM parameters.
-        getManagementIp().setEntity(vds.getManagementIp());
-        getPmUserName().setEntity(vds.getPmUser());
-        getPmPassword().setEntity(vds.getPmPassword());
-        getPmType().setSelectedItem(vds.getPmType());
-        setPmOptionsMap(VdsStatic.pmOptionsStringToMap(vds.getPmOptions()));
+            // Set primary PM parameters.
+            getManagementIp().setEntity(primaryAgent.getIp());
+            getPmUserName().setEntity(primaryAgent.getUser());
+            getPmPassword().setEntity(primaryAgent.getPassword());
+            getPmType().setSelectedItem(primaryAgent.getType());
+            if (primaryAgent.getPort() != null) {
+                getPmPort().setEntity(primaryAgent.getPort().toString());
+            }
+            setPmOptionsMap(VdsStatic.pmOptionsStringToMap(primaryAgent.getOptions()));
 
-        // Set secondary PM parameters.
-        getPmSecondaryIp().setEntity(vds.getPmSecondaryIp());
-        getPmSecondaryUserName().setEntity(vds.getPmSecondaryUser());
-        getPmSecondaryPassword().setEntity(vds.getPmSecondaryPassword());
-        getPmSecondaryType().setSelectedItem(vds.getPmSecondaryType());
-        setPmSecondaryOptionsMap(vds.getPmSecondaryOptionsMap());
-
+            if (vds.getFenceAgents().size() > 1) {
+                FenceAgent secondaryAgent = vds.getFenceAgents().get(1);
+                // Set secondary PM parameters.
+                getPmSecondaryIp().setEntity(secondaryAgent.getIp());
+                getPmSecondaryUserName().setEntity(secondaryAgent.getUser());
+                getPmSecondaryPassword().setEntity(secondaryAgent.getPassword());
+                getPmSecondaryType().setSelectedItem(secondaryAgent.getType());
+                if (secondaryAgent.getPort() != null) {
+                    getPmSecondaryPort().setEntity(secondaryAgent.getPort().toString());
+                }
+                setPmSecondaryOptionsMap(secondaryAgent.getOptionsMap());
+                getPmSecondaryConcurrent().setEntity(secondaryAgent.getOrder() == primaryAgent.getOrder());
+            }
+        }
+        getDisableAutomaticPowerManagement().setEntity(vds.isDisablePowerManagementPolicy());
+        getPmKdumpDetection().setEntity(vds.isPmKdumpDetection());
         // Set other PM parameters.
         if (isEditWithPMemphasis) {
             setIsPowerManagementTabSelected(true);
@@ -1792,11 +1821,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         } else {
             getIsPm().setEntity(vds.getpm_enabled());
         }
-
-        getPmSecondaryConcurrent().setEntity(vds.isPmSecondaryConcurrent());
-        getDisableAutomaticPowerManagement().setEntity(vds.isDisablePowerManagementPolicy());
-        getPmKdumpDetection().setEntity(vds.isPmKdumpDetection());
-
         updateModelDataCenterFromVds(dataCenters, vds);
 
         ArrayList<VDSGroup> clusters;
@@ -1858,6 +1882,12 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         getHost().setEntity(""); //$NON-NLS-1$
         getUserPassword().setEntity(""); //$NON-NLS-1$
         getFetchSshFingerprint().setEntity(""); //$NON-NLS-1$
+    }
+
+    public static void orderAgents(List<FenceAgent> fenceAgents) {
+        synchronized (fenceAgents) {
+            Collections.sort(fenceAgents, new FenceAgent.FenceAgentOrderComparator());
+        }
     }
 
     protected abstract boolean showInstallationProperties();

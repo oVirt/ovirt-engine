@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -130,7 +131,10 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
 
                 // if all ok check PM is legal
                 returnValue =
-                    returnValue && IsPowerManagementLegal(getParameters().getVdsStaticData(), compatibilityVersion);
+                        returnValue
+                                && isPowerManagementLegal(getParameters().getVdsStaticData().isPmEnabled(),
+                                        getParameters().getFenceAgents(),
+                                        compatibilityVersion);
             } else {
                 addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE);
             }
@@ -218,8 +222,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 }
             }
         }
-        AlertIfPowerManagementNotConfigured(getParameters().getVdsStaticData());
-        TestVdsPowerManagementStatus(getParameters().getVdsStaticData());
+        alertIfPowerManagementNotConfigured(getParameters().getVdsStaticData());
+        testVdsPowerManagementStatus(getParameters().getVdsStaticData());
         checkKdumpIntegrationStatus();
         setSucceeded(true);
     }
@@ -235,8 +239,20 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             public Void runInTransaction() {
                 getCompensationContext().snapshotEntity(getVds().getStaticData());
                 DbFacade.getInstance().getVdsStaticDao().update(getParameters().getVdsStaticData());
+                updateFenceAgents();// TODO: what compensation needed for fencing?
                 getCompensationContext().stateChanged();
                 return null;
+            }
+
+            private void updateFenceAgents() {
+                if (getParameters().getFenceAgents() != null) { // if == null, means no update. Empty list means
+                                                                  // delete agents.
+                    DbFacade.getInstance().getFenceAgentDao().removeByVdsId(getVdsId());
+                    for (FenceAgent agent : getParameters().getFenceAgents()) {
+                        agent.setHostId(getVdsId());
+                        DbFacade.getInstance().getFenceAgentDao().save(agent);
+                    }
+                }
             }
         });
 

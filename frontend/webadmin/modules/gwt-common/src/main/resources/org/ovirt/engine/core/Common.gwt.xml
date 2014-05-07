@@ -142,6 +142,7 @@
 		<include name="common/businessentities/VdsSelectionAlgorithm.java" />
 		<include name="common/businessentities/VdsSpmStatus.java" />
 		<include name="common/businessentities/VdsStatic.java" />
+		<include name="common/businessentities/FenceAgent.java" />
 		<include name="common/businessentities/VdsStatistics.java" />
 		<include name="common/businessentities/VDSStatus.java" />
 		<include name="common/businessentities/VDSType.java" />
@@ -270,7 +271,7 @@
 		<include name="common/businessentities/ImageDbOperationScope.java" />
 		<include name="common/businessentities/VdcOption.java" />
 		<include name="common/errors/VdcFault.java" />
-		<include name="common/errors/VdcBllErrors.java" />
+		<include name="common/errors/VdcBllErrors.java" />		
 		<include name="common/errors/SqlInjectionException.java" />
 		<include name="common/errors/SearchEngineIllegalCharacterException.java" />
 		<include name="common/businessentities/VdsMovedToNonOperationalType.java" />

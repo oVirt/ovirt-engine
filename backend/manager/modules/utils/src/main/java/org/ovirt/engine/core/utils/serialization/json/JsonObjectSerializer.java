@@ -14,9 +14,7 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -39,8 +37,6 @@ public class JsonObjectSerializer implements Serializer {
                 JsonVdcActionParametersBaseMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(IVdcQueryable.class, JsonIVdcQueryableMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(VM.class, JsonVmMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(VdsStatic.class, JsonVdsStaticMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(VDS.class, JsonVDSMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(AddVmTemplateParameters.class,
                 JsonAddVmTemplateParametersMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(VmManagementParametersBase.class,

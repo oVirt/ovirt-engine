@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -7,6 +8,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Host;
@@ -16,11 +18,13 @@ import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostsResource;
+import org.ovirt.engine.api.restapi.types.FenceAgentMapper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -40,7 +44,8 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     private static final Logger log = LoggerFactory.getLogger(BackendHostsResource.class);
     private static final String DEFAULT_NAME = "Default";
-    static final String[] SUB_COLLECTIONS = { "storage", "nics", "numanodes", "tags", "permissions", "statistics", "hooks" };
+    static final String[] SUB_COLLECTIONS = { "storage", "nics", "numanodes", "tags", "permissions", "statistics",
+            "hooks", "fenceagents" };
     static final String GLUSTERONLY_MODE_COLLECTIONS_TO_HIDE = "storage";
 
     public BackendHostsResource() {
@@ -90,12 +95,21 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         validateParameters(host, "name", "address");
         VdsStatic staticHost = getMapper(Host.class, VdsStatic.class).map(host, null);
         staticHost.setVdsGroupId(getClusterId(host));
-        AddVdsActionParameters addParams = new AddVdsActionParameters(staticHost, host.getRootPassword());
+        AddVdsActionParameters addParams =
+                new AddVdsActionParameters(getMapper(Host.class, VdsStatic.class).map(host, null),
+                        host.getRootPassword());
         if (host.isSetOverrideIptables()) {
             addParams.setOverrideFirewall(host.isOverrideIptables());
         }
         if (host.isSetRebootAfterInstallation()) {
             addParams.setRebootAfterInstallation(host.isRebootAfterInstallation());
+        }
+        if (host.isSetPowerManagement() && host.getPowerManagement().isSetAgents()) {
+            List<FenceAgent> agents = new LinkedList<FenceAgent>();
+            for (Agent agent : host.getPowerManagement().getAgents().getAgents()) {
+                agents.add(FenceAgentMapper.map(agent, null));
+            }
+            addParams.setFenceAgents(agents);
         }
         addParams = (AddVdsActionParameters) getMapper
                 (Host.class, VdsOperationActionParameters.class).map(host, (VdsOperationActionParameters) addParams);

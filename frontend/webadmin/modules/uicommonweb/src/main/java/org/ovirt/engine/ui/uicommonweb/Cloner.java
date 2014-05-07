@@ -3,8 +3,11 @@ package org.ovirt.engine.ui.uicommonweb;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
 
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -246,20 +249,7 @@ public final class Cloner
         obj.setSshKeyFingerprint(instance.getSshKeyFingerprint());
         obj.setSshPort(instance.getSshPort());
         obj.setSshUsername(instance.getSshUsername());
-        obj.setManagementIp(instance.getManagementIp());
-        obj.setPmUser(instance.getPmUser());
-        obj.setPmPassword(instance.getPmPassword());
-        obj.setPmType(instance.getPmType());
-        obj.setPmOptionsMap(instance.getPmOptionsMap());
-
-        obj.setPmSecondaryIp(instance.getManagementIp());
-        obj.setPmSecondaryUser(instance.getPmUser());
-        obj.setPmSecondaryPassword(instance.getPmPassword());
-        obj.setPmSecondaryType(instance.getPmType());
-        obj.setPmSecondaryOptionsMap(instance.getPmOptionsMap());
-
-        obj.setpm_enabled(instance.getpm_enabled());
-        obj.setPmSecondaryConcurrent(instance.isPmSecondaryConcurrent());
+        obj.setFenceAgents(cloneAgents(instance.getFenceAgents()));
         obj.setDisablePowerManagementPolicy(instance.isDisablePowerManagementPolicy());
         obj.setPmKdumpDetection(instance.isPmKdumpDetection());
 
@@ -274,6 +264,33 @@ public final class Cloner
         obj.setVdsSpmPriority(instance.getVdsSpmPriority());
 
         return obj;
+    }
+
+    private static List<FenceAgent> cloneAgents(List<FenceAgent> agents) {
+        if (agents == null || agents.isEmpty()) {
+            return null;
+        } else {
+            List<FenceAgent> clonedAgents = new LinkedList<FenceAgent>();
+            for (FenceAgent agent : agents) {
+                clonedAgents.add(cloneAgent(agent));
+            }
+            return clonedAgents;
+        }
+    }
+
+    private static FenceAgent cloneAgent(FenceAgent agent) {
+        FenceAgent clonedAgent = new FenceAgent();
+        clonedAgent.setId(agent.getId());
+        clonedAgent.setHostId(agent.getHostId());
+        clonedAgent.setIp(agent.getIp());
+        clonedAgent.setOptions(agent.getOptions());
+        clonedAgent.setOptionsMap(agent.getOptionsMap());
+        clonedAgent.setOrder(agent.getOrder());
+        clonedAgent.setPassword(agent.getPassword());
+        clonedAgent.setPort(agent.getPort());
+        clonedAgent.setType(agent.getType());
+        clonedAgent.setUser(agent.getUser());
+        return clonedAgent;
     }
 
     private static StoragePool cloneStorage_pool(StoragePool instance)

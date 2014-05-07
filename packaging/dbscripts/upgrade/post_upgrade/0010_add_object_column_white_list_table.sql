@@ -40,9 +40,7 @@ BEGIN
        column_name in (
           'vds_group_id', 'vds_group_name', 'vds_group_description',
           'vds_id', 'vds_name', 'ip', 'vds_unique_id', 'host_name', 'port', 'vds_strength',
-          'server_ssl_enabled', 'vds_type', 'pm_type', 'pm_user', 'pm_port', 'pm_options',  'pm_enabled',
-          'pm_proxy_preferences', 'pm_secondary_ip', 'pm_secondary_type', 'pm_secondary_user', 'pm_secondary_port',
-          'pm_secondary_options', 'pm_secondary_concurrent', 'vds_spm_priority', 'hooks', 'status', 'cpu_cores',
+          'server_ssl_enabled', 'vds_type', 'pm_enabled', 'pm_proxy_preferences', 'vds_spm_priority', 'hooks', 'status', 'cpu_cores',
           'cpu_model', 'cpu_speed_mh', 'if_total_speed', 'kvm_enabled', 'physical_mem_mb',
           'pending_vcpus_count', 'pending_vmem_size', 'mem_commited', 'vm_active', 'vm_count',
           'vm_migrating', 'vms_cores_count', 'cpu_over_commit_time_stamp', 'hypervisor_type',

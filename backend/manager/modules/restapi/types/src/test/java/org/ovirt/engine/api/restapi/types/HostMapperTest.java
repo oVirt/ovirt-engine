@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.SSH;
 import org.ovirt.engine.api.model.User;
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
@@ -163,70 +164,6 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     }
 
     @Test
-    public void testPowerManagementAgents() {
-        String[] ip = { "1.1.1.111", "1.1.1.112" };
-        int agents = 0;
-        int i = 0;
-        VDS vds = new VDS();
-        vds.setId(Guid.Empty);
-        vds.setpm_enabled(true);
-        vds.setManagementIp(ip[0]);
-        vds.setPmType("apc");
-        vds.setPmUser("user");
-        vds.setPmOptions("secure=true");
-        vds.setPmSecondaryConcurrent(true);
-        vds.setPmSecondaryIp(ip[1]);
-        vds.setPmSecondaryType("apc");
-        vds.setPmSecondaryUser("user");
-        vds.setPmSecondaryOptions("secure=true");
-        Host host = HostMapper.map(vds, (Host) null);
-        agents = host.getPowerManagement().getAgents().getAgents().size();
-        assertEquals(agents, 2);
-        for (Agent agent : host.getPowerManagement().getAgents().getAgents()) {
-            assertEquals(host.getPowerManagement().isEnabled(), true);
-            assertEquals(agent.getAddress(), ip[i]);
-            assertEquals(agent.getType(), "apc");
-            assertEquals(agent.getUsername(), "user");
-            assertTrue(agent.isConcurrent());
-            assertEquals(agent.getOptions().getOptions().get(0).getName(), "secure");
-            assertEquals(agent.getOptions().getOptions().get(0).getValue(), "true");
-            if (i > 0) {
-                assertEquals(agent.isConcurrent(), true);
-            }
-            i++;
-        }
-    }
-
-    @Test
-    public void testUpdatePowerManagementHost() {
-        String[] ip = { "1.1.1.111", "1.1.1.112"};
-        PowerManagement powerMgmt = new PowerManagement();
-        powerMgmt.setAddress(ip[1]);
-        powerMgmt.setEnabled(true);
-        powerMgmt.setPassword("passwd");
-        powerMgmt.setType("apc");
-        powerMgmt.setUsername("user");
-        powerMgmt.setKdumpDetection(true);
-
-        VdsStatic vdsStatic = new VdsStatic();
-        vdsStatic.setManagementIp(ip[0]);
-        vdsStatic.setPmEnabled(true);
-        vdsStatic.setPmPassword("passwd");
-        vdsStatic.setPmPort(123);
-        vdsStatic.setPmType("apc");
-        vdsStatic.setPmUser("user");
-        vdsStatic.setPmKdumpDetection(false);
-
-        VdsStatic mappedVdsStatic = HostMapper.map(powerMgmt, vdsStatic);
-        assertEquals(mappedVdsStatic.getManagementIp(), ip[1]);
-        assertEquals(mappedVdsStatic.isPmEnabled(), true);
-        assertEquals(mappedVdsStatic.getPmPassword(), "passwd");
-        assertEquals(mappedVdsStatic.getPmType(), "apc");
-        assertEquals(mappedVdsStatic.getPmUser(), "user");
-        assertTrue(mappedVdsStatic.isPmKdumpDetection());
-    }
-
-    @Test
     public void testUpdateSshHost() {
         SSH sshConf = new SSH();
         sshConf.setPort(22);
@@ -264,20 +201,18 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         powerMgmt.setAgents(agents);
 
         VdsStatic vdsStatic = new VdsStatic();
-        vdsStatic.setManagementIp(ip[0]);
         vdsStatic.setPmEnabled(true);
-        vdsStatic.setPmPassword("passwd");
-        vdsStatic.setPmPort(123);
-        vdsStatic.setPmType("apc");
-        vdsStatic.setPmUser("user");
         vdsStatic.setPmKdumpDetection(false);
+        FenceAgent primaryAgent = new FenceAgent();
+        primaryAgent.setIp(ip[0]);
+        primaryAgent.setType("apc");
+        primaryAgent.setUser("user");
+        primaryAgent.setPassword("passwd");
+        primaryAgent.setPort(123);
+        primaryAgent.setOrder(1);
 
         VdsStatic mappedVdsStatic = HostMapper.map(powerMgmt, vdsStatic);
-        assertEquals(mappedVdsStatic.getManagementIp(), ip[1]);
         assertEquals(mappedVdsStatic.isPmEnabled(), true);
-        assertEquals(mappedVdsStatic.getPmPassword(), "passwd");
-        assertEquals(mappedVdsStatic.getPmType(), "apc");
-        assertEquals(mappedVdsStatic.getPmUser(), "user");
         assertTrue(mappedVdsStatic.isPmKdumpDetection());
     }
 

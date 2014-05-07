@@ -160,7 +160,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     throw new VdsInstallException(VDSStatus.InstallFailed, "Partial installation");
                 case Reboot:
                     setVdsStatus(VDSStatus.Reboot);
-                    RunSleepOnReboot(getStatusOnReboot());
+                    runSleepOnReboot(getStatusOnReboot());
                 break;
                 case Complete:
                     if (checkProtocolTofallback(getVds())) {

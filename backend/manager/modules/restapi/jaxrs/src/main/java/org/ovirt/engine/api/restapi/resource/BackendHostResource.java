@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Fault;
@@ -21,17 +22,22 @@ import org.ovirt.engine.api.model.PowerManagementStatus;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
+import org.ovirt.engine.api.resource.FenceAgentsResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
 import org.ovirt.engine.api.resource.HostNumaNodesResource;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostStorageResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
+import org.ovirt.engine.api.restapi.types.DeprecatedPowerManagementMapper;
+import org.ovirt.engine.api.restapi.types.FenceAgentMapper;
+import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
+import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -42,6 +48,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -53,6 +60,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostResource extends AbstractBackendActionableResource<Host, VDS> implements
@@ -74,7 +82,9 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
                     new VdsActionParameters(guid));
         }
 
-        return performGet(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(guid));
+        Host host = performGet(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(guid));
+        deprecatedAddLinksToAgents(host);
+        return host;
     }
 
     @Override
@@ -94,12 +104,54 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
                 entity = getEntity(hostResolver, true);
             }
         }
-        return performUpdate(incoming,
-                             entity,
-                             map(entity),
-                             hostResolver,
-                             VdcActionType.UpdateVds,
-                             new UpdateParametersProvider());
+
+        // deprecatedUpdateFenceAgents(incoming);
+
+        Host host = performUpdate(incoming,
+                entity,
+                map(entity),
+                hostResolver,
+                VdcActionType.UpdateVds,
+                new UpdateParametersProvider());
+        deprecatedAddLinksToAgents(host);
+        return host;
+    }
+
+    @Deprecated
+    private void deprecatedAddLinksToAgents(Host host) {
+        if (host.isSetPowerManagement() && host.getPowerManagement().isSetAgents()
+                && host.getPowerManagement().getAgents().isSetAgents()) {
+            for (Agent agent : host.getPowerManagement().getAgents().getAgents()) {
+                Host host2 = new Host();
+                host2.setId(host.getId());
+                agent.setHost(host2);
+                LinkHelper.addLinks(uriInfo, agent);
+            }
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Deprecated
+    /**
+     * In the past fence-agents appeared in-line in a host, and updating them was done through an update
+     * of the host. This is maintained for backwards-compatibility (for simplicity, agents are removed and
+     * re-added). Update of 3+ agents is not supported, since traditionally there were at most 2.
+     * This method does not handle deleting only one of the agents (existing bug).
+     */
+    private void deprecatedUpdateFenceAgents(Host incoming) {
+        List<FenceAgent> agents =
+                DeprecatedPowerManagementMapper.map(incoming.getPowerManagement(),
+                        getFenceAgentsResource().getFenceAgents());
+        if (agents.isEmpty()) {
+            FenceAgentCommandParameterBase params = new FenceAgentCommandParameterBase();
+            params.setVdsId(guid);
+            performAction(VdcActionType.RemoveFenceAgentsByVdsId, params);
+        } else if (agents.size() < 3) {
+            for (FenceAgent agent : agents) {
+                getFenceAgentsResource().remove(agent.getId().toString());
+                getFenceAgentsResource().add(FenceAgentMapper.map(agent, null));
+            }
+        }
     }
 
     @Override
@@ -287,24 +339,25 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         case STOP:
             return fence(action, VdcActionType.StopVds, FenceActionType.Stop);
         case STATUS:
-            return getFencingStatus(action);
+            return getFenceStatus(action);
         default:
             return null;
         }
     }
 
-    private Response getFencingStatus(Action action) {
-        FenceStatusReturnValue result = getEntity(FenceStatusReturnValue.class, VdcQueryType.GetVdsFenceStatus, new VdsIdParametersBase(guid), guid.toString());
-        if (result.getIsSucceeded()) {
+    private Response getFenceStatus(Action action) {
+        VDSReturnValue result = getEntity(VDSReturnValue.class, VdcQueryType.GetVdsFenceStatus, new VdsIdParametersBase(guid), guid.toString());
+        FenceStatusReturnValue fenceResult = (FenceStatusReturnValue) result.getReturnValue();
+        if (fenceResult.getIsSucceeded()) {
             PowerManagement pm = new PowerManagement();
-            pm.setStatus(result.getStatus().toLowerCase().equals("on") ? StatusUtils.create(PowerManagementStatus.ON)
-                    : result.getStatus().toLowerCase().equals("off") ? StatusUtils.create(PowerManagementStatus.OFF)
-                            : result.getStatus().toLowerCase().equals("unknown") ? StatusUtils.create(PowerManagementStatus.UNKNOWN)
+            pm.setStatus(fenceResult.getStatus().toLowerCase().equals("on") ? StatusUtils.create(PowerManagementStatus.ON)
+                    : fenceResult.getStatus().toLowerCase().equals("off") ? StatusUtils.create(PowerManagementStatus.OFF)
+                            : fenceResult.getStatus().toLowerCase().equals("unknown") ? StatusUtils.create(PowerManagementStatus.UNKNOWN)
                                     : null);
             action.setPowerManagement(pm);
             return actionSuccess(action);
         } else {
-            return handleFailure(action, result.getMessage());
+            return handleFailure(action, fenceResult.getMessage());
         }
     }
 
@@ -378,6 +431,9 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             VdsStatic updated = getMapper(modelType, VdsStatic.class).map(incoming,
                     entity.getStaticData());
             UpdateVdsActionParameters updateParams = new UpdateVdsActionParameters(updated, incoming.getRootPassword(), false);
+            // Updating Fence-agents is deprecated from this context, so the original, unchanged, list of agents is
+            // passed to the engine.
+            updateParams.setFenceAgents(entity.getFenceAgents());
             if (incoming.isSetOverrideIptables()) {
                 updateParams.setOverrideFirewall(incoming.isOverrideIptables());
             }
@@ -409,5 +465,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Path("hooks")
     public BackendHostHooksResource getHooksResource() {
         return inject(new BackendHostHooksResource(id));
+    }
+
+    @Override
+    @Path("fenceagents")
+    public FenceAgentsResource getFenceAgentsResource() {
+        return inject(new BackendFenceAgentsResource(id));
     }
 }

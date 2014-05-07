@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -71,7 +70,6 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
         return getCustomMapSqlParameterSource()
                 .addValue("host_name", vds.getHostName())
                 .addValue("free_text_comment", vds.getComment())
-                .addValue("ip", vds.getManagementIp())
                 .addValue("vds_unique_id", vds.getUniqueID())
                 .addValue("port", vds.getPort())
                 .addValue("protocol", vds.getProtocol())
@@ -81,20 +79,8 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("server_SSL_enabled", vds.isServerSslEnabled())
                 .addValue("vds_type", vds.getVdsType())
                 .addValue("vds_strength", vds.getVdsStrength())
-                .addValue("pm_type", vds.getPmType())
-                .addValue("pm_user", vds.getPmUser())
-                .addValue("pm_password", DbFacadeUtils.encryptPassword(vds.getPmPassword()))
-                .addValue("pm_port", vds.getPmPort())
-                .addValue("pm_options", vds.getPmOptions())
                 .addValue("pm_enabled", vds.isPmEnabled())
                 .addValue("pm_proxy_preferences", vds.getPmProxyPreferences())
-                .addValue("pm_secondary_ip", vds.getPmSecondaryIp())
-                .addValue("pm_secondary_type", vds.getPmSecondaryType())
-                .addValue("pm_secondary_user", vds.getPmSecondaryUser())
-                .addValue("pm_secondary_password", DbFacadeUtils.encryptPassword(vds.getPmSecondaryPassword()))
-                .addValue("pm_secondary_port", vds.getPmSecondaryPort())
-                .addValue("pm_secondary_options", vds.getPmSecondaryOptions())
-                .addValue("pm_secondary_concurrent", vds.isPmSecondaryConcurrent())
                 .addValue("pm_detect_kdump", vds.isPmKdumpDetection())
                 .addValue("otp_validity", vds.getOtpValidity())
                 .addValue("vds_spm_priority", vds.getVdsSpmPriority())
@@ -128,7 +114,6 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
             VdsStatic entity = new VdsStatic();
             entity.setHostName(rs.getString("host_name"));
             entity.setComment(rs.getString("free_text_comment"));
-            entity.setManagementIp(rs.getString("ip"));
             entity.setUniqueID(rs.getString("vds_unique_id"));
             entity.setPort(rs.getInt("port"));
             entity.setProtocol(VdsProtocol.fromValue(rs.getInt("protocol")));
@@ -145,20 +130,8 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                     .getBoolean("server_SSL_enabled"));
             entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
             entity.setVdsStrength(rs.getInt("vds_strength"));
-            entity.setPmType(rs.getString("pm_type"));
-            entity.setPmUser(rs.getString("pm_user"));
-            entity.setPmPassword(DbFacadeUtils.decryptPassword(rs.getString("pm_password")));
-            entity.setPmPort((Integer) rs.getObject("pm_port"));
-            entity.setPmOptions(rs.getString("pm_options"));
             entity.setPmEnabled(rs.getBoolean("pm_enabled"));
             entity.setPmProxyPreferences(rs.getString("pm_proxy_preferences"));
-            entity.setPmSecondaryIp((rs.getString("pm_secondary_ip")));
-            entity.setPmSecondaryType(rs.getString("pm_secondary_type"));
-            entity.setPmSecondaryUser(rs.getString("pm_secondary_user"));
-            entity.setPmSecondaryPassword(DbFacadeUtils.decryptPassword(rs.getString("pm_secondary_password")));
-            entity.setPmSecondaryPort((Integer) rs.getObject("pm_secondary_port"));
-            entity.setPmSecondaryOptions(rs.getString("pm_secondary_options"));
-            entity.setPmSecondaryConcurrent(rs.getBoolean("pm_secondary_concurrent"));
             entity.setPmKdumpDetection(rs.getBoolean("pm_detect_kdump"));
             entity.setOtpValidity(rs.getLong("otp_validity"));
             entity.setSshKeyFingerprint(rs.getString("sshKeyFingerprint"));

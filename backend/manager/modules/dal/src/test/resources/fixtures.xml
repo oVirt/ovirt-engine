@@ -1747,7 +1747,6 @@
     <table name="vds_static">
         <column>vds_id</column>
         <column>vds_name</column>
-        <column>ip</column>
         <column>vds_unique_id</column>
         <column>host_name</column>
         <column>port</column>
@@ -1755,20 +1754,8 @@
         <column>server_SSL_enabled</column>
         <column>vds_type</column>
         <column>vds_strength</column>
-        <column>pm_type</column>
-        <column>pm_user</column>
-        <column>pm_password</column>
-        <column>pm_port</column>
-        <column>pm_options</column>
         <column>pm_enabled</column>
         <column>pm_proxy_preferences</column>
-        <column>pm_secondary_ip</column>
-        <column>pm_secondary_type</column>
-        <column>pm_secondary_user</column>
-        <column>pm_secondary_password</column>
-        <column>pm_secondary_port</column>
-        <column>pm_secondary_options</column>
-        <column>pm_secondary_concurrent</column>
         <column>_create_date</column>
         <column>_update_date</column>
         <column>vds_spm_priority</column>
@@ -1781,7 +1768,6 @@
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>magenta-vdsc</value>
-            <value>192.168.122.17</value>
             <value>farkle</value>
             <value>magenta-vdsc.redhat.com</value>
             <value>54321</value>
@@ -1789,20 +1775,8 @@
             <value>1</value>
             <value>1</value>
             <value>1</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <value></value>
             <value>0</value>
             <value>cluster,dc,other_dc</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <value>0</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>8</value>
@@ -1816,7 +1790,6 @@
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
             <value>purple-vdsc</value>
-            <value>192.168.122.18</value>
             <value>farkle</value>
             <value>purple-vdsc.redhat.com</value>
             <value>54321</value>
@@ -1824,20 +1797,8 @@
             <value>1</value>
             <value>0</value>
             <value>1</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <value></value>
             <value>0</value>
             <value>cluster,dc</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <value>0</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>6</value>
@@ -1851,7 +1812,6 @@
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e8</value>
             <value>localfs-vds</value>
-            <value>192.168.122.16</value>
             <value>farkle</value>
             <value>localfs-vds.redhat.com</value>
             <value>54321</value>
@@ -1859,20 +1819,8 @@
             <value>1</value>
             <value>1</value>
             <value>1</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <value></value>
             <value>0</value>
             <value>cluster,dc</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <value>0</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>8</value>
@@ -1886,7 +1834,6 @@
         <row>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
             <value>gluster-server1</value>
-            <value>192.168.122.19</value>
             <value>farkle</value>
             <value>gluster1-vdsc.redhat.com</value>
             <value>54321</value>
@@ -1894,20 +1841,8 @@
             <value>1</value>
             <value>1</value>
             <value>1</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <value></value>
             <value>0</value>
             <value>cluster,dc</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <value>0</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>4</value>
@@ -1921,7 +1856,6 @@
         <row>
             <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
             <value>gluster-server2</value>
-            <value>192.168.122.20</value>
             <value>farkle</value>
             <value>gluster2-vdsc.redhat.com</value>
             <value>54321</value>
@@ -1929,20 +1863,8 @@
             <value>1</value>
             <value>1</value>
             <value>1</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <value></value>
             <value>0</value>
             <value>cluster,dc</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <value>0</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>4</value>

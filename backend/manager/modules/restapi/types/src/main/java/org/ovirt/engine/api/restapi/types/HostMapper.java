@@ -7,8 +7,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.Agent;
-import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.AutoNumaStatus;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
@@ -130,21 +128,6 @@ public class HostMapper {
     @Mapping(from = PowerManagement.class, to = VdsStatic.class)
     public static VdsStatic map(PowerManagement model, VdsStatic template) {
         VdsStatic entity = template != null ? template : new VdsStatic();
-        boolean hasAgents=StringUtils.isNotEmpty(model.getAddress()) || (model.isSetAgents() && model.getAgents().getAgents().size() > 0);
-        boolean removeSecondaryAgent=StringUtils.isNotEmpty(entity.getPmSecondaryIp()) && model.isSetAgents() && model.getAgents().getAgents().size() < 2;
-        if (hasAgents) {
-            entity.setManagementIp(getManagementIp(model, entity));
-            entity.setPmType(getManagementType(model, entity));
-            entity.setPmUser(getManagementUser(model, entity));
-            entity.setPmPassword(getManagementPassword(model, entity));
-            entity.setPmOptions(getManagementOptions(model, entity));
-        }
-        else {
-            clearPmAgentsSettings(entity);
-        }
-        if (removeSecondaryAgent) {
-            clearSecondaryPmAgentSettings(entity);
-        }
         if (model.isSetEnabled()) {
             entity.setPmEnabled(model.isEnabled());
         }
@@ -161,160 +144,10 @@ public class HostMapper {
             }
             entity.setPmProxyPreferences(builder.toString());
         }
-        if (model.isSetAgents()) {
-            // Currently only Primary/Secondary agents are supported
-            int order = 1;
-            for (Agent agent : model.getAgents().getAgents()) {
-
-                if (agent.isSetOrder()) {
-                    order = agent.getOrder();
-                }
-                if (order == 1) { // Primary
-                    order++; // in case that order is not defined, secondary will still be defined correctly.
-                }
-                else if (order == 2) { // Secondary
-                    if (agent.isSetType()) {
-                        entity.setPmSecondaryType(agent.getType());
-                    }
-                    if (agent.isSetAddress()) {
-                        entity.setPmSecondaryIp(agent.getAddress());
-                    }
-                    if (agent.isSetUsername()) {
-                        entity.setPmSecondaryUser(agent.getUsername());
-                    }
-                    if (agent.isSetPassword()) {
-                        entity.setPmSecondaryPassword(agent.getPassword());
-                    }
-                    if (agent.isSetOptions()) {
-                        entity.setPmSecondaryOptions(map(agent.getOptions(), null));
-                    }
-                    if (agent.isSetConcurrent()) {
-                        entity.setPmSecondaryConcurrent(agent.isConcurrent());
-                    }
-                }
-            }
-        }
         if (model.isSetKdumpDetection()) {
             entity.setPmKdumpDetection(model.isKdumpDetection());
         }
         return entity;
-    }
-
-    private static void clearPmAgentsSettings(VdsStatic entity) {
-        clearPrimaryPmAgentSettings(entity);
-        clearSecondaryPmAgentSettings(entity);
-    }
-
-    private static void clearPrimaryPmAgentSettings(VdsStatic entity) {
-        entity.setManagementIp(null);
-        entity.setPmType(null);
-        entity.setPmUser(null);
-        entity.setPmPassword(null);
-        entity.setPmOptions(StringUtils.EMPTY);
-    }
-
-    private static void clearSecondaryPmAgentSettings(VdsStatic entity) {
-        entity.setPmSecondaryType(null);
-        entity.setPmSecondaryIp(null);
-        entity.setPmSecondaryUser(null);
-        entity.setPmSecondaryPassword(null);
-        entity.setPmSecondaryOptions(StringUtils.EMPTY);
-    }
-
-    /**
-     * Get the management ip address to use.
-     * If the incoming Host management ip is different from the one in
-     * VdsStatic we use incoming management ip
-     * If incoming agent address is different from the management ip in
-     * VdsStatic we use the incoming agent address at order 1.
-     * @param model
-     * @param vdsStatic
-     * @return
-     */
-    private static String getManagementIp(PowerManagement model, VdsStatic vdsStatic) {
-        if (model.isSetAddress() && !model.getAddress().equals(vdsStatic.getManagementIp())) {
-            return model.getAddress();
-        }
-        if (model.isSetAgents()) {
-            for (Agent agent : model.getAgents().getAgents()) {
-                if (agent.getOrder() == 1 && !agent.getAddress().equals(vdsStatic.getManagementIp())) {
-                    return agent.getAddress();
-                }
-            }
-        }
-        return vdsStatic.getManagementIp();
-    }
-
-    /**
-     * Get the management type to use.
-     * If the incoming Host management type is different from the one in
-     * VdsStatic we use incoming management type
-     * If incoming agent type different from the management type in
-     * VdsStatic we use the incoming agent type at order 1.
-     * @param model
-     * @param vdsStatic
-     * @return
-     */
-    private static String getManagementType(PowerManagement model, VdsStatic vdsStatic) {
-        if (model.isSetType() && !model.getType().equals(vdsStatic.getPmType())) {
-            return model.getType();
-        }
-        if (model.isSetAgents()) {
-            for (Agent agent : model.getAgents().getAgents()) {
-                if (agent.getOrder() == 1 && agent.isSetType() && !agent.getType().equals(vdsStatic.getPmType())) {
-                    return agent.getType();
-                }
-            }
-        }
-        return vdsStatic.getPmType();
-    }
-
-    private static String getManagementUser(PowerManagement model, VdsStatic vdsStatic) {
-        if (model.isSetUsername() && !model.getUsername().equals(vdsStatic.getPmUser())) {
-            return model.getUsername();
-        }
-        if (model.isSetAgents()) {
-            for (Agent agent : model.getAgents().getAgents()) {
-                if (agent.getOrder() == 1 && agent.isSetUsername() && !agent.getUsername().equals(vdsStatic.getPmUser())) {
-                    return agent.getUsername();
-                }
-            }
-        }
-        return vdsStatic.getPmUser();
-    }
-
-    private static String getManagementPassword(PowerManagement model, VdsStatic vdsStatic) {
-        if (model.isSetPassword() && !model.getPassword().equals(vdsStatic.getPmPassword())) {
-            return model.getPassword();
-        }
-        if (model.isSetAgents()) {
-            for (Agent agent : model.getAgents().getAgents()) {
-                if (agent.getOrder() == 1 && agent.isSetPassword() && !agent.getPassword().equals(vdsStatic.getPmPassword())) {
-                    return agent.getPassword();
-                }
-            }
-        }
-        return vdsStatic.getPmPassword();
-    }
-
-    private static String getManagementOptions(PowerManagement model, VdsStatic vdsStatic) {
-        if (model.isSetOptions()) {
-            String modelOptions = map(model.getOptions(), null);
-            if (!modelOptions.equals(vdsStatic.getPmOptions())) {
-                return modelOptions;
-            }
-        }
-        if (model.isSetAgents()) {
-            for (Agent agent : model.getAgents().getAgents()) {
-                if (agent.getOrder() == 1 && agent.isSetOptions()) {
-                    String agentOptions = map(agent.getOptions(), null);
-                    if (!agentOptions.equals(vdsStatic.getPmOptions())) {
-                        return agentOptions;
-                    }
-                }
-            }
-        }
-        return vdsStatic.getPmOptions();
     }
 
     @Mapping(from = Options.class, to = String.class)
@@ -396,7 +229,8 @@ public class HostMapper {
             model.setIscsi(new IscsiDetails());
             model.getIscsi().setInitiator(entity.getIScsiInitiatorName());
         }
-        model.setPowerManagement(map(entity, (PowerManagement)null));
+        PowerManagement pm = map(entity, (PowerManagement) null);
+        model.setPowerManagement(DeprecatedPowerManagementMapper.map(entity.getFenceAgents(), pm));
         model.setHardwareInformation(map(entity, (HardwareInformation)null));
         model.setSsh(map(entity.getStaticData(), (SSH) null));
         CPU cpu = new CPU();
@@ -454,7 +288,6 @@ public class HostMapper {
         model.setNumaSupported(entity.isNumaSupport());
 
         model.setLiveSnapshotSupport(entity.getLiveSnapshotSupport());
-
         return model;
     }
 
@@ -532,14 +365,6 @@ public class HostMapper {
     @Mapping(from = VDS.class, to = PowerManagement.class)
     public static PowerManagement map(VDS entity, PowerManagement template) {
         PowerManagement model = template != null ? template : new PowerManagement();
-        model.setType(entity.getPmType());
-        model.setEnabled(entity.getpm_enabled());
-        model.setAddress(entity.getManagementIp());
-        model.setUsername(entity.getPmUser());
-        model.setAutomaticPmEnabled(!entity.isDisablePowerManagementPolicy());
-        if (entity.getPmOptionsMap() != null) {
-            model.setOptions(map(entity.getPmOptionsMap(), null));
-        }
         if (entity.getPmProxyPreferences() != null) {
             PmProxies pmProxies = new PmProxies();
                 String[] proxies = StringUtils.split(entity.getPmProxyPreferences(), ",");
@@ -550,40 +375,12 @@ public class HostMapper {
                 }
             model.setPmProxies(pmProxies);
         }
-        if (entity.getpm_enabled()) {
-            // Set Primary Agent
-            Agent agent = new Agent();
-            if (!StringUtils.isEmpty(entity.getManagementIp())) {
-                agent.setType(entity.getPmType());
-                agent.setAddress(entity.getManagementIp());
-                agent.setUsername(entity.getPmUser());
-                if (entity.getPmOptionsMap() != null) {
-                    agent.setOptions(map(entity.getPmOptionsMap(), null));
-                }
-                agent.setOrder(1);
-                model.setAgents(new Agents());
-                model.getAgents().getAgents().add(agent);
-
-            }
-            // Set Secondary Agent
-            if (!StringUtils.isEmpty(entity.getPmSecondaryIp())) {
-                boolean concurrent = entity.isPmSecondaryConcurrent();
-                // When a second agent exists, 'concurrent' field is relevant for both agents, so here we
-                // set it retroactively in the first agent.
-                model.getAgents().getAgents().get(0).setConcurrent(concurrent);
-                agent = new Agent();
-                agent.setType(entity.getPmSecondaryType());
-                agent.setAddress(entity.getPmSecondaryIp());
-                agent.setUsername(entity.getPmSecondaryUser());
-                if (entity.getPmOptionsMap() != null) {
-                    agent.setOptions(map(entity.getPmSecondaryOptionsMap(), null));
-                }
-                agent.setOrder(2);
-                agent.setConcurrent(concurrent);
-                model.getAgents().getAgents().add(agent);
-            }
-        }
         model.setKdumpDetection(entity.isPmKdumpDetection());
+        model.setEnabled(entity.getpm_enabled());
+        model.setAutomaticPmEnabled(!entity.isDisablePowerManagementPolicy());
+        if (entity.getpm_enabled()) {
+            DeprecatedPowerManagementMapper.map(entity.getFenceAgents(), model);
+        }
         return model;
     }
 

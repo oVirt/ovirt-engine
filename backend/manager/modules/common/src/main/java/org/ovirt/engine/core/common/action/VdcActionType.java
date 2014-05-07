@@ -85,6 +85,10 @@ public enum VdcActionType {
     InstallVds(130, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
     UpgradeOvirtNode(131, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
     VdsKdumpDetection(132, QuotaDependency.NONE),
+    AddFenceAgent(133, ActionGroup.EDIT_HOST_CONFIGURATION, QuotaDependency.NONE),
+    RemoveFenceAgent(134, ActionGroup.EDIT_HOST_CONFIGURATION, QuotaDependency.NONE),
+    UpdateFenceAgent(135, ActionGroup.EDIT_HOST_CONFIGURATION, QuotaDependency.NONE),
+    RemoveFenceAgentsByVdsId(136, ActionGroup.EDIT_HOST_CONFIGURATION, QuotaDependency.NONE),
 
     // Network
     UpdateNetworkToVdsInterface(149, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),

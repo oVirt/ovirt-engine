@@ -7,12 +7,12 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.NetworkProviderValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
-import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -27,16 +27,15 @@ import org.ovirt.engine.core.common.vdscommands.AddVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.pm.FenceConfigHelper;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class VdsCommand<T extends VdsActionParameters> extends CommandBase<T> {
@@ -76,20 +75,20 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         return getVdsName();
     }
 
-    protected void RunSleepOnReboot() {
-        RunSleepOnReboot(VDSStatus.NonResponsive);
+    protected void runSleepOnReboot() {
+        runSleepOnReboot(VDSStatus.NonResponsive);
     }
 
-    protected void RunSleepOnReboot(final VDSStatus status) {
+    protected void runSleepOnReboot(final VDSStatus status) {
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
-                SleepOnReboot(status);
+                sleepOnReboot(status);
             }
         });
     }
 
-    private void SleepOnReboot(final VDSStatus status) {
+    private void sleepOnReboot(final VDSStatus status) {
         int sleepTimeInSec = Config.<Integer> getValue(ConfigValues.ServerRebootTimeout);
         log.info("Waiting {} seconds, for server to finish reboot process.",
                 sleepTimeInSec);
@@ -149,12 +148,12 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * @param vdsStatic
      *            The VDS static.
      */
-    protected void AlertIfPowerManagementNotConfigured(VdsStatic vdsStatic) {
+    protected void alertIfPowerManagementNotConfigured(VdsStatic vdsStatic) {
         if (getVdsGroup() != null && !getVdsGroup().supportsVirtService()) {
             return;
         }
 
-        if (!vdsStatic.isPmEnabled() || StringUtils.isEmpty(vdsStatic.getPmType())) {
+        if (!vdsStatic.isPmEnabled()) {
             Alert(AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
             // remove any test failure alerts
             AlertDirector.RemoveVdsAlert(vdsStatic.getId(),
@@ -171,7 +170,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * @param vdsStatic
      *            The VDS static.
      */
-    protected void TestVdsPowerManagementStatus(VdsStatic vdsStatic) {
+    protected void testVdsPowerManagementStatus(VdsStatic vdsStatic) {
         if (vdsStatic.isPmEnabled()) {
             runInternalQuery(VdcQueryType.GetVdsFenceStatus,
                     new VdsIdParametersBase(vdsStatic.getId()));
@@ -181,7 +180,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     /**
      * Alerts if power management operation failed.
      */
-    protected void AlertIfPowerManagementOperationFailed() {
+    protected void alertIfPowerManagementOperationFailed() {
         Alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_FAILED);
     }
 
@@ -189,38 +188,49 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * Alerts if power management operation skipped.
      * @param operation The operation name.
      */
-    protected void AlertIfPowerManagementOperationSkipped(String operation, Throwable throwable) {
+    protected void alertIfPowerManagementOperationSkipped(String operation, Throwable throwable) {
         Alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED, operation, throwable);
     }
 
-    protected void LogSettingVmToDown(Guid vdsId, Guid vmId) {
+    protected void logSettingVmToDown(Guid vdsId, Guid vmId) {
         AuditLogableBase logable = new AuditLogableBase(vdsId, vmId);
         AuditLogDirector.log(logable,
                 AuditLogType.VM_WAS_SET_DOWN_DUE_TO_HOST_REBOOT_OR_MANUAL_FENCE);
     }
 
-    protected boolean IsPowerManagementLegal(VdsStatic vdsStatic, String clusterCompatibilityVersion) {
-        boolean result = true;
+    /**
+     * Check if given agent is valid.
+     * The check that is made is that 'user' and 'password' values are not empty.
+     */
+    protected boolean isFenceAgentValid(FenceAgent agent) {
+        if (StringUtils.isEmpty(agent.getUser()) ||
+                StringUtils.isEmpty(agent.getPassword())) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT_CREDENTIALS);
+            return false;
+        } else {
+            return true;
+        }
+    }
 
-        if (vdsStatic.isPmEnabled()) {
-            // check if pm_type is not null and if it in the supported fence types by version
-            if (StringUtils.isEmpty(vdsStatic.getPmType())) {
+    protected boolean isPowerManagementLegal(boolean pmEnabled,
+            List<FenceAgent> fenceAgents,
+            String clusterCompatibilityVersion) {
+        if (pmEnabled) {
+            if (fenceAgents == null || fenceAgents.isEmpty()) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT);
-                result = false;
-            } else if (!Regex.IsMatch(
-                    FenceConfigHelper.getFenceConfigurationValue(ConfigValues.VdsFenceType.name(), clusterCompatibilityVersion),
-                    String.format("(,|^)%1$s(,|$)", vdsStatic.getPmType()))) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_AGENT_NOT_SUPPORTED);
-                result = false;
+                return false;
             }
-            // Do not allow to pass empty/null value as the user/password agent credentials
-            else if (StringUtils.isEmpty(vdsStatic.getPmUser()) ||
-                    StringUtils.isEmpty(vdsStatic.getPmPassword())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT_CREDENTIALS);
-                result = false;
+            FenceValidator fenceValidator = new FenceValidator();
+            for (FenceAgent agent : fenceAgents) {
+                if (!fenceValidator.isFenceAgentVersionCompatible(agent,
+                        clusterCompatibilityVersion,
+                        getReturnValue().getCanDoActionMessages())
+                        || !isFenceAgentValid(agent)) {
+                    return false;
+                }
             }
         }
-        return result;
+        return true;
     }
 
     @Override
@@ -320,24 +330,13 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     public boolean isPmReportsStatusDown() {
         boolean result = false;
         VDS vds = getVds();
-        VDSReturnValue returnValue=null;
+        VDSFenceReturnValue returnValue = null;
         // Check first if Host has configured PM
         if (vds != null && vds.getpm_enabled()) {
-            FenceExecutor executor = new FenceExecutor(vds, FenceActionType.Status);
-            if (executor.findProxyHost()) {
-                // try to get status via Primary card
-                returnValue = executor.fence(FenceAgentOrder.Primary);
-                if (returnValue.getSucceeded()) {
-                    result = isHostStatusOff(returnValue);
-                }
-                // try to get status via Secondary card (if configured)
-                if (!result && !StringUtils.isEmpty(vds.getPmSecondaryIp())) {
-                    returnValue = executor.fence(FenceAgentOrder.Secondary);
-                    if (returnValue.getSucceeded()) {
-                        result = isHostStatusOff(returnValue);
-                    }
-                }
-            }
+            FenceExecutor executor = new FenceExecutor(vds);
+            returnValue = executor.checkStatus();
+            // !! handle failure
+            result = isHostStatusOff(returnValue);
         }
         if (result) {
             runVdsCommand(VDSCommandType.SetVdsStatus,
@@ -354,10 +353,10 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
                 && validate(validator.messagingBrokerProvided());
     }
 
-    private static boolean isHostStatusOff(VDSReturnValue returnValue) {
+    private static boolean isHostStatusOff(VDSFenceReturnValue returnValue) {
         String OFF = "off";
         boolean result = false;
-        if (returnValue != null && returnValue.getReturnValue() != null) {
+        if (returnValue != null) {
             FenceStatusReturnValue value = (FenceStatusReturnValue) returnValue.getReturnValue();
             result = value.getStatus().equalsIgnoreCase(OFF);
         }

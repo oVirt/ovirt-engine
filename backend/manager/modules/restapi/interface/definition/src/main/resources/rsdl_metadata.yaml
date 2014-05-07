@@ -2957,14 +2957,14 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /hosts/{host:id}/fence|rel=fence
-  description: initiate the fence operation on the host which has become non-responsive after multiple retries to connect to it
+  description: perform fencing operation (start/stop/status) on the host. 
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.fence_type: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
-        description: initiate the fence operation on the host which has become non-responsive after multiple retries to connect to it
+        description: perform fencing operation (start/stop/status) on the host.
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -3302,6 +3302,58 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /hosts/{host:id}/fenceagents|rel=get
+  description: get all fencing agents defined for this host
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /hosts/{host:id}/fenceagents|rel=add
+  description: add a new fencing-agent to the host
+  request:
+    body:
+      parameterType: Agent
+      signatures:
+      - mandatoryArguments: {agent.address: 'xs:string', agent.order: 'xs:int', agent.type: 'xs:string', agent.username: 'xs:string', agent.password: 'xs:string'}
+        optionalArguments: {agent.port: 'xs:int', agent.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=get
+  description: get the fencing agent with the specified ID.  
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}        
+- name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=update
+  description: update a fencing-agent
+  request:
+    body:
+      parameterType: Agent
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {agent.address: 'xs:string', agent.order: 'xs:int', agent.type: 'xs:string', agent.username: 'xs:string', agent.password: 'xs:string', agent.port: 'xs:int', agent.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /hosts/{host:id}/fenceagents/{fenceagent:id}|rel=delete
+  description: delete the specified fencing agent
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}                    
 - name: /networks|rel=get
   description: get the list of all networks in the system
   request:

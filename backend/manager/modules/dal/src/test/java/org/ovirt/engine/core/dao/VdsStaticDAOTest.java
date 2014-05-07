@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Test;
@@ -17,7 +16,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 
 public class VdsStaticDAOTest extends BaseDAOTestCase {
-    private static final String IP_ADDRESS = "192.168.122.17";
     private VdsStaticDAO dao;
     private VdsDynamicDAO dynamicDao;
     private VdsStatisticsDAO statisticsDao;
@@ -37,7 +35,6 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
         newStaticVds.setSshUsername("root");
         newStaticVds.setVdsGroupId(existingVds.getVdsGroupId());
         newStaticVds.setSshKeyFingerprint("b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31");
-        newStaticVds.setPmSecondaryOptionsMap(new HashMap<String, String>());
         newStaticVds.setProtocol(VdsProtocol.STOMP);
     }
 
@@ -72,17 +69,6 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
 
         assertNotNull(vds);
         assertEquals(existingVds.getHostName(), vds.getHostName());
-    }
-
-    /**
-     * Ensures the right set of VdsStatic instances are returned.
-     */
-    @Test
-    public void testGetAllWithIpAddress() {
-        List<VdsStatic> result = dao.getAllWithIpAddress(IP_ADDRESS);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
     }
 
     /**

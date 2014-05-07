@@ -54,15 +54,6 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
     List<VDS> getAllForHostname(String hostname);
 
     /**
-     * Retrieves all instances with the given address.
-     *
-     * @param address
-     *            the address
-     * @return the list of instances
-     */
-    List<VDS> getAllWithIpAddress(String address);
-
-    /**
      * Retrieves all instances with the given unique id.
      *
      * @param id

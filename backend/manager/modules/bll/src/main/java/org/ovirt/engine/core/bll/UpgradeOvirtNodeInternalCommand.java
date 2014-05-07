@@ -173,7 +173,7 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
                     throw new VdsInstallException(VDSStatus.InstallFailed, StringUtils.EMPTY);
                 case Reboot:
                     setVdsStatus(VDSStatus.Reboot);
-                    RunSleepOnReboot(getStatusOnReboot());
+                    runSleepOnReboot(getStatusOnReboot());
                 break;
                 case Complete:
                     if (!getParameters().getActivateHost() && VDSStatus.Maintenance.equals(vdsInitialStatus)) {

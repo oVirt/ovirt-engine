@@ -15,7 +15,7 @@ public class GetAgentFenceOptionsQuery<P extends GetAgentFenceOptionsQueryParame
     protected void executeQueryCommand() {
         String version = getParameters().getVersion();
         VdsFenceOptions options = new VdsFenceOptions(version);
-        HashMap<String, HashMap<String, String>> map = options.getFencingOptionMappingMap();
+        HashMap<String, HashMap<String, String>> map = options.getFenceOptionMappingMap();
         getQueryReturnValue().setReturnValue(map);
         getQueryReturnValue().setSucceeded(map.size() > 0);
     }

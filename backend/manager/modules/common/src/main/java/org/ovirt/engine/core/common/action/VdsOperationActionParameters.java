@@ -60,9 +60,6 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     public VdsOperationActionParameters(VdsStatic vdsStaticVal, String passwordVal) {
         super(vdsStaticVal.getId());
-        if ("".equals(vdsStaticVal.getManagementIp())) {
-            vdsStaticVal.setManagementIp(null);
-        }
         vdsStatic = vdsStaticVal;
         password = passwordVal;
         authMethod = AuthenticationMethod.Password;

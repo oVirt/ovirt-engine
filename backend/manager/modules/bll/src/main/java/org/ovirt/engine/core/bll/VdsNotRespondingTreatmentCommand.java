@@ -55,17 +55,6 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         return lockProperties.withScope(Scope.Execution);
     }
 
-    /**
-     * Create an executor which retries to find a proxy, since this command is automatic and we don't want it to fail
-     * fast if no proxy is available, but to try a few times.
-     *
-     * @return The executor, which is used to check if a proxy is available for fence the host.
-     */
-    @Override
-    protected FenceExecutor createExecutorForProxyCheck() {
-        return new FenceExecutor(getVds(), getParameters().getAction());
-    }
-
     private boolean shouldFencingBeSkipped(VDS vds) {
         // check if fencing in cluster is enabled
         VDSGroup vdsGroup = getDbFacade().getVdsGroupDao().get(vds.getVdsGroupId());
@@ -91,6 +80,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      */
     @Override
     protected void executeCommand() {
+        boolean skippedDueToFencingPolicy = false;
         setVds(null);
         if (getVds() == null) {
             setCommandShouldBeLogged(false);
@@ -171,10 +161,6 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     }
 
     @Override
-    protected void setStatus() {
-    }
-
-    @Override
     protected void handleError() {
         // if fence failed on spm, move storage pool to non operational
         if (getVds().getSpmStatus() != VdsSpmStatus.None) {
@@ -186,7 +172,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
                             AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM));
         }
         log.error("Failed to run Fence script on vds '{}'.", getVdsName());
-        AlertIfPowerManagementOperationSkipped(RESTART, null);
+        alertIfPowerManagementOperationSkipped(RESTART, null);
     }
 
     @Override

@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -50,6 +49,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
@@ -168,14 +168,13 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     }
 
     private void processFence() {
-        FenceExecutor executor = new FenceExecutor(getVds(), FenceActionType.Status);
-        // check first if we have any VDS to act as the proxy for fence
-        // actions.
-        if (getVds().getpm_enabled() && executor.findProxyHost()) {
-            VDSReturnValue returnValue = executor.fence();
-            fenceSucceeded = returnValue.getSucceeded();
+        FenceExecutor executor = new FenceExecutor(getVds());
+        vdsProxyFound = new FenceProxyLocator(getVds()).isProxyHostAvailable();
+        if (getVds().getpm_enabled() && vdsProxyFound) {
+            VDSFenceReturnValue returnValue = executor.checkStatus();
+            fenceSucceeded = returnValue.getSucceeded(); // potential bug here - if no proxy host found, this variable
+                                                         // is still 'true'
             fenceStatusReturnValue = (FenceStatusReturnValue) returnValue.getReturnValue();
-            vdsProxyFound = true;
         }
     }
 

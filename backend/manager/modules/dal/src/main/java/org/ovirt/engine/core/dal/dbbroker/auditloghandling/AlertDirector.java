@@ -24,13 +24,16 @@ public final class AlertDirector {
         AuditLogDirector.log(auditLogable, logType, message);
     }
 
+    public static void AddVdsAlert(Guid vdsId, AuditLogType type) {
+        AddVdsAlert(vdsId, type, new AuditLogableBase());
+    }
+
     /**
      * Adds an alert
      * @param vdsId
      * @param type
      */
-    public static void AddVdsAlert(Guid vdsId, AuditLogType type) {
-        AuditLogableBase alert = new AuditLogableBase();
+    public static void AddVdsAlert(Guid vdsId, AuditLogType type, AuditLogableBase alert) {
         alert.setVdsId(vdsId);
         AlertDirector.Alert(alert, type);
     }

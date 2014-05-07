@@ -261,11 +261,13 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 getStrippedVdsUniqueId(),
                 getParameters().getVdsPort(),
                 IsPending);
-
         UpdateVdsActionParameters p = new UpdateVdsActionParameters(vds.getStaticData(), "", false);
         p.setInstallVds(!IsPending);
         p.setIsReinstallOrUpgrade(!IsPending);
         p.setAuthMethod(VdsOperationActionParameters.AuthenticationMethod.PublicKey);
+        if (vds.isFenceAgentsExist()) {
+            p.setFenceAgents(vds.getFenceAgents());
+        }
         p.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
         VdcReturnValueBase rc = Backend.getInstance().runInternalAction(VdcActionType.UpdateVds, p);
 
@@ -295,7 +297,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     private boolean registerNewHost(Guid vdsGroupId, boolean IsPending) {
         boolean returnValue = true;
 
-        VdsStatic vds = new VdsStatic(getParameters().getVdsHostName(), "",
+        VdsStatic vds = new VdsStatic(getParameters().getVdsHostName(),
                     getStrippedVdsUniqueId(), getParameters().getVdsPort(),
                     getParameters().getSSHPort(),
                     getParameters().getSSHUser(),
@@ -376,6 +378,9 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                                 vds_byHostName.getStaticData(), "" , false);
                         parameters.setShouldBeLogged(false);
                         parameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+                        if (vds_byHostName.isFenceAgentsExist()) {
+                            parameters.setFenceAgents(vds_byHostName.getFenceAgents());
+                        }
 
                         // If host exists in InstallingOs status, remove it from DB and move on
                         final VDS foundVds = DbFacade.getInstance().getVdsDao().getByName(parameters.getVdsStaticData().getName());
@@ -413,7 +418,9 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                                 "VdcBLL::HandleOldVdssWithSameHostName - Could not change the IP for an existing VDS. All available hostnames are taken (ID = '{}', name = '{}', management IP = '{}' , host name = '{}')",
                                 vds_byHostName.getId(),
                                 vds_byHostName.getName(),
-                                vds_byHostName.getManagementIp(),
+                                vds_byHostName.getFenceAgents().isEmpty() ? "" : vds_byHostName.getFenceAgents()
+                                        .get(0)
+                                        .getIp(),
                                 vds_byHostName.getHostName());
                         error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_HOST_ALL_TAKEN;
                         returnValue = false;
@@ -462,6 +469,9 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     hostToRegister.setVdsName(newName);
                     UpdateVdsActionParameters parameters =
                             new UpdateVdsActionParameters(hostToRegister.getStaticData(), "", false);
+                    if (hostToRegister.isFenceAgentsExist()) {
+                        parameters.setFenceAgents(hostToRegister.getFenceAgents());
+                    }
                     VdcReturnValueBase ret = Backend.getInstance().runInternalAction(VdcActionType.UpdateVds, parameters);
                     if (ret == null || !ret.getSucceeded()) {
                         error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_NAME;

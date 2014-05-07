@@ -53,6 +53,8 @@ public enum VdcQueryType implements Serializable {
     GetServerSSHPublicKey,
     GetServerSSHKeyFingerprint,
     GetCpuStatisticsByVdsId,
+    GetFenceAgentById,
+    GetFenceAgentsByVdsId,
 
     // VdsStatic Queries
     GetVdsStaticByName,

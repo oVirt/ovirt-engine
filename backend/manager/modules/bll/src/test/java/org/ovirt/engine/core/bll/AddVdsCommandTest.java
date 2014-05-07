@@ -22,6 +22,7 @@ import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -95,9 +96,15 @@ public class AddVdsCommandTest {
         when(commandMock.getVdsDAO()).thenReturn(vdsDaoMock);
         when(commandMock.validateVdsGroup()).thenReturn(true);
         when(commandMock.validateSingleHostAttachedToLocalStorage()).thenReturn(true);
-        when(commandMock.isPowerManagementLegal()).thenReturn(true);
 
         when(commandMock.getSSHClient()).thenReturn(sshClient);
+        Version version = new Version("1.2.3");
+        VDSGroup vdsGroup = new VDSGroup();
+        vdsGroup.setcompatibility_version(version);
+        when(commandMock.getVdsGroup()).thenReturn(vdsGroup);
+        when(commandMock.isPowerManagementLegal(parameters.getVdsStaticData().isPmEnabled(),
+                parameters.getFenceAgents(),
+                new Version("1.2.3").toString())).thenReturn(true);
         doNothing().when(sshClient).connect();
         doNothing().when(sshClient).authenticate();
     }
@@ -142,7 +149,6 @@ public class AddVdsCommandTest {
     public void canDoActionSucceedsWhenHasPeersThrowsException() throws Exception {
         setupGlusterMock(true, new VDS(), true);
         when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenThrow(new RuntimeException());
-
         assertTrue(commandMock.canDoAction());
     }
 

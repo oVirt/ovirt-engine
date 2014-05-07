@@ -1733,29 +1733,40 @@
   <!-- Hosts -->
   <xs:element name="agent" type="Agent"/>
   <xs:complexType name="Agent">
-    <xs:sequence>
-      <xs:element name="address" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="username" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="password" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element ref="options" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="concurrent" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="order" type="xs:int" minOccurs="0" maxOccurs="1"/>
-    </xs:sequence>
-    <xs:attribute name="type" type="xs:string"/>
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="address" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="username" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="password" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="options" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="concurrent" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="order" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="port" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="type" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
+
 
   <xs:element name="agents" type="Agents"/>
 
   <xs:complexType name="Agents">
-    <xs:sequence>
-      <xs:element name="agent" type="Agent" minOccurs="0" maxOccurs="unbounded">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="Agents"/>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
+      <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="agent" type="Agent" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="Agents"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="power_management" type="PowerManagement"/>
