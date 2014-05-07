@@ -21,24 +21,26 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.BlockStats;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProfileDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.FopStats;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.StatsInfo;
-import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
+import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeProfileParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetGlusterVolumeProfileInfoQueryTest extends
-        AbstractQueryTest<GlusterVolumeQueriesParameters, GetGlusterVolumeProfileInfoQuery<GlusterVolumeQueriesParameters>> {
+        AbstractQueryTest<GlusterVolumeProfileParameters, GetGlusterVolumeProfileInfoQuery<GlusterVolumeProfileParameters>> {
 
     private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid VOLUME_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c943");
     private GlusterVolumeProfileInfo expectedProfileInfo;
-    private GlusterVolumeQueriesParameters params;
+    private GlusterVolumeProfileParameters params;
 
     @Mock
     private VdsDAO vdsDao;
@@ -48,6 +50,9 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
 
     @Mock
     private GlusterVolumeDao volumeDao;
+
+    @Mock
+    private GlusterBrickDao brickDao;
 
     @Before
     @Override
@@ -67,14 +72,23 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
         return vds;
     }
 
-    public void mockVdsDbFacadeAndDao() {
+    private GlusterBrickEntity getBrick() {
+        GlusterBrickEntity brick = new GlusterBrickEntity();
+        brick.setBrickDirectory("dir");
+        brick.setServerName("host");
+        return brick;
+    }
+
+    private void mockVdsDbFacadeAndDao() {
         doReturn(Collections.singletonList(getVds(VDSStatus.Up))).when(vdsDao).getAllForVdsGroupWithStatus(CLUSTER_ID,
                 VDSStatus.Up);
         doReturn(volumeDao).when(getQuery()).getGlusterVolumeDao();
+        doReturn(brickDao).when(getQuery()).getGlusterBrickDao();
         doReturn(clusterUtils).when(getQuery()).getClusterUtils();
         doReturn(getVds(VDSStatus.Up)).when(clusterUtils).getUpServer(CLUSTER_ID);
         doReturn(vdsDao).when(clusterUtils).getVdsDao();
         doReturn("test-vol").when(getQuery()).getGlusterVolumeName(VOLUME_ID);
+        doReturn(getBrick()).when(brickDao).getById(any(Guid.class));
     }
 
     private void setupMock() {
@@ -86,7 +100,7 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     }
 
     private void setupExpectedGlusterVolumeOptionInfo() {
-        params = new GlusterVolumeQueriesParameters(CLUSTER_ID, VOLUME_ID);
+        params = new GlusterVolumeProfileParameters(CLUSTER_ID, VOLUME_ID);
         expectedProfileInfo = new GlusterVolumeProfileInfo();
         expectedProfileInfo.setVolumeId(VOLUME_ID);
         expectedProfileInfo.setBrickProfileDetails(getBrickProfileDetails());
@@ -131,6 +145,7 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     public void testExecuteQueryCommand() {
         doReturn(params.getClusterId()).when(getQueryParameters()).getClusterId();
         doReturn(params.getVolumeId()).when(getQueryParameters()).getVolumeId();
+        doReturn(params.isNfs()).when(getQueryParameters()).isNfs();
         getQuery().executeQueryCommand();
         GlusterVolumeProfileInfo glusterVolumeProfileInfo =
                 (GlusterVolumeProfileInfo) getQuery().getQueryReturnValue().getReturnValue();
