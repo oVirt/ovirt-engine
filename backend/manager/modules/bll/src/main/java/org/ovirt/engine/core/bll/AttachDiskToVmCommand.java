@@ -44,11 +44,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
     public AttachDiskToVmCommand(T parameters) {
         super(parameters);
         disk = loadDisk((Guid) getParameters().getEntityInfo().getId());
-    }
-
-    protected AttachDiskToVmCommand(T parameters, Disk disk) {
-        super(parameters);
-        this.disk = disk;
+        disk.setReadOnly(getParameters().isReadOnly());
     }
 
     @Override
@@ -122,11 +118,21 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             }
         }
         DiskValidator diskValidator = getDiskValidator(disk);
+
+        if (!validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface())) {
+            return false;
+        }
+
         if (!validate(diskValidator.isVirtIoScsiValid(getVm()))) {
             return false;
         }
 
         if (!validate(diskValidator.isDiskInterfaceSupported(getVm()))) {
+            return false;
+        }
+
+        if (disk.getDiskStorageType() == DiskStorageType.LUN &&
+                !validate(diskValidator.isReadOnlyPropertyCompatibleWithLunInterface())) {
             return false;
         }
 
