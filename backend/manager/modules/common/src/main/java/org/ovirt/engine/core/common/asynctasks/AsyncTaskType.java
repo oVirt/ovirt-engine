@@ -11,6 +11,7 @@ public enum AsyncTaskType {
     cloneImageStructure,
     syncImageData,
     extendImageSize,
+    downloadImage,
     downloadImageFromStream;
 
     public int getValue() {
