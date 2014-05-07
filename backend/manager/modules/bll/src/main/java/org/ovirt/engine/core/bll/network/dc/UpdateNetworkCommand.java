@@ -33,6 +33,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -151,7 +153,8 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 Objects.equals(oldNetwork.getProvidedBy(), newNetwork.getProvidedBy()) &&
                 Objects.equals(oldNetwork.getStp(), newNetwork.getStp()) &&
                 Objects.equals(oldNetwork.getVlanId(), newNetwork.getVlanId()) &&
-                Objects.equals(oldNetwork.isVmNetwork(), newNetwork.isVmNetwork());
+                Objects.equals(oldNetwork.isVmNetwork(), newNetwork.isVmNetwork() &&
+                Objects.equals(oldNetwork.getLabel(), newNetwork.getLabel()));
     }
 
     private boolean oldAndNewNetworkIsNotExternal() {
@@ -182,20 +185,39 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             super(network);
         }
 
-        public ValidationResult notRenamingLabel(String oldLabel) {
-            if (network.getLabel() == null || oldLabel == null || network.getLabel().equals(oldLabel)) {
+        public ValidationResult notRenamingLabel(String newLabel) {
+            String oldLabel = network.getLabel();
+            if (oldLabel == null || newLabel == null || oldLabel.equals(newLabel)) {
                 return ValidationResult.VALID;
             }
 
             List<VdsNetworkInterface> nics =
                     getDbFacade().getInterfaceDao().getVdsInterfacesByNetworkId(network.getId());
             for (VdsNetworkInterface nic : nics) {
-                if (NetworkUtils.isLabeled(nic) && nic.getLabels().contains(oldLabel)) {
-                    new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_LABEL_RENAMING_NOT_SUPPORTED);
+                VdsNetworkInterface labeledNic = nic;
+                if (NetworkUtils.isVlan(nic)) {
+                    labeledNic = getBaseInterface(nic);
+                }
+
+                if (NetworkUtils.isLabeled(labeledNic) && labeledNic.getLabels().contains(oldLabel)) {
+                    return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_LABEL_RENAMING_NOT_SUPPORTED);
                 }
             }
 
             return ValidationResult.VALID;
+        }
+
+        private VdsNetworkInterface getBaseInterface(VdsNetworkInterface vlan) {
+            List<VdsNetworkInterface> hostNics =
+                    getDbFacade().getInterfaceDao().getAllInterfacesForVds(vlan.getVdsId());
+
+            for (VdsNetworkInterface hostNic : hostNics) {
+                if (NetworkUtils.interfaceBasedOn(vlan.getName(), hostNic.getName())) {
+                    return hostNic;
+                }
+            }
+
+            throw new VdcBLLException(VdcBllErrors.LABELED_NETWORK_INTERFACE_NOT_FOUND);
         }
 
         public ValidationResult notRenamingUsedNetwork(String networkName) {
