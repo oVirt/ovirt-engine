@@ -57,6 +57,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -197,6 +198,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         initOsRepository();
         initSearchDependencies();
         initHandlers();
+        initVmPropertiesUtils();
 
         final String AppErrorsFileName = "bundles/AppErrors.properties";
         final String VdsErrorsFileName = "bundles/VdsmErrors.properties";
@@ -661,6 +663,11 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @ExcludeClassInterceptors
     public void triggerPoolMonitoringJob() {
         SchedulerUtilQuartzImpl.getInstance().triggerJob(poolMonitoringJobId);
+    }
+
+    private void initVmPropertiesUtils() {
+        VmPropertiesUtils vmPropertiesUtils = VmPropertiesUtils.getInstance();
+        SimpleDependecyInjector.getInstance().bind(VmPropertiesUtils.class, vmPropertiesUtils);
     }
 
     private void initOsRepository() {
