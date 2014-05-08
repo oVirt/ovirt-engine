@@ -51,6 +51,9 @@ public class NetworkMapper {
         if (model.isSetStp()) {
             entity.setStp(model.isStp());
         }
+        if (model.isSetDisplay()) { // for backward compatibility use display tag or usage tag
+            entity.getCluster().setDisplay(model.isDisplay());
+        }
         if (model.isSetUsages()) {
             List<NetworkUsage> networkUsages = new ArrayList<NetworkUsage>();
             for (String usage : model.getUsages().getUsages()) {
@@ -62,9 +65,6 @@ public class NetworkMapper {
         }
         if (model.isSetMtu()) {
             entity.setMtu(model.getMtu());
-        }
-        if (model.isSetDisplay()) { // for backward compatibility use display tag or usage tag
-            entity.getCluster().setDisplay(model.isDisplay());
         }
         if (model.isSetRequired()) {
             entity.getCluster().setRequired(model.isRequired());
