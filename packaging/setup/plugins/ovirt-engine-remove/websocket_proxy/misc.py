@@ -41,10 +41,13 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _misc(self):
-        self.services.startup(
-            name=osetupcons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
-            state=False,
-        )
+        if self.services.exists(
+            name=osetupcons.Const.WEBSOCKET_PROXY_SERVICE_NAME
+        ):
+            self.services.startup(
+                name=osetupcons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
+                state=False,
+            )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
