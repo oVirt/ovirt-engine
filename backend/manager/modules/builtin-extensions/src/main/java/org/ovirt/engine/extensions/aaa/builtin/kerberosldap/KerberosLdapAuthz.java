@@ -1,6 +1,7 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -204,7 +205,11 @@ public class KerberosLdapAuthz implements Extension {
                         configuration.get("config.query.filter.size")
                 ).mput(
                         Base.ContextKeys.BUILD_INTERFACE_VERSION,
-                        Base.INTERFACE_VERSION_CURRENT);
+                        Base.INTERFACE_VERSION_CURRENT
+                ).mput(
+                        Authz.ContextKeys.AVAILABLE_NAMESPACES,
+                        Arrays.asList("*")
+                        );
     }
 
     private ExtMap mapLdapUser(LdapUser user) {

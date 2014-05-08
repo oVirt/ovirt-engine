@@ -177,28 +177,38 @@ public class AuthzUtils {
             ) {
         Object opaque = null;
         try {
-            opaque = extension.invoke(
-                    new ExtMap().mput(
-                            Base.InvokeKeys.COMMAND,
-                            Authz.InvokeCommands.QUERY_OPEN
-                            ).mput(
-                                    input
-                            )
-                    ).get(Authz.InvokeKeys.QUERY_OPAQUE);
-            List<ExtMap> result = null;
-            do {
-                result = extension.invoke(new ExtMap().mput(
-                        Base.InvokeKeys.COMMAND,
-                        Authz.InvokeCommands.QUERY_EXECUTE
-                        ).mput(
-                                Authz.InvokeKeys.QUERY_OPAQUE,
-                                opaque
+            for (String namespace : extension.getContext().<List<String>>get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
+                opaque = extension.invoke(
+                        new ExtMap().mput(
+                                Base.InvokeKeys.COMMAND,
+                                Authz.InvokeCommands.QUERY_OPEN
                                 ).mput(
-                                        Authz.InvokeKeys.PAGE_SIZE,
-                                        PAGE_SIZE
+                                    Authz.InvokeKeys.NAMESPACE,
+                                    namespace
+                                ).mput(
+                                        input
                                 )
-                        ).get(Authz.InvokeKeys.QUERY_RESULT);
-            } while (result != null && handler.handle(result));
+                        ).get(Authz.InvokeKeys.QUERY_OPAQUE);
+                List<ExtMap> result = null;
+                do {
+                    result = extension.invoke(new ExtMap().mput(
+                            Base.InvokeKeys.COMMAND,
+                            Authz.InvokeCommands.QUERY_EXECUTE
+                            ).mput(
+                                    Authz.InvokeKeys.QUERY_OPAQUE,
+                                    opaque
+                                    ).mput(
+                                            Authz.InvokeKeys.PAGE_SIZE,
+                                            PAGE_SIZE
+                                    )
+                            ).get(Authz.InvokeKeys.QUERY_RESULT);
+                } while (result != null && handler.handle(result));
+
+                // no conditional in for-in
+                if (result != null) {
+                    break;
+                }
+            }
         } finally {
             extension.invoke(new ExtMap().mput(
                     Base.InvokeKeys.COMMAND,

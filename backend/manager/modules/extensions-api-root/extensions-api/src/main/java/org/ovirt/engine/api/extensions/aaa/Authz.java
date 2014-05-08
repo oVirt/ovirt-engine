@@ -16,6 +16,12 @@ public class Authz {
      */
     public static class ContextKeys {
         /**
+         * Available namespaces within provider.
+         * Query can be done within the context of namespace, to avoid
+         * scanning entire network. At least one namespace must be available.
+         */
+        public static final ExtKey AVAILABLE_NAMESPACES = new ExtKey("AAA_AUTHZ_AVAILABLE_NAMESPACES", List/*<String>*/.class, "6dffa34c-955f-486a-bd35-0a272b45a711");
+        /**
          * Maximum query filter size.
          * Limit the number of entries within {@link InvokeKeys#QUERY_FILTER}.
          * No more than this may be provided.
@@ -45,6 +51,11 @@ public class Authz {
          * @see Status
          */
         public static final ExtKey STATUS = new ExtKey("AAA_AUTHZ_STATUS", Integer.class, "566f0ba5-8329-4de1-952a-7a81e4bedd3e");
+        /**
+         * Namespace to use.
+         * @see ContextKeys#AVAILABLE_NAMESPACES
+         */
+        public static final ExtKey NAMESPACE = new ExtKey("AAA_AUTHZ_NAMESPACE", String.class, "7e12d802-86ff-4162-baaa-d6f6fe73201e");
         /**
          * Query filter.
          * @see QueryFilterRecord
@@ -101,6 +112,7 @@ public class Authz {
          * <p>
          * Input:
          * <ul>
+         * <li>{@link InvokeKeys#NAMESPACE}[M]</li>
          * <li>{@link InvokeKeys#QUERY_ENTITY}[M]</li>
          * <li>{@link InvokeKeys#QUERY_FILTER}[M]</li>
          * <li>{@link InvokeKeys#RESOLVE_GROUPS_RECURSIVE}[M] - resolve groups recursively.</li>

@@ -102,7 +102,11 @@ public class InternalAuthz implements Extension {
                         configuration.get("config.query.filter.size")
                 ).mput(
                         Base.ContextKeys.BUILD_INTERFACE_VERSION,
-                        Base.INTERFACE_VERSION_CURRENT);
+                        Base.INTERFACE_VERSION_CURRENT
+                ).mput(
+                        Authz.ContextKeys.AVAILABLE_NAMESPACES,
+                        Arrays.asList("*")
+                        );
         adminUser = new ExtMap().mput(
                 Authz.PrincipalRecord.NAME,
                 configuration.getProperty("config.authz.user.name")
