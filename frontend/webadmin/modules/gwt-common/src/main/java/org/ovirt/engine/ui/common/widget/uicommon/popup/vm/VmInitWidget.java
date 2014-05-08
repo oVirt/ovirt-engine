@@ -549,12 +549,14 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         model.getPasswordSet().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
-                if ("IsChangable".equals(propName)) { //$NON-NLS-1$
-                    passwordSetEditor.setTitle(
-                            model.getPasswordSet().getIsChangable() ?
-                            constants.vmInitPasswordSetToolTip() : constants.vmInitPasswordNotSetToolTip()
-                    );
+                if (args != null && args instanceof PropertyChangedEventArgs) {
+                    String propName = ((PropertyChangedEventArgs) args).propertyName;
+                    if ("IsChangable".equals(propName)) { //$NON-NLS-1$
+                        passwordSetEditor.setTitle(
+                                model.getPasswordSet().getIsChangable() ?
+                                constants.vmInitPasswordSetToolTip() : constants.vmInitPasswordNotSetToolTip()
+                        );
+                    }
                 }
             }
         });
