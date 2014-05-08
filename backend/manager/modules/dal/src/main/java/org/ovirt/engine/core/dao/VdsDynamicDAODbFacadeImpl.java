@@ -279,4 +279,13 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             log.debug("Ignored an unneeded update of VdsDynamic");
         }
     }
+
+    @Override
+    public void updateCpuFlags(Guid id, String cpuFlags) {
+        getCallsHandler().executeModification(
+                "updateCpuFlags",
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_id", id)
+                        .addValue("cpu_flags", cpuFlags));
+    }
 }

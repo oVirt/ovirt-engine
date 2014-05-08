@@ -498,9 +498,6 @@ public class VdsUpdateRunTimeInfo {
                     refreshVdsStats();
                 }
             } else {
-                if (_firstStatus != VDSStatus.Up ) {
-                    monitoringStrategy.processHardwareCapabilities(_vds);
-                }
                 // refresh dynamic data
                 final AtomicBoolean processHardwareNeededAtomic = new AtomicBoolean();
                 VDSStatus refreshReturnStatus =

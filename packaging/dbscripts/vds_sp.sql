@@ -993,3 +993,17 @@ BEGIN
       AND vds_interface.vds_id = vds.vds_id);
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION UpdateCpuFlags(
+  v_vds_id UUID,
+  v_cpu_flags VARCHAR(4000))
+  RETURNS VOID
+AS $procedure$
+BEGIN
+      UPDATE vds_dynamic
+      SET
+      cpu_flags = v_cpu_flags
+      WHERE vds_id = v_vds_id;
+END; $procedure$
+LANGUAGE plpgsql;
