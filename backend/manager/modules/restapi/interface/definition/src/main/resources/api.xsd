@@ -3300,6 +3300,7 @@
           <xs:element ref="network" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="mac" minOccurs="0"/>
           <xs:element ref="ip" minOccurs="0"/>
+          <xs:element name="base_interface" type="xs:string" minOccurs="0" maxOccurs="1" />
           <xs:element ref="vlan" minOccurs="0"/>
           <xs:element ref="bonding" minOccurs="0" maxOccurs="1"/>
           <xs:element name="boot_protocol" type="xs:string" minOccurs="0" maxOccurs="1"/>
