@@ -14,6 +14,8 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MoveImageGroupVDSCommandParameters;
@@ -74,8 +76,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                             getParameters()
                                     .getCopyVolumeType(),
                             getParameters().getVolumeFormat(),
-                            getParameters()
-                                    .getVolumeType(),
+                            getVolumeTypeForDomain(getParameters().getStorageDomainId()),
                             isWipeAfterDelete(),
                             getParameters()
                                     .getForceOverride()));
@@ -119,6 +120,20 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
     private boolean isWipeAfterDelete() {
         return getDestinationDiskImage() != null ? getDestinationDiskImage().isWipeAfterDelete()
                 : getParameters().getWipeAfterDelete();
+    }
+
+    /**
+     * Since we are supporting copy/move operations between different storage families (file/block) we have to
+     * predetermine the volume type according to the destination storage type, for block domains we cannot use sparse
+     * for file domains we will use the same type of the original image
+     * @param storageDomainId
+     * @return
+     */
+    private VolumeType getVolumeTypeForDomain(Guid storageDomainId) {
+        StorageDomainStatic destDomain = getStorageDomainStaticDAO().get(storageDomainId);
+        VolumeType volumeType = destDomain.getStorageType().isBlockDomain() ? VolumeType.Preallocated :
+                getParameters().getVolumeType();
+        return volumeType;
     }
 
     /**
