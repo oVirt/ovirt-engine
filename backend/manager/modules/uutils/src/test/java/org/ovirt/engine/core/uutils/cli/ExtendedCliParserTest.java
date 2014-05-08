@@ -225,7 +225,7 @@ public class ExtendedCliParserTest {
 
         final String[] args = { argName };
 
-        parser.addArg(new ArgumentBuilder().shortName(argName).valueRequied(true).build());
+        parser.addArg(new ArgumentBuilder().shortName(argName).valueRequired(true).build());
         parser.parse(args);
     }
 
@@ -239,13 +239,13 @@ public class ExtendedCliParserTest {
         parser.addArg(new ArgumentBuilder()
                 .shortName("-a")
                 .longName("--aa")
-                .valueRequied(true)
+                .valueRequired(true)
                 .build());
 
         parser.addArg(new ArgumentBuilder()
                 .shortName("-a")
                 .longName("--bb")
-                .valueRequied(true)
+                .valueRequired(true)
                 .build());
     }
 
@@ -259,13 +259,13 @@ public class ExtendedCliParserTest {
         parser.addArg(new ArgumentBuilder()
                 .shortName("-a")
                 .longName("--aa")
-                .valueRequied(true)
+                .valueRequired(true)
                 .build());
 
         parser.addArg(new ArgumentBuilder()
                 .shortName("-b")
                 .longName("--aa")
-                .valueRequied(true)
+                .valueRequired(true)
                 .build());
     }
 }

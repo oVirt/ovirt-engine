@@ -58,7 +58,7 @@ public class ArgumentBuilder {
      *            indicator if value is required
      * @returns builder instance
      */
-    public ArgumentBuilder valueRequied(boolean valueRequired) {
+    public ArgumentBuilder valueRequired(boolean valueRequired) {
         this.valueRequired = valueRequired;
         return this;
     }

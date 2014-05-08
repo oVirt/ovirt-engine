@@ -47,7 +47,7 @@ public class ArgumentBuilderTest {
                 .shortName(shortName)
                 .longName(longName)
                 .destination(destination)
-                .valueRequied(true)
+                .valueRequired(true)
                 .build();
 
         assertEquals(shortName, arg.getShortName());

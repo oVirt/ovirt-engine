@@ -189,38 +189,38 @@ public class ManageDomainsArguments {
 
         parser.addArg(new ArgumentBuilder()
                 .longName(ARG_CONFIG_FILE)
-                .valueRequied(true)
+                .valueRequired(true)
                 .build());
 
         parser.addArg(new ArgumentBuilder()
                 .longName(ARG_LOG_FILE)
-                .valueRequied(true)
+                .valueRequired(true)
                 .build());
 
         parser.addArg(new ArgumentBuilder()
                 .longName(ARG_LOG_LEVEL)
-                .valueRequied(true)
+                .valueRequired(true)
                 .build());
 
         parser.addArg(new ArgumentBuilder()
                 .longName(ARG_LOG4J_CONFIG)
-                .valueRequied(true)
+                .valueRequired(true)
                 .build());
 
         if (ACTION_ADD.equals(action) || ACTION_EDIT.equals(action)) {
             parser.addArg(new ArgumentBuilder()
                     .longName(ARG_DOMAIN)
-                    .valueRequied(true)
+                    .valueRequired(true)
                     .build());
 
             parser.addArg(new ArgumentBuilder()
                     .longName(ARG_PROVIDER)
-                    .valueRequied(true)
+                    .valueRequired(true)
                     .build());
 
             parser.addArg(new ArgumentBuilder()
                     .longName(ARG_USER)
-                    .valueRequied(true)
+                    .valueRequired(true)
                     .build());
 
             parser.addArg(new ArgumentBuilder()
@@ -229,7 +229,7 @@ public class ManageDomainsArguments {
 
             parser.addArg(new ArgumentBuilder()
                     .longName(ARG_LDAP_SERVERS)
-                    .valueRequied(true)
+                    .valueRequired(true)
                     .build());
 
             parser.addArg(new ArgumentBuilder()
@@ -238,7 +238,7 @@ public class ManageDomainsArguments {
 
             parser.addArg(new ArgumentBuilder()
                     .longName(ARG_PASSWORD_FILE)
-                    .valueRequied(true)
+                    .valueRequired(true)
                     .build());
 
             parser.addArg(new ArgumentBuilder()
@@ -248,7 +248,7 @@ public class ManageDomainsArguments {
         } else if (ACTION_DELETE.equals(action)) {
             parser.addArg(new ArgumentBuilder()
                     .longName(ARG_DOMAIN)
-                    .valueRequied(true)
+                    .valueRequired(true)
                     .build());
 
             parser.addArg(new ArgumentBuilder()
@@ -257,7 +257,7 @@ public class ManageDomainsArguments {
 
             parser.addArg(new ArgumentBuilder()
                     .longName(ARG_PASSWORD_FILE)
-                    .valueRequied(true)
+                    .valueRequired(true)
                     .build());
 
         } else if (ACTION_VALIDATE.equals(action)) {
