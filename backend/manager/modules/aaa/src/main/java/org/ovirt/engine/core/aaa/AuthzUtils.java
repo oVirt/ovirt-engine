@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
-import org.ovirt.engine.api.extensions.ExtUUID;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.api.extensions.aaa.Authz.QueryEntity;
@@ -101,7 +100,6 @@ public class AuthzUtils {
             boolean recursiveGroupsResolving) {
         return populatePrincipals(
                 extension,
-                Authz.InvokeCommands.QUERY_OPEN,
                 new ExtMap().mput(
                         Authz.InvokeKeys.QUERY_ENTITY,
                         Authz.QueryEntity.PRINCIPAL
@@ -118,7 +116,6 @@ public class AuthzUtils {
     private static List<DirectoryGroup> queryGroups(ExtensionProxy extension, final ExtMap filter) {
         return populateGroups(
                 extension,
-                Authz.InvokeCommands.QUERY_OPEN,
                 new ExtMap().mput(
                         Authz.InvokeKeys.QUERY_ENTITY,
                         Authz.QueryEntity.GROUP
@@ -130,10 +127,9 @@ public class AuthzUtils {
     }
 
     private static List<DirectoryUser> populatePrincipals(final ExtensionProxy extension,
-            final ExtUUID command,
-            final ExtMap extMap) {
+            final ExtMap input) {
         final List<DirectoryUser> directoryUsers = new ArrayList<>();
-        queryImpl(command, extMap, extension, new QueryResultHandler() {
+        queryImpl(extension, input, new QueryResultHandler() {
 
             @Override
             public boolean handle(List<ExtMap> queryResults) {
@@ -153,10 +149,9 @@ public class AuthzUtils {
     }
 
     private static List<DirectoryGroup> populateGroups(final ExtensionProxy extension,
-            final ExtUUID command,
-            final ExtMap extMap) {
+            final ExtMap input) {
         final List<DirectoryGroup> directoryGroups = new ArrayList<>();
-        queryImpl(command, extMap, extension, new QueryResultHandler() {
+        queryImpl(extension, input, new QueryResultHandler() {
             @Override
             public boolean handle(List<ExtMap> queryResults) {
 
@@ -176,9 +171,8 @@ public class AuthzUtils {
     }
 
     private static void queryImpl(
-            final ExtUUID command,
-            final ExtMap parameters,
             final ExtensionProxy extension,
+            final ExtMap input,
             final QueryResultHandler handler
             ) {
         Object opaque = null;
@@ -186,9 +180,9 @@ public class AuthzUtils {
             opaque = extension.invoke(
                     new ExtMap().mput(
                             Base.InvokeKeys.COMMAND,
-                            command
+                            Authz.InvokeCommands.QUERY_OPEN
                             ).mput(
-                                    parameters
+                                    input
                             )
                     ).get(Authz.InvokeKeys.QUERY_OPAQUE);
             List<ExtMap> result = null;
