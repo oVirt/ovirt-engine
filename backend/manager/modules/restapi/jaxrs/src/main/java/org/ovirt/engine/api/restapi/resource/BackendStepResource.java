@@ -50,6 +50,7 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
 
     @Override
     public Response end(Action action) {
+        validateParameters(action, "succeeded");
         return doAction(VdcActionType.EndExternalStep,
                 new EndExternalStepParameters(guid, action.isSucceeded()), action);
     }

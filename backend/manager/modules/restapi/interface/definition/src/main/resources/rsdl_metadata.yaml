@@ -4627,7 +4627,7 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {}
+      - mandatoryArguments: {action.succeeded: 'xs:boolean'}
         optionalArguments: {action.force: 'xs:boolean', action.status.state: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: invoke the command to end the specified step of an external job with an optional agrument to force the operation
     urlparams: {}
