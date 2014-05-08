@@ -35,7 +35,9 @@ public enum VdcObjectType {
     GlusterService(25, "GlusterService"),
     ExternalTask(26, "ExternalTask"),
     VnicProfile(27, "Vnic Profile"),
-    MacPool(28, "MAC Pool");
+    MacPool(28, "MAC Pool"),
+    DiskProfile(29, "Disk Profile");
+
 
     private int value;
     private String vdcObjectTranslationVal;

@@ -76,7 +76,7 @@ public class FixturesTool {
     /**
      * Predefined scale storage domain.
      */
-    protected static final Guid STORAGE_DOAMIN_SCALE_SD5 = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
+    public static final Guid STORAGE_DOAMIN_SCALE_SD5 = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
 
     /**
      * Predefined scale storage domain.
@@ -628,4 +628,6 @@ public class FixturesTool {
     public static final Guid NON_DEFAULT_MAC_POOL = new Guid("c248552d-64d4-4a77-ab1d-4c5eea00be6b");
     public static final Guid NOT_USED_MAC_POOL_ID = new Guid("17baf4e3-4347-4f81-915f-7762a108b81a");
     public static final Guid DEFAULT_MAC_POOL_ID = new Guid("8c3a60e9-6a66-40db-84e0-c74077991775");
+
+    public static final Guid DISK_PROFILE_1 = new Guid("fd81f1e1-785b-4579-ab75-1419ebb87052");
 }
