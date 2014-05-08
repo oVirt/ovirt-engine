@@ -278,4 +278,13 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
         getCallsHandler().executeModification("UpdateVdsDynamicPowerManagementPolicyFlag", parameterSource);
 
     }
+
+    @Override
+    public void updateCpuFlags(Guid id, String cpuFlags) {
+        getCallsHandler().executeModification(
+                "updateCpuFlags",
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_id", id)
+                        .addValue("cpu_flags", cpuFlags));
+    }
 }

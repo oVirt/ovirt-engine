@@ -35,4 +35,10 @@ public interface VdsDynamicDAO extends GenericDao<VdsDynamic, Guid>, StatusAware
      * @param controlledByPmPolicy - a new value for the flag
      */
     void updateVdsDynamicPowerManagementPolicyFlag(Guid id, boolean controlledByPmPolicy);
+
+    /**
+     * @param id
+     * @param cpuFlags
+     */
+    void updateCpuFlags(Guid id, String cpuFlags);
 }

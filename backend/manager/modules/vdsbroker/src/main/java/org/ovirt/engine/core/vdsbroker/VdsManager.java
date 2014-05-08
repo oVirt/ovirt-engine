@@ -547,6 +547,12 @@ public class VdsManager {
 
             // We process the software capabilities.
             VDSStatus oldStatus = vds.getStatus();
+            if (oldStatus != VDSStatus.Up) {
+                // persist to db the host's cpu_flags.
+                // TODO this needs to be revisited - either all the logic is in-memory or based on db
+                DbFacade.getInstance().getVdsDynamicDao().updateCpuFlags(vds.getId(), vds.getCpuFlags());
+                monitoringStrategy.processHardwareCapabilities(vds);
+            }
             monitoringStrategy.processSoftwareCapabilities(vds);
 
             returnStatus = vds.getStatus();
