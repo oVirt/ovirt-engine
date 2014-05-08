@@ -280,7 +280,7 @@ public class ShellLikeConfd {
      * @return map of all properties.
      */
     public Map<String, String> getProperties() {
-        return values;
+        return Collections.unmodifiableMap(values);
     }
 
     /**
