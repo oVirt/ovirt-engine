@@ -76,7 +76,7 @@ public class FixturesTool {
     /**
      * Predefined scale storage domain.
      */
-    protected static final Guid STORAGE_DOAMIN_SCALE_SD5 = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
+    public static final Guid STORAGE_DOAMIN_SCALE_SD5 = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
 
     /**
      * Predefined scale storage domain.
@@ -624,4 +624,6 @@ public class FixturesTool {
      */
     public static final int NUMBER_OF_VMS_IN_VDS_GROUP_RHEL6_NFS_CLUSTER = 0;
     public static final int NUMBER_OF_VMS_IN_VDS_GROUP_RHEL6_ISCSI = 7;
+
+    public static final Guid DISK_PROFILE_1 = new Guid("fd81f1e1-785b-4579-ab75-1419ebb87052");
 }

@@ -137,6 +137,7 @@ import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
+import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
@@ -1103,5 +1104,14 @@ public class DbFacade {
      */
     public VmNumaNodeDAO getVmNumaNodeDAO() {
         return getDao(VmNumaNodeDAO.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link DiskProfileDao}.
+     *
+     * @return the dao instance
+     */
+    public DiskProfileDao getDiskProfileDao() {
+        return getDao(DiskProfileDao.class);
     }
 }

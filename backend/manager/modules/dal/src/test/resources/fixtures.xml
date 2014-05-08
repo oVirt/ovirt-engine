@@ -5022,6 +5022,46 @@
         </row>
     </table>
 
+    <table name="disk_profiles">
+        <column>id</column>
+        <column>name</column>
+        <column>storage_domain_id</column>
+        <column>qos_id</column>
+        <column>description</column>
+        <row>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
+            <value>engine_profile</value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>ae956031-6be2-43d6-bb90-5191c9253314</value>
+            <value>disk profile description</value>
+        </row>
+        <row>
+            <value>a667da39-27b0-47ec-a5fa-d4293a62b222</value>
+            <value>engine_profile_pm</value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>ae956031-6be2-43d6-bb90-5191c9253315</value>
+            <null />
+        </row>
+        <row>
+            <value>d0f2ca62-f564-447c-aa55-ce2aa12ea798</value>
+            <value>engine2_profile</value>
+            <value>17e7489d-d490-4681-a322-073ca19bd33d</value>
+            <null />
+        </row>
+        <row>
+            <value>471b199e-9454-47a1-85dd-4461f665abc5</value>
+            <value>engine3_profile</value>
+            <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
+            <null />
+        </row>
+        <row>
+            <value>2b75e023-a1fb-4dcb-9738-0ec7fe2d51c6</value>
+            <value>engine4_profile</value>
+            <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
+            <value>ae956031-6be2-43d6-bb90-5191c9253314</value>
+        </row>
+    </table>
+
     <table name="image_storage_domain_map">
         <column>image_id</column>
         <column>storage_domain_id</column>

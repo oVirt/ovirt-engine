@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -318,4 +319,11 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(FixturesTool.VM_NETWORK_INTERFACE_PROFILE, VdcObjectType.VnicProfile)));
     }
 
+    @Test
+    public void testGetEntityNameByIdAndTypeForDiskProfile() {
+        DiskProfile diskProfile = dbFacade.getDiskProfileDao().get(FixturesTool.DISK_PROFILE_1);
+        assertNotNull(diskProfile);
+        String name = diskProfile.getName();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(FixturesTool.DISK_PROFILE_1, VdcObjectType.DiskProfile)));
+    }
 }
