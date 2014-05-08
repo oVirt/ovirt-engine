@@ -49,7 +49,7 @@ public class ImportRepoImageCopyTaskHandler
 
     @Override
     public AsyncTaskType getTaskType() {
-        return AsyncTaskType.copyImage;
+        return AsyncTaskType.downloadImage;
     }
 
     protected OpenStackImageProviderProxy getProviderProxy() {
