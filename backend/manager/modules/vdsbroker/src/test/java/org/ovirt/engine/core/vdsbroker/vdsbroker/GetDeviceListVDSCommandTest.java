@@ -19,7 +19,7 @@ import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 public class GetDeviceListVDSCommandTest {
 
     @Rule
-    public static RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
+    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Test
     public void parseLunFromXmlRpcReturnsIscsiByDefault() throws Exception {

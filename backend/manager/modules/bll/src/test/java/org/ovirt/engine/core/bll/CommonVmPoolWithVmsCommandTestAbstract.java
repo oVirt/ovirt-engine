@@ -54,7 +54,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     @Rule
-    public static MockConfigRule mcr = new MockConfigRule(
+    public MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.MaxVmNameLengthWindows, 15),
             mockConfig(ConfigValues.MaxVmNameLengthNonWindows, 64),
             mockConfig(ConfigValues.MaxVmsInPool, 87),

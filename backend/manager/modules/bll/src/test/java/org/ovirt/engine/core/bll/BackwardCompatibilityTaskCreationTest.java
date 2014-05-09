@@ -59,7 +59,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 public class BackwardCompatibilityTaskCreationTest {
 
     @Rule
-    public static final RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
+    public final RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(

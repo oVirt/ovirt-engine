@@ -23,7 +23,7 @@ public class NetworkUtilsTest {
     private static final String MANAGEMENT_NETWORK = "mgmt";
 
     @Rule
-    public static RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
+    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(

@@ -45,7 +45,7 @@ public class RemoveImageCommandTest {
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.VdcVersion, "3.1"));
 
     @Rule
-    public static RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
+    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Mock
     private SnapshotDao snapshotDAO;

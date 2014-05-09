@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.validator;
 
+import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.both;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -183,8 +183,7 @@ public class DiskImagesValidatorTest {
     public void diskImagesDontExist() {
         doReturn(false).when(validator).isDiskExists(disk1.getId());
         doReturn(false).when(validator).isDiskExists(disk2.getId());
-        assertThat(validator.diskImagesNotExist(),
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_NOT_EXIST)));
+        assertThat(validator.diskImagesNotExist(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_NOT_EXIST));
     }
 
     @Test

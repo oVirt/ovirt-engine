@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -51,7 +51,7 @@ public class SetupNetworksHelperTest {
     private static final String BOND_NAME = "bond0";
     private static final String MANAGEMENT_NETWORK_NAME = "management";
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.ManagementNetwork,
             MANAGEMENT_NETWORK_NAME),
             mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_3.toString(), true),

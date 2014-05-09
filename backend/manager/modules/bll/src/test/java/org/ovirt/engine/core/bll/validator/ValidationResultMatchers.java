@@ -3,8 +3,7 @@ package org.ovirt.engine.core.bll.validator;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.internal.matchers.TypeSafeMatcher;
-import org.junit.matchers.JUnitMatchers;
+import org.hamcrest.TypeSafeMatcher;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
@@ -39,7 +38,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
  * </pre>
  *
  * @see org.junit.Assert#assertThat(Object, Matcher)
- * @see JUnitMatchers
  * @see CoreMatchers
  */
 public class ValidationResultMatchers {
@@ -65,7 +63,7 @@ public class ValidationResultMatchers {
      *            The matcher to match against {@link ValidationResult#getVariableReplacements()}
      * @return A matcher matching any {@link ValidationResult} that it's variable replacements match the given matcher.
      */
-    public static Matcher<ValidationResult> replacements(Matcher<Iterable<String>> matcher) {
+    public static Matcher<ValidationResult> replacements(Matcher<Iterable<? super String>> matcher) {
         return new Replacements(matcher);
     }
 
@@ -103,9 +101,9 @@ public class ValidationResultMatchers {
 
     private static class Replacements extends TypeSafeMatcher<ValidationResult> {
 
-        private Matcher<Iterable<String>> matcher;
+        private Matcher<Iterable<? super String>> matcher;
 
-        public Replacements(Matcher<Iterable<String>> matcher) {
+        public Replacements(Matcher<Iterable<? super String>> matcher) {
             this.matcher = matcher;
         }
 
@@ -125,7 +123,7 @@ public class ValidationResultMatchers {
         private Matcher<ValidationResult> matcher;
 
         public Fails(VdcBllMessages expected) {
-            matcher = JUnitMatchers.both(CoreMatchers.not(isValid())).and(new WithMessage(expected));
+            matcher = CoreMatchers.both(CoreMatchers.not(isValid())).and(new WithMessage(expected));
         }
 
         @Override

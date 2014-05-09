@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.frontend.server.gwt;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -186,7 +187,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         String sessionId = "sessionId"; //$NON-NLS-1$
         VdcQueryType queryType = VdcQueryType.GetConfigurationValue;
         Object result = testServlet.runPublicQuery(queryType, mockConfigQueryParams, sessionId);
-        assertThat(result, is(Integer.class));
+        assertThat(result, is(instanceOf(Integer.class)));
         verify(mockConfigQueryParams).setSessionId(sessionId);
         verify(mockConfigQueryParams).setHttpSessionId(sessionId);
         verify(mockConfigQueryParams).setFiltered(testServlet.filterQueries());

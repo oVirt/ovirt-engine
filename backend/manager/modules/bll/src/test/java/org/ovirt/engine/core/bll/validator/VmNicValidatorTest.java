@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.validator;
 
+import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.both;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -136,7 +136,7 @@ public class VmNicValidatorTest {
 
     @Test
     public void e1000VmInterfaceTypeWhenNotIsCompatibleWithOs() throws Exception {
-        isCompatibleWithOsTest(both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS)),
+        isCompatibleWithOsTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS),
                 VmInterfaceType.e1000.getValue());
     }
 

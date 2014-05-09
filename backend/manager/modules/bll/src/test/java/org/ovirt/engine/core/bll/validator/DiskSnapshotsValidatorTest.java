@@ -19,7 +19,6 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.both;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -71,7 +70,7 @@ public class DiskSnapshotsValidatorTest {
     @Test
     public void diskSnapshotsDontExist() {
         assertThat(validator.diskSnapshotsNotExist(Arrays.asList(Guid.newGuid())),
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SNAPSHOTS_NOT_EXIST)));
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SNAPSHOTS_NOT_EXIST));
     }
 
     @Test
