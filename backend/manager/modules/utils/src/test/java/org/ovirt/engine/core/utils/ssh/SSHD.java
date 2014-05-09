@@ -5,9 +5,11 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.sshd.SshServer;
-import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
+import org.apache.sshd.common.KeyPairProvider;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.CommandFactory;
 import org.apache.sshd.server.PasswordAuthenticator;
@@ -47,7 +49,7 @@ public class SSHD {
         }
     }
 
-    static class MyKeyPairProvider extends AbstractKeyPairProvider {
+    static class MyKeyPairProvider implements KeyPairProvider {
         KeyPair _keyPair;
 
         public MyKeyPairProvider(KeyPair keyPair) {
@@ -55,8 +57,21 @@ public class SSHD {
         }
 
         @Override
-        protected KeyPair[] loadKeys() {
-            return new KeyPair[] { _keyPair };
+        public KeyPair loadKey(String type) {
+            return _keyPair;
+        }
+
+        /* >=0.10 */
+        //@Override
+        public Iterable<KeyPair> loadKeys() {
+            List<KeyPair> ret = new LinkedList<>();
+            ret.add(_keyPair);
+            return ret;
+        }
+
+        @Override
+        public String getKeyTypes() {
+            return SSH_RSA;
         }
     }
 
