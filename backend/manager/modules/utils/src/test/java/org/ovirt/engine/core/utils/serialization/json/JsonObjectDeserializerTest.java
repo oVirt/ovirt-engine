@@ -4,9 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 
-import junit.framework.Assert;
-
 import org.apache.commons.lang.SerializationException;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

@@ -2,9 +2,9 @@ package org.ovirt.engine.core.config;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.config.entity.ConfigKey;

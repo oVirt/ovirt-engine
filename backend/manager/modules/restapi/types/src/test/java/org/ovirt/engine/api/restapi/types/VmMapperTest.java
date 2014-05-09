@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Boot;

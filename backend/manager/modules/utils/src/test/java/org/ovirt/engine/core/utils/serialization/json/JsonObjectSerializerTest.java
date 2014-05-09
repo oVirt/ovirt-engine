@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.utils.serialization.json;
 
 import static org.junit.Assert.assertEquals;
-import junit.framework.Assert;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import static junit.framework.Assert.assertNotSame;
+import static org.junit.Assert.assertNotSame;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;

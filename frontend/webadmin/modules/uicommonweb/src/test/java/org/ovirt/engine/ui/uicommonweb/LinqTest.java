@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 

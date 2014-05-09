@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.utils;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
 import org.ovirt.engine.core.utils.kerberos.KDCLocator;

@@ -36,13 +36,12 @@ import static org.mockito.Mockito.doReturn;
 import org.jboss.resteasy.core.ResourceMethod;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.spi.HttpRequest;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Matchers.anyBoolean;
 
 import org.ovirt.engine.api.common.invocation.Current;
-
-import junit.framework.Assert;
 
 public class ChallengerTest extends Assert {
 

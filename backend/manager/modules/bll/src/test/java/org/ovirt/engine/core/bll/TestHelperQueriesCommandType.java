@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 

@@ -7,9 +7,9 @@ import org.ovirt.engine.api.model.Sso;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class SsoMapperTest {
 

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 public class BaseConditionFieldAutoCompleterTest {

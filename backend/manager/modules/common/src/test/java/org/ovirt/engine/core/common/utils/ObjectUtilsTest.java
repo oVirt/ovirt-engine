@@ -3,8 +3,8 @@ package org.ovirt.engine.core.common.utils;
 import java.math.BigDecimal;
 
 import org.junit.Test;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class ObjectUtilsTest {
 

@@ -16,10 +16,9 @@
 
 package org.ovirt.engine.api.common.invocation;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 public class CurrentTest extends Assert {
 

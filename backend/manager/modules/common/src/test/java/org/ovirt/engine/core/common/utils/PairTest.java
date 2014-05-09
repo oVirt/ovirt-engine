@@ -3,8 +3,7 @@ package org.ovirt.engine.core.common.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 public class PairTest {
