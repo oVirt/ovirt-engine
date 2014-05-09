@@ -12,6 +12,7 @@
     <script type="text/javascript">
         <c:if test="${requestScope['userInfo'] != null}">
             var userInfo = <c:out value="${requestScope['userInfo']}" escapeXml="false"/>;
+            var ssoToken = <c:out value="${requestScope['ssoToken']}" escapeXml="false"/>;
         </c:if>
         <c:if test="${requestScope['applicationMode'] != null}">
             var applicationMode = <c:out value="${requestScope['applicationMode']}" escapeXml="false"/>;

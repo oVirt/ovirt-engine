@@ -15,6 +15,18 @@
        <Bug code="UuF"/>
      </Match>
 
+    <!--
+      findbugs complain of unused field in class.
+      This is a GWT class and use to generate code
+
+      findbugs reason:
+      UuF: Unused field (UUF_UNUSED_FIELD)
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.frontend.communication.SSOTokenChange" />
+       <Bug code="UuF"/>
+     </Match>
+
      <Match>
        <Class name="org.ovirt.engine.ui.frontend.AsyncQuery" />
        <Field name="converterCallback"/>

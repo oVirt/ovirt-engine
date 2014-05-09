@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.uicommonweb.HtmlParameters;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 import com.google.gwt.i18n.client.LocaleInfo;
-import com.google.gwt.user.client.Cookies;
 
 public class ReportModel extends EntityModel {
 
@@ -15,11 +14,10 @@ public class ReportModel extends EntityModel {
     private boolean differntDcError = false;
     private final String reportUrl;
 
-    public ReportModel(String baseUrl) {
-        String sessionID = Cookies.getCookie("JSESSIONID"); //$NON-NLS-1$
+    public ReportModel(String baseUrl, String ssoToken) {
 
         reportUrl = baseUrl + "/flow.html" + "?viewAsDashboardFrame=false"; //$NON-NLS-1$ //$NON-NLS-2$
-        paramsMap.setParameter("sessionID", sessionID); //$NON-NLS-1$
+        paramsMap.setParameter("sessionID", ssoToken); //$NON-NLS-1$
         paramsMap.setParameter("_flowId", "viewReportFlow"); //$NON-NLS-1$ //$NON-NLS-2$
         paramsMap.setParameter("active_hosts_select", //$NON-NLS-1$
                "AND+delete_date+IS+NULL"); //$NON-NLS-1$

@@ -112,6 +112,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
     protected void initFrontend() {
         super.initFrontend();
 
+        ReportInit.getInstance().initHandlers(eventBus);
         // Configure REST API integration for UI plugin infrastructure
         frontend.setLoginHandler(new FrontendLoginHandler() {
             @Override

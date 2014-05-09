@@ -20,12 +20,23 @@ import org.ovirt.engine.ui.frontend.VdsmErrors;
 import org.ovirt.engine.ui.frontend.communication.CommunicationProvider;
 import org.ovirt.engine.ui.frontend.communication.GWTRPCCommunicationProvider;
 import org.ovirt.engine.ui.frontend.communication.OperationProcessor;
+import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
 import org.ovirt.engine.ui.frontend.communication.VdcOperationManager;
+import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.inject.client.AbstractGinModule;
+import com.google.gwt.user.client.rpc.RpcRequestBuilder;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.RootPresenter;
 import com.gwtplatform.mvp.client.proxy.ParameterTokenFormatter;
@@ -66,7 +77,6 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(VdcOperationManager.class).in(Singleton.class);
         bind(OperationProcessor.class).in(Singleton.class);
         bind(CommunicationProvider.class).to(GWTRPCCommunicationProvider.class).in(Singleton.class);
-        bind(GenericApiGWTServiceAsync.class).in(Singleton.class);
     }
 
     protected void bindResourceConfiguration(
@@ -92,4 +102,34 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(impl).in(Singleton.class);
     }
 
+    @Provides
+    @Singleton
+    public GenericApiGWTServiceAsync getGenericApiGWTService(final EventBus eventBus) {
+        // no need to use GenericApiGWTServiceAsync.Util as this is GIN-managed singleton anyway
+        GenericApiGWTServiceAsync service = GWT.create(GenericApiGWTService.class);
+        // cast to ServiceDefTarget and set RPC request builder as needed
+        ((ServiceDefTarget) service).setRpcRequestBuilder(new RpcRequestBuilder() {
+            @Override
+            protected void doSetCallback(RequestBuilder rb, final RequestCallback callback) {
+                rb.setCallback(new RequestCallback() {
+
+                    @Override
+                    public void onResponseReceived(Request request, Response response) {
+                        String tokenValue = response.getHeader("OVIRT-SSO-TOKEN"); //$NON-NLS-1$
+                        if (tokenValue != null) {
+                            //Login result received.
+                            SSOTokenChangeEvent.fire(eventBus, tokenValue);
+                        }
+                        callback.onResponseReceived(request, response);
+                    }
+
+                    @Override
+                    public void onError(Request request, Throwable exception) {
+                        callback.onError(request, exception);
+                    }
+                });
+            }
+        });
+        return service;
+    }
 }

@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
+import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent.SSOTokenChangeHandler;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -12,6 +14,8 @@ import org.ovirt.engine.ui.uicompat.ReportParser;
 import org.ovirt.engine.ui.uicompat.ReportParser.Dashboard;
 import org.ovirt.engine.ui.uicompat.ReportParser.Resource;
 
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -27,10 +31,13 @@ public class ReportInit {
     private boolean urlInitialized;
     private Event reportsInitEvent;
     private String reportBaseUrl;
+    private String ssoToken;
     private boolean isCommunityEdition;
 
     private Map<String, Resource> resourceMap;
     private Map<String, Dashboard> dashboardMap;
+
+    private HandlerRegistration ssoTokenHandlerRegistration;
 
     public static ReportInit getInstance() {
         return INSTANCE;
@@ -135,16 +142,25 @@ public class ReportInit {
         return reportBaseUrl;
     }
 
+    public void setSsoToken(final String token) {
+        this.ssoToken = token;
+        checkIfInitFinished();
+    }
+
+    public String getSsoToken() {
+        return this.ssoToken;
+    }
+
     private void setXmlInitialized() {
         this.xmlInitialized = true;
         checkIfInitFinished();
     }
 
     private void checkIfInitFinished() {
-        if (xmlInitialized && urlInitialized) {
+        if (xmlInitialized && urlInitialized && ssoToken != null) {
 
             // Check if the reports should be enabled in this system
-            if (!reportBaseUrl.equals("") && !resourceMap.isEmpty()) { //$NON-NLS-1$
+            if (!"".equals(reportBaseUrl) && !resourceMap.isEmpty() && !"".equals(ssoToken)) { //$NON-NLS-1$ $NON-NLS-2$
                 setReportsEnabled(true);
             } else {
                 setReportsEnabled(false);
@@ -153,6 +169,27 @@ public class ReportInit {
             // The initialization process blocks on this event after the login
             reportsInitEvent.raise(this, null);
         }
+    }
+
+    public void initHandlers(EventBus eventBus) {
+        if (ssoTokenHandlerRegistration != null) {
+            ssoTokenHandlerRegistration.removeHandler();
+        }
+        // Register to listen for session id acquired events.
+        ssoTokenHandlerRegistration = eventBus.addHandler(SSOTokenChangeEvent.getType(),
+            new SSOTokenChangeHandler() {
+
+                @Override
+                public void onSSOTokenChange(SSOTokenChangeEvent event) {
+                    ReportInit.this.ssoToken = event.getToken();
+                    if (ReportInit.this.ssoToken == null) { //This should not happen
+                        //This will make the login continue, just the reports will be broken.
+                        ReportInit.this.ssoToken = "";
+                    }
+                    checkIfInitFinished();
+                }
+            }
+        );
     }
 
 }

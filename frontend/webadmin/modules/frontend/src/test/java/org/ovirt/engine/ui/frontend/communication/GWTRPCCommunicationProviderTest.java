@@ -3,7 +3,9 @@ package org.ovirt.engine.ui.frontend.communication;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +25,13 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GWTRPCCommunicationProviderTest {
-    @Mock
+
     GenericApiGWTServiceAsync mockService;
     @Mock
     VdcOperationCallback mockOperationCallbackSingle1;
@@ -37,6 +41,9 @@ public class GWTRPCCommunicationProviderTest {
     VdcOperationCallbackList mockOperationCallbackList1;
     @Mock
     VdcOperationCallbackList mockOperationCallbackList2;
+    @Mock
+    EventBus mockEventBus;
+
     @Captor
     ArgumentCaptor<AsyncCallback<VdcReturnValueBase>> actionCallback;
     @Captor
@@ -53,6 +60,7 @@ public class GWTRPCCommunicationProviderTest {
 
     @Before
     public void setUp() throws Exception {
+        mockService = mock(GenericApiGWTServiceAsync.class, withSettings().extraInterfaces(ServiceDefTarget.class));
         testProvider = new GWTRPCCommunicationProvider(mockService);
     }
 

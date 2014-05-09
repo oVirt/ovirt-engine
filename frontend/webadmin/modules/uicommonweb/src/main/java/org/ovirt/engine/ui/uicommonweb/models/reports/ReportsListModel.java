@@ -22,7 +22,6 @@ import org.ovirt.engine.ui.uicompat.ReportParser.Dashboard;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.LocaleInfo;
-import com.google.gwt.user.client.Cookies;
 
 public class ReportsListModel extends SearchableListModel {
 
@@ -36,10 +35,9 @@ public class ReportsListModel extends SearchableListModel {
         return reportModelRefreshEvent;
     }
 
-    public ReportsListModel(String baseUrl) {
-        String sessionID = Cookies.getCookie("JSESSIONID"); //$NON-NLS-1$
+    public ReportsListModel(String baseUrl, String ssoToken) {
         reportUrl = baseUrl + "/flow.html" + "?viewAsDashboardFrame=true"; //$NON-NLS-1$ //$NON-NLS-2$
-        htmlParams.setParameter("sessionID", sessionID); //$NON-NLS-1$
+        htmlParams.setParameter("sessionID", ssoToken); //$NON-NLS-1$
 
         setFlowId();
 
@@ -108,7 +106,7 @@ public class ReportsListModel extends SearchableListModel {
 
     public void refreshReportModel() {
         SystemTreeItemModel treeItemModel =
-                ((SystemTreeItemModel) CommonModel.getInstance().getSystemTree().getSelectedItem());
+                (CommonModel.getInstance().getSystemTree().getSelectedItem());
         if (treeItemModel == null) {
             return;
         }

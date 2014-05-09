@@ -182,6 +182,9 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
         params.setSessionId(getSession().getId());
         params.setActionType(loginType);
         VdcReturnValueBase returnValue = getBackend().login(params);
+        if (returnValue.getSucceeded()) {
+            this.getThreadLocalResponse().addHeader("OVIRT-SSO-TOKEN", getSession().getId()); //$NON-NLS-1$
+        }
         return returnValue;
     }
 

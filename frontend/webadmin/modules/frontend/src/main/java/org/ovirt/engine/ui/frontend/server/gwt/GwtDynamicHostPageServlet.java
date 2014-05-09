@@ -46,6 +46,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         ATTR_MESSAGES("messages"), //$NON-NLS-1$
         ATTR_BASE_CONTEXT_PATH("baseContextPath"), //$NON-NLS-1$
         ATTR_LOCALE(LocaleFilter.LOCALE),
+        ATTR_SSO_TOKEN("ssoToken"), //$NON-NLS-1$
         ATTR_APPLICATION_TYPE(BrandingFilter.APPLICATION_NAME);
 
         private final String attributeKey;
@@ -106,11 +107,13 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         // Set the messages that need to be replaced.
         request.setAttribute(MD5Attributes.ATTR_MESSAGES.getKey(),
                 getBrandingMessages(getApplicationTypeFromRequest(request), getLocaleFromRequest(request)));
-        request.setAttribute(MD5Attributes.ATTR_BASE_CONTEXT_PATH.getKey(), getConfiguration(request));
+        request.setAttribute(MD5Attributes.ATTR_BASE_CONTEXT_PATH.getKey(),
+                getValueObject(ServletUtils.getBaseContextPath(request)));
         // Set attribute for userInfo object
         DbUser loggedInUser = getLoggedInUser(request.getSession().getId());
         if (loggedInUser != null) {
             request.setAttribute(MD5Attributes.ATTR_USER_INFO.getKey(), getUserInfoObject(loggedInUser));
+            request.setAttribute(MD5Attributes.ATTR_SSO_TOKEN.getKey(), getValueObject(request.getSession().getId()));
         }
 
         try {
@@ -169,13 +172,13 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     }
 
     /**
-     * Retrieve the root context path relative to the context of this servlet.
-     * @param request The {@code HttpServletRequest} to lookup against.
-     * @return
+     * Create a Javascript value object with the value being the passed in value.
+     * @param value The {@code String} value to use as the value of the object.
+     * @return A String representation of the Javascript object.
      */
-    private String getConfiguration(final HttpServletRequest request) {
+    private String getValueObject(final String value) {
         ObjectNode node = mapper.createObjectNode();
-        node.put("value", ServletUtils.getBaseContextPath(request)); //$NON-NLS-1$
+        node.put("value", value); //$NON-NLS-1$
         return node.toString();
     }
 

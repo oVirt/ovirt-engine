@@ -184,7 +184,8 @@ public class CommonModel extends ListModel
         userList = new UserListModel();
         list.add(userList);
 
-        reportsList = new ReportsListModel(ReportInit.getInstance().getReportBaseUrl());
+        reportsList = new ReportsListModel(ReportInit.getInstance().getReportBaseUrl(),
+                ReportInit.getInstance().getSsoToken());
         list.add(reportsList);
 
         reportsList.setIsAvailable(false);
@@ -307,7 +308,7 @@ public class CommonModel extends ListModel
         updateHasSelectedTags();
         getTagList().getSelectedItemsChangedEvent().addListener(this);
 
-        SystemTreeItemModel model = (SystemTreeItemModel) getSystemTree().getSelectedItem();
+        SystemTreeItemModel model = getSystemTree().getSelectedItem();
         if (model == null)
         {
             return;
@@ -345,7 +346,7 @@ public class CommonModel extends ListModel
             if (getSelectedItem() instanceof ISupportSystemTreeContext)
             {
                 ISupportSystemTreeContext treeContext = (ISupportSystemTreeContext) getSelectedItem();
-                treeContext.setSystemTreeSelectedItem((SystemTreeItemModel) getSystemTree().getSelectedItem());
+                treeContext.setSystemTreeSelectedItem(getSystemTree().getSelectedItem());
             }
         }
     }
@@ -657,7 +658,7 @@ public class CommonModel extends ListModel
             if (getSelectedItem() instanceof ISupportSystemTreeContext)
             {
                 ISupportSystemTreeContext treeContext = (ISupportSystemTreeContext) getSelectedItem();
-                treeContext.setSystemTreeSelectedItem((SystemTreeItemModel) getSystemTree().getSelectedItem());
+                treeContext.setSystemTreeSelectedItem(getSystemTree().getSelectedItem());
             }
         }
 
@@ -736,7 +737,7 @@ public class CommonModel extends ListModel
     private void splitSearchString(String source, RefObject<String> prefix, RefObject<String> search)
     {
         ArrayList<TagModel> tags = (ArrayList<TagModel>) getTagList().getSelectedItems();
-        SystemTreeItemModel model = (SystemTreeItemModel) getSystemTree().getSelectedItem();
+        SystemTreeItemModel model = getSystemTree().getSelectedItem();
 
         prefix.argvalue = ""; //$NON-NLS-1$
 

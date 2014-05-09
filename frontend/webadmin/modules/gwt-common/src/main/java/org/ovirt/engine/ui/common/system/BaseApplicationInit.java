@@ -4,11 +4,13 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.CurrentUser.LogoutHandler;
+import org.ovirt.engine.ui.common.auth.SSOTokenData;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.common.uicommon.model.CleanupModelEvent;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -111,7 +113,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
 
     protected void performLogin(T loginModel) {
         DbUser loggedUser = loginModel.getLoggedUser();
-        String loginPassword = (String) loginModel.getPassword().getEntity();
+        String loginPassword = loginModel.getPassword().getEntity();
 
         // UiCommon login preparation
         frontend.initLoggedInUser(loggedUser, loginPassword);
@@ -175,6 +177,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             }
         });
 
+        SSOTokenChangeEvent.fire(eventBus, SSOTokenData.instance().getToken());
         // Indicate that the user should be logged in automatically
         user.setAutoLogin(true);
     }
