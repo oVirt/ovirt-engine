@@ -433,21 +433,22 @@ public class UpdateVmDiskCommandTest {
     }
 
     @Test
-    public void testUpdateIDEDiskAsReadOnlyNotSupported() {
-        DiskImage updatedDisk = createDiskImage();
-        updatedDisk.setReadOnly(true);
-        updatedDisk.setDiskInterface(DiskInterface.IDE);
+    public void testFailInterfaceCanUpdateReadOnly() {
+        initializeCommand(new UpdateVmDiskParameters(vmId, diskImageGuid, createDiskImage()));
+        doReturn(true).when(command).updateReadOnlyRequested();
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
+                when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
 
-        DiskImage diskFromDB = createDiskImage();
-        diskFromDB.setReadOnly(false);
-        diskFromDB.setDiskInterface(DiskInterface.IDE);
+        assertFalse(command.validateCanUpdateReadOnly(diskValidator));
+    }
 
-        when(diskDao.get(diskImageGuid)).thenReturn(diskFromDB);
+    @Test
+    public void testSucceedInterfaceCanUpdateReadOnly() {
+        initializeCommand(new UpdateVmDiskParameters(vmId, diskImageGuid, createDiskImage()));
+        doReturn(true).when(command).updateReadOnlyRequested();
+        doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
 
-        initializeCommand(new UpdateVmDiskParameters(vmId, diskImageGuid, updatedDisk));
-
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_IDE_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
+        assertTrue(command.validateCanUpdateReadOnly(diskValidator));
     }
 
     @Test

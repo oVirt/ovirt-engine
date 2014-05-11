@@ -157,14 +157,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return false;
         }
 
-        if (!validate(diskValidator.isReadOnlyPropertyCompatibleWithLunInterface())) {
-            return false;
-        }
-
         return true;
     }
 
-    private boolean checkIfImageDiskCanBeAdded(VM vm, DiskValidator diskValidator) {
+    protected boolean checkIfImageDiskCanBeAdded(VM vm, DiskValidator diskValidator) {
         boolean returnValue;
         StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
         // vm agnostic checks

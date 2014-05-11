@@ -109,11 +109,7 @@ public class AddDiskToVmCommandTest {
         initializeCommand(storageId);
 
         mockVm();
-        mockStorageDomain(storageId);
-        mockStoragePoolIsoMap();
-        mockInterfaceList();
-        mockMaxPciSlots();
-
+        mockEntities(storageId);
         runAndAssertCanDoActionSuccess();
     }
 
@@ -197,10 +193,7 @@ public class AddDiskToVmCommandTest {
         initializeCommand(storageId, VolumeType.Preallocated);
 
         mockVm();
-        mockStorageDomain(storageId);
-        mockStoragePoolIsoMap();
-        mockInterfaceList();
-        mockMaxPciSlots();
+        mockEntities(storageId);
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
 
         assertTrue(command.canDoAction());
@@ -208,7 +201,6 @@ public class AddDiskToVmCommandTest {
 
     @Test
     public void canDoActionSpaceValidationFails() {
-
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId, VolumeType.Sparse);
 
@@ -832,48 +824,34 @@ public class AddDiskToVmCommandTest {
     }
 
     @Test
-    public void testCanDoFailOnAddIDEReadOnlyDisk() {
-        DiskImage disk = new DiskImage();
-        disk.setDiskInterface(DiskInterface.IDE);
-        disk.setReadOnly(true);
-
+    public void testCanDoFailReadOnlyOnInterface() {
         AddDiskParameters parameters = createParameters();
-        parameters.setDiskInfo(disk);
-
         initializeCommand(Guid.newGuid(), parameters);
-        doReturn(true).when(command).isDiskCanBeAddedToVm(any(Disk.class), any(VM.class));
-        doReturn(true).when(command).isDiskPassPciAndIdeLimit(any(Disk.class));
-
         mockVm();
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_IDE_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
-    }
-
-    @Test
-    public void testCanDoFailOnAddLunVirtIOSCSIReadOnlyDisk() {
-        LunDisk disk = createISCSILunDisk();
-        disk.setDiskInterface(DiskInterface.VirtIO_SCSI);
-        disk.setReadOnly(true);
-
-        AddDiskParameters parameters = createParameters();
-        parameters.setDiskInfo(disk);
-
-        initializeCommand(Guid.newGuid(), parameters);
-        doReturn(true).when(command).isDiskCanBeAddedToVm(any(Disk.class), any(VM.class));
         doReturn(true).when(command).isDiskPassPciAndIdeLimit(any(Disk.class));
-
-        mockVm();
-
-        when(diskValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
-        when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(ValidationResult.VALID);
-        when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
-        when(diskValidator.isReadOnlyPropertyCompatibleWithLunInterface()).thenReturn(
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VIRT_IO_SCSI_INTERFACE_FOR_LUN_DISKS_DOES_NOT_SUPPORT_READ_ONLY_ATTR));
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
+                when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
         doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_VIRT_IO_SCSI_INTERFACE_FOR_LUN_DISKS_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
+                VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
+    }
+
+    @Test
+    public void testCanDoSucceedReadOnly() {
+        Guid storageId = Guid.newGuid();
+        initializeCommand(storageId);
+
+        mockVm();
+        mockEntities(storageId);
+
+        doReturn(true).when(command).isDiskPassPciAndIdeLimit(any(Disk.class));
+        doReturn(true).when(command).checkIfImageDiskCanBeAdded(any(VM.class), any(DiskValidator.class));
+        doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
+        doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
+
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
     private void fillDiskMap(LunDisk disk, VM vm, int expectedMapSize) {
@@ -897,4 +875,11 @@ public class AddDiskToVmCommandTest {
     }
 
     private static final Log log = LogFactory.getLog(AddDiskToVmCommandTest.class);
+
+    private void mockEntities(Guid storageId) {
+        mockStorageDomain(storageId);
+        mockStoragePoolIsoMap();
+        mockInterfaceList();
+        mockMaxPciSlots();
+    }
 }

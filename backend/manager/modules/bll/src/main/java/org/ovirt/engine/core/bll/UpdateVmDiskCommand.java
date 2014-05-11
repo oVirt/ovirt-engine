@@ -160,10 +160,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         }
 
         DiskValidator diskValidator = getDiskValidator(getNewDisk());
-        return validateCanUpdateShareable() && validateCanUpdateReadOnly() &&
+        return validateCanUpdateShareable() && validateCanUpdateReadOnly(diskValidator) &&
                 validate(diskValidator.isVirtIoScsiValid(getVm())) &&
-                validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface()) &&
-                !(getNewDisk().getDiskStorageType() == DiskStorageType.LUN && !validate(diskValidator.isReadOnlyPropertyCompatibleWithLunInterface())) &&
                 (getOldDisk().getDiskInterface() == getNewDisk().getDiskInterface()
                 || validate(diskValidator.isDiskInterfaceSupported(getVm())));
     }
@@ -262,9 +260,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return true;
     }
 
-    private boolean validateCanUpdateReadOnly() {
-        if (updateReadOnlyRequested() && getVm().getStatus() != VMStatus.Down && vmDeviceForVm.getIsPlugged()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+    protected boolean validateCanUpdateReadOnly(DiskValidator diskValidator) {
+        if (updateReadOnlyRequested()) {
+            if(getVm().getStatus() != VMStatus.Down && vmDeviceForVm.getIsPlugged()) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+            }
+            return validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface());
         }
         return true;
     }
@@ -565,7 +566,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return !vmDeviceForVm.getIsReadOnly().equals(getNewDisk().getReadOnly());
     }
 
-    private boolean isAtLeastOneVmIsNotDown(List<VM> vmsDiskPluggedTo) {
+    protected boolean isAtLeastOneVmIsNotDown(List<VM> vmsDiskPluggedTo) {
         for (VM vm : vmsDiskPluggedTo) {
             if (vm.getStatus() != VMStatus.Down) {
                 return true;

@@ -118,7 +118,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
         if (isImageDisk) {
             StorageDomain storageDomain = getStorageDomainDAO().getForStoragePool(
                     ((DiskImage) disk).getStorageIds().get(0), ((DiskImage) disk).getStoragePoolId());
-            StorageDomainValidator storageDomainValidator = new StorageDomainValidator(storageDomain);
+            StorageDomainValidator storageDomainValidator = getStorageDomainValidator(storageDomain);
             if (!validate(storageDomainValidator.isDomainExistAndActive())) {
                 return false;
             }
@@ -136,11 +136,6 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             return false;
         }
 
-        if (disk.getDiskStorageType() == DiskStorageType.LUN &&
-                !validate(diskValidator.isReadOnlyPropertyCompatibleWithLunInterface())) {
-            return false;
-        }
-
         if (!isVmNotInPreviewSnapshot()) {
             return false;
         }
@@ -150,6 +145,10 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             return canPerformDiskHotPlug(disk);
         }
         return true;
+    }
+
+    protected StorageDomainValidator getStorageDomainValidator(StorageDomain storageDomain) {
+        return new StorageDomainValidator(storageDomain);
     }
 
     @Override
