@@ -10,11 +10,11 @@
 			margin-top: 20px;
 		}
 
-        .qpidInnerPanel {
+        .messagingServerInnerPanel {
             padding-left: 20px;
         }
 
-        .qpidHeader {
+        .messagingServerHeader {
 			font-weight: bold;
             margin-top: 10px;
             margin-bottom: 10px;
@@ -25,12 +25,12 @@
 	<g:FlowPanel>
 		<w:EntityModelWidgetWithInfo ui:field="mappings" />
 		<g:FlowPanel addStyleNames="{style.sectionStyle}">
-			<g:Label text="{constants.qpid}" addStyleNames="{style.qpidHeader}"/>
-			<g:FlowPanel addStyleNames="{style.qpidInnerPanel}">
-				<ge:StringEntityModelTextBoxEditor ui:field="qpidHost"/>
-				<ge:StringEntityModelTextBoxEditor ui:field="qpidPort"/>
-				<ge:StringEntityModelTextBoxEditor ui:field="qpidUsername"/>
-				<ge:StringEntityModelPasswordBoxEditor ui:field="qpidPassword"/>
+			<g:Label text="{constants.messagingConfiguration}" addStyleNames="{style.messagingServerHeader}"/>
+			<g:FlowPanel addStyleNames="{style.messagingServerInnerPanel}">
+				<ge:StringEntityModelTextBoxEditor ui:field="messagingServer"/>
+				<ge:StringEntityModelTextBoxEditor ui:field="messagingServerPort"/>
+				<ge:StringEntityModelTextBoxEditor ui:field="messagingServerUsername"/>
+				<ge:StringEntityModelPasswordBoxEditor ui:field="messagingServerPassword"/>
 			</g:FlowPanel>
 		</g:FlowPanel>
 	</g:FlowPanel>

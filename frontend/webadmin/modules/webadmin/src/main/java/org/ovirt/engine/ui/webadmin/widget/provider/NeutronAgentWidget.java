@@ -52,24 +52,24 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
     StringEntityModelTextBoxOnlyEditor interfaceMappings;
 
     @UiField
-    @Path(value = "qpidHost.entity")
-    @WithElementId("qpidHost")
-    StringEntityModelTextBoxEditor qpidHost;
+    @Path(value = "messagingServer.entity")
+    @WithElementId("messagingServer")
+    StringEntityModelTextBoxEditor messagingServer;
 
     @UiField
-    @Path(value = "qpidPort.entity")
-    @WithElementId("qpidPort")
-    StringEntityModelTextBoxEditor qpidPort;
+    @Path(value = "messagingServerPort.entity")
+    @WithElementId("messagingServerPort")
+    StringEntityModelTextBoxEditor messagingServerPort;
 
     @UiField
-    @Path(value = "qpidUsername.entity")
-    @WithElementId("qpidUsername")
-    StringEntityModelTextBoxEditor qpidUsername;
+    @Path(value = "messagingServerUsername.entity")
+    @WithElementId("messagingServerUsername")
+    StringEntityModelTextBoxEditor messagingServerUsername;
 
     @UiField
-    @Path(value = "qpidPassword.entity")
-    @WithElementId("qpidPassword")
-    StringEntityModelPasswordBoxEditor qpidPassword;
+    @Path(value = "messagingServerPassword.entity")
+    @WithElementId("messagingServerPassword")
+    StringEntityModelPasswordBoxEditor messagingServerPassword;
 
     @Inject
     public NeutronAgentWidget() {
@@ -80,10 +80,10 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
-        qpidHost.setLabel(constants.hostQpid());
-        qpidPort.setLabel(constants.portQpid());
-        qpidUsername.setLabel(constants.usernameQpid());
-        qpidPassword.setLabel(constants.passwordQpid());
+        messagingServer.setLabel(constants.messagingServer());
+        messagingServerPort.setLabel(constants.messagingServerPort());
+        messagingServerUsername.setLabel(constants.messagingServerUsername());
+        messagingServerPassword.setLabel(constants.messagingServerPassword());
 
         driver.initialize(this);
     }

@@ -27,10 +27,10 @@ public class NeutronAgentModel extends EntityModel {
     private EntityModel<String> interfaceMappingsLabel = new EntityModel<String>();
     private EntityModel<String> interfaceMappingsExplanation = new EntityModel<String>();
     private EntityModel<String> interfaceMappings = new EntityModel<String>();
-    private EntityModel<String> qpidHost = new EntityModel<String>();
-    private EntityModel<String> qpidPort = new EntityModel<String>();
-    private EntityModel<String> qpidUsername = new EntityModel<String>();
-    private EntityModel<String> qpidPassword = new EntityModel<String>();
+    private EntityModel<String> messagingServer = new EntityModel<String>();
+    private EntityModel<String> messagingServerPort = new EntityModel<String>();
+    private EntityModel<String> messagingServerUsername = new EntityModel<String>();
+    private EntityModel<String> messagingServerPassword = new EntityModel<String>();
 
     public ListModel<String> getPluginType() {
         return pluginType;
@@ -52,20 +52,20 @@ public class NeutronAgentModel extends EntityModel {
         return interfaceMappings;
     }
 
-    public EntityModel<String> getQpidHost() {
-        return qpidHost;
+    public EntityModel<String> getMessagingServer() {
+        return messagingServer;
     }
 
-    public EntityModel<String> getQpidPort() {
-        return qpidPort;
+    public EntityModel<String> getMessagingServerPort() {
+        return messagingServerPort;
     }
 
-    public EntityModel<String> getQpidUsername() {
-        return qpidUsername;
+    public EntityModel<String> getMessagingServerUsername() {
+        return messagingServerUsername;
     }
 
-    public EntityModel<String> getQpidPassword() {
-        return qpidPassword;
+    public EntityModel<String> getMessagingServerPassword() {
+        return messagingServerPassword;
     }
 
     public NeutronAgentModel() {
@@ -121,12 +121,12 @@ public class NeutronAgentModel extends EntityModel {
         if (getIsAvailable()) {
             getPluginType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
             getInterfaceMappings().validateEntity(new IValidation[] { new InterfaceMappingsValidation() });
-            getQpidHost().validateEntity(new IValidation[] { new HostAddressValidation(true) });
-            getQpidPort().validateEntity(new IValidation[] { new IntegerValidation(BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
+            getMessagingServer().validateEntity(new IValidation[] { new HostAddressValidation(true) });
+            getMessagingServerPort().validateEntity(new IValidation[] { new IntegerValidation(BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
                     BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT) });
 
             setIsValid(getPluginType().getIsValid() && getInterfaceMappings().getIsValid()
-                    && getQpidHost().getIsValid() && getQpidPort().getIsValid());
+                    && getMessagingServer().getIsValid() && getMessagingServerPort().getIsValid());
         }
         return getIsValid();
     }
@@ -141,13 +141,13 @@ public class NeutronAgentModel extends EntityModel {
             if (agentConfiguration != null) {
                 getInterfaceMappings().setEntity(agentConfiguration.getNetworkMappings());
 
-                MessagingConfiguration qpidConfiguration = agentConfiguration.getMessagingConfiguration();
-                if (qpidConfiguration != null) {
-                    getQpidHost().setEntity(qpidConfiguration.getAddress());
-                    Integer port = qpidConfiguration.getPort();
-                    getQpidPort().setEntity(port == null ? null : Integer.toString(port));
-                    getQpidUsername().setEntity(qpidConfiguration.getUsername());
-                    getQpidPassword().setEntity(qpidConfiguration.getPassword());
+                MessagingConfiguration messagingConfiguration = agentConfiguration.getMessagingConfiguration();
+                if (messagingConfiguration != null) {
+                    getMessagingServer().setEntity(messagingConfiguration.getAddress());
+                    Integer port = messagingConfiguration.getPort();
+                    getMessagingServerPort().setEntity(port == null ? null : Integer.toString(port));
+                    getMessagingServerUsername().setEntity(messagingConfiguration.getUsername());
+                    getMessagingServerPassword().setEntity(messagingConfiguration.getPassword());
                 }
             }
         }
@@ -172,17 +172,17 @@ public class NeutronAgentModel extends EntityModel {
             }
             agentConfiguration.setNetworkMappings(getInterfaceMappings().getEntity());
 
-            MessagingConfiguration qpidConfiguration = agentConfiguration.getMessagingConfiguration();
-            if (qpidConfiguration == null) {
-                qpidConfiguration = new MessagingConfiguration();
-                agentConfiguration.setMessagingConfiguration(qpidConfiguration);
+            MessagingConfiguration messagingConfiguration = agentConfiguration.getMessagingConfiguration();
+            if (messagingConfiguration == null) {
+                messagingConfiguration = new MessagingConfiguration();
+                agentConfiguration.setMessagingConfiguration(messagingConfiguration);
             }
-            qpidConfiguration.setAddress(getQpidHost().getEntity());
-            String port = getQpidPort().getEntity();
-            qpidConfiguration.setPort(port == null ? null : Integer.valueOf(port));
-            qpidConfiguration.setUsername(getQpidUsername().getEntity());
-            qpidConfiguration.setPassword(getQpidPassword().getEntity());
-            qpidConfiguration.setBrokerType(BrokerType.QPID);
+            messagingConfiguration.setAddress(getMessagingServer().getEntity());
+            String port = getMessagingServerPort().getEntity();
+            messagingConfiguration.setPort(port == null ? null : Integer.valueOf(port));
+            messagingConfiguration.setUsername(getMessagingServerUsername().getEntity());
+            messagingConfiguration.setPassword(getMessagingServerPassword().getEntity());
+            messagingConfiguration.setBrokerType(BrokerType.QPID);
         }
     }
 

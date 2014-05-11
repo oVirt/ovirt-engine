@@ -3184,20 +3184,20 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Networks")
     String providerNetworksSubTabLabel();
 
-    @DefaultStringValue("QPID")
-    String qpid();
+    @DefaultStringValue("Messaging Configuration")
+    String messagingConfiguration();
 
     @DefaultStringValue("Host")
-    String hostQpid();
+    String messagingServer();
 
     @DefaultStringValue("Port")
-    String portQpid();
+    String messagingServerPort();
 
     @DefaultStringValue("Username")
-    String usernameQpid();
+    String messagingServerUsername();
 
     @DefaultStringValue("Password")
-    String passwordQpid();
+    String messagingServerPassword();
 
     // Provider Network
     @DefaultStringValue("External ID")
