@@ -1,5 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -71,6 +78,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmNextRunConfigurationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -84,18 +92,32 @@ import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 public class UserPortalListModel extends AbstractUserPortalListModel {
 
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     public static final EventDefinition searchCompletedEventDefinition;
     private Event privateSearchCompletedEvent;
+
+    /** The edited VM could be different than the selected VM in the grid
+     *  when the VM has next-run configuration */
+    private VM editedVm;
+
+    VmInterfaceCreatingManager defaultNetworkCreatingManager = new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
+        @Override
+        public void vnicCreated(Guid vmId) {
+            if (getWindow() != null) {
+                getWindow().stopProgress();
+            }
+            cancel();
+            updateActionAvailability();
+        }
+
+        @Override
+        public void queryFailed() {
+            stopProgress(UserPortalListModel.this);
+            cancel();
+        }
+    });
 
     public Event getSearchCompletedEvent()
     {
@@ -507,6 +529,16 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         else if ("OnClone".equals(command.getName())) { //$NON-NLS-1$
             onClone();
         }
+        else if ("CancelConfirmation".equals(command.getName())) //$NON-NLS-1$
+        {
+            stopProgress(UserPortalListModel.this);
+            setConfirmWindow(null);
+        }
+        else if ("updateExistingVm".equals(command.getName())) { // $NON-NLS-1$
+            VmNextRunConfigurationModel model = (VmNextRunConfigurationModel) getConfirmWindow();
+            updateExistingVm(UserPortalListModel.this, model.getApplyCpuLater().getEntity());
+            setConfirmWindow(null);
+        }
     }
 
     private void cloneVm() {
@@ -792,10 +824,15 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         getVmInitQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object result) {
-                vmInitLoaded((VM) result);
+                editedVm = (VM) result;
+                vmInitLoaded(editedVm);
             }
         };
-        AsyncDataProvider.getVmById(getVmInitQuery, vm.getId());
+        if (vm.isNextRunConfigurationExists()) {
+            AsyncDataProvider.getVmNextRunConfiguration(getVmInitQuery, vm.getId());
+        } else {
+            AsyncDataProvider.getVmById(getVmInitQuery, vm.getId());
+        }
     }
 
     private void vmInitLoaded(VM vm) {
@@ -1042,28 +1079,9 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
     }
 
-    public void postVmNameUniqueCheck(UserPortalListModel userPortalListModel)
+    public void postVmNameUniqueCheck(final UserPortalListModel userPortalListModel)
     {
-        final VmInterfaceCreatingManager defaultNetworkCreatingManager = new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
-            @Override
-            public void vnicCreated(Guid vmId) {
-                if (getWindow() != null) {
-                    getWindow().stopProgress();
-                }
-                cancel();
-                updateActionAvailability();
-            }
-
-            @Override
-            public void queryFailed() {
-                stopProgress(UserPortalListModel.this);
-                cancel();
-            }
-        });
-
         final UnitVmModel model = (UnitVmModel) getWindow();
-
-        UserPortalItemModel selectedItem = (UserPortalItemModel) userPortalListModel.getSelectedItem();
 
         // Save changes.
         buildVmOnSave(model, gettempVm());
@@ -1134,37 +1152,74 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
         else
         {
-            Guid oldClusterID = ((VM) selectedItem.getEntity()).getVdsGroupId();
-            Guid newClusterID = model.getSelectedCluster().getId();
-            if (oldClusterID.equals(newClusterID) == false)
-            {
-                Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster, new ChangeVMClusterParameters(newClusterID,
-                        gettempVm().getId()),
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult result) {
-                                VM vm = gettempVm();
-                                vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+            final VM selectedItem = (VM) ((UserPortalItemModel) userPortalListModel.getSelectedItem()).getEntity();
+            gettempVm().setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
-                                VmManagementParametersBase param = new VmManagementParametersBase(vm);
-                                param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-                                param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+            if (selectedItem.isRunningOrPaused()) {
+                AsyncDataProvider.isNextRunConfigurationChanged(editedVm, gettempVm(), new AsyncQuery(this,
+                        new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object thisModel, Object returnValue) {
+                        if (((VdcQueryReturnValue)returnValue).<Boolean> getReturnValue()) {
+                            VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();
+                            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().editNextRunConfigurationTitle());
+                            confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
+                            confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
+                            confirmModel.setCpuPluggable(selectedItem.getCpuPerSocket() == gettempVm().getCpuPerSocket() &&
+                                    selectedItem.getNumOfSockets() != gettempVm().getNumOfSockets());
 
-                                Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), this);
-                            }
-                        }, this);
+                            confirmModel.getCommands().add(new UICommand("updateExistingVm", UserPortalListModel.this) //$NON-NLS-1$
+                            .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                            .setIsDefault(true));
+
+                            confirmModel.getCommands().add(new UICommand("CancelConfirmation", UserPortalListModel.this) //$NON-NLS-1$
+                            .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+                            .setIsCancel(true));
+
+                            setConfirmWindow(confirmModel);
+                        }
+                        else {
+                            updateExistingVm(userPortalListModel, false);
+                        }
+                    }
+                }));
             }
-            else
-            {
-                VM vm = gettempVm();
-                vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
-
-                VmManagementParametersBase param = new VmManagementParametersBase(vm);
-                param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-                param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-
-                Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), this);
+            else {
+                updateExistingVm(userPortalListModel, false);
             }
+        }
+    }
+
+    private void updateExistingVm(UserPortalListModel userPortalListModel, final boolean applyCpuChangesLater) {
+        final UnitVmModel model = (UnitVmModel) getWindow();
+        UserPortalItemModel selectedItem = (UserPortalItemModel) userPortalListModel.getSelectedItem();
+
+        Guid oldClusterID = ((VM) selectedItem.getEntity()).getVdsGroupId();
+        Guid newClusterID = model.getSelectedCluster().getId();
+        if (oldClusterID.equals(newClusterID) == false)
+        {
+            Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster, new ChangeVMClusterParameters(newClusterID,
+                    gettempVm().getId()),
+                    new IFrontendActionAsyncCallback() {
+                        @Override
+                        public void executed(FrontendActionAsyncResult result) {
+                            VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
+                            param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+                            param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+                            param.setApplyChangesLater(applyCpuChangesLater);
+
+                            Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
+                        }
+                    }, this);
+        }
+        else
+        {
+            VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
+            param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+            param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+            param.setApplyChangesLater(applyCpuChangesLater);
+
+            Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
         }
     }
 

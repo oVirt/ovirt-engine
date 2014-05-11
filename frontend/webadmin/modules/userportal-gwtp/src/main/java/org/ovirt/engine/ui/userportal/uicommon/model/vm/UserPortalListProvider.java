@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmNextRunConfigurationPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
@@ -34,6 +35,7 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
     private final Provider<ConsolePopupPresenterWidget> consolePopupProvider;
     private final Provider<DefaultConfirmationPopupPresenterWidget> spiceToGuestWithNonRespAgentPopupProvider;
     private final Provider<CloneVmPopupPresenterWidget> cloneVmProvider;
+    private final Provider<VmNextRunConfigurationPresenterWidget> nextRunProvider;
 
     @Inject
     public UserPortalListProvider(EventBus eventBus,
@@ -47,7 +49,8 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
             Provider<VncInfoPopupPresenterWidget> vncInfoPopupProvider,
             Provider<DefaultConfirmationPopupPresenterWidget> spiceToGuestWithNonRespAgentPopupProvider,
             Provider<ConsolePopupPresenterWidget> consolePopupProvider,
-            Provider<CloneVmPopupPresenterWidget> cloneVmProvider) {
+            Provider<CloneVmPopupPresenterWidget> cloneVmProvider,
+            Provider<VmNextRunConfigurationPresenterWidget> nextRunProvider) {
         super(eventBus, defaultConfirmPopupProvider, user);
         this.newVmPopupProvider = newVmPopupProvider;
         this.runOncePopupProvider = runOncePopupProvider;
@@ -58,6 +61,7 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
         this.consolePopupProvider = consolePopupProvider;
         this.spiceToGuestWithNonRespAgentPopupProvider = spiceToGuestWithNonRespAgentPopupProvider;
         this.cloneVmProvider = cloneVmProvider;
+        this.nextRunProvider = nextRunProvider;
     }
 
     @Override
@@ -97,6 +101,9 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
             UICommand lastExecutedCommand) {
         if (lastExecutedCommand == getModel().getRemoveCommand()) {
             return removeConfirmPopupProvider.get();
+        }
+        else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
+            return nextRunProvider.get();
         } else {
             return super.getConfirmModelPopup(source, lastExecutedCommand);
         }
