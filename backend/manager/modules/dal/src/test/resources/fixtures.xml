@@ -875,7 +875,7 @@
             <null/>
             <value>bubu</value>
             <value>LINUX_BRIDGE</value>
-            <value>{"qpidConfiguration" : {"address" : "test", "port" : 5672, "username" : null, "password" : null}, "networkMappings" : ""}</value>
+            <value>{"messagingConfiguration" : {"brokerTpe" : "QPID", "address" : "test", "port" : 5672, "username" : null, "password" : null}, "networkMappings" : ""}</value>
         </row>
     </table>
 

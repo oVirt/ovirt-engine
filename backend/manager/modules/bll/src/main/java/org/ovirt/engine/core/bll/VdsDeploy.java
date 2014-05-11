@@ -494,7 +494,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
         public Boolean call() throws Exception {
             _setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_hostname",
-                _openStackAgentProperties.getAgentConfiguration().getQpidConfiguration().getAddress()
+                _openStackAgentProperties.getAgentConfiguration().getMessagingConfiguration().getAddress()
             );
             return true;
         }},
@@ -502,7 +502,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
         public Boolean call() throws Exception {
             _setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_port",
-                _openStackAgentProperties.getAgentConfiguration().getQpidConfiguration().getPort()
+                _openStackAgentProperties.getAgentConfiguration().getMessagingConfiguration().getPort()
             );
             return true;
         }},
@@ -510,7 +510,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
         public Boolean call() throws Exception {
             _setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_username",
-                _openStackAgentProperties.getAgentConfiguration().getQpidConfiguration().getUsername()
+                _openStackAgentProperties.getAgentConfiguration().getMessagingConfiguration().getUsername()
             );
             return true;
         }},
@@ -518,7 +518,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
         public Boolean call() throws Exception {
             _setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_password",
-                _openStackAgentProperties.getAgentConfiguration().getQpidConfiguration().getPassword()
+                _openStackAgentProperties.getAgentConfiguration().getMessagingConfiguration().getPassword()
             );
             return true;
         }},

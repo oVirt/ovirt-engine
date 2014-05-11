@@ -89,12 +89,21 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
         return builder.toString();
     }
 
-    public static class QpidConfiguration implements Serializable {
+    public static class MessagingConfiguration implements Serializable {
         private static final long serialVersionUID = -8072430559946539586L;
+        private BrokerType brokerType;
         private String address;
         private Integer port;
         private String username;
         private String password;
+
+        public BrokerType getBrokerType() {
+            return brokerType;
+        }
+
+        public void setBrokerType(BrokerType brokerType) {
+            this.brokerType = brokerType;
+        }
 
         public String getAddress() {
             return address;
@@ -103,7 +112,6 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
         public void setAddress(String address) {
             this.address = address;
         }
-
 
         public Integer getPort() {
             return port;
@@ -137,6 +145,7 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
             result = prime * result + ((getPort() == null) ? 0 : getPort().hashCode());
             result = prime * result + ((getUsername() == null) ? 0 : getUsername().hashCode());
             result = prime * result + ((getPassword() == null) ? 0 : getPassword().hashCode());
+            result = prime * result + ((getBrokerType() == null) ? 0 : getBrokerType().hashCode());
             return result;
         }
 
@@ -148,10 +157,10 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
             if (obj == null) {
                 return false;
             }
-            if (!(obj instanceof QpidConfiguration)) {
+            if (!(obj instanceof MessagingConfiguration)) {
                 return false;
             }
-            QpidConfiguration other = (QpidConfiguration) obj;
+            MessagingConfiguration other = (MessagingConfiguration) obj;
             if (getAddress() == null) {
                 if (other.getAddress() != null) {
                     return false;
@@ -180,21 +189,28 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
             } else if (!getUsername().equals(other.getUsername())) {
                 return false;
             }
+            if (getBrokerType() == null) {
+                if (other.getBrokerType() != null) {
+                    return false;
+                }
+            } else if (!getBrokerType().equals(other.getBrokerType())) {
+                return false;
+            }
             return true;
         }
     }
 
     public static class AgentConfiguration implements Serializable {
         private static final long serialVersionUID = -3588687921167640459L;
-        private QpidConfiguration qpidConfiguration;
+        private MessagingConfiguration messagingConfiguration;
         private String networkMappings;
 
-        public QpidConfiguration getQpidConfiguration() {
-            return qpidConfiguration;
+        public MessagingConfiguration getMessagingConfiguration() {
+            return messagingConfiguration;
         }
 
-        public void setQpidConfiguration(QpidConfiguration qpidConfiguration) {
-            this.qpidConfiguration = qpidConfiguration;
+        public void setMessagingConfiguration(MessagingConfiguration messagingConfiguration) {
+            this.messagingConfiguration = messagingConfiguration;
         }
 
         public String getNetworkMappings() {
@@ -210,7 +226,7 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
             final int prime = 31;
             int result = 1;
             result = prime * result + ((getNetworkMappings() == null) ? 0 : getNetworkMappings().hashCode());
-            result = prime * result + ((getQpidConfiguration() == null) ? 0 : getQpidConfiguration().hashCode());
+            result = prime * result + ((getMessagingConfiguration() == null) ? 0 : getMessagingConfiguration().hashCode());
             return result;
         }
 
@@ -233,14 +249,18 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
             } else if (!getNetworkMappings().equals(other.getNetworkMappings())) {
                 return false;
             }
-            if (getQpidConfiguration() == null) {
-                if (other.getQpidConfiguration() != null) {
+            if (getMessagingConfiguration() == null) {
+                if (other.getMessagingConfiguration() != null) {
                     return false;
                 }
-            } else if (!getQpidConfiguration().equals(other.getQpidConfiguration())) {
+            } else if (!getMessagingConfiguration().equals(other.getMessagingConfiguration())) {
                 return false;
             }
             return true;
         }
+    }
+
+    public enum BrokerType {
+        QPID
     }
 }

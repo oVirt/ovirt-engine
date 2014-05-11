@@ -3,7 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.providers;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
-import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.QpidConfiguration;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.BrokerType;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.MessagingConfiguration;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -140,7 +141,7 @@ public class NeutronAgentModel extends EntityModel {
             if (agentConfiguration != null) {
                 getInterfaceMappings().setEntity(agentConfiguration.getNetworkMappings());
 
-                QpidConfiguration qpidConfiguration = agentConfiguration.getQpidConfiguration();
+                MessagingConfiguration qpidConfiguration = agentConfiguration.getMessagingConfiguration();
                 if (qpidConfiguration != null) {
                     getQpidHost().setEntity(qpidConfiguration.getAddress());
                     Integer port = qpidConfiguration.getPort();
@@ -171,16 +172,17 @@ public class NeutronAgentModel extends EntityModel {
             }
             agentConfiguration.setNetworkMappings(getInterfaceMappings().getEntity());
 
-            QpidConfiguration qpidConfiguration = agentConfiguration.getQpidConfiguration();
+            MessagingConfiguration qpidConfiguration = agentConfiguration.getMessagingConfiguration();
             if (qpidConfiguration == null) {
-                qpidConfiguration = new QpidConfiguration();
-                agentConfiguration.setQpidConfiguration(qpidConfiguration);
+                qpidConfiguration = new MessagingConfiguration();
+                agentConfiguration.setMessagingConfiguration(qpidConfiguration);
             }
             qpidConfiguration.setAddress(getQpidHost().getEntity());
             String port = getQpidPort().getEntity();
             qpidConfiguration.setPort(port == null ? null : Integer.valueOf(port));
             qpidConfiguration.setUsername(getQpidUsername().getEntity());
             qpidConfiguration.setPassword(getQpidPassword().getEntity());
+            qpidConfiguration.setBrokerType(BrokerType.QPID);
         }
     }
 
