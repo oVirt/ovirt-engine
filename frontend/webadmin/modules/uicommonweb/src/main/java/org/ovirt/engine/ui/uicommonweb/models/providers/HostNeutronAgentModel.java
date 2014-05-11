@@ -4,6 +4,7 @@ public class HostNeutronAgentModel extends NeutronAgentModel {
 
     public HostNeutronAgentModel() {
         getPluginType().setIsChangable(false);
+        getBrokerType().setIsChangable(false);
         getMessagingServer().setIsChangable(false);
         getMessagingServerPort().setIsChangable(false);
         getMessagingServerUsername().setIsChangable(false);

@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
+import java.util.Arrays;
+
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
@@ -27,6 +29,7 @@ public class NeutronAgentModel extends EntityModel {
     private EntityModel<String> interfaceMappingsLabel = new EntityModel<String>();
     private EntityModel<String> interfaceMappingsExplanation = new EntityModel<String>();
     private EntityModel<String> interfaceMappings = new EntityModel<String>();
+    private ListModel<BrokerType> brokerType = new ListModel<BrokerType>();
     private EntityModel<String> messagingServer = new EntityModel<String>();
     private EntityModel<String> messagingServerPort = new EntityModel<String>();
     private EntityModel<String> messagingServerUsername = new EntityModel<String>();
@@ -50,6 +53,10 @@ public class NeutronAgentModel extends EntityModel {
 
     public EntityModel<String> getInterfaceMappings() {
         return interfaceMappings;
+    }
+
+    public ListModel<BrokerType> getBrokerType() {
+        return brokerType;
     }
 
     public EntityModel<String> getMessagingServer() {
@@ -115,18 +122,21 @@ public class NeutronAgentModel extends EntityModel {
         getInterfaceMappingsExplanation().setEntity(ConstantsManager.getInstance()
                 .getConstants()
                 .interfaceMappingsExplanation());
+        getBrokerType().setItems(Arrays.asList(BrokerType.values()));
     }
 
     public boolean validate() {
         if (getIsAvailable()) {
             getPluginType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+            getBrokerType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
             getInterfaceMappings().validateEntity(new IValidation[] { new InterfaceMappingsValidation() });
             getMessagingServer().validateEntity(new IValidation[] { new HostAddressValidation(true) });
             getMessagingServerPort().validateEntity(new IValidation[] { new IntegerValidation(BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
                     BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT) });
 
             setIsValid(getPluginType().getIsValid() && getInterfaceMappings().getIsValid()
-                    && getMessagingServer().getIsValid() && getMessagingServerPort().getIsValid());
+                    && getMessagingServer().getIsValid() && getMessagingServerPort().getIsValid()
+                    && getBrokerType().getIsValid());
         }
         return getIsValid();
     }
@@ -143,6 +153,7 @@ public class NeutronAgentModel extends EntityModel {
 
                 MessagingConfiguration messagingConfiguration = agentConfiguration.getMessagingConfiguration();
                 if (messagingConfiguration != null) {
+                    getBrokerType().setSelectedItem(messagingConfiguration.getBrokerType());
                     getMessagingServer().setEntity(messagingConfiguration.getAddress());
                     Integer port = messagingConfiguration.getPort();
                     getMessagingServerPort().setEntity(port == null ? null : Integer.toString(port));
@@ -182,7 +193,7 @@ public class NeutronAgentModel extends EntityModel {
             messagingConfiguration.setPort(port == null ? null : Integer.valueOf(port));
             messagingConfiguration.setUsername(getMessagingServerUsername().getEntity());
             messagingConfiguration.setPassword(getMessagingServerPassword().getEntity());
-            messagingConfiguration.setBrokerType(BrokerType.QPID);
+            messagingConfiguration.setBrokerType(getBrokerType().getSelectedItem());
         }
     }
 

@@ -3184,8 +3184,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Networks")
     String providerNetworksSubTabLabel();
 
-    @DefaultStringValue("Messaging Configuration")
+    @DefaultStringValue("Messaging Broker Configuration")
     String messagingConfiguration();
+
+    @DefaultStringValue("Broker Type")
+    String messagingBrokerType();
 
     @DefaultStringValue("Host")
     String messagingServer();

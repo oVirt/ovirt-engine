@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 	<ui:style>
@@ -27,6 +29,7 @@
 		<g:FlowPanel addStyleNames="{style.sectionStyle}">
 			<g:Label text="{constants.messagingConfiguration}" addStyleNames="{style.messagingServerHeader}"/>
 			<g:FlowPanel addStyleNames="{style.messagingServerInnerPanel}">
+				<e:ListModelListBoxEditor ui:field="brokerTypeEditor"/>
 				<ge:StringEntityModelTextBoxEditor ui:field="messagingServer"/>
 				<ge:StringEntityModelTextBoxEditor ui:field="messagingServerPort"/>
 				<ge:StringEntityModelTextBoxEditor ui:field="messagingServerUsername"/>
