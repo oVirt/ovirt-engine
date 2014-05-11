@@ -978,6 +978,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Attached To")
     String attachedToDisk();
 
+    @DefaultStringValue("Apply later")
+    String applyLater();
+
     // Application list
     @DefaultStringValue("Installed Applications")
     String installedApp();

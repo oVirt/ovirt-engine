@@ -100,6 +100,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmNextRunConfigurationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
@@ -322,6 +323,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmExportPopupView
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMakeTemplatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMigratePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmNextRunConfigurationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupView;
@@ -790,6 +792,7 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVirtualMachineEventView.class,
                 SubTabVirtualMachineEventPresenter.ProxyDef.class);
 
+
         // Pool
         bindPresenter(PoolSubTabPanelPresenter.class,
                 PoolSubTabPanelPresenter.ViewDef.class,
@@ -1018,6 +1021,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(SystemPermissionsRemoveConfirmationPopupPresenterWidget.class,
                 SystemPermissionsRemoveConfirmationPopupPresenterWidget.ViewDef.class,
                 SystemPermissionsRemoveConfirmationPopupView.class);
+
+        bindPresenterWidget(VmNextRunConfigurationPresenterWidget.class,
+                VmNextRunConfigurationPresenterWidget.ViewDef.class,
+                VmNextRunConfigurationPopupView.class);
 
         // Bookmarks
         bindPresenterWidget(BookmarkPopupPresenterWidget.class,

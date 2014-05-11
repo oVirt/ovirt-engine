@@ -51,6 +51,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmNextRunConfigurationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
@@ -87,6 +88,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<ReportPresenterWidget> reportWindowProvider,
             final Provider<ConsolePopupPresenterWidget> consolePopupProvider,
             final Provider<VncInfoPopupPresenterWidget> vncWindoProvider,
+            final Provider<VmNextRunConfigurationPresenterWidget> nextRunProvider,
             final Provider<CloneVmPopupPresenterWidget> cloneVmProvider) {
         return new MainTabModelProvider<VM, VmListModel>(eventBus, defaultConfirmPopupProvider, VmListModel.class) {
             @Override
@@ -133,7 +135,11 @@ public class VirtualMachineModule extends AbstractGinModule {
                 else if (lastExecutedCommand == getModel().getStopCommand() ||
                         lastExecutedCommand == getModel().getShutdownCommand()) {
                     return removeConfirmPopupProvider.get();
-                } else {
+                }
+                else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
+                    return nextRunProvider.get();
+                }
+                else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }

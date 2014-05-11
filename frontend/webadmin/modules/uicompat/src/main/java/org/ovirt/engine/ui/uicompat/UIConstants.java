@@ -161,6 +161,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Power Management Configuration")
     String powerManagementConfigurationTitle();
 
+    @DefaultStringValue("Next Restart Configuration")
+    String editNextRunConfigurationTitle();
+
     @DefaultStringValue("Data Centers")
     String dataCentersTitle();
 

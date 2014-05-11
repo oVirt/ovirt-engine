@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -420,6 +421,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private ErrorPopupManager errorPopupManager;
 
+    /** The edited VM could be different than the selected VM in the grid
+     *  when the VM has next-run configuration */
+    private VM editedVm;
+
     VmInterfaceCreatingManager defaultNetworkCreatingManager =
             new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
                 @Override
@@ -778,7 +783,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getVmInitQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object result) {
-                vmInitLoaded((VM) result);
+                editedVm = (VM) result;
+                vmInitLoaded(editedVm);
             }
         };
         if (vm.isNextRunConfigurationExists()) {
@@ -2002,16 +2008,49 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         else // Update existing VM -> consists of editing VM cluster, and if succeeds - editing VM:
         {
-            VM selectedItem = (VM) getSelectedItem();
+            final VM selectedItem = (VM) getSelectedItem();
             // explicitly pass non-editable field from the original VM
             getcurrentVm().setCreatedByUserId(selectedItem.getCreatedByUserId());
             getcurrentVm().setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
-            updateExistingVm(model);
+            if (selectedItem.isRunningOrPaused()) {
+                AsyncDataProvider.isNextRunConfigurationChanged(editedVm, getcurrentVm(), new AsyncQuery(this,
+                        new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object thisModel, Object returnValue) {
+                        if (((VdcQueryReturnValue)returnValue).<Boolean> getReturnValue()) {
+                            VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();
+                            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().editNextRunConfigurationTitle());
+                            confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
+                            confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
+                            confirmModel.setCpuPluggable(selectedItem.getCpuPerSocket() == getcurrentVm().getCpuPerSocket() &&
+                                    selectedItem.getNumOfSockets() != getcurrentVm().getNumOfSockets());
+
+                            confirmModel.getCommands().add(new UICommand("updateExistingVm", VmListModel.this) //$NON-NLS-1$
+                            .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                            .setIsDefault(true));
+
+                            confirmModel.getCommands().add(new UICommand("CancelConfirmation", VmListModel.this) //$NON-NLS-1$
+                            .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+                            .setIsCancel(true));
+
+                            setConfirmWindow(confirmModel);
+                        }
+                        else {
+                            updateExistingVm(false);
+                        }
+                    }
+                }));
+            }
+            else {
+                updateExistingVm(false);
+            }
         }
     }
 
-    private void updateExistingVm(final UnitVmModel model) {
+    private void updateExistingVm(final boolean applyCpuChangesLater) {
+        final UnitVmModel model = (UnitVmModel) getWindow();
+
         if (model.getProgress() != null)
         {
             return;
@@ -2046,6 +2085,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                         .getEntity());
                                 updateVmParams.setBalloonEnabled(balloonEnabled(model));
                                 updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+                                updateVmParams.setApplyChangesLater(applyCpuChangesLater);
 
                                 Frontend.getInstance().runAction(VdcActionType.UpdateVm,
                                         updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), vmListModel);
@@ -2072,6 +2112,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             updateVmParams.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
             updateVmParams.setBalloonEnabled(balloonEnabled(model));
             updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+            updateVmParams.setApplyChangesLater(applyCpuChangesLater);
 
             Frontend.getInstance().runAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
         }
@@ -2586,7 +2627,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 "OnEditConsoleSave".equals(command.getName())) { //$NON-NLS-1$
             setWindow(null);
         }
-
+        else if ("updateExistingVm".equals(command.getName())) { // $NON-NLS-1$
+            VmNextRunConfigurationModel model = (VmNextRunConfigurationModel) getConfirmWindow();
+            updateExistingVm(model.getApplyCpuLater().getEntity());
+            cancelConfirmation();
+        }
     }
 
     private void cloneVm() {

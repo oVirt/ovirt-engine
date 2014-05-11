@@ -230,6 +230,8 @@ public enum HelpTag {
 
     migrate_virtual_machine("migrate_virtual_machine", HelpTagType.WEBADMIN, "VMs Tab > Migrate Virtual Machine(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    edit_next_run_configuration("edit_next_run_configuration", HelpTagType.COMMON, "'VMs' main tab -> 'Edit VM' dialog [replaces the old 'Edit Desktop' (edit_desktop) and 'Edit Server' (edit_server)]"), //$NON-NLS-1$ //$NON-NLS-2$
+
     monitor("monitor", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     move_disk("move_disk", HelpTagType.WEBADMIN, "VMs Tab > Virtual Disks Sub-Tab > Move Virtual Disk"), //$NON-NLS-1$ //$NON-NLS-2$

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+
+	<ui:style>
+        .contentWidgets {
+            width: 97%;
+        }
+	</ui:style>
+
+	<g:FlowPanel>
+        <g:HTML ui:field="message1" />
+        <g:FlowPanel ui:field="cpuPanel">
+            <g:HTML ui:field="message2" />
+            <ge:EntityModelCheckBoxEditor ui:field="applyCpuLaterEditor" addStyleNames="{style.contentWidgets}"/>
+        </g:FlowPanel>
+	</g:FlowPanel>
+
+</ui:UiBinder>
