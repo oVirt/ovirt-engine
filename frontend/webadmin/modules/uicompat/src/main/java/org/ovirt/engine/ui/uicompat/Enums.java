@@ -324,4 +324,6 @@ public interface Enums extends LocalizedEnums {
     String SerialNumberPolicy___CUSTOM();
 
     String OpenstackNetworkProviderProperties$BrokerType___QPID();
+
+    String OpenstackNetworkProviderProperties$BrokerType___RABBIT_MQ();
 }

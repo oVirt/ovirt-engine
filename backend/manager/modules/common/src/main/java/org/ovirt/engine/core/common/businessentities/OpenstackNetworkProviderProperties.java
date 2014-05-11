@@ -266,7 +266,13 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
                 "qpid_port",
                 "qpid_username",
                 "qpid_password",
-                "quantum.openstack.common.rpc.impl_qpid");
+                "quantum.openstack.common.rpc.impl_qpid"),
+        RABBIT_MQ(
+                "rabbit_host",
+                "rabbit_port",
+                "rabbit_userid",
+                "rabbit_password",
+                "neutron.openstack.common.rpc.impl_kombu");
 
         private String hostKey;
         private String portKey;
