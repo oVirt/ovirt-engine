@@ -261,6 +261,45 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
     }
 
     public enum BrokerType {
-        QPID
+        QPID(
+                "qpid_hostname",
+                "qpid_port",
+                "qpid_username",
+                "qpid_password",
+                "quantum.openstack.common.rpc.impl_qpid");
+
+        private String hostKey;
+        private String portKey;
+        private String usernameKey;
+        private String passwordKey;
+        private String rpcBackendValue;
+
+        private BrokerType(String hostKey, String portKey, String usernameKey, String passwordKey, String rpcBackend) {
+            this.hostKey = hostKey;
+            this.portKey = portKey;
+            this.usernameKey = usernameKey;
+            this.passwordKey = passwordKey;
+            this.rpcBackendValue = rpcBackend;
+        }
+
+        public String getHostKey() {
+            return hostKey;
+        }
+
+        public String getUsernameKey() {
+            return usernameKey;
+        }
+
+        public String getPasswordKey() {
+            return passwordKey;
+        }
+
+        public String getRpcBackendValue() {
+            return rpcBackendValue;
+        }
+
+        public String getPortKey() {
+            return portKey;
+        }
     }
 }

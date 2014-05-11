@@ -26,9 +26,9 @@ import java.util.concurrent.Callable;
 import javax.naming.TimeLimitExceededException;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.ovirt.engine.core.bll.utils.EngineSSHDialog;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.MessagingConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -114,6 +114,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
     private String _iptables = "";
 
     private OpenstackNetworkProviderProperties _openStackAgentProperties = null;
+    private MessagingConfiguration _messagingConfiguration = null;
 
     /**
      * set vds object with unique id.
@@ -493,32 +494,33 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
         new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
         public Boolean call() throws Exception {
             _setCliEnvironmentIfNecessary(
-                OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_hostname",
-                _openStackAgentProperties.getAgentConfiguration().getMessagingConfiguration().getAddress()
+                OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/" + _messagingConfiguration.getBrokerType().getHostKey(),
+                _messagingConfiguration.getAddress()
             );
             return true;
         }},
         new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
         public Boolean call() throws Exception {
             _setCliEnvironmentIfNecessary(
-                OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_port",
-                _openStackAgentProperties.getAgentConfiguration().getMessagingConfiguration().getPort()
+                OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/" + _messagingConfiguration.getBrokerType().getPortKey(),
+                _messagingConfiguration.getPort()
             );
             return true;
         }},
         new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
         public Boolean call() throws Exception {
             _setCliEnvironmentIfNecessary(
-                OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_username",
-                _openStackAgentProperties.getAgentConfiguration().getMessagingConfiguration().getUsername()
+                OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/" +
+                                    _messagingConfiguration.getBrokerType().getUsernameKey(),
+                _messagingConfiguration.getUsername()
             );
             return true;
         }},
         new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
         public Boolean call() throws Exception {
-            _setCliEnvironmentIfNecessary(
-                OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_password",
-                _openStackAgentProperties.getAgentConfiguration().getMessagingConfiguration().getPassword()
+            _setCliEnvironmentIfNecessary(OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/" +
+                            _messagingConfiguration.getBrokerType().getPasswordKey(),
+            _messagingConfiguration.getPassword()
             );
             return true;
         }},
@@ -526,7 +528,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
         public Boolean call() throws Exception {
             _parser.cliEnvironmentSet(
                 OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/rpc_backend",
-                "quantum.openstack.common.rpc.impl_qpid"
+                _messagingConfiguration.getBrokerType().getRpcBackendValue()
             );
             return true;
         }},
@@ -1170,6 +1172,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
     public void setOpenStackAgentProperties(OpenstackNetworkProviderProperties properties) {
         _openStackAgentProperties = properties;
         if (_openStackAgentProperties != null) {
+            _messagingConfiguration = _openStackAgentProperties.getAgentConfiguration().getMessagingConfiguration();
             _customizationConditions.add(CustomizationCondition.NEUTRON_SETUP);
             if (_openStackAgentProperties.isLinuxBridge()) {
                 _customizationConditions.add(CustomizationCondition.NEUTRON_LINUX_BRIDGE_SETUP);
