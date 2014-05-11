@@ -195,6 +195,11 @@
         <include name="common/businessentities/VmRngDevice.java" />
 		<include name="common/job/*.java" />
 
+		<!-- Profiles -->
+		<include name="common/businessentities/profiles/DiskProfile.java" />
+		<include name="common/businessentities/profiles/ProfileBase.java" />
+		<include name="common/businessentities/profiles/ProfileType.java" />
+
 		<!-- Quota -->
 		<include name="common/businessentities/Quota.java"/>
 		<include name="common/businessentities/QuotaEnforcementTypeEnum.java"/>

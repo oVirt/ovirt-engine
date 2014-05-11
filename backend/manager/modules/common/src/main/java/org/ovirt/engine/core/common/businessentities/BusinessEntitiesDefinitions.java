@@ -44,6 +44,9 @@ public final class BusinessEntitiesDefinitions {
     public static final String BOND_NAME_PREFIX = "bond";
     public static final String BOND_NAME_PATTERN = "^" + BOND_NAME_PREFIX + "\\d+$";
 
+    // Profiles
+    public static final int PROFILE_NAME_SIZE = 50;
+
     // Bookmark (bookmarks)
     public static final int BOOKMARK_NAME_SIZE = 40;
     public static final int BOOKMARK_VALUE_SIZE = 300;
