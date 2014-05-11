@@ -389,11 +389,12 @@ public class HostSetupNetworksModel extends EntityModel {
                         .editNetworkTitle(logicalNetwork.getName()));
                 networkDialogModel.getName().setIsAvailable(false);
                 networkDialogModel.getNetwork().setIsChangable(false);
-                networkDialogModel.getNetwork().setSelectedItem(logicalNetwork.getEntity());
                 networkDialogModel.getGateway()
                         .setIsAvailable((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MultipleGatewaysSupported,
                                 version));
             }
+
+            networkDialogModel.getNetwork().setSelectedItem(logicalNetwork.getEntity());
             networkDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetwork.getName()));
             networkDialogModel.getAddress().setEntity(entity.getAddress());
             networkDialogModel.getSubnet().setEntity(entity.getSubnet());
