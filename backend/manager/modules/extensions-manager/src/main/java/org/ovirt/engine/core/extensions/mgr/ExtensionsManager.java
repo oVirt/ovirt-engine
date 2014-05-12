@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Observable;
 import java.util.Properties;
 import java.util.ServiceLoader;
 
@@ -30,7 +31,7 @@ import org.ovirt.engine.api.extensions.Extension;
  * This class is responsible for loading the required {@code Configuration} in order to create an extension. It holds
  * the logic of ordering and solving conflicts during loading the configuration
  */
-public class ExtensionsManager {
+public class ExtensionsManager extends Observable {
     private static final String ENGINE_EXTENSION_ENABLED = "ENGINE_EXTENSION_ENABLED_";
 
     public static final ExtKey TRACE_LOG_CONTEXT_KEY = new ExtKey("EXTENSION_MANAGER_TRACE_LOG", Logger.class, "863db666-3ea7-4751-9695-918a3197ad83");
@@ -318,6 +319,8 @@ public class ExtensionsManager {
                 }
             }
         }
+        setChanged();
+        notifyObservers();
     }
 
     private Extension loadExtension(Properties props) throws Exception {
