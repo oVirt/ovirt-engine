@@ -117,7 +117,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
         registerHandler(getView().getConsoleClientResourcesAnchor().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                Window.open(dynamicMessages.consoleClientResourcesUrl(), "_blank", null); //$NON-NLS-1$
+                Window.open(dynamicMessages.consoleClientResourcesUrl(), "_blank", "resizable=yes,scrollbars=yes"); //$NON-NLS-1$ $NON-NLS-2$
             }
         }));
     }
