@@ -54,6 +54,7 @@ public enum VdcActionType {
     CloneVm(53, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
     ImportVmFromConfiguration(43, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     UpdateVmVersion(44, QuotaDependency.NONE),
+    ImportVmTemplateFromConfiguration(45, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     // VdsCommands
     AddVds(101, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
     UpdateVds(102, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),

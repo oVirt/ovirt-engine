@@ -63,7 +63,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     public ImportVmTemplateCommand(ImportVmTemplateParameters parameters) {
         super(parameters);
         setVmTemplate(parameters.getVmTemplate());
-        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplate().getId()));
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         setStoragePoolId(parameters.getStoragePoolId());
         setVdsGroupId(parameters.getVdsGroupId());
         setStorageDomainId(parameters.getStorageDomainId());
@@ -99,12 +99,13 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             retVal = validate(sourceDomainValidator.isDomainExistAndActive());
         }
 
-        if (retVal && getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
+        if (retVal && (getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport)
+                && !isImagesAlreadyOnTarget()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             retVal = false;
         }
 
-        if (retVal) {
+        if (retVal && !isImagesAlreadyOnTarget()) {
             // Set the template images from the Export domain and change each image id storage is to the import domain
             GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getParameters()
                     .getStoragePoolId(), getParameters().getSourceDomainId());
@@ -179,7 +180,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             retVal = validateNoDuplicateDiskImages(getParameters().getImages());
         }
 
-        if (retVal && getParameters().getImages() != null && !getParameters().getImages().isEmpty()) {
+        if (retVal && getParameters().getImages() != null && !getParameters().getImages().isEmpty() && !isImagesAlreadyOnTarget()) {
             Map<StorageDomain, Integer> domainMap = getSpaceRequirementsForStorageDomains(
                     new ArrayList<DiskImage>(getVmTemplate().getDiskImageMap().values()));
             if (domainMap.isEmpty()) {
@@ -258,7 +259,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     protected boolean validateNoDuplicateDiskImages(Iterable<DiskImage> images) {
-        if (!getParameters().isImportAsNewEntity()) {
+        if (!getParameters().isImportAsNewEntity() && !isImagesAlreadyOnTarget()) {
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(images);
             return validate(diskImagesValidator.diskImagesAlreadyExist());
         }
@@ -301,13 +302,13 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         });
 
         boolean doesVmTemplateContainImages = !getParameters().getImages().isEmpty();
-        if (doesVmTemplateContainImages) {
+        if (doesVmTemplateContainImages && !isImagesAlreadyOnTarget()) {
             moveOrCopyAllImageGroups(getVmTemplateId(), getParameters().getImages());
         }
 
         VmDeviceUtils.addImportedDevices(getVmTemplate(), getParameters().isImportAsNewEntity());
 
-        if (!doesVmTemplateContainImages) {
+        if (!doesVmTemplateContainImages || isImagesAlreadyOnTarget()) {
             endMoveOrCopyCommand();
         }
         checkTrustedService();

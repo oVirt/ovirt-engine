@@ -56,6 +56,26 @@ public class OvfHelper {
         return vm;
     }
 
+    /**
+     * parses a given ovf to a VmTemplate, initialized with images and interfaces.
+     * @param ovf
+     * @return
+     *        VmTemplate that represents the given ovf data
+     * @throws OvfReaderException
+     */
+    public VmTemplate readVmTemplateFromOvf(String ovf) throws OvfReaderException {
+        ArrayList<DiskImage> diskImages = new ArrayList<DiskImage>();
+        ArrayList<VmNetworkInterface> interfaces = new ArrayList<VmNetworkInterface>();
+        VmTemplate template = new VmTemplate();
+        ovfManager.ImportTemplate(ovf, template, diskImages, interfaces);
+        template.setInterfaces(interfaces);
+        // add disk map
+        for (DiskImage disk : diskImages) {
+            template.getDiskTemplateMap().put(disk.getId(), disk);
+        }
+        return template;
+    }
+
     public String generateOvfConfigurationForVm(VM vm) {
         if (VMStatus.ImageLocked != vm.getStatus()) {
             VmHandler.updateDisksFromDb(vm);
