@@ -620,7 +620,7 @@ class Const(object):
     FIREWALL_MANAGER_HUMAN = 'skip'
     FIREWALL_MANAGER_IPTABLES = 'iptables'
     FIREWALL_MANAGER_FIREWALLD = 'firewalld'
-    ISO_DOMAIN_NFS_DEFAULT_ACL = '0.0.0.0/0.0.0.0(rw)'
+    ISO_DOMAIN_NFS_DEFAULT_ACL_FORMAT = '{fqdn}(rw)'
     ENGINE_DB_BACKUP_PREFIX = 'engine'
 
     @classproperty

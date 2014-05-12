@@ -368,10 +368,20 @@ class Plugin(plugin.PluginBase):
                 osetupcons.ConfigEnv.ISO_DOMAIN_NFS_ACL
             ] = self.dialog.queryString(
                 name='ISO_DOMAIN_ACL',
-                note=_('Local ISO domain ACL [@DEFAULT@]: '),
+                note=_(
+                    'Local ISO domain ACL - note that the default will '
+                    'restrict access to {fqdn} only, for security reasons '
+                    '[@DEFAULT@]: '
+                ).format(
+                    fqdn=self.environment[osetupcons.ConfigEnv.FQDN]
+                ),
                 prompt=True,
                 caseSensitive=True,
-                default=osetupcons.Const.ISO_DOMAIN_NFS_DEFAULT_ACL,
+                default=(
+                    osetupcons.Const.ISO_DOMAIN_NFS_DEFAULT_ACL_FORMAT.format(
+                        fqdn=self.environment[osetupcons.ConfigEnv.FQDN]
+                    )
+                ),
             )
 
         if self.environment[
