@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -43,7 +44,7 @@ public enum ConsoleProtocol {
         return null;
     }
 
-    static class PriorityComparator implements Comparator<ConsoleProtocol> {
+    static class PriorityComparator implements Comparator<ConsoleProtocol>, Serializable {
         @Override
         public int compare(ConsoleProtocol fst, ConsoleProtocol snd) {
             if (fst == null && snd == null) {
