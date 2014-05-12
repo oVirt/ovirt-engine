@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
@@ -97,7 +96,7 @@ public class VdsUpdateRunTimeInfo {
     private final Map<Guid, VmDynamic> _vmDynamicToSave = new HashMap<>();
     private final Map<Guid, VmStatistics> _vmStatisticsToSave = new HashMap<>();
     private final Map<Guid, List<VmNetworkInterface>> _vmInterfaceStatisticsToSave = new HashMap<>();
-    private final Map<Guid, DiskImageDynamic> _vmDiskImageDynamicToSave = new HashMap<>();
+    private final Set<DiskImageDynamic> _vmDiskImageDynamicToSave = new HashSet<>();
     private final List<LUNs> vmLunDisksToSave = new ArrayList<>();
     private final Map<VmDeviceId, VmDevice> vmDeviceToSave = new HashMap<>();
     private final List<VmDevice> newVmDevices = new ArrayList<>();
@@ -193,7 +192,7 @@ public class VdsUpdateRunTimeInfo {
 
         getDbFacade().getVmNetworkStatisticsDao().updateAllInBatch(allVmInterfaceStatistics);
 
-        getDbFacade().getDiskImageDynamicDao().updateAllInBatch(_vmDiskImageDynamicToSave.values());
+        getDbFacade().getDiskImageDynamicDao().updateAllDiskImageDynamicWithDiskId(_vmDiskImageDynamicToSave);
         getDbFacade().getLunDao().updateAllInBatch(vmLunDisksToSave);
         saveVmDevicesToDb();
         saveVmJobsToDb();
@@ -2041,18 +2040,7 @@ public class VdsUpdateRunTimeInfo {
             addVmStatisticsToList(vmToUpdate.getStatisticsData());
             updateInterfaceStatistics(vmToUpdate, vmStatistics);
 
-            for (DiskImageDynamic imageDynamic : _runningVms.get(vmToUpdate.getId()).getVmDynamic().getDisks()) {
-                Disk disk = getDbFacade().getDiskDao().get(imageDynamic.getId());
-                // We have disk_id statistics, which is good, but disk_image_dynamic table contains image_id, so we
-                // update for the AI.
-                // We also check if the disk is null, as, for external VMs the disk is not in the database
-                if (disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                    DiskImage diskImage = (DiskImage) disk;
-                    Guid activeImageId = diskImage.getImageId();
-                    imageDynamic.setId(activeImageId);
-                    _vmDiskImageDynamicToSave.put(activeImageId, imageDynamic);
-                }
-            }
+            _vmDiskImageDynamicToSave.addAll(_runningVms.get(vmToUpdate.getId()).getVmDynamic().getDisks());
         }
     }
 

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.compat.Guid;
@@ -83,5 +84,29 @@ public class DiskImageDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbF
                 return paramValue;
             }
         };
+    }
+
+    public MapSqlParameterMapper<DiskImageDynamic> getBatchImageGroupMapper() {
+        return new MapSqlParameterMapper<DiskImageDynamic>() {
+
+            @Override
+            public MapSqlParameterSource map(DiskImageDynamic entity) {
+                MapSqlParameterSource paramValue = new MapSqlParameterSource()
+                        .addValue("image_group_id", entity.getId())
+                        .addValue("read_rate", entity.getread_rate())
+                        .addValue("write_rate", entity.getwrite_rate())
+                        .addValue("actual_size", entity.getactual_size())
+                        .addValue("read_latency_seconds", entity.getReadLatency())
+                        .addValue("write_latency_seconds", entity.getWriteLatency())
+                        .addValue("flush_latency_seconds", entity.getFlushLatency());
+
+                return paramValue;
+            }
+        };
+    }
+
+    @Override
+    public void updateAllDiskImageDynamicWithDiskId(Collection<DiskImageDynamic> diskImageDynamic) {
+        updateAllInBatch("Updatedisk_image_dynamic_by_disk_id", diskImageDynamic, getBatchImageGroupMapper());
     }
 }
