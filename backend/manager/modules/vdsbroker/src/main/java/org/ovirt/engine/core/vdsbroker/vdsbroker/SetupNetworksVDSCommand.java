@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -16,6 +17,8 @@ import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameter
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters> extends FutureVDSCommand<T> {
 
@@ -25,6 +28,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     protected static final String SLAVES = "nics";
     private static final String DEFAULT_ROUTE = "defaultRoute";
     private static final Map<String, String> REMOVE_OBJ = Collections.singletonMap("remove", Boolean.TRUE.toString());
+    private static final Log log = LogFactory.getLog(SetupNetworksVDSCommand.class);
 
     public SetupNetworksVDSCommand(T parameters) {
         super(parameters);
@@ -72,7 +76,11 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 qosMapper.serialize(iface.isQosOverridden() ? iface.getQos() : qosDao.get(network.getQosId()));
             }
 
-            if (FeatureSupported.defaultRoute(Collections.max(host.getSupportedClusterVersionsSet()))
+            Set<Version> supportedClusterVersionsSet = host.getSupportedClusterVersionsSet();
+            if (supportedClusterVersionsSet == null || supportedClusterVersionsSet.isEmpty()) {
+                log.warnFormat("Host {0} ({1}) doesn't contain Supported Cluster Versions, therefore 'defaultRoute'"
+                        + " will not be sent via the SetupNetworks", host.getName(), host.getId());
+            } else if (FeatureSupported.defaultRoute(Collections.max(supportedClusterVersionsSet))
                     && NetworkUtils.isManagementNetwork(network)
                     && (iface.getBootProtocol() == NetworkBootProtocol.DHCP
                     || (iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP
