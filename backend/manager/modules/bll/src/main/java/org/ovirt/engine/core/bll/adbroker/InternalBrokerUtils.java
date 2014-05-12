@@ -40,7 +40,7 @@ public class InternalBrokerUtils {
 
     public static LdapUser getUserByUPN(String userName) {
         LdapUser retVal = null;
-        DbUser dbUser = getDbUserDAO().getByUsernameAndDomain(userName, "internal");
+        DbUser dbUser = getDbUserDAO().getByUsernameAndDomain(userName, Config.<String>getValue(ConfigValues.AdminDomain));
         if (dbUser != null) {
             retVal = new LdapUser(dbUser);
         }
