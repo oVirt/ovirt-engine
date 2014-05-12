@@ -42,14 +42,16 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
     protected void executeVdsBrokerCommand() {
         // call getVdsCapabilities verb
         super.executeVdsBrokerCommand();
-        updateNetConfigDirtyFlag();
+        persistCollectedData();
 
-        // update to db
+        proceedProxyReturnValue();
+    }
+
+    protected void persistCollectedData() {
+        updateNetConfigDirtyFlag();
         persistAndEnforceNetworkCompliance(getVds(),
                 skipManagementNetwork(),
                 Entities.entitiesByName(getParameters().getInterfaces()));
-
-        proceedProxyReturnValue();
     }
 
     /**
