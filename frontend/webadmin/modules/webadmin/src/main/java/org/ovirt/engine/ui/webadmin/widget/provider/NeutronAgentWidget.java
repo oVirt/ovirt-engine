@@ -44,7 +44,7 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
     private static ApplicationTemplates templates = GWT.create(ApplicationTemplates.class);
 
     @UiField(provided = true)
-    EntityModelWidgetWithInfo mappings;
+    EntityModelWidgetWithInfo<String> mappings;
 
     @Path(value = "interfaceMappingsLabel.entity")
     @WithElementId("interfaceMappingsLabel")
