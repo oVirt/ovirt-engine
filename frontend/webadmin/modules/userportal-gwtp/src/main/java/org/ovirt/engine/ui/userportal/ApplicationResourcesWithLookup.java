@@ -87,6 +87,9 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
     @Source("images/os/large/ubuntu_13_10.png")
     ImageResource ubuntu_13_10LargeImage();
 
+    @Source("images/os/large/debian_7.png")
+    ImageResource debian_7LargeImage();
+
     // ppc64 OSes large images
 
     @Source("images/os/large/other.png")
@@ -190,6 +193,9 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
 
     @Source("images/os/ubuntu_13_10.png")
     ImageResource ubuntu_13_10SmallImage();
+
+    @Source("images/os/debian_7.png")
+    ImageResource debian_7SmallImage();
 
     // ppc64 OSes small images
 
