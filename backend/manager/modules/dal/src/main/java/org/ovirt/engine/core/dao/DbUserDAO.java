@@ -32,6 +32,14 @@ public interface DbUserDAO extends DAO, SearchDAO<DbUser> {
     DbUser getByUsername(String username);
 
     /**
+     * Retriens a user by username and domain
+     * @param username username of the user
+     * @param domain domain of the user
+     * @return
+     */
+    DbUser getByUsernameAndDomain(String username, String domain);
+
+    /**
      * Retrieves a user by domain name and external identifier.
      *
      * @param domain the name of the domain
