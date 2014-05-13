@@ -124,7 +124,7 @@ class Plugin(plugin.PluginBase):
                     insecure=True,
                 )
                 isUp = True
-            except self._ovirtsdk_api.RequestError:
+            except self._ovirtsdk_errors.RequestError:
                 self.logger.debug(
                     'Cannot connect to engine',
                     exc_info=True,
@@ -160,8 +160,10 @@ class Plugin(plugin.PluginBase):
     def _validation(self):
         import ovirtsdk.api
         import ovirtsdk.xml
+        import ovirtsdk.infrastructure.errors
         self._ovirtsdk_api = ovirtsdk.api
         self._ovirtsdk_xml = ovirtsdk.xml
+        self._ovirtsdk_errors = ovirtsdk.infrastructure.errors
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
