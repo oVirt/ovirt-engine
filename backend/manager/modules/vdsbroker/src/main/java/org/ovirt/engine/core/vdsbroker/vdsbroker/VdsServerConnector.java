@@ -292,4 +292,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterVolumeRemoveBrickStatus(String volumeName, String[] bricksList);
 
     public Map<String, Object> setNumberOfCpus(String vmId, String numberOfCpus);
+
+    public Map<String, Object> updateVmPolicy(Map info);
 }

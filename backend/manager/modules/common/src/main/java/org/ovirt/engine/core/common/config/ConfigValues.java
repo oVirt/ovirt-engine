@@ -1091,6 +1091,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     NonVmNetworkSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    VmSlaPolicySupported,
+
     @TypeConverterAttribute(List.class)
     @DefaultValueAttribute("0,2")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)

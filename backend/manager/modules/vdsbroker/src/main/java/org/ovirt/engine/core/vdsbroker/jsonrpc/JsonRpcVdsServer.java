@@ -1401,6 +1401,16 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc updateVmPolicy(Map params) {
+        JsonRpcRequest request =
+                new RequestBuilder("VM.updateVmPolicy").withParameter("params", params)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc setHaMaintenanceMode(String mode, boolean enabled) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.setHaMaintenanceMode").withParameter("mode", mode)

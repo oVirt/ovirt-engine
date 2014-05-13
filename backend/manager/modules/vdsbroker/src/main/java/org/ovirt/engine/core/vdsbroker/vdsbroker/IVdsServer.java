@@ -303,4 +303,6 @@ public interface IVdsServer {
     GlusterVolumeTaskReturnForXmlRpc glusterVolumeRemoveBrickStatus(String volumeName, String[] bricksList);
 
     StatusOnlyReturnForXmlRpc setNumberOfCpus(String vmId, String numberOfCpus);
+
+    StatusOnlyReturnForXmlRpc updateVmPolicy(Map info);
 }
