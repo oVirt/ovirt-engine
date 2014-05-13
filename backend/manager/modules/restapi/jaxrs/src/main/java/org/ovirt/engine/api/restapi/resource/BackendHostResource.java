@@ -25,6 +25,7 @@ import org.ovirt.engine.api.resource.HostNicsResource;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostStorageResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
+import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
@@ -137,6 +138,24 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         ApproveVdsParameters params = new ApproveVdsParameters(guid);
         params = (ApproveVdsParameters) getMapper
                 (Action.class, VdsOperationActionParameters.class).map(action, (VdsOperationActionParameters) params);
+
+        // Set pk authentication as default
+        params.setAuthMethod(VdsOperationActionParameters.AuthenticationMethod.PublicKey);
+
+        if (action.isSetRootPassword()) {
+            params.setAuthMethod(VdsOperationActionParameters.AuthenticationMethod.Password);
+            params.setRootPassword(action.getRootPassword());
+        }
+        else if (action.isSetSsh() && action.getSsh().isSetAuthenticationMethod()) {
+            if (action.getSsh().getAuthenticationMethod().equals(
+                    AuthenticationMethod.PASSWORD.value())) {
+                params.setAuthMethod(VdsOperationActionParameters.AuthenticationMethod.Password);
+                if (action.getSsh().isSetUser() && action.getSsh().getUser().isSetPassword()) {
+                    params.setPassword(action.getSsh().getUser().getPassword());
+                }
+            }
+        }
+
         return doAction(VdcActionType.ApproveVds,
                         params,
                         action);
