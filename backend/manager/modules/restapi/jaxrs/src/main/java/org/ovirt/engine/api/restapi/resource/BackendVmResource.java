@@ -24,6 +24,7 @@ import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
+import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Ticket;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.ActionResource;
@@ -71,7 +72,9 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
+import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -499,7 +502,7 @@ public class BackendVmResource extends
                     entity.getStaticData());
 
             updated.setUsbPolicy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy(),
-                    lookupCluster(updated.getVdsGroupId())));
+                    lookupCluster(updated.getVdsGroupId()).getcompatibility_version()));
 
             VmManagementParametersBase params = new VmManagementParametersBase(updated);
 
@@ -525,12 +528,26 @@ public class BackendVmResource extends
                 params.setUpdateRngDevice(true);
                 params.setRngDevice(RngDeviceMapper.map(incoming.getRngDevice(), null));
             }
+            if (incoming.isSetInstanceType() && (incoming.getInstanceType().isSetId() || incoming.getInstanceType().isSetName())) {
+                updated.setInstanceTypeId(lookupInstanceTypeId(incoming.getInstanceType()));
+            } else if (incoming.isSetInstanceType()) {
+                // this means that the instance type should be unset
+                updated.setInstanceTypeId(null);
+            }
             return params;
         }
     }
 
     private VDSGroup lookupCluster(Guid id) {
         return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByVdsGroupId, new IdQueryParameters(id), "GetVdsGroupByVdsGroupId");
+    }
+
+    private Guid lookupInstanceTypeId(Template template) {
+        return template.isSetId() ? asGuid(template.getId()) : lookupInstanceTypeByName(template).getId();
+    }
+
+    private VmTemplate lookupInstanceTypeByName(Template template) {
+        return getEntity(VmTemplate.class, VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(template.getName()), "GetVmTemplate");
     }
 
     @Override

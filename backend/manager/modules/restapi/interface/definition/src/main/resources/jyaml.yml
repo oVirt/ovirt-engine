@@ -76,6 +76,8 @@ transfers:
   bookmarks: org.ovirt.engine.api.models.Bookmarks
   template: org.ovirt.engine.api.model.Template
   templates: org.ovirt.engine.api.model.Templates
+  instance_type: org.ovirt.engine.api.model.InstanceType
+  instance_types: org.ovirt.engine.api.model.InstanceTypes
   ticket: org.ovirt.engine.api.model.Ticket
   transparent_hugepages: org.ovirt.engine.api.model.TransparentHugePages
   user: org.ovirt.engine.api.model.User
@@ -168,6 +170,8 @@ handlers:
   org.ovirt.engine.api.model.Tags: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Template: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Templates: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.InstanceType: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.InstanceTypes: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Ticket: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.TransparentHugePages: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.User: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper

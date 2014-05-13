@@ -2398,9 +2398,33 @@
   </xs:complexType>
 
   <!-- Virtual Machine Templates -->
-
   <xs:element name="templates" type="Templates"/>
   <xs:element name="template" type="Template"/>
+
+  <xs:complexType name="InstanceTypes">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="InstanceTypes"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="instance_type" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="InstanceType">
+    <xs:complexContent>
+      <xs:extension base="Template">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="instance_types" type="InstanceTypes"/>
+  <xs:element name="instance_type" type="InstanceType"/>
 
   <xs:complexType name="Template">
     <xs:complexContent>
@@ -2821,6 +2845,7 @@
           <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="cluster" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="template" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="instance_type" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="storage_domain" minOccurs="0" maxOccurs="1"/>
           <xs:element name="start_time" type="xs:dateTime" minOccurs="0"/>
           <xs:element name="stop_time" type="xs:dateTime" minOccurs="0"/>

@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -17,10 +16,8 @@ import org.ovirt.engine.api.model.Permissions;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TemplateVersion;
 import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -36,19 +33,13 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplatesResourceTest
-    extends AbstractBackendCollectionResourceTest<Template, VmTemplate, BackendTemplatesResource> {
+    extends BackendTemplatesBasedResourceTest<Template, VmTemplate, BackendTemplatesResource> {
 
-    protected VmHelper vmHelper = VmHelper.getInstance();
+
     private static final String VERSION_NAME = "my new version";
 
     public BackendTemplatesResourceTest() {
         super(new BackendTemplatesResource(), SearchType.VmTemplate, "Template : ");
-    }
-
-    @Override
-    public void init() {
-        super.init();
-        initBackendResource(vmHelper);
     }
 
     @Test
@@ -106,71 +97,8 @@ public class BackendTemplatesResourceTest
         assertNull(((Template)response.getEntity()).getCreationStatus());
     }
 
-    @Test
-    public void testRemove() throws Exception {
-        setUpGetEntityExpectations(0);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
-                                           VmTemplateParametersBase.class,
-                                           new String[] { "VmTemplateId" },
-                                           new Object[] { GUIDS[0] },
-                                           true,
-                                           true));
-        verifyRemove(collection.remove(GUIDS[0].toString()));
-    }
-
-    @Test
-    public void testRemoveNonExistant() throws Exception{
-        setUpGetEntityExpectations(VdcQueryType.GetVmTemplate,
-                GetVmTemplateParameters.class,
-                new String[] { "Id" },
-                new Object[] { NON_EXISTANT_GUID },
-                null);
-        control.replay();
-        try {
-            collection.remove(NON_EXISTANT_GUID.toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
-        }
-    }
-
-    private void setUpGetEntityExpectations(int index) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVmTemplate,
-                GetVmTemplateParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[index] },
-                getEntity(index));
-    }
-
-    @Test
-    public void testRemoveCantDo() throws Exception {
-        doTestBadRemove(false, true, CANT_DO);
-    }
-
     protected org.ovirt.engine.core.common.businessentities.VDSGroup getVdsGroupEntity() {
         return new VDSGroup();
-    }
-
-    @Test
-    public void testRemoveFailed() throws Exception {
-        doTestBadRemove(true, false, FAILURE);
-    }
-
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations(0);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
-                                           VmTemplateParametersBase.class,
-                                           new String[] { "VmTemplateId" },
-                                           new Object[] { GUIDS[0] },
-                                           canDo,
-                                           success));
-        try {
-            collection.remove(GUIDS[0].toString());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
     }
 
     @Test
@@ -230,46 +158,33 @@ public class BackendTemplatesResourceTest
         assertEquals(creationStatus.value(), created.getCreationStatus().getState());
     }
 
-    @Test
     public void testAdd() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpHttpHeaderExpectations("Expect", "201-created");
-
         setUpGetConsoleExpectations(new int[]{0, 0, 0});
-        setUpGetVirtioScsiExpectations(new int[]{0, 0});
         setUpGetRngDeviceExpectations(new int[]{0, 0});
+
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
-        setUpGetEntityExpectations(0);
+
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
 
-        setUpCreationExpectations(VdcActionType.AddVmTemplate,
-                                  AddVmTemplateParameters.class,
-                                  new String[] { "Name", "Description" },
-                                  new Object[] { NAMES[0], DESCRIPTIONS[0] },
-                                  true,
-                                  true,
-                                  GUIDS[0],
-                                  asList(GUIDS[2]),
-                                  asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                                  VdcQueryType.GetVmTemplate,
-                                  GetVmTemplateParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[0] },
-                                  getEntity(0));
+        super.testAdd();
+    }
 
-        Response response = collection.add(getModel(0));
-        assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof Template);
-        verifyModel((Template)response.getEntity(), 0);
-        assertNull(((Template)response.getEntity()).getCreationStatus());
+    @Override
+    protected Response doAdd(Template model) {
+        return collection.add(model);
+    }
+
+    @Override
+    protected Template getRestModel(int index) {
+        return getModel(index);
     }
 
     @Test
@@ -545,7 +460,7 @@ public class BackendTemplatesResourceTest
         expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);
     }
 
-    private void doTestBadAdd(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadAdd(boolean canDo, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -560,18 +475,7 @@ public class BackendTemplatesResourceTest
 
         setUpGetConsoleExpectations(new int[] {0});
 
-        setUriInfo(setUpActionExpectations(VdcActionType.AddVmTemplate,
-                                           AddVmTemplateParameters.class,
-                                           new String[] { "Name", "Description" },
-                                           new Object[] { NAMES[0], DESCRIPTIONS[0] },
-                                           canDo,
-                                           success));
-        try {
-            collection.add(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        super.doTestBadAdd(canDo, success, detail);
     }
 
     @Test
@@ -651,48 +555,24 @@ public class BackendTemplatesResourceTest
         return collection.list().getTemplates();
     }
 
-
-    @Test
-    public void testListAllContentIsConsolePopulated() throws Exception {
-        testListAllConsoleAware(true);
-    }
-
-    @Test
-    public void testListAllContentIsNotConsolePopulated() throws Exception {
-        testListAllConsoleAware(false);
-    }
-
-    private void testListAllConsoleAware(boolean allContent) throws Exception {
-        UriInfo uriInfo = setUpUriExpectations(null);
+    protected void testListAllConsoleAware(boolean allContent) throws Exception {
         if (allContent) {
-            List<String> populates = new ArrayList<String>();
-            populates.add("true");
-            expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
-            setUpGetConsoleExpectations(new int[]{0, 1, 2});
-            setUpGetVirtioScsiExpectations(new int[] {0, 1, 2});
             setUpGetRngDeviceExpectations(new int[]{0, 1, 2});
         }
 
-        setUpQueryExpectations("");
-        collection.setUriInfo(uriInfo);
-        verifyCollection(getCollection());
+        super.testListAllConsoleAware(allContent);
     }
 
     @Override
     protected void verifyCollection(List<Template> collection) throws Exception {
         super.verifyCollection(collection);
 
-        List<String> populateHeader = httpHeaders.getRequestHeader(BackendResource.POPULATE);
-        boolean populated = populateHeader != null ? populateHeader.contains("true") : false;
-
         for (Template template : collection) {
-            assertTrue(populated ? template.isSetConsole() : !template.isSetConsole());
             if(template.getId().equals(GUIDS[2].toString())) {
                  assertEquals(template.getVersion().getVersionName(), VERSION_NAME);
                  assertEquals(template.getVersion().getVersionNumber(), new Integer(2));
                  assertEquals(template.getVersion().getBaseTemplate().getId(), GUIDS[1].toString());
-            }
-            else {
+            } else {
                 assertNull(template.getVersion());
             }
         }
@@ -714,16 +594,6 @@ public class BackendTemplatesResourceTest
         if(index == 2) {
             assertNotNull(model.getVersion());
             assertNotSame(model.getVersion().getBaseTemplate().getId(), model.getId());
-        }
-    }
-
-    private void setUpGetVirtioScsiExpectations(int ... idxs) throws Exception {
-        for (int i = 0; i < idxs.length; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[idxs[i]] },
-                    new ArrayList<>());
         }
     }
 

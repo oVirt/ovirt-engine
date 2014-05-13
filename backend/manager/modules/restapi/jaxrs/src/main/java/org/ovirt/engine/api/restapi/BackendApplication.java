@@ -44,6 +44,7 @@ import org.ovirt.engine.api.restapi.resource.BackendDomainsResource;
 import org.ovirt.engine.api.restapi.resource.BackendEventsResource;
 import org.ovirt.engine.api.restapi.resource.BackendGroupsResource;
 import org.ovirt.engine.api.restapi.resource.BackendHostsResource;
+import org.ovirt.engine.api.restapi.resource.BackendInstanceTypesResource;
 import org.ovirt.engine.api.restapi.resource.BackendJobsResource;
 import org.ovirt.engine.api.restapi.resource.BackendNetworksResource;
 import org.ovirt.engine.api.restapi.resource.BackendResource;
@@ -129,6 +130,7 @@ public class BackendApplication extends Application {
         addResource(new BackendDataCentersResource());
         addResource(new BackendStorageDomainsResource());
         addResource(new BackendTemplatesResource());
+        addResource(new BackendInstanceTypesResource());
         addResource(new BackendNetworksResource());
         addResource(new BackendVmPoolsResource());
         addResource(new BackendDisksResource());

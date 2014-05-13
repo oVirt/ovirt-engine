@@ -84,6 +84,7 @@ public class FeaturesHelper {
             addNetworkCustomPropertiesFeature(features);
             addFeatureRemoveDiskFromVmSnapshot(features);
             addFeatureDiskSnapshotsResourceInStorageDomainContext(features);
+            addInstanceTypesFeature(features);
         }
         return features;
     }
@@ -456,6 +457,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Network Custom Properties");
         feature.setDescription("Configure custom properties when provisioning networks on hosts.");
+        features.getFeature().add(feature);
+    }
+
+    private void addInstanceTypesFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Instance Types");
+        feature.setDescription("Add/modify/remove instance types.");
         features.getFeature().add(feature);
     }
 }

@@ -50,6 +50,7 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments:
+          vm.instance_type.id|name: xs:string
           vm.name: xs:string
           vm.cluster.id|name: xs:string
           vm.timezone: xs:string
@@ -131,6 +132,7 @@ actions:
       signatures:
       - mandatoryArguments: {vm.name: 'xs:string', vm.template.id|name: 'xs:string', vm.cluster.id|name: 'xs:string'}
         optionalArguments:
+          vm.instance_type.id|name: xs:string
           vm.quota.id: xs:string
           vm.timezone: xs:string
           vm.os.boot--COLLECTION: {boot.dev: 'xs:string'}
@@ -4939,6 +4941,68 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+
+- name: /instancetypes|rel=get
+  description: get the list of instance types on the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /instancetypes/{instancetype:id}|rel=get
+  description: get the details of the instance type on the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /instancetypes/{instancetype:id}|rel=delete
+  description: delete the instance type from the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /instancetypes|rel=add
+  description: add a new instance type to the system
+  request:
+    body:
+      parameterType: InstanceType
+      signatures:
+      - mandatoryArguments: {instance_type.name: 'xs:string'}
+        optionalArguments:
+          instance_type.memory: xs:long
+          instance_type.cpu.topology.cores: xs:int
+          instance_type.high_availability.enabled: xs:boolean
+          instance_type.origin: xs:string
+          instance_type.high_availability.priority: xs:int
+          instance_type.console.enabled: xs:boolean
+          instance_type.description: xs:string
+          instance_type.os.boot--COLLECTION: {boot.dev: 'xs:string'}
+          instance_type.cpu.topology.sockets: xs:int
+          instance_type.cpu_shares: xs:int
+          instance_type.cpu.architecture: xs:string
+          instance_type.display.type: xs:string
+          instance_type.display.monitors: xs:int
+          instance_typeay.single_qxl_pci: xs:boolean
+          instance_type.display.smartcard_enabled: xs:boolean
+          instance_type.usb.enabled: xs:boolean
+          instance_type.usb.type: xs:string
+          instance_type.migration_downtime: xs:int
+          instance_type.virtio_scsi.enabled: xs:boolean
+        description: add a new instance type to the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+
 - name: /clusters/{cluster:id}/affinitygroups|rel=get
   description: get the list of affinity groups in the cluster
   request:

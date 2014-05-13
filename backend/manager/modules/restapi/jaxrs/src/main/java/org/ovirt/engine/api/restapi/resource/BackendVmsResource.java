@@ -28,6 +28,7 @@ import org.ovirt.engine.api.model.Payloads;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Tags;
+import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.model.VirtIOSCSI;
@@ -105,7 +106,7 @@ public class BackendVmsResource extends
                 response = createVmFromSnapshot(vm);
             } else {
                 validateParameters(vm, "template.id|name");
-                Guid templateId = getTemplateId(vm);
+                Guid templateId = getTemplateId(vm.getTemplate());
                 VmStatic staticVm = getMapper(VM.class, VmStatic.class).map(vm,
                         getMapper(VmTemplate.class, VmStatic.class).map(lookupTemplate(templateId), null));
                 if (namedCluster(vm)) {
@@ -123,7 +124,7 @@ public class BackendVmsResource extends
                 }
 
                 staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(vm.getUsb(),
-                        cluster));
+                        cluster.getcompatibility_version()));
 
                 if (!isFiltered()) {
                     // if the user set the host-name within placement-policy, rather than the host-id (legal) -
@@ -140,6 +141,11 @@ public class BackendVmsResource extends
                         (vm.isSetStorageDomain() && vm.getStorageDomain().isSetId()) ? asGuid(vm.getStorageDomain()
                                 .getId())
                                 : Guid.Empty;
+
+                if (vm.isSetInstanceType() && (vm.getInstanceType().isSetId() || vm.getInstanceType().isSetName())) {
+                    staticVm.setInstanceTypeId(getTemplateId(vm.getInstanceType()));
+                }
+
                 if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()) {
                     response = cloneVmFromTemplate(staticVm, vm, templateId);
                 } else if (Guid.Empty.equals(templateId)) {
@@ -540,12 +546,12 @@ public class BackendVmsResource extends
         return vm.isSetTemplate() && (vm.getTemplate().isSetId() || vm.getTemplate().isSetName());
     }
 
-    protected Guid getTemplateId(VM vm) {
-        return vm.getTemplate().isSetId() ? asGuid(vm.getTemplate().getId()) : getTemplateByName(vm).getId();
+    protected Guid getTemplateId(Template template) {
+        return template.isSetId() ? asGuid(template.getId()) : getTemplateByName(template).getId();
     }
 
-    private VmTemplate getTemplateByName(VM vm) {
-        return lookupTemplateByName(vm.getTemplate().getName());
+    private VmTemplate getTemplateByName(Template template) {
+        return lookupTemplateByName(template.getName());
     }
 
     public VmTemplate lookupTemplateByName(String name) {

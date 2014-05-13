@@ -83,7 +83,7 @@ public class BackendTemplatesResource
         }
 
         staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(template.getUsb(),
-                cluster != null ? cluster : lookupCluster(staticVm.getVdsGroupId())));
+                cluster != null ? cluster.getcompatibility_version() : lookupCluster(staticVm.getVdsGroupId()).getcompatibility_version()));
 
         // REVISIT: powershell has a IsVmTemlateWithSameNameExist safety check
         AddVmTemplateParameters params = new AddVmTemplateParameters(staticVm,

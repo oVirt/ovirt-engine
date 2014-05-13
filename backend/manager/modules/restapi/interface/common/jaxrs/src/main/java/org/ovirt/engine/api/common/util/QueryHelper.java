@@ -31,6 +31,7 @@ import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
@@ -69,6 +70,7 @@ public class QueryHelper {
         RETURN_TYPES.put(DataCenter.class, "Datacenter" + RETURN_TYPE_SEPARTOR);
         RETURN_TYPES.put(StorageDomain.class, "Storage" + RETURN_TYPE_SEPARTOR);
         RETURN_TYPES.put(Template.class, "Template" + RETURN_TYPE_SEPARTOR);
+        RETURN_TYPES.put(InstanceType.class, "Instancetypes" + RETURN_TYPE_SEPARTOR);
         RETURN_TYPES.put(User.class, "Users" + RETURN_TYPE_SEPARTOR);
         RETURN_TYPES.put(Group.class, "Groups" + RETURN_TYPE_SEPARTOR);
         RETURN_TYPES.put(VmPool.class, "Pools" + RETURN_TYPE_SEPARTOR);

@@ -41,6 +41,7 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.IPs;
 import org.ovirt.engine.api.model.Initialization;
+import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.OperatingSystem;
@@ -68,7 +69,6 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
@@ -385,6 +385,10 @@ public class VmMapper {
             if(entity.isStateless()) {
                 model.setUseLatestTemplateVersion(entity.isUseLatestVersion());
             }
+        }
+        if (entity.getInstanceTypeId() != null) {
+            model.setInstanceType(new InstanceType());
+            model.getInstanceType().setId(entity.getInstanceTypeId().toString());
         }
         if (entity.getStatus() != null) {
             model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
@@ -1368,21 +1372,21 @@ public class VmMapper {
         return pin;
     }
 
-    public static UsbPolicy getUsbPolicyOnCreate(Usb usb, VDSGroup vdsGroup) {
+    public static UsbPolicy getUsbPolicyOnCreate(Usb usb, Version vdsGroupVersion) {
         if (usb == null || !usb.isSetEnabled() || !usb.isEnabled()) {
             return UsbPolicy.DISABLED;
         }
         else {
             UsbType usbType = getUsbType(usb);
             if (usbType == null) {
-                return getUsbPolicyAccordingToClusterVersion(vdsGroup);
+                return getUsbPolicyAccordingToClusterVersion(vdsGroupVersion);
             } else {
                 return getUsbPolicyAccordingToUsbType(usbType);
             }
         }
     }
 
-    public static UsbPolicy getUsbPolicyOnUpdate(Usb usb, UsbPolicy currentPolicy, VDSGroup vdsGroup) {
+    public static UsbPolicy getUsbPolicyOnUpdate(Usb usb, UsbPolicy currentPolicy, Version vdsGroupVersion) {
         if (usb == null)
             return currentPolicy;
 
@@ -1396,7 +1400,7 @@ public class VmMapper {
                 }
                 else {
                     return currentPolicy == UsbPolicy.DISABLED ?
-                            getUsbPolicyAccordingToClusterVersion(vdsGroup)
+                            getUsbPolicyAccordingToClusterVersion(vdsGroupVersion)
                             : currentPolicy;
                 }
             }
@@ -1419,8 +1423,8 @@ public class VmMapper {
         return usb.isSetType() ? UsbType.fromValue(usb.getType()) : null;
     }
 
-    private static UsbPolicy getUsbPolicyAccordingToClusterVersion(VDSGroup vdsGroup) {
-        return vdsGroup.getcompatibility_version().compareTo(Version.v3_1) >= 0 ?
+    private static UsbPolicy getUsbPolicyAccordingToClusterVersion(Version vdsGroupVersion) {
+        return vdsGroupVersion.compareTo(Version.v3_1) >= 0 ?
                 UsbPolicy.ENABLED_NATIVE : UsbPolicy.ENABLED_LEGACY;
     }
 
