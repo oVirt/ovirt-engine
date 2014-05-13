@@ -29,6 +29,7 @@ import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.model.PmProxies;
 import org.ovirt.engine.api.model.PmProxy;
 import org.ovirt.engine.api.model.PowerManagement;
+import org.ovirt.engine.api.model.SELinuxMode;
 import org.ovirt.engine.api.model.SSH;
 import org.ovirt.engine.api.model.StorageManager;
 import org.ovirt.engine.api.model.TransparentHugePages;
@@ -685,7 +686,18 @@ public class HostMapper {
             return model;
         }
 
-        model.setMode(entity.getSELinuxEnforceMode().toString());
+        String mode = null;
+        switch (entity.getSELinuxEnforceMode()) {
+            case DISABLED:
+                mode = SELinuxMode.DISABLED.value();
+                break;
+            case PERMISSIVE:
+                mode = SELinuxMode.PERMISSIVE.value();
+                break;
+            case ENFORCING:
+                mode = SELinuxMode.ENFORCING.value();
+        }
+        model.setMode(mode);
 
         return model;
     }

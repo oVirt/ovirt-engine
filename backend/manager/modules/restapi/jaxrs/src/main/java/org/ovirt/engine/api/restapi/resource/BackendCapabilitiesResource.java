@@ -73,6 +73,7 @@ import org.ovirt.engine.api.model.PowerManagementStatus;
 import org.ovirt.engine.api.model.PowerManagers;
 import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.api.model.ReportedDeviceTypes;
+import org.ovirt.engine.api.model.SELinuxMode;
 import org.ovirt.engine.api.model.SELinuxModes;
 import org.ovirt.engine.api.model.SchedulingPolicies;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
@@ -128,7 +129,6 @@ import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
-import org.ovirt.engine.core.common.businessentities.SELinuxMode;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -842,7 +842,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         if (VersionUtils.greaterOrEqual(version, VERSION_3_5)) {
             version.setSelinuxModes(new SELinuxModes());
             for (SELinuxMode mode: values) {
-                version.getSelinuxModes().getSELinuxModes().add(mode.toString());
+                version.getSelinuxModes().getSELinuxModes().add(mode.value());
             }
         }
     }

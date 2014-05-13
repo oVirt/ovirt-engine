@@ -9,10 +9,6 @@ public enum SELinuxMode {
         intValue = i;
     }
 
-    public String toString() {
-        return name().toLowerCase();
-    }
-
     public int toInt() {
         return intValue;
     }
