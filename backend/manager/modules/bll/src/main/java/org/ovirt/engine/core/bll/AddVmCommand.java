@@ -797,6 +797,32 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 isVirtioScsiEnabled(),
                 isBalloonEnabled(),
                 false);
+
+        if (instanceTypeId != null) {
+            copyDiskDevicesFromTemplate();
+        }
+    }
+
+    /**
+     * If both the instance type and the template is set, than all the devices has to be copied from instance type except the
+     * disk devices which has to be copied from the template (since the instance type has no disks but the template does have).
+     */
+    private void copyDiskDevicesFromTemplate() {
+        List<VmDevice> disks = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmDisksSource.getId(), VmDeviceGeneralType.DISK);
+        VmDeviceUtils.copyVmDevices(
+                vmDisksSource.getId(),
+                getVmId(),
+                getVm(),
+                getVm().getStaticData(),
+                true,
+                disks,
+                getSrcDeviceIdToTargetDeviceIdMapping(),
+                false,
+                false,
+                false,
+                false,
+                false
+        );
     }
 
     protected static boolean isLegalClusterId(Guid clusterId, List<String> reasons) {
