@@ -22,12 +22,12 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
     protected void executeQuery(DirectorySearcher directorySearcher) {
         log.debug("Executing LdapAuthenticateUserCommand");
 
-        directorySearcher.setExplicitAuth(true);
         LdapUser user = null;
         LdapQueryData queryData = new LdapQueryDataImpl();
 
         String loginName = getLoginName();
-        getParameters().getOutputMap().put(Authn.InvokeKeys.PRINCIPAL, loginName);
+        ExtMap output = new ExtMap().mput(Authn.InvokeKeys.PRINCIPAL, loginName);
+        setReturnValue(output);
 
         if (getLoginName().contains("@")) { // the user name is UPN use 'User
             // Principal Name' search
@@ -58,11 +58,11 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
                     queryData.getLdapQueryType().name());
             setSucceeded(false);
             Exception ex = directorySearcher.getException();
-            handleDirectorySearcherException(ex);
+            handleDirectorySearcherException(output, ex);
         } else {
             user = populateUserData((LdapUser) searchResult, getAuthenticationDomain());
             if (user != null) {
-                getParameters().getOutputMap().mput(
+                setReturnValue(output.mput(
                         Authn.InvokeKeys.RESULT,
                         Authn.AuthResult.SUCCESS
                         ).mput(
@@ -70,22 +70,22 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
                                 new ExtMap().mput(
                                         Authn.AuthRecord.PRINCIPAL,
                                         loginName
-                                        ));
+                                        )));
                 setSucceeded(true);
             } else {
                 log.errorFormat("Failed authenticating. Domain is {0}. User is {1}. The user doesn't have a UPN",
                         getAuthenticationDomain(),
                         getLoginName());
-                getParameters().getOutputMap().put(Authn.InvokeKeys.RESULT, Authn.AuthResult.CREDENTIALS_INCORRECT);
+                output.put(Authn.InvokeKeys.RESULT, Authn.AuthResult.CREDENTIALS_INCORRECT);
             }
         }
 
         if (!getSucceeded()) {
-            getParameters().getOutputMap().putIfAbsent(Authn.InvokeKeys.RESULT, Authn.AuthResult.GENERAL_ERROR);
+            output.putIfAbsent(Authn.InvokeKeys.RESULT, Authn.AuthResult.GENERAL_ERROR);
         }
     }
 
-    private void handleDirectorySearcherException(Exception ex) {
+    private void handleDirectorySearcherException(ExtMap output, Exception ex) {
         if (ex instanceof AuthenticationResultException) {
             AuthenticationResultException authResultException = (AuthenticationResultException) ex;
             AuthenticationResult result = authResultException.getResult();
@@ -93,14 +93,8 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
                 result = AuthenticationResult.OTHER;
             }
             log.error(result.getDetailedMessage());
-            getParameters().getOutputMap().put(Authn.InvokeKeys.RESULT, resultsMap.get(result));
+            output.put(Authn.InvokeKeys.RESULT, resultsMap.get(result));
         }
-    }
-
-    @Override
-    protected void handleRootDSEFailure(DirectorySearcher directorySearcher) {
-        Exception ex = directorySearcher.getException();
-        handleDirectorySearcherException(ex);
     }
 
     private String constructPrincipalName(String username, String domain) {

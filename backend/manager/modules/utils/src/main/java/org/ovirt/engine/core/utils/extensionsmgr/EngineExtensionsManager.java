@@ -6,9 +6,12 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.aaa.Authn;
@@ -27,6 +30,13 @@ public class EngineExtensionsManager extends ExtensionsManager {
 
     private static volatile EngineExtensionsManager instance = null;
     private static Log log = LogFactory.getLog(EngineExtensionsManager.class);
+    private final Set<String> multipleValuesKeys = new HashSet<>(Arrays.asList(
+            "AdUserName",
+            "AdUserId",
+            "AdUserPassword",
+            "LDAPProviderTypes",
+            "LDAPSecurityAuthentication"
+            ));
 
     public static EngineExtensionsManager getInstance() {
         if (instance == null) {
@@ -121,7 +131,7 @@ public class EngineExtensionsManager extends ExtensionsManager {
         dirConfig.put("config.authz.user.name", Config.<String> getValue(ConfigValues.AdminUser));
         dirConfig.put("config.authz.user.id", "fdfc627c-d875-11e0-90f0-83df133b58cc");
         dirConfig.put("config.query.filter.size",
-                Config.<Integer> getValue(ConfigValues.MaxLDAPQueryPartsNumber));
+                Config.getValue(ConfigValues.MaxLDAPQueryPartsNumber).toString());
         load(dirConfig);
     }
 
@@ -161,6 +171,7 @@ public class EngineExtensionsManager extends ExtensionsManager {
                 authConfig.put("ovirt.engine.aaa.authn.authz.plugin", domain);
                 authConfig.put("config.change.password.url", blankIfNull(passwordChangeUrlPerDomain.get(domain)));
                 authConfig.put("config.change.password.msg", blankIfNull(passwordChangeMsgPerDomain.get(domain)));
+                attachConfigValuesFromDb(authConfig, domain);
                 load(authConfig);
 
                 Properties dirConfig = new Properties();
@@ -171,14 +182,61 @@ public class EngineExtensionsManager extends ExtensionsManager {
                 dirConfig.put(Base.ConfigKeys.BINDINGS_JBOSSMODULE_CLASS,
                         "org.ovirt.engine.extensions.aaa.builtin.kerberosldap.KerberosLdapAuthz");
                 dirConfig.put("config.query.filter.size",
-                        Config.<Integer> getValue(ConfigValues.MaxLDAPQueryPartsNumber));
+                        Config.getValue(ConfigValues.MaxLDAPQueryPartsNumber).toString());
+                attachConfigValuesFromDb(dirConfig, domain);
                 load(dirConfig);
             }
         }
     }
 
-    private static String blankIfNull(String value) {
+    private String blankIfNull(String value) {
         return value == null ? "" : value;
+    }
+
+    private void attachConfigValuesFromDb(Properties props, String domain) {
+        attachConfigValueFromDb(domain, props,
+                ConfigValues.LdapServers,
+                ConfigValues.LDAPServerPort,
+                ConfigValues.AdUserName,
+                ConfigValues.AdUserPassword,
+                ConfigValues.LDAPSecurityAuthentication,
+                ConfigValues.AuthenticationMethod,
+                ConfigValues.LDAPProviderTypes,
+                ConfigValues.LDAPQueryTimeout,
+                ConfigValues.DomainName,
+                ConfigValues.SASL_QOP,
+                ConfigValues.LDAPConnectTimeout,
+                ConfigValues.MaxLDAPQueryPartsNumber,
+                ConfigValues.LDAPOperationTimeout,
+                ConfigValues.LdapQueryPageSize);
+    }
+
+    private void attachConfigValueFromDb(String domain, Properties props, ConfigValues... keys) {
+        for (ConfigValues key : keys) {
+            String value = multipleValuesKeys.contains(key.name()) ? getValue(domain, Config.getValue(key).toString()): Config.getValue(key).toString();
+            props.put("config." + key.name(), value);
+        }
+    }
+
+    private String getValue(String domain, String val) {
+        String[] domainPairs = val.split(",");
+        String result = null;
+        for (String pair : domainPairs) {
+            String[] nameValue = pair.split(":");
+            if (nameValue.length != 2) {
+                throw new RuntimeException(
+                            String.format(
+                                    "Domain information should be in format of DomainName:Value. The string %1$s does not match this format",
+                                    pair
+                            )
+                );
+            }
+            if (nameValue[0].equals(domain)) {
+                result = nameValue[1];
+                break;
+            }
+        }
+        return result;
     }
 
 }

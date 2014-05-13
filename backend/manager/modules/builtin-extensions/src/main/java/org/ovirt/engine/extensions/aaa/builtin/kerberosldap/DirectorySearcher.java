@@ -1,21 +1,23 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.serverordering.LdapServersOrderingAlgorithmFactory;
+import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.serverordering.LdapServersOrderingAlgorithmFactory;
 
 public class DirectorySearcher {
 
     private boolean baseDNExist = true;
-    private boolean explicitAuth = false;
     private String explicitBaseDN;
+    private Properties configuration;
 
     private static final Log log = LogFactory.getLog(DirectorySearcher.class);
 
@@ -24,15 +26,9 @@ public class DirectorySearcher {
     private static final ExceptionHandler<LdapSearchExceptionHandlingResponse, LdapCredentials> handler =
             new LdapSearchExceptionHandler();
 
-    public void setExplicitAuth(boolean explicitAuth) {
-        this.explicitAuth = explicitAuth;
-    }
 
-    public boolean getExplicitAuth() {
-        return explicitAuth;
-    }
-
-    public DirectorySearcher(LdapCredentials ldapCredentials) {
+    public DirectorySearcher(Properties configuration, LdapCredentials ldapCredentials) {
+        this.configuration = configuration;
         this.ldapCredentials = ldapCredentials;
     }
 
@@ -54,34 +50,22 @@ public class DirectorySearcher {
         return returnValue;
     }
 
-    protected GetRootDSE createRootDSE(URI uri) {
-        return new GetRootDSE(uri);
-    }
-
-    protected Domain getDomainObject(String domainName) {
-        Domain domainObject = UsersDomainsCacheManagerService.getInstance().getDomain(domainName);
-        return domainObject;
+    protected GetRootDSE createRootDSE(String uri) {
+        return new GetRootDSE(configuration, uri);
     }
 
     public List<?> find(final LdapQueryData queryData, final long resultCount) {
-
         final String domainName = queryData.getDomain();
-
-        final Domain domain = getDomainObject(domainName);
-        if (domain == null) {
-            log.errorFormat("Error in finding LDAP servers for domain {0} using user {1}", domainName, ldapCredentials.getUserName());
-            return null;
-        }
-
-        List<URI> ldapServerURIs = domain.getLdapServers();
-        List<URI> editableLdapServerURIs = new ArrayList<>(ldapServerURIs);
+        List<String> ldapServerURIs =
+                Arrays.asList(configuration.getProperty("config.LDAPServers").split(","));
+        List<String> editableLdapServerURIs = new ArrayList<>(ldapServerURIs);
         if (log.isDebugEnabled()) {
             log.debug("Ldap server list: " + StringUtils.join(ldapServerURIs, ", "));
         }
         List<?> response = null;
 
-        for (Iterator<URI> iterator = ldapServerURIs.iterator(); iterator.hasNext();) {
-            URI ldapURI = iterator.next();
+        for (Iterator<String> iterator = ldapServerURIs.iterator(); iterator.hasNext();) {
+            String ldapURI = iterator.next();
             try {
                 response = findAndOrderServers(queryData, ldapURI, domainName, resultCount, editableLdapServerURIs);
                 if (response != null) {
@@ -91,27 +75,28 @@ public class DirectorySearcher {
                 return null;
             }
         }
-        domain.setLdapServers(editableLdapServerURIs);
+        configuration.setProperty("config.LdapServers", StringUtils.join(editableLdapServerURIs, ","));
         return response;
     }
 
     private List<?> findAndOrderServers(LdapQueryData queryData,
-            URI ldapURI,
+            String ldapURI,
             String domainName,
             long resultCount,
-            List<URI> modifiedLdapServersURIs) throws Exception {
+            List<String> modifiedLdapServersURIs) throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("Using Ldap server " + ldapURI);
         }
         try {
             setException(null);
-            GetRootDSETask getRootDSETask = new GetRootDSETask(this, domainName, ldapURI);
+            GetRootDSETask getRootDSETask = new GetRootDSETask(configuration, this, domainName, ldapURI);
             PrepareLdapConnectionTask prepareLdapConnectionTask =
-                    new PrepareLdapConnectionTask(this, ldapCredentials, domainName, ldapURI);
+                    new PrepareLdapConnectionTask(configuration, this, ldapCredentials, domainName, ldapURI);
             getRootDSETask.call(); // TODO: Not really async Can throw exception
             LdapQueryExecution queryExecution =
                             LdapQueryExecutionBuilderImpl.getInstance()
-                                    .build(getDomainObject(domainName).getLdapProviderType(), queryData);
+                            .build(LdapProviderType.valueOf(configuration.getProperty("config.LDAPProviderTypes")),
+                                    queryData);
             if (queryExecution.getBaseDN() != null && !queryExecution.getBaseDN().isEmpty()) {
                 setExplicitBaseDN(queryExecution.getBaseDN());
             }
@@ -124,7 +109,7 @@ public class DirectorySearcher {
             if (ldapTemplate == null) {
                 return Collections.emptyList();
             }
-            return new DirectorySearchTask(ldapTemplate, queryExecution, resultCount).call();
+            return new DirectorySearchTask(configuration, ldapTemplate, queryExecution, resultCount).call();
         } catch (Exception exception) {
             LdapSearchExceptionHandlingResponse handlingResponse = handler.handle(exception, ldapCredentials);
             Exception translatedException = handlingResponse.getTranslatedException();

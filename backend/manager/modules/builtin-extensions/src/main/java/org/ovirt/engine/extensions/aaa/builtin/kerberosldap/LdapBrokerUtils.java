@@ -1,9 +1,9 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
 
 import javax.naming.CommunicationException;
 import javax.naming.InvalidNameException;
@@ -12,8 +12,6 @@ import javax.naming.ldap.Rdn;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -25,33 +23,7 @@ public class LdapBrokerUtils {
 
     private static final Log log = LogFactory.getLog(LdapBrokerUtils.class);
 
-    /**
-     * getDomainsList as stored in DB - trims the domains if needed
-     *
-     * @return
-     */
-    public static List<String> getDomainsList(boolean filterInternalDomain) {
-        String[] domains = Config.<String> getValue(ConfigValues.DomainName).split("[,]", -1);
-        List<String> results = new ArrayList<String>();
-        for (String domain : domains) {
-            String trimmedDomain = domain.trim();
-            if (!trimmedDomain.isEmpty()) {
-                results.add(trimmedDomain);
-            }
-        }
-        if (!filterInternalDomain) {
-            results.add(Config.<String> getValue(ConfigValues.AdminDomain).trim());
-        }
-        return results;
-    }
 
-    /**
-     * returns the full domain list
-     * @return
-     */
-    public static List<String> getDomainsList() {
-        return  getDomainsList(false);
-    }
     /**
      * This method should parse a string in the following format: CN=groupname,OU=ouSub,OU=ouMain,DC=qumranet,DC=com to
      * the following format qumranet.com/ouMain/ouSub/groupname it should also handle '\,' and '\=' as ',' and '='.
@@ -103,14 +75,16 @@ public class LdapBrokerUtils {
      *            object that contain query information (query filter + base DN)
      * @return list of results
      */
-    public static List<GroupSearchResult> performGroupQuery(String loginName,
+    public static List<GroupSearchResult> performGroupQuery(Properties configuration, String loginName,
             String password,
             String domainName,
             LdapQueryData queryData) {
 
         LdapCredentials ldapCredentials =
-                new LdapCredentials(LdapBrokerUtils.modifyLoginNameForKerberos(loginName, domainName), password);
-        DirectorySearcher directorySearcher = new DirectorySearcher(ldapCredentials);
+                new LdapCredentials(LdapBrokerUtils.modifyLoginNameForKerberos(loginName, domainName, configuration),
+                        password);
+        DirectorySearcher directorySearcher =
+                new DirectorySearcher(configuration, ldapCredentials);
 
         try {
             List<GroupSearchResult> searchResults = (List<GroupSearchResult>) directorySearcher.findAll(queryData);
@@ -130,16 +104,11 @@ public class LdapBrokerUtils {
         return StringUtils.countMatches(name, "\\") == 1 ? name.replace("\\", "\\\\\\") : name;
     }
 
-    public static String modifyLoginNameForKerberos(String loginName, String domain) {
+    public static String modifyLoginNameForKerberos(String loginName, String domain, Properties configuration) {
         String[] parts = loginName.split("[@]");
 
-        Domain requestedDomain = UsersDomainsCacheManagerService.getInstance().getDomain(domain);
-
-        if (requestedDomain == null) {
-            throw new DomainNotConfiguredException(domain);
-        }
-
-        LDAPSecurityAuthentication securityAuthentication = requestedDomain.getLdapSecurityAuthentication();
+        LDAPSecurityAuthentication securityAuthentication =
+                LDAPSecurityAuthentication.valueOf(configuration.getProperty("config.LDAPSecurityAuthentication"));
         boolean isKerberosAuth = securityAuthentication.equals(LDAPSecurityAuthentication.GSSAPI);
 
         // if loginName is not in format of user@domain
@@ -210,9 +179,11 @@ public class LdapBrokerUtils {
      * @param env hashtable of parameters for ldap configuration.
      * this method adds to hashtable specific ldap configuration.
      */
-    public static void addLdapConfigValues(Hashtable<String, String> env){
-        env.put("com.sun.jndi.ldap.read.timeout", Long.toString(Config.<Integer> getValue(ConfigValues.LDAPQueryTimeout) * 1000));
-        env.put("com.sun.jndi.ldap.connect.timeout", Long.toString(Config.<Integer> getValue(ConfigValues.LDAPConnectTimeout) * 1000));
+    public static void addLdapConfigValues(Properties config, Hashtable<String, String> env) {
+        env.put("com.sun.jndi.ldap.read.timeout",
+                Long.toString(Long.parseLong(config.getProperty("config.LDAPQueryTimeout")) * 1000));
+        env.put("com.sun.jndi.ldap.connect.timeout",
+                Long.toString(Long.parseLong(config.getProperty("config.LDAPConnectTimeout")) * 1000));
     }
 
     /**

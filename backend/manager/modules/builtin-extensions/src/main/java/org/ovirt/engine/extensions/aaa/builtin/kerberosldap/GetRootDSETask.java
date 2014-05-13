@@ -1,26 +1,28 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-import java.net.URI;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
 import org.ovirt.engine.core.ldap.LdapProviderType;
+import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 
 public class GetRootDSETask implements Callable<Boolean> {
 
     private final DirectorySearcher searcher;
     private final String domainName;
-    private final URI ldapURI;
+    private final String ldapURI;
+    private final Properties configuration;
 
     private static final Log log = LogFactory.getLog(GetRootDSETask.class);
 
-    public GetRootDSETask(DirectorySearcher searcher, String domainName, URI ldapURI) {
+    public GetRootDSETask(Properties configuration, DirectorySearcher searcher, String domainName, String ldapURI) {
         super();
+        this.configuration = configuration;
         this.searcher = searcher;
         this.domainName = domainName;
         this.ldapURI = ldapURI;
@@ -39,29 +41,23 @@ public class GetRootDSETask implements Callable<Boolean> {
     @Override
     public Boolean call() throws Exception {
         boolean baseDNExist = false;
-        Domain domainObject = searcher.getDomainObject(domainName);
         // If no domain can be found in the cache - it means it was not set
         // during system initialization and we will not query for rootDSE for it
-        if (domainObject == null) {
-            log.errorFormat("No domain object was obtained for domain {0} - this domain is probably not configured in the database",
-                    domainName);
-            baseDNExist = false;
-            throw new DomainNotConfiguredException(domainName);
-        } else {
-            LdapProviderType ldapProviderType = domainObject.getLdapProviderType();
-            RootDSE rootDSE = domainObject.getRootDSE();
-            // If no rootDSE is set for domain - try to set it - if in
-            // construct a rootDSE object and provide a baseDN that assumes
-            // that all users will be under "cn=users"
-            if (rootDSE == null) {
-                domainObject.getLock().writeLock().lock();
+        LdapProviderType ldapProviderType =
+                LdapProviderType.valueOf(configuration.getProperty("config.LDAPProviderTypes"));
+        RootDSE rootDSE = (RootDSE) configuration.get("config.rootDSE");
+        // If no rootDSE is set for domain - try to set it - if in
+        // construct a rootDSE object and provide a baseDN that assumes
+        // that all users will be under "cn=users"
+        if (rootDSE == null) {
+            synchronized (configuration) {
                 try {
-                    rootDSE = domainObject.getRootDSE();
+                    rootDSE = (RootDSE) configuration.get("config.rootDSE");
                     if (rootDSE == null) {
                         GetRootDSE query = createGetRootDSE(ldapURI);
                         Attributes rootDseRecords = query.getDomainAttributes(ldapProviderType, domainName);
                         if (rootDseRecords != null) {
-                            setRootDSE(domainObject, ldapProviderType, rootDseRecords);
+                            setRootDSE(ldapProviderType, rootDseRecords);
                             baseDNExist = true;
                         } else {
                             log.errorFormat("Couldn't deduce provider type for domain {0}", domainName);
@@ -71,30 +67,27 @@ public class GetRootDSETask implements Callable<Boolean> {
                     } else {
                         baseDNExist = true;
                     }
-                    //TODO: change this exception logging to something nicer
                 } catch (Exception ex) {
                     log.error("", ex);
-                } finally {
-                    domainObject.getLock().writeLock().unlock();
                 }
-            } else {
-                baseDNExist = true;
             }
+        } else {
+            baseDNExist = true;
         }
         searcher.setBaseDNExist(baseDNExist);
         return baseDNExist;
     }
 
-    protected GetRootDSE createGetRootDSE(URI uri) {
-        return new GetRootDSE(uri);
+    protected GetRootDSE createGetRootDSE(String uri) {
+        return new GetRootDSE(configuration, uri);
     }
 
-    private void setRootDSE(Domain domainObject, LdapProviderType ldapProviderType, Attributes rootDseRecords)
+    private void setRootDSE(LdapProviderType ldapProviderType, Attributes rootDseRecords)
             throws NamingException {
         RootDSE rootDSE;
         rootDSE = RootDSEFactory.get(ldapProviderType, rootDseRecords);
-        domainObject.setRootDSE(rootDSE);
-        domainObject.setLdapProviderType(ldapProviderType);
+        configuration.put("config.rootDSE", rootDSE);
+        configuration.put("config.LDAPProviderTypes", ldapProviderType.toString());
     }
 
 }

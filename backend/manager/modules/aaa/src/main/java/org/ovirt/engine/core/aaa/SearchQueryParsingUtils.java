@@ -12,6 +12,7 @@ import org.ovirt.engine.api.extensions.ExtUUID;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.api.extensions.aaa.Authz.QueryFilterOperator;
 import org.ovirt.engine.api.extensions.aaa.Authz.QueryFilterRecord;
+import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 
 /**
  * This class is a helper class to transform searchbackend related search queries to Extension API structures. This
@@ -36,8 +37,6 @@ public class SearchQueryParsingUtils {
         attributesToKeys.put("$DEPARTMENT", Authz.PrincipalRecord.DEPARTMENT);
         attributesToKeys.put("$TITLE", Authz.PrincipalRecord.TITLE);
         attributesToKeys.put("cn", Authz.GroupRecord.NAME);
-        attributesToKeys.put("$GROUP_ID", Authz.GroupRecord.ID);
-        attributesToKeys.put("$PRINCIPAL_ID", Authz.PrincipalRecord.ID);
         attributesToKeys.put("$PRINCIPAL_NAME", Authz.PrincipalRecord.NAME);
     }
 
@@ -60,8 +59,16 @@ public class SearchQueryParsingUtils {
         return result;
     }
 
+    public static ExtMap generateQueryForName(String name, ExtUUID queryEntity) {
+        StringBuilder query = new StringBuilder(getQueryPrefixByEntity(queryEntity)).append("|");
+        for (String key : attributesToKeys.keySet()) {
+            query.append(String.format("(%1$s=%2$s)", key, name));
+        }
+        return generateQueryMap(query.append(")").toString(), queryEntity);
+    }
+
     public static ExtMap generateQueryMap(String query, ExtUUID queryEntity) {
-        String queryPrefix = Authz.QueryEntity.PRINCIPAL.equals(queryEntity) ? USERS_QUERY_PREFIX : GROUPS_QUERY_PREFIX;
+        String queryPrefix = getQueryPrefixByEntity(queryEntity);
         ExtMap result = new ExtMap();
         result.mput(
                 Authz.InvokeKeys.QUERY_ENTITY,
@@ -114,6 +121,21 @@ public class SearchQueryParsingUtils {
                     );
         }
         return result;
+    }
+
+    private static String getQueryPrefixByEntity(ExtUUID queryEntity) {
+        String queryPrefix = Authz.QueryEntity.PRINCIPAL.equals(queryEntity) ? USERS_QUERY_PREFIX : GROUPS_QUERY_PREFIX;
+        return queryPrefix;
+    }
+
+    public static List<List<String>> getIdsBatches(final ExtensionProxy extension, final List<String> ids) {
+
+        int chunk = extension.getContext().<Integer> get(Authz.ContextKeys.QUERY_MAX_FILTER_SIZE, 100) - 10;
+        List<List<String>> batchOfIdsList = new ArrayList<>();
+        for (int counter = 0; counter < ids.size(); counter = counter + chunk) {
+            batchOfIdsList.add(ids.subList(counter, counter + chunk > ids.size() ? ids.size() : counter + chunk));
+        }
+        return batchOfIdsList;
     }
 
     private static ExtMap createMapForKeyAndValue(String field, String value) {

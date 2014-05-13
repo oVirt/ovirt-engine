@@ -1,5 +1,7 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
+import java.util.Properties;
+
 public class LdapSearchByUserNameParameters extends LdapBrokerBaseParameters {
     private String privateUserName;
 
@@ -11,8 +13,8 @@ public class LdapSearchByUserNameParameters extends LdapBrokerBaseParameters {
         privateUserName = value;
     }
 
-    public LdapSearchByUserNameParameters(String sessionId, String domain, String userName) {
-        super(sessionId, domain);
+    public LdapSearchByUserNameParameters(Properties configuration, String sessionId, String domain, String userName) {
+        super(configuration, sessionId, domain);
         setUserName(userName);
     }
 }

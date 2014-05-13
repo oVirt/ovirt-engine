@@ -5,18 +5,22 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * @author yzaslavs
  */
 public class UsersObjectIdQueryGenerator extends LdapQueryDataGeneratorBase<Guid> {
 
+    private Properties configuration;
+
+    public UsersObjectIdQueryGenerator(Properties configuration) {
+        this.configuration = configuration;
+    }
+
     public List<LdapQueryData> getLdapQueriesData(String domain) {
-        int queryLimit = Config.<Integer> getValue(ConfigValues.MaxLDAPQueryPartsNumber);
+        int queryLimit = Integer.parseInt(configuration.getProperty("config.LDAPQueryPartsNumber"));
         List<LdapQueryData> results = new ArrayList<LdapQueryData>();
         LdapQueryData subQueryData = new LdapQueryDataImpl();
 

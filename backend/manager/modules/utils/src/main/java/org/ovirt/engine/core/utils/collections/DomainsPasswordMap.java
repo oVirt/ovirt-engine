@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
@@ -12,6 +11,7 @@ import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 public class DomainsPasswordMap implements Map<String, String> {
 
     private final Map<String, String> map;
+    private String csvOfDomainToPassword;
 
     /**
      * This structure is a map of domains to decrypted password. It initializes from a comma separated list of
@@ -23,6 +23,7 @@ public class DomainsPasswordMap implements Map<String, String> {
      * @param certAlias
      */
     public DomainsPasswordMap(String csvOfDomainToPassword) {
+        this.csvOfDomainToPassword = csvOfDomainToPassword;
         if (!csvOfDomainToPassword.isEmpty()) {
             String[] domainPasswordPairs = csvOfDomainToPassword.split(",");
             map = new HashMap<String, String>(domainPasswordPairs.length);
@@ -101,6 +102,10 @@ public class DomainsPasswordMap implements Map<String, String> {
     @Override
     public Set<Entry<String, String>> entrySet() {
         return map.entrySet();
+    }
+
+    public String toString() {
+        return csvOfDomainToPassword;
     }
 
 }

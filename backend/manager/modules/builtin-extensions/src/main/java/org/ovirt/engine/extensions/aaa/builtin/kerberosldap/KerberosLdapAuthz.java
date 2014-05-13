@@ -87,7 +87,7 @@ public class KerberosLdapAuthz implements Extension {
         // Find the users using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
                 AdActionType.SearchGroupsByQuery,
-                new LdapSearchByQueryParameters(
+                new LdapSearchByQueryParameters(configuration,
                         null,
                         getDirectoryName(),
                         queryData,
@@ -111,7 +111,7 @@ public class KerberosLdapAuthz implements Extension {
         // Find the users using the old mechanism:
         LdapReturnValueBase ldapResult = broker.runAdAction(
                 AdActionType.SearchUserByQuery,
-                new LdapSearchByQueryParameters(
+                new LdapSearchByQueryParameters(configuration,
                         null,
                         getDirectoryName(),
                         queryData,
@@ -136,6 +136,7 @@ public class KerberosLdapAuthz implements Extension {
             if (command.equals(Base.InvokeCommands.LOAD)) {
                 doLoad(input, output);
             } else if (command.equals(Base.InvokeCommands.INITIALIZE)) {
+                doInit(input, output);
             } else if (command.equals(Authz.InvokeCommands.QUERY_OPEN)) {
                 doQueryOpen(input, output);
             } else if (command.equals(Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD)) {
@@ -147,18 +148,50 @@ public class KerberosLdapAuthz implements Extension {
                 output.put(Base.InvokeKeys.RESULT, Base.InvokeResult.UNSUPPORTED);
             }
             output.putIfAbsent(Base.InvokeKeys.RESULT, Base.InvokeResult.SUCCESS);
+            output.putIfAbsent(Authz.InvokeKeys.STATUS, Authz.Status.SUCCESS);
+
         } catch (Exception ex) {
-            output.mput(Base.InvokeKeys.RESULT, Base.InvokeResult.FAILED).
-                    mput(Base.InvokeKeys.MESSAGE, ex.getMessage());
+            output.mput(
+                    Base.InvokeKeys.RESULT,
+                    Base.InvokeResult.FAILED
+                    ).mput(
+                            Base.InvokeKeys.MESSAGE,
+                            ex.getMessage()
+                    ).mput(
+                            Authz.InvokeKeys.STATUS,
+                            Authz.Status.GENERAL_ERROR
+                    );
+        }
+    }
+
+    private void doInit(ExtMap input, ExtMap output) {
+        try {
+            Utils.handleApplicationInit(context.<ExtMap> get(Base.ContextKeys.GLOBAL_CONTEXT)
+                    .<String> get(Base.GlobalContextKeys.APPLICATION_NAME));
+        } catch (Exception e) {
+            output.mput(
+                    Base.InvokeKeys.MESSAGE,
+                    e.getMessage()
+                    ).mput(
+                            Base.InvokeKeys.RESULT,
+                            Base.InvokeResult.FAILED
+                    );
         }
     }
 
     private void doFetchPrincipalRecord(ExtMap input, ExtMap output) {
         LdapReturnValueBase ldapResult =
-                broker.runAdAction(AdActionType.GetAdUserByUserName, new LdapSearchByUserNameParameters(null,
+                broker.runAdAction(AdActionType.GetAdUserByUserName, new LdapSearchByUserNameParameters(configuration,
+                        null,
                         getDirectoryName(),
                         input.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD).<String> get(Authn.AuthRecord.PRINCIPAL)));
-        output.mput(Authz.InvokeKeys.PRINCIPAL_RECORD, mapLdapUser(((LdapUser) ldapResult.getReturnValue())));
+        output.mput(
+                Authz.InvokeKeys.PRINCIPAL_RECORD,
+                mapLdapUser(((LdapUser) ldapResult.getReturnValue()))
+                ).mput(
+                        Authz.InvokeKeys.STATUS,
+                        Authz.Status.SUCCESS);
+
     }
 
     private void doQueryExecute(ExtMap input, ExtMap output) {
@@ -187,6 +220,7 @@ public class KerberosLdapAuthz implements Extension {
         context = inputMap.<ExtMap> get(Base.InvokeKeys.CONTEXT);
         configuration = context.<Properties> get(Base.ContextKeys.CONFIGURATION);
         broker = LdapFactory.getInstance(getDirectoryName());
+        Utils.setDefaults(configuration, getDirectoryName());
         context.mput(
                 Base.ContextKeys.AUTHOR,
                 "The oVirt Project").mput(
@@ -203,7 +237,7 @@ public class KerberosLdapAuthz implements Extension {
                         "N/A"
                 ).mput(
                         Authz.ContextKeys.QUERY_MAX_FILTER_SIZE,
-                        configuration.get("config.query.filter.size")
+                        Integer.parseInt(configuration.getProperty("config.query.filter.size"))
                 ).mput(
                         Base.ContextKeys.BUILD_INTERFACE_VERSION,
                         Base.INTERFACE_VERSION_CURRENT

@@ -48,7 +48,7 @@ public class AuthzUtils {
 
     public static List<DirectoryUser> findPrincipalsByIds(final ExtensionProxy extension, final List<String> ids) {
         List<DirectoryUser> results = new ArrayList<>();
-        for (List<String> batch : getIdsBatches(extension, ids)) {
+        for (List<String> batch : SearchQueryParsingUtils.getIdsBatches(extension, ids)) {
             results.addAll(
                     queryPrincipals(
                             extension,
@@ -76,7 +76,7 @@ public class AuthzUtils {
 
     public static List<DirectoryGroup> findGroupsByIds(final ExtensionProxy extension, final List<String> ids) {
         List<DirectoryGroup> results = new ArrayList<>();
-        for (List<String> batch : getIdsBatches(extension, ids)) {
+        for (List<String> batch : SearchQueryParsingUtils.getIdsBatches(extension, ids)) {
             results.addAll(
                     queryGroups(
                             extension,
@@ -256,16 +256,6 @@ public class AuthzUtils {
                     );
         }
         return directoryGroup;
-    }
-
-    private static List<List<String>> getIdsBatches(final ExtensionProxy extension, final List<String> ids) {
-
-        int chunk = extension.getContext().<Integer> get(Authz.ContextKeys.QUERY_MAX_FILTER_SIZE) - 10;
-        List<List<String>> batchOfIdsList = new ArrayList<>();
-        for (int counter = 0; counter < ids.size(); counter = counter + chunk) {
-            batchOfIdsList.add(ids.subList(counter, counter + chunk > ids.size() ? ids.size() : counter + chunk));
-        }
-        return batchOfIdsList;
     }
 
 }

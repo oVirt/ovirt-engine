@@ -100,7 +100,9 @@ public class InternalAuthz implements Extension {
                         "N/A"
                 ).mput(
                         Authz.ContextKeys.QUERY_MAX_FILTER_SIZE,
-                        configuration.get("config.query.filter.size")
+                        Integer.parseInt(
+                                configuration.getProperty("config.query.filter.size")
+                        )
                 ).mput(
                         Base.ContextKeys.BUILD_INTERFACE_VERSION,
                         Base.INTERFACE_VERSION_CURRENT

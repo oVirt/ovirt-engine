@@ -1,17 +1,26 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-import org.ovirt.engine.api.extensions.ExtMap;
+import java.util.Properties;
 
 public class LdapBrokerBaseParameters {
+
     private String privateDomain;
     private String authenticationDomain;
     private String sessionId;
     private String privatePassword;
-    private ExtMap inputMap;
-    private ExtMap outputMap;
+    private Properties configuration;
 
-    public LdapBrokerBaseParameters(String domain) {
+    public Properties getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(Properties configuration) {
+        this.configuration = configuration;
+    }
+
+    public LdapBrokerBaseParameters(Properties configuration, String domain) {
         setDomain(domain);
+        setConfiguration(configuration);
     }
 
     /**
@@ -22,30 +31,16 @@ public class LdapBrokerBaseParameters {
      * @param domain
      *            - domain name for search
      */
-    public LdapBrokerBaseParameters(String sessionId, String domain) {
+    public LdapBrokerBaseParameters(Properties configuration, String sessionId, String domain) {
         setSessionId(sessionId);
         setDomain(domain);
+        setConfiguration(configuration);
     }
 
     public String getDomain() {
         return privateDomain;
     }
 
-    public ExtMap getInputMap() {
-        return inputMap;
-    }
-
-    public void setInputMap(ExtMap inputMap) {
-        this.inputMap = inputMap;
-    }
-
-    public ExtMap getOutputMap() {
-        return outputMap;
-    }
-
-    public void setOutputMap(ExtMap outputMap) {
-        this.outputMap = outputMap;
-    }
 
     public void setDomain(String value) {
         privateDomain = value;

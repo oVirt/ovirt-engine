@@ -3,6 +3,8 @@
  */
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
+import java.util.Properties;
+
 import javax.naming.directory.SearchControls;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,9 +22,8 @@ public class SimpleLdapTemplateWrapper extends LDAPTemplateWrapper {
     /**
      * @param contextSource
      */
-    public SimpleLdapTemplateWrapper(LdapContextSource contextSource, String userName, String password, String path) {
-        super(contextSource, userName, password, path);
-        // TODO Auto-generated constructor stub
+    public SimpleLdapTemplateWrapper(Properties configuration, LdapContextSource contextSource, String userName, String password, String path) {
+        super(configuration, contextSource, userName, password, path);
     }
 
     @Override

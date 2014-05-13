@@ -5,6 +5,7 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.naming.Context;
@@ -15,8 +16,6 @@ import javax.security.auth.kerberos.KerberosTicket;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.kerberos.KerberosReturnCodeParser;
 import org.ovirt.engine.core.utils.log.Log;
@@ -33,17 +32,11 @@ import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthenticationStrategy {
 
     private static final String GSS_API_AUTHENTICATION = "GSSAPI";
-    private static final String LOGIN_MODULE_POLICY_NAME = "oVirtKerb";
     private static final Log log = LogFactory.getLog(GSSAPIDirContextAuthenticationStrategy.class);
     private LoginContext loginContext;
     private String password;
     private String userName;
-    private String realm;
-    private boolean explicitAuth;
-
-    public void setExplicitAuth(boolean explicitAuth) {
-        this.explicitAuth = explicitAuth;
-    }
+    private Properties configuration;
 
     public LoginContext getLoginContext() {
         return loginContext;
@@ -55,11 +48,10 @@ public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthent
      * @param explicitAuth
      *
      */
-    public GSSAPIDirContextAuthenticationStrategy(String userName, String password, String realm, boolean explicitAuth) {
+    public GSSAPIDirContextAuthenticationStrategy(Properties configuration, String userName, String password) {
         this.userName = userName;
         this.password = password;
-        this.realm = realm;
-        this.explicitAuth = explicitAuth;
+        this.configuration = configuration;
     }
 
     /*
@@ -73,7 +65,7 @@ public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthent
     @Override
     public void setupEnvironment(Hashtable env, String userDn, String password) throws NamingException {
         env.put(Context.SECURITY_AUTHENTICATION, GSS_API_AUTHENTICATION);
-        String qopValue = Config.<String>getValue(ConfigValues.SASL_QOP);
+        String qopValue = configuration.getProperty("config.SASL_QOP");
         env.put("javax.security.sasl.qop", qopValue);
     }
 
@@ -94,37 +86,16 @@ public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthent
     }
 
     public void authenticate() throws AuthenticationResultException {
-        UsersDomainsCacheManager usersDomainsCacheManager = UsersDomainsCacheManagerService.getInstance();
-        UserDomainInfo userDomainInfo = usersDomainsCacheManager.associateUserWithDomain(this.userName,
-                this.realm.toLowerCase());
-        loginContext = null;
-        synchronized (userDomainInfo) {
-            // In case authentication is performed in an implicit way (as a
-            // result of internal command) try and get
-            // login context from cache
-            if (!explicitAuth) {
-                loginContext = userDomainInfo.getLoginContext();
-            }
-
-            if (!validLoginContext()) {
-                explicitAuth(userDomainInfo);
-            }
-        }
-    }
-
-    private void explicitAuth(UserDomainInfo userDomainInfo) throws AuthenticationResultException {
-
         GSSAPICallbackHandler callbackHandler = new GSSAPICallbackHandler(userName, password);
-        authenticateToKDC(callbackHandler, userDomainInfo);
-
+        authenticateToKDC(callbackHandler);
     }
 
-    private  void authenticateToKDC(GSSAPICallbackHandler callbackHandler, UserDomainInfo userDomainInfo) throws AuthenticationResultException {
+
+    private void authenticateToKDC(GSSAPICallbackHandler callbackHandler) throws AuthenticationResultException {
 
         try {
-            loginContext = new LoginContext(LOGIN_MODULE_POLICY_NAME, callbackHandler);
+            loginContext = new LoginContext(configuration.getProperty("config.JAASLoginContext"), callbackHandler);
             loginContext.login();
-            userDomainInfo.setLoginContext(loginContext);
             if (log.isDebugEnabled()) {
                 log.debug("Successful login for user " + userName);
             }

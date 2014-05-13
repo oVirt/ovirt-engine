@@ -1,22 +1,25 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-import java.net.URI;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.ldap.LdapProviderType;
+import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.springframework.ldap.core.support.LdapContextSource;
 
 public class PrepareLdapConnectionTask implements Callable<LDAPTemplateWrapper> {
 
+    private Properties configuration;
+
     public PrepareLdapConnectionTask(
+            Properties configuration,
             DirectorySearcher searcher,
             LdapCredentials ldapCredentials,
             String domain,
-            URI ldapURI) {
+            String ldapURI) {
+        this.configuration = configuration;
         this.searcher = searcher;
         this.ldapCredentials = ldapCredentials;
         this.domain = domain;
@@ -26,7 +29,7 @@ public class PrepareLdapConnectionTask implements Callable<LDAPTemplateWrapper> 
     private final LdapCredentials ldapCredentials;
     private final DirectorySearcher searcher;
     private final String domain;
-    private final URI ldapURI;
+    private final String ldapURI;
 
     private static final Log log = LogFactory.getLog(PrepareLdapConnectionTask.class);
 
@@ -37,16 +40,16 @@ public class PrepareLdapConnectionTask implements Callable<LDAPTemplateWrapper> 
         String password = ldapCredentials.getPassword();
         LdapContextSource ldapctx = new LdapContextSource();
 
-        LDAPTemplateWrapper wrapper = LDAPTemplateWrapperFactory.getLDAPTemplateWrapper(ldapctx, userName, password,
+        LDAPTemplateWrapper wrapper =
+                LDAPTemplateWrapperFactory.getLDAPTemplateWrapper(configuration, ldapctx, userName, password,
                 domain);
 
         try {
             wrapper.init(ldapURI,
                     searcher.isBaseDNExist(),
-                    searcher.getExplicitAuth(),
                     searcher.getExplicitBaseDN(),
-                    searcher.getDomainObject(domain).getLdapProviderType(),
-                    Config.<Integer> getValue(ConfigValues.LDAPQueryTimeout) * 1000);
+                    LdapProviderType.valueOf(configuration.getProperty("config.LDAPProviderTypes")),
+                    Integer.parseInt(configuration.getProperty("config.LDAPQueryTimeout")) * 1000);
             ldapctx.afterPropertiesSet();
         } catch (Exception e) {
             log.error("Error connecting to directory server", e);

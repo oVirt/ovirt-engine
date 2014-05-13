@@ -3,6 +3,7 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Properties;
 
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -32,22 +33,17 @@ public class LDAPTemplateWrapperFactory {
 
     }
 
-    public static LDAPTemplateWrapper getLDAPTemplateWrapper(LdapContextSource contextSource, String userName,
+    public static LDAPTemplateWrapper getLDAPTemplateWrapper(Properties configuration, LdapContextSource contextSource, String userName,
                                                              String password, String domain) {
 
-        Domain requestedDomain = UsersDomainsCacheManagerService.getInstance().getDomain(domain);
-
-        if (requestedDomain == null) {
-            throw new DomainNotConfiguredException(domain);
-        }
         LDAPSecurityAuthentication ldapSecurityAuthentication =
-                UsersDomainsCacheManagerService.getInstance().getDomain(domain).getLdapSecurityAuthentication();
+                LDAPSecurityAuthentication.valueOf(configuration.getProperty("config.LDAPSecurityAuthentication"));
         try {
             Class<? extends LDAPTemplateWrapper> wrapperClass =
                     classesOfLDAPTemplateWrappers.get(ldapSecurityAuthentication);
             Constructor<? extends LDAPTemplateWrapper> constructor = wrapperClass.getConstructor(
-                    LdapContextSource.class, String.class, String.class, String.class);
-            return constructor.newInstance(contextSource, userName, password, domain);
+                    Properties.class, LdapContextSource.class, String.class, String.class, String.class);
+            return constructor.newInstance(configuration, contextSource, userName, password, domain);
         } catch (IllegalAccessException | IllegalArgumentException | InstantiationException |
                 InvocationTargetException | NoSuchMethodException | SecurityException e) {
             log.error("Failed to get LDAPTemplateWrapper for security authentication "

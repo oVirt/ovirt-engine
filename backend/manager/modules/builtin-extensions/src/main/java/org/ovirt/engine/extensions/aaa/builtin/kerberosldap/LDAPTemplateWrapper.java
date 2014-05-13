@@ -1,12 +1,10 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-import java.net.URI;
 import java.util.Hashtable;
+import java.util.Properties;
 
 import javax.naming.directory.SearchControls;
 
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -17,6 +15,7 @@ import org.springframework.ldap.core.NameClassPairCallbackHandler;
 import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.core.support.SingleContextSource;
+
 import com.sun.jndi.ldap.LdapCtxFactory;
 
 public abstract class LDAPTemplateWrapper {
@@ -30,31 +29,34 @@ public abstract class LDAPTemplateWrapper {
     protected DirContextAuthenticationStrategy authStrategy;
     protected String baseDN;
     protected String domain;
-    protected boolean explicitAuth;
+    protected Properties configuration;
 
     public abstract void search(String baseDN, String filter, String displayFilter, SearchControls searchControls,
             NameClassPairCallbackHandler handler);
 
-    public LDAPTemplateWrapper(LdapContextSource contextSource, String userName, String password, String domain) {
+    public LDAPTemplateWrapper(Properties configuration,
+            LdapContextSource contextSource,
+            String userName,
+            String password,
+            String domain) {
         this.contextSource = contextSource;
         ldapTemplate = new LdapTemplate(this.contextSource);
         this.userName = userName;
         this.password = password;
         this.domain = domain;
         this.baseDN = "";
+        this.configuration = configuration;
 
     }
 
-    public void init(URI ldapURI,
+    public void init(String ldapURI,
             boolean setBaseDN,
-            boolean explicitAuth,
             String explicitBaseDN,
             LdapProviderType ldapProviderType, long timeout) {
-        this.explicitAuth = explicitAuth;
         if (explicitBaseDN != null) {
             this.baseDN = explicitBaseDN;
         } else if (!domain.isEmpty() && setBaseDN) {
-            this.baseDN = getBaseDNForDomain(domain);
+            this.baseDN = getBaseDNForDomain();
         }
 
         adjustUserName(ldapProviderType);
@@ -69,7 +71,7 @@ public abstract class LDAPTemplateWrapper {
         Hashtable<String, String> baseEnvironmentProperties =  new Hashtable<String, String>();
         // objectGUID
         baseEnvironmentProperties.put("java.naming.ldap.attributes.binary", "objectGUID");
-        LdapBrokerUtils.addLdapConfigValues(baseEnvironmentProperties);
+        LdapBrokerUtils.addLdapConfigValues(configuration, baseEnvironmentProperties);
         contextSource.setBaseEnvironmentProperties(baseEnvironmentProperties);
     }
 
@@ -88,28 +90,13 @@ public abstract class LDAPTemplateWrapper {
 
     protected abstract DirContextAuthenticationStrategy buildContextAuthenticationStategy();
 
-    private String getBaseDNForDomain(String domainName) {
+    private String getBaseDNForDomain() {
 
-        if (domainName == null) {
-            return null;
-        }
-
-        Domain domain = UsersDomainsCacheManagerService.getInstance().getDomain(domainName);
-        if (domain == null) {
-            log.errorFormat("The domain {0} does not exist in the configuration. A base DN cannot be configured for it",
-                    domainName);
-            return null;
-        }
-        RootDSE rootDSE = domain.getRootDSE();
+        RootDSE rootDSE = (RootDSE) configuration.get("config.rootDSE");
         if (rootDSE != null) {
             return rootDSE.getDefaultNamingContext();
         }
         return null;
-    }
-
-    public void setExplicitAuth(boolean explicitAuth) {
-        this.explicitAuth = explicitAuth;
-
     }
 
     protected NameClassPairCallbackHandler pagedSearch(String baseDN,
@@ -130,7 +117,7 @@ public abstract class LDAPTemplateWrapper {
             if (log.isDebugEnabled()) {
                 log.debugFormat("LDAP query is {0}", displayFilter);
             }
-            int ldapPageSize = Config.<Integer> getValue(ConfigValues.LdapQueryPageSize);
+            int ldapPageSize = Integer.parseInt(configuration.getProperty("config.LdapQueryPageSize"));
             PagedResultsDirContextProcessor requestControl = new PagedResultsDirContextProcessor(ldapPageSize);
             ldapTemplate.search(baseDN, filter, searchControls, handler, requestControl);
             PagedResultsCookie cookie = requestControl.getCookie();
@@ -145,6 +132,7 @@ public abstract class LDAPTemplateWrapper {
             }
 
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.errorFormat("Error in running LDAP query. BaseDN is {0}, filter is {1}. Exception message is: {2}",
                     baseDN,
                     displayFilter,

@@ -1,6 +1,11 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
+import java.security.GeneralSecurityException;
+
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
+
 public abstract class LdapWithConfiguredCredentialsCommandBase extends LdapBrokerCommandBase {
+
 
     protected LdapWithConfiguredCredentialsCommandBase(LdapBrokerBaseParameters parameters) {
         super(parameters);
@@ -8,16 +13,17 @@ public abstract class LdapWithConfiguredCredentialsCommandBase extends LdapBroke
 
     @Override
     protected void initCredentials(String domain) {
-        Domain domainObject = UsersDomainsCacheManagerService.getInstance().getDomain(domain);
-        if (domainObject != null) {
-            setLoginName(domainObject.getUserName());
-            setPassword(domainObject.getPassword());
-            if (getLoginName().contains("@")) {
-                String userDomain = getLoginName().split("@")[1].toLowerCase();
-                setAuthenticationDomain(userDomain);
-            } else {
-                setAuthenticationDomain(domain);
-            }
+        setLoginName(configuration.getProperty("config.AdUserName"));
+        try {
+            setPassword(EngineEncryptionUtils.decrypt(configuration.getProperty("config.AdUserPassword")));
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        }
+        if (getLoginName().contains("@")) {
+            String userDomain = getLoginName().split("@")[1].toLowerCase();
+            setAuthenticationDomain(userDomain);
+        } else {
+            setAuthenticationDomain(domain);
         }
     }
 }

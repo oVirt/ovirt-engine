@@ -1,6 +1,7 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import java.util.List;
+import java.util.Properties;
 
 import org.ovirt.engine.core.compat.Guid;
 
@@ -8,8 +9,8 @@ public class LdapSearchByIdListParameters extends LdapBrokerBaseParameters {
     private boolean populateGroups;
     private List<Guid> ids;
 
-    public LdapSearchByIdListParameters(String domain, List<Guid> ids, boolean populateGroups) {
-        super(domain);
+    public LdapSearchByIdListParameters(Properties configuration, String domain, List<Guid> ids, boolean populateGroups) {
+        super(configuration, domain);
         this.ids = ids;
         this.populateGroups = populateGroups;
     }

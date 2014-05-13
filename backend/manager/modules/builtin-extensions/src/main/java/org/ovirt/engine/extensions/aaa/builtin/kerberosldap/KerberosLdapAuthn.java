@@ -50,6 +50,7 @@ public class KerberosLdapAuthn implements Extension {
     private void doLoad(ExtMap inputMap, ExtMap outputMap) {
         context = inputMap.<ExtMap> get(Base.InvokeKeys.CONTEXT);
         configuration = context.<Properties> get(Base.ContextKeys.CONFIGURATION);
+        Utils.setDefaults(configuration, getAuthzName());
         broker = LdapFactory.getInstance(getAuthzName());
         context.<List<String>> get(
                 Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS
@@ -77,18 +78,32 @@ public class KerberosLdapAuthn implements Extension {
     }
 
     private void doInit(ExtMap inputMap, ExtMap outputMap) {
-        KerberosManager.getInstance();
-        UsersDomainsCacheManagerService.getInstance().init();
+        try {
+            Utils.handleApplicationInit(context.<ExtMap>get(Base.ContextKeys.GLOBAL_CONTEXT).<String>get(Base.GlobalContextKeys.APPLICATION_NAME));
+        } catch (Exception e) {
+            outputMap.mput(
+                    Base.InvokeKeys.MESSAGE,
+                    e.getMessage()
+                    ).mput(
+                            Base.InvokeKeys.RESULT,
+                            Base.InvokeResult.FAILED
+                    );
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     private void doAuthenticate(ExtMap input, ExtMap output) {
-        broker.runAdAction(
+        output.mput(
+                (ExtMap) broker.runAdAction(
             AdActionType.AuthenticateUser,
-                new LdapUserPasswordBaseParameters(input, output)
-            );
+                new LdapUserPasswordBaseParameters(
+                        configuration,
+                        input.<String> get(Authn.InvokeKeys.USER),
+                        input.<String> get(Authn.InvokeKeys.CREDENTIALS)
+                )
+                        ).getReturnValue());
         // Putting these keys anyway, it's up to BLL to decide if to use them or not
         output.mput(
                 Authn.InvokeKeys.USER_MESSAGE,

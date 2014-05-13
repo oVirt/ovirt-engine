@@ -4,6 +4,7 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import java.security.PrivilegedAction;
+import java.util.Properties;
 
 import javax.naming.directory.SearchControls;
 import javax.security.auth.Subject;
@@ -21,8 +22,12 @@ public class GSSAPILdapTemplateWrapper extends LDAPTemplateWrapper {
 
     private LoginContext loginContext;
 
-    public GSSAPILdapTemplateWrapper(LdapContextSource contextSource, String userName, String password, String path) {
-        super(contextSource, userName, password, path);
+    public GSSAPILdapTemplateWrapper(Properties configuration,
+            LdapContextSource contextSource,
+            String userName,
+            String password,
+            String path) {
+        super(configuration, contextSource, userName, password, path);
     }
 
     /**
@@ -73,10 +78,7 @@ public class GSSAPILdapTemplateWrapper extends LDAPTemplateWrapper {
 
     @Override
     protected DirContextAuthenticationStrategy buildContextAuthenticationStategy() {
-
-        String realm = domain.toUpperCase();
-
-        return new GSSAPIDirContextAuthenticationStrategy(userName, password, realm, explicitAuth);
+        return new GSSAPIDirContextAuthenticationStrategy(configuration, userName, password);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-import java.net.URI;
 import java.util.Hashtable;
+import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -12,9 +12,6 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -24,14 +21,17 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  * is needed in order to fetch the base DN and the domain functionality level and does not require authentication
  */
 public class GetRootDSE {
-    private final URI ldapURI;
+    private final String ldapURI;
 
     private Attributes attributes;
 
+    private Properties configuration;
+
     private final static Log log = LogFactory.getLog(GetRootDSE.class);
 
-    public GetRootDSE(URI ldapURI) {
+    public GetRootDSE(Properties configuration, String ldapURI) {
         this.ldapURI = ldapURI;
+        this.configuration = configuration;
     }
 
     /**
@@ -39,7 +39,7 @@ public class GetRootDSE {
      */
     private void execute(LdapProviderType ldapProviderType, String domain) {
         Hashtable<String, String> env = new Hashtable<String, String>();
-        LdapBrokerUtils.addLdapConfigValues(env);
+        LdapBrokerUtils.addLdapConfigValues(configuration, env);
         initContextVariables(env);
 
         Attributes results = null;
@@ -59,7 +59,7 @@ public class GetRootDSE {
             searchControls.setSearchScope(queryExecution.getSearchScope());
             // Added this in order to prevent a warning saying: "the returning obj flag wasn't set, setting it to true"
             searchControls.setReturningObjFlag(true);
-            searchControls.setTimeLimit(Config.<Integer> getValue(ConfigValues.LDAPOperationTimeout) * 1000);
+            searchControls.setTimeLimit(Integer.parseInt(configuration.getProperty("config.LDAPOperationTimeout")) * 1000);
             NamingEnumeration<SearchResult> search =
                     ctx.search(queryExecution.getBaseDN(), queryExecution.getFilter(), searchControls);
 
@@ -105,18 +105,6 @@ public class GetRootDSE {
         return new InitialDirContext(env);
     }
 
-
-    private void updateProviderTypeInConfig(String domain, String type) {
-        String[] types = Config.<String> getValue(ConfigValues.LDAPProviderTypes).split(",");
-        for (int x = 0; x < types.length; x++) {
-            if (types[x].startsWith(domain)) {
-                types[x] = domain + ":" + type;
-                break;
-            }
-        }
-        Config.getConfigUtils().setStringValue(ConfigValues.LDAPProviderTypes.name(), StringUtils.join(types, ","));
-    }
-
     public Attributes getDomainAttributes(LdapProviderType general, String domain) {
         if (attributes == null) {
             execute(general, domain);
@@ -124,7 +112,7 @@ public class GetRootDSE {
         return attributes;
     }
 
-    protected URI getLdapURI() {
+    protected String getLdapURI() {
         return ldapURI;
     }
 

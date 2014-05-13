@@ -1,15 +1,18 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -52,6 +55,15 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     }
 
     private Map<String, LdapGroup> globalGroupsDict = new HashMap<>();
+    protected Properties configuration;
+
+    public Properties getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(Properties configuration) {
+        this.configuration = configuration;
+    }
 
     @Override
     protected String getPROTOCOL() {
@@ -61,10 +73,12 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     protected LdapBrokerCommandBase(LdapUserPasswordBaseParameters parameters) {
         super(parameters);
         setAuthenticationDomain(getDomain());
+        setConfiguration(parameters.getConfiguration());
     }
 
     protected LdapBrokerCommandBase(LdapBrokerBaseParameters parameters) {
         super(parameters);
+        setConfiguration(parameters.getConfiguration());
         initCredentials(parameters.getDomain());
     }
 
@@ -73,16 +87,18 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     }
 
     protected void setUserDomainCredentials(String domain) {
-        Domain domainObject = UsersDomainsCacheManagerService.getInstance().getDomain(domain);
-        if (domainObject != null) {
-            setLoginName(domainObject.getUserName());
-            setPassword(domainObject.getPassword());
-            if (getLoginName().contains("@")) {
-                String userDomain = getLoginName().split("@")[1].toLowerCase();
-                setAuthenticationDomain(userDomain);
-            } else {
-                setAuthenticationDomain(domain);
-            }
+        setLoginName(configuration.getProperty("config.AdUserName"));
+        try {
+            setPassword(EngineEncryptionUtils.decrypt(configuration.getProperty("config.AdUserPassword")));
+        } catch (GeneralSecurityException e) {
+            log.error(String.format("Error decrypting password. Message is: %1$s", e.getMessage()));
+            throw new RuntimeException(e);
+        }
+        if (getLoginName().contains("@")) {
+            String userDomain = getLoginName().split("@")[1].toLowerCase();
+            setAuthenticationDomain(userDomain);
+        } else {
+            setAuthenticationDomain(domain);
         }
     }
 
@@ -92,9 +108,9 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         try {
             log.debugFormat("Running LDAP command: {0}", getClass().getName());
             String loginNameForKerberos =
-                    LdapBrokerUtils.modifyLoginNameForKerberos(getLoginName(), getAuthenticationDomain());
+                    LdapBrokerUtils.modifyLoginNameForKerberos(getLoginName(), getAuthenticationDomain(), configuration);
             LdapCredentials ldapCredentials = new LdapCredentials(loginNameForKerberos, getPassword());
-            DirectorySearcher directorySearcher = new DirectorySearcher(ldapCredentials);
+            DirectorySearcher directorySearcher = new DirectorySearcher(configuration, ldapCredentials);
             executeQuery(directorySearcher);
             exceptionOccurred = directorySearcher.getException() != null;
         }
@@ -107,11 +123,6 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
             }
         }
         return _ldapReturnValue;
-    }
-
-    protected void handleRootDSEFailure(DirectorySearcher directorySearcher) {
-        // Supposed to handle rootDSEFailure - default implementation does nothing. Subclasses may override this
-        // behavior
     }
 
     protected abstract void executeQuery(DirectorySearcher directorySearcher);
@@ -160,7 +171,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         try {
             GroupsDNQueryGenerator generator = new GroupsDNQueryGenerator();
             List<GroupSearchResult> searchResultCollection =
-                    LdapBrokerUtils.performGroupQuery(loginName, password, domain, queryData);
+                    LdapBrokerUtils.performGroupQuery(configuration, loginName, password, domain, queryData);
             if (searchResultCollection != null) {
                 for (GroupSearchResult searchResult : searchResultCollection) {
                     ProceedGroupsSearchResult(searchResult, groupsDict, generator);

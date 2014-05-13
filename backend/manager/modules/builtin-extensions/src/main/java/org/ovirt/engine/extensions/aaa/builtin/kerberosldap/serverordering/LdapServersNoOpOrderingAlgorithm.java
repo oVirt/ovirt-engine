@@ -1,6 +1,5 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap.serverordering;
 
-import java.net.URI;
 import java.util.List;
 
 public class LdapServersNoOpOrderingAlgorithm extends LdapServersOrderingAlgorithm {
@@ -13,11 +12,11 @@ public class LdapServersNoOpOrderingAlgorithm extends LdapServersOrderingAlgorit
      * @param servers
      */
     @Override
-    public void reorder(URI server, List<URI> servers) {
+    public void reorder(String server, List<String> servers) {
     }
 
     @Override
-    protected void reorderImpl(URI server, List<URI> restOfServers) {
+    protected void reorderImpl(String server, List<String> restOfServers) {
     }
 
 }

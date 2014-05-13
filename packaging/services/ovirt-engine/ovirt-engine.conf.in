@@ -102,6 +102,7 @@ ENGINE_VERBOSE_GC=false
 #
 ENGINE_PROPERTIES=""
 ENGINE_PROPERTIES="${ENGINE_PROPERTIES} jsse.enableSNIExtension=false"
+ENGINE_PROPERTIES="${ENGINE_PROPERTIES} \"java.security.krb5.conf=${ENGINE_ETC}/krb5.conf\""
 
 #
 # Extra Java arguments to be added to command-line.

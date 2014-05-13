@@ -1,5 +1,7 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
+import java.util.Properties;
+
 public class LdapSearchByQueryParameters extends LdapBrokerBaseParameters {
     private LdapQueryData ldapQueryData;
     private boolean populateGroups;
@@ -12,17 +14,24 @@ public class LdapSearchByQueryParameters extends LdapBrokerBaseParameters {
         this.ldapQueryData = ldapQueryData;
     }
 
-    public LdapSearchByQueryParameters(String domain, LdapQueryData ldapQueryData) {
-        super(domain);
+    public LdapSearchByQueryParameters(Properties configuration, String domain, LdapQueryData ldapQueryData) {
+        super(configuration, domain);
         setLdapQueryData(ldapQueryData);
     }
 
-    public LdapSearchByQueryParameters(String sessionId, String domain, LdapQueryData ldapQueryData) {
-        this(sessionId, domain, ldapQueryData, false);
+    public LdapSearchByQueryParameters(Properties configuration,
+            String sessionId,
+            String domain,
+            LdapQueryData ldapQueryData) {
+        this(configuration, sessionId, domain, ldapQueryData, false);
     }
 
-    public LdapSearchByQueryParameters(String sessionId, String domain, LdapQueryData ldapQueryData, boolean populateGroups) {
-        super(sessionId, domain);
+    public LdapSearchByQueryParameters(Properties configuration,
+            String sessionId,
+            String domain,
+            LdapQueryData ldapQueryData,
+            boolean populateGroups) {
+        super(configuration, sessionId, domain);
         setLdapQueryData(ldapQueryData);
         this.populateGroups = populateGroups;
     }
