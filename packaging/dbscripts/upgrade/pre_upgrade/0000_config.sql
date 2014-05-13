@@ -821,6 +821,8 @@ select fn_db_add_config_value('SkipFencingIfSDActiveSupported', 'false', '3.4');
 
 select fn_db_add_config_value('HostStorageLeaseAliveCheckingInterval', '90', 'general');
 
+select fn_db_add_config_value('NUMAMigration','false','general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

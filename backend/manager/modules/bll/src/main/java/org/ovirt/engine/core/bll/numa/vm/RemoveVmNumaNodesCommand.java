@@ -3,15 +3,15 @@ package org.ovirt.engine.core.bll.numa.vm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> extends VmCommand<T> {
+public class RemoveVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> extends AbstractVmNumaNodeCommand<T> {
 
     public RemoveVmNumaNodesCommand(T parameters) {
         super(parameters);
@@ -22,11 +22,11 @@ public class RemoveVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> e
         boolean succeeded = false;
         try {
             List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
-            List<Guid> guids = new ArrayList<Guid>();
+            List<Guid> guids = new ArrayList<>();
             for (VmNumaNode node : vmNumaNodes) {
                 guids.add(node.getId());
             }
-            getDbFacade().getVmNumaNodeDAO().massRemoveNumaNodeByNumaNodeId(guids);
+            getVmNumaNodeDao().massRemoveNumaNodeByNumaNodeId(guids);
             succeeded = true;
         } finally {
             setSucceeded(succeeded);
@@ -34,8 +34,16 @@ public class RemoveVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> e
     }
 
     @Override
+    protected boolean canDoAction() {
+        if (getVm() == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
+        return true;
+    }
+
+    @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getParameters().getVmId(),
                 VdcObjectType.VM,
                 getActionType().getActionGroup()));
