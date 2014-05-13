@@ -139,6 +139,7 @@ public class StorageDomainMapperTest extends
         connection.setNfsRetrans((short) 200);
         connection.setNfsTimeo((short) 400);
         connection.setNfsVersion(org.ovirt.engine.core.common.businessentities.NfsVersion.V3);
+        connection.setMountOptions("tcp");
 
         Storage RESTConnection = new Storage();
         RESTConnection.setId(connId.toString());
@@ -148,6 +149,7 @@ public class StorageDomainMapperTest extends
         RESTConnection.setNfsRetrans(200);
         RESTConnection.setNfsTimeo(400);
         RESTConnection.setNfsVersion(NfsVersion.V3.toString());
+        RESTConnection.setMountOptions("tcp");
 
         StorageConnection mappedResult = StorageDomainMapper.map(connection, null);
         assertEquals(RESTConnection.getId(), mappedResult.getId());
@@ -157,6 +159,7 @@ public class StorageDomainMapperTest extends
         assertEquals(RESTConnection.getNfsRetrans(), mappedResult.getNfsRetrans());
         assertEquals(RESTConnection.getNfsTimeo(), mappedResult.getNfsTimeo());
         assertEquals(RESTConnection.getNfsVersion(), mappedResult.getNfsVersion());
+        assertEquals(RESTConnection.getMountOptions(), mappedResult.getMountOptions());
     }
 
     @Test
@@ -222,6 +225,7 @@ public class StorageDomainMapperTest extends
         connection.setNfsRetrans((short) 200);
         connection.setNfsTimeo((short) 400);
         connection.setNfsVersion(org.ovirt.engine.core.common.businessentities.NfsVersion.V3);
+        connection.setMountOptions("tcp");
 
         StorageConnection RESTConnection = new StorageConnection();
         RESTConnection.setId(connId.toString());
@@ -231,6 +235,7 @@ public class StorageDomainMapperTest extends
         RESTConnection.setNfsRetrans(200);
         RESTConnection.setNfsTimeo(400);
         RESTConnection.setNfsVersion(NfsVersion.V3.toString());
+        RESTConnection.setMountOptions("tcp");
 
         StorageServerConnections mappedResult = StorageDomainMapper.map(RESTConnection, null);
         assertEquals(connection.getid(), mappedResult.getid());
@@ -239,6 +244,7 @@ public class StorageDomainMapperTest extends
         assertEquals(connection.getNfsRetrans(), mappedResult.getNfsRetrans());
         assertEquals(connection.getNfsTimeo(), mappedResult.getNfsTimeo());
         assertEquals(connection.getNfsVersion(), mappedResult.getNfsVersion());
+        assertEquals(connection.getMountOptions(), mappedResult.getMountOptions());
     }
 
     @Test

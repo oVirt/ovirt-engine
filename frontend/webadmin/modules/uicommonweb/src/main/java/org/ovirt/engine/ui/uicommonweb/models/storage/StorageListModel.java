@@ -421,7 +421,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 model.getPath().setEntity(connection.getconnection());
                 model.getRetransmissions().setEntity(connection.getNfsRetrans());
                 model.getTimeout().setEntity(connection.getNfsTimeo());
-
+                model.getMountOptions().setEntity(connection.getMountOptions());
                 for (EntityModel<NfsVersion> item : model.getVersion().getItems()) {
                     EntityModel itemModel = (EntityModel) item;
                     boolean noNfsVersion = itemModel.getEntity() == null && connection.getNfsVersion() == null;
@@ -438,7 +438,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 model.getOverride().setEntity(
                         connection.getNfsVersion() != null ||
                         connection.getNfsRetrans() != null ||
-                        connection.getNfsTimeo() != null);
+                        connection.getNfsTimeo() != null ||
+                        connection.getMountOptions() != null);
 
             }
         }), storage.getStorage(), true);
@@ -1522,6 +1523,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             connection.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
             connection.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
             connection.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
+            connection.setMountOptions(nfsModel.getMountOptions().getEntity());
         }
 
     }
@@ -1550,6 +1552,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
             tempVar.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
             tempVar.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
+            tempVar.setMountOptions((String) nfsModel.getMountOptions().getEntity());
         }
         connection = tempVar;
 

@@ -326,6 +326,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Mount Options")
     String storagePopupMountOptionsLabel();
 
+    @DefaultStringValue("Additional mount options")
+    String storagePopupAdditionalMountOptionsLabel();
+
     @DefaultStringValue("Path")
     String storagePopupLocalPathLabel();
 

@@ -132,6 +132,15 @@ public class NfsStorageModel extends Model implements IStorageModel {
         timeout = value;
     }
 
+    private EntityModel<String> mountOptions;
+
+    public EntityModel<String> getMountOptions() {
+        return mountOptions;
+    }
+
+    private void setMountOptions(EntityModel<String> value) {
+        mountOptions = value;
+    }
 
     static {
 
@@ -161,6 +170,7 @@ public class NfsStorageModel extends Model implements IStorageModel {
 
         setRetransmissions(new EntityModel<Short>());
         setTimeout(new EntityModel<Short>());
+        setMountOptions(new EntityModel<String>());
 
         setOverride(new EntityModel<Boolean>());
         getOverride().getEntityChangedEvent().addListener(this);
@@ -175,6 +185,7 @@ public class NfsStorageModel extends Model implements IStorageModel {
         getVersion().setIsChangable(isChangeable);
         getRetransmissions().setIsChangable(isChangeable);
         getTimeout().setIsChangable(isChangeable);
+        getMountOptions().setIsChangable(isChangeable);
     }
 
     @Override
@@ -205,9 +216,14 @@ public class NfsStorageModel extends Model implements IStorageModel {
             new IntegerValidation(1, TIMEOUT_MAX)
         });
 
+        getMountOptions().validateEntity(new IValidation[] {
+            new NonUtfValidation()
+        });
+
         return getPath().getIsValid()
             && getRetransmissions().getIsValid()
-            && getTimeout().getIsValid();
+            && getTimeout().getIsValid()
+            && getMountOptions().getIsValid();
     }
 
     @Override
@@ -247,5 +263,6 @@ public class NfsStorageModel extends Model implements IStorageModel {
         getVersion().setIsAvailable(available);
         getRetransmissions().setIsAvailable(available);
         getTimeout().setIsAvailable(available);
+        getMountOptions().setIsAvailable(available);
     }
 }

@@ -104,6 +104,14 @@
                             <ge:ShortEntityModelTextBoxOnlyEditor ui:field="timeoutEditor" addStyleNames="table_contentWidget_pfly_fix"/>
                         </td>
                     </tr>
+                    <tr>
+                        <td nowrap="nowrap">
+                            <g:Label ui:field="mountOptionsLabel" addStyleNames="{style.label}"/>
+                        </td>
+                        <td>
+                            <ge:StringEntityModelTextBoxOnlyEditor ui:field="mountOptionsEditor" addStyleNames="table_contentWidget_pfly_fix"/>
+                        </td>
+                    </tr>
                 </table>
             </table>
         </g:HTMLPanel>

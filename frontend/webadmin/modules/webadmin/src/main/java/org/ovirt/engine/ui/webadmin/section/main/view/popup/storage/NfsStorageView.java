@@ -113,6 +113,15 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     Label timeoutLabel;
 
     @UiField
+    @WithElementId
+    @Path(value = "mountOptions.entity")
+    StringEntityModelTextBoxOnlyEditor mountOptionsEditor;
+
+    @UiField
+    @Ignore
+    Label mountOptionsLabel;
+
+    @UiField
     Label message;
 
     private final Driver driver = GWT.create(Driver.class);
@@ -164,6 +173,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         versionLabel.setText(constants.storagePopupNfsVersionLabel());
         retransmissionsLabel.setText(constants.storagePopupNfsRetransmissionsLabel());
         timeoutLabel.setText(constants.storagePopupNfsTimeoutLabel());
+        mountOptionsLabel.setText(constants.storagePopupAdditionalMountOptionsLabel());
     }
 
     @Override
@@ -179,17 +189,20 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         styleTextBoxEditor(timeoutEditor,  object.getOverride().getIsChangable());
         styleTextBoxEditor(retransmissionsEditor, object.getOverride().getIsChangable());
         styleTextBoxEditor(versionReadOnlyEditor, object.getOverride().getIsChangable());
+        styleTextBoxEditor(mountOptionsEditor, object.getOverride().getIsChangable());
 
         setElementVisibility(versionEditor,  object.getOverride().getIsChangable());
         setElementVisibility(versionReadOnlyEditor, !object.getOverride().getIsChangable());
         setElementVisibility(versionLabel, object.getVersion().getIsAvailable());
         setElementVisibility(retransmissionsLabel, object.getRetransmissions().getIsAvailable());
         setElementVisibility(timeoutLabel, object.getTimeout().getIsAvailable());
+        setElementVisibility(mountOptionsLabel, object.getMountOptions().getIsAvailable());
 
         // When all advanced fields are unavailable - hide the expander.
         boolean anyField = object.getVersion().getIsAvailable()
             || object.getRetransmissions().getIsAvailable()
-            || object.getTimeout().getIsAvailable();
+            || object.getTimeout().getIsAvailable()
+            || object.getMountOptions().getIsAvailable();
 
         expander.getElement().getStyle().setVisibility(anyField ? Style.Visibility.VISIBLE : Style.Visibility.HIDDEN);
     }

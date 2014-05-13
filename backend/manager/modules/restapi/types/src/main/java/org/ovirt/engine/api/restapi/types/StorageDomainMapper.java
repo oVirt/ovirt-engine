@@ -85,6 +85,9 @@ public class StorageDomainMapper {
                             entity.setNfsVersion(map(nfsVersion, null));
                         }
                     }
+                    if (storage.isSetMountOptions()) {
+                        entity.setMountOptions(storage.getMountOptions());
+                    }
                     break;
                 case LOCALFS:
                     if (storage.isSetPath()) {
@@ -224,6 +227,9 @@ public class StorageDomainMapper {
                         entity.setNfsVersion(map(nfsVersion, null));
                     }
                 }
+                if (model.isSetMountOptions()) {
+                    entity.setMountOptions(model.getMountOptions());
+                }
                 break;
             case LOCALFS:
                 if (model.isSetPath()) {
@@ -275,6 +281,9 @@ public class StorageDomainMapper {
             }
             if (entity.getNfsTimeo() != null) {
                 model.setNfsTimeo(entity.getNfsTimeo().intValue());
+            }
+            if (entity.getMountOptions() != null) {
+                model.setMountOptions(entity.getMountOptions());
             }
         }
         else if (entity.getstorage_type().equals(org.ovirt.engine.core.common.businessentities.StorageType.POSIXFS)) {
