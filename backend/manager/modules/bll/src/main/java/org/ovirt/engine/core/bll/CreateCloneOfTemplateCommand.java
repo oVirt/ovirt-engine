@@ -33,6 +33,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
         DiskImage returnValue = super.cloneDiskImage(newImageGuid);
         returnValue.setStorageIds(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
         returnValue.setQuotaId(getParameters().getQuotaId());
+        returnValue.setDiskProfileId(getParameters().getDiskProfileId());
         // override to have no template
         returnValue.setParentId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         returnValue.setImageTemplateId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);

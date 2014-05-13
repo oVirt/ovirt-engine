@@ -8,6 +8,7 @@ public class StorageDomainParametersBase extends StoragePoolParametersBase {
     private Guid storageDomainId;
     private boolean isInternal;
     private Guid quotaId;
+    private Guid diskProfileId;
 
     public StorageDomainParametersBase() {
         storageDomainId = Guid.Empty;
@@ -45,5 +46,13 @@ public class StorageDomainParametersBase extends StoragePoolParametersBase {
 
     public void setQuotaId(Guid quotaId) {
         this.quotaId = quotaId;
+    }
+
+    public Guid getDiskProfileId() {
+        return diskProfileId;
+    }
+
+    public void setDiskProfileId(Guid diskProfileId) {
+        this.diskProfileId = diskProfileId;
     }
 }

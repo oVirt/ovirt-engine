@@ -128,6 +128,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         params.setEntityInfo(getParameters().getEntityInfo());
         params.setQuotaId(diskInfoDestinationMap.get(disk.getId()).getQuotaId() != null ?
                 diskInfoDestinationMap.get(disk.getId()).getQuotaId() : null);
+        params.setDiskProfileId(diskInfoDestinationMap.get(disk.getId()).getDiskProfileId());
         return params;
     }
 

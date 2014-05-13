@@ -19,7 +19,8 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
                 getCustomMapSqlParameterSource().addValue("image_id",
                         entity.getimage_id()).addValue("storage_domain_id",
                         entity.getstorage_domain_id())
-                        .addValue("quota_id", entity.getQuotaId()));
+                        .addValue("quota_id", entity.getQuotaId())
+                        .addValue("disk_profile_id", entity.getDiskProfileId()));
     }
 
     @Override
@@ -77,6 +78,15 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
         getCallsHandler().executeModification("updateQuotaForImageAndSnapshots", parameterSource);
     }
 
+    @Override
+    public void updateDiskProfileByImageGroupIdAndStorageDomainId(Guid diskId, Guid storageDomainId, Guid diskProfileId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("image_group_id", diskId)
+                .addValue("storage_domain_id", storageDomainId)
+                .addValue("disk_profile_id", diskProfileId);
+        getCallsHandler().executeModification("UpdateDiskProfileByImageGroupId", parameterSource);
+    }
+
     private static final RowMapper<image_storage_domain_map> IMAGE_STORAGE_DOMAIN_MAP_MAPPER =
             new RowMapper<image_storage_domain_map>() {
 
@@ -86,6 +96,7 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
                     entity.setimage_id(getGuidDefaultEmpty(rs, "image_id"));
                     entity.setstorage_domain_id(getGuidDefaultEmpty(rs, "storage_domain_id"));
                     entity.setQuotaId(getGuid(rs, "quota_id"));
+                    entity.setDiskProfileId(getGuid(rs, "disk_profile_id"));
                     return entity;
                 }
             };

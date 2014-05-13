@@ -655,7 +655,8 @@ public class SnapshotsManager {
                     ImagesHandler.addImage(diskImage, true, (diskImage.getStorageIds() == null) ? null :
                             new image_storage_domain_map(diskImage.getImageId(),
                                     diskImage.getStorageIds().get(0),
-                                    diskImage.getQuotaId()));
+                                    diskImage.getQuotaId(),
+                                    diskImage.getDiskProfileId()));
                 }
                 ImagesHandler.addDiskToVm(diskImage, vmId);
             }

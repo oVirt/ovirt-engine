@@ -46,4 +46,13 @@ public interface ImageStorageDomainMapDao extends GenericDao<image_storage_domai
      * @param quotaId
      */
     void updateQuotaForImageAndSnapshots(Guid diskId, Guid storageDomainId, Guid quotaId);
+
+    /**
+     * updates images disk profile of a specific disk on a specific storage domain
+     *
+     * @param diskId
+     * @param storageDomainId
+     * @param diskProfileId
+     */
+    void updateDiskProfileByImageGroupIdAndStorageDomainId(Guid diskId, Guid storageDomainId, Guid diskProfileId);
 }

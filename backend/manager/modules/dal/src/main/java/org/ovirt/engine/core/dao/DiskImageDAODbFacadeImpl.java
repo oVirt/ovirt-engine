@@ -195,6 +195,8 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setQuotaIds(getGuidListFromStringPreserveAllTokens(rs.getString("quota_id")));
             entity.setQuotaNames(splitPreserveAllTokens(rs.getString("quota_name")));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
+            entity.setDiskProfileIds(getGuidListFromStringPreserveAllTokens(rs.getString("disk_profile_id")));
+            entity.setDiskProfileNames(splitPreserveAllTokens(rs.getString("disk_profile_name")));
         }
 
         @Override

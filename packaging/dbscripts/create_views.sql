@@ -71,6 +71,8 @@ SELECT images.image_guid as image_guid,
     image_storage_domain_map.quota_id as quota_id,
     quota.quota_name as quota_name,
     storage_pool.quota_enforcement_type,
+    image_storage_domain_map.disk_profile_id as disk_profile_id,
+    disk_profiles.name as disk_profile_name,
     disk_image_dynamic.actual_size as actual_size,
     disk_image_dynamic.read_rate as read_rate,
     disk_image_dynamic.write_rate as write_rate,
@@ -90,6 +92,7 @@ LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images
 LEFT OUTER JOIN storage_domain_static_view ON image_storage_domain_map.storage_domain_id = storage_domain_static_view.id
 LEFT OUTER JOIN snapshots ON images.vm_snapshot_id = snapshots.snapshot_id
 LEFT OUTER JOIN quota ON image_storage_domain_map.quota_id = quota.id
+LEFT OUTER JOIN disk_profiles ON image_storage_domain_map.disk_profile_id = disk_profiles.id
 LEFT OUTER JOIN storage_pool ON storage_pool.id = storage_domain_static_view.storage_pool_id
 WHERE images.image_guid != '00000000-0000-0000-0000-000000000000';
 
@@ -122,11 +125,14 @@ SELECT images.image_guid as image_id,
 	   array_to_string(array_agg(storage_domain_static.storage_type), ',') storage_type,
 	   array_to_string(array_agg(storage_domain_static.storage_name), ',') as storage_name,
 	   array_to_string(array_agg(COALESCE(CAST(quota.id as varchar), '')), ',') as quota_id,
-	   array_to_string(array_agg(COALESCE(quota.quota_name, '')), ',') as quota_name
+	   array_to_string(array_agg(COALESCE(quota.quota_name, '')), ',') as quota_name,
+           array_to_string(array_agg(COALESCE(CAST(disk_profiles.id as varchar), '')), ',') as disk_profile_id,
+	   array_to_string(array_agg(COALESCE(disk_profiles.name, '')), ',') as disk_profile_name
 FROM images
 LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
 LEFT OUTER JOIN storage_domain_static ON image_storage_domain_map.storage_domain_id = storage_domain_static.id
 LEFT OUTER JOIN quota ON image_storage_domain_map.quota_id = quota.id
+LEFT OUTER JOIN disk_profiles ON image_storage_domain_map.disk_profile_id = disk_profiles.id
 GROUP BY images.image_guid;
 
 CREATE OR REPLACE VIEW vm_images_view
@@ -145,6 +151,7 @@ SELECT                storage_for_image_view.storage_id as storage_id, storage_f
                       images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors, images_storage_domain_view.sgio as sgio,
                       images_storage_domain_view.entity_type as entity_type,images_storage_domain_view.number_of_vms as number_of_vms,images_storage_domain_view.vm_names as vm_names,
                       storage_for_image_view.quota_id as quota_id, storage_for_image_view.quota_name as quota_name, images_storage_domain_view.quota_enforcement_type,
+                      storage_for_image_view.disk_profile_id as disk_profile_id, storage_for_image_view.disk_profile_name as disk_profile_name,
                       images_storage_domain_view.disk_id, images_storage_domain_view.disk_alias as disk_alias, images_storage_domain_view.disk_description as disk_description,images_storage_domain_view.shareable as shareable,
                       images_storage_domain_view.alignment as alignment, images_storage_domain_view.last_alignment_scan as last_alignment_scan, images_storage_domain_view.ovf_store as ovf_store
 FROM         images_storage_domain_view
@@ -202,6 +209,8 @@ FROM
            storage_for_image_view.quota_name as quota_name,
            quota_enforcement_type,
            ovf_store,
+           storage_for_image_view.disk_profile_id as disk_profile_id, -- disk profile fields
+           storage_for_image_view.disk_profile_name as disk_profile_name,
            null AS lun_id, -- LUN fields
            null AS physical_volume_id,
            null AS volume_group_id,
@@ -246,6 +255,8 @@ FROM
            null AS quota_name,
            null AS quota_enforcement_type,
            false as ovf_store,
+           null AS disk_profile_id, -- disk profile fields
+           null AS disk_profile_name,
            l.lun_id, -- LUN fields
            l.physical_volume_id,
            l.volume_group_id,
@@ -1055,7 +1066,7 @@ SELECT vm_images_view.storage_id, vm_images_view.storage_path, vm_images_view.st
        vm_images_view.imagestatus, vm_images_view.lastmodified, vm_images_view.app_list, vm_images_view.vm_snapshot_id, vm_images_view.volume_type,
        vm_images_view.image_group_id, vm_images_view.active, vm_images_view.volume_format, vm_images_view.disk_interface,
        vm_images_view.boot, vm_images_view.wipe_after_delete, vm_images_view.propagate_errors, vm_images_view.entity_type, vm_images_view.number_of_vms, vm_images_view.vm_names, vm_images_view.quota_id,
-       vm_images_view.quota_name, vm_images_view.disk_alias, vm_images_view.disk_description, vm_images_view.sgio,
+       vm_images_view.quota_name, vm_images_view.disk_profile_id, vm_images_view.disk_profile_name, vm_images_view.disk_alias, vm_images_view.disk_description, vm_images_view.sgio,
        storage_domains_with_hosts_view.id, storage_domains_with_hosts_view.storage, storage_domains_with_hosts_view.storage_name,
        storage_domains_with_hosts_view.available_disk_size, storage_domains_with_hosts_view.used_disk_size,
        storage_domains_with_hosts_view.commited_disk_size, storage_domains_with_hosts_view.actual_images_size, storage_domains_with_hosts_view.storage_type,

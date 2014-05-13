@@ -93,6 +93,7 @@ public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
         parameters.setStorageDomainId(enclosingCommand.getParameters().getStorageDomainId());
         parameters.setImageGroupID(enclosingCommand.getParameters().getImageGroupID());
         parameters.setQuotaId(enclosingCommand.getParameters().getQuotaId());
+        parameters.setDiskProfileId(enclosingCommand.getParameters().getDiskProfileId());
         parameters.setParentCommand(VdcActionType.ImportRepoImage);
         parameters.setParentParameters(enclosingCommand.getParameters());
         parameters.setDestinationImageId(enclosingCommand.getParameters().getDestinationImageId());

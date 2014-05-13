@@ -821,6 +821,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         params.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
         params.setRevertDbOperationScope(ImageDbOperationScope.IMAGE);
         params.setQuotaId(disk.getQuotaId() != null ? disk.getQuotaId() : getParameters().getQuotaId());
+        params.setDiskProfileId(disk.getDiskProfileId());
         if (getParameters().getVm().getDiskMap() != null
                 && getParameters().getVm().getDiskMap().containsKey(originalDiskId)) {
             DiskImageBase diskImageBase =
