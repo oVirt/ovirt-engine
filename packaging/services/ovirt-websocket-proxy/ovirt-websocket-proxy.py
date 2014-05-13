@@ -89,7 +89,7 @@ class TicketDecoder(object):
         if (
             datetime.datetime.utcnow() -
             datetime.datetime.strptime(decoded['validFrom'], '%Y%m%d%H%M%S')
-        ) < datetime.timedelta():
+        ) < datetime.timedelta(seconds=-5):  # tolerance to the past
             raise ValueError('Ticket life time expired')
         if (
             datetime.datetime.strptime(decoded['validTo'], '%Y%m%d%H%M%S') -
