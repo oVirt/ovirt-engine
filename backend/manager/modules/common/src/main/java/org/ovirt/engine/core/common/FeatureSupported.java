@@ -366,4 +366,14 @@ public class FeatureSupported {
     public static boolean storagePoolMemoryBackend(Version version) {
         return supportedInConfig(ConfigValues.StoragePoolMemoryBackend, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if get live merge is supported for the given version.
+     */
+    public static boolean liveMerge(Version version) {
+        return supportedInConfig(ConfigValues.LiveMergeSupported, version);
+
+    }
 }

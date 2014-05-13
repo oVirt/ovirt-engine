@@ -405,6 +405,11 @@ select fn_db_add_config_value('LDAPProviderTypes','','general');
 select fn_db_add_config_value('LeaseRetries','3','general');
 select fn_db_add_config_value('LeaseTimeSec','60','general');
 select fn_db_add_config_value('LicenseCertificateFingerPrint','5f 38 41 89 b1 33 49 0c 24 13 6b b3 e5 ba 9e c7 fd 83 80 3b','general');
+select fn_db_add_config_value('LiveMergeSupported','false','3.0');
+select fn_db_add_config_value('LiveMergeSupported','false','3.1');
+select fn_db_add_config_value('LiveMergeSupported','false','3.2');
+select fn_db_add_config_value('LiveMergeSupported','false','3.3');
+select fn_db_add_config_value('LiveMergeSupported','false','3.4');
 select fn_db_add_config_value('LiveSnapshotEnabled','false','3.0');
 select fn_db_add_config_value('LocalAdminPassword','123456','general');
 --Handling Enable lock policy for Storage Pool Manager on activation

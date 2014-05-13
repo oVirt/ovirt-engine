@@ -131,7 +131,8 @@ public enum ConfigurationValues {
     ClusterRequiredRngSourcesDefault(ConfigAuthType.User),
     SpiceFileTransferToggleSupported(ConfigAuthType.User),
     SpiceCopyPasteToggleSupported(ConfigAuthType.User),
-    DefaultMtu;
+    DefaultMtu,
+    LiveMergeSupported(ConfigAuthType.User);
 
     public static enum ConfigAuthType {
         Admin,

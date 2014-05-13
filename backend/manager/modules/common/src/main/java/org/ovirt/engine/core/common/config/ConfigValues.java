@@ -1805,5 +1805,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("30")
     KdumpStartedTimeout,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    LiveMergeSupported,
+
     Invalid
 }
