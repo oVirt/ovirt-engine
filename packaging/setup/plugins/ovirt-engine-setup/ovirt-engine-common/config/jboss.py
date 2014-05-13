@@ -28,7 +28,8 @@ from otopi import util
 from otopi import plugin
 
 
-from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -43,8 +44,8 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ConfigEnv.JBOSS_HOME,
-            osetupcons.FileLocations.JBOSS_HOME
+            oengcommcons.ConfigEnv.JBOSS_HOME,
+            oengcommcons.FileLocations.JBOSS_HOME
         )
 
     @plugin.event(
@@ -53,13 +54,13 @@ class Plugin(plugin.PluginBase):
     def _validation(self):
         if not os.path.exists(
             self.environment[
-                osetupcons.ConfigEnv.JBOSS_HOME
+                oengcommcons.ConfigEnv.JBOSS_HOME
             ]
         ):
             raise RuntimeError(
                 _('Cannot find Jboss at {jbossHome}').format(
                     jbossHome=self.environment[
-                        osetupcons.ConfigEnv.JBOSS_HOME
+                        oengcommcons.ConfigEnv.JBOSS_HOME
                     ],
                 )
             )

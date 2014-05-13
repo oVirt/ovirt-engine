@@ -40,6 +40,10 @@ from ovirt_engine import util as outil
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
+from ovirt_engine_setup.engine import vdcoption
 from ovirt_engine_setup import util as osetuputil
 
 
@@ -82,7 +86,7 @@ class Plugin(plugin.PluginBase):
         self.environment[
             otopicons.CoreEnv.LOG_FILTER_KEYS
         ].append(
-            osetupcons.PKIEnv.STORE_PASS
+            oenginecons.PKIEnv.STORE_PASS
         )
 
     @plugin.event(
@@ -90,22 +94,22 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.PKIEnv.STORE_PASS,
-            osetupcons.Defaults.DEFAULT_PKI_STORE_PASS
+            oenginecons.PKIEnv.STORE_PASS,
+            oengcommcons.Defaults.DEFAULT_PKI_STORE_PASS
         )
         self.environment.setdefault(
-            osetupcons.PKIEnv.COUNTRY,
-            osetupcons.Defaults.DEFAULT_PKI_COUNTRY
+            oenginecons.PKIEnv.COUNTRY,
+            oengcommcons.Defaults.DEFAULT_PKI_COUNTRY
         )
         self.environment.setdefault(
-            osetupcons.PKIEnv.ORG,
+            oenginecons.PKIEnv.ORG,
             None
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
         condition=lambda self: not os.path.exists(
-            osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
         )
     )
     def _setup(self):
@@ -114,16 +118,16 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
-            osetupcons.Stages.DIALOG_TITLES_E_PKI,
+            oengcommcons.Stages.DIALOG_TITLES_E_PKI,
         ),
         after=(
             osetupcons.Stages.CONFIG_PROTOCOLS_CUSTOMIZATION,
-            osetupcons.Stages.DIALOG_TITLES_S_PKI,
+            oengcommcons.Stages.DIALOG_TITLES_S_PKI,
         ),
     )
     def _customization(self):
         if self._enabled:
-            if self.environment[osetupcons.PKIEnv.ORG] is None:
+            if self.environment[oenginecons.PKIEnv.ORG] is None:
                 org = 'Test'
                 if '.' in self.environment[osetupcons.ConfigEnv.FQDN]:
                     org = self.environment[
@@ -131,7 +135,7 @@ class Plugin(plugin.PluginBase):
                     ].split('.', 1)[1]
 
                 self.environment[
-                    osetupcons.PKIEnv.ORG
+                    oenginecons.PKIEnv.ORG
                 ] = self.dialog.queryString(
                     name='OVESETUP_PKI_ORG',
                     note=_('Organization name for certificate [@DEFAULT@]: '),
@@ -185,8 +189,8 @@ class Plugin(plugin.PluginBase):
         localtransaction = transaction.Transaction()
         with localtransaction:
             for name in (
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_CA_TEMPLATE,
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_CERT_TEMPLATE,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_TEMPLATE,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_TEMPLATE,
             ):
                 localtransaction.append(
                     filetransaction.FileTransaction(
@@ -199,9 +203,9 @@ class Plugin(plugin.PluginBase):
                                         osetupcons.ConfigEnv.FQDN
                                     ],
                                     self.environment[
-                                        osetupcons.ConfigEnv.PUBLIC_HTTP_PORT
+                                        oengcommcons.ConfigEnv.PUBLIC_HTTP_PORT
                                     ],
-                                    osetupcons.Const.ENGINE_PKI_CA_URI,
+                                    oenginecons.Const.ENGINE_PKI_CA_URI,
                                 )
                             }
                         ),
@@ -211,13 +215,13 @@ class Plugin(plugin.PluginBase):
 
         self.execute(
             args=(
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_CA_CREATE,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_CREATE,
                 '--subject=/C=%s/O=%s/CN=%s.%s' % (
                     self._subjectComponentEscape(
-                        self.environment[osetupcons.PKIEnv.COUNTRY],
+                        self.environment[oenginecons.PKIEnv.COUNTRY],
                     ),
                     self._subjectComponentEscape(
-                        self.environment[osetupcons.PKIEnv.ORG],
+                        self.environment[oenginecons.PKIEnv.ORG],
                     ),
                     self._subjectComponentEscape(
                         self.environment[
@@ -227,12 +231,12 @@ class Plugin(plugin.PluginBase):
                     random.randint(10000, 99999),
                 ),
                 '--keystore-password=%s' % (
-                    self.environment[osetupcons.PKIEnv.STORE_PASS],
+                    self.environment[oenginecons.PKIEnv.STORE_PASS],
                 ),
             ),
             envAppend={
                 'JAVA_HOME': self.environment[
-                    osetupcons.ConfigEnv.JAVA_HOME
+                    oengcommcons.ConfigEnv.JAVA_HOME
                 ],
             },
         )
@@ -240,17 +244,17 @@ class Plugin(plugin.PluginBase):
         for name in ('engine', 'apache', 'jboss'):
             self.execute(
                 (
-                    osetupcons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
                     '--name=%s' % name,
                     '--password=%s' % (
-                        self.environment[osetupcons.PKIEnv.STORE_PASS],
+                        self.environment[oenginecons.PKIEnv.STORE_PASS],
                     ),
                     '--subject=/C=%s/O=%s/CN=%s' % (
                         self._subjectComponentEscape(
-                            self.environment[osetupcons.PKIEnv.COUNTRY],
+                            self.environment[oenginecons.PKIEnv.COUNTRY],
                         ),
                         self._subjectComponentEscape(
-                            self.environment[osetupcons.PKIEnv.ORG],
+                            self.environment[oenginecons.PKIEnv.ORG],
                         ),
                         self._subjectComponentEscape(
                             self.environment[osetupcons.ConfigEnv.FQDN],
@@ -261,50 +265,50 @@ class Plugin(plugin.PluginBase):
 
         uninstall_files.extend(
             (
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_STORE,
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_KEY,
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CERT,
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_STORE,
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_TRUST_STORE,
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_STORE,
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_CA_CERT_CONF,
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_STORE,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_KEY,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CERT,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_STORE,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_TRUST_STORE,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_STORE,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_CERT_CONF,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF,
             )
         )
 
         self.execute(
             args=(
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
                 '--name=apache',
                 '--passin=%s' % (
-                    self.environment[osetupcons.PKIEnv.STORE_PASS],
+                    self.environment[oenginecons.PKIEnv.STORE_PASS],
                 ),
                 '--key=%s' % (
-                    osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
                 ),
             ),
             logStreams=False,
         )
         uninstall_files.append(
-            osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY
         )
 
         if not os.path.exists(
-            osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
         ):
             os.symlink(
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
             )
             uninstall_files.append(
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
             )
 
         for f in (
-            osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_STORE,
-            osetupcons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_STORE,
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_STORE,
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_STORE,
         ):
             os.chown(
                 f,
@@ -317,17 +321,19 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
-            osetupcons.Stages.DB_CONNECTION_AVAILABLE,
+            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
         condition=lambda self: self._enabled,
     )
     def miscOptions(self):
-        self.environment[osetupcons.DBEnv.STATEMENT].updateVdcOptions(
+        vdcoption.VdcOption(
+            statement=self.environment[oengcommcons.EngineDBEnv.STATEMENT]
+        ).updateVdcOptions(
             options=(
                 {
                     'name': 'OrganizationName',
                     'value': self.environment[
-                        osetupcons.PKIEnv.ORG
+                        oenginecons.PKIEnv.ORG
                     ],
                 },
             ),
@@ -344,7 +350,7 @@ class Plugin(plugin.PluginBase):
     )
     def _closeup(self):
         x509 = X509.load_cert(
-            file=osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+            file=oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
             format=X509.FORMAT_PEM,
         )
         self.dialog.note(

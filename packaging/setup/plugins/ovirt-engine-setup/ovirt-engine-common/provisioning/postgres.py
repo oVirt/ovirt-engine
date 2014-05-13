@@ -27,7 +27,8 @@ from otopi import util
 from otopi import plugin
 
 
-from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -42,24 +43,24 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ProvisioningEnv.POSTGRES_CONF,
-            osetupcons.Defaults.DEFAULT_POSTGRES_PROVISIONING_PG_CONF
+            oengcommcons.ProvisioningEnv.POSTGRES_CONF,
+            oengcommcons.Defaults.DEFAULT_POSTGRES_PROVISIONING_PG_CONF
         )
         self.environment.setdefault(
-            osetupcons.ProvisioningEnv.POSTGRES_PG_HBA,
-            osetupcons.Defaults.DEFAULT_POSTGRES_PROVISIONING_PG_HBA
+            oengcommcons.ProvisioningEnv.POSTGRES_PG_HBA,
+            oengcommcons.Defaults.DEFAULT_POSTGRES_PROVISIONING_PG_HBA
         )
         self.environment.setdefault(
-            osetupcons.ProvisioningEnv.POSTGRES_PG_VERSION,
-            osetupcons.Defaults.DEFAULT_POSTGRES_PROVISIONING_PG_VERSION
+            oengcommcons.ProvisioningEnv.POSTGRES_PG_VERSION,
+            oengcommcons.Defaults.DEFAULT_POSTGRES_PROVISIONING_PG_VERSION
         )
         self.environment.setdefault(
-            osetupcons.ProvisioningEnv.POSTGRES_SERVICE,
-            osetupcons.Defaults.DEFAULT_POSTGRES_PROVISIONING_SERVICE
+            oengcommcons.ProvisioningEnv.POSTGRES_SERVICE,
+            oengcommcons.Defaults.DEFAULT_POSTGRES_PROVISIONING_SERVICE
         )
         self.environment.setdefault(
-            osetupcons.ProvisioningEnv.POSTGRES_MAX_CONN,
-            osetupcons.Defaults.DEFAULT_POSTGRES_PROVISIONING_MAX_CONN
+            oengcommcons.ProvisioningEnv.POSTGRES_MAX_CONN,
+            oengcommcons.Defaults.DEFAULT_POSTGRES_PROVISIONING_MAX_CONN
         )
 
 

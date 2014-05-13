@@ -31,7 +31,11 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 from ovirt_engine_setup import config as osetupconfig
+from ovirt_engine_setup.engine import vdcoption
 
 
 @util.export
@@ -111,12 +115,12 @@ class Plugin(plugin.PluginBase):
                 sdk = self._ovirtsdk_api.API(
                     url='https://localhost:{port}/ovirt-engine/api'.format(
                         port=self.environment[
-                            osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT
+                            oengcommcons.ConfigEnv.PUBLIC_HTTPS_PORT
                         ],
                     ),
                     username='{user}@{domain}'.format(
                         user=osetupcons.Const.USER_ADMIN,
-                        domain=osetupcons.Const.DOMAIN_INTERNAL,
+                        domain=oenginecons.Const.DOMAIN_INTERNAL,
                     ),
                     password=self.environment[
                         osetupcons.ConfigEnv.ADMIN_PASSWORD
@@ -139,22 +143,22 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.AIOEnv.LOCAL_DATA_CENTER,
-            osetupcons.AIODefaults.DEFAULT_LOCAL_DATA_CENTER
+            oenginecons.AIOEnv.LOCAL_DATA_CENTER,
+            oenginecons.AIODefaults.DEFAULT_LOCAL_DATA_CENTER
         )
         self.environment.setdefault(
-            osetupcons.AIOEnv.LOCAL_CLUSTER,
-            osetupcons.AIODefaults.DEFAULT_LOCAL_CLUSTER
+            oenginecons.AIOEnv.LOCAL_CLUSTER,
+            oenginecons.AIODefaults.DEFAULT_LOCAL_CLUSTER
         )
         self.environment.setdefault(
-            osetupcons.AIOEnv.LOCAL_HOST,
-            osetupcons.AIODefaults.DEFAULT_LOCAL_HOST
+            oenginecons.AIOEnv.LOCAL_HOST,
+            oenginecons.AIODefaults.DEFAULT_LOCAL_HOST
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: self.environment[
-            osetupcons.AIOEnv.CONFIGURE
+            oenginecons.AIOEnv.CONFIGURE
         ],
     )
     def _validation(self):
@@ -168,22 +172,22 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self.environment[
-            osetupcons.AIOEnv.CONFIGURE
+            oenginecons.AIOEnv.CONFIGURE
         ],
     )
     def _misc(self):
-        self.environment[osetupcons.ApacheEnv.NEED_RESTART] = True
+        self.environment[oengcommcons.ApacheEnv.NEED_RESTART] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
-        name=osetupcons.Stages.AIO_CONFIG_VDSM,
+        name=oenginecons.Stages.AIO_CONFIG_VDSM,
         condition=lambda self: self.environment[
-            osetupcons.AIOEnv.CONFIGURE
+            oenginecons.AIOEnv.CONFIGURE
         ],
         after=(
-            osetupcons.Stages.AIO_CONFIG_STORAGE,
-            osetupcons.Stages.AIO_CONFIG_SSH,
-            osetupcons.Stages.CORE_ENGINE_START,
+            oenginecons.Stages.AIO_CONFIG_STORAGE,
+            oenginecons.Stages.AIO_CONFIG_SSH,
+            oengcommcons.Stages.CORE_ENGINE_START,
             osetupcons.Stages.APACHE_RESTART,
         ),
     )
@@ -191,9 +195,14 @@ class Plugin(plugin.PluginBase):
         self.logger.debug('Connecting to the Engine')
         engine_api = self._waitEngineUp()
 
-        SupportedClusterLevels = self.environment[
-            osetupcons.DBEnv.STATEMENT
-        ].getVdcOption(name='SupportedClusterLevels')
+        SupportedClusterLevels = vdcoption.VdcOption(
+            statement=self.environment[
+                oengcommcons.EngineDBEnv.STATEMENT
+            ]
+        ).getVdcOption(
+            name='SupportedClusterLevels'
+        )
+
         self.logger.debug(
             'SupportedClusterLevels [{levels}], '
             'PACKAGE_VERSION [{pv}],'.format(
@@ -213,7 +222,7 @@ class Plugin(plugin.PluginBase):
         self.logger.debug('Creating the local data center')
         engine_api.datacenters.add(
             self._ovirtsdk_xml.params.DataCenter(
-                name=self.environment[osetupcons.AIOEnv.LOCAL_DATA_CENTER],
+                name=self.environment[oenginecons.AIOEnv.LOCAL_DATA_CENTER],
                 storage_type='localfs',
                 version=engine_version,
             )
@@ -224,12 +233,12 @@ class Plugin(plugin.PluginBase):
         )
         engine_api.clusters.add(
             self._ovirtsdk_xml.params.Cluster(
-                name=self.environment[osetupcons.AIOEnv.LOCAL_CLUSTER],
+                name=self.environment[oenginecons.AIOEnv.LOCAL_CLUSTER],
                 cpu=self._ovirtsdk_xml.params.CPU(
-                    id=self.environment[osetupcons.AIOEnv.VDSM_CPU]
+                    id=self.environment[oenginecons.AIOEnv.VDSM_CPU]
                 ),
                 data_center=engine_api.datacenters.get(
-                    self.environment[osetupcons.AIOEnv.LOCAL_DATA_CENTER]
+                    self.environment[oenginecons.AIOEnv.LOCAL_DATA_CENTER]
                 ),
                 version=engine_version
             )
@@ -239,22 +248,22 @@ class Plugin(plugin.PluginBase):
         # At this stage sshd is already running
         engine_api.hosts.add(
             self._ovirtsdk_xml.params.Host(
-                name=self.environment[osetupcons.AIOEnv.LOCAL_HOST],
+                name=self.environment[oenginecons.AIOEnv.LOCAL_HOST],
                 address=self.environment[osetupcons.ConfigEnv.FQDN],
                 reboot_after_installation=False,
                 override_iptables=False,
                 cluster=engine_api.clusters.get(
-                    self.environment[osetupcons.AIOEnv.LOCAL_CLUSTER]
+                    self.environment[oenginecons.AIOEnv.LOCAL_CLUSTER]
                 ),
                 ssh=self._ovirtsdk_xml.params.SSH(
                     authentication_method='publickey',
-                    port=self.environment[osetupcons.AIOEnv.SSHD_PORT],
+                    port=self.environment[oenginecons.AIOEnv.SSHD_PORT],
                 ),
             )
         )
         if not self._waitVDSMHostUp(
             engine_api=engine_api,
-            host=self.environment[osetupcons.AIOEnv.LOCAL_HOST],
+            host=self.environment[oenginecons.AIOEnv.LOCAL_HOST],
         ):
             self.logger.warning(_(
                 'Local storage domain not added because '
@@ -264,19 +273,19 @@ class Plugin(plugin.PluginBase):
             self.logger.debug('Adding local storage domain')
             storage = self._ovirtsdk_xml.params.Storage(
                 path=self.environment[
-                    osetupcons.AIOEnv.STORAGE_DOMAIN_DIR
+                    oenginecons.AIOEnv.STORAGE_DOMAIN_DIR
                 ].rstrip('/'),
             )
             storage.set_type('localfs')
 
             storage_domain = self._ovirtsdk_xml.params.StorageDomain(
-                name=self.environment[osetupcons.AIOEnv.STORAGE_DOMAIN_NAME],
+                name=self.environment[oenginecons.AIOEnv.STORAGE_DOMAIN_NAME],
                 data_center=engine_api.datacenters.get(
-                    self.environment[osetupcons.AIOEnv.LOCAL_DATA_CENTER]
+                    self.environment[oenginecons.AIOEnv.LOCAL_DATA_CENTER]
                 ),
                 storage_format='v3',
                 host=engine_api.hosts.get(
-                    self.environment[osetupcons.AIOEnv.LOCAL_HOST]
+                    self.environment[oenginecons.AIOEnv.LOCAL_HOST]
                 ),
                 storage=storage
             )

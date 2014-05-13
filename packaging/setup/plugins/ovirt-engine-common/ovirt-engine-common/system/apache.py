@@ -28,6 +28,8 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -43,11 +45,11 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ApacheEnv.HTTPD_SERVICE,
-            osetupcons.Defaults.DEFAULT_HTTPD_SERVICE
+            oengcommcons.ApacheEnv.HTTPD_SERVICE,
+            oengcommcons.Defaults.DEFAULT_HTTPD_SERVICE
         )
         self.environment.setdefault(
-            osetupcons.ApacheEnv.NEED_RESTART,
+            oengcommcons.ApacheEnv.NEED_RESTART,
             False,
         )
 
@@ -63,12 +65,12 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CLOSEUP,
         name=osetupcons.Stages.APACHE_RESTART,
         after=(
-            osetupcons.Stages.CORE_ENGINE_START,
+            oengcommcons.Stages.CORE_ENGINE_START,
         ),
         condition=lambda self: (
             self._enabled and
             self.environment[
-                osetupcons.ApacheEnv.NEED_RESTART
+                oengcommcons.ApacheEnv.NEED_RESTART
             ]
         ),
     )
@@ -76,20 +78,20 @@ class Plugin(plugin.PluginBase):
         self.logger.info(
             _('Restarting {service}').format(
                 service=self.environment[
-                    osetupcons.ApacheEnv.HTTPD_SERVICE
+                    oengcommcons.ApacheEnv.HTTPD_SERVICE
                 ],
             )
         )
         self.services.startup(
             name=self.environment[
-                osetupcons.ApacheEnv.HTTPD_SERVICE
+                oengcommcons.ApacheEnv.HTTPD_SERVICE
             ],
             state=True,
         )
         for state in (False, True):
             self.services.state(
                 name=self.environment[
-                    osetupcons.ApacheEnv.HTTPD_SERVICE
+                    oengcommcons.ApacheEnv.HTTPD_SERVICE
                 ],
                 state=state,
             )

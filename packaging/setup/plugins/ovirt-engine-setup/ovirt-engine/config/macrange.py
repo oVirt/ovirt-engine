@@ -28,7 +28,10 @@ from otopi import util
 from otopi import plugin
 
 
-from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import vdcoption
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -43,10 +46,10 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ConfigEnv.MAC_RANGE_POOL,
+            oenginecons.ConfigEnv.MAC_RANGE_POOL,
             '{newbase}:00-{newbase}:ff'.format(
                 newbase='{base}:{part1:x}:{part2:x}'.format(
-                    base=osetupcons.Const.MAC_RANGE_BASE,
+                    base=oenginecons.Const.MAC_RANGE_BASE,
                     part1=int(random.randrange(255)),
                     part2=int(random.randrange(255)),
                 ),
@@ -56,19 +59,23 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
-            osetupcons.Stages.DB_CONNECTION_AVAILABLE,
+            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
         condition=lambda self: self.environment[
-            osetupcons.DBEnv.NEW_DATABASE
+            oengcommcons.EngineDBEnv.NEW_DATABASE
         ]
     )
     def _misc(self):
-        self.environment[osetupcons.DBEnv.STATEMENT].updateVdcOptions(
+        vdcoption.VdcOption(
+            statement=self.environment[
+                oengcommcons.EngineDBEnv.STATEMENT
+            ]
+        ).updateVdcOptions(
             options=(
                 {
                     'name': 'MacPoolRanges',
                     'value': self.environment[
-                        osetupcons.ConfigEnv.MAC_RANGE_POOL
+                        oenginecons.ConfigEnv.MAC_RANGE_POOL
                     ],
                 },
             ),

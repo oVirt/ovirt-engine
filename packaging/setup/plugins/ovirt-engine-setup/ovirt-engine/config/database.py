@@ -33,6 +33,9 @@ from ovirt_engine import util as outil
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -50,7 +53,7 @@ class Plugin(plugin.PluginBase):
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=(
-                    osetupcons.FileLocations.
+                    oenginecons.FileLocations.
                     OVIRT_ENGINE_SERVICE_CONFIG_DATABASE
                 ),
                 mode=0o600,
@@ -75,23 +78,23 @@ class Plugin(plugin.PluginBase):
                     ) +
                     ''
                 ).format(
-                    host=self.environment[osetupcons.DBEnv.HOST],
-                    port=self.environment[osetupcons.DBEnv.PORT],
-                    user=self.environment[osetupcons.DBEnv.USER],
+                    host=self.environment[oengcommcons.EngineDBEnv.HOST],
+                    port=self.environment[oengcommcons.EngineDBEnv.PORT],
+                    user=self.environment[oengcommcons.EngineDBEnv.USER],
                     password=outil.escape(
-                        self.environment[osetupcons.DBEnv.PASSWORD],
+                        self.environment[oengcommcons.EngineDBEnv.PASSWORD],
                         '"\\$',
                     ),
-                    db=self.environment[osetupcons.DBEnv.DATABASE],
-                    secured=self.environment[osetupcons.DBEnv.SECURED],
+                    db=self.environment[oengcommcons.EngineDBEnv.DATABASE],
+                    secured=self.environment[oengcommcons.EngineDBEnv.SECURED],
                     securedValidation=self.environment[
-                        osetupcons.DBEnv.SECURED_HOST_VALIDATION
+                        oengcommcons.EngineDBEnv.SECURED_HOST_VALIDATION
                     ],
                     jdbcTlsOptions='&'.join(
                         s for s in (
                             'ssl=true'
                             if self.environment[
-                                osetupcons.DBEnv.SECURED
+                                oengcommcons.EngineDBEnv.SECURED
                             ] else '',
 
                             (
@@ -99,7 +102,8 @@ class Plugin(plugin.PluginBase):
                                 'org.postgresql.ssl.NonValidatingFactory'
                             )
                             if not self.environment[
-                                osetupcons.DBEnv.SECURED_HOST_VALIDATION
+                                oengcommcons.EngineDBEnv.
+                                SECURED_HOST_VALIDATION
                             ] else ''
                         ) if s
                     ),

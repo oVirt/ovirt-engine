@@ -33,6 +33,9 @@ from otopi import filetransaction
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 from ovirt_engine_setup import domains as osetupdomains
 
 
@@ -51,7 +54,7 @@ class Plugin(plugin.PluginBase):
         self._checker.check_base_writable(path)
         self._checker.check_available_space(
             path,
-            osetupcons.AIOConst.MINIMUM_SPACE_STORAGEDOMAIN_MB
+            oenginecons.AIOConst.MINIMUM_SPACE_STORAGEDOMAIN_MB
         )
 
     @plugin.event(
@@ -59,29 +62,29 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.AIOEnv.STORAGE_DOMAIN_DIR,
+            oenginecons.AIOEnv.STORAGE_DOMAIN_DIR,
             None
         )
         self.environment.setdefault(
-            osetupcons.AIOEnv.STORAGE_DOMAIN_NAME,
+            oenginecons.AIOEnv.STORAGE_DOMAIN_NAME,
             None
         )
         self.environment.setdefault(
-            osetupcons.AIOEnv.STORAGE_DOMAIN_DEFAULT_DIR,
-            osetupcons.FileLocations.AIO_STORAGE_DOMAIN_DEFAULT_DIR
+            oenginecons.AIOEnv.STORAGE_DOMAIN_DEFAULT_DIR,
+            oenginecons.FileLocations.AIO_STORAGE_DOMAIN_DEFAULT_DIR
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: self.environment[
-            osetupcons.AIOEnv.CONFIGURE
+            oenginecons.AIOEnv.CONFIGURE
         ],
-        name=osetupcons.Stages.AIO_CONFIG_STORAGE,
+        name=oenginecons.Stages.AIO_CONFIG_STORAGE,
         before=(
-            osetupcons.Stages.DIALOG_TITLES_E_ALLINONE,
+            oengcommcons.Stages.DIALOG_TITLES_E_ALLINONE,
         ),
         after=(
-            osetupcons.Stages.AIO_CONFIG_AVAILABLE,
+            oenginecons.Stages.AIO_CONFIG_AVAILABLE,
         ),
     )
     def _customization(self):
@@ -89,14 +92,14 @@ class Plugin(plugin.PluginBase):
         If the user want to use NFS for ISO domain ask how to configure it.
         """
         interactive = self.environment[
-            osetupcons.AIOEnv.STORAGE_DOMAIN_DIR
+            oenginecons.AIOEnv.STORAGE_DOMAIN_DIR
         ] is None
 
         validDomain = False
         while not validDomain:
             try:
                 default_dir = self.environment[
-                    osetupcons.AIOEnv.STORAGE_DOMAIN_DEFAULT_DIR
+                    oenginecons.AIOEnv.STORAGE_DOMAIN_DEFAULT_DIR
                 ]
                 if os.path.exists(default_dir):
                     default_dir += '-%s' % (
@@ -104,7 +107,7 @@ class Plugin(plugin.PluginBase):
                     )
                 if interactive:
                     self.environment[
-                        osetupcons.AIOEnv.STORAGE_DOMAIN_DIR
+                        oenginecons.AIOEnv.STORAGE_DOMAIN_DIR
                     ] = self.dialog.queryString(
                         name='OVESETUP_AIO_STORAGE_DOMAIN_DIR',
                         note=_('Local storage domain path [@DEFAULT@]: '),
@@ -115,7 +118,7 @@ class Plugin(plugin.PluginBase):
 
                 self._validateDomain(
                     path=self.environment[
-                        osetupcons.AIOEnv.STORAGE_DOMAIN_DIR
+                        oenginecons.AIOEnv.STORAGE_DOMAIN_DIR
                     ]
                 )
 
@@ -130,7 +133,7 @@ class Plugin(plugin.PluginBase):
                             '{directory}: {error}'
                         ).format(
                             directory=self.environment[
-                                osetupcons.AIOEnv.STORAGE_DOMAIN_DIR
+                                oenginecons.AIOEnv.STORAGE_DOMAIN_DIR
                             ],
                             error=e,
                         )
@@ -139,7 +142,7 @@ class Plugin(plugin.PluginBase):
                     raise
 
         path = self.environment[
-            osetupcons.AIOEnv.STORAGE_DOMAIN_DIR
+            oenginecons.AIOEnv.STORAGE_DOMAIN_DIR
         ].rstrip('/')
         self.environment[osetupcons.SystemEnv.SELINUX_CONTEXTS].append({
             'type': 'public_content_rw_t',
@@ -150,22 +153,22 @@ class Plugin(plugin.PluginBase):
         ].append(path)
 
         if self.environment[
-            osetupcons.AIOEnv.STORAGE_DOMAIN_NAME
+            oenginecons.AIOEnv.STORAGE_DOMAIN_NAME
         ] is None:
             self.environment[
-                osetupcons.AIOEnv.STORAGE_DOMAIN_NAME
+                oenginecons.AIOEnv.STORAGE_DOMAIN_NAME
             ] = self.dialog.queryString(
                 name='OVESETUP_AIO_STORAGE_DOMAIN_NAME',
                 note=_('Local storage domain name [@DEFAULT@]: '),
                 prompt=True,
                 caseSensitive=True,
-                default=osetupcons.AIODefaults.DEFAULT_STORAGE_DOMAIN_NAME,
+                default=oenginecons.AIODefaults.DEFAULT_STORAGE_DOMAIN_NAME,
             )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self.environment[
-            osetupcons.AIOEnv.CONFIGURE
+            oenginecons.AIOEnv.CONFIGURE
         ],
     )
     def _misc(self):
@@ -173,19 +176,19 @@ class Plugin(plugin.PluginBase):
             filetransaction.FileTransaction(
                 name=os.path.join(
                     self.environment[
-                        osetupcons.AIOEnv.STORAGE_DOMAIN_DIR
+                        oenginecons.AIOEnv.STORAGE_DOMAIN_DIR
                     ].rstrip('/'),
                     '.keep',
                 ),
                 content='',
                 mode=0o644,
                 dmode=0o755,
-                owner=self.environment[osetupcons.SystemEnv.USER_VDSM],
-                group=self.environment[osetupcons.SystemEnv.GROUP_KVM],
+                owner=self.environment[oengcommcons.SystemEnv.USER_VDSM],
+                group=self.environment[oengcommcons.SystemEnv.GROUP_KVM],
                 downer=self.environment[
-                    osetupcons.SystemEnv.USER_VDSM
+                    oengcommcons.SystemEnv.USER_VDSM
                 ],
-                dgroup=self.environment[osetupcons.SystemEnv.GROUP_KVM],
+                dgroup=self.environment[oengcommcons.SystemEnv.GROUP_KVM],
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
                 ],

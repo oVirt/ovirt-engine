@@ -32,6 +32,7 @@ from otopi import constants as otopicons
 from otopi import filetransaction
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
 
 
 @util.export
@@ -96,7 +97,7 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ConfigEnv.ISO_DOMAIN_NFS_ACL,
+            oenginecons.ConfigEnv.ISO_DOMAIN_NFS_ACL,
             None
         )
 
@@ -110,39 +111,39 @@ class Plugin(plugin.PluginBase):
         self.command.detect('exportfs')
         self.environment[
             osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-        ].append(osetupcons.FileLocations.NFS_EXPORT_FILE)
+        ].append(oenginecons.FileLocations.NFS_EXPORT_FILE)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: self._enabled,
     )
     def _validation(self):
-        if os.path.exists(osetupcons.FileLocations.OVIRT_NFS_EXPORT_FILE):
+        if os.path.exists(oenginecons.FileLocations.OVIRT_NFS_EXPORT_FILE):
             self._source = self._destination = (
-                osetupcons.FileLocations.OVIRT_NFS_EXPORT_FILE
+                oenginecons.FileLocations.OVIRT_NFS_EXPORT_FILE
             )
-        elif os.path.exists(osetupcons.FileLocations.NFS_EXPORT_DIR):
-            self._source = osetupcons.FileLocations.NFS_EXPORT_FILE
-            self._destination = osetupcons.FileLocations.OVIRT_NFS_EXPORT_FILE
+        elif os.path.exists(oenginecons.FileLocations.NFS_EXPORT_DIR):
+            self._source = oenginecons.FileLocations.NFS_EXPORT_FILE
+            self._destination = oenginecons.FileLocations.OVIRT_NFS_EXPORT_FILE
 
             content, old_line = self._getContentRemovePath(
                 self._source,
                 self.environment[
-                    osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                    oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
                 ],
             )
             self._move = old_line is not None
-        elif os.path.exists(osetupcons.FileLocations.NFS_EXPORT_FILE):
+        elif os.path.exists(oenginecons.FileLocations.NFS_EXPORT_FILE):
             self.source = self._destination = (
-                osetupcons.FileLocations.NFS_EXPORT_FILE
+                oenginecons.FileLocations.NFS_EXPORT_FILE
             )
 
         self._generate = (
             self.environment[
-                osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
             ] is not None and
             self.environment[
-                osetupcons.ConfigEnv.ISO_DOMAIN_NFS_ACL
+                oenginecons.ConfigEnv.ISO_DOMAIN_NFS_ACL
             ] is not None
         )
 
@@ -154,16 +155,16 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self._enabled,
         after=(
-            osetupcons.Stages.CONFIG_ISO_DOMAIN_AVAILABLE,
+            oenginecons.Stages.CONFIG_ISO_DOMAIN_AVAILABLE,
         ),
     )
     def _misc(self):
         new_line = '{path}\t{acl}'.format(
             path=self.environment[
-                osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
             ],
             acl=self.environment[
-                osetupcons.ConfigEnv.ISO_DOMAIN_NFS_ACL
+                oenginecons.ConfigEnv.ISO_DOMAIN_NFS_ACL
             ],
         )
         do_generate = self._generate
@@ -172,7 +173,7 @@ class Plugin(plugin.PluginBase):
             content, old_line = self._getContentRemovePath(
                 self._source,
                 self.environment[
-                    osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                    oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
                 ],
             )
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(

@@ -28,7 +28,10 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import database
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
+from ovirt_engine_setup.engine_common import database
 from ovirt_engine_setup import dialog
 
 
@@ -84,11 +87,11 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
-            self.environment[osetupcons.DBEnv.PASSWORD] is not None and
+            self.environment[oengcommcons.EngineDBEnv.PASSWORD] is not None and
             self.environment[osetupcons.RemoveEnv.REMOVE_DATABASE]
         ),
         after=(
-            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
+            oengcommcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
         ),
     )
     def _misc(self):
@@ -96,16 +99,18 @@ class Plugin(plugin.PluginBase):
         try:
             dbovirtutils = database.OvirtUtils(
                 plugin=self,
-                dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+                dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
             )
             dbovirtutils.tryDatabaseConnect()
             self._bkpfile = dbovirtutils.backup(
-                dir=osetupcons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
-                prefix=osetupcons.Const.ENGINE_DB_BACKUP_PREFIX,
+                dir=oenginecons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
+                prefix=oenginecons.Const.ENGINE_DB_BACKUP_PREFIX,
             )
             self.logger.info(
                 _('Clearing Engine database {database}').format(
-                    database=self.environment[osetupcons.DBEnv.DATABASE],
+                    database=self.environment[
+                        oengcommcons.EngineDBEnv.DATABASE
+                    ],
                 )
             )
             dbovirtutils.clearDatabase()

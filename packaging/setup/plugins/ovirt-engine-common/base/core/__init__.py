@@ -24,10 +24,8 @@ from otopi import util
 
 from . import offlinepackager
 from . import misc
-from . import engine
 from . import answerfile
 from . import uninstall
-from . import protocols
 from . import postinstall
 
 
@@ -35,10 +33,8 @@ from . import postinstall
 def createPlugins(context):
     offlinepackager.Plugin(context=context)
     misc.Plugin(context=context)
-    engine.Plugin(context=context)
     answerfile.Plugin(context=context)
     uninstall.Plugin(context=context)
-    protocols.Plugin(context=context)
     postinstall.Plugin(context=context)
 
 

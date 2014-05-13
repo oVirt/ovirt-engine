@@ -28,6 +28,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
 from ovirt_engine_setup import dialog
 
 
@@ -43,7 +44,7 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.CoreEnv.ENGINE_SERVICE_STOP,
+            oenginecons.CoreEnv.ENGINE_SERVICE_STOP,
             None
         )
 
@@ -52,14 +53,17 @@ class Plugin(plugin.PluginBase):
     )
     def _validation(self):
         if (
-            self.services.exists(name=osetupcons.Const.ENGINE_SERVICE_NAME) and
-            self.services.status(name=osetupcons.Const.ENGINE_SERVICE_NAME)
+            self.services.exists(
+                name=oenginecons.Const.ENGINE_SERVICE_NAME
+            ) and self.services.status(
+                name=oenginecons.Const.ENGINE_SERVICE_NAME
+            )
         ):
             if self.environment[
-                osetupcons.CoreEnv.ENGINE_SERVICE_STOP
+                oenginecons.CoreEnv.ENGINE_SERVICE_STOP
             ] is None:
                 self.environment[
-                    osetupcons.CoreEnv.ENGINE_SERVICE_STOP
+                    oenginecons.CoreEnv.ENGINE_SERVICE_STOP
                 ] = dialog.queryBoolean(
                     dialog=self.dialog,
                     name='OVESETUP_CORE_ENGINE_STOP',
@@ -73,7 +77,7 @@ class Plugin(plugin.PluginBase):
                     default=True,
                 )
 
-            if not self.environment[osetupcons.CoreEnv.ENGINE_SERVICE_STOP]:
+            if not self.environment[oenginecons.CoreEnv.ENGINE_SERVICE_STOP]:
                 raise RuntimeError(
                     _('Engine service is running, no approval to stop')
                 )
@@ -85,10 +89,10 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _transactionBegin(self):
-        if self.services.exists(name=osetupcons.Const.ENGINE_SERVICE_NAME):
+        if self.services.exists(name=oenginecons.Const.ENGINE_SERVICE_NAME):
             self.logger.info(_('Stopping engine service'))
             self.services.state(
-                name=osetupcons.Const.ENGINE_SERVICE_NAME,
+                name=oenginecons.Const.ENGINE_SERVICE_NAME,
                 state=False
             )
 

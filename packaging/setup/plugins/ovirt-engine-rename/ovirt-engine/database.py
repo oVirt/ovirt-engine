@@ -31,7 +31,10 @@ from otopi import transaction
 
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import database
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
+from ovirt_engine_setup.engine_common import database
+from ovirt_engine_setup.engine import vdcoption
 from ovirt_engine_setup import domains
 
 
@@ -52,13 +55,19 @@ class Plugin(plugin.PluginBase):
             pass
 
         def abort(self):
-            connection = self._parent.environment[osetupcons.DBEnv.CONNECTION]
+            connection = self._parent.environment[
+                oengcommcons.EngineDBEnv.CONNECTION
+            ]
             if connection is not None:
                 connection.rollback()
-                self._parent.environment[osetupcons.DBEnv.CONNECTION] = None
+                self._parent.environment[
+                    oengcommcons.EngineDBEnv.CONNECTION
+                ] = None
 
         def commit(self):
-            connection = self._parent.environment[osetupcons.DBEnv.CONNECTION]
+            connection = self._parent.environment[
+                oengcommcons.EngineDBEnv.CONNECTION
+            ]
             if connection is not None:
                 connection.commit()
 
@@ -75,19 +84,19 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        name=osetupcons.Stages.DB_CONNECTION_AVAILABLE,
+        name=oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
     )
     def _connection(self):
         self.environment[
-            osetupcons.DBEnv.STATEMENT
+            oengcommcons.EngineDBEnv.STATEMENT
         ] = database.Statement(
-            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
         # must be here as we do not have database at validation
         self.environment[
-            osetupcons.DBEnv.CONNECTION
-        ] = self.environment[osetupcons.DBEnv.STATEMENT].connect()
+            oengcommcons.EngineDBEnv.CONNECTION
+        ] = self.environment[oengcommcons.EngineDBEnv.STATEMENT].connect()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
@@ -95,11 +104,11 @@ class Plugin(plugin.PluginBase):
     def _validation(self):
         dbovirtutils = database.OvirtUtils(
             plugin=self,
-            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
         )
         dbovirtutils.tryDatabaseConnect()
         dbstatement = database.Statement(
-            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
         my_domains = []
@@ -147,20 +156,24 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
-            osetupcons.Stages.DB_CONNECTION_AVAILABLE,
+            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
     )
     def _misc(self):
         option = 'RedirectServletReportsPage'
-        statement = self.environment[osetupcons.DBEnv.STATEMENT]
-        value = statement.getVdcOption(name=option)
+        vdc = vdcoption.VdcOption(
+            statement=self.environment[
+                oengcommcons.EngineDBEnv.STATEMENT
+            ]
+        )
+        value = vdc.getVdcOption(name=option)
 
         if value:
             newfqdn = self.environment[osetupcons.RenameEnv.FQDN]
             u = urlparse.urlparse(value)
             ulist = list(u)
             ulist[1] = newfqdn + ":" + str(u.port)
-            statement.updateVdcOptions(
+            vdc.updateVdcOptions(
                 options=(
                     {
                         'name': option,

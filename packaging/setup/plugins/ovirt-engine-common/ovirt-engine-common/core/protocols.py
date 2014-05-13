@@ -28,6 +28,8 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -42,35 +44,35 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ConfigEnv.HTTP_PORT,
-            osetupcons.Defaults.DEFAULT_NETWORK_HTTP_PORT
+            oengcommcons.ConfigEnv.HTTP_PORT,
+            oengcommcons.Defaults.DEFAULT_NETWORK_HTTP_PORT
         )
         self.environment.setdefault(
-            osetupcons.ConfigEnv.HTTPS_PORT,
-            osetupcons.Defaults.DEFAULT_NETWORK_HTTPS_PORT
+            oengcommcons.ConfigEnv.HTTPS_PORT,
+            oengcommcons.Defaults.DEFAULT_NETWORK_HTTPS_PORT
         )
         self.environment.setdefault(
-            osetupcons.ConfigEnv.JBOSS_HTTP_PORT,
-            osetupcons.Defaults.DEFAULT_NETWORK_JBOSS_HTTP_PORT
+            oengcommcons.ConfigEnv.JBOSS_HTTP_PORT,
+            oengcommcons.Defaults.DEFAULT_NETWORK_JBOSS_HTTP_PORT
         )
         self.environment.setdefault(
-            osetupcons.ConfigEnv.JBOSS_HTTPS_PORT,
-            osetupcons.Defaults.DEFAULT_NETWORK_JBOSS_HTTPS_PORT
+            oengcommcons.ConfigEnv.JBOSS_HTTPS_PORT,
+            oengcommcons.Defaults.DEFAULT_NETWORK_JBOSS_HTTPS_PORT
         )
         self.environment.setdefault(
-            osetupcons.ConfigEnv.JBOSS_AJP_PORT,
-            osetupcons.Defaults.DEFAULT_NETWORK_JBOSS_AJP_PORT
+            oengcommcons.ConfigEnv.JBOSS_AJP_PORT,
+            oengcommcons.Defaults.DEFAULT_NETWORK_JBOSS_AJP_PORT
         )
         self.environment.setdefault(
-            osetupcons.ConfigEnv.JBOSS_DEBUG_ADDRESS,
-            osetupcons.Defaults.DEFAULT_NETWORK_JBOSS_DEBUG_ADDRESS
+            oengcommcons.ConfigEnv.JBOSS_DEBUG_ADDRESS,
+            oengcommcons.Defaults.DEFAULT_NETWORK_JBOSS_DEBUG_ADDRESS
         )
         self.environment.setdefault(
-            osetupcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT,
+            oengcommcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT,
             None
         )
         self.environment.setdefault(
-            osetupcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT,
+            oengcommcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT,
             None
         )
 
@@ -80,41 +82,41 @@ class Plugin(plugin.PluginBase):
     def _setup(self):
         if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
             self.environment[
-                osetupcons.ConfigEnv.JBOSS_AJP_PORT
+                oengcommcons.ConfigEnv.JBOSS_AJP_PORT
             ] = None
             self.environment[
-                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
+                oengcommcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
             ] = self.environment[
-                osetupcons.ConfigEnv.JBOSS_HTTP_PORT
+                oengcommcons.ConfigEnv.JBOSS_HTTP_PORT
             ]
             self.environment[
-                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT
+                oengcommcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT
             ] = self.environment[
-                osetupcons.ConfigEnv.JBOSS_HTTPS_PORT
+                oengcommcons.ConfigEnv.JBOSS_HTTPS_PORT
             ]
         if self.environment[
-            osetupcons.ConfigEnv.JBOSS_AJP_PORT
+            oengcommcons.ConfigEnv.JBOSS_AJP_PORT
         ] is None:
             self.environment[
-                osetupcons.ConfigEnv.PUBLIC_HTTP_PORT
+                oengcommcons.ConfigEnv.PUBLIC_HTTP_PORT
             ] = self.environment[
-                osetupcons.ConfigEnv.JBOSS_HTTP_PORT
+                oengcommcons.ConfigEnv.JBOSS_HTTP_PORT
             ]
             self.environment[
-                osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT
+                oengcommcons.ConfigEnv.PUBLIC_HTTPS_PORT
             ] = self.environment[
-                osetupcons.ConfigEnv.JBOSS_HTTPS_PORT
+                oengcommcons.ConfigEnv.JBOSS_HTTPS_PORT
             ]
         else:
             self.environment[
-                osetupcons.ConfigEnv.PUBLIC_HTTP_PORT
+                oengcommcons.ConfigEnv.PUBLIC_HTTP_PORT
             ] = self.environment[
-                osetupcons.ConfigEnv.HTTP_PORT
+                oengcommcons.ConfigEnv.HTTP_PORT
             ]
             self.environment[
-                osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT
+                oengcommcons.ConfigEnv.PUBLIC_HTTPS_PORT
             ] = self.environment[
-                osetupcons.ConfigEnv.HTTPS_PORT
+                oengcommcons.ConfigEnv.HTTPS_PORT
             ]
 
 

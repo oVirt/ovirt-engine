@@ -28,8 +28,10 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 from ovirt_engine_setup import dialog
-from ovirt_engine_setup import postgres
+from ovirt_engine_setup.engine_common import postgres
 
 
 @util.export
@@ -42,14 +44,14 @@ class Plugin(plugin.PluginBase):
         self._renamedDBResources = False
         self._provisioning = postgres.Provisioning(
             plugin=self,
-            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
             defaults={
-                'user': osetupcons.Defaults.DEFAULT_DB_USER,
-                'database': osetupcons.Defaults.DEFAULT_DB_DATABASE,
-                'port': osetupcons.Defaults.DEFAULT_DB_PORT,
-                'secured': osetupcons.Defaults.DEFAULT_DB_SECURED,
+                'user': oengcommcons.Defaults.DEFAULT_DB_USER,
+                'database': oengcommcons.Defaults.DEFAULT_DB_DATABASE,
+                'port': oengcommcons.Defaults.DEFAULT_DB_PORT,
+                'secured': oengcommcons.Defaults.DEFAULT_DB_SECURED,
                 'hostValidation': (
-                    osetupcons.Defaults.
+                    oengcommcons.Defaults.
                     DEFAULT_DB_SECURED_HOST_VALIDATION
                 ),
             },
@@ -60,21 +62,21 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED,
+            oengcommcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED,
             None
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
         after=(
-            osetupcons.Stages.DB_CONNECTION_SETUP,
+            oengcommcons.Stages.DB_CONNECTION_SETUP,
         ),
         condition=lambda self: (
             not self.environment[
                 osetupcons.CoreEnv.DEVELOPER_MODE
             ] and
             self.environment[
-                osetupcons.DBEnv.NEW_DATABASE
+                oengcommcons.EngineDBEnv.NEW_DATABASE
             ]
         ),
     )
@@ -86,17 +88,17 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
-            osetupcons.Stages.DIALOG_TITLES_E_DATABASE,
-            osetupcons.Stages.DB_CONNECTION_CUSTOMIZATION,
+            oengcommcons.Stages.DIALOG_TITLES_E_DATABASE,
+            oengcommcons.Stages.DB_CONNECTION_CUSTOMIZATION,
         ),
         after=(
-            osetupcons.Stages.DIALOG_TITLES_S_DATABASE,
+            oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
         ),
         condition=lambda self: self._enabled,
     )
     def _customization(self):
         if self.environment[
-            osetupcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
+            oengcommcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
         ] is None:
             local = dialog.queryBoolean(
                 dialog=self.dialog,
@@ -111,16 +113,16 @@ class Plugin(plugin.PluginBase):
                 default=True,
             )
             if local:
-                self.environment[osetupcons.DBEnv.HOST] = 'localhost'
+                self.environment[oengcommcons.EngineDBEnv.HOST] = 'localhost'
                 self.environment[
-                    osetupcons.DBEnv.PORT
-                ] = osetupcons.Defaults.DEFAULT_DB_PORT
+                    oengcommcons.EngineDBEnv.PORT
+                ] = oengcommcons.Defaults.DEFAULT_DB_PORT
 
                 # TODO:
                 # consider creating database and role
                 # at engine_@RANDOM@
                 self.environment[
-                    osetupcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
+                    oengcommcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
                 ] = dialog.queryBoolean(
                     dialog=self.dialog,
                     name='OVESETUP_PROVISIONING_POSTGRES_ENABLED',
@@ -141,11 +143,11 @@ class Plugin(plugin.PluginBase):
 
             else:
                 self.environment[
-                    osetupcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
+                    oengcommcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
                 ] = False
 
         self._enabled = self.environment[
-            osetupcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
+            oengcommcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
         ]
         if self._enabled:
             self._provisioning.applyEnvironment()
@@ -154,7 +156,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         priority=plugin.Stages.PRIORITY_LAST,
         condition=lambda self: self.environment[
-            osetupcons.DBEnv.HOST
+            oengcommcons.EngineDBEnv.HOST
         ] == 'localhost',
     )
     def _customization_firewall(self):
@@ -175,8 +177,8 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         before=(
-            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
-            osetupcons.Stages.DB_SCHEMA,
+            oengcommcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
+            oengcommcons.Stages.DB_SCHEMA,
         ),
         after=(
             osetupcons.Stages.SYSTEM_SYSCTL_CONFIG_AVAILABLE,
@@ -204,10 +206,10 @@ class Plugin(plugin.PluginBase):
                 '    Database user name: {user}\n'
             ).format(
                 database=self.environment[
-                    osetupcons.DBEnv.DATABASE
+                    oengcommcons.EngineDBEnv.DATABASE
                 ],
                 user=self.environment[
-                    osetupcons.DBEnv.USER
+                    oengcommcons.EngineDBEnv.USER
                 ],
             )
         )

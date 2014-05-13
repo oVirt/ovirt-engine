@@ -30,6 +30,9 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 from ovirt_engine_setup import dialog
 
 
@@ -46,8 +49,8 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.SystemEnv.SHMMAX,
-            osetupcons.Defaults.DEFAULT_SYSTEM_SHMMAX
+            oengcommcons.SystemEnv.SHMMAX,
+            oengcommcons.Defaults.DEFAULT_SYSTEM_SHMMAX
         )
 
     @plugin.event(
@@ -63,20 +66,20 @@ class Plugin(plugin.PluginBase):
         self._content = (
             "# ovirt-engine configuration.\n"
             "kernel.shmmax = %s\n"
-        ) % self.environment[osetupcons.SystemEnv.SHMMAX]
+        ) % self.environment[oengcommcons.SystemEnv.SHMMAX]
 
         interactive = self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
 
         while True:
             shmmax = self._get_shmmax()
 
-            if shmmax >= self.environment[osetupcons.SystemEnv.SHMMAX]:
+            if shmmax >= self.environment[oengcommcons.SystemEnv.SHMMAX]:
                 break
             else:
                 self.logger.debug(
                     'sysctl shared memory is %s lower than %s' % (
                         shmmax,
-                        self.environment[osetupcons.SystemEnv.SHMMAX],
+                        self.environment[oengcommcons.SystemEnv.SHMMAX],
                     )
                 )
 
@@ -97,7 +100,7 @@ class Plugin(plugin.PluginBase):
                             "Then execute the following command as root:\n"
                             "{sysctl} -p {file}"
                         ).format(
-                            file=osetupcons.FileLocations.OVIRT_ENGINE_SYSCTL,
+                            file=oenginecons.FileLocations.OVIRT_ENGINE_SYSCTL,
                             content=self._content,
                             sysctl=self.command.get('sysctl'),
                         )
@@ -126,7 +129,7 @@ class Plugin(plugin.PluginBase):
     def _misc(self):
         if self._enabled:
             sysctl = filetransaction.FileTransaction(
-                name=osetupcons.FileLocations.OVIRT_ENGINE_SYSCTL,
+                name=oenginecons.FileLocations.OVIRT_ENGINE_SYSCTL,
                 content=self._content,
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
@@ -134,7 +137,7 @@ class Plugin(plugin.PluginBase):
             )
             self.environment[
                 osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-            ].append(osetupcons.FileLocations.OVIRT_ENGINE_SYSCTL)
+            ].append(oenginecons.FileLocations.OVIRT_ENGINE_SYSCTL)
 
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(sysctl)
 
@@ -149,11 +152,11 @@ class Plugin(plugin.PluginBase):
         # Verify shmmax is set correctly
         shmmax = self._get_shmmax()
 
-        if shmmax < self.environment[osetupcons.SystemEnv.SHMMAX]:
+        if shmmax < self.environment[oengcommcons.SystemEnv.SHMMAX]:
             self.logger.debug(
                 'sysctl kernel.shmmax is %s lower than %s' % (
                     shmmax,
-                    self.environment[osetupcons.SystemEnv.SHMMAX],
+                    self.environment[oengcommcons.SystemEnv.SHMMAX],
                 )
             )
 

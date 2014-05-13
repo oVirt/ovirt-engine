@@ -30,8 +30,10 @@ from otopi import plugin
 from otopi import base
 
 
-from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import database
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
+from ovirt_engine_setup.engine_common import database
 
 
 from async_tasks_map import ASYNC_TASKS_MAP
@@ -103,7 +105,7 @@ class Plugin(plugin.PluginBase):
 
             self._parent.services.state(
                 name=self.environment[
-                    osetupcons.Const.ENGINE_SERVICE_NAME
+                    oenginecons.Const.ENGINE_SERVICE_NAME
                 ],
                 state=True,
             )
@@ -111,7 +113,7 @@ class Plugin(plugin.PluginBase):
         def __exit__(self, exc_type, exc_value, traceback):
             self._parent.services.state(
                 name=self.environment[
-                    osetupcons.Const.ENGINE_SERVICE_NAME
+                    oenginecons.Const.ENGINE_SERVICE_NAME
                 ],
                 state=False,
             )
@@ -123,12 +125,12 @@ class Plugin(plugin.PluginBase):
     def _clearZombieTasks(self):
         rc, tasks, stderr = self.execute(
             args=(
-                osetupcons.FileLocations.OVIRT_ENGINE_TASKCLEANER,
+                oenginecons.FileLocations.OVIRT_ENGINE_TASKCLEANER,
                 '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
-                '-u', self.environment[osetupcons.DBEnv.USER],
-                '-s', self.environment[osetupcons.DBEnv.HOST],
-                '-p', str(self.environment[osetupcons.DBEnv.PORT]),
-                '-d', self.environment[osetupcons.DBEnv.DATABASE],
+                '-u', self.environment[oengcommcons.EngineDBEnv.USER],
+                '-s', self.environment[oengcommcons.EngineDBEnv.HOST],
+                '-p', str(self.environment[oengcommcons.EngineDBEnv.PORT]),
+                '-d', self.environment[oengcommcons.EngineDBEnv.DATABASE],
                 '-R',
                 '-A',
                 '-J',
@@ -137,7 +139,7 @@ class Plugin(plugin.PluginBase):
             raiseOnError=False,
             envAppend={
                 'DBFUNC_DB_PGPASSFILE': self.environment[
-                    osetupcons.DBEnv.PGPASS_FILE
+                    oengcommcons.EngineDBEnv.PGPASS_FILE
                 ]
             },
         )
@@ -242,7 +244,7 @@ class Plugin(plugin.PluginBase):
 
     def _checkRunningTasks(self):
         dbstatement = database.Statement(
-            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
         return (
@@ -271,7 +273,7 @@ class Plugin(plugin.PluginBase):
                         'Press Ctrl+C to interrupt. '
                     ).format(
                         cleanup_wait=self.environment[
-                            osetupcons.AsyncTasksEnv.
+                            oenginecons.AsyncTasksEnv.
                             CLEAR_TASKS_WAIT_PERIOD
                         ],
                         number=len(runningTasks + compensations),
@@ -279,7 +281,7 @@ class Plugin(plugin.PluginBase):
                 )
                 time.sleep(
                     self.environment[
-                        osetupcons.AsyncTasksEnv.
+                        oenginecons.AsyncTasksEnv.
                         CLEAR_TASKS_WAIT_PERIOD
                     ]
                 )
@@ -293,12 +295,12 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.AsyncTasksEnv.CLEAR_TASKS,
+            oenginecons.AsyncTasksEnv.CLEAR_TASKS,
             True
         )
         self.environment.setdefault(
-            osetupcons.AsyncTasksEnv.CLEAR_TASKS_WAIT_PERIOD,
-            osetupcons.Defaults.DEFAULT_CLEAR_TASKS_WAIT_PERIOD
+            oenginecons.AsyncTasksEnv.CLEAR_TASKS_WAIT_PERIOD,
+            oenginecons.Defaults.DEFAULT_CLEAR_TASKS_WAIT_PERIOD
         )
 
     @plugin.event(
@@ -308,10 +310,10 @@ class Plugin(plugin.PluginBase):
     def _validateEnv(self):
         self._enabled = (
             not self.environment[
-                osetupcons.DBEnv.NEW_DATABASE
+                oengcommcons.EngineDBEnv.NEW_DATABASE
             ] and
             self.environment[
-                osetupcons.AsyncTasksEnv.CLEAR_TASKS
+                oenginecons.AsyncTasksEnv.CLEAR_TASKS
             ]
         )
 
@@ -319,7 +321,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: self._enabled,
         after=(
-            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
+            oengcommcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
         ),
     )
     def _validateZombies(self):
@@ -341,7 +343,7 @@ class Plugin(plugin.PluginBase):
         if runningTasks or compensations:
             self._askUserToStopTasks(runningTasks, compensations)
             dbstatement = database.Statement(
-                dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+                dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
                 environment=self.environment,
             )
             try:

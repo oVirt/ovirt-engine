@@ -925,6 +925,7 @@ fi
 %config %{_sysconfdir}/logrotate.d/ovirt-engine-setup
 %dir %{engine_data}/setup/bin/
 %dir %{engine_log}/setup
+%dir %{engine_data}/setup/ovirt_engine_setup
 %{_bindir}/engine-cleanup
 %{_bindir}/engine-setup
 %{_mandir}/man8/engine-cleanup.*
@@ -932,9 +933,10 @@ fi
 %{engine_data}/bin/ovirt-engine-log-setup-event.sh
 %{engine_data}/conf/iptables.default.in
 %{engine_data}/setup/bin/ovirt-engine-remove
+%{engine_data}/setup/bin/ovirt-engine-rename
 %{engine_data}/setup/bin/ovirt-engine-setup
 %{engine_data}/setup/bin/ovirt-engine-setup.env
-%{engine_data}/setup/ovirt_engine_setup/
+%{engine_data}/setup/ovirt_engine_setup/*.py*
 %{engine_data}/setup/plugins/*/base/
 %{engine_state}/backups/
 %{engine_state}/setup/
@@ -951,11 +953,10 @@ fi
 %{engine_data}/conf/ovirt-engine-proxy.conf.v2.in
 %{engine_data}/conf/ovirt-engine-root-redirect.conf.in
 %{engine_data}/firewalld/ovirt-engine/
-%{engine_data}/setup/bin/ovirt-engine-rename
 %{engine_data}/setup/bin/ovirt-engine-upgrade-check
 %{engine_data}/setup/dbutils/
+%{engine_data}/setup/ovirt_engine_setup/engine/
 %{engine_data}/setup/plugins/*/ovirt-engine/
-%{engine_data}/setup/plugins/ovirt-engine-rename/
 
 %if %{ovirt_provides_jboss}
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf
@@ -967,6 +968,7 @@ fi
 
 %files setup-plugin-ovirt-engine-common
 
+%{engine_data}/setup/ovirt_engine_setup/engine_common/
 %{engine_data}/setup/plugins/*/ovirt-engine-common/
 
 %files setup-plugin-websocket-proxy

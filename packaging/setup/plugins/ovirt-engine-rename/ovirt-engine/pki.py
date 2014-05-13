@@ -39,6 +39,9 @@ from ovirt_engine import util as outil
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 from ovirt_engine_setup import dialog
 
 
@@ -58,7 +61,7 @@ class Plugin(plugin.PluginBase):
         self.environment[
             otopicons.CoreEnv.LOG_FILTER_KEYS
         ].append(
-            osetupcons.PKIEnv.STORE_PASS
+            oenginecons.PKIEnv.STORE_PASS
         )
 
     @plugin.event(
@@ -66,8 +69,8 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.PKIEnv.STORE_PASS,
-            osetupcons.Defaults.DEFAULT_PKI_STORE_PASS
+            oenginecons.PKIEnv.STORE_PASS,
+            oengcommcons.Defaults.DEFAULT_PKI_STORE_PASS
         )
         self.environment.setdefault(
             osetupcons.RenameEnv.FORCE_IGNORE_AIA_IN_CA,
@@ -82,25 +85,25 @@ class Plugin(plugin.PluginBase):
             osetupcons.RenameEnv.FILES_TO_BE_MODIFIED
         ].extend(
             (
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_CERT_TEMPLATE[
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_TEMPLATE[
                     :-len('.in')],
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF,
             )
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_LATE_SETUP,
         condition=lambda self: os.path.exists(
-            osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
         )
     )
     def _late_setup(self):
         if (
             X509.load_cert(
-                file=osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT,
+                file=oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT,
                 format=X509.FORMAT_PEM,
             ).get_pubkey().get_rsa().pub() != X509.load_cert(
-                file=osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+                file=oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
                 format=X509.FORMAT_PEM,
             ).get_pubkey().get_rsa().pub()
         ):
@@ -113,11 +116,11 @@ class Plugin(plugin.PluginBase):
                     'for the new host name.\n'
                 ).format(
                     apache_ca=(
-                        osetupcons.FileLocations.
+                        oenginecons.FileLocations.
                         OVIRT_ENGINE_PKI_APACHE_CA_CERT
                     ),
                     ca=(
-                        osetupcons.FileLocations.
+                        oenginecons.FileLocations.
                         OVIRT_ENGINE_PKI_ENGINE_CA_CERT
                     ),
                 )
@@ -129,9 +132,9 @@ class Plugin(plugin.PluginBase):
                 osetupcons.RenameEnv.FILES_TO_BE_MODIFIED
             ].extend(
                 (
-                    osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_STORE,
-                    osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
-                    osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_STORE,
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
                 )
             )
 
@@ -146,7 +149,7 @@ class Plugin(plugin.PluginBase):
     )
     def _aia(self):
         x509 = X509.load_cert(
-            file=osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+            file=oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
             format=X509.FORMAT_PEM,
         )
 
@@ -188,7 +191,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        name=osetupcons.Stages.RENAME_PKI_CONF_MISC,
+        name=oengcommcons.Stages.RENAME_PKI_CONF_MISC,
     )
     def _misc_conffiles(self):
         self.environment[
@@ -205,9 +208,9 @@ class Plugin(plugin.PluginBase):
         localtransaction = transaction.Transaction()
         with localtransaction:
             for config in (
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_CERT_TEMPLATE[
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_TEMPLATE[
                     :-len('.in')],
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF
             ):
                 with open(config, 'r') as f:
                     content = []
@@ -222,7 +225,7 @@ class Plugin(plugin.PluginBase):
                                     osetupcons.RenameEnv.FQDN
                                 ],
                                 self.environment[
-                                    osetupcons.ConfigEnv.PUBLIC_HTTP_PORT
+                                    oengcommcons.ConfigEnv.PUBLIC_HTTP_PORT
                                 ],
                             )
                         content.append(line)
@@ -237,7 +240,7 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
-            osetupcons.Stages.RENAME_PKI_CONF_MISC,
+            oengcommcons.Stages.RENAME_PKI_CONF_MISC,
         ),
         condition=lambda self: self._enabled,
     )
@@ -248,10 +251,10 @@ class Plugin(plugin.PluginBase):
         # need to work this out to allow transactional
         rc, stdout, stderr = self.execute(
             args=(
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
                 '--name=%s' % 'apache',
                 '--passin=%s' % (
-                    self.environment[osetupcons.PKIEnv.STORE_PASS],
+                    self.environment[oenginecons.PKIEnv.STORE_PASS],
                 ),
                 '--cert=-',
             ),
@@ -271,10 +274,10 @@ class Plugin(plugin.PluginBase):
 
         self.execute(
             (
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
                 '--name=%s' % 'apache',
                 '--password=%s' % (
-                    self.environment[osetupcons.PKIEnv.STORE_PASS],
+                    self.environment[oenginecons.PKIEnv.STORE_PASS],
                 ),
                 '--subject=%s' % '/' + '/'.join(
                     outil.escape(s, '/\\')
@@ -287,30 +290,30 @@ class Plugin(plugin.PluginBase):
 
         self.uninstall_files.extend(
             (
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_STORE,
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_STORE,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
             )
         )
 
         self.execute(
             args=(
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
                 '--name=%s' % 'apache',
                 '--passin=%s' % (
-                    self.environment[osetupcons.PKIEnv.STORE_PASS],
+                    self.environment[oenginecons.PKIEnv.STORE_PASS],
                 ),
                 '--key=%s' % (
-                    osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
                 ),
             ),
         )
 
         self.uninstall_files.append(
-            osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
         )
 
         self.environment[
-            osetupcons.ApacheEnv.NEED_RESTART
+            oengcommcons.ApacheEnv.NEED_RESTART
         ] = True
 
 

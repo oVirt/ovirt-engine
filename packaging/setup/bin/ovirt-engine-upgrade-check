@@ -47,6 +47,7 @@ sys.path.append(os.path.dirname(
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
 
 
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
@@ -58,7 +59,7 @@ def tolist(s):
 
 def get_setup_packages():
     setup_packages = []
-    engine_setup_packages = [osetupcons.Const.ENGINE_PACKAGE_SETUP_NAME]
+    engine_setup_packages = [oenginecons.Const.ENGINE_PACKAGE_SETUP_NAME]
 
     engine_setup_config = configparser.ConfigParser()
     engine_setup_config.optionxform = str
@@ -90,11 +91,11 @@ def get_setup_packages():
         if engine_setup_config.has_section(section):
             if engine_setup_config.has_option(
                 section,
-                osetupcons.RPMDistroEnv.ENGINE_SETUP_PACKAGES
+                oenginecons.RPMDistroEnv.ENGINE_SETUP_PACKAGES
             ):
                 engine_setup_packages = get_packages(
                     section,
-                    osetupcons.RPMDistroEnv.ENGINE_SETUP_PACKAGES
+                    oenginecons.RPMDistroEnv.ENGINE_SETUP_PACKAGES
                 )
             if engine_setup_config.has_option(
                 section,

@@ -34,6 +34,9 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -64,7 +67,7 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.AIOEnv.SSHD_PORT,
+            oenginecons.AIOEnv.SSHD_PORT,
             None
         )
 
@@ -82,13 +85,13 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: (
             self._enabled and
-            self.environment[osetupcons.AIOEnv.CONFIGURE]
+            self.environment[oenginecons.AIOEnv.CONFIGURE]
         ),
         before=(
-            osetupcons.Stages.DIALOG_TITLES_E_ALLINONE,
+            oengcommcons.Stages.DIALOG_TITLES_E_ALLINONE,
         ),
         after=(
-            osetupcons.Stages.AIO_CONFIG_AVAILABLE,
+            oenginecons.Stages.AIO_CONFIG_AVAILABLE,
         ),
     )
     def _customization(self):
@@ -99,7 +102,7 @@ class Plugin(plugin.PluginBase):
                 name='sshd',
                 state=True,
             )
-        if self.environment[osetupcons.AIOEnv.SSHD_PORT] is None:
+        if self.environment[oenginecons.AIOEnv.SSHD_PORT] is None:
             rc, stdout, stderr = self.execute(
                 args=(
                     self.command.get('sshd'),
@@ -110,19 +113,19 @@ class Plugin(plugin.PluginBase):
                 words = line.split()
                 if words[0] == 'port':
                     self.environment[
-                        osetupcons.AIOEnv.SSHD_PORT
+                        oenginecons.AIOEnv.SSHD_PORT
                     ] = int(words[1])
                     break
         self.environment.setdefault(
-            osetupcons.AIOEnv.SSHD_PORT,
-            osetupcons.AIOEnv.DEFAULT_SSH_PORT
+            oenginecons.AIOEnv.SSHD_PORT,
+            oenginecons.AIOEnv.DEFAULT_SSH_PORT
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: (
             self._enabled and
-            self.environment[osetupcons.AIOEnv.CONFIGURE]
+            self.environment[oenginecons.AIOEnv.CONFIGURE]
         ),
     )
     def _validation(self):
@@ -142,7 +145,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
             self._enabled and
-            self.environment[osetupcons.AIOEnv.CONFIGURE]
+            self.environment[oenginecons.AIOEnv.CONFIGURE]
         ),
         after=(
             osetupcons.Stages.SSH_KEY_AVAILABLE,
@@ -150,7 +153,7 @@ class Plugin(plugin.PluginBase):
     )
     def _misc(self):
         authorized_keys_line = self.environment[
-            osetupcons.PKIEnv.ENGINE_SSH_PUBLIC_KEY
+            oenginecons.PKIEnv.ENGINE_SSH_PUBLIC_KEY
         ] + ' ovirt-engine'
 
         authorized_keys_file = os.path.join(
@@ -186,10 +189,10 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
-        name=osetupcons.Stages.AIO_CONFIG_SSH,
+        name=oenginecons.Stages.AIO_CONFIG_SSH,
         condition=lambda self: (
             self._enabled and
-            self.environment[osetupcons.AIOEnv.CONFIGURE]
+            self.environment[oenginecons.AIOEnv.CONFIGURE]
         ),
     )
     def _closeup(self):

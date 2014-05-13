@@ -32,6 +32,10 @@ from otopi import filetransaction
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine import vdcoption
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -46,21 +50,21 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
             not self.environment[
-                osetupcons.DBEnv.NEW_DATABASE
+                oengcommcons.EngineDBEnv.NEW_DATABASE
             ] and
             not self.environment[
                 osetupcons.CoreEnv.DEVELOPER_MODE
             ]
         ),
         after=[
-            osetupcons.Stages.DB_CONNECTION_AVAILABLE,
+            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ],
     )
     def _misc(self):
         content = []
         used = set()
 
-        for vdcoption, sysprep, osinfo in (
+        for vdco, sysprep, osinfo in (
             ('SysPrep2K3Path', 'sysprep.2k3', (
                 'windows_2003', 'windows_2003x64'
             )),
@@ -76,9 +80,11 @@ class Plugin(plugin.PluginBase):
             ('SysPrepWindows8x64Path', 'sysprep.w8x64', ('windows_2008x64',)),
             ('SysPrepXPPath', 'sysprep.xp', ('windows_xp',)),
         ):
-            val = self.environment[
-                osetupcons.DBEnv.STATEMENT
-            ].getVdcOption(name=vdcoption)
+            val = vdcoption.VdcOption(
+                statement=self.environment[
+                    oengcommcons.EngineDBEnv.STATEMENT
+                ]
+            ).getVdcOption(name=vdco)
 
             #
             # fix embarrassing typo in previous setup
@@ -90,12 +96,14 @@ class Plugin(plugin.PluginBase):
             # reset so at next cycle we won't
             # consider vdcoptions any more
             #
-            self.environment[
-                osetupcons.DBEnv.STATEMENT
-            ].updateVdcOptions(
+            vdcoption.VdcOption(
+                statement=self.environment[
+                    oengcommcons.EngineDBEnv.STATEMENT
+                ]
+            ).updateVdcOptions(
                 options=(
                     {
-                        'name': vdcoption,
+                        'name': vdco,
                         'value': '',
                     },
                 ),
@@ -104,13 +112,13 @@ class Plugin(plugin.PluginBase):
             if val and os.path.exists(val):
                 self.logger.debug(
                     "Found legacy sysprep %s '%s'",
-                    vdcoption,
+                    vdco,
                     val,
                 )
                 if filecmp.cmp(
                     val,
                     os.path.join(
-                        osetupcons.FileLocations.OVIRT_ENGINE_DATADIR,
+                        oenginecons.FileLocations.OVIRT_ENGINE_DATADIR,
                         'conf',
                         'sysprep',
                         sysprep,
@@ -158,7 +166,7 @@ class Plugin(plugin.PluginBase):
         try:
             os.rmdir(
                 os.path.join(
-                    osetupcons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
+                    oenginecons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
                     'sysprep',
                 )
             )

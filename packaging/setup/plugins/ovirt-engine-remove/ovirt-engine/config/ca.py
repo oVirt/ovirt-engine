@@ -32,6 +32,9 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 from ovirt_engine_setup import util as osetuputil
 
 
@@ -69,12 +72,12 @@ class Plugin(plugin.PluginBase):
                 datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             ),
             suffix='.tar.gz',
-            dir=osetupcons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
+            dir=oenginecons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
         )
         os.fchown(
             fd,
             osetuputil.getUid(
-                self.environment[osetupcons.SystemEnv.USER_ROOT]
+                self.environment[oengcommcons.SystemEnv.USER_ROOT]
             ),
             -1
         )
@@ -89,8 +92,8 @@ class Plugin(plugin.PluginBase):
                     fileobj=fileobj
                 )
                 for n in (
-                    osetupcons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_PKI,
-                    osetupcons.FileLocations.OVIRT_ENGINE_PKIDIR,
+                    oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_PKI,
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKIDIR,
                 ):
                     if os.path.exists(n):
                         tar.add(n)

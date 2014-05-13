@@ -29,6 +29,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
 
 
 @util.export
@@ -44,13 +45,13 @@ class Plugin(plugin.PluginBase):
     )
     def _misc(self):
         if (
-            osetupcons.FileLocations.OVIRT_ENGINE_SYSCTL in
+            oenginecons.FileLocations.OVIRT_ENGINE_SYSCTL in
             self.environment[osetupcons.RemoveEnv.FILES_TO_REMOVE]
         ):
             self.environment[
                 osetupcons.RemoveEnv.FILES_TO_REMOVE
             ].remove(
-                osetupcons.FileLocations.OVIRT_ENGINE_SYSCTL
+                oenginecons.FileLocations.OVIRT_ENGINE_SYSCTL
             )
 
     @plugin.event(
@@ -64,7 +65,7 @@ class Plugin(plugin.PluginBase):
     )
     def _closeup(self):
         if os.path.exists(
-            osetupcons.FileLocations.OVIRT_ENGINE_SYSCTL
+            oenginecons.FileLocations.OVIRT_ENGINE_SYSCTL
         ):
             self.dialog.note(
                 text=_(
@@ -74,7 +75,7 @@ class Plugin(plugin.PluginBase):
                     'If you want to restore default kernel.shmmax '
                     'value please remove the file and reboot.'
                 ).format(
-                    filename=osetupcons.FileLocations.OVIRT_ENGINE_SYSCTL,
+                    filename=oenginecons.FileLocations.OVIRT_ENGINE_SYSCTL,
                 ),
             )
 

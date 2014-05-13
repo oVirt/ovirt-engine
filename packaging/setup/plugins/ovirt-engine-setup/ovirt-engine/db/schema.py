@@ -31,7 +31,10 @@ from otopi import transaction
 
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import database
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
+from ovirt_engine_setup.engine_common import database
 
 
 @util.export
@@ -56,12 +59,12 @@ class Plugin(plugin.PluginBase):
             try:
                 dbovirtutils = database.OvirtUtils(
                     plugin=self._parent,
-                    dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+                    dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
                 )
                 self._parent.logger.info(
                     _('Clearing Engine database {database}').format(
                         database=self._parent.environment[
-                            osetupcons.DBEnv.DATABASE
+                            oengcommcons.EngineDBEnv.DATABASE
                         ],
                     )
                 )
@@ -70,7 +73,7 @@ class Plugin(plugin.PluginBase):
                     self._parent.logger.info(
                         _('Restoring Engine database {database}').format(
                             database=self._parent.environment[
-                                osetupcons.DBEnv.DATABASE
+                                oengcommcons.EngineDBEnv.DATABASE
                             ],
                         )
                     )
@@ -94,7 +97,7 @@ class Plugin(plugin.PluginBase):
 
     def _checkDatabaseOwnership(self):
         statement = database.Statement(
-            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
         result = statement.execute(
@@ -125,7 +128,7 @@ class Plugin(plugin.PluginBase):
                     cls.relname
             """,
             args=dict(
-                user=self.environment[osetupcons.DBEnv.USER],
+                user=self.environment[oengcommcons.EngineDBEnv.USER],
             ),
             ownConnection=True,
             transaction=False,
@@ -147,13 +150,13 @@ class Plugin(plugin.PluginBase):
                         '-t {user}'
                     ).format(
                         cmd=(
-                            osetupcons.FileLocations.
+                            oenginecons.FileLocations.
                             OVIRT_ENGINE_DB_CHANGE_OWNER
                         ),
-                        server=self.environment[osetupcons.DBEnv.HOST],
-                        port=self.environment[osetupcons.DBEnv.PORT],
-                        db=self.environment[osetupcons.DBEnv.DATABASE],
-                        user=self.environment[osetupcons.DBEnv.USER],
+                        server=self.environment[oengcommcons.EngineDBEnv.HOST],
+                        port=self.environment[oengcommcons.EngineDBEnv.PORT],
+                        db=self.environment[oengcommcons.EngineDBEnv.DATABASE],
+                        user=self.environment[oengcommcons.EngineDBEnv.USER],
                     ),
                 )
             )
@@ -161,7 +164,7 @@ class Plugin(plugin.PluginBase):
     def _checkSupportedVersionsPresent(self):
         # TODO: figure out a better way to do this for the future
         statement = database.Statement(
-            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
         dcVersions = statement.execute(
@@ -203,10 +206,10 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         after=(
-            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
+            oengcommcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
         ),
         condition=lambda self: not self.environment[
-            osetupcons.DBEnv.NEW_DATABASE
+            oengcommcons.EngineDBEnv.NEW_DATABASE
         ],
     )
     def _validation(self):
@@ -215,24 +218,24 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        name=osetupcons.Stages.DB_SCHEMA,
+        name=oengcommcons.Stages.DB_SCHEMA,
         after=(
-            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
+            oengcommcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
         ),
     )
     def _misc(self):
         backupFile = None
 
         if not self.environment[
-            osetupcons.DBEnv.NEW_DATABASE
+            oengcommcons.EngineDBEnv.NEW_DATABASE
         ]:
             dbovirtutils = database.OvirtUtils(
                 plugin=self,
-                dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+                dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
             )
             backupFile = dbovirtutils.backup(
-                dir=osetupcons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
-                prefix=osetupcons.Const.ENGINE_DB_BACKUP_PREFIX,
+                dir=oenginecons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
+                prefix=oenginecons.Const.ENGINE_DB_BACKUP_PREFIX,
             )
 
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
@@ -244,11 +247,11 @@ class Plugin(plugin.PluginBase):
 
         self.logger.info(_('Creating/refreshing Engine database schema'))
         args = [
-            osetupcons.FileLocations.OVIRT_ENGINE_DB_SCHMA_TOOL,
-            '-s', self.environment[osetupcons.DBEnv.HOST],
-            '-p', str(self.environment[osetupcons.DBEnv.PORT]),
-            '-u', self.environment[osetupcons.DBEnv.USER],
-            '-d', self.environment[osetupcons.DBEnv.DATABASE],
+            oenginecons.FileLocations.OVIRT_ENGINE_DB_SCHMA_TOOL,
+            '-s', self.environment[oengcommcons.EngineDBEnv.HOST],
+            '-p', str(self.environment[oengcommcons.EngineDBEnv.PORT]),
+            '-u', self.environment[oengcommcons.EngineDBEnv.USER],
+            '-d', self.environment[oengcommcons.EngineDBEnv.DATABASE],
             '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
             '-c', 'apply',
         ]
@@ -256,19 +259,23 @@ class Plugin(plugin.PluginBase):
             osetupcons.CoreEnv.DEVELOPER_MODE
         ]:
             if not os.path.exists(
-                osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR
+                oenginecons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR
             ):
                 os.makedirs(
-                    osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR
+                    oenginecons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR
                 )
             args.extend(
                 [
                     '-m',
                     os.path.join(
-                        osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR,
+                        oenginecons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR,
                         '%s-%s.scripts.md5' % (
-                            self.environment[osetupcons.DBEnv.HOST],
-                            self.environment[osetupcons.DBEnv.DATABASE],
+                            self.environment[
+                                oengcommcons.EngineDBEnv.HOST
+                            ],
+                            self.environment[
+                                oengcommcons.EngineDBEnv.DATABASE
+                            ],
                         ),
                     ),
                 ]
@@ -277,7 +284,7 @@ class Plugin(plugin.PluginBase):
             args=args,
             envAppend={
                 'DBFUNC_DB_PGPASSFILE': self.environment[
-                    osetupcons.DBEnv.PGPASS_FILE
+                    oengcommcons.EngineDBEnv.PGPASS_FILE
                 ]
             },
         )

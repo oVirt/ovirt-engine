@@ -33,6 +33,9 @@ from ovirt_engine import util as outil
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -47,8 +50,8 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ApacheEnv.HTTPD_CONF_OVIRT_ENGINE,
-            osetupcons.FileLocations.HTTPD_CONF_OVIRT_ENGINE
+            oenginecons.ApacheEnv.HTTPD_CONF_OVIRT_ENGINE,
+            oenginecons.FileLocations.HTTPD_CONF_OVIRT_ENGINE
         )
 
     @plugin.event(
@@ -58,20 +61,20 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _misc(self):
-        self.environment[osetupcons.ApacheEnv.NEED_RESTART] = True
+        self.environment[oengcommcons.ApacheEnv.NEED_RESTART] = True
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=self.environment[
-                    osetupcons.ApacheEnv.HTTPD_CONF_OVIRT_ENGINE
+                    oenginecons.ApacheEnv.HTTPD_CONF_OVIRT_ENGINE
                 ],
                 content=outil.processTemplate(
                     template=(
-                        osetupcons.FileLocations.
+                        oenginecons.FileLocations.
                         HTTPD_CONF_OVIRT_ENGINE_TEMPLATE
                     ),
                     subst={
                         '@JBOSS_AJP_PORT@': self.environment[
-                            osetupcons.ConfigEnv.JBOSS_AJP_PORT
+                            oengcommcons.ConfigEnv.JBOSS_AJP_PORT
                         ],
                     },
                 ),

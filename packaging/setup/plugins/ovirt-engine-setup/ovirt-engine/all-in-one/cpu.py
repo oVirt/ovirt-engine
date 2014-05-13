@@ -28,7 +28,7 @@ from otopi import util
 from otopi import plugin
 
 
-from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
 
 
 @util.export
@@ -76,9 +76,9 @@ class Plugin(plugin.PluginBase):
         savedPath = sys.path
         ret = None
         try:
-            sys.path.append(osetupcons.FileLocations.AIO_VDSM_PATH)
+            sys.path.append(oenginecons.FileLocations.AIO_VDSM_PATH)
             caps = util.loadModule(
-                path=osetupcons.FileLocations.AIO_VDSM_PATH,
+                path=oenginecons.FileLocations.AIO_VDSM_PATH,
                 name='caps',
             )
             ret = (
@@ -93,13 +93,13 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
-        self.environment[osetupcons.AIOEnv.VDSM_CPU] = None
-        self.environment[osetupcons.AIOEnv.SUPPORTED] = False
+        self.environment[oenginecons.AIOEnv.VDSM_CPU] = None
+        self.environment[oenginecons.AIOEnv.SUPPORTED] = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
         condition=lambda self: self.environment[
-            osetupcons.AIOEnv.ENABLE
+            oenginecons.AIOEnv.ENABLE
         ],
         priority=plugin.Stages.PRIORITY_HIGH,
     )
@@ -109,12 +109,12 @@ class Plugin(plugin.PluginBase):
         result = virtualization.detect()
         if result == virtualization.DETECT_RESULT_SUPPORTED:
             self.logger.info(_('Hardware supports virtualization'))
-            self.environment[osetupcons.AIOEnv.SUPPORTED] = True
+            self.environment[oenginecons.AIOEnv.SUPPORTED] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: self.environment[
-            osetupcons.AIOEnv.CONFIGURE
+            oenginecons.AIOEnv.CONFIGURE
         ],
     )
     def _validation(self):
@@ -138,7 +138,7 @@ class Plugin(plugin.PluginBase):
             for entry in self.CPU_FAMILIES:
                 if entry['model'] in supported:
                     self.environment[
-                        osetupcons.AIOEnv.VDSM_CPU
+                        oenginecons.AIOEnv.VDSM_CPU
                     ] = entry['name']
                     break
 

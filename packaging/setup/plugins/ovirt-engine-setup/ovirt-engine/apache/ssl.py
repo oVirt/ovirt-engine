@@ -31,6 +31,9 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 from ovirt_engine_setup import dialog
 from ovirt_engine_setup import util as osetuputil
 
@@ -44,13 +47,13 @@ class Plugin(plugin.PluginBase):
         self._enabled = True
         self._params = {
             'SSLCertificateFile': (
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT
             ),
             'SSLCertificateKeyFile': (
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY
             ),
             'SSLCACertificateFile': (
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
             ),
         }
 
@@ -59,11 +62,11 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ApacheEnv.HTTPD_CONF_SSL,
-            osetupcons.FileLocations.HTTPD_CONF_SSL
+            oenginecons.ApacheEnv.HTTPD_CONF_SSL,
+            oenginecons.FileLocations.HTTPD_CONF_SSL
         )
         self.environment.setdefault(
-            osetupcons.ApacheEnv.CONFIGURE_SSL,
+            oenginecons.ApacheEnv.CONFIGURE_SSL,
             None
         )
 
@@ -74,14 +77,14 @@ class Plugin(plugin.PluginBase):
     def _setup(self):
         if (
             self.environment[
-                osetupcons.ApacheEnv.CONFIGURE_SSL
+                oenginecons.ApacheEnv.CONFIGURE_SSL
             ] is None and
             (
                 self.environment[
                     osetupcons.CoreEnv.DEVELOPER_MODE
                 ] or
                 self.environment[
-                    osetupcons.ApacheEnv.CONFIGURED
+                    oenginecons.ApacheEnv.CONFIGURED
                 ]
             )
         ):
@@ -91,15 +94,15 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: self._enabled,
         before=(
-            osetupcons.Stages.DIALOG_TITLES_E_APACHE,
+            oengcommcons.Stages.DIALOG_TITLES_E_APACHE,
         ),
         after=(
-            osetupcons.Stages.DIALOG_TITLES_S_APACHE,
+            oengcommcons.Stages.DIALOG_TITLES_S_APACHE,
         ),
     )
     def _customization(self):
         if self.environment[
-            osetupcons.ApacheEnv.CONFIGURE_SSL
+            oenginecons.ApacheEnv.CONFIGURE_SSL
         ] is None:
             self.dialog.note(
                 _(
@@ -108,7 +111,7 @@ class Plugin(plugin.PluginBase):
                 )
             )
             self.environment[
-                osetupcons.ApacheEnv.CONFIGURE_SSL
+                oenginecons.ApacheEnv.CONFIGURE_SSL
             ] = dialog.queryBoolean(
                 dialog=self.dialog,
                 name='OVESETUP_APACHE_CONFIG_SSL',
@@ -123,13 +126,13 @@ class Plugin(plugin.PluginBase):
             )
 
         self._enabled = self.environment[
-            osetupcons.ApacheEnv.CONFIGURE_SSL
+            oenginecons.ApacheEnv.CONFIGURE_SSL
         ]
 
         if self._enabled:
             if not os.path.exists(
                 self.environment[
-                    osetupcons.ApacheEnv.HTTPD_CONF_SSL
+                    oenginecons.ApacheEnv.HTTPD_CONF_SSL
                 ]
             ):
                 self.logger.warning(
@@ -148,7 +151,7 @@ class Plugin(plugin.PluginBase):
     def _validate_ssl(self):
         with open(
             self.environment[
-                osetupcons.ApacheEnv.HTTPD_CONF_SSL
+                oenginecons.ApacheEnv.HTTPD_CONF_SSL
             ],
             'r'
         ) as f:
@@ -172,7 +175,7 @@ class Plugin(plugin.PluginBase):
                 ).format(
                     missingParams=missingParams,
                     file=self.environment[
-                        osetupcons.ApacheEnv.HTTPD_CONF_SSL
+                        oenginecons.ApacheEnv.HTTPD_CONF_SSL
                     ]
                 )
             )
@@ -183,12 +186,12 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _misc(self):
-        self.environment[osetupcons.ApacheEnv.NEED_RESTART] = True
+        self.environment[oengcommcons.ApacheEnv.NEED_RESTART] = True
         changed_lines = []
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=self.environment[
-                    osetupcons.ApacheEnv.HTTPD_CONF_SSL
+                    oenginecons.ApacheEnv.HTTPD_CONF_SSL
                 ],
                 content=osetuputil.editConfigContent(
                     content=self._sslData.splitlines(),
@@ -207,14 +210,14 @@ class Plugin(plugin.PluginBase):
             optional=True
         ).addChanges(
             'ssl',
-            self.environment[osetupcons.ApacheEnv.HTTPD_CONF_SSL],
+            self.environment[oenginecons.ApacheEnv.HTTPD_CONF_SSL],
             changed_lines,
         )
         self.environment[
             osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
         ].append(
             self.environment[
-                osetupcons.ApacheEnv.HTTPD_CONF_SSL
+                oenginecons.ApacheEnv.HTTPD_CONF_SSL
             ]
         )
 

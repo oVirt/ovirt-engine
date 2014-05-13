@@ -30,6 +30,9 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -45,18 +48,18 @@ class Plugin(plugin.PluginBase):
     def _misc(self):
         for f in (
             (
-                osetupcons.FileLocations.
+                oenginecons.FileLocations.
                 OVIRT_ENGINE_SERVICE_CONFIG_JBOSS
             ),
             (
-                osetupcons.FileLocations.
+                oenginecons.FileLocations.
                 OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG_JBOSS
             ),
         ):
             content = [
                 'JBOSS_HOME="{jbossHome}"'.format(
                     jbossHome=self.environment[
-                        osetupcons.ConfigEnv.JBOSS_HOME
+                        oengcommcons.ConfigEnv.JBOSS_HOME
                     ],
                 ),
             ]

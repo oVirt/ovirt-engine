@@ -29,6 +29,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
 
 
 @util.export
@@ -45,8 +46,16 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.RPMDistroEnv.UPGRADE_YUM_GROUP,
-            osetupcons.Const.UPGRADE_YUM_GROUP_NAME
+            oenginecons.RPMDistroEnv.ENGINE_PACKAGES,
+            oenginecons.Const.ENGINE_PACKAGE_NAME
+        )
+        self.environment.setdefault(
+            oenginecons.RPMDistroEnv.ENGINE_SETUP_PACKAGES,
+            oenginecons.Const.ENGINE_PACKAGE_SETUP_NAME
+        )
+        self.environment.setdefault(
+            oenginecons.RPMDistroEnv.UPGRADE_YUM_GROUP,
+            oenginecons.Const.UPGRADE_YUM_GROUP_NAME
         )
 
     @plugin.event(
@@ -60,7 +69,7 @@ class Plugin(plugin.PluginBase):
             osetupcons.RPMDistroEnv.VERSION_LOCK_FILTER
         ].extend(
             tolist(
-                self.environment[osetupcons.RPMDistroEnv.ENGINE_PACKAGES]
+                self.environment[oenginecons.RPMDistroEnv.ENGINE_PACKAGES]
             )
         )
         self.environment[
@@ -70,7 +79,7 @@ class Plugin(plugin.PluginBase):
                 '%s%s' % (prefix, suffix)
                 for prefix in tolist(
                     self.environment[
-                        osetupcons.RPMDistroEnv.ENGINE_PACKAGES
+                        oenginecons.RPMDistroEnv.ENGINE_PACKAGES
                     ]
                 )
                 for suffix in osetupcons.Const.RPM_LOCK_LIST_SUFFIXES
@@ -81,10 +90,10 @@ class Plugin(plugin.PluginBase):
         ].append(
             {
                 'group': self.environment[
-                    osetupcons.RPMDistroEnv.UPGRADE_YUM_GROUP
+                    oenginecons.RPMDistroEnv.UPGRADE_YUM_GROUP
                 ],
                 'packages': tolist(
-                    self.environment[osetupcons.RPMDistroEnv.ENGINE_PACKAGES]
+                    self.environment[oenginecons.RPMDistroEnv.ENGINE_PACKAGES]
                 ),
             },
         )
@@ -92,7 +101,9 @@ class Plugin(plugin.PluginBase):
             osetupcons.RPMDistroEnv.PACKAGES_SETUP
         ].extend(
             tolist(
-                self.environment[osetupcons.RPMDistroEnv.ENGINE_SETUP_PACKAGES]
+                self.environment[
+                    oenginecons.RPMDistroEnv.ENGINE_SETUP_PACKAGES
+                ]
             )
         )
 

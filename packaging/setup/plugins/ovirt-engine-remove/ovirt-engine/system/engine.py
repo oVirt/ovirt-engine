@@ -19,6 +19,7 @@
 """Engine plugin."""
 
 
+import os
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -28,6 +29,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
 
 
 @util.export
@@ -38,6 +40,27 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+    )
+    def _setup(self):
+        if not os.path.exists(
+            osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG
+        ):
+            if os.path.exists(
+                osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+            ):
+                self.dialog.note(
+                    text=_(
+                        'If you want to cleanup after setup of a previous '
+                        'version, you should use the setup package of that '
+                        'version.'
+                    )
+                )
+            raise RuntimeError(
+                _('Could not detect product setup')
+            )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: not self.environment[
             osetupcons.CoreEnv.DEVELOPER_MODE
@@ -45,7 +68,7 @@ class Plugin(plugin.PluginBase):
     )
     def _misc(self):
         self.services.startup(
-            name=osetupcons.Const.ENGINE_SERVICE_NAME,
+            name=oenginecons.Const.ENGINE_SERVICE_NAME,
             state=False,
         )
 

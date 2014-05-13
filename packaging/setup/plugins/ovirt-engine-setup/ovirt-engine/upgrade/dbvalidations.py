@@ -28,7 +28,9 @@ from otopi import util
 from otopi import plugin
 
 
-from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -38,25 +40,25 @@ class Plugin(plugin.PluginBase):
     def _dbUtil(self, fix=False):
 
         args = [
-            osetupcons.FileLocations.OVIRT_ENGINE_DB_VALIDATOR,
+            oenginecons.FileLocations.OVIRT_ENGINE_DB_VALIDATOR,
             '--user={user}'.format(
                 user=self.environment[
-                    osetupcons.DBEnv.USER
+                    oengcommcons.EngineDBEnv.USER
                 ],
             ),
             '--host={host}'.format(
                 host=self.environment[
-                    osetupcons.DBEnv.HOST
+                    oengcommcons.EngineDBEnv.HOST
                 ],
             ),
             '--port={port}'.format(
                 port=self.environment[
-                    osetupcons.DBEnv.PORT
+                    oengcommcons.EngineDBEnv.PORT
                 ],
             ),
             '--database={database}'.format(
                 database=self.environment[
-                    osetupcons.DBEnv.DATABASE
+                    oengcommcons.EngineDBEnv.DATABASE
                 ],
             ),
             '--log={logfile}'.format(
@@ -73,7 +75,7 @@ class Plugin(plugin.PluginBase):
             raiseOnError=False,
             envAppend={
                 'DBFUNC_DB_PGPASSFILE': self.environment[
-                    osetupcons.DBEnv.PGPASS_FILE
+                    oengcommcons.EngineDBEnv.PGPASS_FILE
                 ]
             },
         )
@@ -101,7 +103,7 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.DBEnv.FIX_DB_VIOLATIONS,
+            oengcommcons.EngineDBEnv.FIX_DB_VIOLATIONS,
             None
         )
 
@@ -109,11 +111,11 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_VALIDATION,
         priority=plugin.Stages.PRIORITY_LOW,
         after=(
-            osetupcons.Stages.DB_CONNECTION_CUSTOMIZATION,
-            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
+            oengcommcons.Stages.DB_CONNECTION_CUSTOMIZATION,
+            oengcommcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
         ),
         condition=lambda self: not self.environment[
-            osetupcons.DBEnv.NEW_DATABASE
+            oengcommcons.EngineDBEnv.NEW_DATABASE
         ],
     )
     def _validation(self):
@@ -123,7 +125,7 @@ class Plugin(plugin.PluginBase):
         violations, issues_found = self._checkDb()
         if issues_found:
             if self.environment[
-                osetupcons.DBEnv.FIX_DB_VIOLATIONS
+                oengcommcons.EngineDBEnv.FIX_DB_VIOLATIONS
             ] is None:
                 self.logger.warn(
                     _(
@@ -134,7 +136,7 @@ class Plugin(plugin.PluginBase):
                     ),
                 )
                 self.environment[
-                    osetupcons.DBEnv.FIX_DB_VIOLATIONS
+                    oengcommcons.EngineDBEnv.FIX_DB_VIOLATIONS
                 ] = self.dialog.queryBoolean(
                     dialog=self.dialog,
                     name='OVESETUP_FIX_DB_VALIDATIONS',
@@ -147,7 +149,7 @@ class Plugin(plugin.PluginBase):
                 )
 
             if not self.environment[
-                osetupcons.DBEnv.FIX_DB_VIOLATIONS
+                oengcommcons.EngineDBEnv.FIX_DB_VIOLATIONS
             ]:
                 raise RuntimeError(
                     _(
@@ -159,7 +161,7 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_EARLY_MISC,
         condition=lambda self: self.environment[
-            osetupcons.DBEnv.FIX_DB_VIOLATIONS
+            oengcommcons.EngineDBEnv.FIX_DB_VIOLATIONS
         ],
     )
     def _misc(self):

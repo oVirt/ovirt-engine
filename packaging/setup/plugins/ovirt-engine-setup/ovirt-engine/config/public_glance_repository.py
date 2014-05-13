@@ -28,6 +28,8 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -49,14 +51,14 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
-            osetupcons.Stages.DB_CONNECTION_AVAILABLE,
+            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
         condition=lambda self: self.environment[
             osetupcons.ConfigEnv.ADD_OVIRT_GLANCE_REPOSITORY
         ],
     )
     def _misc(self):
-        self.environment[osetupcons.DBEnv.STATEMENT].execute(
+        self.environment[oengcommcons.EngineDBEnv.STATEMENT].execute(
             statement="""
                 select inst_add_glance_provider(
                     %(provider_id)s,

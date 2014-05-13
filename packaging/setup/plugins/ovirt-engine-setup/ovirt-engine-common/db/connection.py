@@ -30,9 +30,10 @@ from otopi import transaction
 from otopi import plugin
 
 
-from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 from ovirt_engine_setup import util as osetuputil
-from ovirt_engine_setup import database
+from ovirt_engine_setup.engine_common import database
 from ovirt_engine_setup import dialog
 
 
@@ -53,20 +54,26 @@ class Plugin(plugin.PluginBase):
             pass
 
         def abort(self):
-            connection = self._parent.environment[osetupcons.DBEnv.CONNECTION]
+            connection = self._parent.environment[
+                oengcommcons.EngineDBEnv.CONNECTION
+            ]
             if connection is not None:
                 connection.rollback()
-                self._parent.environment[osetupcons.DBEnv.CONNECTION] = None
+                self._parent.environment[
+                    oengcommcons.EngineDBEnv.CONNECTION
+                ] = None
 
         def commit(self):
-            connection = self._parent.environment[osetupcons.DBEnv.CONNECTION]
+            connection = self._parent.environment[
+                oengcommcons.EngineDBEnv.CONNECTION
+            ]
             if connection is not None:
                 connection.commit()
 
     def _checkDbEncoding(self, environment):
 
         statement = database.Statement(
-            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
             environment=environment,
         )
         encoding = statement.execute(
@@ -101,26 +108,26 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.DB_CONNECTION_CUSTOMIZATION,
+        name=oengcommcons.Stages.DB_CONNECTION_CUSTOMIZATION,
         before=(
-            osetupcons.Stages.DIALOG_TITLES_E_DATABASE,
+            oengcommcons.Stages.DIALOG_TITLES_E_DATABASE,
         ),
         after=(
-            osetupcons.Stages.DIALOG_TITLES_S_DATABASE,
+            oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
         ),
     )
     def _customization(self):
         dbovirtutils = database.OvirtUtils(
             plugin=self,
-            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
         )
 
         interactive = None in (
-            self.environment[osetupcons.DBEnv.HOST],
-            self.environment[osetupcons.DBEnv.PORT],
-            self.environment[osetupcons.DBEnv.DATABASE],
-            self.environment[osetupcons.DBEnv.USER],
-            self.environment[osetupcons.DBEnv.PASSWORD],
+            self.environment[oengcommcons.EngineDBEnv.HOST],
+            self.environment[oengcommcons.EngineDBEnv.PORT],
+            self.environment[oengcommcons.EngineDBEnv.DATABASE],
+            self.environment[oengcommcons.EngineDBEnv.USER],
+            self.environment[oengcommcons.EngineDBEnv.PASSWORD],
         )
 
         if interactive:
@@ -143,22 +150,22 @@ class Plugin(plugin.PluginBase):
                     "Make sure that database can be accessed remotely.\n"
                     "\n"
                 ).format(
-                    user=osetupcons.Defaults.DEFAULT_DB_USER,
-                    database=osetupcons.Defaults.DEFAULT_DB_DATABASE,
+                    user=oengcommcons.Defaults.DEFAULT_DB_USER,
+                    database=oengcommcons.Defaults.DEFAULT_DB_DATABASE,
                 ),
             )
 
         connectionValid = False
         while not connectionValid:
-            host = self.environment[osetupcons.DBEnv.HOST]
-            port = self.environment[osetupcons.DBEnv.PORT]
-            secured = self.environment[osetupcons.DBEnv.SECURED]
+            host = self.environment[oengcommcons.EngineDBEnv.HOST]
+            port = self.environment[oengcommcons.EngineDBEnv.PORT]
+            secured = self.environment[oengcommcons.EngineDBEnv.SECURED]
             securedHostValidation = self.environment[
-                osetupcons.DBEnv.SECURED_HOST_VALIDATION
+                oengcommcons.EngineDBEnv.SECURED_HOST_VALIDATION
             ]
-            db = self.environment[osetupcons.DBEnv.DATABASE]
-            user = self.environment[osetupcons.DBEnv.USER]
-            password = self.environment[osetupcons.DBEnv.PASSWORD]
+            db = self.environment[oengcommcons.EngineDBEnv.DATABASE]
+            user = self.environment[oengcommcons.EngineDBEnv.USER]
+            password = self.environment[oengcommcons.EngineDBEnv.PASSWORD]
 
             if host is None:
                 while True:
@@ -166,7 +173,7 @@ class Plugin(plugin.PluginBase):
                         name='OVESETUP_ENGINE_DB_HOST',
                         note=_('Engine database host [@DEFAULT@]: '),
                         prompt=True,
-                        default=osetupcons.Defaults.DEFAULT_DB_HOST,
+                        default=oengcommcons.Defaults.DEFAULT_DB_HOST,
                     )
                     try:
                         socket.getaddrinfo(host, None)
@@ -186,7 +193,7 @@ class Plugin(plugin.PluginBase):
                                 name='OVESETUP_ENGINE_DB_PORT',
                                 note=_('Engine database port [@DEFAULT@]: '),
                                 prompt=True,
-                                default=osetupcons.Defaults.DEFAULT_DB_PORT,
+                                default=oengcommcons.Defaults.DEFAULT_DB_PORT,
                             )
                         )
                         break  # do while missing in python
@@ -202,7 +209,7 @@ class Plugin(plugin.PluginBase):
                         '[@DEFAULT@]: '
                     ),
                     prompt=True,
-                    default=osetupcons.Defaults.DEFAULT_DB_SECURED,
+                    default=oengcommcons.Defaults.DEFAULT_DB_SECURED,
                 )
 
             if not secured:
@@ -225,7 +232,7 @@ class Plugin(plugin.PluginBase):
                     name='OVESETUP_ENGINE_DB_DATABASE',
                     note=_('Engine database name [@DEFAULT@]: '),
                     prompt=True,
-                    default=osetupcons.Defaults.DEFAULT_DB_DATABASE,
+                    default=oengcommcons.Defaults.DEFAULT_DB_DATABASE,
                 )
 
             if user is None:
@@ -233,7 +240,7 @@ class Plugin(plugin.PluginBase):
                     name='OVESETUP_ENGINE_DB_USER',
                     note=_('Engine database user [@DEFAULT@]: '),
                     prompt=True,
-                    default=osetupcons.Defaults.DEFAULT_DB_USER,
+                    default=oengcommcons.Defaults.DEFAULT_DB_USER,
                 )
 
             if password is None:
@@ -245,15 +252,15 @@ class Plugin(plugin.PluginBase):
                 )
 
             dbenv = {
-                osetupcons.DBEnv.HOST: host,
-                osetupcons.DBEnv.PORT: port,
-                osetupcons.DBEnv.SECURED: secured,
-                osetupcons.DBEnv.SECURED_HOST_VALIDATION: (
+                oengcommcons.EngineDBEnv.HOST: host,
+                oengcommcons.EngineDBEnv.PORT: port,
+                oengcommcons.EngineDBEnv.SECURED: secured,
+                oengcommcons.EngineDBEnv.SECURED_HOST_VALIDATION: (
                     securedHostValidation
                 ),
-                osetupcons.DBEnv.USER: user,
-                osetupcons.DBEnv.PASSWORD: password,
-                osetupcons.DBEnv.DATABASE: db,
+                oengcommcons.EngineDBEnv.USER: user,
+                oengcommcons.EngineDBEnv.PASSWORD: password,
+                oengcommcons.EngineDBEnv.DATABASE: db,
             }
 
             if interactive:
@@ -276,29 +283,29 @@ class Plugin(plugin.PluginBase):
 
         try:
             self.environment[
-                osetupcons.DBEnv.NEW_DATABASE
+                oengcommcons.EngineDBEnv.NEW_DATABASE
             ] = dbovirtutils.isNewDatabase()
         except:
             self.logger.debug('database connection failed', exc_info=True)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        name=osetupcons.Stages.DB_CONNECTION_AVAILABLE,
+        name=oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         after=(
-            osetupcons.Stages.DB_SCHEMA,
+            oengcommcons.Stages.DB_SCHEMA,
         ),
     )
     def _connection(self):
         self.environment[
-            osetupcons.DBEnv.STATEMENT
+            oengcommcons.EngineDBEnv.STATEMENT
         ] = database.Statement(
-            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
         # must be here as we do not have database at validation
         self.environment[
-            osetupcons.DBEnv.CONNECTION
-        ] = self.environment[osetupcons.DBEnv.STATEMENT].connect()
+            oengcommcons.EngineDBEnv.CONNECTION
+        ] = self.environment[oengcommcons.EngineDBEnv.STATEMENT].connect()
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

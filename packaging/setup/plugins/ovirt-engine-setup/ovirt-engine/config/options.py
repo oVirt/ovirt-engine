@@ -29,7 +29,11 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 from ovirt_engine_setup import dialog
+from ovirt_engine_setup.engine import vdcoption
 
 
 @util.export
@@ -61,16 +65,16 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
-            osetupcons.Stages.DIALOG_TITLES_E_ENGINE,
+            oenginecons.Stages.DIALOG_TITLES_E_ENGINE,
         ),
         after=(
-            osetupcons.Stages.DB_CONNECTION_STATUS,
-            osetupcons.Stages.DIALOG_TITLES_S_ENGINE,
+            oengcommcons.Stages.DB_CONNECTION_STATUS,
+            oenginecons.Stages.DIALOG_TITLES_S_ENGINE,
         ),
     )
     def _customization(self):
         self._enabled = self.environment[
-            osetupcons.DBEnv.NEW_DATABASE
+            oengcommcons.EngineDBEnv.NEW_DATABASE
         ]
 
         if not self._enabled:
@@ -136,11 +140,15 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
-            osetupcons.Stages.DB_CONNECTION_AVAILABLE,
+            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
     )
     def _miscAlways(self):
-        self.environment[osetupcons.DBEnv.STATEMENT].updateVdcOptions(
+        vdcoption.VdcOption(
+            statement=self.environment[
+                oengcommcons.EngineDBEnv.STATEMENT
+            ]
+        ).updateVdcOptions(
             options=(
                 {
                     'name': 'ProductRPMVersion',
@@ -152,14 +160,18 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
-            osetupcons.Stages.DB_CONNECTION_AVAILABLE,
+            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
         condition=lambda self: self.environment[
-            osetupcons.DBEnv.NEW_DATABASE
+            oengcommcons.EngineDBEnv.NEW_DATABASE
         ]
     )
     def _miscNewDatabase(self):
-        self.environment[osetupcons.DBEnv.STATEMENT].updateVdcOptions(
+        vdcoption.VdcOption(
+            statement=self.environment[
+                oengcommcons.EngineDBEnv.STATEMENT
+            ]
+        ).updateVdcOptions(
             options=(
                 {
                     'name': 'SSLEnabled',
@@ -175,11 +187,22 @@ class Plugin(plugin.PluginBase):
                 },
                 {
                     'name': 'ConfigDir',
-                    'value': osetupcons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
+                    'value': oenginecons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
                 },
                 {
                     'name': 'DataDir',
                     'value': osetupcons.FileLocations.DATADIR,
+                },
+                {
+                    'name': 'WebSocketProxy',
+                    'value': '%s:%s' % (
+                        'localhost',
+                        oenginecons.Defaults.DEFAULT_WEBSOCKET_PROXY_PORT,
+                    ),
+                },
+                {
+                    'name': 'RedirectServletReportsPage',
+                    'value': '/ovirt-engine-reports',
                 },
             ),
         )
@@ -187,14 +210,18 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
-            osetupcons.Stages.CONFIG_DB_ENCRYPTION_AVAILABLE,
+            oengcommcons.Stages.CONFIG_DB_ENCRYPTION_AVAILABLE,
         ),
         condition=lambda self: self.environment[
-            osetupcons.DBEnv.NEW_DATABASE
+            oengcommcons.EngineDBEnv.NEW_DATABASE
         ]
     )
     def _miscEncrypted(self):
-        self.environment[osetupcons.DBEnv.STATEMENT].updateVdcOptions(
+        vdcoption.VdcOption(
+            statement=self.environment[
+                oengcommcons.EngineDBEnv.STATEMENT
+            ]
+        ).updateVdcOptions(
             options=(
                 {
                     'name': 'LocalAdminPassword',
@@ -222,7 +249,7 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
         ),
         condition=lambda self: self.environment[
-            osetupcons.DBEnv.NEW_DATABASE
+            oengcommcons.EngineDBEnv.NEW_DATABASE
         ]
     )
     def _closeup(self):

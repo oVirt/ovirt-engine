@@ -36,6 +36,9 @@ from otopi import filetransaction
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 from ovirt_engine_setup import domains as osetupdomains
 from ovirt_engine_setup import util as osetuputil
 
@@ -72,7 +75,7 @@ class Plugin(plugin.PluginBase):
         md['DESCRIPTION'] = description
         md['REMOTE_PATH'] = '%s:%s' % (
             self.environment[osetupcons.ConfigEnv.FQDN],
-            self.environment[osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT]
+            self.environment[oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT]
         )
 
         lines = ['%s=%s' % (key, md[key]) for key in sorted(md.keys())]
@@ -141,10 +144,10 @@ class Plugin(plugin.PluginBase):
             os.chown(
                 path,
                 osetuputil.getUid(
-                    self.environment[osetupcons.SystemEnv.USER_VDSM]
+                    self.environment[oengcommcons.SystemEnv.USER_VDSM]
                 ),
                 osetuputil.getGid(
-                    self.environment[osetupcons.SystemEnv.GROUP_KVM]
+                    self.environment[oengcommcons.SystemEnv.GROUP_KVM]
                 )
             )
             os.chmod(path, 0o755)
@@ -152,7 +155,7 @@ class Plugin(plugin.PluginBase):
         self.logger.debug('Generating a new uuid for ISO domain')
         sdUUID = str(uuid.uuid4())
         description = self.environment[
-            osetupcons.ConfigEnv.ISO_DOMAIN_NAME
+            oenginecons.ConfigEnv.ISO_DOMAIN_NAME
         ]
         self.logger.debug(
             'Creating ISO domain for {path}. uuid: {uuid}'.format(
@@ -167,18 +170,18 @@ class Plugin(plugin.PluginBase):
                 name=os.path.join(
                     basePath,
                     'images',
-                    osetupcons.Const.ISO_DOMAIN_IMAGE_UID,
+                    oenginecons.Const.ISO_DOMAIN_IMAGE_UID,
                     '.keep',
                 ),
                 content=[],
                 mode=0o644,
                 dmode=0o755,
-                owner=self.environment[osetupcons.SystemEnv.USER_VDSM],
-                group=self.environment[osetupcons.SystemEnv.GROUP_KVM],
+                owner=self.environment[oengcommcons.SystemEnv.USER_VDSM],
+                group=self.environment[oengcommcons.SystemEnv.GROUP_KVM],
                 downer=self.environment[
-                    osetupcons.SystemEnv.USER_VDSM
+                    oengcommcons.SystemEnv.USER_VDSM
                 ],
-                dgroup=self.environment[osetupcons.SystemEnv.GROUP_KVM],
+                dgroup=self.environment[oengcommcons.SystemEnv.GROUP_KVM],
                 modifiedList=uninstall_files,
             )
         )
@@ -192,12 +195,12 @@ class Plugin(plugin.PluginBase):
                     content=[],
                     mode=0o660,
                     dmode=0o755,
-                    owner=self.environment[osetupcons.SystemEnv.USER_VDSM],
-                    group=self.environment[osetupcons.SystemEnv.GROUP_KVM],
+                    owner=self.environment[oengcommcons.SystemEnv.USER_VDSM],
+                    group=self.environment[oengcommcons.SystemEnv.GROUP_KVM],
                     downer=self.environment[
-                        osetupcons.SystemEnv.USER_VDSM
+                        oengcommcons.SystemEnv.USER_VDSM
                     ],
-                    dgroup=self.environment[osetupcons.SystemEnv.GROUP_KVM],
+                    dgroup=self.environment[oengcommcons.SystemEnv.GROUP_KVM],
                     modifiedList=uninstall_files,
                 )
             )
@@ -208,12 +211,12 @@ class Plugin(plugin.PluginBase):
                 binary=True,
                 mode=0o660,
                 dmode=0o755,
-                owner=self.environment[osetupcons.SystemEnv.USER_VDSM],
-                group=self.environment[osetupcons.SystemEnv.GROUP_KVM],
+                owner=self.environment[oengcommcons.SystemEnv.USER_VDSM],
+                group=self.environment[oengcommcons.SystemEnv.GROUP_KVM],
                 downer=self.environment[
-                    osetupcons.SystemEnv.USER_VDSM
+                    oengcommcons.SystemEnv.USER_VDSM
                 ],
-                dgroup=self.environment[osetupcons.SystemEnv.GROUP_KVM],
+                dgroup=self.environment[oengcommcons.SystemEnv.GROUP_KVM],
                 modifiedList=uninstall_files,
             )
         )
@@ -223,10 +226,10 @@ class Plugin(plugin.PluginBase):
                 name=metadata,
                 mode=0o644,
                 dmode=0o755,
-                owner=self.environment[osetupcons.SystemEnv.USER_VDSM],
-                group=self.environment[osetupcons.SystemEnv.GROUP_KVM],
-                downer=self.environment[osetupcons.SystemEnv.USER_VDSM],
-                dgroup=self.environment[osetupcons.SystemEnv.GROUP_KVM],
+                owner=self.environment[oengcommcons.SystemEnv.USER_VDSM],
+                group=self.environment[oengcommcons.SystemEnv.GROUP_KVM],
+                downer=self.environment[oengcommcons.SystemEnv.USER_VDSM],
+                dgroup=self.environment[oengcommcons.SystemEnv.GROUP_KVM],
                 content=self._generate_md_content(sdUUID, description),
                 modifiedList=uninstall_files,
             )
@@ -239,7 +242,7 @@ class Plugin(plugin.PluginBase):
         self._checker.check_base_writable(path)
         self._checker.check_available_space(
             path,
-            osetupcons.Const.MINIMUM_SPACE_ISODOMAIN_MB
+            oenginecons.Const.MINIMUM_SPACE_ISODOMAIN_MB
         )
         return self._get_domain(path)
 
@@ -248,28 +251,28 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT,
+            oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT,
             None
         )
         self.environment.setdefault(
-            osetupcons.ConfigEnv.ISO_DOMAIN_SD_UUID,
+            oenginecons.ConfigEnv.ISO_DOMAIN_SD_UUID,
             None
         )
         self.environment.setdefault(
-            osetupcons.ConfigEnv.ISO_DOMAIN_NAME,
+            oenginecons.ConfigEnv.ISO_DOMAIN_NAME,
             None
         )
         self.environment.setdefault(
-            osetupcons.ConfigEnv.ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT,
-            osetupcons.FileLocations.ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT
+            oenginecons.ConfigEnv.ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT,
+            oenginecons.FileLocations.ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT
         )
         self.environment.setdefault(
-            osetupcons.ConfigEnv.ISO_DOMAIN_EXISTS,
+            oenginecons.ConfigEnv.ISO_DOMAIN_EXISTS,
             False
         )
 
         self.environment[
-            osetupcons.ConfigEnv.ISO_DOMAIN_STORAGE_DIR
+            oenginecons.ConfigEnv.ISO_DOMAIN_STORAGE_DIR
         ] = None
 
     def __init__(self, context):
@@ -279,14 +282,14 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         after=(
-            osetupcons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
+            oenginecons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
         ),
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
         ),
         condition=lambda self: (
-            self.environment[osetupcons.SystemEnv.NFS_CONFIG_ENABLED] and
-            not self.environment[osetupcons.ConfigEnv.ISO_DOMAIN_EXISTS]
+            self.environment[oenginecons.SystemEnv.NFS_CONFIG_ENABLED] and
+            not self.environment[oenginecons.ConfigEnv.ISO_DOMAIN_EXISTS]
         ),
     )
     def _customization(self):
@@ -294,17 +297,18 @@ class Plugin(plugin.PluginBase):
         If the user want to use NFS for ISO domain ask how to configure it.
         """
         interactive = self.environment[
-            osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+            oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
         ] is None
 
         validDomain = False
         while not validDomain:
             try:
                 if self.environment[
-                    osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                    oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
                 ] is None:
                     default_mount_point = self.environment[
-                        osetupcons.ConfigEnv.ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT
+                        oenginecons.ConfigEnv.
+                        ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT
                     ]
                     if os.path.exists(default_mount_point):
                         default_mount_point += '-%s' % (
@@ -312,7 +316,7 @@ class Plugin(plugin.PluginBase):
                         )
 
                     self.environment[
-                        osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                        oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
                     ] = self.dialog.queryString(
                         name='NFS_MOUNT_POINT',
                         note=_('Local ISO domain path [@DEFAULT@]: '),
@@ -322,10 +326,10 @@ class Plugin(plugin.PluginBase):
                     )
 
                 self.environment[
-                    osetupcons.ConfigEnv.ISO_DOMAIN_SD_UUID
+                    oenginecons.ConfigEnv.ISO_DOMAIN_SD_UUID
                 ] = self._validateAndGetDomain(
                     path=self.environment[
-                        osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                        oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
                     ]
                 )
 
@@ -339,19 +343,20 @@ class Plugin(plugin.PluginBase):
                             '{mountPoint}: {error}'
                         ).format(
                             mountPoint=self.environment[
-                                osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                                oenginecons.ConfigEnv.
+                                ISO_DOMAIN_NFS_MOUNT_POINT
                             ],
                             error=e,
                         )
                     )
                     self.environment[
-                        osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                        oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
                     ] = None
                 else:
                     raise
 
         path = self.environment[
-            osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+            oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
         ].rstrip('/')
         self.environment[osetupcons.SystemEnv.SELINUX_CONTEXTS].append({
             'type': 'public_content_rw_t',
@@ -362,10 +367,10 @@ class Plugin(plugin.PluginBase):
         ].append(path)
 
         if self.environment[
-            osetupcons.ConfigEnv.ISO_DOMAIN_NFS_ACL
+            oenginecons.ConfigEnv.ISO_DOMAIN_NFS_ACL
         ] is None:
             self.environment[
-                osetupcons.ConfigEnv.ISO_DOMAIN_NFS_ACL
+                oenginecons.ConfigEnv.ISO_DOMAIN_NFS_ACL
             ] = self.dialog.queryString(
                 name='ISO_DOMAIN_ACL',
                 note=_(
@@ -385,23 +390,23 @@ class Plugin(plugin.PluginBase):
             )
 
         if self.environment[
-            osetupcons.ConfigEnv.ISO_DOMAIN_NAME
+            oenginecons.ConfigEnv.ISO_DOMAIN_NAME
         ] is None:
             validName = False
             while not validName:
                 self.environment[
-                    osetupcons.ConfigEnv.ISO_DOMAIN_NAME
+                    oenginecons.ConfigEnv.ISO_DOMAIN_NAME
                 ] = self.dialog.queryString(
                     name='ISO_DOMAIN_NAME',
                     note=_('Local ISO domain name [@DEFAULT@]: '),
                     prompt=True,
                     caseSensitive=True,
-                    default=osetupcons.Defaults.DEFAULT_ISO_DOMAIN_NAME,
+                    default=oenginecons.Defaults.DEFAULT_ISO_DOMAIN_NAME,
                 )
 
                 if self.RE_NOT_ALPHANUMERIC.search(
                         self.environment[
-                            osetupcons.ConfigEnv.ISO_DOMAIN_NAME
+                            oenginecons.ConfigEnv.ISO_DOMAIN_NAME
                         ]
                 ):
                     self.logger.error(
@@ -415,41 +420,41 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        name=osetupcons.Stages.CONFIG_ISO_DOMAIN_AVAILABLE,
+        name=oenginecons.Stages.CONFIG_ISO_DOMAIN_AVAILABLE,
         after=(
-            osetupcons.Stages.DB_CONNECTION_AVAILABLE,
+            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
         condition=lambda self: (
-            self.environment[osetupcons.SystemEnv.NFS_CONFIG_ENABLED] and
-            not self.environment[osetupcons.ConfigEnv.ISO_DOMAIN_EXISTS]
+            self.environment[oenginecons.SystemEnv.NFS_CONFIG_ENABLED] and
+            not self.environment[oenginecons.ConfigEnv.ISO_DOMAIN_EXISTS]
         ),
     )
     def _add_iso_domain_to_db(self):
         """
         Add iso domain to DB
         """
-        if self.environment[osetupcons.ConfigEnv.ISO_DOMAIN_SD_UUID] is None:
+        if self.environment[oenginecons.ConfigEnv.ISO_DOMAIN_SD_UUID] is None:
             self.environment[
-                osetupcons.ConfigEnv.ISO_DOMAIN_SD_UUID
+                oenginecons.ConfigEnv.ISO_DOMAIN_SD_UUID
             ] = self._prepare_new_domain(
                 self.environment[
-                    osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                    oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
                 ]
             )
         self.environment[
-            osetupcons.ConfigEnv.ISO_DOMAIN_STORAGE_DIR
+            oenginecons.ConfigEnv.ISO_DOMAIN_STORAGE_DIR
         ] = os.path.join(
             self.environment[
-                osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
             ],
             self.environment[
-                osetupcons.ConfigEnv.ISO_DOMAIN_SD_UUID
+                oenginecons.ConfigEnv.ISO_DOMAIN_SD_UUID
             ],
             'images',
-            osetupcons.Const.ISO_DOMAIN_IMAGE_UID,
+            oenginecons.Const.ISO_DOMAIN_IMAGE_UID,
         )
         self.logger.debug('Adding ISO domain into DB')
-        self.environment[osetupcons.DBEnv.STATEMENT].execute(
+        self.environment[oengcommcons.EngineDBEnv.STATEMENT].execute(
             statement="""
                 select inst_add_iso_storage_domain(
                     %(storage_domain_id)s,
@@ -462,23 +467,23 @@ class Plugin(plugin.PluginBase):
             """,
             args=dict(
                 storage_domain_id=self.environment[
-                    osetupcons.ConfigEnv.ISO_DOMAIN_SD_UUID
+                    oenginecons.ConfigEnv.ISO_DOMAIN_SD_UUID
                 ],
                 name=self.environment[
-                    osetupcons.ConfigEnv.ISO_DOMAIN_NAME
+                    oenginecons.ConfigEnv.ISO_DOMAIN_NAME
                 ],
                 connection_id=str(uuid.uuid4()),
                 connection='%s:%s' % (
                     self.environment[osetupcons.ConfigEnv.FQDN],
                     self.environment[
-                        osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                        oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
                     ]
                 ),
                 available=0,
                 used=0,
             ),
         )
-        self.environment[osetupcons.ConfigEnv.ISO_DOMAIN_EXISTS] = True
+        self.environment[oenginecons.ConfigEnv.ISO_DOMAIN_EXISTS] = True
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

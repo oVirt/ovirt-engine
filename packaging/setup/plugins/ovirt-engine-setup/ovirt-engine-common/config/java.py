@@ -30,7 +30,8 @@ from otopi import plugin
 from ovirt_engine import java
 
 
-from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -45,19 +46,19 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ConfigEnv.JAVA_HOME,
+            oengcommcons.ConfigEnv.JAVA_HOME,
             None
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: self.environment[
-            osetupcons.ConfigEnv.JAVA_HOME
+            oengcommcons.ConfigEnv.JAVA_HOME
         ] is None,
     )
     def _validation(self):
         self.environment[
-            osetupcons.ConfigEnv.JAVA_HOME
+            oengcommcons.ConfigEnv.JAVA_HOME
         ] = java.Java().getJavaHome()
 
 

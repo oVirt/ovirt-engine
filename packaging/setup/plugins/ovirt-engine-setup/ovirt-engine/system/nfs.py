@@ -34,6 +34,9 @@ from otopi import filetransaction
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup import dialog
 
@@ -64,11 +67,11 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.SystemEnv.NFS_CONFIG_ENABLED,
+            oenginecons.SystemEnv.NFS_CONFIG_ENABLED,
             None
         )
         self.environment.setdefault(
-            osetupcons.SystemEnv.NFS_SERVICE_NAME,
+            oenginecons.SystemEnv.NFS_SERVICE_NAME,
             None
         )
 
@@ -77,7 +80,7 @@ class Plugin(plugin.PluginBase):
         # on non new installation.
         #
         self.environment.setdefault(
-            osetupcons.SystemEnv.NFS_CONFIG_ENABLED_LEGACY_IN_POSTINSTALL,
+            oenginecons.SystemEnv.NFS_CONFIG_ENABLED_LEGACY_IN_POSTINSTALL,
             self.environment[
                 osetupcons.CoreEnv.ORIGINAL_GENERATED_BY_VERSION
             ] is not None
@@ -99,36 +102,36 @@ class Plugin(plugin.PluginBase):
             self._enabled = False
 
         if self.environment[
-            osetupcons.SystemEnv.NFS_SERVICE_NAME
+            oenginecons.SystemEnv.NFS_SERVICE_NAME
         ] is None:
             for service in ('nfs-server', 'nfs'):
                 if self.services.exists(name=service):
                     self.environment[
-                        osetupcons.SystemEnv.NFS_SERVICE_NAME
+                        oenginecons.SystemEnv.NFS_SERVICE_NAME
                     ] = service
                     break
             else:
                 self._enabled = False
         if (
             self.environment[
-                osetupcons.SystemEnv.NFS_CONFIG_ENABLED
+                oenginecons.SystemEnv.NFS_CONFIG_ENABLED
             ] is None or
             self.environment[
-                osetupcons.SystemEnv.NFS_CONFIG_ENABLED_LEGACY_IN_POSTINSTALL
+                oenginecons.SystemEnv.NFS_CONFIG_ENABLED_LEGACY_IN_POSTINSTALL
             ]
         ):
-            if not self.environment[osetupcons.DBEnv.NEW_DATABASE]:
+            if not self.environment[oengcommcons.EngineDBEnv.NEW_DATABASE]:
                 self.environment[
-                    osetupcons.SystemEnv.NFS_CONFIG_ENABLED
+                    oenginecons.SystemEnv.NFS_CONFIG_ENABLED
                 ] = False
 
         self.environment[
-            osetupcons.SystemEnv.NFS_CONFIG_ENABLED_LEGACY_IN_POSTINSTALL
+            oenginecons.SystemEnv.NFS_CONFIG_ENABLED_LEGACY_IN_POSTINSTALL
         ] = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
+        name=oenginecons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
         ),
@@ -153,7 +156,7 @@ class Plugin(plugin.PluginBase):
             self._enabled = False
         else:
             enabled = self.environment[
-                osetupcons.SystemEnv.NFS_CONFIG_ENABLED
+                oenginecons.SystemEnv.NFS_CONFIG_ENABLED
             ]
             if enabled is None:
                 self._enabled = dialog.queryBoolean(
@@ -172,14 +175,14 @@ class Plugin(plugin.PluginBase):
 
         # expose to other modules
         self.environment[
-            osetupcons.SystemEnv.NFS_CONFIG_ENABLED
+            oenginecons.SystemEnv.NFS_CONFIG_ENABLED
         ] = self._enabled
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         after=(
             osetupcons.Stages.NET_FIREWALL_MANAGER_AVAILABLE,
-            osetupcons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
+            oenginecons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
         ),
         # must be run before firewall_manager plugin
         condition=lambda self: self._enabled
@@ -200,12 +203,12 @@ class Plugin(plugin.PluginBase):
     def _misc(self):
         changed_lines = []
         content = []
-        if os.path.exists(osetupcons.FileLocations.NFS_RHEL_CONFIG):
-            with open(osetupcons.FileLocations.NFS_RHEL_CONFIG, 'r') as f:
+        if os.path.exists(oenginecons.FileLocations.NFS_RHEL_CONFIG):
+            with open(oenginecons.FileLocations.NFS_RHEL_CONFIG, 'r') as f:
                 content = f.read().splitlines()
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
-                name=osetupcons.FileLocations.NFS_RHEL_CONFIG,
+                name=oenginecons.FileLocations.NFS_RHEL_CONFIG,
                 content=osetuputil.editConfigContent(
                     content=content,
                     params=self.SYSCONFIG_NFS_PARAMS,
@@ -222,12 +225,12 @@ class Plugin(plugin.PluginBase):
             optional=True
         ).addChanges(
             'nfs_config',
-            osetupcons.FileLocations.NFS_RHEL_CONFIG,
+            oenginecons.FileLocations.NFS_RHEL_CONFIG,
             changed_lines,
         )
         self.environment[
             osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-        ].append(osetupcons.FileLocations.NFS_RHEL_CONFIG)
+        ].append(oenginecons.FileLocations.NFS_RHEL_CONFIG)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
@@ -248,14 +251,14 @@ class Plugin(plugin.PluginBase):
 
         self.services.startup(
             name=self.environment[
-                osetupcons.SystemEnv.NFS_SERVICE_NAME
+                oenginecons.SystemEnv.NFS_SERVICE_NAME
             ],
             state=True,
         )
         for state in (False, True):
             self.services.state(
                 name=self.environment[
-                    osetupcons.SystemEnv.NFS_SERVICE_NAME
+                    oenginecons.SystemEnv.NFS_SERVICE_NAME
                 ],
                 state=state,
             )

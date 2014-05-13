@@ -28,6 +28,9 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -39,7 +42,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
-        name=osetupcons.Stages.CORE_ENGINE_START,
+        name=oengcommcons.Stages.CORE_ENGINE_START,
         condition=lambda self: not self.environment[
             osetupcons.CoreEnv.DEVELOPER_MODE
         ],
@@ -47,11 +50,11 @@ class Plugin(plugin.PluginBase):
     def _closeup(self):
         self.logger.info(_('Starting engine service'))
         self.services.state(
-            name=osetupcons.Const.ENGINE_SERVICE_NAME,
+            name=oenginecons.Const.ENGINE_SERVICE_NAME,
             state=True,
         )
         self.services.startup(
-            name=osetupcons.Const.ENGINE_SERVICE_NAME,
+            name=oenginecons.Const.ENGINE_SERVICE_NAME,
             state=True,
         )
 

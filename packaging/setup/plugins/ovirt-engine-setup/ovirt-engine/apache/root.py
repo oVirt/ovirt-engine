@@ -30,6 +30,9 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 from ovirt_engine_setup import dialog
 
 
@@ -46,15 +49,15 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ApacheEnv.HTTPD_CONF_OVIRT_ROOT,
-            osetupcons.FileLocations.HTTPD_CONF_OVIRT_ROOT
+            oenginecons.ApacheEnv.HTTPD_CONF_OVIRT_ROOT,
+            oenginecons.FileLocations.HTTPD_CONF_OVIRT_ROOT
         )
         self.environment.setdefault(
-            osetupcons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION,
+            oenginecons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION,
             None
         )
         self.environment.setdefault(
-            osetupcons.ApacheEnv.CONFIGURE_ROOT_REDIRECTIOND_DEFAULT,
+            oenginecons.ApacheEnv.CONFIGURE_ROOT_REDIRECTIOND_DEFAULT,
             False
         )
 
@@ -65,14 +68,14 @@ class Plugin(plugin.PluginBase):
     def _setup(self):
         if (
             self.environment[
-                osetupcons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION
+                oenginecons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION
             ] is None and
             (
                 self.environment[
                     osetupcons.CoreEnv.DEVELOPER_MODE
                 ] or
                 self.environment[
-                    osetupcons.ApacheEnv.CONFIGURED
+                    oenginecons.ApacheEnv.CONFIGURED
                 ]
             )
         ):
@@ -81,16 +84,16 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
-            osetupcons.Stages.DIALOG_TITLES_E_APACHE,
+            oengcommcons.Stages.DIALOG_TITLES_E_APACHE,
         ),
         after=(
-            osetupcons.Stages.DIALOG_TITLES_S_APACHE,
+            oengcommcons.Stages.DIALOG_TITLES_S_APACHE,
         ),
         condition=lambda self: self._enabled,
     )
     def _customization(self):
         if self.environment[
-            osetupcons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION
+            oenginecons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION
         ] is None:
             self.dialog.note(
                 _(
@@ -100,7 +103,7 @@ class Plugin(plugin.PluginBase):
                 )
             )
             self.environment[
-                osetupcons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION
+                oenginecons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION
             ] = dialog.queryBoolean(
                 dialog=self.dialog,
                 name='OVESETUP_APACHE_CONFIG_ROOT_REDIRECTION',
@@ -110,13 +113,13 @@ class Plugin(plugin.PluginBase):
                 ),
                 prompt=True,
                 default=self.environment[
-                    osetupcons.ApacheEnv.
+                    oenginecons.ApacheEnv.
                     CONFIGURE_ROOT_REDIRECTIOND_DEFAULT
                 ],
             )
 
         self._enabled = self.environment[
-            osetupcons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION
+            oenginecons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION
         ]
 
     @plugin.event(
@@ -125,16 +128,16 @@ class Plugin(plugin.PluginBase):
     )
     def _misc(self):
         with open(
-            osetupcons.FileLocations.HTTPD_CONF_OVIRT_ROOT_TEMPLATE,
+            oenginecons.FileLocations.HTTPD_CONF_OVIRT_ROOT_TEMPLATE,
             'r'
         ) as f:
             content = f.read()
 
-        self.environment[osetupcons.ApacheEnv.NEED_RESTART] = True
+        self.environment[oengcommcons.ApacheEnv.NEED_RESTART] = True
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=self.environment[
-                    osetupcons.ApacheEnv.HTTPD_CONF_OVIRT_ROOT
+                    oenginecons.ApacheEnv.HTTPD_CONF_OVIRT_ROOT
                 ],
                 content=content,
                 modifiedList=self.environment[

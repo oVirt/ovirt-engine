@@ -30,6 +30,9 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -59,25 +62,25 @@ class Plugin(plugin.PluginBase):
         ).format(
             fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
             proxyFlag=flag(self.environment[
-                osetupcons.ConfigEnv.JBOSS_AJP_PORT
+                oengcommcons.ConfigEnv.JBOSS_AJP_PORT
             ]),
             directFlag=flag(self.environment[
-                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
+                oengcommcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
             ]),
             proxyHttpPort=self.environment[
-                osetupcons.ConfigEnv.HTTP_PORT
+                oengcommcons.ConfigEnv.HTTP_PORT
             ],
             proxyHttpsPort=self.environment[
-                osetupcons.ConfigEnv.HTTPS_PORT
+                oengcommcons.ConfigEnv.HTTPS_PORT
             ],
             directHttpPort=self.environment[
-                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
+                oengcommcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
             ],
             directHttpsPort=self.environment[
-                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT
+                oengcommcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT
             ],
             ajpPort=self.environment[
-                osetupcons.ConfigEnv.JBOSS_AJP_PORT
+                oengcommcons.ConfigEnv.JBOSS_AJP_PORT
             ],
         )
 
@@ -86,14 +89,14 @@ class Plugin(plugin.PluginBase):
                 'ENGINE_DEBUG_ADDRESS={debugAddress}\n'
             ).format(
                 debugAddress=self.environment[
-                    osetupcons.ConfigEnv.JBOSS_DEBUG_ADDRESS
+                    oengcommcons.ConfigEnv.JBOSS_DEBUG_ADDRESS
                 ],
             )
 
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=(
-                    osetupcons.FileLocations.
+                    oenginecons.FileLocations.
                     OVIRT_ENGINE_SERVICE_CONFIG_PROTOCOLS
                 ),
                 content=content,
@@ -115,8 +118,8 @@ class Plugin(plugin.PluginBase):
     def _closeup(self):
         # TODO
         # layout of jboss and proxy should be the same
-        if self.environment[osetupcons.ConfigEnv.JBOSS_AJP_PORT]:
-            engineURI = osetupcons.Const.ENGINE_URI
+        if self.environment[oengcommcons.ConfigEnv.JBOSS_AJP_PORT]:
+            engineURI = oenginecons.Const.ENGINE_URI
         else:
             engineURI = '/'
 
@@ -128,10 +131,10 @@ class Plugin(plugin.PluginBase):
             ).format(
                 fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
                 httpPort=self.environment[
-                    osetupcons.ConfigEnv.PUBLIC_HTTP_PORT
+                    oengcommcons.ConfigEnv.PUBLIC_HTTP_PORT
                 ],
                 httpsPort=self.environment[
-                    osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT
+                    oengcommcons.ConfigEnv.PUBLIC_HTTPS_PORT
                 ],
                 engineURI=engineURI,
             )
@@ -143,7 +146,7 @@ class Plugin(plugin.PluginBase):
                     'JBoss is listening for debug connection at: {address}'
                 ).format(
                     address=self.environment[
-                        osetupcons.ConfigEnv.JBOSS_DEBUG_ADDRESS
+                        oengcommcons.ConfigEnv.JBOSS_DEBUG_ADDRESS
                     ],
                 )
             )

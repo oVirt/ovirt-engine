@@ -31,6 +31,9 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 from ovirt_engine_setup import dialog
 
 
@@ -48,12 +51,16 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG,
+            oenginecons.ConfigEnv.WEBSOCKET_PROXY_CONFIG,
             None
         )
         self.environment.setdefault(
-            osetupcons.ConfigEnv.WEBSOCKET_PROXY_PORT,
-            osetupcons.Defaults.DEFAULT_WEBSOCKET_PROXY_PORT
+            oenginecons.ConfigEnv.WEBSOCKET_PROXY_PORT,
+            oenginecons.Defaults.DEFAULT_WEBSOCKET_PROXY_PORT
+        )
+        self.environment.setdefault(
+            oenginecons.ConfigEnv.WEBSOCKET_PROXY_HOST,
+            'localhost'
         )
 
     @plugin.event(
@@ -62,13 +69,12 @@ class Plugin(plugin.PluginBase):
     def _late_setup(self):
         if (
             not os.path.exists(
-                osetupcons.FileLocations.
+                oenginecons.FileLocations.
                 OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_STORE
             )
             # Do not check if service exists. when upgrading from
             # 3.2 it will not exist at this point, but is Required
             # by the package so will be installed.
-            # TODO: Fix and do something more complex if/when it can
             # be installed separately from the engine.
         ):
             self._enabled = True
@@ -86,23 +92,23 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION,
+        name=oenginecons.Stages.CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION,
         condition=lambda self: self._enabled,
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
         ),
         after=(
-            osetupcons.Stages.DB_CONNECTION_STATUS,
+            oengcommcons.Stages.DB_CONNECTION_STATUS,
             osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
         ),
     )
     def _customization(self):
 
         if self.environment[
-            osetupcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
+            oenginecons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
         ] is None:
             self.environment[
-                osetupcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
+                oenginecons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
             ] = dialog.queryBoolean(
                 dialog=self.dialog,
                 name='OVESETUP_CONFIG_WEBSOCKET_PROXY',
@@ -114,21 +120,21 @@ class Plugin(plugin.PluginBase):
                 default=True,
             )
         self._enabled = self.environment[
-            osetupcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
+            oenginecons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
         ]
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: self.environment[
-            osetupcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
+            oenginecons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
         ],
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
         ),
         after=(
-            osetupcons.Stages.DB_CONNECTION_STATUS,
+            oengcommcons.Stages.DB_CONNECTION_STATUS,
             osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
-            osetupcons.Stages.CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION,
+            oenginecons.Stages.CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION,
         ),
     )
     def _customization_firewall(self):
@@ -142,7 +148,7 @@ class Plugin(plugin.PluginBase):
             osetupcons.NetEnv.FIREWALLD_SUBST
         ].update({
             '@WEBSOCKET_PROXY_PORT@': self.environment[
-                osetupcons.ConfigEnv.WEBSOCKET_PROXY_PORT
+                oenginecons.ConfigEnv.WEBSOCKET_PROXY_PORT
             ],
         })
 
@@ -150,7 +156,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self._enabled,
         after=(
-            osetupcons.Stages.DB_CONNECTION_AVAILABLE,
+            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
             osetupcons.Stages.CA_AVAILABLE,
         ),
     )
@@ -158,27 +164,16 @@ class Plugin(plugin.PluginBase):
 
         self.logger.info(_('Configuring WebSocket Proxy'))
 
-        self.environment[osetupcons.DBEnv.STATEMENT].updateVdcOptions(
-            options=(
-                {
-                    'name': 'WebSocketProxy',
-                    'value': 'Engine:%s' % self.environment[
-                        osetupcons.ConfigEnv.WEBSOCKET_PROXY_PORT
-                    ],
-                },
-            ),
-        )
-
         self.execute(
             args=(
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
                 '--name=%s' % 'websocket-proxy',
                 '--password=%s' % (
-                    self.environment[osetupcons.PKIEnv.STORE_PASS],
+                    self.environment[oenginecons.PKIEnv.STORE_PASS],
                 ),
                 '--subject=/C=%s/O=%s/CN=%s' % (
-                    self.environment[osetupcons.PKIEnv.COUNTRY],
-                    self.environment[osetupcons.PKIEnv.ORG],
+                    self.environment[oenginecons.PKIEnv.COUNTRY],
+                    self.environment[oenginecons.PKIEnv.ORG],
                     self.environment[osetupcons.ConfigEnv.FQDN],
                 ),
             ),
@@ -188,11 +183,11 @@ class Plugin(plugin.PluginBase):
         ].extend(
             (
                 (
-                    osetupcons.FileLocations.
+                    oenginecons.FileLocations.
                     OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_CERT
                 ),
                 (
-                    osetupcons.FileLocations.
+                    oenginecons.FileLocations.
                     OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_STORE
                 ),
             )
@@ -200,10 +195,10 @@ class Plugin(plugin.PluginBase):
 
         rc, stdout, stderr = self.execute(
             args=(
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
                 '--name=websocket-proxy',
                 '--passin=%s' % self.environment[
-                    osetupcons.PKIEnv.STORE_PASS
+                    oenginecons.PKIEnv.STORE_PASS
                 ],
                 '--key=-',
             ),
@@ -212,7 +207,7 @@ class Plugin(plugin.PluginBase):
 
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_KEY,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_KEY,
                 mode=0o600,
                 owner=self.environment[osetupcons.SystemEnv.USER_ENGINE],
                 enforcePermissions=True,
@@ -226,7 +221,7 @@ class Plugin(plugin.PluginBase):
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=(
-                    osetupcons.FileLocations.
+                    oenginecons.FileLocations.
                     OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIG_SETUP
                 ),
                 content=(
@@ -238,18 +233,18 @@ class Plugin(plugin.PluginBase):
                     "SSL_ONLY=True\n"
                 ).format(
                     port=self.environment[
-                        osetupcons.ConfigEnv.WEBSOCKET_PROXY_PORT
+                        oenginecons.ConfigEnv.WEBSOCKET_PROXY_PORT
                     ],
                     certificate=(
-                        osetupcons.FileLocations.
+                        oenginecons.FileLocations.
                         OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_CERT
                     ),
                     key=(
-                        osetupcons.FileLocations.
+                        oenginecons.FileLocations.
                         OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_KEY
                     ),
                     engine_cert=(
-                        osetupcons.FileLocations.
+                        oenginecons.FileLocations.
                         OVIRT_ENGINE_PKI_ENGINE_CERT
                     ),
                 ),
@@ -273,11 +268,11 @@ class Plugin(plugin.PluginBase):
     def _closeup(self):
         for state in (False, True):
             self.services.state(
-                name=osetupcons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
+                name=oenginecons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
                 state=state,
             )
         self.services.startup(
-            name=osetupcons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
+            name=oenginecons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
             state=True,
         )
 

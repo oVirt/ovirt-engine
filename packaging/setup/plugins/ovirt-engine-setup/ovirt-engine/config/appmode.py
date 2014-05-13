@@ -28,6 +28,10 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine import vdcoption
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -54,13 +58,13 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
-            osetupcons.Stages.DIALOG_TITLES_E_ENGINE,
+            oenginecons.Stages.DIALOG_TITLES_E_ENGINE,
         ),
         after=(
-            osetupcons.Stages.DIALOG_TITLES_S_ENGINE,
+            oenginecons.Stages.DIALOG_TITLES_S_ENGINE,
         ),
         condition=lambda self: self.environment[
-            osetupcons.DBEnv.NEW_DATABASE
+            oengcommcons.EngineDBEnv.NEW_DATABASE
         ],
         name=osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE
     )
@@ -82,13 +86,13 @@ class Plugin(plugin.PluginBase):
                     'Gluster',
                 ),
                 caseSensitive=False,
-                default=osetupcons.Defaults.DEFAULT_CONFIG_APPLICATION_MODE,
+                default=oenginecons.Defaults.DEFAULT_CONFIG_APPLICATION_MODE,
             )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
-            osetupcons.Stages.DB_CONNECTION_AVAILABLE,
+            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
         condition=lambda self: self._enabled,
     )
@@ -96,7 +100,7 @@ class Plugin(plugin.PluginBase):
 
         v = self.environment[osetupcons.ConfigEnv.APPLICATION_MODE]
 
-        self.environment[osetupcons.DBEnv.STATEMENT].execute(
+        self.environment[oengcommcons.EngineDBEnv.STATEMENT].execute(
             statement="""
                 select inst_update_service_type(
                     %(clusterId)s,
@@ -105,16 +109,18 @@ class Plugin(plugin.PluginBase):
                 )
             """,
             args=dict(
-                clusterId=self.environment[
-                    osetupcons.DBEnv.STATEMENT
-                ].getVdcOption(name='AutoRegistrationDefaultVdsGroupID'),
+                clusterId=vdcoption.VdcOption(
+                    statement=self.environment[
+                        oengcommcons.EngineDBEnv.STATEMENT
+                    ]
+                ).getVdcOption(name='AutoRegistrationDefaultVdsGroupID'),
                 virt=(v in ('both', 'virt')),
                 gluster=(v == 'gluster'),
             ),
         )
 
         if v != 'both':
-            self.environment[osetupcons.DBEnv.STATEMENT].execute(
+            self.environment[oengcommcons.EngineDBEnv.STATEMENT].execute(
                 statement="""
                     select fn_db_update_config_value(
                         'ApplicationMode',

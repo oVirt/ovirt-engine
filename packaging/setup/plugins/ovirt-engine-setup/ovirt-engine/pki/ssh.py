@@ -37,6 +37,9 @@ from otopi import filetransaction
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -67,10 +70,10 @@ class Plugin(plugin.PluginBase):
     def _getEnginePublicKey(self):
         rc, cert, stderr = self.execute(
             (
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
                 '--name=engine',
                 '--passin=%s' % self.environment[
-                    osetupcons.PKIEnv.STORE_PASS
+                    oenginecons.PKIEnv.STORE_PASS
                 ],
                 '--cert=-',
             ),
@@ -101,10 +104,10 @@ class Plugin(plugin.PluginBase):
     def _misc(self):
         rc, privkey, stderr = self.execute(
             (
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
                 '--name=engine',
                 '--passin=%s' % self.environment[
-                    osetupcons.PKIEnv.STORE_PASS
+                    oenginecons.PKIEnv.STORE_PASS
                 ],
                 '--key=-',
             ),
@@ -112,10 +115,10 @@ class Plugin(plugin.PluginBase):
         )
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
-                name=osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_SSH_KEY,
+                name=oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_SSH_KEY,
                 content=privkey,
                 mode=0o600,
-                owner=self.environment[osetupcons.SystemEnv.USER_ROOT],
+                owner=self.environment[oengcommcons.SystemEnv.USER_ROOT],
                 enforcePermissions=True,
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
@@ -123,7 +126,7 @@ class Plugin(plugin.PluginBase):
             )
         )
         self.environment[
-            osetupcons.PKIEnv.ENGINE_SSH_PUBLIC_KEY
+            oenginecons.PKIEnv.ENGINE_SSH_PUBLIC_KEY
         ] = self._getSSHPublicKey(self._getEnginePublicKey())
 
     @plugin.event(

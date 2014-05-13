@@ -34,7 +34,9 @@ from otopi import constants as otopicons
 
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import database
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
+from ovirt_engine_setup.engine_common import database
 from ovirt_engine_setup import util as osetuputil
 
 
@@ -227,7 +229,7 @@ class Provisioning(base.Base):
     def _initDbIfRequired(self):
         if not os.path.exists(
             self.environment[
-                osetupcons.ProvisioningEnv.POSTGRES_PG_VERSION
+                oengcommcons.ProvisioningEnv.POSTGRES_PG_VERSION
             ]
         ):
             self.logger.info(_('Initializing PostgreSQL'))
@@ -252,7 +254,7 @@ class Provisioning(base.Base):
                             osetupcons.FileLocations.SYSCONFDIR,
                             'init.d',
                             self.environment[
-                                osetupcons.ProvisioningEnv.POSTGRES_SERVICE
+                                oengcommcons.ProvisioningEnv.POSTGRES_SERVICE
                             ],
                         ),
                         'initdb',
@@ -266,7 +268,7 @@ class Provisioning(base.Base):
     ):
         with open(
             self.environment[
-                osetupcons.ProvisioningEnv.POSTGRES_CONF
+                oengcommcons.ProvisioningEnv.POSTGRES_CONF
             ]
         ) as f:
             content = f.read().splitlines()
@@ -293,7 +295,7 @@ class Provisioning(base.Base):
             transaction.append(
                 filetransaction.FileTransaction(
                     name=self.environment[
-                        osetupcons.ProvisioningEnv.POSTGRES_CONF
+                        oengcommcons.ProvisioningEnv.POSTGRES_CONF
                     ],
                     content=content,
                     modifiedList=self.environment[
@@ -305,7 +307,7 @@ class Provisioning(base.Base):
                 osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
             ].append(
                 self.environment[
-                    osetupcons.ProvisioningEnv.POSTGRES_CONF
+                    oengcommcons.ProvisioningEnv.POSTGRES_CONF
                 ]
             )
 
@@ -316,7 +318,7 @@ class Provisioning(base.Base):
         content = []
         with open(
             self.environment[
-                osetupcons.ProvisioningEnv.POSTGRES_PG_HBA
+                oengcommcons.ProvisioningEnv.POSTGRES_PG_HBA
             ]
         ) as f:
             for line in f.read().splitlines():
@@ -331,7 +333,7 @@ class Provisioning(base.Base):
         transaction.append(
             filetransaction.FileTransaction(
                 name=self.environment[
-                    osetupcons.ProvisioningEnv.POSTGRES_PG_HBA
+                    oengcommcons.ProvisioningEnv.POSTGRES_PG_HBA
                 ],
                 content=content,
                 visibleButUnsafe=True,
@@ -367,7 +369,7 @@ class Provisioning(base.Base):
         content = []
         with open(
             self.environment[
-                osetupcons.ProvisioningEnv.POSTGRES_PG_HBA
+                oengcommcons.ProvisioningEnv.POSTGRES_PG_HBA
             ]
         ) as f:
             for line in f.read().splitlines():
@@ -382,7 +384,7 @@ class Provisioning(base.Base):
         transaction.append(
             filetransaction.FileTransaction(
                 name=self.environment[
-                    osetupcons.ProvisioningEnv.POSTGRES_PG_HBA
+                    oengcommcons.ProvisioningEnv.POSTGRES_PG_HBA
                 ],
                 content=content,
                 modifiedList=self.environment[
@@ -394,7 +396,7 @@ class Provisioning(base.Base):
             osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
         ].append(
             self.environment[
-                osetupcons.ProvisioningEnv.POSTGRES_PG_HBA
+                oengcommcons.ProvisioningEnv.POSTGRES_PG_HBA
             ]
         )
 
@@ -402,7 +404,7 @@ class Provisioning(base.Base):
             for state in (False, True):
                 self.services.state(
                     name=self.environment[
-                        osetupcons.ProvisioningEnv.POSTGRES_SERVICE
+                        oengcommcons.ProvisioningEnv.POSTGRES_SERVICE
                     ],
                     state=state,
                 )
@@ -453,7 +455,7 @@ class Provisioning(base.Base):
     def validate(self):
         if not self.services.exists(
             name=self.environment[
-                osetupcons.ProvisioningEnv.POSTGRES_SERVICE
+                oengcommcons.ProvisioningEnv.POSTGRES_SERVICE
             ]
         ):
             raise RuntimeError(
@@ -502,7 +504,7 @@ class Provisioning(base.Base):
 
             with AlternateUser(
                 user=self.environment[
-                    osetupcons.SystemEnv.USER_POSTGRES
+                    oengcommcons.SystemEnv.USER_POSTGRES
                 ],
             ):
                 usockenv = {
@@ -536,7 +538,7 @@ class Provisioning(base.Base):
             self._updateMaxConnections(
                 transaction=localtransaction,
                 maxconn=self.environment[
-                    osetupcons.ProvisioningEnv.POSTGRES_MAX_CONN
+                    oengcommcons.ProvisioningEnv.POSTGRES_MAX_CONN
                 ],
             )
             self._addPgHbaDatabaseAccess(
@@ -545,7 +547,7 @@ class Provisioning(base.Base):
 
         self.services.startup(
             name=self.environment[
-                osetupcons.ProvisioningEnv.POSTGRES_SERVICE
+                oengcommcons.ProvisioningEnv.POSTGRES_SERVICE
             ],
             state=True,
         )

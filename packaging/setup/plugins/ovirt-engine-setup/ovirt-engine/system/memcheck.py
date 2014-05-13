@@ -30,6 +30,7 @@ from otopi import util
 from otopi import plugin
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
 from ovirt_engine_setup import dialog
 
 
@@ -57,9 +58,9 @@ class Plugin(plugin.PluginBase):
     def _check_requirements(self):
         satisfied = False
         if self._total_memory < self.environment[
-            osetupcons.SystemEnv.MEMCHECK_MINIMUM_MB
+            oenginecons.SystemEnv.MEMCHECK_MINIMUM_MB
         ] * self.environment[
-            osetupcons.SystemEnv.MEMCHECK_THRESHOLD
+            oenginecons.SystemEnv.MEMCHECK_THRESHOLD
         ] / 100:
             self.logger.warn(
                 _(
@@ -68,26 +69,26 @@ class Plugin(plugin.PluginBase):
                     'is recommended.'
                 ).format(
                     minimum=self.environment[
-                        osetupcons.SystemEnv.MEMCHECK_MINIMUM_MB
+                        oenginecons.SystemEnv.MEMCHECK_MINIMUM_MB
                     ],
                     recommended=self.environment[
-                        osetupcons.SystemEnv.MEMCHECK_RECOMMENDED_MB
+                        oenginecons.SystemEnv.MEMCHECK_RECOMMENDED_MB
                     ],
                 )
             )
         else:
             satisfied = True
             if self._total_memory < self.environment[
-                osetupcons.SystemEnv.MEMCHECK_RECOMMENDED_MB
+                oenginecons.SystemEnv.MEMCHECK_RECOMMENDED_MB
             ] * self.environment[
-                osetupcons.SystemEnv.MEMCHECK_THRESHOLD
+                oenginecons.SystemEnv.MEMCHECK_THRESHOLD
             ] / 100:
                 self.logger.warn(
                     _(
                         'Less than {recommended}MB of memory is available'
                     ).format(
                         recommended=self.environment[
-                            osetupcons.SystemEnv.MEMCHECK_RECOMMENDED_MB
+                            oenginecons.SystemEnv.MEMCHECK_RECOMMENDED_MB
                         ],
                     )
                 )
@@ -98,25 +99,25 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.SystemEnv.MEMCHECK_ENABLED,
+            oenginecons.SystemEnv.MEMCHECK_ENABLED,
             True
         )
         self.environment.setdefault(
-            osetupcons.SystemEnv.MEMCHECK_MINIMUM_MB,
-            osetupcons.Defaults.DEFAULT_SYSTEM_MEMCHECK_MINIMUM_MB
+            oenginecons.SystemEnv.MEMCHECK_MINIMUM_MB,
+            oenginecons.Defaults.DEFAULT_SYSTEM_MEMCHECK_MINIMUM_MB
         )
         self.environment.setdefault(
-            osetupcons.SystemEnv.MEMCHECK_RECOMMENDED_MB,
-            osetupcons.Defaults.DEFAULT_SYSTEM_MEMCHECK_RECOMMENDED_MB
+            oenginecons.SystemEnv.MEMCHECK_RECOMMENDED_MB,
+            oenginecons.Defaults.DEFAULT_SYSTEM_MEMCHECK_RECOMMENDED_MB
         )
         self.environment.setdefault(
-            osetupcons.SystemEnv.MEMCHECK_THRESHOLD,
-            osetupcons.Defaults.DEFAULT_SYSTEM_MEMCHECK_THRESHOLD
+            oenginecons.SystemEnv.MEMCHECK_THRESHOLD,
+            oenginecons.Defaults.DEFAULT_SYSTEM_MEMCHECK_THRESHOLD
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
-        name=osetupcons.Stages.MEMORY_CHECK,
+        name=oenginecons.Stages.MEMORY_CHECK,
     )
     def _validateMemory(self):
         """
@@ -141,16 +142,16 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         after=(
-            osetupcons.Stages.MEMORY_CHECK,
+            oenginecons.Stages.MEMORY_CHECK,
         ),
         condition=lambda self: self.environment[
-            osetupcons.SystemEnv.MEMCHECK_ENABLED
+            oenginecons.SystemEnv.MEMCHECK_ENABLED
         ],
     )
     def _validateContinueLowMemory(self):
         if (
             self.environment[
-                osetupcons.SystemEnv.MEMCHECK_ENABLED
+                oenginecons.SystemEnv.MEMCHECK_ENABLED
             ] and
             not self._satisfied
         ):
@@ -169,7 +170,7 @@ class Plugin(plugin.PluginBase):
                 raise RuntimeError(_('Aborted by user'))
 
             self.environment[
-                osetupcons.SystemEnv.MEMCHECK_ENABLED
+                oenginecons.SystemEnv.MEMCHECK_ENABLED
             ] = False
 
     @plugin.event(

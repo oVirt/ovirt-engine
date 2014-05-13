@@ -33,6 +33,9 @@ from ovirt_engine import util as outil
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -45,9 +48,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        name=osetupcons.Stages.CONFIG_DB_ENCRYPTION_AVAILABLE,
+        name=oengcommcons.Stages.CONFIG_DB_ENCRYPTION_AVAILABLE,
         after=(
-            osetupcons.Stages.DB_CONNECTION_AVAILABLE,
+            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
             osetupcons.Stages.CA_AVAILABLE,
         ),
     )
@@ -66,7 +69,7 @@ class Plugin(plugin.PluginBase):
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=(
-                    osetupcons.FileLocations.
+                    oenginecons.FileLocations.
                     OVIRT_ENGINE_SERVICE_CONFIG_PKI
                 ),
                 mode=0o600,
@@ -87,31 +90,31 @@ class Plugin(plugin.PluginBase):
                     'ENGINE_PKI_ENGINE_STORE_ALIAS="{engine_store_alias}"\n'
                 ).format(
                     pki_dir=(
-                        osetupcons.FileLocations.
+                        oenginecons.FileLocations.
                         OVIRT_ENGINE_PKIDIR
                     ),
                     ca=(
-                        osetupcons.FileLocations.
+                        oenginecons.FileLocations.
                         OVIRT_ENGINE_PKI_ENGINE_CA_CERT
                     ),
                     engine_cert=(
-                        osetupcons.FileLocations.
+                        oenginecons.FileLocations.
                         OVIRT_ENGINE_PKI_ENGINE_CERT
                     ),
                     trust_store=(
-                        osetupcons.FileLocations.
+                        oenginecons.FileLocations.
                         OVIRT_ENGINE_PKI_ENGINE_TRUST_STORE
                     ),
                     trust_store_password=outil.escape(
-                        osetupcons.Const.PKI_PASSWORD,
+                        oenginecons.Const.PKI_PASSWORD,
                         '"\\$',
                     ),
                     engine_store=(
-                        osetupcons.FileLocations.
+                        oenginecons.FileLocations.
                         OVIRT_ENGINE_PKI_ENGINE_STORE
                     ),
                     engine_store_password=outil.escape(
-                        osetupcons.Const.PKI_PASSWORD,
+                        oenginecons.Const.PKI_PASSWORD,
                         '"\\$',
                     ),
                     engine_store_alias='1',

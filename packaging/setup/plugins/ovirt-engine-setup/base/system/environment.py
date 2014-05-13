@@ -1,4 +1,3 @@
-
 #
 # ovirt-engine-setup -- ovirt engine setup
 # Copyright (C) 2013 Red Hat, Inc.
@@ -17,9 +16,12 @@
 #
 
 
-"""Misc plugin."""
+"""Environment plugin."""
 
 
+import grp
+import os
+import pwd
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -33,23 +35,29 @@ from ovirt_engine_setup import constants as osetupcons
 
 @util.export
 class Plugin(plugin.PluginBase):
-    """Misc plugin."""
+    """Environment plugin."""
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_CLOSEUP,
-        name=osetupcons.Stages.CORE_ENGINE_START,
-        condition=lambda self: not self.environment[
-            osetupcons.CoreEnv.DEVELOPER_MODE
-        ],
+        stage=plugin.Stages.STAGE_INIT,
     )
-    def _closeup(self):
-        self.logger.info(_('Starting engine service'))
-        self.services.state(
-            name=osetupcons.Const.ENGINE_SERVICE_NAME,
-            state=True,
+    def _init(self):
+        if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
+            engineUser = pwd.getpwuid(os.geteuid())[0]
+            engineGroup = grp.getgrgid(os.getegid())[0]
+        else:
+            engineUser = osetupcons.Defaults.DEFAULT_SYSTEM_USER_ENGINE
+            engineGroup = osetupcons.Defaults.DEFAULT_SYSTEM_GROUP_ENGINE
+
+        self.environment.setdefault(
+            osetupcons.SystemEnv.USER_ENGINE,
+            engineUser
+        )
+        self.environment.setdefault(
+            osetupcons.SystemEnv.GROUP_ENGINE,
+            engineGroup
         )
 
 

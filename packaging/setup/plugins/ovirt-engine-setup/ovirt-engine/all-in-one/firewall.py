@@ -29,6 +29,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
 
 
 @util.export
@@ -44,10 +45,10 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         after=(
             osetupcons.Stages.NET_FIREWALL_MANAGER_AVAILABLE,
-            osetupcons.Stages.AIO_CONFIG_AVAILABLE,
+            oenginecons.Stages.AIO_CONFIG_AVAILABLE,
         ),
         # must be run before firewall_manager plugin
-        condition=lambda self: self.environment[osetupcons.AIOEnv.CONFIGURE],
+        condition=lambda self: self.environment[oenginecons.AIOEnv.CONFIGURE],
         # must be always enabled to create examples
     )
     def _configuration(self):

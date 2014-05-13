@@ -87,16 +87,6 @@ class Plugin(plugin.PluginBase):
                     'or after an upgrade from an older installation.'
                 )
             )
-            if os.path.exists(
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
-            ):
-                self.dialog.note(
-                    text=_(
-                        'If you want to cleanup after setup of a previous '
-                        'version, you should use the setup package of that '
-                        'version.'
-                    )
-                )
             raise RuntimeError(
                 _('Could not detect product setup')
             )
@@ -137,8 +127,8 @@ class Plugin(plugin.PluginBase):
                 dialog=self.dialog,
                 name='OVESETUP_CORE_REMOVE',
                 note=_(
-                    'ovirt-engine is about to be removed, data will '
-                    'be lost (@VALUES@) [@DEFAULT@]: '
+                    'Installed ovirt components are about to be removed, '
+                    'data will be lost (@VALUES@) [@DEFAULT@]: '
                 ),
                 prompt=True,
                 true=_('OK'),

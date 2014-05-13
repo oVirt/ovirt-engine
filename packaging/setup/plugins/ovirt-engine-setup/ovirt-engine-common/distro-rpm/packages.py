@@ -48,7 +48,7 @@ class Plugin(plugin.PluginBase):
         version lock transaction element.
         Not that this is real transaction, but we need to
         rollback/commit same as packager.
-        We cannot actually prepare the transaction at prepration
+        We cannot actually prepare the transaction at preparation
         because new packages are not installed.
         But we must restore file as we do not know what packages
         were locked at previous version.
@@ -279,14 +279,6 @@ class Plugin(plugin.PluginBase):
         self.environment.setdefault(
             osetupcons.RPMDistroEnv.VERSION_LOCK_FILTER,
             []
-        )
-        self.environment.setdefault(
-            osetupcons.RPMDistroEnv.ENGINE_PACKAGES,
-            osetupcons.Const.ENGINE_PACKAGE_NAME
-        )
-        self.environment.setdefault(
-            osetupcons.RPMDistroEnv.ENGINE_SETUP_PACKAGES,
-            osetupcons.Const.ENGINE_PACKAGE_SETUP_NAME
         )
         self.environment[
             osetupcons.RPMDistroEnv.PACKAGES_UPGRADE_LIST

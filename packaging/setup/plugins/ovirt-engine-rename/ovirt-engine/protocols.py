@@ -36,6 +36,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
 
 
 @util.export
@@ -52,7 +53,7 @@ class Plugin(plugin.PluginBase):
         self.environment[
             osetupcons.RenameEnv.FILES_TO_BE_MODIFIED
         ].append(
-            osetupcons.FileLocations.
+            oenginecons.FileLocations.
             OVIRT_ENGINE_SERVICE_CONFIG_PROTOCOLS
         )
 
@@ -61,7 +62,7 @@ class Plugin(plugin.PluginBase):
     )
     def _misc(self):
         config = (
-            osetupcons.FileLocations.
+            oenginecons.FileLocations.
             OVIRT_ENGINE_SERVICE_CONFIG_PROTOCOLS
         )
 

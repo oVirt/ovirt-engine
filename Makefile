@@ -145,6 +145,10 @@ BUILD_TARGET=install
 	-e "s|@ENGINE_VAR@|$(PKG_STATE_DIR)|g" \
 	-e "s|@ENGINE_CACHE@|$(PKG_CACHE_DIR)|g" \
 	-e "s|@ENGINE_PID@|$(PID_DIR)/$(ENGINE_NAME).pid|g" \
+	-e "s|@ENGINE_COMMON_USR@|$(DATA_DIR)|g" \
+	-e "s|@SETUP_LOG@|$(PKG_LOG_DIR)|g" \
+	-e "s|@SETUP_USR@|$(DATA_DIR)|g" \
+	-e "s|@SETUP_VAR@|$(PKG_STATE_DIR)|g" \
 	-e "s|@DEV_PYTHON_DIR@|$(DEV_PYTHON_DIR)|g" \
 	-e "s|@RPM_VERSION@|$(RPM_VERSION)|g" \
 	-e "s|@RPM_RELEASE@|$(RPM_RELEASE)|g" \
@@ -184,6 +188,8 @@ GENERATED = \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.sysv \
 	packaging/setup/bin/ovirt-engine-setup.env \
 	packaging/setup/ovirt_engine_setup/config.py \
+	packaging/setup/ovirt_engine_setup/engine/engineconfig.py \
+	packaging/setup/ovirt_engine_setup/engine_common/enginecommonconfig.py \
 	packaging/sys-etc/logrotate.d/ovirt-engine \
 	packaging/sys-etc/logrotate.d/ovirt-engine-notifier \
 	packaging/sys-etc/logrotate.d/ovirt-engine-setup \

@@ -19,7 +19,6 @@
 """Environment plugin."""
 
 
-import grp
 import os
 import pwd
 import gettext
@@ -31,6 +30,8 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -45,41 +46,30 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
-            rootUser = engineUser = apacheUser = pwd.getpwuid(os.geteuid())[0]
-            engineGroup = grp.getgrgid(os.getegid())[0]
+            rootUser = apacheUser = pwd.getpwuid(os.geteuid())[0]
         else:
-            rootUser = osetupcons.Defaults.DEFAULT_SYSTEM_USER_ROOT
-            engineUser = osetupcons.Defaults.DEFAULT_SYSTEM_USER_ENGINE
-            apacheUser = osetupcons.Defaults.DEFAULT_SYSTEM_USER_APACHE
-            engineGroup = osetupcons.Defaults.DEFAULT_SYSTEM_GROUP_ENGINE
+            rootUser = oengcommcons.Defaults.DEFAULT_SYSTEM_USER_ROOT
+            apacheUser = oengcommcons.Defaults.DEFAULT_SYSTEM_USER_APACHE
 
         self.environment.setdefault(
-            osetupcons.SystemEnv.USER_ROOT,
+            oengcommcons.SystemEnv.USER_ROOT,
             rootUser
         )
         self.environment.setdefault(
-            osetupcons.SystemEnv.USER_ENGINE,
-            engineUser
-        )
-        self.environment.setdefault(
-            osetupcons.SystemEnv.USER_APACHE,
+            oengcommcons.SystemEnv.USER_APACHE,
             apacheUser
         )
         self.environment.setdefault(
-            osetupcons.SystemEnv.USER_VDSM,
-            osetupcons.Defaults.DEFAULT_SYSTEM_USER_VDSM
+            oengcommcons.SystemEnv.USER_VDSM,
+            oengcommcons.Defaults.DEFAULT_SYSTEM_USER_VDSM
         )
         self.environment.setdefault(
-            osetupcons.SystemEnv.GROUP_KVM,
-            osetupcons.Defaults.DEFAULT_SYSTEM_GROUP_KVM
+            oengcommcons.SystemEnv.GROUP_KVM,
+            oengcommcons.Defaults.DEFAULT_SYSTEM_GROUP_KVM
         )
         self.environment.setdefault(
-            osetupcons.SystemEnv.GROUP_ENGINE,
-            engineGroup
-        )
-        self.environment.setdefault(
-            osetupcons.SystemEnv.USER_POSTGRES,
-            osetupcons.Defaults.DEFAULT_SYSTEM_USER_POSTGRES
+            oengcommcons.SystemEnv.USER_POSTGRES,
+            oengcommcons.Defaults.DEFAULT_SYSTEM_USER_POSTGRES
         )
 
 

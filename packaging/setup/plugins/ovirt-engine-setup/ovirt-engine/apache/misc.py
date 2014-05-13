@@ -27,7 +27,7 @@ from otopi import util
 from otopi import plugin
 
 
-from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
 
 
 @util.export
@@ -42,7 +42,7 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.ApacheEnv.CONFIGURED,
+            oenginecons.ApacheEnv.CONFIGURED,
             False
         )
 
@@ -51,7 +51,7 @@ class Plugin(plugin.PluginBase):
         priority=plugin.Stages.PRIORITY_LOW,
     )
     def _misc(self):
-        self.environment[osetupcons.ApacheEnv.CONFIGURED] = True
+        self.environment[oenginecons.ApacheEnv.CONFIGURED] = True
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

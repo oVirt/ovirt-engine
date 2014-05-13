@@ -29,6 +29,9 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -44,7 +47,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         after=(
             osetupcons.Stages.NET_FIREWALL_MANAGER_AVAILABLE,
-            osetupcons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
+            oenginecons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
         ),
     )
     def _configuration(self):
@@ -52,20 +55,20 @@ class Plugin(plugin.PluginBase):
             osetupcons.NetEnv.FIREWALLD_SUBST
         ].update({
             '@HTTP_PORT@': self.environment[
-                osetupcons.ConfigEnv.PUBLIC_HTTP_PORT
+                oengcommcons.ConfigEnv.PUBLIC_HTTP_PORT
             ],
             '@HTTPS_PORT@': self.environment[
-                osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT
+                oengcommcons.ConfigEnv.PUBLIC_HTTPS_PORT
             ],
             '@JBOSS_HTTP_PORT@': self.environment[
-                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
+                oengcommcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
             ],
             '@JBOSS_HTTPS_PORT@': self.environment[
-                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT
+                oengcommcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT
             ],
         })
         if self.environment[
-            osetupcons.ConfigEnv.JBOSS_AJP_PORT
+            oengcommcons.ConfigEnv.JBOSS_AJP_PORT
         ] is not None:
             self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
                 {
@@ -78,7 +81,7 @@ class Plugin(plugin.PluginBase):
                 },
             ])
         if self.environment[
-            osetupcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
+            oengcommcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
         ] is not None:
             self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
                 {

@@ -31,6 +31,9 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -68,7 +71,7 @@ class Plugin(plugin.PluginBase):
                             "10-engine-setup.conf"
                         ).format(
                             engine_sysconf=(
-                                osetupcons.FileLocations.
+                                oenginecons.FileLocations.
                                 OVIRT_ENGINE_SYSCONFDIR
                             ),
                         )
@@ -84,10 +87,10 @@ class Plugin(plugin.PluginBase):
                                 osetupcons.ConfigEnv.FQDN
                             ],
                             port=self.environment[
-                                osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT
+                                oengcommcons.ConfigEnv.PUBLIC_HTTPS_PORT
                             ],
                             user=osetupcons.Const.USER_ADMIN,
-                            domain=osetupcons.Const.DOMAIN_INTERNAL,
+                            domain=oenginecons.Const.DOMAIN_INTERNAL,
                         )
                     ),
                     modifiedList=self.environment[

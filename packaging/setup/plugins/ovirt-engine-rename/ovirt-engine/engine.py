@@ -1,3 +1,4 @@
+
 #
 # ovirt-engine-setup -- ovirt engine setup
 # Copyright (C) 2013 Red Hat, Inc.
@@ -16,7 +17,7 @@
 #
 
 
-"""DB pgpass plugin."""
+"""Misc plugin."""
 
 
 import gettext
@@ -28,44 +29,31 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import database
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
 class Plugin(plugin.PluginBase):
-    """DB pgpass plugin."""
+    """Misc plugin."""
+
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_INIT,
+        stage=plugin.Stages.STAGE_CLOSEUP,
+        name=oengcommcons.Stages.CORE_ENGINE_START,
+        condition=lambda self: not self.environment[
+            osetupcons.CoreEnv.DEVELOPER_MODE
+        ],
     )
-    def _init(self):
-        self.environment[osetupcons.DBEnv.PGPASS_FILE] = None
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_VALIDATION,
-        name=osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
-        condition=lambda self: self.environment[
-            osetupcons.DBEnv.PASSWORD
-        ] is not None
-    )
-    def _validation(self):
-        # this required for dbvalidations
-        database.OvirtUtils(
-            plugin=self,
-            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
-        ).createPgPass()
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
-        name=osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
-    )
-    def _misc(self):
-        database.OvirtUtils(
-            plugin=self,
-            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
-        ).createPgPass()
+    def _closeup(self):
+        self.logger.info(_('Starting engine service'))
+        self.services.state(
+            name=oenginecons.Const.ENGINE_SERVICE_NAME,
+            state=True,
+        )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

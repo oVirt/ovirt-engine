@@ -29,6 +29,9 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 
 
 @util.export
@@ -92,12 +95,12 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.DIALOG_TITLES_S_ALLINONE,
+        name=oengcommcons.Stages.DIALOG_TITLES_S_ALLINONE,
         after=(
             osetupcons.Stages.DIALOG_TITLES_E_PACKAGES,
         ),
         condition=lambda self: self.environment[
-            osetupcons.AIOEnv.ENABLE
+            oenginecons.AIOEnv.ENABLE
         ],
     )
     def _title_s_allinone(self):
@@ -107,9 +110,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.DIALOG_TITLES_E_ALLINONE,
+        name=oengcommcons.Stages.DIALOG_TITLES_E_ALLINONE,
         after=(
-            osetupcons.Stages.DIALOG_TITLES_S_ALLINONE,
+            oengcommcons.Stages.DIALOG_TITLES_S_ALLINONE,
         ),
     )
     def _title_e_allinone(self):
@@ -119,7 +122,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_S_NETWORK,
         after=(
-            osetupcons.Stages.DIALOG_TITLES_E_ALLINONE,
+            oengcommcons.Stages.DIALOG_TITLES_E_ALLINONE,
         ),
     )
     def _title_s_network(self):
@@ -139,7 +142,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.DIALOG_TITLES_S_DATABASE,
+        name=oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
         after=(
             osetupcons.Stages.DIALOG_TITLES_E_NETWORK,
         ),
@@ -151,9 +154,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.DIALOG_TITLES_E_DATABASE,
+        name=oengcommcons.Stages.DIALOG_TITLES_E_DATABASE,
         after=(
-            osetupcons.Stages.DIALOG_TITLES_S_DATABASE,
+            oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
         ),
     )
     def _title_e_database(self):
@@ -161,9 +164,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.DIALOG_TITLES_S_ENGINE,
+        name=oenginecons.Stages.DIALOG_TITLES_S_ENGINE,
         after=(
-            osetupcons.Stages.DIALOG_TITLES_E_DATABASE,
+            oengcommcons.Stages.DIALOG_TITLES_E_DATABASE,
         ),
     )
     def _title_s_engine(self):
@@ -173,9 +176,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.DIALOG_TITLES_E_ENGINE,
+        name=oenginecons.Stages.DIALOG_TITLES_E_ENGINE,
         after=(
-            osetupcons.Stages.DIALOG_TITLES_S_ENGINE,
+            oenginecons.Stages.DIALOG_TITLES_S_ENGINE,
         ),
     )
     def _title_e_engine(self):
@@ -183,9 +186,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.DIALOG_TITLES_S_PKI,
+        name=oengcommcons.Stages.DIALOG_TITLES_S_PKI,
         after=(
-            osetupcons.Stages.DIALOG_TITLES_E_ENGINE,
+            oenginecons.Stages.DIALOG_TITLES_E_ENGINE,
         ),
     )
     def _title_s_pki(self):
@@ -195,9 +198,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.DIALOG_TITLES_E_PKI,
+        name=oengcommcons.Stages.DIALOG_TITLES_E_PKI,
         after=(
-            osetupcons.Stages.DIALOG_TITLES_S_PKI,
+            oengcommcons.Stages.DIALOG_TITLES_S_PKI,
         ),
     )
     def _title_e_pki(self):
@@ -205,9 +208,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.DIALOG_TITLES_S_APACHE,
+        name=oengcommcons.Stages.DIALOG_TITLES_S_APACHE,
         after=(
-            osetupcons.Stages.DIALOG_TITLES_E_PKI,
+            oengcommcons.Stages.DIALOG_TITLES_E_PKI,
         ),
     )
     def _title_s_apache(self):
@@ -217,9 +220,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.DIALOG_TITLES_E_APACHE,
+        name=oengcommcons.Stages.DIALOG_TITLES_E_APACHE,
         after=(
-            osetupcons.Stages.DIALOG_TITLES_S_APACHE,
+            oengcommcons.Stages.DIALOG_TITLES_S_APACHE,
         ),
     )
     def _title_e_apache(self):
@@ -229,7 +232,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
         after=(
-            osetupcons.Stages.DIALOG_TITLES_E_APACHE,
+            oengcommcons.Stages.DIALOG_TITLES_E_APACHE,
         ),
     )
     def _title_s_system(self):

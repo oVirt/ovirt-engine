@@ -31,6 +31,9 @@ from otopi import filetransaction
 from otopi import constants as otopicons
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine_common \
+    import enginecommonconstants as oengcommcons
 from ovirt_engine_setup import dialog
 
 
@@ -49,27 +52,27 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.AIOEnv.ENABLE,
+            oenginecons.AIOEnv.ENABLE,
             False
         )
         self.environment.setdefault(
-            osetupcons.AIOEnv.CONFIGURE,
+            oenginecons.AIOEnv.CONFIGURE,
             None
         )
         self.environment.setdefault(
-            osetupcons.AIOEnv.CONTINUE_WITHOUT_AIO,
+            oenginecons.AIOEnv.CONTINUE_WITHOUT_AIO,
             None
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
         after=(
-            osetupcons.Stages.DB_CONNECTION_SETUP,
+            oengcommcons.Stages.DB_CONNECTION_SETUP,
         ),
         condition=lambda self: self.environment[
-            osetupcons.AIOEnv.ENABLE
+            oenginecons.AIOEnv.ENABLE
         ] and self.environment[
-            osetupcons.DBEnv.NEW_DATABASE
+            oengcommcons.EngineDBEnv.NEW_DATABASE
         ],
     )
     def _setup(self):
@@ -80,20 +83,20 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: (
             self._enabled and
             self.environment[
-                osetupcons.AIOEnv.SUPPORTED
+                oenginecons.AIOEnv.SUPPORTED
             ] is False
         ),
-        name=osetupcons.Stages.AIO_CONFIG_NOT_AVAILABLE,
+        name=oenginecons.Stages.AIO_CONFIG_NOT_AVAILABLE,
         before=(
-            osetupcons.Stages.AIO_CONFIG_AVAILABLE,
+            oenginecons.Stages.AIO_CONFIG_AVAILABLE,
         ),
     )
     def _continueSetupWithoutAIO(self):
         if self.environment[
-            osetupcons.AIOEnv.CONTINUE_WITHOUT_AIO
+            oenginecons.AIOEnv.CONTINUE_WITHOUT_AIO
         ] is None:
             self.environment[
-                osetupcons.AIOEnv.CONTINUE_WITHOUT_AIO
+                oenginecons.AIOEnv.CONTINUE_WITHOUT_AIO
             ] = dialog.queryBoolean(
                 dialog=self.dialog,
                 name='OVESETUP_CONTINUE_WITHOUT_AIO',
@@ -108,10 +111,10 @@ class Plugin(plugin.PluginBase):
             )
 
         if self.environment[
-            osetupcons.AIOEnv.CONTINUE_WITHOUT_AIO
+            oenginecons.AIOEnv.CONTINUE_WITHOUT_AIO
         ]:
             self._enabled = False
-            self.environment[osetupcons.AIOEnv.CONFIGURE] = False
+            self.environment[oenginecons.AIOEnv.CONFIGURE] = False
         else:
             raise RuntimeError(
                 _('Aborted by user.')
@@ -120,20 +123,20 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: self._enabled,
-        name=osetupcons.Stages.AIO_CONFIG_AVAILABLE,
+        name=oenginecons.Stages.AIO_CONFIG_AVAILABLE,
         before=(
-            osetupcons.Stages.DIALOG_TITLES_E_ALLINONE,
+            oengcommcons.Stages.DIALOG_TITLES_E_ALLINONE,
         ),
         after=(
-            osetupcons.Stages.DIALOG_TITLES_S_ALLINONE,
+            oengcommcons.Stages.DIALOG_TITLES_S_ALLINONE,
         ),
     )
     def _constomization(self):
         if self.environment[
-            osetupcons.AIOEnv.CONFIGURE
+            oenginecons.AIOEnv.CONFIGURE
         ] is None:
             self.environment[
-                osetupcons.AIOEnv.CONFIGURE
+                oenginecons.AIOEnv.CONFIGURE
             ] = dialog.queryBoolean(
                 dialog=self.dialog,
                 name='OVESETUP_AIO_CONFIGURE',
@@ -144,7 +147,7 @@ class Plugin(plugin.PluginBase):
                 prompt=True,
                 default=False,
             )
-        if self.environment[osetupcons.AIOEnv.CONFIGURE]:
+        if self.environment[oenginecons.AIOEnv.CONFIGURE]:
             self.environment[
                 osetupcons.ConfigEnv.FQDN_REVERSE_VALIDATION
             ] = True
@@ -155,7 +158,7 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self.environment[
-            osetupcons.AIOEnv.CONFIGURE
+            oenginecons.AIOEnv.CONFIGURE
         ],
     )
     def _misc(self):
@@ -164,7 +167,7 @@ class Plugin(plugin.PluginBase):
         """
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
-                name=osetupcons.FileLocations.AIO_POST_INSTALL_CONFIG,
+                name=oenginecons.FileLocations.AIO_POST_INSTALL_CONFIG,
                 content=(
                     '[environment:default]',
                     'OVESETUP_AIO/enable=bool:False',

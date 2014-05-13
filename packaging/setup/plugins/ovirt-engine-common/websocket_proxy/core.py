@@ -28,6 +28,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
 
 
 @util.export
@@ -45,11 +46,11 @@ class Plugin(plugin.PluginBase):
     )
     def _transactionBegin(self):
         if self.services.exists(
-            name=osetupcons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
+            name=oenginecons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
         ):
             self.logger.info(_('Stopping websocket-proxy service'))
             self.services.state(
-                name=osetupcons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
+                name=oenginecons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
                 state=False
             )
 
