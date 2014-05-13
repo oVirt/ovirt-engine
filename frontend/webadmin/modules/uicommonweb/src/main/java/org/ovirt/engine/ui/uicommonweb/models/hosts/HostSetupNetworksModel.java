@@ -69,16 +69,16 @@ public class HostSetupNetworksModel extends EntityModel {
         return (VDS) super.getEntity();
     }
 
-    private EntityModel<Boolean> privateCheckConnectivity;
+    private EntityModel<Boolean> checkConnectivity;
 
     public EntityModel<Boolean> getCheckConnectivity()
     {
-        return privateCheckConnectivity;
+        return checkConnectivity;
     }
 
     private void setCheckConnectivity(EntityModel<Boolean> value)
     {
-        privateCheckConnectivity = value;
+        checkConnectivity = value;
     }
 
     private EntityModel<Integer> connectivityTimeout;
@@ -93,16 +93,16 @@ public class HostSetupNetworksModel extends EntityModel {
         connectivityTimeout = value;
     }
 
-    private EntityModel<Boolean> privateCommitChanges;
+    private EntityModel<Boolean> commitChanges;
 
     public EntityModel<Boolean> getCommitChanges()
     {
-        return privateCommitChanges;
+        return commitChanges;
     }
 
     public void setCommitChanges(EntityModel<Boolean> value)
     {
-        privateCommitChanges = value;
+        commitChanges = value;
     }
 
     private static final EventDefinition NICS_CHANGED_EVENT_DEFINITION = new EventDefinition("NicsChanged", //$NON-NLS-1$
@@ -113,11 +113,11 @@ public class HostSetupNetworksModel extends EntityModel {
     private static final EventDefinition OPERATION_CANDIDATE_EVENT_DEFINITION =
             new EventDefinition("OperationCandidate", NetworkOperationFactory.class); //$NON-NLS-1$
 
-    private Event privateOperationCandidateEvent;
+    private Event operationCandidateEvent;
 
-    private Event privateNicsChangedEvent;
+    private Event nicsChangedEvent;
 
-    private Event privateNetworksChangedEvent;
+    private Event networksChangedEvent;
 
     private List<VdsNetworkInterface> allNics;
 
@@ -220,7 +220,7 @@ public class HostSetupNetworksModel extends EntityModel {
             onOperation(candidate, candidate.getCommand(op1, op2, allNics));
         }
 
-        // raise the candidate event only if it was changed or if a drop occured
+        // raise the candidate event only if it was changed or if a drop occurred
         if (drop || !candidate.equals(currentCandidate) || !equals(op1, currentOp1) || !equals(op2, currentOp2)) {
             currentCandidate = candidate;
             currentOp1 = op1;
@@ -243,7 +243,7 @@ public class HostSetupNetworksModel extends EntityModel {
     }
 
     public Event getNetworksChangedEvent() {
-        return privateNetworksChangedEvent;
+        return networksChangedEvent;
     }
 
     public List<NetworkInterfaceModel> getNics() {
@@ -251,11 +251,11 @@ public class HostSetupNetworksModel extends EntityModel {
     }
 
     public Event getNicsChangedEvent() {
-        return privateNicsChangedEvent;
+        return nicsChangedEvent;
     }
 
     public Event getOperationCandidateEvent() {
-        return privateOperationCandidateEvent;
+        return operationCandidateEvent;
     }
 
     private Set<LogicalNetworkModel> computeLabelChanges(NicLabelModel labelsModel,
@@ -924,7 +924,7 @@ public class HostSetupNetworksModel extends EntityModel {
     }
 
     private void setNetworksChangedEvent(Event value) {
-        privateNetworksChangedEvent = value;
+        networksChangedEvent = value;
     }
 
     private void setNics(Map<String, NetworkInterfaceModel> nics) {
@@ -934,11 +934,11 @@ public class HostSetupNetworksModel extends EntityModel {
     }
 
     private void setNicsChangedEvent(Event value) {
-        privateNicsChangedEvent = value;
+        nicsChangedEvent = value;
     }
 
     private void setOperationCandidateEvent(Event event) {
-        privateOperationCandidateEvent = event;
+        operationCandidateEvent = event;
     }
 
     private void validate() {
