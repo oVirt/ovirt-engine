@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+	xmlns:m="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool">
+
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
+	<ui:style>
+		.macRangeWidget {
+			max-height: 105px;
+		}
+
+		.macRangesLabel {
+			margin-top: 10px;
+			margin-bottom: 5px;
+			margin-left: 5px;
+			font-weight: bold;
+	</ui:style>
+
+	<g:FlowPanel>
+		<ge:EntityModelCheckBoxEditor ui:field="allowDuplicates" />
+		<g:Label text="{constants.macPoolWidgetRangesLabel}" addStyleNames="{style.macRangesLabel}" />
+		<m:MacRangeWidget ui:field="macRanges" addStyleNames="{style.macRangeWidget}" />
+	</g:FlowPanel>
+
+</ui:UiBinder>

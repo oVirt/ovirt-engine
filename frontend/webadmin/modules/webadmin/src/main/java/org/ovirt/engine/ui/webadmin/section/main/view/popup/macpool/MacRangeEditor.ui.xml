@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+
+	<ui:style>
+		.leftBoxStyle {
+			float: left;
+			width: 170px;
+			margin-right: 20px;
+			margin-bottom: 5px;
+		}
+
+		.rightBoxStyle {
+			float: left;
+			width: 155px;
+			margin-right: 20px;
+			margin-bottom: 5px;
+		}
+	</ui:style>
+
+	<g:FlowPanel>
+		<ge:StringEntityModelTextBoxEditor ui:field="leftBound" addStyleNames="{style.leftBoxStyle}" />
+		<ge:StringEntityModelTextBoxEditor ui:field="rightBound" addStyleNames="{style.rightBoxStyle}" />
+	</g:FlowPanel>
+
+</ui:UiBinder>

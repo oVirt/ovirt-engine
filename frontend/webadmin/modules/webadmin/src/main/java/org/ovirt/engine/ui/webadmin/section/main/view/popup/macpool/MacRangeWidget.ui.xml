@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style type="org.ovirt.engine.ui.common.widget.AddRemoveRowWidget.WidgetStyle">
+		.buttonStyle {
+			margin-right: 10px;
+			width: 9px;
+			padding-left: 2px;
+			padding-top: 2px;
+			margin-top: 6px;
+		}
+	</ui:style>
+
+	<g:ScrollPanel>
+		<g:FlowPanel ui:field="contentPanel" />
+	</g:ScrollPanel>
+
+</ui:UiBinder>

@@ -869,6 +869,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Invalid MAC address")
     String invalidMacAddressMsg();
 
+    @DefaultStringValue("The right bound of the MAC address range must not be smaller than its left bound.")
+    String invalidMacRangeRightBound();
+
     @DefaultStringValue("Note: Local Storage is already configured for this Host. The Host belongs to")
     String noteLocalStorageAlreadyConfiguredForThisHostMsg();
 

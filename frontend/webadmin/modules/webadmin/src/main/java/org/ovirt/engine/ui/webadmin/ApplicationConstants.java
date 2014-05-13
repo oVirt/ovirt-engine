@@ -3344,6 +3344,19 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Override QoS")
     String qosOverrideLabel();
 
+    // MAC pool widget
+    @DefaultStringValue("From")
+    String macPoolWidgetLeftBound();
+
+    @DefaultStringValue("To")
+    String macPoolWidgetRightBound();
+
+    @DefaultStringValue("Allow Duplicates")
+    String macPoolWidgetAllowDuplicates();
+
+    @DefaultStringValue("MAC Address Ranges")
+    String macPoolWidgetRangesLabel();
+
     @DefaultStringValue("Cluster Policies")
     String configureClusterPolicyTabLabel();
 
