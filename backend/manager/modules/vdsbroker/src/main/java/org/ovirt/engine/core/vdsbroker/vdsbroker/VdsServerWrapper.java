@@ -1384,6 +1384,15 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc updateVmPolicy(Map info) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.updateVmPolicy(info));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc setMOMPolicyParameters(Map<String, Object> key_value_store) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.setMOMPolicyParameters(key_value_store);

@@ -1064,7 +1064,10 @@ public enum AuditLogType {
     USER_REMOVE_AUDIT_LOG(10600),
     USER_REMOVE_AUDIT_LOG_FAILED(10601, AuditLogSeverity.ERROR),
     USER_CLEAR_ALL_DISMISSED_AUDIT_LOG(10602),
-    USER_CLEAR_ALL_DISMISSED_AUDIT_LOG_FAILED(10603, AuditLogSeverity.ERROR);
+    USER_CLEAR_ALL_DISMISSED_AUDIT_LOG_FAILED(10603, AuditLogSeverity.ERROR),
+
+    VM_SLA_POLICY(10550),
+    FAILED_VM_SLA_POLICY(10551, AuditLogSeverity.ERROR);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are suppressed.

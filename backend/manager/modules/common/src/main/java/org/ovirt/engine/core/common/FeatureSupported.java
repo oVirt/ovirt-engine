@@ -61,6 +61,16 @@ public class FeatureSupported {
     /**
      * @param version
      *            Compatibility version to check for.
+     * @return <code>true</code> if VM SLA policy is supported for the version,
+     *         <code>false</code> if it's not.
+     */
+    public static boolean vmSlaPolicy(Version version) {
+        return supportedInConfig(ConfigValues.VmSlaPolicySupported, version);
+    }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
      * @return <code>true</code> if bridges element reported by VDSM is supported for the version, <code>false</code> if
      *         it's not.
      */
