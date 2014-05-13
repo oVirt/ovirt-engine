@@ -14,8 +14,10 @@ import javax.naming.AuthenticationException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -30,6 +32,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -47,6 +50,8 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
@@ -82,6 +87,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         addCanDoActionMessage(String.format("$server %1$s", getParameters().getvds().getHostName()));
     }
 
+    protected Provider getHostProvider() {
+        return DbFacade.getInstance().getProviderDao().get(getParameters().getProviderId());
+    }
+
     @Override
     protected void executeCommand() {
         Guid oVirtId = getParameters().getVdsForUniqueId();
@@ -105,6 +114,24 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 return null;
             }
         });
+
+        if (getParameters().getAddProvisioned()) {
+            HostProviderProxy proxy =
+                    ((HostProviderProxy) ProviderProxyFactory.getInstance().create(getHostProvider()));
+            proxy.provisionHost(
+                    getParameters().getvds(),
+                    getParameters().getHostGroup(),
+                    getParameters().getComputeResource(),
+                    getParameters().getHostMac(),
+                    getParameters().getDiscoverName(),
+                    getParameters().getPassword()
+            );
+
+            AuditLogableBase logable = new AuditLogableBase();
+            logable.setVds(getParameters().getvds());
+            logable.addCustomValue("HostGroupName", getParameters().getHostGroup().getName());
+            AuditLogDirector.log(logable, AuditLogType.VDS_PROVISION);
+        }
 
         // set vds spm id
         if (getVdsGroup().getStoragePoolId() != null) {
@@ -137,9 +164,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 return null;
             }
         });
-        // do not install vds's which added in pending mode (currently power
-        // clients). they are installed as part of the approve process
-        if (Config.<Boolean> getValue(ConfigValues.InstallVds) && !getParameters().getAddPending()) {
+        // do not install vds's which added in pending mode or for provisioning (currently power
+        // clients). they are installed as part of the approve process or automatically after provision
+        if (Config.<Boolean> getValue(ConfigValues.InstallVds) &&
+            !getParameters().getAddPending() &&
+            !getParameters().getAddProvisioned()) {
             final InstallVdsParameters installVdsParameters = new InstallVdsParameters(getVdsId(), getParameters().getPassword());
             installVdsParameters.setAuthMethod(getParameters().getAuthMethod());
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
@@ -242,6 +271,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         // TODO: oVirt type - here oVirt behaves like power client?
         if (getParameters().getAddPending()) {
             vdsDynamic.setStatus(VDSStatus.PendingApproval);
+        }
+        else if (getParameters().getAddProvisioned()) {
+            vdsDynamic.setStatus(VDSStatus.InstallingOS);
         }
         else if (Config.<Boolean> getValue(ConfigValues.InstallVds)) {
             vdsDynamic.setStatus(VDSStatus.Installing);
@@ -386,7 +418,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     protected boolean canConnect(VDS vds) {
         // execute the connectivity and id uniqueness validation for VDS type hosts
         if (
-            !getParameters().getAddPending() &&
+            !getParameters().getAddPending() && !getParameters().getAddProvisioned() &&
             Config.<Boolean> getValue(ConfigValues.InstallVds)
         ) {
             try (final EngineSSHClient sshclient = getSSHClient()) {

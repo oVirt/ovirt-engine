@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EditableOnVdsStatus {
     VDSStatus[] statuses() default { VDSStatus.NonResponsive, VDSStatus.Maintenance, VDSStatus.Down,
-            VDSStatus.Unassigned, VDSStatus.InstallFailed, VDSStatus.PendingApproval };
+            VDSStatus.Unassigned, VDSStatus.InstallFailed, VDSStatus.PendingApproval, VDSStatus.InstallingOS };
 
 }

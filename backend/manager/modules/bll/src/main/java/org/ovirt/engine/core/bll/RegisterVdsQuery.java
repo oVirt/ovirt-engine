@@ -29,6 +29,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInMaintenanceMode
 public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCommandBase<P> {
@@ -358,6 +360,21 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                                 vds_byHostName.getStaticData(), "" , false);
                         parameters.setShouldBeLogged(false);
                         parameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+
+                        // If host exists in InstallingOs status, remove it from DB and move on
+                        final VDS foundVds = DbFacade.getInstance().getVdsDao().getByName(parameters.getVdsStaticData().getName());
+                        if ((foundVds != null) && (foundVds.getDynamicData().getStatus() == VDSStatus.InstallingOS)) {
+                            TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
+                                @Override
+                                public Void runInTransaction() {
+                                    getDbFacade().getVdsStatisticsDao().remove(foundVds.getId());
+                                    getDbFacade().getVdsDynamicDao().remove(foundVds.getId());
+                                    getDbFacade().getVdsStaticDao().remove(foundVds.getId());
+                                    return null;
+                                }
+                            });
+                        }
+
                         VdcReturnValueBase ret = Backend.getInstance().runInternalAction(VdcActionType.UpdateVds, parameters);
 
                         if (ret == null || !ret.getSucceeded()) {

@@ -87,6 +87,16 @@ public final class VdcActionUtils {
                         VdcActionType.ClearNonResponsiveVdsVms,
                         VdcActionType.RefreshHostCapabilities));
         vdsMatrix.put(
+                VDSStatus.InstallingOS,
+                EnumSet.of(VdcActionType.UpdateVds,
+                        VdcActionType.ActivateVds,
+                        VdcActionType.MaintenanceVds,
+                        VdcActionType.AttachVdsToTag,
+                        VdcActionType.ClearNonResponsiveVdsVms,
+                        VdcActionType.RefreshHostCapabilities,
+                        VdcActionType.ApproveVds,
+                        VdcActionType.RefreshHostCapabilities));
+        vdsMatrix.put(
                 VDSStatus.InstallFailed,
                 EnumSet.of(VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities));
         vdsMatrix.put(

@@ -23,7 +23,8 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
             addCanDoActionMessage(VdcBllMessages.VDS_APPROVE_VDS_NOT_FOUND);
             returnValue = false;
         } else if (getVds().getStatus() != VDSStatus.PendingApproval
-                && getVds().getStatus() != VDSStatus.InstallFailed) {
+                && getVds().getStatus() != VDSStatus.InstallFailed
+                && getVds().getStatus() != VDSStatus.InstallingOS) {
             addCanDoActionMessage(VdcBllMessages.VDS_APPROVE_VDS_IN_WRONG_STATUS.toString());
             returnValue = false;
         }

@@ -238,7 +238,8 @@ public class VdsManager {
                             setLastUpdate();
                         }
                         if (!getInitialized() && _vds.getStatus() != VDSStatus.NonResponsive
-                                && _vds.getStatus() != VDSStatus.PendingApproval) {
+                                && _vds.getStatus() != VDSStatus.PendingApproval
+                                && _vds.getStatus() != VDSStatus.InstallingOS) {
                             log.infoFormat("Initializing Host: {0}", _vds.getName());
                             ResourceManager.getInstance().HandleVdsFinishedInit(_vds.getId());
                             setInitialized(true);
@@ -315,7 +316,9 @@ public class VdsManager {
                 _vds.getStatus() != VDSStatus.InstallFailed &&
                 _vds.getStatus() != VDSStatus.Reboot &&
                 _vds.getStatus() != VDSStatus.Maintenance &&
-                _vds.getStatus() != VDSStatus.PendingApproval && _vds.getStatus() != VDSStatus.Down);
+                _vds.getStatus() != VDSStatus.PendingApproval &&
+                _vds.getStatus() != VDSStatus.InstallingOS &&
+                _vds.getStatus() != VDSStatus.Down);
     }
 
     private void HandleVdsRecoveringException(VDSRecoveringException ex) {

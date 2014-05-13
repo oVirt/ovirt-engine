@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.host.provider.foreman;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -18,11 +20,17 @@ import org.apache.commons.httpclient.HttpsURL;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.BaseProviderProxy;
 import org.ovirt.engine.core.bll.provider.ExternalTrustStoreInitializer;
+import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
+import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
+import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
+import org.ovirt.engine.core.common.businessentities.ExternalOperatingSystem;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -38,12 +46,24 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     private HttpClient httpClient = new HttpClient();
 
     private ObjectMapper objectMapper = new ObjectMapper();
-    private static final String API_ENTRY_POINT = "/api";
-    private static final String HOSTS_ENTRY_POINT = API_ENTRY_POINT + "/hosts";
+    private static final String API_ENTRY_POINT = "/api/v2";
     private static final String JSON_FORMAT = "format=json";
+
+    private static final String HOSTS_ENTRY_POINT = API_ENTRY_POINT + "/hosts";
     private static final String ALL_HOSTS_QUERY = HOSTS_ENTRY_POINT + "?" + JSON_FORMAT;
     private static final String SEARCH_SECTION_FORMAT = "search=%1$s";
     private static final String SEARCH_QUERY_FORMAT = "?" + SEARCH_SECTION_FORMAT + "&" + JSON_FORMAT;
+
+    private static final String HOST_GROUPS_ENTRY_POINT = API_ENTRY_POINT + "/hostgroups";
+    private static final String HOST_GROUPS_QUERY = HOST_GROUPS_ENTRY_POINT + "?" + JSON_FORMAT;
+
+    private static final String COMPUTE_RESOURCES_HOSTS_ENTRY_POINT = API_ENTRY_POINT + "/compute_resources" + "?" + JSON_FORMAT;
+
+    private static final String DISCOVERED_HOSTS = "/discovered_hosts";
+    private static final String DISCOVERED_HOSTS_ENTRY_POINT = API_ENTRY_POINT + DISCOVERED_HOSTS;
+
+    private static final String OPERATION_SYSTEM_ENTRY_POINT = API_ENTRY_POINT + "/operatingsystems";
+    private static final String OPERATION_SYSTEM_QUERY = OPERATION_SYSTEM_ENTRY_POINT + "?" + JSON_FORMAT;
 
     public ForemanHostProviderProxy(Provider hostProvider) {
         super(hostProvider);
@@ -51,35 +71,131 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         initHttpClient();
     }
 
+    private List<VDS> runHostListMethod(HttpMethod httpMethod) {
+        try{
+            runHttpMethod(httpClient, httpMethod);
+            ForemanHostWrapper fhw = objectMapper.readValue(httpMethod.getResponseBody(), ForemanHostWrapper.class);
+            return mapHosts(Arrays.asList(fhw.getResults()));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private List<ExternalDiscoveredHost> runDiscoveredHostListMethod(HttpMethod httpMethod) {
+        try{
+            runHttpMethod(httpClient, httpMethod);
+            ForemanDiscoveredHostWrapper fdw =
+                    objectMapper.readValue(httpMethod.getResponseBody(), ForemanDiscoveredHostWrapper.class);
+            return mapDiscoveredHosts(Arrays.asList(fdw.getResults()));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private List<ExternalHostGroup> runHostGroupListMethod(HttpMethod httpMethod) {
+        try{
+            runHttpMethod(httpClient, httpMethod);
+            ForemanHostGroupWrapper fhgw =
+                    objectMapper.readValue(httpMethod.getResponseBody(), ForemanHostGroupWrapper.class);
+            return mapHostGroups(Arrays.asList(fhgw.getResults()));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private List<ExternalOperatingSystem> runOperationSystemMethod(HttpMethod httpMethod) {
+        try{
+            runHttpMethod(httpClient, httpMethod);
+            ForemanOperatingSystemWrapper fosw =
+                    objectMapper.readValue(httpMethod.getResponseBody(), ForemanOperatingSystemWrapper.class);
+            return mapOperationSystem(Arrays.asList(fosw.getResults()));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private List<ExternalComputeResource> runComputeResourceMethod(HttpMethod httpMethod) {
+        try{
+            runHttpMethod(httpClient, httpMethod);
+            ForemanComputerResourceWrapper fcrw =
+                    objectMapper.readValue(httpMethod.getResponseBody(), ForemanComputerResourceWrapper.class);
+          return mapComputeResource(Arrays.asList(fcrw.getResults()));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // Mapping
+    private List<ExternalComputeResource> mapComputeResource(List<ForemanComputerResource> foremanCrs) {
+        ArrayList<ExternalComputeResource> crs = new ArrayList<ExternalComputeResource>(foremanCrs.size());
+        for (ForemanComputerResource cr : foremanCrs) {
+            ExternalComputeResource computeResource = new ExternalComputeResource();
+            computeResource.setName(cr.getName());
+            computeResource.setUrl(cr.getUrl());
+            computeResource.setId(cr.getId());
+            crs.add(computeResource);
+        }
+        return crs;
+    }
+
+    private List<ExternalOperatingSystem> mapOperationSystem(List<ForemanOperatingSystem> foremanOss) {
+        ArrayList<ExternalOperatingSystem> oss = new ArrayList<ExternalOperatingSystem>(foremanOss.size());
+        for (ForemanOperatingSystem os : foremanOss) {
+            ExternalOperatingSystem eos = new ExternalOperatingSystem();
+            eos.setName(os.getName());
+            eos.setId(os.getId());
+            oss.add(eos);
+        }
+        return oss;
+    }
+
+    private List<ExternalDiscoveredHost> mapDiscoveredHosts(List<ForemanDiscoveredHost> foremanHosts) {
+        ArrayList<ExternalDiscoveredHost> hosts = new ArrayList<ExternalDiscoveredHost>(foremanHosts.size());
+        for (ForemanDiscoveredHost host : foremanHosts) {
+            ExternalDiscoveredHost dhost = new ExternalDiscoveredHost();
+            dhost.setName(host.getName());
+            dhost.setIp(host.getIp());
+            dhost.setMac(host.getMac());
+            hosts.add(dhost);
+        }
+        return hosts;
+    }
+
+    private List<VDS> mapHosts(List<ForemanHost> foremanHosts) {
+        ArrayList<VDS> hosts = new ArrayList<VDS>(foremanHosts.size());
+        for (ForemanHost host : foremanHosts) {
+            VDS vds = new VDS();
+            vds.setVdsName(host.getName());
+            vds.setHostName(host.getIp());
+            hosts.add(vds);
+        }
+        return hosts;
+    }
+
+    private List<ExternalHostGroup> mapHostGroups(List<ForemanHostGroup> foremanHostGroups) {
+        ArrayList<ExternalHostGroup> hostGroups = new ArrayList<ExternalHostGroup>(foremanHostGroups.size());
+
+        for (ForemanHostGroup hostGroup : foremanHostGroups) {
+            ExternalHostGroup hostgroup = new ExternalHostGroup();
+            hostgroup.setHostgroupId(hostGroup.getId());
+            hostgroup.setName(hostGroup.getName());
+            hostgroup.setOsId(hostGroup.getOperatingsystem_id());
+            hostgroup.setEnvironmentId(hostGroup.getEnvironment_id());
+            hostgroup.setDomainId(hostGroup.getDomain_id());
+            hostgroup.setSubnetId(hostGroup.getSubnet_id());
+            hostgroup.setParameters(hostGroup.getParameters());
+            hostgroup.setMediumId(hostGroup.getMedium_id());
+            hostgroup.setArchitectureId(hostGroup.getArchitecture_id());
+            hostgroup.setPtableId(hostGroup.getPtable_id());
+            hostGroups.add(hostgroup);
+        }
+        return hostGroups;
+    }
+
     @Override
     public List<VDS> getAll() {
         HttpMethod method = new GetMethod(ALL_HOSTS_QUERY);
         return runHostListMethod(method);
-    }
-
-    private List<VDS> runHostListMethod(HttpMethod httpMethod) {
-        try{
-            runHttpMethod(httpClient, httpMethod);
-            ForemanHostWrapper[] hosts = objectMapper.readValue(httpMethod.getResponseBody(), ForemanHostWrapper[].class);
-            return map(Arrays.asList(hosts));
-        } catch (IOException e) {
-            handleException(e);
-        }
-        return null;
-    }
-
-    private List<VDS> map(List<ForemanHostWrapper> foremanHosts) {
-        ArrayList<VDS> hosts = new ArrayList<VDS>(foremanHosts.size());
-
-        for (ForemanHostWrapper host : foremanHosts) {
-            VDS vds = new VDS();
-            String hostName = host.getHost().getName();
-            vds.setVdsName(hostName);
-            vds.setHostName(hostName);
-            hosts.add(vds);
-        }
-
-        return hosts;
     }
 
     @Override
@@ -90,9 +206,114 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     @Override
+    public List<ExternalDiscoveredHost> getDiscoveredHosts() {
+        HttpMethod method = new GetMethod(DISCOVERED_HOSTS_ENTRY_POINT);
+        return runDiscoveredHostListMethod(method);
+    }
+
+    @Override
+    public List<ExternalHostGroup> getHostGroups() {
+        HttpMethod method = new GetMethod(HOST_GROUPS_QUERY);
+        return runHostGroupListMethod(method);
+    }
+
+    @Override
+    public List<ExternalComputeResource> getComputeResources() {
+        HttpMethod method = new GetMethod(COMPUTE_RESOURCES_HOSTS_ENTRY_POINT);
+        return runComputeResourceMethod(method);
+    }
+
+    private List<ExternalOperatingSystem> getOperationSystems() {
+        HttpMethod method = new GetMethod(OPERATION_SYSTEM_QUERY);
+        return runOperationSystemMethod(method);
+    }
+
+    @Override
+    public void provisionHost(VDS vds,
+                              ExternalHostGroup hg,
+                              ExternalComputeResource computeResource,
+                              String mac,
+                              String discoverName,
+                              String rootPassword) {
+        final String entityBody = "{\n" +
+                "    \"discovered_host\": {\n" +
+                "        \"name\": \"" + vds.getName() + "\",\n" +
+                "        \"hostgroup_id\": \"" + hg.getHostgroupId() + "\",\n" +
+                "        \"environment_id\": \"" + hg.getEnvironmentId() + "\",\n" +
+                "        \"mac\": \"" + mac + "\",\n" +
+                "        \"domain_id\": \"" + hg.getDomainId() + "\",\n" +
+                "        \"subnet_id\": \"" + hg.getSubnetId() + "\",\n" +
+                "        \"ip\": \"" + vds.getHostName() + "\",\n" +
+                "        \"architecture_id\": \"" + hg.getArchitectureId() + "\",\n" +
+                "        \"operatingsystem_id\": \"" + hg.getOsId() + "\",\n" +
+                "        \"medium_id\": \"" + hg.getMediumId() + "\",\n" +
+                "        \"ptable_id\": \"" + hg.getPtableId() + "\",\n" +
+                "        \"root_pass\": \"" + rootPassword + "\",\n" +
+                "        \"host_parameters_attributes\": [\n" +
+                "           {\n" +
+               "                \"name\": \"host_ovirt_id\",\n" +
+                "                \"value\": \"" + vds.getStaticData().getId() + "\",\n" +
+                "                \"_destroy\": \"false\",\n" +
+                "                \"nested\": \"\"\n" +
+                "            },\n" +
+                "           {\n" +
+                "                \"name\": \"compute_resource_id\",\n" +
+                "                \"value\": \"" + computeResource.getId() + "\",\n" +
+                "                \"_destroy\": \"false\",\n" +
+                "                \"nested\": \"\"\n" +
+                "            },\n" +
+                "           {\n" +
+                "                \"name\": \"pass\",\n" +
+                // todo: current set pass hardcore to "321321321", waits for alonbl for md5 util and will use also rootPassword field
+                "                \"value\": \"" + "$1$s/abrbU5$qSMGyWzwtBAQXLQN0VlQg0" + "\",\n" +
+                "                \"_destroy\": \"false\",\n" +
+                "                \"nested\": \"\"\n" +
+                "            },\n" +
+                "           {\n" +
+                "                \"name\": \"management\",\n" +
+                "                \"value\": \"" + computeResource.getUrl().replaceAll("(http://|/api)", "") + "\",\n" +
+                "                \"_destroy\": \"false\",\n" +
+                "                \"nested\": \"\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        PutMethod httpMethod = new PutMethod(DISCOVERED_HOSTS_ENTRY_POINT + "/" + discoverName);
+        RequestEntity entity = new RequestEntity() {
+            @Override
+            public boolean isRepeatable() {
+                return false;
+            }
+
+            @Override
+            public void writeRequest(OutputStream outputStream) throws IOException {
+                PrintWriter pr = new PrintWriter(outputStream);
+                pr.println(entityBody);
+                pr.flush();
+            }
+
+            @Override
+            public long getContentLength() {
+                return entityBody.getBytes().length;
+            }
+
+            @Override
+            public String getContentType() {
+                return "application/json";
+            }
+        };
+        httpMethod.setRequestEntity(entity);
+        runHttpMethod(httpClient, httpMethod);
+    }
+
+    @Override
     public void testConnection() {
         HttpMethod httpMethod = new GetMethod(API_ENTRY_POINT);
         runHttpMethod(httpClient, httpMethod);
+
+        // validate permissions to discovered host and host group.
+        getDiscoveredHosts();
+        getHostGroups();
     }
 
     @Override
@@ -111,7 +332,10 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         try {
             int result = httpClient.executeMethod(httpMethod);
 
-            if (result != HttpURLConnection.HTTP_OK) {
+            // after post request the return value is HTTP_MOVED_TEMP on success
+            if (result != HttpURLConnection.HTTP_OK && result != HttpURLConnection.HTTP_MOVED_TEMP) {
+                // check other results and report better.
+                // 422: conflicts in data
                 throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE);
             }
         } catch (HttpException e) {
@@ -135,10 +359,12 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 httpClient.getHostConfiguration().setHost(hostUrl.getHost(), hostPort);
             }
             objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            Credentials hostProviderCredentials = new UsernamePasswordCredentials(hostProvider.getUsername(), hostProvider.getPassword());
-            httpClient.getState().setCredentials(AuthScope.ANY, hostProviderCredentials);
-            // Required when working with foreman's /api rather than accessing directly to /hosts
-            httpClient.getState().setAuthenticationPreemptive(true);
+            if (hostProvider.getUsername() != null && hostProvider.getPassword() != null) {
+                Credentials hostProviderCredentials = new UsernamePasswordCredentials(hostProvider.getUsername(), hostProvider.getPassword());
+                httpClient.getState().setCredentials(AuthScope.ANY, hostProviderCredentials);
+                // Required when working with foreman's /api rather than accessing directly to /hosts
+                httpClient.getParams().setAuthenticationPreemptive(true);
+            }
         } catch (RuntimeException e) {
             handleException(e);
         }

@@ -2,11 +2,18 @@ package org.ovirt.engine.core.bll.host.provider.foreman;
 
 import java.io.Serializable;
 
-public class ForemanHost implements Serializable {
-    private static final long serialVersionUID = 468697212133957493L;
-    private String name;
+public class ForemanDiscoveredHost implements Serializable {
+    private static final long serialVersionUID = -6900772579678185173L;
     private String ip;
+    private String name;
+    private String mac;
 
+    public String getMac() {
+        return mac;
+    }
+    public void setMac(String mac) {
+        this.mac = mac;
+    }
     public String getIp() {
         return ip;
     }

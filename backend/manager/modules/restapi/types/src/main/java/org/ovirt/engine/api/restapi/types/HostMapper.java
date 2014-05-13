@@ -617,6 +617,8 @@ public class HostMapper {
             return HostStatus.INITIALIZING;
         case Connecting:
             return HostStatus.CONNECTING;
+        case InstallingOS:
+            return HostStatus.INSTALLING_OS;
         default:
             return null;
         }

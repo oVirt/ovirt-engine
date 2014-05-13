@@ -86,7 +86,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 // check if a name is updated to an existing vds name
                 else if (!StringUtils.equalsIgnoreCase(_oldVds.getName(), getParameters().getVdsStaticData()
                         .getName())
-                        && getVdsDAO().getByName(vdsName) != null) {
+                        && getVdsDAO().getByName(vdsName) != null)  {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 } else if (!StringUtils.equalsIgnoreCase(_oldVds.getHostName(), getParameters().getVdsStaticData()
                         .getHostName())
@@ -94,7 +94,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST);
                 } else if (getParameters().getInstallVds() && _oldVds.getStatus() != VDSStatus.Maintenance
                         && _oldVds.getStatus() != VDSStatus.NonOperational
-                        && _oldVds.getStatus() != VDSStatus.InstallFailed) {
+                        && _oldVds.getStatus() != VDSStatus.InstallFailed
+                        && _oldVds.getStatus() != VDSStatus.InstallingOS) {
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
                 } else if (getParameters().getInstallVds()
                         && getParameters().getAuthMethod() == AuthenticationMethod.Password

@@ -31,7 +31,8 @@ public enum HostStatus {
     CONNECTING,
     REBOOT,
     UNASSIGNED,
-    UP;
+    UP,
+    INSTALLING_OS;
 
     public String value() {
         return name().toLowerCase();

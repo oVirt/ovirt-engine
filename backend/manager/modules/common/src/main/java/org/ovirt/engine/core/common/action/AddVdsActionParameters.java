@@ -1,33 +1,52 @@
 package org.ovirt.engine.core.common.action;
 
+import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
+import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddVdsActionParameters extends VdsOperationActionParameters {
     private static final long serialVersionUID = 8452910234577071082L;
 
+    private Guid vdsId;
+    private boolean privateAddPending;
+    private boolean glusterPeerProbeNeeded;
+    private boolean privateAddProvisioned;
+    private Guid providerId;
+    private ExternalHostGroup hostGroup;
+    private String hostMac;
+    private String discoverName;
+    private ExternalComputeResource computeResource;
+    public Guid getProviderId() { return providerId; };
+    public ExternalHostGroup getHostGroup() { return hostGroup; };
+    public String getHostMac() { return hostMac; };
+    public String getDiscoverName() { return discoverName; };
+    public ExternalComputeResource getComputeResource() { return computeResource; }
+
     public AddVdsActionParameters(VdsStatic vdsStatic, String password) {
         super(vdsStatic, password);
         glusterPeerProbeNeeded = true;
+        privateAddProvisioned = false;
     }
 
-    private Guid vdsId;
-
-    private boolean privateAddPending;
-
-    private boolean glusterPeerProbeNeeded;
-
-    public boolean getAddPending() {
-        return privateAddPending;
+    public void initVdsActionParametersForProvision(Guid pid,
+                                                    ExternalHostGroup hg,
+                                                    ExternalComputeResource cr,
+                                                    String mac,
+                                                    String discover_name) {
+        privateAddProvisioned = true;
+        hostMac = mac;
+        hostGroup = hg;
+        providerId = pid;
+        discoverName = discover_name;
+        computeResource = cr;
     }
 
-    public void setAddPending(boolean value) {
-        privateAddPending = value;
+    public boolean getAddProvisioned() {
+        return privateAddProvisioned;
     }
 
-    public AddVdsActionParameters() {
-        glusterPeerProbeNeeded = true;
-    }
+    public AddVdsActionParameters() { glusterPeerProbeNeeded = true; }
 
     public void setVdsForUniqueId(Guid serverForUniqueId) {
         this.vdsId = serverForUniqueId;
@@ -43,5 +62,13 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
 
     public boolean isGlusterPeerProbeNeeded() {
         return this.glusterPeerProbeNeeded;
+    }
+
+    public boolean getAddPending() {
+        return privateAddPending;
+    }
+
+    public void setAddPending(boolean value) {
+        privateAddPending = value;
     }
 }

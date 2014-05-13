@@ -1,18 +1,11 @@
-package org.ovirt.engine.core.bll.host.provider.foreman;
+package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-public class ForemanHost implements Serializable {
+public class ExternalHost implements Serializable {
     private static final long serialVersionUID = 468697212133957493L;
     private String name;
-    private String ip;
 
-    public String getIp() {
-        return ip;
-    }
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
     public String getName() {
         return name;
     }
