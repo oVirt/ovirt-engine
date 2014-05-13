@@ -946,6 +946,22 @@ public class SyntaxChecker implements ISyntaxChecker {
 
             } else if (generalQuery) {
                 inQuery = "(" + innerQuery;
+            } else if (searchObjStr.equals(SearchObjects.VDS_OBJ_NAME) && primeryKey.equals("vds_id")
+                    && wherePhrase.toString().contains("storage_domains_with_hosts_view.storage_name")
+                    && !wherePhrase.toString().contains("AND") && !wherePhrase.toString().contains("OR")) {
+                ListIterator<SyntaxObject> syntaxObjects = syntax.listIterator(0);
+                boolean notFoundValue = true;
+                String value = null;
+                while (syntaxObjects.hasNext() && notFoundValue) {
+                    SyntaxObject obj = syntaxObjects.next();
+                    if (obj.getType() == SyntaxObjectType.CONDITION_VALUE) {
+                        value = obj.getBody();
+                        notFoundValue = false;
+                    }
+                }
+                inQuery =
+                        "SELECT * FROM vds WHERE ( storage_pool_id IN (SELECT storage_pool_id FROM storage_domains WHERE  storage_domains.storage_name LIKE '"
+                                + value + "')";
             } else {
                 inQuery = StringFormat.format(
                         "SELECT * FROM %1$s WHERE ( %2$s IN (%3$s)",
