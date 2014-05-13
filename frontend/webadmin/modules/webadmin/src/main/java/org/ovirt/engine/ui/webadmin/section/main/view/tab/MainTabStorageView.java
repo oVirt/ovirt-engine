@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.searchbackend.StorageDomainFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
@@ -55,6 +56,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 return object.getStorageName();
             }
         };
+        nameColumn.makeSortable(StorageDomainFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.domainNameStorage(), "150px"); //$NON-NLS-1$
 
         CommentColumn<StorageDomain> commentColumn = new CommentColumn<StorageDomain>();
@@ -74,6 +76,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 return object.getStorageType();
             }
         };
+        storageTypeColumn.makeSortable(StorageDomainFieldAutoCompleter.TYPE);
         getTable().addColumn(storageTypeColumn, constants.storageTypeStorage(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> formatColumn = new EnumColumn<StorageDomain, StorageFormatType>() {
@@ -95,6 +98,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                         }
                     }
                 };
+        crossDataCenterStatusColumn.makeSortable(StorageDomainFieldAutoCompleter.STATUS);
         getTable().addColumn(crossDataCenterStatusColumn, constants.crossDcStatusStorage(), "210px"); //$NON-NLS-1$
 
         StorageSizeColumn<StorageDomain> totalSpaceColumn = new StorageSizeColumn<StorageDomain>() {
@@ -113,6 +117,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 return (long) availableDiskSize;
             }
         };
+        freeSpaceColumn.makeSortable(StorageDomainFieldAutoCompleter.SIZE);
         getTable().addColumn(freeSpaceColumn, constants.freeSpaceStorage(), "130px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> descriptionColumn = new TextColumnWithTooltip<StorageDomain>() {
@@ -121,6 +126,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 return object.getDescription();
             }
         };
+        descriptionColumn.makeSortable(StorageDomainFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descriptionColumn, constants.domainDescriptionStorage(), "200px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.newDomainStorage()) {
