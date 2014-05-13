@@ -630,4 +630,5 @@ public class FixturesTool {
     public static final Guid DEFAULT_MAC_POOL_ID = new Guid("8c3a60e9-6a66-40db-84e0-c74077991775");
 
     public static final Guid DISK_PROFILE_1 = new Guid("fd81f1e1-785b-4579-ab75-1419ebb87052");
+    public static final Guid DISK_PROFILE_2 = new Guid("fd81f1e1-785b-4579-ab75-1419ebb87053");
 }

@@ -57,6 +57,7 @@ public class LiveMigrateVmDisksCommandTest {
     private final Guid vmId = Guid.newGuid();
     private final Guid quotaId = Guid.newGuid();
     private final Guid storagePoolId = Guid.newGuid();
+    private final Guid diskProfileId = Guid.newGuid();
 
     @Mock
     private DiskImageDAO diskImageDao;
@@ -103,11 +104,23 @@ public class LiveMigrateVmDisksCommandTest {
     }
 
     private List<LiveMigrateDiskParameters> createLiveMigrateVmDisksParameters() {
-        return Arrays.asList(new LiveMigrateDiskParameters(diskImageId, srcStorageId, dstStorageId, vmId, quotaId, diskImageGroupId));
+        return Arrays.asList(new LiveMigrateDiskParameters(diskImageId,
+                srcStorageId,
+                dstStorageId,
+                vmId,
+                quotaId,
+                diskProfileId,
+                diskImageGroupId));
     }
 
     private List<LiveMigrateDiskParameters> createLiveMigrateVmDisksParameters(Guid srcStorageId, Guid dstStorageId) {
-        return Arrays.asList(new LiveMigrateDiskParameters(diskImageId, srcStorageId, dstStorageId, vmId, quotaId, diskImageGroupId));
+        return Arrays.asList(new LiveMigrateDiskParameters(diskImageId,
+                srcStorageId,
+                dstStorageId,
+                vmId,
+                quotaId,
+                diskProfileId,
+                diskImageGroupId));
     }
 
     private void createParameters() {

@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.dao;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -56,7 +59,8 @@ public class ImageStorageDomainMapDaoTest extends BaseDAOTestCase {
         image_storage_domain_map entry =
                 new image_storage_domain_map(EXISTING_IMAGE_ID_WITH_NO_MAP_ENTRY,
                         EXISTING_DOMAIN_ID,
-                        FixturesTool.DEFAULT_QUOTA_GENERAL);
+                        FixturesTool.DEFAULT_QUOTA_GENERAL,
+                        FixturesTool.DISK_PROFILE_1);
         dao.save(entry);
         List<image_storage_domain_map> entries = dao.getAllByImageId(EXISTING_IMAGE_ID_WITH_NO_MAP_ENTRY);
         assertNotNull(entries);
@@ -100,5 +104,22 @@ public class ImageStorageDomainMapDaoTest extends BaseDAOTestCase {
         quotaId = image_storage_domain_map.getQuotaId();
         // check that the new quota is the inserted one
         assertEquals("quota wasn't changed", quotaId, FixturesTool.DEFAULT_QUOTA_GENERAL);
+    }
+
+    @Test
+    public void testChangeDiskProfileForDisk() {
+        // fetch image
+        image_storage_domain_map image_storage_domain_map = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
+        // test that the current disk profile doesn't equal with the new disk profile
+        assertThat("Same source and dest disk profile id, cannot perform test",
+                image_storage_domain_map.getDiskProfileId(), not(equalTo(FixturesTool.DISK_PROFILE_2)));
+        // change to newDiskProfileId
+        dao.updateDiskProfileByImageGroupIdAndStorageDomainId(EXISTING_DISK_ID, EXISTING_DOMAIN_ID, FixturesTool.DISK_PROFILE_2);
+        // fetch the image again
+        image_storage_domain_map = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
+        // check that the new disk profile is the inserted one
+        assertEquals("disk profile wasn't changed",
+                image_storage_domain_map.getDiskProfileId(),
+                FixturesTool.DISK_PROFILE_2);
     }
 }

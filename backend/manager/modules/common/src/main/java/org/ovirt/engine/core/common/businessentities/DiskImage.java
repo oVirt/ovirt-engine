@@ -34,6 +34,8 @@ public class DiskImage extends DiskImageBase implements IImage {
     private double actualDiskWithSnapthotsSize;
     private ArrayList<Guid> quotaIds;
     private ArrayList<String> quotaNames;
+    private ArrayList<Guid> diskProfileIds;
+    private ArrayList<String> diskProfileNames;
     private String vmSnapshotDescription;
 
     public DiskImage() {
@@ -379,6 +381,41 @@ public class DiskImage extends DiskImageBase implements IImage {
         return quotaNames.get(0);
     }
 
+    public ArrayList<Guid> getDiskProfileIds() {
+        return diskProfileIds;
+    }
+
+    public void setDiskProfileIds(ArrayList<Guid> diskProfileIds) {
+        this.diskProfileIds = diskProfileIds;
+    }
+
+    public ArrayList<String> getDiskProfileNames() {
+        return diskProfileNames;
+    }
+
+    public void setDiskProfileNames(ArrayList<String> diskProfileNames) {
+        this.diskProfileNames = diskProfileNames;
+    }
+
+    public Guid getDiskProfileId() {
+        if (diskProfileIds == null || diskProfileIds.isEmpty()) {
+            return null;
+        }
+        return diskProfileIds.get(0);
+    }
+
+    public void setDiskProfileId(Guid diskProfileId) {
+        diskProfileIds = new ArrayList<Guid>();
+        diskProfileIds.add(diskProfileId);
+    }
+
+    public String getDiskProfileName() {
+        if (diskProfileNames == null || diskProfileNames.isEmpty()) {
+            return null;
+        }
+        return diskProfileNames.get(0);
+    }
+
     public static DiskImage copyOf(DiskImage diskImage) {
         DiskImage di = new DiskImage();
 
@@ -392,6 +429,12 @@ public class DiskImage extends DiskImageBase implements IImage {
         }
         if (diskImage.getQuotaNames() != null) {
             di.setQuotaNames(new ArrayList<String>(diskImage.getQuotaNames()));
+        }
+        if (diskImage.getDiskProfileIds() != null) {
+            di.setDiskProfileIds(new ArrayList<Guid>(diskImage.getDiskProfileIds()));
+        }
+        if (diskImage.getDiskProfileNames() != null) {
+            di.setDiskProfileNames(new ArrayList<String>(diskImage.getDiskProfileNames()));
         }
         di.setQuotaEnforcementType(diskImage.getQuotaEnforcementType());
         di.setActive(diskImage.getActive());
@@ -457,6 +500,9 @@ public class DiskImage extends DiskImageBase implements IImage {
         result = prime * result + ((readLatency == null) ? 0 : readLatency.hashCode());
         result = prime * result + ((writeLatency == null) ? 0 : writeLatency.hashCode());
         result = prime * result + ((flushLatency == null) ? 0 : flushLatency.hashCode());
+        result = prime * result + ((diskProfileIds == null) ? 0 : diskProfileIds.hashCode());
+        result = prime * result + ((diskProfileNames == null) ? 0 : diskProfileNames.hashCode());
+
         return result;
     }
 
@@ -487,7 +533,9 @@ public class DiskImage extends DiskImageBase implements IImage {
                 && writeRateFromDiskImageDynamic == other.writeRateFromDiskImageDynamic
                 && ObjectUtils.objectsEqual(readLatency, other.readLatency)
                 && ObjectUtils.objectsEqual(writeLatency, other.writeLatency)
-                && ObjectUtils.objectsEqual(flushLatency, other.flushLatency));
+                && ObjectUtils.objectsEqual(flushLatency, other.flushLatency)
+                && ObjectUtils.haveSameElements(diskProfileIds, other.diskProfileIds)
+                && ObjectUtils.haveSameElements(diskProfileNames, other.diskProfileNames));
     }
 
 }

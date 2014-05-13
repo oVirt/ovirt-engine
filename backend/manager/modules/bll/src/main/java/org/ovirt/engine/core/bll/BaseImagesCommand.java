@@ -236,6 +236,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         retDiskImage.setId(getImageGroupId());
         retDiskImage.setLastModifiedDate(new Date());
         retDiskImage.setQuotaId(getParameters().getQuotaId());
+        retDiskImage.setDiskProfileId(getParameters().getDiskProfileId());
         retDiskImage.setDiskAlias(getParameters().getDiskAlias());
         return retDiskImage;
     }
@@ -265,7 +266,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         diskDynamic.setactual_size(image.getActualSizeInBytes());
         getDiskImageDynamicDAO().save(diskDynamic);
         image_storage_domain_map image_storage_domain_map = new image_storage_domain_map(image.getImageId(),
-                image.getStorageIds().get(0), image.getQuotaId());
+                image.getStorageIds().get(0), image.getQuotaId(), image.getDiskProfileId());
         getImageStorageDomainMapDao().save(image_storage_domain_map);
         boolean isDiskAdded = saveDiskIfNotExists(image);
         if (compensationContext != null) {
@@ -401,7 +402,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         DbFacade.getInstance().getImageDao().save(diskImage.getImage());
         image_storage_domain_map image_storage_domain_map = new image_storage_domain_map(diskImage.getImageId(),
                 diskImage.getStorageIds()
-                        .get(0), diskImage.getQuotaId());
+                        .get(0), diskImage.getQuotaId(), diskImage.getDiskProfileId());
         DbFacade.getInstance()
                 .getImageStorageDomainMapDao()
                 .save(image_storage_domain_map);

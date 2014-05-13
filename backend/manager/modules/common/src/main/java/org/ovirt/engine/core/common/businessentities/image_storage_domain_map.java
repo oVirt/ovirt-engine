@@ -8,16 +8,18 @@ public class image_storage_domain_map implements BusinessEntity<ImageStorageDoma
 
     private ImageStorageDomainMapId id;
     private Guid quotaId;
+    private Guid diskProfileId;
 
     public image_storage_domain_map() {
         id = new ImageStorageDomainMapId();
     }
 
-    public image_storage_domain_map(Guid image_id, Guid storage_domain_id, Guid quotaId) {
+    public image_storage_domain_map(Guid image_id, Guid storage_domain_id, Guid quotaId, Guid diskProfileId) {
         this();
         this.id.setImageId(image_id);
         this.id.setStorageDomainId(storage_domain_id);
         this.quotaId = quotaId;
+        this.diskProfileId = diskProfileId;
     }
 
     public Guid getstorage_domain_id() {
@@ -44,12 +46,21 @@ public class image_storage_domain_map implements BusinessEntity<ImageStorageDoma
         this.quotaId = quotaId;
     }
 
+    public Guid getDiskProfileId() {
+        return diskProfileId;
+    }
+
+    public void setDiskProfileId(Guid diskProfileId) {
+        this.diskProfileId = diskProfileId;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
+        result = prime * result + ((diskProfileId == null) ? 0 : diskProfileId.hashCode());
         return result;
     }
 
@@ -66,7 +77,8 @@ public class image_storage_domain_map implements BusinessEntity<ImageStorageDoma
         }
         image_storage_domain_map other = (image_storage_domain_map) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(quotaId, other.quotaId));
+                && ObjectUtils.objectsEqual(quotaId, other.quotaId)
+                && ObjectUtils.objectsEqual(diskProfileId, other.diskProfileId));
     }
 
     @Override

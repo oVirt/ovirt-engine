@@ -705,6 +705,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         storageIds.add(storageId);
         newImage.setStorageIds(storageIds);
         newImage.setQuotaId(image.getQuotaId());
+        newImage.setDiskProfileId(image.getDiskProfileId());
         return newImage;
     }
 
@@ -976,6 +977,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 tempVar.setEntityInfo(getParameters().getEntityInfo());
                 tempVar.setParentParameters(getParameters());
                 tempVar.setQuotaId(diskInfoDestinationMap.get(dit.getId()).getQuotaId());
+                tempVar.setDiskProfileId(diskInfoDestinationMap.get(dit.getId()).getDiskProfileId());
                 VdcReturnValueBase result = runInternalActionWithTasksContext(VdcActionType.CreateSnapshotFromTemplate, tempVar);
 
                 /**

@@ -79,6 +79,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                 getParameters().getDiskAlias() : getDiskImage().getDiskAlias());
         newImage.setVmSnapshotId(getParameters().getVmSnapshotId());
         newImage.setQuotaId(getParameters().getQuotaId());
+        newImage.setDiskProfileId(getParameters().getDiskProfileId());
         newImage.setParentId(Guid.Empty);
         newImage.setImageTemplateId(Guid.Empty);
         newImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(getParameters().getDestinationStorageDomainId())));

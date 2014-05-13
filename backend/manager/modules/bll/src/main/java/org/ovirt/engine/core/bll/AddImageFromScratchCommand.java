@@ -66,6 +66,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         newDiskImage.setImageStatus(ImageStatus.LOCKED);
         newDiskImage.setVmSnapshotId(getParameters().getVmSnapshotId());
         newDiskImage.setQuotaId(getParameters().getQuotaId());
+        newDiskImage.setDiskProfileId(getParameters().getDiskProfileId());
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override

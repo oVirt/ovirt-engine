@@ -52,11 +52,11 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         implements QuotaStorageDependent {
 
     private List<PermissionSubject> listPermissionSubjects;
-    private Map<Guid, List<Disk>> otherVmDisks = new HashMap<>();
-    private List<VM> vmsDiskSnapshotPluggedTo = new LinkedList<>();
-    private List<VM> vmsDiskPluggedTo = new LinkedList<>();
-    private List<VM> vmsDiskOrSnapshotPluggedTo = new LinkedList<>();
-    private List<VM> vmsDiskOrSnapshotAttachedTo = new LinkedList<>();
+    private final Map<Guid, List<Disk>> otherVmDisks = new HashMap<>();
+    private final List<VM> vmsDiskSnapshotPluggedTo = new LinkedList<>();
+    private final List<VM> vmsDiskPluggedTo = new LinkedList<>();
+    private final List<VM> vmsDiskOrSnapshotPluggedTo = new LinkedList<>();
+    private final List<VM> vmsDiskOrSnapshotAttachedTo = new LinkedList<>();
 
     /**
      * vm device for the given vm and disk
@@ -331,7 +331,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             listPermissionSubjects.add(new PermissionSubject(diskId,
                     VdcObjectType.Disk,
                     ActionGroup.EDIT_DISK_PROPERTIES));
-
             if (getOldDisk() != null && getNewDisk() != null && getOldDisk().getSgio() != getNewDisk().getSgio()) {
                 listPermissionSubjects.add(new PermissionSubject(diskId,
                         VdcObjectType.Disk,
@@ -359,6 +358,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     }
                     getImageDao().update(diskImage.getImage());
                     updateQuota(diskImage);
+                    updateDiskProfile();
                 }
 
                 reloadDisks();
@@ -381,8 +381,20 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         });
     }
 
+    protected void updateDiskProfile() {
+        if (isDiskImage()) {
+            DiskImage oldDisk = (DiskImage) getOldDisk();
+            DiskImage newDisk = (DiskImage) getNewDisk();
+            if (!Objects.equals(oldDisk.getDiskProfileId(), newDisk.getDiskProfileId())) {
+                getImageStorageDomainMapDao().updateDiskProfileByImageGroupIdAndStorageDomainId(newDisk.getId(),
+                        newDisk.getStorageIds().get(0),
+                        newDisk.getDiskProfileId());
+            }
+        }
+    }
+
     protected void updateQuota(DiskImage diskImage) {
-        if (isQuotaValidationNeeded()) {
+        if (isDiskImage()) {
             DiskImage oldDisk = (DiskImage) getOldDisk();
             if (!Objects.equals(oldDisk.getQuotaId(), diskImage.getQuotaId())) {
                 getImageStorageDomainMapDao().updateQuotaForImageAndSnapshots(diskImage.getId(),
@@ -498,12 +510,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return jobProperties;
     }
 
-    private boolean isQuotaValidationNeeded() {
+    private boolean isDiskImage() {
         return getOldDisk() != null && getNewDisk() != null && DiskStorageType.IMAGE == getOldDisk().getDiskStorageType();
     }
 
     protected Guid getQuotaId() {
-        if (getNewDisk() != null && isQuotaValidationNeeded()) {
+        if (getNewDisk() != null && isDiskImage()) {
             return ((DiskImage) getNewDisk()).getQuotaId();
         }
         return null;
@@ -513,7 +525,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<>();
 
-        if (isQuotaValidationNeeded()) {
+        if (isDiskImage()) {
             DiskImage oldDiskImage = (DiskImage) getOldDisk();
             DiskImage newDiskImage = (DiskImage) getNewDisk();
 

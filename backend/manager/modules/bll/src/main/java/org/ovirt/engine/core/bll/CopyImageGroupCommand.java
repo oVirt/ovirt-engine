@@ -113,7 +113,9 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             if (!shouldUpdateStorageDisk() && getParameters().getAddImageDomainMapping()) {
                 getImageStorageDomainMapDao().save
                         (new image_storage_domain_map(getParameters().getImageId(),
-                                getParameters().getStorageDomainId(), getParameters().getQuotaId()));
+                                getParameters().getStorageDomainId(),
+                                getParameters().getQuotaId(),
+                                getParameters().getDiskProfileId()));
             }
 
             setSucceeded(true);
@@ -177,7 +179,8 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                 getImageStorageDomainMapDao().save
                         (new image_storage_domain_map(snapshot.getImageId(),
                                 getParameters().getStorageDomainId(),
-                                getParameters().getQuotaId()));
+                                getParameters().getQuotaId(),
+                                getParameters().getDiskProfileId()));
             }
         }
         super.endSuccessfully();

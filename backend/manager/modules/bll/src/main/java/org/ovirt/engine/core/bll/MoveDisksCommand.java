@@ -170,6 +170,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
                 moveDiskParameters.getStorageDomainId(),
                 vmId,
                 moveDiskParameters.getQuotaId(),
+                moveDiskParameters.getDiskProfileId(),
                 diskMap.get(moveDiskParameters.getImageId()).getId());
     }
 

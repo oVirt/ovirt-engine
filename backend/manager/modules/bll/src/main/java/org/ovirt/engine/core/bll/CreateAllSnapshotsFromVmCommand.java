@@ -277,6 +277,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         result.setDescription(getParameters().getDescription());
         result.setSessionId(getParameters().getSessionId());
         result.setQuotaId(image.getQuotaId());
+        result.setDiskProfileId(image.getDiskProfileId());
         result.setVmSnapshotId(newActiveSnapshotId);
         result.setEntityInfo(getParameters().getEntityInfo());
         result.setParentCommand(parentCommand);
