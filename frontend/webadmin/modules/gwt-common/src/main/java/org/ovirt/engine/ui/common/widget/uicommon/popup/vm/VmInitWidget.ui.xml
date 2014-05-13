@@ -60,13 +60,23 @@
         <g:FlowPanel ui:field="syspreptOptionsContent">
             <ge:StringEntityModelTextBoxEditor ui:field="windowsHostnameEditor" />
             <ge:ListModelSuggestBoxEditor ui:field="sysprepDomainEditor" />
+            <ge:StringEntityModelTextBoxEditor ui:field="sysprepOrgNameEditor" />
+            <ge:StringEntityModelTextBoxEditor ui:field="activeDirectoryOUEditor" />
             <ge:EntityModelCheckBoxEditor ui:field="windowsSyspreptimeZoneEnabledEditor" />
             <e:ListModelListBoxEditor ui:field="windowsSysprepTimeZoneEditor" />
-            <ge:StringEntityModelTextBoxEditor ui:field="inputLocaleEditor" />
-            <ge:StringEntityModelTextBoxEditor ui:field="uiLanguageEditor" />
-            <ge:StringEntityModelTextBoxEditor ui:field="systemLocaleEditor" />
-            <ge:StringEntityModelTextBoxEditor ui:field="userLocaleEditor" />
-            <ge:StringEntityModelTextBoxEditor ui:field="activeDirectoryOUEditor" />
+            <d:AdvancedParametersExpander ui:field="sysprepPasswordExpander" addStyleNames="{style.verticalPanel}"/>
+                <g:FlowPanel ui:field="sysprepPasswordExpanderContent" >
+                    <ge:EntityModelCheckBoxEditor ui:field="sysprepPasswordSetEditor" />
+                    <ge:StringEntityModelPasswordBoxEditor ui:field="sysprepAdminPasswordEditor" />
+                    <ge:StringEntityModelPasswordBoxEditor ui:field="sysprepAdminPasswordVerificationEditor" />
+                </g:FlowPanel>
+            <d:AdvancedParametersExpander ui:field="sysprepInputsExpander" addStyleNames="{style.verticalPanel}"/>
+                <g:FlowPanel ui:field="sysprepInputsExpanderContent" >
+                    <ge:StringEntityModelTextBoxEditor ui:field="inputLocaleEditor" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="uiLanguageEditor" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="systemLocaleEditor" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="userLocaleEditor" />
+                </g:FlowPanel>
             <d:AdvancedParametersExpander ui:field="sysprepScriptExpander" addStyleNames="{style.verticalPanel}"/>
             <g:FlowPanel ui:field="sysprepScriptExpanderContent" >
                 <ge:StringEntityModelTextAreaEditor ui:field="sysprepScriptEditor" labelStyleName="{style.displayNone}" />
@@ -84,9 +94,9 @@
 
             <g:FlowPanel ui:field="authenticationExpanderContent">
                 <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor" />
-                <ge:EntityModelCheckBoxEditor ui:field="passwordSetEditor" />
-                <ge:StringEntityModelPasswordBoxEditor ui:field="rootPasswordEditor" />
-                <ge:StringEntityModelPasswordBoxEditor ui:field="rootPasswordVerificationEditor" />
+                <ge:EntityModelCheckBoxEditor ui:field="cloudInitPasswordSetEditor" />
+                <ge:StringEntityModelPasswordBoxEditor ui:field="cloudInitRootPasswordEditor" />
+                <ge:StringEntityModelPasswordBoxEditor ui:field="cloudInitRootPasswordVerificationEditor" />
                 <ge:StringEntityModelTextAreaEditor ui:field="authorizedKeysEditor" />
                 <ge:EntityModelCheckBoxEditor ui:field="regenerateKeysEnabledEditor" />
             </g:FlowPanel>

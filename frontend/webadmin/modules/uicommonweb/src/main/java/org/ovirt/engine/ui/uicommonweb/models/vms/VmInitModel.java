@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostnameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.MatchFieldsValidator;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -78,6 +79,14 @@ public class VmInitModel extends Model {
     }
     private void setWindowsHostname(EntityModel<String> value) {
         privateWindowsHostname = value;
+    }
+
+    private EntityModel<String> privateSysprepOrgName;
+    public EntityModel<String> getSysprepOrgName() {
+        return privateSysprepOrgName;
+    }
+    private void setSysprepOrgName(EntityModel<String> value) {
+        privateSysprepOrgName = value;
     }
 
     private EntityModel<String> privateHostname;
@@ -164,7 +173,7 @@ public class VmInitModel extends Model {
     }
 
     public boolean getAuthorizedKeysEnabled() {
-        return !StringHelper.isNullOrEmpty(getRootPassword().getEntity());
+        return !StringHelper.isNullOrEmpty(getCloudInitRootPassword().getEntity());
     }
 
     private EntityModel<String> privateAuthorizedKeys;
@@ -201,33 +210,64 @@ public class VmInitModel extends Model {
         privateTimeZoneList = value;
     }
 
+    public boolean getSysprepPasswordEnabled() {
+        return !StringHelper.isNullOrEmpty(getSysprepAdminPassword().getEntity());
+    }
+
     public boolean getRootPasswordEnabled() {
-        return !StringHelper.isNullOrEmpty(getRootPassword().getEntity());
+        return !StringHelper.isNullOrEmpty(getCloudInitRootPassword().getEntity());
     }
 
-    private EntityModel<String> privateRootPassword;
-    public EntityModel<String> getRootPassword() {
-        return privateRootPassword;
+    private EntityModel<String> privateCloudInitRootPassword;
+    public EntityModel<String> getCloudInitRootPassword() {
+        return privateCloudInitRootPassword;
     }
-    private void setRootPassword(EntityModel<String> value) {
-        privateRootPassword = value;
-    }
-
-    private EntityModel<Boolean> privatePasswordSet;
-    public EntityModel<Boolean> getPasswordSet() {
-        return privatePasswordSet;
+    private void setCloudInitRootPassword(EntityModel<String> value) {
+        privateCloudInitRootPassword = value;
     }
 
-    private void setPasswordSet(EntityModel<Boolean> value) {
-        privatePasswordSet = value;
+    private EntityModel<String> privateCloudInitRootPasswordVerification;
+    public EntityModel<String> getCloudInitRootPasswordVerification() {
+        return privateCloudInitRootPasswordVerification;
+    }
+    private void setCloudInitRootPasswordVerification(EntityModel<String> value) {
+        privateCloudInitRootPasswordVerification = value;
     }
 
-    private EntityModel<String> privateRootPasswordVerification;
-    public EntityModel<String> getRootPasswordVerification() {
-        return privateRootPasswordVerification;
+    private EntityModel<Boolean> privateCloudInitPasswordSet;
+    public EntityModel<Boolean> getCloudInitPasswordSet() {
+        return privateCloudInitPasswordSet;
     }
-    private void setRootPasswordVerification(EntityModel<String> value) {
-        privateRootPasswordVerification = value;
+
+    private void setCloudInitPasswordSet(EntityModel<Boolean> value) {
+        privateCloudInitPasswordSet = value;
+    }
+
+
+    private EntityModel<String> privateSysprepAdminPassword;
+    public EntityModel<String> getSysprepAdminPassword() {
+        return privateSysprepAdminPassword;
+    }
+    private void setSysprepAdminPassword(EntityModel<String> value) {
+        privateSysprepAdminPassword = value;
+    }
+
+
+    private EntityModel<String> privateSysprepAdminPasswordVerification;
+    public EntityModel<String> getSysprepAdminPasswordVerification() {
+        return privateSysprepAdminPasswordVerification;
+    }
+    private void setSysprepAdminPasswordVerification(EntityModel<String> value) {
+        privateSysprepAdminPasswordVerification = value;
+    }
+
+    private EntityModel<Boolean> privateSysprepPasswordSet;
+    public EntityModel<Boolean> getSysprepPasswordSet() {
+        return privateSysprepPasswordSet;
+    }
+
+    private void setSysprepPasswordSet(EntityModel<Boolean> value) {
+        privateSysprepPasswordSet = value;
     }
 
 
@@ -411,6 +451,7 @@ public class VmInitModel extends Model {
         setWindowsSysprepTimeZone(new ListModel<Map.Entry<String, String>>());
         setWindowsSysprepTimeZoneEnabled(new EntityModel<Boolean>());
         setWindowsHostname(new EntityModel<String>());
+        setSysprepOrgName(new EntityModel<String>());
         setSysprepDomain(new ListModel<String>());
         setInputLocale(new EntityModel<String>());
         setUiLanguage(new EntityModel<String>());
@@ -426,10 +467,15 @@ public class VmInitModel extends Model {
         setTimeZoneEnabled(new EntityModel<Boolean>());
         setTimeZoneList(new ListModel<Map.Entry<String, String>>());
         setUserName(new EntityModel<String>());
-        setRootPassword(new EntityModel<String>());
-        setRootPasswordVerification(new EntityModel<String>());
-        setPasswordSet(new EntityModel<Boolean>());
-        getPasswordSet().getEntityChangedEvent().addListener(this);
+        setCloudInitRootPassword(new EntityModel<String>());
+        setCloudInitRootPasswordVerification(new EntityModel<String>());
+        setCloudInitPasswordSet(new EntityModel<Boolean>());
+        getCloudInitPasswordSet().getEntityChangedEvent().addListener(this);
+        setSysprepAdminPassword(new EntityModel<String>());
+        setSysprepAdminPasswordVerification(new EntityModel<String>());
+        setSysprepPasswordSet(new EntityModel<Boolean>());
+        getSysprepPasswordSet().getEntityChangedEvent().addListener(this);
+
 
         setNetworkEnabled(new EntityModel<Boolean>());
         setNetworkSelectedName(new EntityModel<String>());
@@ -475,10 +521,13 @@ public class VmInitModel extends Model {
         getNetworkEnabled().setEntity(false);
         getAttachmentEnabled().setEntity(false);
 
-        getPasswordSet().setEntity(false);
-        getPasswordSet().setIsChangable(false);
+        getCloudInitPasswordSet().setEntity(false);
+        getCloudInitPasswordSet().setIsChangable(false);
+        getSysprepPasswordSet().setEntity(false);
+        getSysprepPasswordSet().setIsChangable(false);
 
         getWindowsHostname().setEntity("");
+        getSysprepOrgName().setEntity("");
         getInputLocale().setEntity("");
         getUiLanguage().setEntity("");
         getSystemLocale().setEntity("");
@@ -486,8 +535,10 @@ public class VmInitModel extends Model {
         getSysprepScript().setEntity("");
         getHostname().setEntity("");
         getUserName().setEntity("");
-        getRootPassword().setEntity("");
-        getRootPasswordVerification().setEntity("");
+        getCloudInitRootPassword().setEntity("");
+        getCloudInitRootPasswordVerification().setEntity("");
+        getSysprepAdminPassword().setEntity("");
+        getSysprepAdminPasswordVerification().setEntity("");
         getAuthorizedKeys().setEntity("");
         getRegenerateKeysEnabled().setEntity(false);
         getCustomScript().setEntity("");
@@ -521,6 +572,9 @@ public class VmInitModel extends Model {
                 getHostname().setEntity(vmInit.getHostname());
                 getWindowsHostname().setEntity(vmInit.getHostname());
             }
+            if (!StringHelper.isNullOrEmpty(vmInit.getOrgName())) {
+                getSysprepOrgName().setEntity(vmInit.getOrgName());
+            }
             updateSysprepDomain(vmInit.getDomain());
             if (!StringHelper.isNullOrEmpty(vmInit.getInputLocale())) {
                 getInputLocale().setEntity(vmInit.getInputLocale());
@@ -551,11 +605,16 @@ public class VmInitModel extends Model {
             }
 
             if (!StringHelper.isNullOrEmpty(vmInit.getRootPassword())) {
-                getRootPassword().setEntity(vmInit.getRootPassword());
-                getRootPasswordVerification().setEntity(vmInit.getRootPassword());
+                getCloudInitRootPassword().setEntity(vmInit.getRootPassword());
+                getCloudInitRootPasswordVerification().setEntity(vmInit.getRootPassword());
+                getSysprepAdminPassword().setEntity(vmInit.getRootPassword());
+                getSysprepAdminPasswordVerification().setEntity(vmInit.getRootPassword());
             }
-            getPasswordSet().setEntity(vmInit.isPasswordAlreadyStored());
-            getPasswordSet().setIsChangable(vmInit.isPasswordAlreadyStored());
+            getCloudInitPasswordSet().setEntity(vmInit.isPasswordAlreadyStored());
+            getCloudInitPasswordSet().setIsChangable(vmInit.isPasswordAlreadyStored());
+            getSysprepPasswordSet().setEntity(vmInit.isPasswordAlreadyStored());
+            getSysprepPasswordSet().setIsChangable(vmInit.isPasswordAlreadyStored());
+
 
             if (!StringHelper.isNullOrEmpty(vmInit.getAuthorizedKeys())) {
                 getAuthorizedKeys().setEntity(vmInit.getAuthorizedKeys());
@@ -642,6 +701,23 @@ public class VmInitModel extends Model {
     public boolean validate() {
         getHostname().setIsValid(true);
         getWindowsHostname().setIsValid(true);
+        getSysprepAdminPassword().setIsValid(true);
+        getSysprepAdminPasswordVerification().setIsValid(true);
+        getCloudInitRootPassword().setIsValid(true);
+        getCloudInitRootPasswordVerification().setIsValid(true);
+
+        if (this.isWindowsOS) {
+            if (getSysprepPasswordEnabled()) {
+                getSysprepAdminPassword().validateEntity(new IValidation[] { new NotEmptyValidation(), new MatchFieldsValidator(getSysprepAdminPassword().getEntity(),
+                        getSysprepAdminPasswordVerification().getEntity()) });
+            }
+        } else {
+            if (getRootPasswordEnabled()) {
+                getCloudInitRootPassword().validateEntity(new IValidation[] { new NotEmptyValidation(), new MatchFieldsValidator(getCloudInitRootPassword().getEntity(),
+                        getCloudInitRootPasswordVerification().getEntity()) });
+            }
+        }
+
         if (getHostnameEnabled()) {
             if (this.isWindowsOS) {
                 getWindowsHostname().validateEntity(new IValidation[] { new HostnameValidation() });
@@ -661,24 +737,7 @@ public class VmInitModel extends Model {
             getTimeZoneList().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
-        getRootPassword().setIsValid(true);
-        getRootPasswordVerification().setIsValid(true);
-        if (getRootPasswordEnabled()) {
-            getRootPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
-            if (getRootPassword().getIsValid()) {
-                if (!(getRootPassword().getEntity())
-                        .equals(getRootPasswordVerification().getEntity())) {
-                    ArrayList<String> reasons = new ArrayList<String>();
-                    reasons.add(rootPasswordMatchMessage);
-                    getRootPassword().setInvalidityReasons(reasons);
-                    getRootPassword().setIsValid(false);
-                }
-            }
-            if (!getRootPassword().getIsValid()) {
-                getRootPasswordVerification().setInvalidityReasons(getRootPassword().getInvalidityReasons());
-                getRootPasswordVerification().setIsValid(false);
-            }
-        }
+
 
         boolean networkIsValid = true;
         getNetworkList().setIsValid(true);
@@ -738,7 +797,8 @@ public class VmInitModel extends Model {
                 && getSysprepDomain().getIsValid()
                 && getAuthorizedKeys().getIsValid()
                 && getTimeZoneList().getIsValid()
-                && getRootPassword().getIsValid()
+                && getCloudInitRootPassword().getIsValid()
+                && getSysprepAdminPassword().getIsValid()
                 && networkIsValid
                 && dnsIsValid;
     }
@@ -812,15 +872,21 @@ public class VmInitModel extends Model {
             vmInit.setUserLocale((String)getUserLocale().getEntity());
             vmInit.setCustomScript((String) getSysprepScript().getEntity());
             vmInit.setActiveDirectoryOU((String) getActiveDirectoryOU().getEntity());
+            if (getSysprepPasswordEnabled()) {
+                vmInit.setRootPassword(getSysprepAdminPassword().getEntity());
+            }
+            vmInit.setPasswordAlreadyStored(getSysprepPasswordSet().getEntity());
+            vmInit.setOrgName((String) getSysprepOrgName().getEntity());
         } else {
             vmInit.setCustomScript((String) getCustomScript().getEntity());
+            if (getRootPasswordEnabled()) {
+                vmInit.setRootPassword(getCloudInitRootPassword().getEntity());
+            }
+            vmInit.setPasswordAlreadyStored(getCloudInitPasswordSet().getEntity());
         }
 
         vmInit.setUserName((String) getUserName().getEntity());
 
-        if (getRootPasswordEnabled()) {
-            vmInit.setRootPassword(getRootPassword().getEntity());
-        }
         vmInit.setAuthorizedKeys(getAuthorizedKeys().getEntity());
         if (getRegenerateKeysEnabled().getEntity()) {
             vmInit.setRegenerateKeys(Boolean.TRUE);
@@ -844,7 +910,6 @@ public class VmInitModel extends Model {
         vmInit.setDnsServers(getDnsServers().getEntity());
         vmInit.setDnsSearch(getDnsSearchDomains().getEntity());
         vmInit.setCustomScript(getCustomScript().getEntity());
-        vmInit.setPasswordAlreadyStored(getPasswordSet().getEntity());
 
         return vmInit;
     }
@@ -870,16 +935,24 @@ public class VmInitModel extends Model {
         else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition)) {
             if (sender == getNetworkSelectedName()) {
                 networkSelectedName_SelectionChanged();
-            } else if (sender == getPasswordSet()) {
-                passwordSetChanged();
+            } else if (sender == getCloudInitPasswordSet()) {
+                cloudInitPasswordSetChanged();
+            } else if (sender == getSysprepPasswordSet()) {
+                sysprepPasswordSetChanged();
             }
         }
     }
 
-    private void passwordSetChanged() {
-        Boolean passwordChangable = !getPasswordSet().getEntity();
-        getRootPassword().setIsChangable(passwordChangable);
-        getRootPasswordVerification().setIsChangable(passwordChangable);
+    private void cloudInitPasswordSetChanged() {
+        Boolean passwordChangable = !getCloudInitPasswordSet().getEntity();
+        getCloudInitRootPassword().setIsChangable(passwordChangable);
+        getCloudInitRootPasswordVerification().setIsChangable(passwordChangable);
+    }
+
+    private void sysprepPasswordSetChanged() {
+        Boolean passwordChangable = !getSysprepPasswordSet().getEntity();
+        getSysprepAdminPassword().setIsChangable(passwordChangable);
+        getSysprepAdminPasswordVerification().setIsChangable(passwordChangable);
     }
 
     @Override

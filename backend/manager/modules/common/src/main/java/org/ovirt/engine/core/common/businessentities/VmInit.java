@@ -14,6 +14,7 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
     private String authorizedKeys;
     private Boolean regenerateKeys;
     private String activeDirectoryOU;
+    private String orgName;
 
     private String dnsServers;
     private String dnsSearch;
@@ -180,5 +181,13 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
 
     public void setActiveDirectoryOU(String activeDirectoryOU) {
         this.activeDirectoryOU = activeDirectoryOU;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
     }
 }

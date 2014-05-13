@@ -172,6 +172,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("User Locale")
     String userLocaleLabel();
 
+    @DefaultStringValue("Custom Locale")
+    String customLocaleLabel();
+
     @DefaultStringValue("Sysprep")
     String sysprepLabel();
 
@@ -186,6 +189,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("VM Hostname")
     String cloudInitHostnameLabel();
+
+    @DefaultStringValue("Organization Name")
+    String sysprepOrgNameLabel();
 
     @DefaultStringValue("Authentication")
     String cloudInitAuthenticationLabel();
@@ -207,6 +213,12 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Verify Root Password")
     String cloudInitRootPasswordVerificationLabel();
+
+    @DefaultStringValue("Admin Password")
+    String sysprepAdminPasswordLabel();
+
+    @DefaultStringValue("Verify Admin Password")
+    String sysprepAdminPasswordVerificationLabel();
 
     @DefaultStringValue("Networks")
     String cloudInitNetworskLabel();
@@ -288,6 +300,12 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Verify the root password for the guest")
     String cloudInitRootPasswordVerificationToolTip();
+
+    @DefaultStringValue("Choose a password for the admin login")
+    String sysprepAdminPasswordToolTip();
+
+    @DefaultStringValue("Verify the  password")
+    String sysprepAdminPasswordVerificationToolTip();
 
     @DefaultStringValue("Enter the name of a network interface, e.g. \"eth0\"")
     String cloudInitNetworkToolTip();

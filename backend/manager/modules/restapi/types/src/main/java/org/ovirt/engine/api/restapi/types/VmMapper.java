@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapMinusOneToNull;
+import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapNullToMinusOne;
 import static org.ovirt.engine.core.compat.Guid.createGuidFromString;
 
 import java.util.ArrayList;
@@ -79,9 +81,6 @@ import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-
-import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapNullToMinusOne;
-import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapMinusOneToNull;
 
 public class VmMapper {
 
@@ -1084,6 +1083,10 @@ public class VmMapper {
         if (model.isSetActiveDirectoryOu()) {
             entity.setUserName(model.getActiveDirectoryOu());
         }
+
+        if (model.isSetOrgName()) {
+            entity.setOrgName(model.getOrgName());
+        }
         return entity;
     }
 
@@ -1145,6 +1148,9 @@ public class VmMapper {
         }
         if (entity.getActiveDirectoryOU() != null) {
             model.setActiveDirectoryOu(entity.getActiveDirectoryOU());
+        }
+        if (entity.getOrgName() != null) {
+            model.setOrgName(entity.getOrgName());
         }
         return model;
     }

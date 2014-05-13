@@ -78,19 +78,16 @@ public final class SysprepHandler {
 
             sysPrepContent = populateSysPrepDomainProperties(sysPrepContent, domain, sysPrepParams);
             sysPrepContent = replace(sysPrepContent, "$ComputerName$", hostName != null ? hostName : "");
-            sysPrepContent = replace(sysPrepContent, "$AdminPassword$", Config.<String> getValue(ConfigValues.LocalAdminPassword));
-
             String timeZone = getTimeZone(vm);
-
             sysPrepContent = replace(sysPrepContent, "$TimeZone$", timeZone);
-            sysPrepContent = replace(sysPrepContent, "$OrgName$", Config.<String> getValue(ConfigValues.OrganizationName));
-
 
             String inputLocale = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
             String uiLanguage = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
             String systemLocale = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
             String userLocale = Config.<String> getValue(ConfigValues.DefaultSysprepLocale);
             String activeDirectoryOU = "";
+            String adminPassword = Config.<String> getValue(ConfigValues.LocalAdminPassword);
+            String orgName = Config.<String> getValue(ConfigValues.OrganizationName);
 
             if (vm.getVmInit() != null) {
                 if (!StringUtils.isEmpty(vm.getVmInit().getInputLocale())) {
@@ -108,6 +105,12 @@ public final class SysprepHandler {
                 if (!StringUtils.isEmpty(vm.getVmInit().getActiveDirectoryOU())) {
                     activeDirectoryOU = vm.getVmInit().getActiveDirectoryOU();
                 }
+                if (!StringUtils.isEmpty(vm.getVmInit().getRootPassword())) {
+                    adminPassword = vm.getVmInit().getRootPassword();
+                }
+                if (!StringUtils.isEmpty(vm.getVmInit().getOrgName())) {
+                    orgName = vm.getVmInit().getOrgName();
+                }
             }
 
             sysPrepContent = replace(sysPrepContent, "$SetupUiLanguageUiLanguage$", inputLocale);
@@ -116,6 +119,8 @@ public final class SysprepHandler {
             sysPrepContent = replace(sysPrepContent, "$SystemLocale$", systemLocale);
             sysPrepContent = replace(sysPrepContent, "$UserLocale$", userLocale);
             sysPrepContent = replace(sysPrepContent, "$MachineObjectOU$", activeDirectoryOU);
+            sysPrepContent = replace(sysPrepContent, "$OrgName$", orgName);
+            sysPrepContent = replace(sysPrepContent, "$AdminPassword$", adminPassword);
         }
 
         return sysPrepContent;

@@ -112,6 +112,11 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     StringEntityModelTextBoxEditor windowsHostnameEditor;
 
     @UiField
+    @Path(value = "sysprepOrgName.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor sysprepOrgNameEditor;
+
+    @UiField
     @Path(value = "sysprepDomain.selectedItem")
     @WithElementId
     ListModelSuggestBoxEditor sysprepDomainEditor;
@@ -162,11 +167,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     StringEntityModelTextAreaEditor authorizedKeysEditor;
 
     @UiField
-    @Path(value = "passwordSet.entity")
-    @WithElementId
-    EntityModelCheckBoxEditor passwordSetEditor;
-
-    @UiField
     @Path(value = "customScript.entity")
     @WithElementId
     StringEntityModelTextAreaEditor customScriptEditor;
@@ -199,15 +199,34 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     FlowPanel authenticationExpanderContent;
 
     @UiField
-    @Path(value = "rootPassword.entity")
+    @Path(value = "cloudInitPasswordSet.entity")
     @WithElementId
-    StringEntityModelPasswordBoxEditor rootPasswordEditor;
+    EntityModelCheckBoxEditor cloudInitPasswordSetEditor;
 
     @UiField
-    @Path(value = "rootPasswordVerification.entity")
+    @Path(value = "cloudInitRootPassword.entity")
     @WithElementId
-    StringEntityModelPasswordBoxEditor rootPasswordVerificationEditor;
+    StringEntityModelPasswordBoxEditor cloudInitRootPasswordEditor;
 
+    @UiField
+    @Path(value = "cloudInitRootPasswordVerification.entity")
+    @WithElementId
+    StringEntityModelPasswordBoxEditor cloudInitRootPasswordVerificationEditor;
+
+    @UiField
+    @Path(value = "sysprepPasswordSet.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor sysprepPasswordSetEditor;
+
+    @UiField
+    @Path(value = "sysprepAdminPassword.entity")
+    @WithElementId
+    StringEntityModelPasswordBoxEditor sysprepAdminPasswordEditor;
+
+    @UiField
+    @Path(value = "sysprepAdminPasswordVerification.entity")
+    @WithElementId
+    StringEntityModelPasswordBoxEditor sysprepAdminPasswordVerificationEditor;
 
     @UiField
     @Ignore
@@ -264,6 +283,23 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @UiField
     @Ignore
     FlowPanel sysprepScriptExpanderContent;
+
+    @UiField
+    @Ignore
+    AdvancedParametersExpander sysprepPasswordExpander;
+
+    @UiField
+    @Ignore
+    FlowPanel sysprepPasswordExpanderContent;
+
+
+    @UiField
+    @Ignore
+    AdvancedParametersExpander sysprepInputsExpander;
+
+    @UiField
+    @Ignore
+    FlowPanel sysprepInputsExpanderContent;
 
     @UiField
     @Ignore
@@ -342,6 +378,8 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         networkExpander.initWithContent(networkExpanderContent.getElement());
         customScriptExpander.initWithContent(customScriptExpanderContent.getElement());
         sysprepScriptExpander.initWithContent(sysprepScriptExpanderContent.getElement());
+        sysprepPasswordExpander.initWithContent(sysprepPasswordExpanderContent.getElement());
+        sysprepInputsExpander.initWithContent(sysprepInputsExpanderContent.getElement());
     }
 
     void initCheckBoxEditors() {
@@ -378,6 +416,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     void localize() {
         hostnameEditor.setLabel(constants.cloudInitHostnameLabel());
         windowsHostnameEditor.setLabel(constants.cloudInitHostnameLabel());
+        sysprepOrgNameEditor.setLabel(constants.sysprepOrgNameLabel());
         sysprepDomainEditor.setLabel(constants.domainVmPopup());
         inputLocaleEditor.setLabel(constants.inputLocaleLabel());
         uiLanguageEditor.setLabel(constants.uiLanguageLabel());
@@ -388,14 +427,17 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         userLocaleEditor.setLabel(constants.userLocaleLabel());
         userNameEditor.setLabel(constants.cloudInitUserNameLabel());
         authorizedKeysEditor.setLabel(constants.cloudInitAuthorizedKeysLabel());
-        passwordSetEditor.setLabel(constants.vmInitPasswordSetLabel());
+        cloudInitPasswordSetEditor.setLabel(constants.vmInitPasswordSetLabel());
+        sysprepPasswordSetEditor.setLabel(constants.vmInitPasswordSetLabel());
         regenerateKeysEnabledEditor.setLabel(constants.cloudInitRegenerateKeysLabel());
         timeZoneEnabledEditor.setLabel(constants.cloudInitConfigureTimeZoneLabel());
         timeZoneEditor.setLabel(constants.cloudInitTimeZoneLabel());
         windowsSyspreptimeZoneEnabledEditor.setLabel(constants.cloudInitConfigureTimeZoneLabel());
         windowsSysprepTimeZoneEditor.setLabel(constants.cloudInitTimeZoneLabel());
-        rootPasswordEditor.setLabel(constants.cloudInitRootPasswordLabel());
-        rootPasswordVerificationEditor.setLabel(constants.cloudInitRootPasswordVerificationLabel());
+        cloudInitRootPasswordEditor.setLabel(constants.cloudInitRootPasswordLabel());
+        cloudInitRootPasswordVerificationEditor.setLabel(constants.cloudInitRootPasswordVerificationLabel());
+        sysprepAdminPasswordEditor.setLabel(constants.sysprepAdminPasswordLabel());
+        sysprepAdminPasswordVerificationEditor.setLabel(constants.sysprepAdminPasswordVerificationLabel());
 
         networkEnabledEditor.setLabel(constants.cloudInitNetworkLabel());
 
@@ -418,12 +460,15 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         hostnameEditor.setTitle(constants.cloudInitHostnameToolTip());
         windowsHostnameEditor.setTitle(constants.cloudInitHostnameToolTip());
         authorizedKeysEditor.setTitle(constants.cloudInitAuthorizedKeysToolTip());
-        passwordSetEditor.setTitle(constants.vmInitPasswordSetToolTip());
+        cloudInitPasswordSetEditor.setTitle(constants.vmInitPasswordSetToolTip());
+        sysprepPasswordSetEditor.setTitle(constants.vmInitPasswordSetToolTip());
         customScriptEditor.setTitle(constants.customScriptToolTip());
         regenerateKeysEnabledEditor.setTitle(constants.cloudInitRegenerateKeysToolTip());
         timeZoneEditor.setTitle(constants.cloudInitTimeZoneToolTip());
-        rootPasswordEditor.setTitle(constants.cloudInitRootPasswordToolTip());
-        rootPasswordVerificationEditor.setTitle(constants.cloudInitRootPasswordVerificationToolTip());
+        cloudInitRootPasswordEditor.setTitle(constants.cloudInitRootPasswordToolTip());
+        cloudInitRootPasswordVerificationEditor.setTitle(constants.cloudInitRootPasswordVerificationToolTip());
+        sysprepAdminPasswordEditor.setTitle(constants.sysprepAdminPasswordToolTip());
+        sysprepAdminPasswordVerificationEditor.setTitle(constants.sysprepAdminPasswordVerificationToolTip());
 
         networkListEditor.setTitle(constants.cloudInitNetworkToolTip());
         networkNameEditor.setTitle(constants.cloudInitNetworkToolTip());
@@ -446,6 +491,12 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
         sysprepScriptExpander.setTitleWhenExpended(constants.sysprepLabel());
         sysprepScriptExpander.setTitleWhenCollapsed(constants.sysprepLabel());
+
+        sysprepPasswordExpander.setTitleWhenExpended(constants.sysprepAdminPasswordLabel());
+        sysprepPasswordExpander.setTitleWhenCollapsed(constants.sysprepAdminPasswordLabel());
+
+        sysprepInputsExpander.setTitleWhenExpended(constants.customLocaleLabel());
+        sysprepInputsExpander.setTitleWhenCollapsed(constants.customLocaleLabel());
     }
 
     void addStyles() {
@@ -467,12 +518,16 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         userNameEditor.addStyleName(customizableStyle.primaryOption());
         hostnameEditor.addStyleName(customizableStyle.primaryOption());
         windowsHostnameEditor.addStyleName(customizableStyle.primaryOption());
+        sysprepOrgNameEditor.addStyleName(customizableStyle.primaryOption());
         timeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
         timeZoneEditor.addStyleName(customizableStyle.primaryOption());
-        rootPasswordEditor.addStyleName(customizableStyle.primaryOption());
-        rootPasswordVerificationEditor.addStyleName(customizableStyle.primaryOption());
+        cloudInitRootPasswordEditor.addStyleName(customizableStyle.primaryOption());
+        cloudInitRootPasswordVerificationEditor.addStyleName(customizableStyle.primaryOption());
+        sysprepAdminPasswordEditor.addStyleName(customizableStyle.primaryOption());
+        sysprepAdminPasswordVerificationEditor.addStyleName(customizableStyle.primaryOption());
         authorizedKeysEditor.addStyleName(customizableStyle.primaryOption());
-        passwordSetEditor.addStyleName(customizableStyle.primaryOption());
+        cloudInitPasswordSetEditor.addStyleName(customizableStyle.primaryOption());
+        sysprepPasswordSetEditor.addStyleName(customizableStyle.primaryOption());
         regenerateKeysEnabledEditor.addStyleName(customizableStyle.primaryOption());
         networkExpanderContent.addStyleName(customizableStyle.primaryOption());
 
@@ -482,6 +537,8 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         authenticationExpanderContent.addStyleName(customizableStyle.expanderContent());
         customScriptExpanderContent.addStyleName(customizableStyle.expanderContent());
         sysprepScriptExpanderContent.addStyleName(customizableStyle.expanderContent());
+        sysprepPasswordExpanderContent.addStyleName(customizableStyle.expanderContent());
+        sysprepInputsExpanderContent.addStyleName(customizableStyle.expanderContent());
     }
 
     /* Controls style for network options based on network selection */
@@ -546,14 +603,29 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
             }
         });
 
-        model.getPasswordSet().getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getCloudInitPasswordSet().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (args != null && args instanceof PropertyChangedEventArgs) {
                     String propName = ((PropertyChangedEventArgs) args).propertyName;
                     if ("IsChangable".equals(propName)) { //$NON-NLS-1$
-                        passwordSetEditor.setTitle(
-                                model.getPasswordSet().getIsChangable() ?
+                        cloudInitPasswordSetEditor.setTitle(
+                                model.getCloudInitPasswordSet().getIsChangable() ?
+                                constants.vmInitPasswordSetToolTip() : constants.vmInitPasswordNotSetToolTip()
+                        );
+                    }
+                }
+            }
+        });
+
+        model.getSysprepPasswordSet().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (args != null && args instanceof PropertyChangedEventArgs) {
+                    String propName = ((PropertyChangedEventArgs) args).propertyName;
+                    if ("IsChangable".equals(propName)) { //$NON-NLS-1$
+                        sysprepPasswordSetEditor.setTitle(
+                                model.getSysprepPasswordSet().getIsChangable() ?
                                 constants.vmInitPasswordSetToolTip() : constants.vmInitPasswordNotSetToolTip()
                         );
                     }

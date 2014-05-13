@@ -74,7 +74,8 @@ public class VmInitDAODbFacadeImpl extends BaseDAODbFacade implements VmInitDAO 
                 .addValue("system_locale", vmInit.getSystemLocale())
                 .addValue("user_locale", vmInit.getUserLocale())
                 .addValue("user_name", vmInit.getUserName())
-                .addValue("active_directory_ou", vmInit.getActiveDirectoryOU());
+                .addValue("active_directory_ou", vmInit.getActiveDirectoryOU())
+                .addValue("org_name", vmInit.getOrgName());
     }
 
     private static class VMInitRowMapper implements RowMapper<VmInit> {
@@ -102,6 +103,7 @@ public class VmInitDAODbFacadeImpl extends BaseDAODbFacade implements VmInitDAO 
             entity.setUserLocale(rs.getString("user_locale"));
             entity.setUserName(rs.getString("user_name"));
             entity.setActiveDirectoryOU(rs.getString("active_directory_ou"));
+            entity.setOrgName(rs.getString("org_name"));
 
             return entity;
         }
