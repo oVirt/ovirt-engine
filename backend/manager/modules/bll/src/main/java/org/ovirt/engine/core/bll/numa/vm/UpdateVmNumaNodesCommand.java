@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.numa.vm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -13,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
-public class UpdateVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> extends VmCommand<T> {
+public class UpdateVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> extends AbstractVmNumaNodeCommand<T> {
 
     public UpdateVmNumaNodesCommand(T parameters) {
         super(parameters);
@@ -21,38 +20,35 @@ public class UpdateVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> e
 
     @Override
     protected void executeCommand() {
-        boolean succeeded = false;
-        try {
-            Guid vdsId = getVm().getDedicatedVmForVds();
-            List<VdsNumaNode> vdsNumaNodes = new ArrayList<VdsNumaNode>();
-            if (vdsId != null) {
-                vdsNumaNodes = getDbFacade().getVdsNumaNodeDAO().getAllVdsNumaNodeByVdsId(vdsId);
-            }
-            List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
-            List<VdsNumaNode> nodes = new ArrayList<VdsNumaNode>();
-            for (VmNumaNode vmNumaNode : vmNumaNodes) {
-                for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
-                    int index = pair.getSecond().getSecond();
-                    for (VdsNumaNode vdsNumaNode : vdsNumaNodes) {
-                        if (vdsNumaNode.getIndex() == index) {
-                            pair.setFirst(vdsNumaNode.getId());
-                            pair.getSecond().setFirst(true);
-                            break;
-                        }
+        List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
+        Guid vdsId = getVm().getDedicatedVmForVds();
+        List<VdsNumaNode> vdsNumaNodes = new ArrayList<>();
+        if (vdsId != null) {
+            vdsNumaNodes = getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(vdsId);
+        }
+
+        List<VdsNumaNode> nodes = new ArrayList<>();
+        for (VmNumaNode vmNumaNode : vmNumaNodes) {
+            for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
+                int index = pair.getSecond().getSecond();
+                for (VdsNumaNode vdsNumaNode : vdsNumaNodes) {
+                    if (vdsNumaNode.getIndex() == index) {
+                        pair.setFirst(vdsNumaNode.getId());
+                        pair.getSecond().setFirst(true);
+                        break;
                     }
                 }
-                nodes.add((VdsNumaNode) vmNumaNode);
             }
-            getDbFacade().getVmNumaNodeDAO().massUpdateNumaNode(nodes);
-            succeeded = true;
-        } finally {
-            setSucceeded(succeeded);
+            nodes.add(vmNumaNode);
         }
+        getVmNumaNodeDao().massUpdateNumaNode(nodes);
+
+        setSucceeded(true);
     }
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getParameters().getVmId(),
                 VdcObjectType.VM,
                 getActionType().getActionGroup()));

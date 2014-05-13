@@ -1936,6 +1936,13 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     UnsupportedLocalesFilterOverrides,
 
+    /**
+     * Defines the parameter name used by numa migration on/off
+     */
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    SupportNUMAMigration,
+
     @TypeConverterAttribute(List.class)
     @DefaultValueAttribute("")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
