@@ -45,6 +45,9 @@ public enum ConsoleProtocol {
     }
 
     static class PriorityComparator implements Comparator<ConsoleProtocol>, Serializable {
+
+        private static final long serialVersionUID = -4511422219352593185L;
+
         @Override
         public int compare(ConsoleProtocol fst, ConsoleProtocol snd) {
             if (fst == null && snd == null) {
@@ -58,6 +61,7 @@ public enum ConsoleProtocol {
             }
             return fst.priority - snd.priority;
         }
+
     }
 
     public static List<ConsoleProtocol> getProtocolsByPriority() {
