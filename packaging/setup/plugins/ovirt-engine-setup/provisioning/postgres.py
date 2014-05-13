@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -76,7 +76,8 @@ class Plugin(plugin.PluginBase):
             os.seteuid(os.getuid())
 
     def _generatePassword(self):
-        return ''.join([random.choice(self._PASSWORD_CHARS) for i in range(8)])
+        rand = random.SystemRandom()
+        return ''.join([rand.choice(self._PASSWORD_CHARS) for i in range(22)])
 
     def _initDB(self):
         self.logger.info(_('Initializing PostgreSQL'))
