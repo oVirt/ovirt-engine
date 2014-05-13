@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDynamicDAO;
 
 public class CollectVdsNetworkDataAfterInstallationVDSCommand extends CollectVdsNetworkDataVDSCommand {
 
@@ -20,6 +22,9 @@ public class CollectVdsNetworkDataAfterInstallationVDSCommand extends CollectVds
     @Override
     protected void persistCollectedData() {
         super.persistCollectedData();
-        DbFacade.getInstance().getVdsDynamicDao().updateIfNeeded(getVds().getDynamicData());
+        VdsDynamicDAO vdsDynamicDao = DbFacade.getInstance().getVdsDynamicDao();
+        VdsDynamic hostFromDb = vdsDynamicDao.get(getVds().getId());
+        hostFromDb.setsupported_cluster_levels(getVds().getDynamicData().getsupported_cluster_levels());
+        vdsDynamicDao.update(hostFromDb);
     }
 }
