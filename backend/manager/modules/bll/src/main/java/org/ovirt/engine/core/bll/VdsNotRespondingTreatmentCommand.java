@@ -73,6 +73,10 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
                 this.setExecutionContext(ec);
             } else {
                 super.executeCommand();
+                // Since the parent class run the command, we need to reinitialize the execution context
+                if (this.getExecutionContext() != null) {
+                    this.getExecutionContext().setJob(getDbFacade().getJobDao().get(this.getJobId()));
+                }
             }
         } else {
             setCommandShouldBeLogged(false);
