@@ -1388,4 +1388,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         mVdsDynamic.setNumaSupport(numaSupport);
     }
 
+    public void setLiveSnapshotSupport(Boolean value) {
+        this.mVdsDynamic.setLiveSnapshotSupport(value);
+    }
+
+    public Boolean getLiveSnapshotSupport() {
+        return this.mVdsDynamic.getLiveSnapshotSupport();
+    }
 }

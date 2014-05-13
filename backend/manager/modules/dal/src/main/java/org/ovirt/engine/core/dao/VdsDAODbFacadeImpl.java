@@ -356,6 +356,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setSELinuxEnforceMode((Integer) rs.getObject("selinux_enforce_mode"));
             entity.setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(rs.getInt("auto_numa_balancing")));
             entity.setNumaSupport(rs.getBoolean("is_numa_supported"));
+            entity.setLiveSnapshotSupport(rs.getBoolean("is_live_snapshot_supported"));
             return entity;
         }
     }

@@ -78,6 +78,8 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     MemorySizeTextBoxLabel<Long> swapFree;
     MemorySizeTextBoxLabel<Float> maxSchedulingMemory;
 
+    BooleanTextBoxLabel liveSnapshotSupport = new BooleanTextBoxLabel(constants.active(), constants.inactive());
+
     @Ignore
     DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Integer>>, Integer> physicalMemoryDetails =
             new DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Integer>>, Integer>(constants.total(),
@@ -135,7 +137,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         boolean glusterSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 3, 8);
+        formBuilder = new FormBuilder(formPanel, 3, 9);
 
         formBuilder.addFormItem(new FormItem(constants.osVersionHostGeneral(), oS, 0).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.kernelVersionHostGeneral(), kernelVersion, 0).withAutoPlacement());
@@ -160,6 +162,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formBuilder.addFormItem(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.selinuxModeGeneral(), selinuxEnforceMode, 2).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.liveSnapshotSupportHostGeneral(), liveSnapshotSupport, 2).withAutoPlacement());
     }
 
     void initMemorySizeLabels() {

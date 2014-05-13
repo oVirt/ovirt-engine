@@ -439,6 +439,10 @@ public class VdsBrokerObjectsBuilder {
         } else {
             vds.setSELinuxEnforceMode(null);
         }
+
+        if (xmlRpcStruct.containsKey(VdsProperties.liveSnapshotSupport)) {
+            vds.setLiveSnapshotSupport(AssignBoolValue(xmlRpcStruct, VdsProperties.liveSnapshotSupport));
+        }
     }
 
     private static void setRngSupportedSourcesToVds(VDS vds, Map<String, Object> xmlRpcStruct) {

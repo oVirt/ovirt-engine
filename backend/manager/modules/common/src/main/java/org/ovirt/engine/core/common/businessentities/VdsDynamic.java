@@ -89,6 +89,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private KdumpStatus kdumpStatus;
 
+    private boolean liveSnapshotSupport;
+
     private VdsTransparentHugePagesState transparentHugePagesState;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
@@ -197,6 +199,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         numaNodeList = new ArrayList<VdsNumaNode>();
         autoNumaBalancing = AutoNumaBalanceStatus.UNKNOWN;
         supportedRngSources = new HashSet<VmRngDevice.Source>();
+        liveSnapshotSupport = true;  // usually supported, exceptional case if it isn't.
     }
 
     public Integer getcpu_cores() {
@@ -618,6 +621,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.selinuxEnforceMode = SELinuxMode.fromValue(value);
     }
 
+    public boolean getLiveSnapshotSupport() {
+        return liveSnapshotSupport;
+    }
+
+    public void setLiveSnapshotSupport(boolean liveSnapshotSupport) {
+        this.liveSnapshotSupport = liveSnapshotSupport;
+    }
+
     public List<VdsNumaNode> getNumaNodeList() {
         return numaNodeList;
     }
@@ -705,6 +716,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + ((numaNodeList == null) ? 0 : numaNodeList.hashCode());
         result = prime * result + autoNumaBalancing.getValue();
         result = prime * result + (numaSupport ? 0 : 1);
+        result = prime * result + (liveSnapshotSupport ? 0 : 1);
 
         return result;
     }
@@ -778,7 +790,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && numaSupport == other.numaSupport)
                 && ObjectUtils.objectsEqual(supportedEmulatedMachines, other.supportedEmulatedMachines)
                 && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
-                && ObjectUtils.objectsEqual(supportedRngSources, other.supportedRngSources);
+                && ObjectUtils.objectsEqual(supportedRngSources, other.supportedRngSources)
+                && liveSnapshotSupport == other.liveSnapshotSupport;
     }
 
 }

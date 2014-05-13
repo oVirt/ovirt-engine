@@ -104,6 +104,7 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             entity.setSELinuxEnforceMode((Integer) rs.getObject("selinux_enforce_mode"));
             entity.setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(rs.getInt("auto_numa_balancing")));
             entity.setNumaSupport(rs.getBoolean("is_numa_supported"));
+            entity.setLiveSnapshotSupport(rs.getBoolean("is_live_snapshot_supported"));
 
             return entity;
         }
@@ -267,7 +268,8 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                 .addValue("auto_numa_balancing", vds.getAutoNumaBalancing().getValue())
                 .addValue("is_numa_supported", vds.isNumaSupport())
                 .addValue("supported_rng_sources", VmRngDevice.sourcesToCsv(vds.getSupportedRngSources()))
-                .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines());
+                .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines())
+                .addValue("is_live_snapshot_supported", vds.getLiveSnapshotSupport());
 
         return parameterSource;
     }

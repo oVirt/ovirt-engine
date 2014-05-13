@@ -1482,6 +1482,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("SELinux mode")
     String selinuxModeGeneral();
 
+    @DefaultStringValue("Live Snapsnot Support")
+    String liveSnapshotSupportHostGeneral();
+
     // Storage
     @DefaultStringValue("Domain Name")
     String domainNameStorage();
