@@ -1,25 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
+    xmlns:m="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool">
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterPopupView.Style">
-		.contentStyle {
-		}
-	</ui:style>
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
-	<d:SimpleDialogPanel width="450px" height="320px">
-		<d:content>
-			<g:FlowPanel>
-				<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
-				<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
-				<e:ListModelListBoxEditor ui:field="storagePoolTypeEditor" />
-				<e:ListModelListBoxEditor ui:field="versionEditor" />
-				<e:ListModelListBoxEditor ui:field="quotaEnforceTypeEditor" />
-				<ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
-			</g:FlowPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterPopupView.Style">
+        .contentStyle {
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="610px" height="320px">
+        <d:content>
+            <t:DialogTabPanel height="100%" width="100%">
+                <t:tab>
+                    <t:DialogTab label="{constants.dataCenterGeneralTab}">
+                        <t:content>
+                            <g:FlowPanel>
+                                <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
+                                <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
+                                <e:ListModelListBoxEditor ui:field="storagePoolTypeEditor" />
+                                <e:ListModelListBoxEditor ui:field="versionEditor" />
+                                <e:ListModelListBoxEditor ui:field="quotaEnforceTypeEditor" />
+                                <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
+                            </g:FlowPanel>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+                <t:tab>
+                    <t:DialogTab label="{constants.dataCenterMacPoolTab}">
+                        <t:content>
+                            <g:FlowPanel>
+                                <e:ListModelListBoxEditor ui:field="macPoolListEditor" />
+                                <m:MacPoolWidget ui:field="macPoolWidget" />
+                            </g:FlowPanel>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+            </t:DialogTabPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

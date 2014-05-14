@@ -736,6 +736,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         dataCenter.setcompatibility_version(model.getVersion().getSelectedItem());
         dataCenter.setQuotaEnforcementType(model.getQuotaEnforceTypeListModel()
                 .getSelectedItem());
+        dataCenter.setMacPoolId(model.getMacPoolListModel().getSelectedItem().getId());
 
         model.startProgress(null);
 

@@ -272,6 +272,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Quota Mode")
     String dataCenterPopupQuotaEnforceTypeLabel();
 
+    @DefaultStringValue("MAC Address Pool")
+    String dataCenterPopupMacPoolLabel();
+
     @DefaultStringValue("Edit Network Parameters")
     String dataCenterEditNetworkPopupLabel();
 

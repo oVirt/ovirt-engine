@@ -3,19 +3,27 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import java.util.ArrayList;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
+import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -25,7 +33,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidati
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
-@SuppressWarnings("unused")
 public class DataCenterModel extends Model
 {
     private StoragePool privateEntity;
@@ -38,6 +45,7 @@ public class DataCenterModel extends Model
     public void setEntity(StoragePool value)
     {
         privateEntity = value;
+        initSelectedMacPool();
     }
 
     private Guid privateDataCenterId;
@@ -158,6 +166,26 @@ public class DataCenterModel extends Model
         this.quotaEnforceTypeListModel = quotaEnforceTypeListModel;
     }
 
+    private ListModel<MacPool> macPoolListModel;
+
+    public ListModel<MacPool> getMacPoolListModel() {
+        return macPoolListModel;
+    }
+
+    private void setMacPoolListModel(ListModel<MacPool> macPoolListModel) {
+        this.macPoolListModel = macPoolListModel;
+    }
+
+    private MacPoolModel macPoolModel;
+
+    public MacPoolModel getMacPoolModel() {
+        return macPoolModel;
+    }
+
+    private void setMacPoolModel(MacPoolModel macPoolModel) {
+        this.macPoolModel = macPoolModel;
+    }
+
     public DataCenterModel()
     {
         setName(new EntityModel<String>());
@@ -173,6 +201,22 @@ public class DataCenterModel extends Model
         List<QuotaEnforcementTypeEnum> list = AsyncDataProvider.getInstance().getQuotaEnforcmentTypes();
         getQuotaEnforceTypeListModel().setItems(list);
         getQuotaEnforceTypeListModel().setSelectedItem(list.get(0));
+
+        setMacPoolListModel(new SortedListModel<MacPool>(new Linq.SharedMacPoolComparator()));
+        setMacPoolModel(new MacPoolModel());
+        getMacPoolModel().setIsChangable(false);
+        getMacPoolListModel().getItemsChangedEvent().addListener(this);
+        getMacPoolListModel().getSelectedItemChangedEvent().addListener(this);
+        startProgress(null);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllMacPools,
+                new VdcQueryParametersBase(),
+                new AsyncQuery(new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        getMacPoolListModel().setItems((Collection<MacPool>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                        stopProgress();
+                    }
+                }));
 
         setMaxNameLength(1);
         AsyncQuery _asyncQuery = new AsyncQuery();
@@ -194,9 +238,14 @@ public class DataCenterModel extends Model
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getStoragePoolType())
-        {
+        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getStoragePoolType()) {
             storagePoolType_SelectedItemChanged();
+        } else if (sender == getMacPoolListModel()) {
+            if (ev.matchesDefinition(ListModel.itemsChangedEventDefinition)) {
+                initSelectedMacPool();
+            } else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
+                getMacPoolModel().setEntity(getMacPoolListModel().getSelectedItem());
+            }
         }
     }
 
@@ -281,6 +330,20 @@ public class DataCenterModel extends Model
         }
     }
 
+    private void initSelectedMacPool() {
+        Collection<MacPool> allMacPools = getMacPoolListModel().getItems();
+        StoragePool dc = getEntity();
+        if (allMacPools != null && dc != null) {
+            Guid macPoolId = dc.getMacPoolId();
+            for (MacPool macPool : allMacPools) {
+                if (macPool.getId().equals(macPoolId)) {
+                    getMacPoolListModel().setSelectedItem(macPool);
+                    break;
+                }
+            }
+        }
+    }
+
     public boolean validate()
     {
         getName().validateEntity(new IValidation[] {
@@ -295,8 +358,10 @@ public class DataCenterModel extends Model
 
         getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
+        getMacPoolModel().validate();
+
         return getName().getIsValid() && getDescription().getIsValid() && getComment().getIsValid()
-                && getVersion().getIsValid();
+                && getVersion().getIsValid() && getMacPoolModel().getIsValid();
     }
 
 }

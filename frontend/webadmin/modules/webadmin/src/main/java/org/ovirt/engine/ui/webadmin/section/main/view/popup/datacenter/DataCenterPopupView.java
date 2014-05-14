@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter;
 
+import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -12,9 +13,11 @@ import org.ovirt.engine.ui.common.widget.renderer.BooleanRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterModel;
+import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool.MacPoolWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -67,6 +70,16 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     @WithElementId
     ListModelListBoxEditor<QuotaEnforcementTypeEnum> quotaEnforceTypeEditor;
 
+    @UiField(provided = true)
+    @Path(value = "macPoolListModel.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<MacPool> macPoolListEditor;
+
+    @UiField
+    @Ignore
+    @WithElementId
+    MacPoolWidget macPoolWidget;
+
     @UiField
     Style style;
 
@@ -94,6 +107,13 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
         });
 
         quotaEnforceTypeEditor = new ListModelListBoxEditor<QuotaEnforcementTypeEnum>(new EnumRenderer());
+
+        macPoolListEditor = new ListModelListBoxEditor<MacPool>(new NullSafeRenderer<MacPool>() {
+            @Override
+            protected String renderNullSafe(MacPool macPool) {
+                return macPool.getName();
+            }
+        });
     }
 
     void localize(ApplicationConstants constants) {
@@ -103,11 +123,13 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
         storagePoolTypeEditor.setLabel(constants.dataCenterPopupStorageTypeLabel());
         versionEditor.setLabel(constants.dataCenterPopupVersionLabel());
         quotaEnforceTypeEditor.setLabel(constants.dataCenterPopupQuotaEnforceTypeLabel());
+        macPoolListEditor.setLabel(constants.dataCenterPopupMacPoolLabel());
     }
 
     @Override
     public void edit(DataCenterModel object) {
         driver.edit(object);
+        updateMacPool(object.getMacPoolModel());
     }
 
     @Override
@@ -118,6 +140,11 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     @Override
     public void focusInput() {
         nameEditor.setFocus(true);
+    }
+
+    @Override
+    public void updateMacPool(MacPoolModel macPoolModel) {
+        macPoolWidget.edit(macPoolModel);
     }
 
     public void addContentStyleName(String styleName) {
