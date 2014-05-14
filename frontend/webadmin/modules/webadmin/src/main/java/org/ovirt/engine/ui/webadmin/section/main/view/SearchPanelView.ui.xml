@@ -66,23 +66,27 @@
             float: left;
             height: 25px;
             width: 100%;
+        }
+
+        .searchBoxMiddleSearchString td {
             outline: 1px gray solid;
         }
 
         .searchStringPrefixLabel {
             border: none;
-            outline: none;
+            outline: 1px gray solid;
             font-size: 14px;
             color: grey;
-            height: 25px;
-            line-height: 25px;
-            padding-right: 6px;
+            padding-left: 10px;
+            padding-right: 10px;
             white-space: nowrap;
+            background-color: #CACACA;
+            color: #000000;
         }
 
         .searchSuggestBox {
             padding-left: 10px;
-            padding-right: 0px;
+            padding-right: 2px;
             padding-bottom: 0px;
             padding-top: 0px;
             margin: 0px;
@@ -139,7 +143,7 @@
             <g:VerticalPanel ui:field="searchBoxPanel" addStyleNames="{style.searchBoxPanel}">
                 <g:HorizontalPanel ui:field="searchBoxPanelContainer" addStyleNames="{style.searchBoxPanelContainer}">
                     <g:HorizontalPanel addStyleNames="{style.searchBoxMiddleSearchPrefix}">
-                        <g:Label ui:field="searchStringPrefixLabel" addStyleNames="{style.searchStringPrefixLabel} {style.openSans}" />
+                        <g:Label ui:field="searchStringPrefixLabel" addStyleNames="{style.searchStringPrefixLabel} {style.openSans} spv_searchStringPrefixLabel_pfly_fix" />
                     </g:HorizontalPanel>
                     <g:HorizontalPanel addStyleNames="{style.searchBoxMiddleSearchString}">
                         <g:SuggestBox ui:field="searchStringInput" addStyleNames="{style.searchSuggestBox} {style.openSans}" />

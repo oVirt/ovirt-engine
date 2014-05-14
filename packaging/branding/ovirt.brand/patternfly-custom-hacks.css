@@ -310,12 +310,12 @@ a.dropdown-toggle {
 
 #SearchPanelView_searchStringInput {
     height: 26px;
-    line-height: 26px;
+    line-height: 16px;
 }
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     #SearchPanelView_searchStringInput {
         height: 25px;
-        line-height: 25px;
+        line-height: 15px;
     }
 }
 .dab_dropdownImage_pfly_fix {
@@ -401,4 +401,15 @@ a.dropdown-toggle {
 .appv_searchButton_pfly_fix {
     position: relative !important;
     top: 2px !important;
+}
+.spv_searchStringPrefixLabel_pfly_fix {
+    height: 26px;
+    line-height: 26px;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .spv_searchStringPrefixLabel_pfly_fix {
+        height: 25px;
+        line-height: 25px;
+    }
 }
