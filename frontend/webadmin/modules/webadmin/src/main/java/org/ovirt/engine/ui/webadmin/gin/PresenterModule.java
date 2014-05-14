@@ -64,6 +64,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.macpool.SharedMacPoolPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
@@ -291,6 +292,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.MultipleHostsPo
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksBondPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksManagementPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool.SharedMacPoolPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS.NetworkQoSPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolEditPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
@@ -513,6 +515,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ManagePolicyUnitPopupPresenterWidget.class,
                 ManagePolicyUnitPopupPresenterWidget.ViewDef.class,
                 ManagePolicyUnitPopupView.class);
+        bindPresenterWidget(SharedMacPoolPopupPresenterWidget.class,
+                SharedMacPoolPopupPresenterWidget.ViewDef.class,
+                SharedMacPoolPopupView.class);
         bindPresenterWidget(AffinityGroupPopupPresenterWidget.class,
                 AffinityGroupPopupPresenterWidget.ViewDef.class,
                 AffinityGroupPopupView.class);

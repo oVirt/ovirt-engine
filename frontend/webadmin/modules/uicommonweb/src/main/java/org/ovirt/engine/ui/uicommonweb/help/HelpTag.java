@@ -266,6 +266,12 @@ public enum HelpTag {
 
     new_data_center___guide_me("new_data_center___guide_me", HelpTagType.WEBADMIN), //$NON-NLS-1$
 
+    new_shared_mac_pool("new_shared_mac_pool", HelpTagType.WEBADMIN, "Configure > MAC Address Pools > New"), //$NON-NLS-1$ $NON-NLS-2$
+
+    edit_shared_mac_pool("edit_shared_mac_pool", HelpTagType.WEBADMIN, "Configure > MAC Address Pools > Edit"), //$NON-NLS-1$ $NON-NLS-2$
+
+    remove_shared_mac_pools("remove_shared_mac_pools", HelpTagType.WEBADMIN, "Configure > MAC Address Pools > Remove"), //$NON-NLS-1$ $NON-NLS-2$
+
     new_domain("new_domain", HelpTagType.WEBADMIN, "Storage Tab > New Domain"), //$NON-NLS-1$ //$NON-NLS-2$
 
     new_external_subnet("new_external_subnet", HelpTagType.WEBADMIN, "Networks main tab -> External Subnet sub tab -> New"), //$NON-NLS-1$ //$NON-NLS-2$

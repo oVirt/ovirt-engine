@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.AlertListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicommonweb.models.macpool.SharedMacPoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
@@ -84,6 +85,7 @@ public class CommonModel extends ListModel
     private SystemPermissionListModel systemPermissionListModel;
     private ClusterPolicyListModel clusterPolicyListModel;
     private InstanceTypeListModel instanceTypeListModel;
+    private SharedMacPoolListModel sharedMacPoolListModel;
 
     // NOTE: when adding a new ListModel here, be sure to add it to the list in initItems()
     private SearchableListModel dataCenterList;
@@ -207,6 +209,7 @@ public class CommonModel extends ListModel
         roleListModel = new RoleListModel();
         systemPermissionListModel = new SystemPermissionListModel();
         clusterPolicyListModel = new ClusterPolicyListModel();
+        sharedMacPoolListModel = new SharedMacPoolListModel();
 
         // Activate the default list model.
         setSelectedItem(getDefaultItem());
@@ -564,7 +567,7 @@ public class CommonModel extends ListModel
         model.setTitle(ConstantsManager.getInstance().getConstants().ConfigureTitle());
         model.setHelpTag(HelpTag.configure);
         model.setHashName("configure"); //$NON-NLS-1$
-        model.setEntity(new Model[] { roleListModel, systemPermissionListModel, clusterPolicyListModel });
+        model.setEntity(new Model[] { roleListModel, systemPermissionListModel, clusterPolicyListModel, sharedMacPoolListModel });
 
         UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
@@ -1070,6 +1073,10 @@ public class CommonModel extends ListModel
 
     public InstanceTypeListModel getInstanceTypeListModel() {
         return instanceTypeListModel;
+    }
+
+    public SharedMacPoolListModel getSharedMacPoolListModel() {
+        return sharedMacPoolListModel;
     }
 
     public Event getSignedOutEvent()

@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
+import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -1401,6 +1402,23 @@ public final class Linq
                 }
             }
             return lexoNumeric.compare(pu1.getName(), pu2.getName());
+        }
+    }
+
+    public final static class SharedMacPoolComparator implements Comparator<MacPool>, Serializable {
+
+        private static final long serialVersionUID = 3603082617231645079L;
+        final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+        @Override
+        public int compare(MacPool o1, MacPool o2) {
+            if (o1.isDefaultPool()) {
+                return -1;
+            } else if (o2.isDefaultPool()) {
+                return 1;
+            } else {
+                return lexoNumeric.compare(o1.getName(), o2.getName());
+            }
         }
     }
 

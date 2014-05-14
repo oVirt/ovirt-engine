@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+	xmlns:m="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool">
+
+	<d:SimpleDialogPanel height="320px" width="450px">
+		<d:content>
+			<g:FlowPanel>
+				<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
+				<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
+				<m:MacPoolWidget ui:field="macPoolWidget" />
+			</g:FlowPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.SharedMacPoolModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -28,6 +29,7 @@ public class ConfigurePopupPresenterWidget extends AbstractPopupPresenterWidget<
     private ClusterPolicyModelProvider clusterPolicyModelProvider;
     private ClusterPolicyClusterModelProvider clusterPolicyClusterModelProvider;
     private InstanceTypeModelProvider instanceTypeModelProvider;
+    private SharedMacPoolModelProvider sharedMacPoolModelProvider;
 
     @Inject
     public ConfigurePopupPresenterWidget(EventBus eventBus, ViewDef view,
@@ -36,7 +38,8 @@ public class ConfigurePopupPresenterWidget extends AbstractPopupPresenterWidget<
             SystemPermissionModelProvider systemPermissionModelProvider,
             ClusterPolicyModelProvider clusterPolicyModelProvider,
             ClusterPolicyClusterModelProvider clusterPolicyClusterModelProvider,
-            InstanceTypeModelProvider instanceTypeModelProvider) {
+            InstanceTypeModelProvider instanceTypeModelProvider,
+            SharedMacPoolModelProvider sharedMacPoolModelProvider) {
         super(eventBus, view);
         this.roleModelProvider = roleModelProvider;
         this.permissionModelProvider = permissionModelProvider;
@@ -44,6 +47,7 @@ public class ConfigurePopupPresenterWidget extends AbstractPopupPresenterWidget<
         this.clusterPolicyModelProvider = clusterPolicyModelProvider;
         this.clusterPolicyClusterModelProvider = clusterPolicyClusterModelProvider;
         this.instanceTypeModelProvider = instanceTypeModelProvider;
+        this.sharedMacPoolModelProvider = sharedMacPoolModelProvider;
     }
 
     @Override
@@ -58,6 +62,7 @@ public class ConfigurePopupPresenterWidget extends AbstractPopupPresenterWidget<
             getView().hideClusterPolicyTab();
         }
         instanceTypeModelProvider.getModel().search();
+        sharedMacPoolModelProvider.getModel().search();
     }
 
     @Override
@@ -69,6 +74,7 @@ public class ConfigurePopupPresenterWidget extends AbstractPopupPresenterWidget<
         clusterPolicyModelProvider.getModel().stopRefresh();
         clusterPolicyClusterModelProvider.getModel().stopRefresh();
         instanceTypeModelProvider.getModel().stopRefresh();
+        sharedMacPoolModelProvider.getModel().stopRefresh();
     }
 
 }

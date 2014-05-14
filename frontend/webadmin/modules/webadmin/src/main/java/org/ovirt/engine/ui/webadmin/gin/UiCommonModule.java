@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeGeneralModelProvi
 import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.SharedMacPoolModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
@@ -106,6 +107,9 @@ public class UiCommonModule extends BaseUiCommonModule {
 
         bind(InstanceTypeModelProvider.class).asEagerSingleton();
         bind(InstanceTypeGeneralModelProvider.class).asEagerSingleton();
+
+        // SharedMacPoolListModel
+        bind(SharedMacPoolModelProvider.class).asEagerSingleton();
     }
 
     void bindIntegration() {

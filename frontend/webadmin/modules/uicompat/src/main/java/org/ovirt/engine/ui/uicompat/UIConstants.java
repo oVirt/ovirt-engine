@@ -189,6 +189,15 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Change Data Center Compatibility Version")
     String changeDataCenterCompatibilityVersionTitle();
 
+    @DefaultStringValue("New MAC Address Pool")
+    String newSharedMacPoolTitle();
+
+    @DefaultStringValue("Edit MAC Address Pool")
+    String editSharedMacPoolTitle();
+
+    @DefaultStringValue("Remove MAC Address Pool(s)")
+    String removeSharedMacPoolsTitle();
+
     @DefaultStringValue("Logical Networks")
     String logicalNetworksTitle();
 

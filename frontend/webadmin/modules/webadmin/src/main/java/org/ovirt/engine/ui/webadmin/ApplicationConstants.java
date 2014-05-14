@@ -1132,6 +1132,36 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Description")
     String descriptionDc();
 
+    @DefaultStringValue("MAC Address Pools")
+    String configureMacPoolsTabLabel();
+
+    @DefaultStringValue("Name")
+    String configureMacPoolNameColumn();
+
+    @DefaultStringValue("Description")
+    String configureMacPoolDescriptionColumn();
+
+    @DefaultStringValue("Add")
+    String configureMacPoolAddButton();
+
+    @DefaultStringValue("Edit")
+    String configureMacPoolEditButton();
+
+    @DefaultStringValue("Remove")
+    String configureMacPoolRemoveButton();
+
+    @DefaultStringValue("Name")
+    String macPoolPopupName();
+
+    @DefaultStringValue("Description")
+    String macPoolPopupDescription();
+
+    @DefaultStringValue("General")
+    String dataCenterGeneralTab();
+
+    @DefaultStringValue("MAC Address Pool")
+    String dataCenterMacPoolTab();
+
     // Storage DC
     @DefaultStringValue("Domain Status in Data-Center")
     String domainStatusInDcStorageDc();

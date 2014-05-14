@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes.InstanceTypesView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool.SharedMacPoolView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyView;
 
 import com.google.gwt.core.client.GWT;
@@ -45,6 +46,9 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
     DialogTab instanceTypesTab;
 
     @UiField
+    DialogTab macPoolsTab;
+
+    @UiField
     SimplePanel rolesTabPanel;
 
     @UiField
@@ -56,6 +60,9 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
     @UiField
     SimplePanel instanceTypesTabPanel;
 
+    @UiField
+    SimplePanel macPoolsTabPanel;
+
     @Inject
     public ConfigurePopupView(
             EventBus eventBus,
@@ -64,8 +71,8 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
             RoleView roleView,
             ClusterPolicyView clusterPolicyView,
             SystemPermissionView systemPermissionView,
-            InstanceTypesView instanceTypesView
-            ) {
+            InstanceTypesView instanceTypesView,
+            SharedMacPoolView sharedMacPoolView) {
         super(eventBus, resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
@@ -82,6 +89,8 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
 
         instanceTypesView.setWidth("100%"); //$NON-NLS-1$
         instanceTypesTabPanel.add(instanceTypesView);
+
+        macPoolsTabPanel.add(sharedMacPoolView);
     }
 
     void localize(ApplicationConstants constants) {
@@ -92,6 +101,7 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
         clusterPoliciesTab.setLabel(constants.configureClusterPolicyTabLabel());
         systemPermissionsTab.setLabel(constants.configureSystemPermissionTabLabel());
         instanceTypesTab.setLabel(constants.instanceTypes());
+        macPoolsTab.setLabel(constants.configureMacPoolsTabLabel());
     }
 
     @Override
