@@ -61,7 +61,7 @@ public abstract class AbstractLoginFormView extends AbstractView {
     @UiField
     @Path("domain.selectedItem")
     @WithElementId("domain")
-    public ListModelListBoxEditor<Object> domainEditor;
+    public ListModelListBoxEditor<String> domainEditor;
 
     @UiField
     @WithElementId
