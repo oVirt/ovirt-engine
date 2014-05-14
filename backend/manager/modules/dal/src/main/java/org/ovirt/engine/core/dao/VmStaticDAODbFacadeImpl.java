@@ -103,7 +103,9 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("serial_number_policy", vm.getSerialNumberPolicy() == null ? null : vm.getSerialNumberPolicy().getValue())
                 .addValue("custom_serial_number", vm.getCustomSerialNumber())
                 .addValue("is_boot_menu_enabled", vm.isBootMenuEnabled())
-                .addValue("numatune_mode", vm.getNumaTuneMode().getValue());
+                .addValue("numatune_mode",
+                        vm.getNumaTuneMode() == null ? NumaTuneMode.PREFERRED.getValue() : vm.getNumaTuneMode()
+                                .getValue());
     }
 
     @Override
