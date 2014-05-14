@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
@@ -35,6 +36,24 @@ public class BackendStorageDomainTemplateResource
     protected Template getFromExportDomain() {
         org.ovirt.engine.core.common.businessentities.VmTemplate entity = getEntity();
         return addLinks(populate(map(entity, null), entity), null, new String[0]);
+    }
+
+    @Override
+    public Response register(Action action) {
+        validateParameters(action, "cluster.id|name");
+        ImportVmTemplateParameters params = new ImportVmTemplateParameters();
+        params.setContainerId(guid);
+        params.setStorageDomainId(parent.getStorageDomainId());
+        params.setVdsGroupId(getClusterId(action));
+        params.setImagesExistOnTargetStorageDomain(true);
+
+        if (action.isSetClone()) {
+            params.setImportAsNewEntity(action.isClone());
+            if (action.isSetVm() && action.getTemplate().isSetName()) {
+                params.getVmTemplate().setName(action.getTemplate().getName());
+            }
+        }
+        return doAction(VdcActionType.ImportVmTemplateFromConfiguration, params, action);
     }
 
     @Override

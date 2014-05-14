@@ -210,6 +210,20 @@ public class BackendStorageDomainVmResourceTest
         verifyActionResponse(resource.doImport(action));
     }
 
+    public void doTestRegister(Cluster cluster, boolean importAsNewEntity) throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.ImportVmFromConfiguration,
+                                           ImportVmParameters.class,
+                                           new String[] { "ContainerId", "StorageDomainId", "VdsGroupId", "ImportAsNewEntity", "ImagesExistOnTargetStorageDomain"},
+                                           new Object[] { VM_ID, GUIDS[3], GUIDS[1], importAsNewEntity, true}));
+
+        Action action = new Action();
+        action.setCluster(cluster);
+
+        action.setClone(importAsNewEntity);
+
+        verifyActionResponse(resource.register(action));
+    }
+
     @Test
     public void testImportAsyncPending() throws Exception {
         doTestImportAsync(AsyncTaskStatusEnum.init, CreationStatus.PENDING);
@@ -264,6 +278,20 @@ public class BackendStorageDomainVmResourceTest
         } catch (WebApplicationException wae) {
             verifyIncompleteException(wae, "Action", "doImport", "cluster.id|name", "storageDomain.id|name");
         }
+    }
+
+    @Test
+    public void testRegisterVM() throws Exception {
+        Cluster cluster = new Cluster();
+        cluster.setId(GUIDS[1].toString());
+        doTestRegister(cluster, false);
+    }
+
+    @Test
+    public void testRegisterAsNewEntity() throws Exception {
+        Cluster cluster = new Cluster();
+        cluster.setId(GUIDS[1].toString());
+        doTestRegister(cluster, true);
     }
 
     protected void setUpGetStorageDomainExpectations(StorageDomainType domainType) throws Exception {

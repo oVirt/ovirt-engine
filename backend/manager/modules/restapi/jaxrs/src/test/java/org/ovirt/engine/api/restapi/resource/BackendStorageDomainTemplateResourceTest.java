@@ -121,6 +121,32 @@ public class BackendStorageDomainTemplateResourceTest
     }
 
     @Test
+    public void testRegisterTemplate() throws Exception {
+        Cluster cluster = new Cluster();
+        cluster.setId(GUIDS[1].toString());
+        doTestRegister(cluster, false);
+    }
+
+    @Test
+    public void testRegisterTemplateAsNewEntity() throws Exception {
+        Cluster cluster = new Cluster();
+        cluster.setId(GUIDS[1].toString());
+        doTestRegister(cluster, true);
+    }
+
+    public void doTestRegister(Cluster cluster, boolean importAsNewEntity) throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.ImportVmTemplateFromConfiguration,
+                                           ImportVmTemplateParameters.class,
+                                           new String[] { "ContainerId", "StorageDomainId", "VdsGroupId", "ImportAsNewEntity", "ImagesExistOnTargetStorageDomain"},
+                                           new Object[] { TEMPLATE_ID, GUIDS[3], GUIDS[1], importAsNewEntity, true }));
+
+        Action action = new Action();
+        action.setCluster(cluster);
+        action.setClone(importAsNewEntity);
+        verifyActionResponse(resource.register(action));
+    }
+
+    @Test
     public void testImport() throws Exception {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());

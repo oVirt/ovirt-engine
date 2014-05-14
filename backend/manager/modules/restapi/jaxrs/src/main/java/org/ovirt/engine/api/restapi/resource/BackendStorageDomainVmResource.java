@@ -37,16 +37,34 @@ public class BackendStorageDomainVmResource
     }
 
     @Override
+    public Response register(Action action) {
+        validateParameters(action, "cluster.id|name");
+        ImportVmParameters params = new ImportVmParameters();
+        params.setContainerId(guid);
+        params.setStorageDomainId(parent.getStorageDomainId());
+        params.setVdsGroupId(getClusterId(action));
+        params.setImagesExistOnTargetStorageDomain(true);
+
+        if (action.isSetClone()) {
+            params.setImportAsNewEntity(action.isClone());
+            if (action.isSetVm() && action.getVm().isSetName()) {
+                params.getVm().setName(action.getVm().getName());
+            }
+        }
+
+        return doAction(VdcActionType.ImportVmFromConfiguration, params, action);
+    }
+
+    @Override
     public Response doImport(Action action) {
         validateParameters(action, "cluster.id|name", "storageDomain.id|name");
-
         Guid destStorageDomainId = getDestStorageDomainId(action);
 
         ImportVmParameters params = new ImportVmParameters(getEntity(),
-                                                           parent.getStorageDomainId(),
-                                                           destStorageDomainId,
-                                                           parent.getDataCenterId(destStorageDomainId),
-                                                           getClusterId(action));
+                parent.getStorageDomainId(),
+                destStorageDomainId,
+                parent.getDataCenterId(destStorageDomainId),
+                getClusterId(action));
         params.setImageToDestinationDomainMap(getDiskToDestinationMap(action));
         params.setForceOverride(action.isSetExclusive() ? action.isExclusive() : false);
 
@@ -57,7 +75,7 @@ public class BackendStorageDomainVmResource
 
         if (action.isSetClone()) {
             params.setImportAsNewEntity(action.isClone());
-            if(action.isSetVm() && action.getVm().isSetName()) {
+            if (action.isSetVm() && action.getVm().isSetName()) {
                 params.getVm().setName(action.getVm().getName());
             }
         }

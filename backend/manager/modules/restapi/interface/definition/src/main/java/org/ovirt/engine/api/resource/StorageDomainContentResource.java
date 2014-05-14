@@ -32,7 +32,7 @@ import org.ovirt.engine.api.model.BaseResource;
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface StorageDomainContentResource<R extends BaseResource> {
 
-    @Path("{action: (import)}/{oid}")
+    @Path("{action: (import|register)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @GET
@@ -45,6 +45,13 @@ public interface StorageDomainContentResource<R extends BaseResource> {
     @Actionable
     @Path("import")
     public Response doImport(Action action);
+
+    @POST
+    @Formatted
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("register")
+    public Response register(Action action);
 
     @Path("disks")
     public StorageDomainContentDisksResource getDisksResource();

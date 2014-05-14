@@ -1525,6 +1525,19 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
+- name: /storagedomains/{storagedomain:id}/templates/{template:id}/register|rel=register
+  description: Register the Template means importing the Template from the data domain, by inserting the configuration of the Template and disks into the DB without the copy process
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
+        optionalArguments: {action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.template.name: 'xs:string'}
+        description: Register the Template means importing the Template from the data domain, by inserting the configuration of the Template and disks into the DB without the copy process
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}/import|rel=import
   description: import the template from the export or data domain
   request:
@@ -1581,6 +1594,19 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
+- name: /storagedomains/{storagedomain:id}/vms/{vm:id}/register|rel=register
+  description: Register the VM means importing the VM from the data domain, by inserting the configuration of the VM and disks into the DB without the copy process
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
+        optionalArguments: {action.clone: 'xs:boolen', action.vm.name: 'xs:string'}
+        description: Register the VM means importing the VM from the data domain, by inserting the configuration of the VM and disks into the DB without the copy process
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}/import|rel=import
   description: import the specified virtual machine in the storage domain into the system
   request:
