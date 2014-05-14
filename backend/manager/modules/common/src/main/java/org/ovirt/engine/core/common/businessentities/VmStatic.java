@@ -177,7 +177,7 @@ public class VmStatic extends VmBase {
         result = prime * result + ((originalTemplateGuid == null) ? 0 : originalTemplateGuid.hashCode());
         result = prime * result + ((originalTemplateName == null) ? 0 : originalTemplateName.hashCode());
         result = prime * result + (useLatestVersion ? 1249 : 1259);
-        result = prime * result + numaTuneMode.getValue().hashCode();
+        result = prime * result + ((numaTuneMode == null) ? 0 : numaTuneMode.getValue().hashCode());
         result = prime * result + ((vNumaNodeList == null) ? 0 : vNumaNodeList.hashCode());
 
         return result;
