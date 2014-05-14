@@ -18,6 +18,7 @@ public class BondPanel extends NicPanel {
     public BondPanel(BondNetworkInterfaceModel item, NetworkPanelsStyle style) {
         super(item, style, true);
         actionButton.setStyleName(style.actionButtonBond());
+        actionButton.setStyleName("bp_actionButton_pfly_fix"); //$NON-NLS-1$
     }
 
     @Override

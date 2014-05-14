@@ -19,6 +19,7 @@ public abstract class NetworkPanel extends NetworkItemPanel {
     public NetworkPanel(LogicalNetworkModel item, NetworkPanelsStyle style, boolean draggable) {
         super(item, style, draggable);
         actionButton.setStyleName(style.actionButtonNetwork());
+        actionButton.addStyleName("np_actionButton_pfly_fix"); //$NON-NLS-1$
         if (item.isManagement()) {
             getElement().addClassName(style.mgmtNetwork());
         }

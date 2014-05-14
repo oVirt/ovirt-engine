@@ -136,7 +136,7 @@
         }
 
         .actionButtonNetwork {
-            padding: 8px;
+            cursor: pointer;
         }
 
         .actionButtonBond {

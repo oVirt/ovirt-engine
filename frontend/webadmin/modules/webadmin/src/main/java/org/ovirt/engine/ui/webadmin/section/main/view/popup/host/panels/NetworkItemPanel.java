@@ -76,6 +76,8 @@ public abstract class NetworkItemPanel extends FocusPanel {
         actionButton.getDownFace().setImage(new Image(resources.editMouseDown()));
         actionButton.setPixelSize(editImage.getWidth(), editImage.getHeight());
         actionButton.setVisible(false);
+        actionButton.addStyleName("buttonStyle_pfly_fix"); //$NON-NLS-1$
+        actionButton.addStyleName("nip_actionButton_pfly_fix"); //$NON-NLS-1$
 
         this.item = item;
         this.style = style;

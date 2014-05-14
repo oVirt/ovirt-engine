@@ -445,3 +445,24 @@ a.dropdown-toggle {
         line-height: 25px;
     }
 }
+.nip_actionButton_pfly_fix img {
+    left: -2px;
+}
+.np_actionButton_pfly_fix {
+    cursor: pointer;
+    position: relative;
+    top: 1px !important;
+    right: 3px !important;
+}
+.np_actionButton_pfly_fix img {
+    cursor: pointer;
+    position: relative;
+    left: 2px !important;
+    top: -6px !important;
+}
+.bp_actionButton_pfly_fix img {
+    position: relative;
+    top: -6px !important;
+    right: 3px !important;
+}
+
