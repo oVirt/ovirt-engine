@@ -1,19 +1,16 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.StatisticType;
 import org.ovirt.engine.api.model.StatisticUnit;
-import org.ovirt.engine.api.model.Value;
 import org.ovirt.engine.api.model.ValueType;
-import org.ovirt.engine.api.model.Values;
 import org.ovirt.engine.api.restapi.resource.BaseBackendResource.BackendFailureException;
+import org.ovirt.engine.api.restapi.utils.StatisticResourceUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -54,21 +51,19 @@ public abstract class AbstractStatisticalQuery<R extends BaseResource, E> {
     }
 
     public Statistic setDatum(Statistic statistic, BigDecimal datum) {
-        statistic.getValues().getValues().get(0).setDatum(datum);
-        return statistic;
+        return StatisticResourceUtils.setDatum(statistic, datum);
     }
 
     public Statistic setDatum(Statistic statistic, String datum) {
-        statistic.getValues().getValues().get(0).setDetail(datum);
-        return statistic;
+        return StatisticResourceUtils.setDatum(statistic, datum);
     }
 
     public Statistic setDatum(Statistic statistic, long datum) {
-        return setDatum(statistic, new BigDecimal(datum));
+        return StatisticResourceUtils.setDatum(statistic, datum);
     }
 
     public Statistic setDatum(Statistic statistic, double datum) {
-        return setDatum(statistic, new BigDecimal(datum, new MathContext(2)));
+        return StatisticResourceUtils.setDatum(statistic, datum);
     }
 
     public abstract List<Statistic> getStatistics(E entity);
@@ -80,25 +75,13 @@ public abstract class AbstractStatisticalQuery<R extends BaseResource, E> {
                                    StatisticType type,
                                    StatisticUnit unit,
                                    ValueType valueType) {
-        Statistic statistic = new Statistic();
-        statistic.setId(asId(name));
-        statistic.setName(name);
-        statistic.setDescription(description);
-        statistic.setType(type);
-        statistic.setUnit(unit);
-        statistic.setValues(new Values());
-        statistic.getValues().setType(valueType);
-        statistic.getValues().getValues().add(new Value());
-        return statistic;
+        return StatisticResourceUtils.create(name, description, type, unit, valueType);
     }
 
     public static Statistic clone(Statistic s) {
         return create(s.getName(), s.getDescription(), s.getType(), s.getUnit(), s.getValues().getType());
     }
 
-    public static String asId(String name) {
-        return UUID.nameUUIDFromBytes(name.getBytes()).toString();
-    }
 
     public List<Statistic> asList(Statistic...statistics) {
         List<Statistic> list = new ArrayList<Statistic>();

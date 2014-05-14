@@ -4117,6 +4117,92 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="volume_profile_details" type="GlusterVolumeProfileDetails"/>
+  <xs:complexType name="GlusterVolumeProfileDetails">
+    <xs:annotation>
+      <xs:appinfo>
+         <jaxb:class name="GlusterVolumeProfileDetails"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="brick_profile_details" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="nfs_profile_details" minOccurs="0" maxOccurs="1"/>
+         </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="brick_profile_details" type="BrickProfileDetails"/>
+  <xs:complexType name="BrickProfileDetails">
+    <xs:sequence>
+      <xs:element ref="brick_profile_detail" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="brick_profile_detail" type="BrickProfileDetail"/>
+  <xs:complexType name="BrickProfileDetail">
+    <xs:complexContent>
+      <xs:extension base="EntityProfileDetail">
+        <xs:sequence>
+          <xs:element ref="brick" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+     </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="nfs_profile_details" type="NfsProfileDetails"/>
+  <xs:complexType name="NfsProfileDetails">
+    <xs:sequence>
+      <xs:element ref="nfs_profile_detail" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="entity_profile_detail" type="EntityProfileDetail"/>
+  <xs:complexType name="EntityProfileDetail">
+    <xs:sequence>
+      <xs:element ref="profile_detail" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="nfs_profile_detail" type="NfsProfileDetail"/>
+  <xs:complexType name="NfsProfileDetail">
+    <xs:complexContent>
+      <xs:extension base="EntityProfileDetail">
+        <xs:sequence>
+          <xs:element name="nfs_server_ip" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="profile_detail" type="ProfileDetail" />
+  <xs:complexType name="ProfileDetail">
+    <xs:sequence>
+      <xs:element name="profile_type" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="duration" type="xs:int" minOccurs="0" maxOccurs="1" />
+      <xs:element ref="statistic" minOccurs="0" maxOccurs="2"/>
+      <xs:element ref="block_statistic" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="fop_statistic" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+   </xs:complexType>
+
+  <xs:element name="block_statistic" type="BlockStatistic"/>
+  <xs:complexType name="BlockStatistic">
+    <xs:sequence>
+      <xs:element ref="statistic" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="fop_statistic" type="FopStatistic"/>
+  <xs:complexType name="FopStatistic">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="statistic" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:element name="pm_proxies" type="PmProxies"/>
   <xs:complexType name="PmProxies">
     <xs:sequence>

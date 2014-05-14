@@ -12,6 +12,7 @@ import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.GlusterVolume;
+import org.ovirt.engine.api.model.GlusterVolumeProfileDetails;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.ApiMediaType;
 import org.ovirt.engine.api.resource.MeasurableResource;
@@ -90,6 +91,11 @@ public interface GlusterVolumeResource extends MeasurableResource {
     @Actionable
     @Path("stopprofile")
     public Response stopProfile(Action action);
+
+    @GET
+    @Formatted
+    @Path("profilestatistics")
+    public GlusterVolumeProfileDetails getProfileStatistics();
 
     /**
      * Sub-resource locator method, returns GlusterBricksResource on which the remainder of the URI is dispatched.

@@ -1,17 +1,23 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
+import java.util.HashMap;
+
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.GlusterVolume;
+import org.ovirt.engine.api.model.GlusterVolumeProfileDetails;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBricksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumeResource;
+import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
 import org.ovirt.engine.api.restapi.resource.BackendStatisticsResource;
 import org.ovirt.engine.api.restapi.resource.VolumeStatisticalQuery;
+import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
@@ -20,8 +26,11 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParamet
 import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileInfo;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeProfileParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -30,6 +39,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendGlusterVolumeResource
         extends AbstractBackendActionableResource<GlusterVolume, GlusterVolumeEntity>
         implements GlusterVolumeResource {
+    private static final String NFS_CONSTRAINT_PARAMETER = "nfsStatistics";
     private BackendGlusterVolumesResource parent;
 
     public BackendGlusterVolumeResource(String volumeId, BackendGlusterVolumesResource parent) {
@@ -155,5 +165,32 @@ public class BackendGlusterVolumeResource
         return inject(new BackendStatisticsResource<GlusterVolume, GlusterVolumeEntity>(entityType,
                 guid,
                 query));
+    }
+
+    @Override
+    public GlusterVolumeProfileDetails getProfileStatistics() {
+        boolean nfsStats = isNfsStatistics();
+        VdcQueryReturnValue result = runQuery(VdcQueryType.GetGlusterVolumeProfileInfo,
+                new GlusterVolumeProfileParameters(Guid.createGuidFromString(parent.getParent().get().getId()), guid, nfsStats));
+        if (result != null
+                && result.getSucceeded()
+                && result.getReturnValue() != null) {
+            return LinkHelper.addLinks(uriInfo, getMapper(GlusterVolumeProfileInfo.class,
+                    GlusterVolumeProfileDetails.class)
+            .map((GlusterVolumeProfileInfo)result.getReturnValue(), null));
+        } else {
+            //throw exception
+            throw new WebFaultException(null, localize(Messages.BACKEND_FAILED), Response.Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private Boolean isNfsStatistics() {
+        if (getUriInfo() != null && QueryHelper.hasMatrixParam(getUriInfo(), NFS_CONSTRAINT_PARAMETER)) {
+            HashMap<String, String> matrixConstraints = QueryHelper.getMatrixConstraints(getUriInfo(), NFS_CONSTRAINT_PARAMETER);
+            String maxString = matrixConstraints.get(NFS_CONSTRAINT_PARAMETER);
+                return Boolean.valueOf(maxString);
+        } else {
+            return false;
+        }
     }
 }

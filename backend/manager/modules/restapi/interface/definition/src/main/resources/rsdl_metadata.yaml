@@ -4377,6 +4377,15 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/profilestatistics|rel=get
+  description: get the profiling statistics once profiling is turned on for a volume
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      nfsStatistics: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers: {}
 - name: /clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=get
   description: get the list of all bricks in the gluster volume attached to the cluster
   request:
