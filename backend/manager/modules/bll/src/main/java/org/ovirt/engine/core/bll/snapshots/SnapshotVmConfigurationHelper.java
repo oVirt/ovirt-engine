@@ -103,11 +103,16 @@ public class SnapshotVmConfigurationHelper {
         Map<Guid, DiskImage> imagesInDbMap = ImagesHandler.getDiskImagesByIdMap(imagesInDb);
         for (DiskImage fromConfigImg : vm.getImages()) {
             if (fromConfigImg.getDiskStorageType() == Disk.DiskStorageType.IMAGE
-                    && imagesInDbMap != null && !imagesInDbMap.containsKey(fromConfigImg.getImageId())) {
+                    && !imagesInDbMap.containsKey(fromConfigImg.getImageId())) {
                 log.debugFormat("Image {0} of Disk {1} cannot be found in database. This image will be returned as ILLEGAL from the query",
                         fromConfigImg.getImageId(),
                         fromConfigImg.getId());
                 fromConfigImg.setImageStatus(ImageStatus.ILLEGAL);
+            }
+            else {
+                // Return image status as appears in DB (needed in case status is ILLEGAL in DB)
+                DiskImage imageInDb = imagesInDbMap.get(fromConfigImg.getImageId());
+                fromConfigImg.setImageStatus(imageInDb.getImageStatus());
             }
         }
     }

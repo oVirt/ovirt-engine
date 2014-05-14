@@ -131,10 +131,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         final Snapshot previousActiveSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
         final Guid previousActiveSnapshotId = previousActiveSnapshot.getId();
 
-        final List<DiskImage> images = getParameters().getDisks() != null ? getParameters().getDisks() :
-                DbFacade.getInstance()
-                        .getDiskImageDao()
-                        .getAllSnapshotsForVmSnapshot(snapshotToBePreviewed.getId());
+        final List<DiskImage> images = getImagesToPreview();
 
         // Images list without those that are excluded from preview
         final List<DiskImage> filteredImages = (List<DiskImage>) CollectionUtils.subtract(
@@ -210,6 +207,11 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         setSucceeded(true);
     }
 
+    private List<DiskImage> getImagesToPreview() {
+        return getParameters().getDisks() != null ? getParameters().getDisks() :
+                getDbFacade().getDiskImageDao().getAllSnapshotsForVmSnapshot(getDstSnapshot().getId());
+    }
+
     /**
      * Returns the list of images that haven't been selected for preview (remain the images from current active VM).
      */
@@ -270,6 +272,12 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
           DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImages);
             if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
                     !validate(diskImagesValidator.diskImagesNotLocked())) {
+              return false;
+          }
+
+          DiskImagesValidator diskImagesToPreviewValidator = new DiskImagesValidator(getImagesToPreview());
+          if (!validate(diskImagesToPreviewValidator.diskImagesNotIllegal()) ||
+                  !validate(diskImagesToPreviewValidator.diskImagesNotLocked())) {
               return false;
           }
 

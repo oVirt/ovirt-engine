@@ -232,9 +232,8 @@ public final class ImagesHandler {
      * @return map object is the collection is not null
      */
     public static Map<Guid, DiskImage> getDiskImagesByIdMap(Collection<DiskImage> diskImages) {
-        Map<Guid, DiskImage> result = null;
+        Map<Guid, DiskImage> result = new HashMap<>();
         if (diskImages != null) {
-            result = new HashMap<Guid, DiskImage>();
             for (DiskImage diskImage : diskImages) {
                 result.put(diskImage.getImageId(), diskImage);
             }
