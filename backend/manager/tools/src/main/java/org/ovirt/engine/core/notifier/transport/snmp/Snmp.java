@@ -211,6 +211,15 @@ public class Snmp extends Transport {
             }
             this.community = new OctetString(community);
             this.oid = new OID(oid);
+            if (!this.oid.isValid()) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Invalid oid '%s'",
+                        oid
+                    )
+                );
+
+            }
         }
     }
 }
