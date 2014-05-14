@@ -3,11 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.TogglePanel;
-import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.SumUpRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterface;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.webadmin.widget.label.LabelWithToolTip;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -25,6 +21,7 @@ public class InterfacePanel extends VerticalPanel {
         super();
         this.isSelectionAvailable = isSelectionEnabled;
     }
+
     public void addInterfaces(List<HostInterface> interfaces) {
         for (HostInterface hostInterface : interfaces) {
             add(new InterfaceElementPanel(hostInterface, isSelectionAvailable));
@@ -43,7 +40,7 @@ class InterfaceElementPanel extends TogglePanel {
     }
 
     Grid createRow(final HostInterface hostInterface) {
-        Grid row = new Grid(1, 8);
+        Grid row = new Grid(1, 2);
         row.setHeight("100%"); //$NON-NLS-1$
         row.setWidth("100%"); //$NON-NLS-1$
 
@@ -54,17 +51,11 @@ class InterfaceElementPanel extends TogglePanel {
 
         row.getColumnFormatter().setWidth(0, "30px"); //$NON-NLS-1$
         row.getColumnFormatter().setWidth(1, "210px"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(2, "210px"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(3, "210px"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(4, "105px"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(5, "105px"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(6, "105px"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(7, "105px"); //$NON-NLS-1$
 
         // Check box and interface status icon
         row.setWidget(0, 0, new FlowPanel() {
             {
-                if (isSelectionAvailable){
+                if (isSelectionAvailable) {
                     add(getCheckBox());
                 }
 
@@ -74,54 +65,6 @@ class InterfaceElementPanel extends TogglePanel {
 
         // Name
         row.setWidget(0, 1, new Label(hostInterface.getName()));
-
-        // Address
-        row.setWidget(0, 2, new Label(hostInterface.getAddress()));
-
-        // MAC
-        LabelWithToolTip macLabel = new LabelWithToolTip(hostInterface.getMAC(), 17);
-        row.setWidget(0, 3, macLabel);
-
-        // Speed
-        row.setWidget(0, 4, new Label() {
-            {
-                if (hostInterface.getSpeed() != null) {
-                    setText(String.valueOf(hostInterface.getSpeed()));
-                } else {
-                    setText(ClientGinjectorProvider.getApplicationConstants().unAvailablePropertyLabel());
-                }
-            }
-        });
-
-        // Rx rate
-        row.setWidget(0, 5, new Label() {
-            {
-                setText(new RxTxRateRenderer().render(new Double[] {
-                        hostInterface.getRxRate(),
-                        hostInterface.getSpeed() != null ? hostInterface.getSpeed().doubleValue() : null
-                }));
-            }
-        });
-
-        // Tx rate
-        row.setWidget(0, 6, new Label() {
-            {
-                setText(new RxTxRateRenderer().render(new Double[] {
-                        hostInterface.getTxRate(),
-                        hostInterface.getSpeed() != null ? hostInterface.getSpeed().doubleValue() : null
-                }));
-            }
-        });
-
-        // Drops
-        row.setWidget(0, 7, new Label() {
-            {
-                setText(new SumUpRenderer().render(new Double[] {
-                        hostInterface.getRxDrop(),
-                        hostInterface.getTxDrop()
-                }));
-            }
-        });
 
         return row;
     }

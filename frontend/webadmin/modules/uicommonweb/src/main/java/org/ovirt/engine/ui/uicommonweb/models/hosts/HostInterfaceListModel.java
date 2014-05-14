@@ -534,6 +534,7 @@ public class HostInterfaceListModel extends SearchableListModel
         model.setVLans(new ArrayList<HostVLan>());
         model.setNetworkName(nic.getNetworkName());
         model.setIsManagement(nic.getIsManagement());
+        model.setAddress(nic.getAddress());
 
         return model;
     }

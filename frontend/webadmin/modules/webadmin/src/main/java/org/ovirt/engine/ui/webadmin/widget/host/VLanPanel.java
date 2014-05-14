@@ -19,8 +19,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VLanPanel extends VerticalPanel {
 
-    public static final String CHECK_BOX_COLUMN_WIDTH = "50%"; //$NON-NLS-1$
-    public static final String NETWORK_NAME_COLUMN_WIDTH = "50%"; //$NON-NLS-1$
+    public static final String CHECK_BOX_COLUMN_WIDTH = "210px"; //$NON-NLS-1$
+    public static final String NETWORK_NAME_COLUMN_WIDTH = "210px"; //$NON-NLS-1$
+    public static final String ADDRESS_COLUMN_WIDTH = "210px"; //$NON-NLS-1$
 
     private final boolean isSelectionAvailable;
 
@@ -28,17 +29,18 @@ public class VLanPanel extends VerticalPanel {
         super();
         this.isSelectionAvailable = isSelectionEnabled;
     }
+
     public void addVLans(HostInterfaceLineModel lineModel) {
         boolean hasVlan = lineModel.getVlanSize() != 0;
         for (HostVLan hostVLan : lineModel.getVLans()) {
             add(new VLanElementPanel(hostVLan, isSelectionAvailable));
         }
 
-        if (!hasVlan || !StringHelper.isNullOrEmpty(lineModel.getNetworkName())){
+        if (!hasVlan || !StringHelper.isNullOrEmpty(lineModel.getNetworkName())
+                || !StringHelper.isNullOrEmpty(lineModel.getAddress())) {
             add(new VLanElementPanel(lineModel));
         }
     }
-
 }
 
 class VLanElementPanel extends TogglePanel {
@@ -57,11 +59,11 @@ class VLanElementPanel extends TogglePanel {
     }
 
     Grid createRow(final HostVLan hostVLan) {
-        Grid row = new Grid(1, 2);
+        Grid row = new Grid(1, 3);
         row.getColumnFormatter().setWidth(0, VLanPanel.CHECK_BOX_COLUMN_WIDTH);
         row.getColumnFormatter().setWidth(1, VLanPanel.NETWORK_NAME_COLUMN_WIDTH);
-        row.getCellFormatter().setHeight(0, 0, "100%"); //$NON-NLS-1$
-        row.getCellFormatter().setHeight(0, 1, "100%"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(2, VLanPanel.ADDRESS_COLUMN_WIDTH);
+
         row.setWidth("100%"); //$NON-NLS-1$
         row.setHeight("100%"); //$NON-NLS-1$
 
@@ -74,7 +76,7 @@ class VLanElementPanel extends TogglePanel {
         HorizontalPanel chekboxPanel = new HorizontalPanel();
         chekboxPanel.setWidth("100%"); //$NON-NLS-1$
 
-        if (isSelectionAvailable){
+        if (isSelectionAvailable) {
             chekboxPanel.add(getCheckBox());
         }
         chekboxPanel.add(new Image(ClientGinjectorProvider.getApplicationResources().splitRotateImage()));
@@ -92,15 +94,18 @@ class VLanElementPanel extends TogglePanel {
 
         row.setWidget(0, 1, networkName);
 
+        // Address
+        row.setWidget(0, 2, new Label(hostVLan.getAddress()));
+
         return row;
     }
 
     Grid createBlankRow(final HostInterfaceLineModel lineModel) {
-        Grid row = new Grid(1, 2);
+        Grid row = new Grid(1, 3);
         row.getColumnFormatter().setWidth(0, VLanPanel.CHECK_BOX_COLUMN_WIDTH);
         row.getColumnFormatter().setWidth(1, VLanPanel.NETWORK_NAME_COLUMN_WIDTH);
-        row.getCellFormatter().setHeight(0, 0, "100%"); //$NON-NLS-1$
-        row.getCellFormatter().setHeight(0, 1, "100%"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(2, VLanPanel.ADDRESS_COLUMN_WIDTH);
+
         row.setWidth("100%"); //$NON-NLS-1$
         row.setHeight("100%"); //$NON-NLS-1$
 
@@ -116,6 +121,9 @@ class VLanElementPanel extends TogglePanel {
         }
 
         row.setWidget(0, 1, networkName);
+
+        // Address
+        row.setWidget(0, 2, new Label(lineModel.getAddress()));
 
         return row;
     }

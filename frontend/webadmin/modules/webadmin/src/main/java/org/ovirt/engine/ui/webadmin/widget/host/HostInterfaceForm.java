@@ -21,10 +21,11 @@ public class HostInterfaceForm extends Composite {
     @SuppressWarnings("unchecked")
     public HostInterfaceForm(final HostInterfaceListModel listModel) {
         isSelectionAvailable = listModel.getIsSelectionAvailable();
-        grid = new Grid(1, 3);
-        grid.getColumnFormatter().setWidth(0, "1080px"); //$NON-NLS-1$
+        grid = new Grid(1, 4);
+        grid.getColumnFormatter().setWidth(0, "240px"); //$NON-NLS-1$
         grid.getColumnFormatter().setWidth(1, "210px"); //$NON-NLS-1$
-        grid.getColumnFormatter().setWidth(2, "420px"); //$NON-NLS-1$
+        grid.getColumnFormatter().setWidth(2, "630px"); //$NON-NLS-1$
+        grid.getColumnFormatter().setWidth(3, "630px"); //$NON-NLS-1$
         grid.setWidth("100%"); //$NON-NLS-1$
         grid.setHeight("100%"); //$NON-NLS-1$
         initWidget(grid);
@@ -81,6 +82,14 @@ public class HostInterfaceForm extends Composite {
         return panel;
     }
 
+    StatisticsPanel createStatisticsPanel(HostInterfaceLineModel lineModel) {
+        StatisticsPanel panel = new StatisticsPanel();
+        panel.setWidth("100%"); //$NON-NLS-1$
+        panel.setHeight("100%"); //$NON-NLS-1$
+        panel.addInterfaces(lineModel.getInterfaces());
+        return panel;
+    }
+
     void showModels(List<HostInterfaceLineModel> interfaceLineModels) {
         this.setVisible(true);
         grid.resizeRows(interfaceLineModels.size());
@@ -90,6 +99,7 @@ public class HostInterfaceForm extends Composite {
             setGridWidget(row, 0, createInterfacePanel(lineModel));
             setGridWidget(row, 1, createBondPanel(lineModel));
             setGridWidget(row, 2, createVLanPanel(lineModel));
+            setGridWidget(row, 3, createStatisticsPanel(lineModel));
             row++;
         }
     }

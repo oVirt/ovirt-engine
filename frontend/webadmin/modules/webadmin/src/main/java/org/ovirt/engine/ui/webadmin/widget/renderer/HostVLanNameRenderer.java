@@ -10,8 +10,8 @@ public class HostVLanNameRenderer extends AbstractRenderer<HostVLan> {
     public String render(HostVLan object) {
         StringBuilder sb = new StringBuilder(object.getName());
 
-        if (object.getAddress() != null && !object.getAddress().isEmpty()) {
-            sb.append(" (").append(object.getAddress()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (object.getInterface().getVlanId() != null) {
+            sb.append(" (").append(object.getInterface().getVlanId()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         return sb.toString();

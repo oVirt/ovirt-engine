@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostListModel, HostInterfaceListModel>
-    implements SubTabHostInterfacePresenter.ViewDef {
+        implements SubTabHostInterfacePresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostInterfaceView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -51,7 +51,10 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
 
     @Inject
     public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants, ApplicationTemplates templates) {
+            EventBus eventBus,
+            ClientStorage clientStorage,
+            ApplicationConstants constants,
+            ApplicationTemplates templates) {
         super(modelProvider);
         table =
                 new SimpleActionTable<HostInterfaceLineModel>(modelProvider,
@@ -74,17 +77,28 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
     }
 
     void initTable(ApplicationConstants constants, ApplicationTemplates templates) {
+        // Interface Panel
         table.addColumn(new EmptyColumn(), constants.empty(), "30px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.nameInterface(), "210px"); //$NON-NLS-1$
-        table.addColumn(new EmptyColumn(), constants.addressInterface(), "210px"); //$NON-NLS-1$
-        table.addColumn(new EmptyColumn(), constants.macInterface(), "210px"); //$NON-NLS-1$
-        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.speedInterface(), constants.mbps()).asString(), "105px"); //$NON-NLS-1$
-        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.rxInterface(), constants.mbps()).asString(), "105px"); //$NON-NLS-1$
-        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.txInterface(), constants.mbps()).asString(), "105px"); //$NON-NLS-1$
-        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.dropsInterface(), constants.pkts()).asString(), "105px"); //$NON-NLS-1$
+
+        // Bond Panel
         table.addColumn(new EmptyColumn(), constants.bondInterface(), "210px"); //$NON-NLS-1$
+
+        // Vlan Panel
         table.addColumn(new EmptyColumn(), constants.vlanInterface(), "210px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.networkNameInterface(), "210px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.addressInterface(), "210px"); //$NON-NLS-1$
+
+        // Statistics Panel
+        table.addColumn(new EmptyColumn(), constants.macInterface(), "210px"); //$NON-NLS-1$
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.speedInterface(), constants.mbps())
+                .asString(), "105px"); //$NON-NLS-1$
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.rxInterface(), constants.mbps())
+                .asString(), "105px"); //$NON-NLS-1$
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.txInterface(), constants.mbps())
+                .asString(), "105px"); //$NON-NLS-1$
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.dropsInterface(), constants.pkts())
+                .asString(), "105px"); //$NON-NLS-1$
 
         table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.addEditInterface()) {
             @Override
@@ -126,7 +140,8 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
             }
         });
 
-        //The table items are in the form, so the table itself will never have items, so don't display the 'empty message'
+        // The table items are in the form, so the table itself will never have items, so don't display the 'empty
+        // message'
         table.table.setEmptyTableWidget(null);
     }
 

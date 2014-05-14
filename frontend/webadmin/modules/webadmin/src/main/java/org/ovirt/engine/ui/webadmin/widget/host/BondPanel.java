@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.ui.common.widget.TogglePanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.webadmin.widget.renderer.HostInterfaceBondNameRenderer;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -40,7 +39,7 @@ public class BondPanel extends TogglePanel {
             }
 
             // Bond name
-            add(new Label(new HostInterfaceBondNameRenderer().render(lineModel)));
+            add(new Label(lineModel.getBondName()));
         } else {
             add(new Label("")); //$NON-NLS-1$
         }
