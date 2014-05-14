@@ -671,6 +671,13 @@ public class VdsManager {
     public boolean handleNetworkException(VDSNetworkException ex, VDS vds) {
         if (vds.getStatus() != VDSStatus.Down) {
             long timeoutToFence = calcTimeoutToFence(vds.getVmCount(), vds.getSpmStatus());
+            log.warnFormat("Host {0} is not responding. It will stay in Connecting state for a grace period of ${1} seconds and after that an attempt to fence the host will be issued.",
+                vds.getName(),
+                TimeUnit.MILLISECONDS.toSeconds(timeoutToFence));
+            AuditLogableBase logable = new AuditLogableBase();
+            logable.setVdsId(vds.getId());
+            logable.addCustomValue("Seconds", Long.toString(TimeUnit.MILLISECONDS.toSeconds(timeoutToFence)));
+            AuditLogDirector.log(logable, AuditLogType.VDS_HOST_IN_CONNECTING_STATE);
             if (mUnrespondedAttempts.get() < Config.<Integer> getValue(ConfigValues.VDSAttemptsToResetCount)
                     || (lastUpdate + timeoutToFence) > System.currentTimeMillis()) {
                 boolean result = false;
@@ -694,7 +701,7 @@ public class VdsManager {
                     vds.getId(), vds.getName(), vds.getVmCount(), vds.getSpmStatus(),
                     TimeUnit.MILLISECONDS.toSeconds(timeoutToFence), ex.getMessage());
 
-            AuditLogableBase logable = new AuditLogableBase(vds.getId());
+            logable = new AuditLogableBase(vds.getId());
             logable.updateCallStackFromThrowable(ex);
             AuditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
             boolean executeSshSoftFencing = false;
