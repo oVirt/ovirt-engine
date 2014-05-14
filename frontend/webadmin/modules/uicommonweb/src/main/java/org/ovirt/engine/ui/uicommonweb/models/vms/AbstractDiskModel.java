@@ -48,7 +48,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -662,13 +661,21 @@ public abstract class AbstractDiskModel extends DiskModel
     protected void updateReadOnlyChangeability() {
         DiskInterface diskInterface = getDiskInterface().getSelectedItem();
 
-        if (DiskInterface.IDE.equals(diskInterface)) {
+        if (diskInterface == DiskInterface.IDE) {
             getIsReadOnly().setChangeProhibitionReason(CONSTANTS.cannotEnableIdeInterfaceForReadOnlyDisk());
             getIsReadOnly().setIsChangable(false);
+            getIsReadOnly().setEntity(false);
+            return;
         }
-        else {
-            getIsReadOnly().setIsChangable(isEditEnabled());
+
+        boolean isDirectLUN = Boolean.FALSE.equals(getIsInternal().getEntity());
+        if (diskInterface == DiskInterface.VirtIO_SCSI && isDirectLUN) {
+            getIsReadOnly().setChangeProhibitionReason(CONSTANTS.cannotEnableVirtIoScsiInterfaceForLunReadOnlyDisk());
+            getIsReadOnly().setIsChangable(false);
+            getIsReadOnly().setEntity(false);
+            return;
         }
+        getIsReadOnly().setIsChangable(isEditEnabled());
     }
 
     private void updatePlugChangeability() {
@@ -775,21 +782,6 @@ public abstract class AbstractDiskModel extends DiskModel
         if (dataCenter != null && dataCenter.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
             getQuota().validateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
         }
-
-        getDiskInterface().validateEntity(new IValidation[] { new IValidation() {
-            @Override
-            public ValidationResult validate(Object value) {
-                ValidationResult result = new ValidationResult();
-
-                if (getDiskInterface().getSelectedItem() == DiskInterface.IDE && getIsReadOnly().getEntity())
-                {
-                    result.setSuccess(false);
-                    result.getReasons().add(ConstantsManager.getInstance().getConstants().cannotEnableIdeInterfaceForReadOnlyDisk());
-                }
-
-                return result;
-            }
-        }});
 
         return getAlias().getIsValid() && getDescription().getIsValid() && getQuota().getIsValid() && getDiskInterface().getIsValid();
     }

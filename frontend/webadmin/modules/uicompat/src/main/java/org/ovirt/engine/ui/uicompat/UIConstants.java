@@ -2242,6 +2242,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("An IDE disk can't be read-only.")
     String cannotEnableIdeInterfaceForReadOnlyDisk();
 
+    @DefaultStringValue("A VirtIO-ISCSI direct LUN disk can't be read-only.")
+    String cannotEnableVirtIoScsiInterfaceForLunReadOnlyDisk();
+
     @DefaultStringValue("Global Maintenance Enabled")
     String haGlobalMaintenance();
 
