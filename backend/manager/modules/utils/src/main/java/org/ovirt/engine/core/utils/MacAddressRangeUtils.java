@@ -50,7 +50,7 @@ public class MacAddressRangeUtils {
     }
 
     public static String macToString(long macAddress) {
-        String value = String.format("%012x", macAddress).toUpperCase();
+        String value = String.format("%012x", macAddress);
         char[] chars = value.toCharArray();
 
         final StringBuilder stringBuilder = new StringBuilder();
