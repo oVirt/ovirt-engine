@@ -265,8 +265,13 @@ public class DisksViewColumns {
         }) {
             @Override
             protected boolean canEdit(EntityModel object) {
-                    return true;
-                }
+                DiskModel diskModel = (DiskModel) object.getEntity();
+                Disk disk = diskModel.getDisk();
+                boolean lunIscsiLimitation =
+                        (disk.getDiskInterface() == DiskInterface.VirtIO_SCSI && disk.getDiskStorageType() == DiskStorageType.LUN);
+                boolean ideLimitation = (disk.getDiskInterface() == DiskInterface.IDE);
+                return !lunIscsiLimitation && !ideLimitation;
+            }
 
             @Override
             public Boolean getValue(EntityModel object) {

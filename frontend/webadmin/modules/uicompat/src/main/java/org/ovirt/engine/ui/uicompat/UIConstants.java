@@ -2223,6 +2223,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Are you sure you want to place the following storage domain(s) into maintenance mode?")
     String areYouSureYouWantToPlaceFollowingStorageDomainsIntoMaintenanceModeMsg();
 
+    @DefaultStringValue("A VirtIO-ISCSI direct LUN disk can't be read-only.")
+    String cannotEnableVirtIoScsiInterfaceForLunReadOnlyDisk();
+
     @DefaultStringValue("Global Maintenance Enabled")
     String haGlobalMaintenance();
 
