@@ -18,7 +18,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
-import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
+import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -95,8 +95,8 @@ public class AttachDiskToVmCommandTest {
 
     private void initCommand() {
         when(diskDao.get(diskId)).thenReturn(createDiskImage());
-        AttachDettachVmDiskParameters parameters = createParameters();
-        command = spy(new AttachDiskToVmCommand<AttachDettachVmDiskParameters>(parameters) {
+        AttachDetachVmDiskParameters parameters = createParameters();
+        command = spy(new AttachDiskToVmCommand<AttachDetachVmDiskParameters>(parameters) {
             // Overridden here and not during spying, since it's called in the constructor
             @SuppressWarnings("synthetic-access")
             @Override
@@ -109,7 +109,7 @@ public class AttachDiskToVmCommandTest {
     /**
      * The command under test.
      */
-    private AttachDiskToVmCommand<AttachDettachVmDiskParameters> command;
+    private AttachDiskToVmCommand<AttachDetachVmDiskParameters> command;
 
     @Test
     public void testCanDoSucceed() {
@@ -132,8 +132,8 @@ public class AttachDiskToVmCommandTest {
         verify(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
     }
 
-    private AttachDettachVmDiskParameters createParameters() {
-        AttachDettachVmDiskParameters parameters = new AttachDettachVmDiskParameters(vmId, diskId);
+    private AttachDetachVmDiskParameters createParameters() {
+        AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(vmId, diskId);
         parameters.setReadOnly(true);
         return parameters;
     }

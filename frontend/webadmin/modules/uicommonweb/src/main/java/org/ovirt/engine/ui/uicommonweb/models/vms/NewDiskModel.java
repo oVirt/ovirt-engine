@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
+import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -90,7 +90,7 @@ public class NewDiskModel extends AbstractDiskModel
             DiskModel disk = disksToAttach.get(i).getEntity();
             // Disk is attached to VM as read only or not, null is applicable only for floating disks
             // but this is not a case here.
-            AttachDettachVmDiskParameters parameters = new AttachDettachVmDiskParameters(
+            AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(
                     getVm().getId(), disk.getDisk().getId(), getIsPlugged().getEntity(),
                     Boolean.TRUE.equals(disk.getDisk().getReadOnly()));
 

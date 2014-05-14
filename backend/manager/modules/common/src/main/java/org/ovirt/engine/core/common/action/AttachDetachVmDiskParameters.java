@@ -4,20 +4,20 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AttachDettachVmDiskParameters extends VmDiskOperationParameterBase {
+public class AttachDetachVmDiskParameters extends VmDiskOperationParameterBase {
 
     private static final long serialVersionUID = 5640716432695539552L;
     private boolean isPlugUnPlug;
     private boolean isReadOnly;
 
-    public AttachDettachVmDiskParameters() {
+    public AttachDetachVmDiskParameters() {
     }
 
-    public AttachDettachVmDiskParameters(Guid vmId, Guid diskId) {
+    public AttachDetachVmDiskParameters(Guid vmId, Guid diskId) {
         this(vmId, diskId, true, false);
     }
 
-    public AttachDettachVmDiskParameters(Guid vmId, Guid diskId, boolean isPlugUnPlug, boolean isReadOnly) {
+    public AttachDetachVmDiskParameters(Guid vmId, Guid diskId, boolean isPlugUnPlug, boolean isReadOnly) {
         super(vmId, null);
         setEntityInfo(new EntityInfo(VdcObjectType.Disk, diskId));
         this.isPlugUnPlug = isPlugUnPlug;

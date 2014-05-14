@@ -8,7 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
+import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -129,7 +129,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     private AuditLogType attemptToAttachDisksToImportedVm(Collection<Disk> disks){
         List<String> failedDisks = new LinkedList<>();
         for (Disk disk : disks) {
-            AttachDettachVmDiskParameters params = new AttachDettachVmDiskParameters(getVm().getId(),
+            AttachDetachVmDiskParameters params = new AttachDetachVmDiskParameters(getVm().getId(),
                     disk.getId(), disk.getPlugged(), disk.getReadOnly());
             VdcReturnValueBase returnVal = getBackend().runInternalAction(VdcActionType.AttachDiskToVm, params);
             if (!returnVal.getSucceeded()) {

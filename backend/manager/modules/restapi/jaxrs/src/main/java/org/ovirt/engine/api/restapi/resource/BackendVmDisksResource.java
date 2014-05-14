@@ -23,7 +23,7 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.Paramete
 import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
+import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -75,7 +75,7 @@ public class BackendVmDisksResource
         getEntity(id); //verifies that entity exists, returns 404 otherwise.
         if (action.isSetDetach() && action.isDetach()) {
             return performAction(VdcActionType.DetachDiskFromVm,
-                    new AttachDettachVmDiskParameters(parentId, Guid.createGuidFromStringDefaultEmpty(id)));
+                    new AttachDetachVmDiskParameters(parentId, Guid.createGuidFromStringDefaultEmpty(id)));
         } else {
             return remove(id);
         }
@@ -209,7 +209,7 @@ public class BackendVmDisksResource
     private Response attachDiskToVm(Disk disk) {
         boolean isDiskActive = BooleanUtils.toBooleanDefaultIfNull(disk.isActive(), false);
         boolean isDiskReadOnly = BooleanUtils.toBooleanDefaultIfNull(disk.isReadOnly(), false);
-        AttachDettachVmDiskParameters params = new AttachDettachVmDiskParameters(parentId,
+        AttachDetachVmDiskParameters params = new AttachDetachVmDiskParameters(parentId,
                 Guid.createGuidFromStringDefaultEmpty(disk.getId()), isDiskActive, isDiskReadOnly);
 
         if (disk.isSetSnapshot()) {

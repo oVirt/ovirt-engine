@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
+import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -176,7 +176,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     private void attachDisk(Disk disk) {
         getBackend().runInternalAction(
                 VdcActionType.AttachDiskToVm,
-                new AttachDettachVmDiskParameters(
+                new AttachDetachVmDiskParameters(
                         getParameters().getNewVmGuid(),
                         disk.getId(),
                         disk.getPlugged(),

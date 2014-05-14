@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
-import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
+import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
@@ -426,7 +426,7 @@ public class VmDiskListModel extends VmDiskListModelBase
             Disk disk = (Disk) item;
             VdcActionParametersBase parameters = removeDisk ?
                     new RemoveDiskParameters(disk.getId()) :
-                    new AttachDettachVmDiskParameters(vm.getId(), disk.getId());
+                    new AttachDetachVmDiskParameters(vm.getId(), disk.getId());
             paramerterList.add(parameters);
         }
 

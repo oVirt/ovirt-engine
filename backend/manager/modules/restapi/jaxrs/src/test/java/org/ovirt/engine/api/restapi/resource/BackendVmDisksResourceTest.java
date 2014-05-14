@@ -18,7 +18,7 @@ import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
+import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -131,7 +131,7 @@ public class BackendVmDisksResourceTest
                 new Object[] { PARENT_ID },
                 getEntityList());
         setUpActionExpectations (VdcActionType.AttachDiskToVm,
-                AttachDettachVmDiskParameters.class,
+                AttachDetachVmDiskParameters.class,
                 new String[] { "VmId", "EntityInfo" },
                 new Object[] { PARENT_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID) },
                 true,
@@ -157,7 +157,7 @@ public class BackendVmDisksResourceTest
                 new Object[] { PARENT_ID },
                 getEntityList());
         setUpActionExpectations (VdcActionType.AttachDiskToVm,
-                AttachDettachVmDiskParameters.class,
+                AttachDetachVmDiskParameters.class,
                 new String[] { "VmId", "EntityInfo", "SnapshotId" },
                 new Object[] { PARENT_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID), snapshotId },
                 true,
@@ -170,7 +170,7 @@ public class BackendVmDisksResourceTest
     public void testDetachDisk() throws Exception {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.DetachDiskFromVm,
-                                           AttachDettachVmDiskParameters.class,
+                                           AttachDetachVmDiskParameters.class,
                                            new String[] { "VmId", "EntityInfo" },
                                            new Object[] { PARENT_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID) },
                                            true,
