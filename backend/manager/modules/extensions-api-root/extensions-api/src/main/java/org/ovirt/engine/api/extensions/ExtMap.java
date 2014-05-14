@@ -324,7 +324,7 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
      * @return Value.
      */
     public <T> T get(ExtKey key, Class<T> type, T defaultValue) {
-        if (!type.isAssignableFrom(key.getType())) {
+        if (!key.getType().isAssignableFrom(type)) {
             throw new IllegalArgumentException(
                 String.format(
                     "Cannnot assign key '%s' into type '%s'",
@@ -333,7 +333,7 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
                 )
             );
         }
-        if (defaultValue != null && !defaultValue.getClass().isAssignableFrom(key.getType())) {
+        if (defaultValue != null && !key.getType().isAssignableFrom(defaultValue.getClass())) {
             throw new IllegalArgumentException(
                 String.format(
                     "Cannnot assign default value of '%s' into type '%s'",
@@ -388,7 +388,7 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
      * @return Value.
      */
     public <T> T get(ExtKey key, T defaultValue) {
-        if (!defaultValue.getClass().isAssignableFrom(key.getType())) {
+        if (!key.getType().isAssignableFrom(defaultValue.getClass())) {
             throw new IllegalArgumentException(
                 String.format(
                     "Cannnot assign default value of '%s' into type '%s'",
