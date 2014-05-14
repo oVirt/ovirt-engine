@@ -13,7 +13,7 @@ public class GetVmsInitQuery<P extends IdsQueryParameters> extends QueriesComman
    @Override
    protected void executeQueryCommand() {
        if (getParameters().getIds() != null) {
-           getQueryReturnValue().setReturnValue(VmHandler.getVmInitByIds(getParameters().getIds()));
+           getQueryReturnValue().setReturnValue(VmHandler.getVmInitByIds(getParameters().getIds(), true));
        }
    }
 }

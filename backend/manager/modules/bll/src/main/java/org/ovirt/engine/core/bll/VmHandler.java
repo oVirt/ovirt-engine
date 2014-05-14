@@ -336,9 +336,22 @@ public class VmHandler {
         db.remove(vm.getId());
     }
 
-    public static List<VmInit> getVmInitByIds(List<Guid> ids) {
+    // if secure is true we don't return the stored password, only
+    // indicate that the password is set via the PasswordAlreadyStored property
+    public static List<VmInit> getVmInitByIds(List<Guid> ids, boolean secure) {
         VmInitDAO db = DbFacade.getInstance().getVmInitDao();
-        return db.getVmInitByIds(ids);
+        List<VmInit> all = db.getVmInitByIds(ids);
+
+        for (VmInit vmInit: all) {
+            if (secure) {
+                vmInit.setPasswordAlreadyStored(!StringUtils.isEmpty(vmInit.getRootPassword()));
+                vmInit.setRootPassword(null);
+            } else {
+                vmInit.setPasswordAlreadyStored(false);
+            }
+
+        }
+        return all;
     }
 
     /**

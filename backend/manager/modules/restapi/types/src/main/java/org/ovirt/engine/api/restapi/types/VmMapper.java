@@ -1119,7 +1119,7 @@ public class VmMapper {
         if (entity.getWinKey() != null) {
             model.setWindowsLicenseKey(entity.getWinKey());
         }
-        if (entity.getRootPassword() != null) {
+        if (entity.getRootPassword() != null || entity.isPasswordAlreadyStored()) {
             model.setRootPassword("******");
         }
         if (entity.getCustomScript() != null) {
