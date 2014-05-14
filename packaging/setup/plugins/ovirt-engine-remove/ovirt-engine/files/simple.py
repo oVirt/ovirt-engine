@@ -118,8 +118,8 @@ class Plugin(plugin.PluginBase):
                     file=filename,
                     lines='\n'.join(
                         [
-                            '\t{line}'.format(line=line)
-                            for line in remove_unremoved
+                            '\t{line}'.format(line=newline)
+                            for newline in remove_unremoved
                         ]
                     ),
                 )
