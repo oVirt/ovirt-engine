@@ -5,7 +5,7 @@ public enum StorageDomainStatus {
     Uninitialized,
     Unattached,
     Active,
-    InActive,
+    Inactive,
     Locked,
     Maintenance,
     PreparingForMaintenance;

@@ -412,12 +412,12 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     statusChanged = true;
                 } else if (domainPoolMap.getStatus() != StorageDomainStatus.Locked
                         && domainPoolMap.getStatus() != data.getStatus()) {
-                    if (domainPoolMap.getStatus() != StorageDomainStatus.InActive
-                            && data.getStatus() != StorageDomainStatus.InActive) {
+                    if (domainPoolMap.getStatus() != StorageDomainStatus.Inactive
+                            && data.getStatus() != StorageDomainStatus.Inactive) {
                         DbFacade.getInstance().getStoragePoolIsoMapDao().update(data.getStoragePoolIsoMapData());
                         statusChanged = true;
                     }
-                    if (data.getStatus() != null && data.getStatus() == StorageDomainStatus.InActive
+                    if (data.getStatus() != null && data.getStatus() == StorageDomainStatus.Inactive
                             && domainFromDb.getStorageDomainType() == StorageDomainType.Master) {
                         StoragePool pool = DbFacade.getInstance().getStoragePoolDao()
                                 .get(domainPoolMap.getstorage_pool_id());
@@ -432,7 +432,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 // if status didn't change and still not active no need to
                 // update dynamic data
                 if (statusChanged
-                        || (domainPoolMap.getStatus() != StorageDomainStatus.InActive && data.getStatus() == StorageDomainStatus.Active)) {
+                        || (domainPoolMap.getStatus() != StorageDomainStatus.Inactive && data.getStatus() == StorageDomainStatus.Active)) {
                     DbFacade.getInstance().getStorageDomainDynamicDao().update(data.getStorageDynamicData());
                     if (data.getAvailableDiskSize() != null && data.getUsedDiskSize() != null) {
                         double freePercent = data.getStorageDynamicData().getfreeDiskPercent();
@@ -1082,7 +1082,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     Set<Guid> inActiveDomainsInPool =
                             new HashSet<Guid>(DbFacade.getInstance()
                                     .getStorageDomainStaticDao()
-                                    .getAllIds(_storagePoolId, StorageDomainStatus.InActive));
+                                    .getAllIds(_storagePoolId, StorageDomainStatus.Inactive));
 
                     // build a list of all the domains in
                     // pool (domainsInPool) that are not

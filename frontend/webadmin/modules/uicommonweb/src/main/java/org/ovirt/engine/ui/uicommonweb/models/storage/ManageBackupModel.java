@@ -113,7 +113,7 @@ public abstract class ManageBackupModel extends SearchableListModel
     {
         if (getEntity() != null)
         {
-            if (getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.InActive
+            if (getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Inactive
                     || getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed)
             {
                 setMessage(ConstantsManager.getInstance().getConstants().theExportDomainIsInactiveMsg());

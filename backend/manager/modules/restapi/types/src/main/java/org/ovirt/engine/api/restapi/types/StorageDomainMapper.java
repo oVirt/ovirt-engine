@@ -388,7 +388,7 @@ public class StorageDomainMapper {
             return StorageDomainStatus.UNATTACHED;
         case Active:
             return StorageDomainStatus.ACTIVE;
-        case InActive:
+        case Inactive:
             return StorageDomainStatus.INACTIVE;
         case Locked:
             return StorageDomainStatus.LOCKED;

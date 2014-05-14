@@ -43,7 +43,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
             StorageDomain domain = new StorageDomain();
             if (xmlRpcStruct.containsKey("status")) {
                 if ("Attached".equals(xmlRpcStruct.get("status").toString())) {
-                    domain.setStatus(StorageDomainStatus.InActive);
+                    domain.setStatus(StorageDomainStatus.Inactive);
                 } else {
                     domain.setStatus(EnumUtils.valueOf(StorageDomainStatus.class, xmlRpcStruct.get("status")
                             .toString(), true));

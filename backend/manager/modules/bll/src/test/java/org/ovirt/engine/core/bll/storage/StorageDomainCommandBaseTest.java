@@ -44,29 +44,29 @@ public class StorageDomainCommandBaseTest {
 
     @Test
     public void statusMatches() {
-        setStorageDomainStatus(StorageDomainStatus.InActive);
-        assertTrue(cmd.checkStorageDomainStatus(StorageDomainStatus.InActive));
+        setStorageDomainStatus(StorageDomainStatus.Inactive);
+        assertTrue(cmd.checkStorageDomainStatus(StorageDomainStatus.Inactive));
         assertFalse(commandHasInvalidStatusMessage());
     }
 
     @Test
     public void statusNotMatch() {
-        setStorageDomainStatus(StorageDomainStatus.InActive);
+        setStorageDomainStatus(StorageDomainStatus.Inactive);
         assertFalse(cmd.checkStorageDomainStatus(StorageDomainStatus.Active));
         assertTrue(commandHasInvalidStatusMessage());
     }
 
     @Test
     public void statusInList() {
-        setStorageDomainStatus(StorageDomainStatus.InActive);
-        assertTrue(cmd.checkStorageDomainStatus(StorageDomainStatus.Locked, StorageDomainStatus.InActive,
+        setStorageDomainStatus(StorageDomainStatus.Inactive);
+        assertTrue(cmd.checkStorageDomainStatus(StorageDomainStatus.Locked, StorageDomainStatus.Inactive,
                 StorageDomainStatus.Unknown));
         assertFalse(commandHasInvalidStatusMessage());
     }
 
     @Test
     public void statusNotInList() {
-        setStorageDomainStatus(StorageDomainStatus.InActive);
+        setStorageDomainStatus(StorageDomainStatus.Inactive);
         assertFalse(cmd.checkStorageDomainStatus(StorageDomainStatus.Locked, StorageDomainStatus.Active,
                 StorageDomainStatus.Unknown));
         assertTrue(commandHasInvalidStatusMessage());
@@ -74,7 +74,7 @@ public class StorageDomainCommandBaseTest {
 
     @Test
     public void canDetachInactiveDomain() {
-        setStorageDomainStatus(StorageDomainStatus.InActive);
+        setStorageDomainStatus(StorageDomainStatus.Inactive);
         storagePoolExists();
         masterDomainIsUp();
         isNotLocalData();
@@ -84,7 +84,7 @@ public class StorageDomainCommandBaseTest {
 
     @Test
     public void canDetachMaintenanceDomain() {
-        setStorageDomainStatus(StorageDomainStatus.InActive);
+        setStorageDomainStatus(StorageDomainStatus.Inactive);
         storagePoolExists();
         masterDomainIsUp();
         isNotLocalData();

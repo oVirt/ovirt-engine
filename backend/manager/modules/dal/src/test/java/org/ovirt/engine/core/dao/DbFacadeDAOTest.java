@@ -186,7 +186,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
                 masterStorageDomainGuid, storagePoolToCheck.getId()));
         assertNotNull(storagePoolIsoMapToCheck);
 
-        storagePoolIsoMapToCheck.setStatus(StorageDomainStatus.InActive);
+        storagePoolIsoMapToCheck.setStatus(StorageDomainStatus.Inactive);
         dbFacade.getStoragePoolIsoMapDao().update(storagePoolIsoMapToCheck);
         assertFalse(dbFacade.isStoragePoolMasterUp(STORAGE_POOL_WITH_MASTER_DOWN));
     }

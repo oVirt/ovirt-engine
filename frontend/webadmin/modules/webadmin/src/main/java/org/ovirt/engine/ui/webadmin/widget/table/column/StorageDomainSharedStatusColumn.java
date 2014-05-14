@@ -21,7 +21,7 @@ public class StorageDomainSharedStatusColumn extends WebAdminImageResourceColumn
                     }
                 case Active:
                     return getApplicationResources().upImage();
-                case InActive:
+                case Inactive:
                     return getApplicationResources().downImage();
                 case Mixed:
                     return getApplicationResources().upalertImage();

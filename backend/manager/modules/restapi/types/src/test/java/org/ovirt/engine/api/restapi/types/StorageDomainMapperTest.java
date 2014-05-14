@@ -72,7 +72,7 @@ public class StorageDomainMapperTest extends
         assertEquals(StorageDomainStatus.ACTIVE, StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.StorageDomainStatus.Active, null));
         assertEquals(StorageDomainStatus.INACTIVE, StorageDomainMapper.map(org.ovirt.engine.core.common
-                .businessentities.StorageDomainStatus.InActive, null));
+                .businessentities.StorageDomainStatus.Inactive, null));
         assertEquals(StorageDomainStatus.LOCKED, StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.StorageDomainStatus.Locked, null));
         assertEquals(StorageDomainStatus.UNATTACHED, StorageDomainMapper.map(org.ovirt.engine.core.common

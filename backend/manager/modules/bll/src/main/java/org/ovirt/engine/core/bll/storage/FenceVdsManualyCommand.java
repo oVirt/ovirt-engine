@@ -174,7 +174,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         if (masterDomain != null
                 && masterDomain.getStatus() != null
                 && (masterDomain.getStatus() == StorageDomainStatus.Active
-                        || masterDomain.getStatus() == StorageDomainStatus.Unknown || masterDomain.getStatus() == StorageDomainStatus.InActive)) {
+                        || masterDomain.getStatus() == StorageDomainStatus.Unknown || masterDomain.getStatus() == StorageDomainStatus.Inactive)) {
             if (!getStoragePool().isLocal()) {
                 // if only one\"the fenced" host connected to sp in dc
                 if (getAmountOfVdssInPool() == 1) {

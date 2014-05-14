@@ -54,12 +54,12 @@ public class ActivateStorageDomainCommandTest {
 
     @Test
     public void internalInactiveAllowed() {
-        internalActionAllowed(StorageDomainStatus.InActive);
+        internalActionAllowed(StorageDomainStatus.Inactive);
     }
 
     @Test
     public void nonInternalInactiveAllowed() {
-        nonInternalActionAllowed(StorageDomainStatus.InActive);
+        nonInternalActionAllowed(StorageDomainStatus.Inactive);
     }
 
     @Test

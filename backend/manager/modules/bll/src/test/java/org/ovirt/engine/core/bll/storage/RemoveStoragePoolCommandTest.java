@@ -105,14 +105,14 @@ public class RemoveStoragePoolCommandTest {
      * Test when there is in active domain.
      */
     @Test
-    public void testInActiveDomainInList() {
+    public void testInactiveDomainInList() {
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
         List<StorageDomain> domainsList = new ArrayList<StorageDomain>();
 
         // Add first locked storage
         StorageDomain tempStorageDomains = new StorageDomain();
-        tempStorageDomains.setStatus(StorageDomainStatus.InActive);
+        tempStorageDomains.setStatus(StorageDomainStatus.Inactive);
         domainsList.add(tempStorageDomains);
 
         List<StorageDomain> listReturned = cmd.getActiveOrLockedDomainList(domainsList);

@@ -75,7 +75,7 @@ public class MultipleStorageDomainsValidatorTest {
     @Test
     public void testAllDomainsExistAndActiveOneInactive() {
         domain1.setStatus(StorageDomainStatus.Active);
-        domain2.setStatus(StorageDomainStatus.InActive);
+        domain2.setStatus(StorageDomainStatus.Inactive);
         ValidationResult result = validator.allDomainsExistAndActive();
         assertFalse("One domain should not be active", result.isValid());
         assertEquals("Wrong validation error",

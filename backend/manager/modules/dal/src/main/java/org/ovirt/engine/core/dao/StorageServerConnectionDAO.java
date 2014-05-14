@@ -48,7 +48,7 @@ public interface StorageServerConnectionDAO extends DAO {
     StorageServerConnections getForIqn(String iqn);
 
     /**
-     * Retrieves all connections of Active/Unknown/InActive domains in the specified storage pool.
+     * Retrieves all connections of Active/Unknown/Inactive domains in the specified storage pool.
      *
      * @param pool
      *            the storage pool
@@ -57,7 +57,7 @@ public interface StorageServerConnectionDAO extends DAO {
     List<StorageServerConnections> getAllConnectableStorageSeverConnection(Guid pool);
 
     /**
-     * Retrieves all connections of Active/Unknown/InActive domains of the specified storage type
+     * Retrieves all connections of Active/Unknown/Inactive domains of the specified storage type
      * in the specified storage pool. If storage type is not specified then all connections of the same
      * domains are returned.
      *

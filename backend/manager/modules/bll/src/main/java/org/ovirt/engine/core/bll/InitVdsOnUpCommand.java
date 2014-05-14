@@ -229,7 +229,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         EventResult result = new EventResult(true, EventType.VDSCONNECTTOPOOL);
         StoragePool storagePool = getStoragePoolDAO().get(storagePoolId);
         StorageDomain masterDomain = getStorageDomainDAO().getStorageDomainByTypeAndPool(storagePoolId, StorageDomainType.Master);
-        boolean masterDomainInactiveOrUnknown = masterDomain.getStatus() == StorageDomainStatus.InActive
+        boolean masterDomainInactiveOrUnknown = masterDomain.getStatus() == StorageDomainStatus.Inactive
                 || masterDomain.getStatus() == StorageDomainStatus.Unknown;
         VDSError error = null;
         try {

@@ -233,7 +233,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                                 .getStoragePoolIsoMapDao()
                                 .updateStatus(
                                         new StoragePoolIsoMapId(storageDomainId, getStoragePool().getId()),
-                                        StorageDomainStatus.InActive);
+                                        StorageDomainStatus.Inactive);
                         return null;
                     }
                 });

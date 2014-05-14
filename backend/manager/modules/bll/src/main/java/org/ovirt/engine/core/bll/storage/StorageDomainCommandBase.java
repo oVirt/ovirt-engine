@@ -72,7 +72,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     protected boolean canDetachDomain(boolean isDestroyStoragePool, boolean isRemoveLast, boolean isInternal) {
         return checkStoragePool()
                 && checkStorageDomain()
-                && checkStorageDomainStatus(StorageDomainStatus.InActive, StorageDomainStatus.Maintenance)
+                && checkStorageDomainStatus(StorageDomainStatus.Inactive, StorageDomainStatus.Maintenance)
                 && (isMaster() || isDestroyStoragePool || checkMasterDomainIsUp())
                 && isNotLocalData(isInternal)
                 && isDetachAllowed(isRemoveLast);
@@ -346,7 +346,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                             newMaster = dbStorageDomain;
                             break;
                         } else if (selectInactiveWhenNoActiveUnknownDomains && newMaster == null
-                                && dbStorageDomain.getStatus() == StorageDomainStatus.InActive) {
+                                && dbStorageDomain.getStatus() == StorageDomainStatus.Inactive) {
                             // if the found domain is inactive, we don't break to continue and look for
                             // active/unknown domain.
                             newMaster = dbStorageDomain;

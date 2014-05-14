@@ -7,7 +7,7 @@ public interface Enums extends LocalizedEnums {
 
     String StorageDomainStatus___Active();
 
-    String StorageDomainStatus___InActive();
+    String StorageDomainStatus___Inactive();
 
     String StorageDomainStatus___Unattached();
 
@@ -23,7 +23,7 @@ public interface Enums extends LocalizedEnums {
 
     String StorageDomainSharedStatus___Active();
 
-    String StorageDomainSharedStatus___InActive();
+    String StorageDomainSharedStatus___Inactive();
 
     String StorageDomainSharedStatus___Unattached();
 

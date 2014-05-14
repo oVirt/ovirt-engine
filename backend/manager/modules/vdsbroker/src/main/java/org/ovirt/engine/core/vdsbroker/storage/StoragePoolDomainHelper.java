@@ -20,7 +20,7 @@ public class StoragePoolDomainHelper {
     private static final Log log = LogFactory.getLog(StoragePoolDomainHelper.class);
 
     public static final Set<StorageDomainStatus> storageDomainMonitoredStatus =
-            Collections.unmodifiableSet(EnumSet.of(StorageDomainStatus.InActive, StorageDomainStatus.Active));
+            Collections.unmodifiableSet(EnumSet.of(StorageDomainStatus.Inactive, StorageDomainStatus.Active));
 
     public static Map<String, String> buildStoragePoolDomainsMap(List<StoragePoolIsoMap> storagePoolIsoMaps) {
         Map<String, String> storageDomains = new HashMap<String, String>();

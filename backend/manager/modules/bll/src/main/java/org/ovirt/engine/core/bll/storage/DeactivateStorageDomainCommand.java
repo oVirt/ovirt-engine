@@ -259,7 +259,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             @Override
             public Object runInTransaction() {
                 if (getParameters().isInactive()) {
-                    map.setStatus(StorageDomainStatus.InActive);
+                    map.setStatus(StorageDomainStatus.Inactive);
                 } else if (_isLastMaster) {
                     map.setStatus(StorageDomainStatus.Maintenance);
                 } else {

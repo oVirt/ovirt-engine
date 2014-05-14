@@ -41,7 +41,7 @@ public class StorageConnectionValidatorTest {
         domain.setStorageType(StorageType.ISCSI);
         domain.setId(Guid.createGuidFromString("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
         domain.setStatus(StorageDomainStatus.Maintenance);
-        domain.setStorageDomainSharedStatus(StorageDomainSharedStatus.InActive);
+        domain.setStorageDomainSharedStatus(StorageDomainSharedStatus.Inactive);
     }
 
     @Test

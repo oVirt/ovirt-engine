@@ -44,7 +44,7 @@ public class VdcActionUtilsTest {
         upStorageDomain.setStatus(StorageDomainStatus.Active);
 
         StorageDomain downStorageDomain = new StorageDomain();
-        downStorageDomain.setStatus(StorageDomainStatus.InActive);
+        downStorageDomain.setStatus(StorageDomainStatus.Inactive);
 
         return Arrays.asList(new Object[][] {
                 { upVm, VdcActionType.MigrateVm, true },

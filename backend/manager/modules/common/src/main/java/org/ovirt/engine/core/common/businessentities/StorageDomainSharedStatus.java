@@ -4,7 +4,7 @@ public enum StorageDomainSharedStatus implements Identifiable {
     // FIXME add ids and remove the ordinal impl of getValue
     Unattached,
     Active,
-    InActive,
+    Inactive,
     Mixed,
     Locked;
 

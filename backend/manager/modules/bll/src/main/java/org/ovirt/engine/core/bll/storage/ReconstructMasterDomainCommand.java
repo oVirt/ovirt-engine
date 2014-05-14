@@ -101,7 +101,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
-                    setStorageDomainStatus(StorageDomainStatus.InActive, getCompensationContext());
+                    setStorageDomainStatus(StorageDomainStatus.Inactive, getCompensationContext());
                     calcStoragePoolStatusByDomainsStatus();
                     getCompensationContext().stateChanged();
                     return null;
