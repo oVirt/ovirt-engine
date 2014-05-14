@@ -224,7 +224,6 @@ public abstract class VmInfoBuilderBase {
         for (VdsNumaNode node : vdsNodes) {
             vdsNumaNodeCpus.put(node.getIndex(), node.getCpuIds());
         }
-        log.error(vdsNumaNodeCpus.toString());
         for (VmNumaNode node : vmNodes) {
             List<Integer> pinnedNodeIndexes = NumaUtils.getPinnedNodeIndexList(node.getVdsNumaNodeList());
             if (!pinnedNodeIndexes.isEmpty()) {
