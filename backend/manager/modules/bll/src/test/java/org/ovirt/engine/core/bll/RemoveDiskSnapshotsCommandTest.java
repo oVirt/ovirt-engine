@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -34,16 +33,12 @@ import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 /** A test case for the {@link RemoveDiskSnapshotsCommand} class. */
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveDiskSnapshotsCommandTest {
 
     private RemoveDiskSnapshotsCommand<RemoveDiskSnapshotsParameters> cmd;
-
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule();
 
     @Mock
     private VmTemplateDAO vmTemplateDAO;
