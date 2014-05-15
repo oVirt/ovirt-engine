@@ -75,38 +75,56 @@ class Plugin(plugin.PluginBase):
                     name=answer,
                 )
             )
-            with open(self.resolveFile(answer), 'w') as f:
-                os.fchmod(f.fileno(), 0o600)
-                f.write(
-                    (
-                        '# action=%s\n'
-                        '[environment:default]\n'
-                    ) % (
-                        self.environment[
-                            osetupcons.CoreEnv.ACTION
-                        ],
+            # Generate the answer file only if valid path is passed
+            try:
+                with open(self.resolveFile(answer), 'w') as f:
+                    os.fchmod(f.fileno(), 0o600)
+                    f.write(
+                        (
+                            '# action=%s\n'
+                            '[environment:default]\n'
+                        ) % (
+                            self.environment[
+                                osetupcons.CoreEnv.ACTION
+                            ],
+                        )
+                    )
+                    consts = []
+                    for constobj in self.environment[
+                        osetupcons.CoreEnv.SETUP_ATTRS_MODULES
+                    ]:
+                        consts.extend(constobj.__dict__['__osetup_attrs__'])
+                    for c in consts:
+                        for k in c.__dict__.values():
+                            if hasattr(k, '__osetup_attrs__'):
+                                if k.__osetup_attrs__['answerfile']:
+                                    k = k.fget(None)
+                                    if k in self.environment:
+                                        v = self.environment[k]
+                                        f.write(
+                                            '%s=%s:%s\n' % (
+                                                k,
+                                                common.typeName(v),
+                                                '\n'.join(v)
+                                                if isinstance(v, list)
+                                                else v,
+                                            )
+                                        )
+
+            except IOError as e:
+                self.logger.warning(
+                    _(
+                        'Cannot write to answer file: {answerfile} '
+                        'Error: {error}'
+                    ).format(
+                        answerfile=answer,
+                        error=e,
                     )
                 )
-                consts = []
-                for constobj in self.environment[
-                    osetupcons.CoreEnv.SETUP_ATTRS_MODULES
-                ]:
-                    consts.extend(constobj.__dict__['__osetup_attrs__'])
-                for c in consts:
-                    for k in c.__dict__.values():
-                        if hasattr(k, '__osetup_attrs__'):
-                            if k.__osetup_attrs__['answerfile']:
-                                k = k.fget(None)
-                                if k in self.environment:
-                                    v = self.environment[k]
-                                    f.write(
-                                        '%s=%s:%s\n' % (
-                                            k,
-                                            common.typeName(v),
-                                            '\n'.join(v) if isinstance(v, list)
-                                            else v,
-                                        )
-                                    )
-
+                self.logger.debug(
+                    'Exception while writing to answer file: %s',
+                    answer,
+                    exc_info=True,
+                )
 
 # vim: expandtab tabstop=4 shiftwidth=4
