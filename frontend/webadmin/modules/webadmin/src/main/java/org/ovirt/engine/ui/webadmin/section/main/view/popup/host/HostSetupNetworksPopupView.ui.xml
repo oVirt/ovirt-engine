@@ -101,7 +101,7 @@
             background-color: #CED8DF;
             border-color: #7A8D9A;
             cursor: move;
-            height: 27px;
+            height: 32px;
         }
 
         .nicPanel:HOVER {
@@ -145,6 +145,8 @@
 
         .networkImageBorder {
             border: 1px solid #C5C5C5;
+            width: 18px !important;
+            height: 18px !important;
         }
 
         .emptyPanel {
@@ -152,6 +154,11 @@
             color: gray;
             height: 36px;
             width: 100%;
+        }
+
+        .emptyPanelLabel {
+            padding-left: 10px;
+            padding-top: 6px;
         }
 
         .checkCon {

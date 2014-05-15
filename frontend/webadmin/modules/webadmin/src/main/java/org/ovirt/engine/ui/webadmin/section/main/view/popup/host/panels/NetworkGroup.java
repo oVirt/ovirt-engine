@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DragDropEventBase;
 import com.google.gwt.event.dom.client.DragEnterEvent;
 import com.google.gwt.event.dom.client.DragEnterHandler;
@@ -88,7 +87,7 @@ public class NetworkGroup extends FocusPanel {
         } else {
             SimplePanel emptyPanel = new SimplePanel();
             Label label = new Label(constants.noNetworkAssigned());
-            label.getElement().getStyle().setPadding(10, Unit.PX);
+            label.getElement().addClassName(style.emptyPanelLabel());
             emptyPanel.setWidget(label);
             emptyPanel.setStylePrimaryName(style.emptyPanel());
             table.setWidget(0, 2, emptyPanel);
