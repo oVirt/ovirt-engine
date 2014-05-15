@@ -589,7 +589,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("VirtIO Console Device Enabled")
     String consoleDeviceEnabled();
 
-    @DefaultStringValue("Pool")
+    @DefaultStringValue("Type")
     String poolVmPopup();
 
     @DefaultStringValue("Pool Type")
