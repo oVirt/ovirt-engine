@@ -1615,12 +1615,8 @@ public class UnitVmModel extends Model {
             }
             else if (sender == getDisplayProtocol())
             {
-                deactivateInstanceTypeManagerAndUpdateFields();
-
                 displayProtocol_SelectedItemChanged(sender, args);
                 initUsbPolicy();
-
-                getBehavior().activateInstanceTypeManager();
             }
             else if (sender == getNumOfSockets())
             {

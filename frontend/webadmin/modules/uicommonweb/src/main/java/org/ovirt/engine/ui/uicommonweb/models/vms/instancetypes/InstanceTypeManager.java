@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Base class which takes care about copying the proper fields from instance type/template/vm static to the VM.
  *
- * Please not that this class manages only the fields which are defined on the instance type, so the
+ * Please note that this class manages only the fields which are defined on the instance type, so the
  * fields which are taken from the template and are not from instance type have to be handled on some
  * different place (most often in the behavior classes).
  *
@@ -72,7 +72,7 @@ public abstract class InstanceTypeManager {
     }
 
     /**
-     * First updates the list of instance types and selects the one which is supposed to be selected and than
+     * First updates the list of instance types and selects the one which is supposed to be selected and then
      * updates all the fields which are taken from the instance type (by calling the updateFields()).
      */
     public void updateAll() {
