@@ -11,7 +11,7 @@
         .unassignedtitle {
             font-size: small;
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .externaltitle {
@@ -34,14 +34,14 @@
             font-size: small;
             text-align: center;
             margin-left: 210px;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .nicstitle {
             font-size: small;
             text-align: center;
             margin-left: 80px;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .statusLabel {
@@ -49,7 +49,6 @@
             font-weight: bold;
             color: gray;
             padding-left: 20px;
-            padding-top: 5px;
         }
 
         .errorLabel {
@@ -210,7 +209,7 @@
         .requiredLabel{
             text-align: center;
             font-weight: bold;
-            padding-top: 10px;
+            padding-top: 6px;
         }
 
     </ui:style>
