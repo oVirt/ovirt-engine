@@ -66,7 +66,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         createInternalAAAConfigurations();
         createKerberosLdapAAAConfigurations();
         ExtensionsManager.getInstance().dump();
-        ExtensionsManager.getInstance().getGlobalContext().put(Base.GlobalContextKeys.APPLICATION_NAME, Base.ApplicationName.ENGINE);
+        ExtensionsManager.getInstance()
+                .getGlobalContext()
+                .put(Base.GlobalContextKeys.APPLICATION_NAME, Base.ApplicationNames.OVIRT_ENGINE_AAA_EXTENSION_TOOL);
         AuthenticationProfileRepository.getInstance();
         DbUserCacheManager.getInstance().init();
         AsyncTaskManager.getInstance().initAsyncTaskManager();
