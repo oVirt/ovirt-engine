@@ -73,7 +73,7 @@
 
 	<d:SimpleDialogPanel width="900px" height="600px">
 		<d:content>
-			<g:VerticalPanel spacing="5" >
+			<g:VerticalPanel addStyleNames="ts5" >
 				<g:HorizontalPanel>
 					<g:Label ui:field="conflictReasonsLabel" addStyleNames="{style.sectionHeaderLabel}"/>
 					<g:VerticalPanel>

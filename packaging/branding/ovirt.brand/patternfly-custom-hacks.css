@@ -6,10 +6,42 @@
    TODO: remove this file when fully converted over to PatternFly.
 */
 
+/* alternatives to setSpacing() or spacing="" */
+.ts2 {
+    border-spacing: 2px;
+    border-collapse: separate;
+}
+.ts3 {
+    border-spacing: 3px;
+    border-collapse: separate;
+}
+.ts4 {
+    border-spacing: 4px;
+    border-collapse: separate;
+}
+.ts5 {
+    border-spacing: 5px;
+    border-collapse: separate;
+}
+.ts10 {
+    border-spacing: 10px;
+    border-collapse: separate;
+}
+.ts15 {
+    border-spacing: 15px;
+    border-collapse: separate;
+}
+
+/* alternatives to padding="" */
+.tp3 {
+    padding: 3px;
+}
+
 
 label {
     font-weight: 500 !important;
 }
+
 
 /* UserPortal navigation bar has wrong font, set to Open Sans */
 .navbar-pf .navbar-nav > li > a {

@@ -80,7 +80,7 @@
                 <g:ScrollPanel ui:field="searchItemsScrollPanel" addStyleNames="{style.searchItemsPanel}">
                     <e:EntityModelCellTable ui:field="searchItems" />
                 </g:ScrollPanel>
-                <g:HorizontalPanel spacing="10" ui:field="roleSelectionPanel" addStyleNames="{style.rolePanel}">
+                <g:HorizontalPanel ui:field="roleSelectionPanel" addStyleNames="{style.rolePanel} ts10">
                     <g:Label ui:field="roleToAssignLabel" addStyleNames="{style.mainLabel}" text="{constants.roleToAssignPermissionsPopup}" />
                     <e:ListModelListBoxEditor ui:field="roleSelection" />
                 </g:HorizontalPanel>

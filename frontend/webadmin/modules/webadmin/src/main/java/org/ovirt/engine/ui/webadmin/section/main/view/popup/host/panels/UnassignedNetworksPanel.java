@@ -73,12 +73,12 @@ public abstract class UnassignedNetworksPanel extends FocusPanel {
 
     public void setStyle(final NetworkPanelsStyle style) {
         this.style = style;
-        setSpacing(10);
+        addStyleName("ts10"); //$NON-NLS-1$
         animatedPanel.getElement().addClassName(style.unassignedNetworksPanel());
     }
 
     protected void stylePanel(VerticalPanel panel) {
-        panel.setSpacing(2);
+        panel.addStyleName("ts2"); //$NON-NLS-1$
         panel.setWidth("100%"); //$NON-NLS-1$
     }
 

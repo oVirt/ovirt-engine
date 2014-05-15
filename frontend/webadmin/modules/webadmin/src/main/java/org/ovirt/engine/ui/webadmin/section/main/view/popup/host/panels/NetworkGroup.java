@@ -55,7 +55,7 @@ public class NetworkGroup extends FocusPanel {
         int networkSize = nicModel.getTotalItemSize();
 
         // style
-        table.setCellSpacing(5);
+        table.addStyleName("ts5"); //$NON-NLS-1$
         table.getElement().addClassName(style.groupPanel());
 
         // columns

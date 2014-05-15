@@ -22,11 +22,11 @@ public class NetworkLabelPanel extends NetworkItemPanel {
     @Override
     protected Widget getContents() {
         VerticalPanel vPanel = new VerticalPanel();
-        vPanel.setSpacing(5);
+        vPanel.addStyleName("ts5"); //$NON-NLS-1$
         vPanel.setWidth("100%"); //$NON-NLS-1$
 
         Grid titleRow = new Grid(1, 2);
-        titleRow.setCellSpacing(3);
+        titleRow.addStyleName("ts3"); //$NON-NLS-1$
 
         ColumnFormatter columnFormatter = titleRow.getColumnFormatter();
         columnFormatter.setWidth(0, "30px"); //$NON-NLS-1$
@@ -40,8 +40,8 @@ public class NetworkLabelPanel extends NetworkItemPanel {
 
         titleRow.setWidget(0, 0, labelImage);
         titleRow.setWidget(0, 1, titleLabel);
-        titleRow.setCellSpacing(3);
-        titleRow.setCellPadding(3);
+        titleRow.addStyleName("ts3"); //$NON-NLS-1$
+        titleRow.addStyleName("tp3"); //$NON-NLS-1$
         vPanel.add(titleRow);
 
         getElement().addClassName(style.bondPanel());

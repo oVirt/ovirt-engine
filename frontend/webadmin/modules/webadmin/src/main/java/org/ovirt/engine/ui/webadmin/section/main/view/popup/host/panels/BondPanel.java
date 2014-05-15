@@ -23,11 +23,11 @@ public class BondPanel extends NicPanel {
     @Override
     protected Widget getContents() {
         VerticalPanel vPanel = new VerticalPanel();
-        vPanel.setSpacing(5);
+        vPanel.addStyleName("ts5"); //$NON-NLS-1$
         vPanel.setWidth("100%"); //$NON-NLS-1$
 
         Grid titleRow = new Grid(1, 3);
-        titleRow.setCellSpacing(3);
+        titleRow.addStyleName("ts3"); //$NON-NLS-1$
 
         ColumnFormatter columnFormatter = titleRow.getColumnFormatter();
         columnFormatter.setWidth(0, "30px"); //$NON-NLS-1$
@@ -42,7 +42,7 @@ public class BondPanel extends NicPanel {
         titleRow.setWidget(0, 0, bondImage);
         titleRow.setWidget(0, 1, titleLabel);
         titleRow.setWidget(0, 2, actionButton);
-        titleRow.setCellSpacing(3);
+        titleRow.addStyleName("ts3"); //$NON-NLS-1$
         titleRow.setCellPadding(3);
         vPanel.add(titleRow);
 

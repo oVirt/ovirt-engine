@@ -23,7 +23,7 @@ public class NicPanel extends NetworkItemPanel {
     @Override
     protected Widget getContents() {
         Grid rowPanel = new Grid(1, 5);
-        rowPanel.setCellSpacing(3);
+        rowPanel.addStyleName("ts3"); //$NON-NLS-1$
         rowPanel.setWidth("100%"); //$NON-NLS-1$
         rowPanel.setHeight("100%"); //$NON-NLS-1$
 

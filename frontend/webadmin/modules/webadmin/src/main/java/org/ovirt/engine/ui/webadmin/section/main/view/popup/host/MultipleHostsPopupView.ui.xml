@@ -21,7 +21,7 @@
 
     <d:SimpleDialogPanel width="900px" height="450px">
         <d:content>
-            <g:VerticalPanel spacing="5">
+            <g:VerticalPanel addStyleNames="ts5">
                 <g:Label></g:Label>
                 <g:HorizontalPanel verticalAlignment="middle">
                     <ge:EntityModelCheckBoxEditor ui:field="useCommonPasswordEditor" />
