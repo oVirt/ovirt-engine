@@ -438,11 +438,18 @@ a.dropdown-toggle {
     height: 26px;
     line-height: 26px;
 }
-
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .spv_searchStringPrefixLabel_pfly_fix {
         height: 25px;
         line-height: 25px;
+    }
+}
+.nlw_mainPanel_pfly_fix .avw_wrapper_pfly_fix {
+    line-height: 0 !important;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .nlw_mainPanel_pfly_fix .avw_wrapper_pfly_fix {
+        margin-top: 0 !important;
     }
 }
 .nip_actionButton_pfly_fix img {
