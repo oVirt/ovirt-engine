@@ -90,7 +90,7 @@ public abstract class CheckboxColumn<T> extends Column<T, Boolean> {
 
         if (!canEdit(object)) {
             sb.append(multipleSelectionAllowed ? INPUT_CHECKBOX_DISABLED_PREFIX : INPUT_RADIO_DISABLED_PREFIX);
-            if (getValue(object)) {
+            if (Boolean.TRUE.equals(getValue(object))) {
                 sb.append(CHECKED_ATTR);
             }
             String disabledMessage = getDisabledMessage(object);
