@@ -1,119 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:r="urn:import:org.ovirt.engine.ui.common.widget.refresh">
+    xmlns:r="urn:import:org.ovirt.engine.ui.common.widget.refresh">
 
-	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+    <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.table.SimpleActionTable.Style">
-		.panel {
-			overflow-y: auto;
-			overflow-x: hidden;
-			height: 100%;
-		}
+    <ui:style type="org.ovirt.engine.ui.common.widget.table.SimpleActionTable.Style">
+        .panel {
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100%;
+        }
 
-		.bar {
-			padding-top: 4px;
-			height: 24px;
-		}
+        .bar {
+            padding-top: 4px;
+            height: 24px;
+        }
 
-		.refreshButton {
-			float: right;
-			font-size: 12px;
-			height: 14px;
-			width: 12px;
-			margin-right: 5px;
-			background: transparent;
-			border: 1px solid transparent;
-		}
+        .refreshButton {
+            float: right;
+            font-size: 12px;
+            height: 14px;
+            width: 12px;
+            margin-right: 5px;
+            background: transparent;
+            border: 1px solid transparent;
+        }
 
-		.refreshPanel {
-			float: right;
-			cursor: pointer;
-			border: 1px solid transparent;
-			display: table-cell;
-		}
+        .refreshPanel {
+            float: right;
+            cursor: pointer;
+            border: 1px solid transparent;
+            display: table-cell;
+        }
 
-		.content {
-			overflow-y: scroll;
-			position: absolute !important;
-			top: 64px;
-			bottom: 0px;
-			left: 0px;
-			right: 0px;
-		}
+        .content {
+            overflow-y: scroll;
+            position: absolute !important;
+            top: 64px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+        }
 
-		.contentWithDefaultHeader {
-		}
+        .contentWithDefaultHeader {
+        }
 
-		.headerContainer {
-			position: absolute;
-			height: 28px;
-			top: 34px;
-			bottom: 0px;
-			left: 0px;
-			right: 0px;
-			background-color: #F0F2FF;
-		}
+        .headerContainer {
+            position: absolute;
+            height: 28px;
+            top: 34px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            background-color: #F0F2FF;
+        }
 
-		.prevButtonStyle {
-			width: 10px;
-			float: right;
-			padding-right: 3px;
-			margin-top: -2px;
-			border: 0px;
-			background: transparent;
-		}
+        .prevButtonStyle {
+            width: 10px;
+            float: right;
+            padding-right: 3px;
+            margin-top: -2px;
+            border: 0px;
+            background: transparent;
+        }
 
-		.nextButtonStyle {
-			width: 10px;
-			float: right;
-			padding-left: 10px;
-			padding-right: 15px;
-			margin-top: -2px;
-			border: 0px;
-			background: transparent;
-		}
+        .nextButtonStyle {
+            width: 10px;
+            float: right;
+            padding-left: 10px;
+            padding-right: 15px;
+            margin-top: -2px;
+            border: 0px;
+            background: transparent;
+        }
 
-		.itemsCountLabelStyle {
-			font-weight: bold;
-			float: right;
-			margin-top: 5px;
-			padding-left: 5px;
-			min-width: 30px;
-			text-align: center;
-			font-family: Arial, verdana, sans-serif;
-			font-size: 11px;
-			color: #666
-		}
+        .itemsCountLabelStyle {
+            font-weight: bold;
+            float: right;
+            margin-top: 5px;
+            padding-left: 5px;
+            min-width: 30px;
+            text-align: center;
+            font-family: Arial, verdana, sans-serif;
+            font-size: 11px;
+            color: #666
+        }
 
-		.subTitledButton {
-			padding-left: 30px !important;
-		}
+        .subTitledButton {
+            padding-left: 30px !important;
+        }
 
         .actionPadding {
             padding-left: 5px;
         }
-	</ui:style>
 
-	<g:FlowPanel addStyleNames="{style.panel}">
-		<g:HTMLPanel ui:field="barPanel" addStyleNames="{style.bar}">
-			<g:FlowPanel ui:field="actionPanel" addStyleNames="{style.actionPadding}"/>
-			<g:PushButton ui:field="nextPageButton" addStyleNames="{style.nextButtonStyle}">
-				<g:upFace image='{resources.pageNextEnable}' />
-				<g:upDisabledFace image='{resources.pageNextDisable}' />
-			</g:PushButton>
-			<g:PushButton ui:field="prevPageButton" addStyleNames="{style.prevButtonStyle}">
-				<g:upFace image='{resources.pagePrevEnable}' />
-				<g:upDisabledFace image='{resources.pagePrevDisable}' />
-			</g:PushButton>
-			<g:Label ui:field="itemsCountLabel" addStyleNames="{style.itemsCountLabelStyle}" />
-			<r:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}" />
-			<div style="clear: both;" />
-		</g:HTMLPanel>
-		<g:SimplePanel ui:field="tableOverhead" />
-		<g:SimplePanel ui:field="tableHeaderContainer" addStyleNames="{style.headerContainer}" />
-		<g:SimplePanel ui:field="tableContainer" addStyleNames="{style.content}" />
-	</g:FlowPanel>
+        .tableOverhead {
+            clear: both;
+        }
+    </ui:style>
+
+    <g:FlowPanel addStyleNames="{style.panel}">
+        <g:HTMLPanel ui:field="barPanel" addStyleNames="{style.bar}">
+            <g:FlowPanel ui:field="actionPanel" addStyleNames="{style.actionPadding}"/>
+            <g:PushButton ui:field="nextPageButton" addStyleNames="{style.nextButtonStyle}">
+                <g:upFace image='{resources.pageNextEnable}' />
+                <g:upDisabledFace image='{resources.pageNextDisable}' />
+            </g:PushButton>
+            <g:PushButton ui:field="prevPageButton" addStyleNames="{style.prevButtonStyle}">
+                <g:upFace image='{resources.pagePrevEnable}' />
+                <g:upDisabledFace image='{resources.pagePrevDisable}' />
+            </g:PushButton>
+            <g:Label ui:field="itemsCountLabel" addStyleNames="{style.itemsCountLabelStyle}" />
+            <r:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}" />
+            <div style="clear: both;" />
+        </g:HTMLPanel>
+        <g:SimplePanel ui:field="tableOverhead" addStyleNames="{style.tableOverhead}" />
+        <g:SimplePanel ui:field="tableHeaderContainer" addStyleNames="{style.headerContainer}" />
+        <g:SimplePanel ui:field="tableContainer" addStyleNames="{style.content}" />
+    </g:FlowPanel>
 
 </ui:UiBinder>
