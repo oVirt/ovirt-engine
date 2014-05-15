@@ -12,6 +12,7 @@ public class SearchObjectsBaseAutoCompleterTest {
         assertEquals("hello", "Hello", comp.changeCaseDisplay("hello"));
         assertEquals("Hello", "Hello", comp.changeCaseDisplay("Hello"));
         assertEquals("HELLO", "Hello", comp.changeCaseDisplay("HELLO"));
+        assertEquals("helLO", "Hello", comp.changeCaseDisplay("helLO"));
     }
 
 }
