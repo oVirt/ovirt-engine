@@ -301,8 +301,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         String searchKey = "";
         try {
             String searchText = getParameters().getSearchPattern();
-            // find if this is a trivial search expression (like 'Vms:' etc).
-            isSafe = SearchObjects.isSafeExpression(searchText);
             if (useCache) {
                 // first lets check the cache of queries.
                 searchKey = String.format("%1$s,%2$s,%3$s", searchText, getParameters().getMaxCount(), getParameters().getCaseSensitive());
@@ -344,9 +342,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 SyntaxContainer searchObj = curSyntaxChecker.analyzeSyntaxState(searchText, true);
                 // set the case-sensitive flag
                 searchObj.setCaseSensitive(getParameters().getCaseSensitive());
-                int maxValue = Integer.MAX_VALUE;
                 // If a number > maxValue is given then maxValue will be used
-                searchObj.setMaxCount(getParameters().getMaxCount() == -1 ? maxValue : Math.min(maxValue, getParameters().getMaxCount()));
+                searchObj.setMaxCount(getParameters().getMaxCount() == -1 ? Integer.MAX_VALUE : Math.min(Integer.MAX_VALUE, getParameters().getMaxCount()));
                 // setting FromSearch value
                 searchObj.setSearchFrom(getParameters().getSearchFrom());
 
@@ -370,10 +367,12 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     getQueryReturnValue().setExceptionString(error);
                     return null;
                 }
-                if (searchObj.getvalid() != true) {
+                if (!searchObj.getvalid()) {
                     log.warnFormat("ResourceManager::searchBusinessObjects - Invalid search text - ''{0}''", searchText);
                     return null;
                 }
+                // find if this is a trivial search expression (like 'Vms:' etc).
+                isSafe = SearchObjects.isSafeExpression(searchText);
                 // An expression is considered safe if matches a trivial search.
                 data =
                         new QueryData(curSyntaxChecker.generateQueryFromSyntaxContainer(searchObj, isSafe),
