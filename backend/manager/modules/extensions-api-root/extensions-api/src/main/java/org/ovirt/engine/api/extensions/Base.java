@@ -156,6 +156,20 @@ public class Base {
          * @see ExtensionRecord
          */
         public static final ExtKey EXTENSIONS = new ExtKey("GLOBAL_EXTENSIONS", List/*<ExtMap>*/.class, "246498c0-2f4d-4135-8cb7-c5eabfd2f6ff");
+
+        /**
+         * Application name.
+         * @see ApplicationNames
+         */
+        public static final ExtKey APPLICATION_NAME = new ExtKey("GLOBAL_APPLICATION_NAME", String.class, "913655b7-1bc9-43b8-9a3a-18330e288708");
+    }
+
+    /**
+     * Application names.
+     */
+    public static class ApplicationNames {
+        public static final String OVIRT_ENGINE = "ovirt-engine";
+        public static final String OVIRT_ENGINE_AAA_EXTENSION_TOOL = "ovirt-engine-aaa-extension-tool";
     }
 
     /**

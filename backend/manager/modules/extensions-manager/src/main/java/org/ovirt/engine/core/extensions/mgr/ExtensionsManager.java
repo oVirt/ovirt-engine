@@ -134,6 +134,10 @@ public class ExtensionsManager extends Observable {
         return instance;
     }
 
+    public ExtMap getGlobalContext() {
+        return globalContext;
+    }
+
     public List<ExtensionProxy> getProvidedExtensions(String provides) {
         List<ExtensionProxy> results = new ArrayList<>();
         for (ExtensionEntry entry : loadedEntries.values()) {
