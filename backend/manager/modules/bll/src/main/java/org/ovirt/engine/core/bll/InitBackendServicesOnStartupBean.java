@@ -68,7 +68,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         ExtensionsManager.getInstance().dump();
         ExtensionsManager.getInstance()
                 .getGlobalContext()
-                .put(Base.GlobalContextKeys.APPLICATION_NAME, Base.ApplicationNames.OVIRT_ENGINE_AAA_EXTENSION_TOOL);
+                .put(Base.GlobalContextKeys.APPLICATION_NAME, Base.ApplicationNames.OVIRT_ENGINE);
         AuthenticationProfileRepository.getInstance();
         DbUserCacheManager.getInstance().init();
         AsyncTaskManager.getInstance().initAsyncTaskManager();
