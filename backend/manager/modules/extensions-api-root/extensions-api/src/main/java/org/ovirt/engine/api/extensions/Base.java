@@ -235,6 +235,12 @@ public class Base {
          */
         public static final ExtKey HOME_URL = new ExtKey("EXTENSION_HOME_URL", String.class, "4ad7a2f4-f969-42d4-b399-72d192e18304");
         /**
+         * Extensions' notes.
+         * Set by extension.
+         * @see InvokeCommands#INITIALIZE
+         */
+        public static final ExtKey EXTENSION_NOTES = new ExtKey("EXTENSION_NOTES", String.class, "2da5ad7e-185a-4584-aaff-97f66978e4ea");
+        /**
          * Extension name.
          * Set by extension.
          * @see InvokeCommands#INITIALIZE

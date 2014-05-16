@@ -345,14 +345,15 @@ public class ExtensionsManager extends Observable {
             if (entry.extension != null) {
                 ExtMap context = entry.extension.getContext();
                 log.info(String.format(
-                        "Instance name: '%1$s', Extension name: '%2$s', Version: '%3$s', Build interface Version: '%4$s', License: '%5$s', Home: '%6$s', Author '%7$s',  File: '%8$s', Activated: '%9$s",
+                    "Instance name: '%1$s', Extension name: '%2$s', Version: '%3$s', Notes: '%4$s', License: '%5$s', Home: '%6$s', Author '%7$s', Build interface Version: '%8$s',  File: '%9$s', Activated: '%10$s'",
                     emptyIfNull(context.get(Base.ContextKeys.INSTANCE_NAME)),
                     emptyIfNull(context.get(Base.ContextKeys.EXTENSION_NAME)),
                     emptyIfNull(context.get(Base.ContextKeys.VERSION)),
-                    emptyIfNull(context.get(Base.ContextKeys.BUILD_INTERFACE_VERSION)),
+                    emptyIfNull(context.get(Base.ContextKeys.EXTENSION_NOTES)),
                     emptyIfNull(context.get(Base.ContextKeys.LICENSE)),
                     emptyIfNull(context.get(Base.ContextKeys.HOME_URL)),
                     emptyIfNull(context.get(Base.ContextKeys.AUTHOR)),
+                    emptyIfNull(context.get(Base.ContextKeys.BUILD_INTERFACE_VERSION)),
                     entry.getFileName(),
                     entry.activated
                 ));
