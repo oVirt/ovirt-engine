@@ -54,8 +54,12 @@ public class RootDSEData {
         // this attribute will be a part of the LDAP URL to perform users queries (i.e - search for a user)
         DirContext dirContext = null;
         Hashtable<String, String> env = new Hashtable<>();
+        env.put(Context.SECURITY_AUTHENTICATION, "SIMPLE");
+        env.put(Context.SECURITY_PRINCIPAL, "");
+        env.put(Context.SECURITY_CREDENTIALS, "");
+        env.put(Context.REFERRAL, "follow");
+        env.put(Context.PROVIDER_URL, url);
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, url.toString());
         try {
             dirContext = new InitialDirContext(env);
             SearchControls controls = RootDSEQueryInfo.createSearchControls();
