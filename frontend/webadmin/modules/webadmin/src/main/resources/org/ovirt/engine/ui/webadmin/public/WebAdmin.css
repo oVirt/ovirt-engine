@@ -109,3 +109,8 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
 .gwt-PopupPanelGlass {
     z-index: 1;
 }
+
+/* right click menu spacing */
+.gwt-MenuBar .gwt-MenuItem {
+    padding: 0 10px !important;
+}
