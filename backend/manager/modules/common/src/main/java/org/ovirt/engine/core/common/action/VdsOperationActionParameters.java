@@ -80,6 +80,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
         return vdsStatic;
     }
 
+    @ShouldNotBeLogged
     public String getPassword() {
         return password;
     }
@@ -97,6 +98,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
     }
 
     // Deprecated to keep old api with root password
+    @ShouldNotBeLogged
     public String getRootPassword() {
         return password;
     }

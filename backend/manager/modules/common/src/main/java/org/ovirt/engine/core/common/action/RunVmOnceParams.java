@@ -47,6 +47,7 @@ public class RunVmOnceParams extends RunVmParams {
         this.sysPrepPassword = sysPrepPassword;
     }
 
+    @ShouldNotBeLogged
     public String getSysPrepPassword() {
         return sysPrepPassword;
     }

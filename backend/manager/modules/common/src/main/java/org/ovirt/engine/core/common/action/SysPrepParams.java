@@ -39,6 +39,7 @@ public class SysPrepParams implements Serializable {
         this.sysPrepPassword = sysPrepPassword;
     }
 
+    @ShouldNotBeLogged
     public String getSysPrepPassword() {
         return sysPrepPassword;
     }

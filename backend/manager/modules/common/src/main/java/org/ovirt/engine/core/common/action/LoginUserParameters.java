@@ -30,6 +30,7 @@ public class LoginUserParameters extends VdcActionParametersBase implements Seri
         loginName = value;
     }
 
+    @ShouldNotBeLogged
     public String getPassword() {
         return password;
     }

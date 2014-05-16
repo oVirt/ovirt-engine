@@ -1,7 +1,12 @@
 package org.ovirt.engine.core.utils;
 
-import java.lang.reflect.Constructor;
+import org.ovirt.engine.core.common.action.ShouldNotBeLogged;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -9,6 +14,9 @@ import java.lang.reflect.Constructor;
  *
  */
 public class ReflectionUtils {
+
+    private static final String GET_ROOT = "get";
+    private static final String IS_ROOT = "is";
 
     /**
      * Find the first constructor of the given type which matches the expected parameters, which is the one which has
@@ -76,6 +84,35 @@ public class ReflectionUtils {
         return true;
     }
 
+    public static List<String> getGetterMethodNames(Object o) {
+        List<String> methodNames = new ArrayList<>();
+        for (Method m : o.getClass().getMethods()) {
+            if (m.getName().startsWith(GET_ROOT) || m.getName().startsWith(IS_ROOT)) {
+                methodNames.add(m.getName());
+            }
+        }
+        return methodNames;
+    }
+
+    public static Method getLoggableMethodWithNoArgs(Object o, String name) {
+        try {
+            Method m = o.getClass().getMethod(name);
+            if (m.getParameterTypes().length == 0 && !m.isAnnotationPresent(ShouldNotBeLogged.class)) {
+                return m;
+            }
+            return null;
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+    }
+
+    public static Object invokeMethodWithNoArgs(Object o, Method method) {
+        try {
+            return method.invoke(o);
+        } catch(InvocationTargetException|IllegalAccessException e) {
+            return null;
+        }
+    }
 
     /**
      * @param className

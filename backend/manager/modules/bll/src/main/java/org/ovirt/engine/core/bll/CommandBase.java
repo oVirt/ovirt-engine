@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1168,6 +1169,34 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return getParameters().getTransactionScopeOption();
     }
 
+    private String getCommandParamatersString(T params) {
+        StringBuilder buf = new StringBuilder();
+        List<String> methodNames = ReflectionUtils.getGetterMethodNames(params);
+
+        methodNames.removeAll(ReflectionUtils.getGetterMethodNames(new VdcActionParametersBase()));
+
+        for (String methodName : methodNames) {
+            Method method = ReflectionUtils.getLoggableMethodWithNoArgs(params, methodName);
+            if (method == null) {
+                continue;
+            }
+            Object retVal = ReflectionUtils.invokeMethodWithNoArgs(params, method);
+            if (buf.length() > 0) {
+                buf.append(", ");
+            }
+            buf.append(getFieldName(methodName));
+            buf.append(" = ");
+            buf.append(retVal == null ? "null" : retVal.toString());
+        }
+        return buf.toString();
+    }
+
+    private String getFieldName(String methodName) {
+        String GET_ROOT = "get";
+        String IS_ROOT = "is";
+        return methodName.startsWith(GET_ROOT) ? methodName.substring(GET_ROOT.length()) : methodName.substring(IS_ROOT.length());
+    }
+
     /**
      * Log the running command , and log the affected entity id and type (if
      * there are any).
@@ -1176,6 +1205,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // Set start of log for running command.
         StringBuilder logInfo = new StringBuilder("Running command: ")
                 .append(getClass().getSimpleName());
+
+        if (log.isDebugEnabled()) {
+            logInfo.append(getParameters() != null ? "(" + getCommandParamatersString(getParameters()) + ")" : StringUtils.EMPTY);
+        }
 
         if (hasTaskHandlers()) {
             logInfo.append(" Task handler: ").append(getCurrentTaskHandler().getClass().getSimpleName());

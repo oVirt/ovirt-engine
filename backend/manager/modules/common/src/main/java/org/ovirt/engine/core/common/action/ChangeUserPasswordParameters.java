@@ -24,10 +24,12 @@ public class ChangeUserPasswordParameters extends VdcActionParametersBase implem
         return _userName;
     }
 
+    @ShouldNotBeLogged
     public String getUserPassword() {
         return _userPassword;
     }
 
+    @ShouldNotBeLogged
     public String getNewPassword() {
         return _newPassword;
     }
