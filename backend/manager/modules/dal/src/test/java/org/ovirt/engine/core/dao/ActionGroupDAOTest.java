@@ -70,10 +70,18 @@ public class ActionGroupDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testRemoveActionVersionMap() {
-        dao.removeActionVersionMap(existingActionMap.getaction_type());
+        ActionVersionMap dummy = new ActionVersionMap();
+        dummy.setaction_type(VdcActionType.RebootVm);
+        dummy.setcluster_minimal_version("3.0");
+        dummy.setstorage_pool_minimal_version("3.0");
+        dao.addActionVersionMap(dummy);
 
-        ActionVersionMap result = dao.getActionVersionMapByActionType(existingActionMap.getaction_type());
+        ActionVersionMap result = dao.getActionVersionMapByActionType(dummy.getaction_type());
+        assertNotNull(result);
 
+        dao.removeActionVersionMap(dummy.getaction_type());
+
+        result = dao.getActionVersionMapByActionType(dummy.getaction_type());
         assertNull(result);
     }
 }
