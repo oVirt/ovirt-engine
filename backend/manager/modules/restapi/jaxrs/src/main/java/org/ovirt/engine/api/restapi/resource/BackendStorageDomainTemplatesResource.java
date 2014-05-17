@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
@@ -16,6 +18,7 @@ import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.UnregisteredEntitiesQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -30,7 +33,19 @@ public class BackendStorageDomainTemplatesResource
     @Override
     public Templates list() {
         Templates templates = new Templates();
-        templates.getTemplates().addAll(getCollection());
+        if (QueryHelper.hasMatrixParam(getUriInfo(), UNREGISTERED_CONSTRAINT_PARAMETER)) {
+            List<org.ovirt.engine.core.common.businessentities.VmTemplate> unregisteredTemplates =
+                    getBackendCollection(VdcQueryType.GetUnregisteredVmTemplates,
+                            new UnregisteredEntitiesQueryParameters(storageDomainId));
+            List<Template> collection = new ArrayList<Template>();
+            for (org.ovirt.engine.core.common.businessentities.VmTemplate entity : unregisteredTemplates) {
+                Template vmTemplate = map(entity);
+                collection.add(addLinks(populate(vmTemplate, entity)));
+            }
+            templates.getTemplates().addAll(collection);
+        } else {
+            templates.getTemplates().addAll(getCollection());
+        }
         return templates;
     }
 

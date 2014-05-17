@@ -24,6 +24,7 @@ public abstract class AbstractBackendStorageDomainContentsResource<C extends Bas
     extends AbstractBackendCollectionResource<R, Q> {
 
     protected Guid storageDomainId;
+    protected static final String UNREGISTERED_CONSTRAINT_PARAMETER = "unregistered";
 
     public AbstractBackendStorageDomainContentsResource(Guid storageDomainId,
                                                         Class<R> modelType,

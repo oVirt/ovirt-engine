@@ -1,9 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
@@ -11,6 +14,7 @@ import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.UnregisteredEntitiesQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -25,7 +29,19 @@ public class BackendStorageDomainVmsResource
     @Override
     public VMs list() {
         VMs vms = new VMs();
-        vms.getVMs().addAll(getCollection());
+        if (QueryHelper.hasMatrixParam(getUriInfo(), UNREGISTERED_CONSTRAINT_PARAMETER)) {
+            List<org.ovirt.engine.core.common.businessentities.VM> unregisteredVms =
+                    getBackendCollection(VdcQueryType.GetUnregisteredVms,
+                            new UnregisteredEntitiesQueryParameters(storageDomainId));
+            List<VM> collection = new ArrayList<VM>();
+            for (org.ovirt.engine.core.common.businessentities.VM entity : unregisteredVms) {
+                VM vm = map(entity);
+                collection.add(addLinks(populate(vm, entity)));
+            }
+            vms.getVMs().addAll(collection);
+        } else {
+            vms.getVMs().addAll(getCollection());
+        }
         return vms;
     }
 
