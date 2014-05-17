@@ -104,7 +104,9 @@ public class Base {
          *     \@Override
          *     public void invoke(ExtMap input, ExtMap output) {
          *         try {
-         *             if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.INITIALIZE)) {
+         *             if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.LOAD)) {
+         *                 doLoad(input, output);
+         *             } else if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.INITIALIZE)) {
          *                 doInit(input, output);
          *             } else {
          *                 output.put(Base.InvokeKeys.RESULT, Base.InvokeResult.UNSUPPORTED);
@@ -205,45 +207,45 @@ public class Base {
         public static final ExtKey CONFIGURATION = new ExtKey("EXTENSION_CONFIGURATION", Properties.class, "2d48ab72-f0a1-4312-b4ae-5068a226b0fc", ExtKey.Flags.SENSITIVE);
         /**
          * Extension's build interface version.
-         * Set by extension during {@link InvokeCommands#INITIALIZE} to {@link #INTERFACE_VERSION_CURRENT}.
-         * @see InvokeCommands#INITIALIZE
+         * Set by extension during {@link InvokeCommands#LOAD} to {@link #INTERFACE_VERSION_CURRENT}.
+         * @see InvokeCommands#LOAD
          * @see #INTERFACE_VERSION_CURRENT
          */
         public static final ExtKey BUILD_INTERFACE_VERSION = new ExtKey("EXTENSION_BUILD_INTERFACE_VERSION", Integer.class, "cb479e5a-4b23-46f8-aed3-56a4747a8ab7");
         /**
          * Extension's license.
          * Set by extension.
-         * @see InvokeCommands#INITIALIZE
+         * @see InvokeCommands#LOAD
          */
         public static final ExtKey LICENSE = new ExtKey("EXTENSION_LICENSE", String.class, "8a61ad65-054c-4e31-9c6d-1ca4d60a4c18");
         /**
          * Extensions' version.
          * Set by extension.
-         * @see InvokeCommands#INITIALIZE
+         * @see InvokeCommands#LOAD
          */
         public static final ExtKey VERSION = new ExtKey("EXTENSION_VERSION", String.class, "fe35f6a8-8239-4bdb-ab1a-af9f779ce68c");
         /**
          * Extensions' author.
          * Set by extension.
-         * @see InvokeCommands#INITIALIZE
+         * @see InvokeCommands#LOAD
          */
         public static final ExtKey AUTHOR = new ExtKey("EXTENSION_AUTHOR", String.class, "ef242f7a-2dad-4bc5-9aad-e07018b7fbcc");
         /**
          * Extensions' home URL.
          * Set by extension.
-         * @see InvokeCommands#INITIALIZE
+         * @see InvokeCommands#LOAD
          */
         public static final ExtKey HOME_URL = new ExtKey("EXTENSION_HOME_URL", String.class, "4ad7a2f4-f969-42d4-b399-72d192e18304");
         /**
          * Extensions' notes.
          * Set by extension.
-         * @see InvokeCommands#INITIALIZE
+         * @see InvokeCommands#LOAD
          */
         public static final ExtKey EXTENSION_NOTES = new ExtKey("EXTENSION_NOTES", String.class, "2da5ad7e-185a-4584-aaff-97f66978e4ea");
         /**
          * Extension name.
          * Set by extension.
-         * @see InvokeCommands#INITIALIZE
+         * @see InvokeCommands#LOAD
          */
         public static final ExtKey EXTENSION_NAME = new ExtKey("EXTENSION_NAME", String.class, "651381d3-f54f-4547-bf28-b0b01a103184");
     }
@@ -271,10 +273,16 @@ public class Base {
      * Invoke commands.
      */
     public static class InvokeCommands {
+
+        /**
+         * Loads extension instance.
+         * Extension should configure its information within the context during this command.
+         * No operation that may fail or change system state should be carried out at this stage.
+         */
+        public static final ExtUUID LOAD = new ExtUUID("EXTENSION_LOAD", "b0f2460e-7971-4a9c-b4e1-c1db1362a47a");
         /**
          * Initialize extension instance.
-         * Invoked before any other commands.
-         * Extension should set its information within context during this command.
+         * Extension should initialize the extension based on the configuration.
          */
         public static final ExtUUID INITIALIZE = new ExtUUID("EXTENSION_INITIALIZE", "e5ae1b7f-9104-4f23-a444-7b9175ff68d2");
         /** Terminate extension instance. */

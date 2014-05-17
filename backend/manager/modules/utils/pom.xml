@@ -14,6 +14,16 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.ovirt.engine.api</groupId>
+      <artifactId>ovirt-engine-extensions-api</artifactId>
+      <version>${org.ovirt.engine.api.ovirt-engine-extensions-api.version}</version>
+  </dependency>
+   <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>extensions-manager</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
       <version>1.8.2</version>
@@ -65,7 +75,6 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>javax.transaction</groupId>
       <artifactId>jta</artifactId>

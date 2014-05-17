@@ -34,8 +34,9 @@ public class InternalAuthz implements Extension {
     public void invoke(ExtMap input, ExtMap output) {
         try {
             ExtUUID command = input.<ExtUUID> get(Base.InvokeKeys.COMMAND);
-            if (command.equals(Base.InvokeCommands.INITIALIZE)) {
-                doInit(input, output);
+            if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.LOAD)) {
+                doLoad(input, output);
+            } else if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.INITIALIZE)) {
             } else if (command.equals(Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD)) {
                 doFetchPrincipalRecord(input, output);
             } else if (command.equals(Authz.InvokeCommands.QUERY_CLOSE)) {
@@ -79,7 +80,7 @@ public class InternalAuthz implements Extension {
         }
     }
 
-    private void doInit(ExtMap input, ExtMap output) {
+    private void doLoad(ExtMap input, ExtMap output) {
         context = input.<ExtMap> get(Base.InvokeKeys.CONTEXT);
         Properties configuration = context.<Properties> get(Base.ContextKeys.CONFIGURATION);
         context.mput(

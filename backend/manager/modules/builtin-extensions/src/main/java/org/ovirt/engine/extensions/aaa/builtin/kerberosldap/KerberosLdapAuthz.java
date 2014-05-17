@@ -133,8 +133,9 @@ public class KerberosLdapAuthz implements Extension {
     public void invoke(ExtMap input, ExtMap output) {
         try {
             Object command = input.get(Base.InvokeKeys.COMMAND);
-            if (command.equals(Base.InvokeCommands.INITIALIZE)) {
-                doInit(input, output);
+            if (command.equals(Base.InvokeCommands.LOAD)) {
+                doLoad(input, output);
+            } else if (command.equals(Base.InvokeCommands.INITIALIZE)) {
             } else if (command.equals(Authz.InvokeCommands.QUERY_OPEN)) {
                 doQueryOpen(input, output);
             } else if (command.equals(Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD)) {
@@ -182,7 +183,7 @@ public class KerberosLdapAuthz implements Extension {
         output.mput(Authz.InvokeKeys.QUERY_OPAQUE, new Opaque(input));
     }
 
-    private void doInit(ExtMap inputMap, ExtMap outputMap) {
+    private void doLoad(ExtMap inputMap, ExtMap outputMap) {
         context = inputMap.<ExtMap> get(Base.InvokeKeys.CONTEXT);
         configuration = context.<Properties> get(Base.ContextKeys.CONFIGURATION);
         broker = LdapFactory.getInstance(getDirectoryName());

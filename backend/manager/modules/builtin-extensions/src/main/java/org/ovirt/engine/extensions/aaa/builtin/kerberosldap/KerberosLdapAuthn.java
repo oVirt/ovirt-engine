@@ -30,7 +30,9 @@ public class KerberosLdapAuthn implements Extension {
     @Override
     public void invoke(ExtMap input, ExtMap output) {
         try {
-            if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.INITIALIZE)) {
+            if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.LOAD)) {
+                doLoad(input, output);
+            } else if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.INITIALIZE)) {
                 doInit(input, output);
             } else if (input.get(Base.InvokeKeys.COMMAND).equals(Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS)) {
                 doAuthenticate(input, output);
@@ -45,7 +47,7 @@ public class KerberosLdapAuthn implements Extension {
     }
 
 
-    private void doInit(ExtMap inputMap, ExtMap outputMap) {
+    private void doLoad(ExtMap inputMap, ExtMap outputMap) {
         context = inputMap.<ExtMap> get(Base.InvokeKeys.CONTEXT);
         configuration = context.<Properties> get(Base.ContextKeys.CONFIGURATION);
         broker = LdapFactory.getInstance(getAuthzName());
@@ -72,12 +74,12 @@ public class KerberosLdapAuthn implements Extension {
                 ).mput(
                         Base.ContextKeys.BUILD_INTERFACE_VERSION,
                         Base.INTERFACE_VERSION_CURRENT);
+    }
 
+    private void doInit(ExtMap inputMap, ExtMap outputMap) {
         KerberosManager.getInstance();
         UsersDomainsCacheManagerService.getInstance().init();
     }
-
-
 
     /**
      * {@inheritDoc}

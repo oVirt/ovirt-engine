@@ -15,32 +15,18 @@
   <packaging>jar</packaging>
 
   <name>Extensions manager</name>
-
   <dependencies>
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>compat</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
 
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>common</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>utils</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>ovirt-engine-extensions-api</artifactId>
       <version>${org.ovirt.engine.api.ovirt-engine-extensions-api.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
+      <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>${commons-logging.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>

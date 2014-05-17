@@ -21,13 +21,15 @@
     <module name="org.apache.log4j"/>
     <module name="org.codehaus.jackson.jackson-core-asl"/>
     <module name="org.codehaus.jackson.jackson-mapper-asl"/>
+    <module name="org.infinispan"/>
+    <module name="org.ovirt.engine.api.ovirt-engine-extensions-api"/>
     <module name="org.ovirt.engine.core.common"/>
     <module name="org.ovirt.engine.core.compat"/>
     <module name="org.ovirt.engine.core.dal"/>
+    <module name="org.ovirt.engine.core.extensions-manager"/>
     <module name="org.ovirt.engine.core.uutils"/>
-    <module name="org.infinispan"/>
-    <module name="org.springframework"/>
     <module name="org.postgresql"/>
+    <module name="org.springframework"/>
   </dependencies>
 
 </module>

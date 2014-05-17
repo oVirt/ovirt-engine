@@ -5,7 +5,7 @@ import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.logger.Logger;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
-import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
+import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
 import java.util.List;
 import java.util.Observable;
@@ -18,7 +18,7 @@ public class LoggerHandler extends Handler implements Observer {
     private volatile List<ExtensionProxy> extensions;
 
     public LoggerHandler() {
-        ExtensionsManager.getInstance().addObserver(this);
+        EngineExtensionsManager.getInstance().addObserver(this);
         update(null, null);
     }
 
@@ -69,6 +69,6 @@ public class LoggerHandler extends Handler implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        extensions = ExtensionsManager.getInstance().getProvidedExtensions(Logger.class.getName());
+        extensions = EngineExtensionsManager.getInstance().getExtensionsByService(Logger.class.getName());
     }
 }

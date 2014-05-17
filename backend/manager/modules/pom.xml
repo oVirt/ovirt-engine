@@ -17,6 +17,7 @@
   <modules>
     <module>extensions-api-root</module>
     <module>uutils</module>
+    <module>extensions-manager</module>
     <module>compat</module>
     <module>utils</module>
     <module>common</module>
@@ -26,7 +27,6 @@
     <module>scheduler</module>
     <module>searchbackend</module>
     <module>aaa</module>
-    <module>extensions-manager</module>
     <module>bll</module>
     <module>restapi</module>
     <module>logger</module>

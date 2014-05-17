@@ -10,7 +10,7 @@ import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
-import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
+import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
 public class AuthenticationProfileRepository {
 
@@ -78,18 +78,21 @@ public class AuthenticationProfileRepository {
         // Get the extensions that correspond to authn (authentication) service.
         // For each extension - get the relevant authn extension.
 
-        for (ExtensionProxy authnExtension : ExtensionsManager.getInstance().getProvidedExtensions(AUTHN_SERVICE)) {
+        for (ExtensionProxy authnExtension : EngineExtensionsManager.getInstance().getExtensionsByService(AUTHN_SERVICE)) {
+            String mapperName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(AUTHN_MAPPING_PLUGIN);
+            String authzName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(AUTHN_AUTHZ_PLUGIN);
+            if (authzName == null) {
+                throw new ConfigurationException(String.format("Authz plugin for %1$s does not exist",
+                        authnExtension.getContext().<String> get(Base.ContextKeys.INSTANCE_NAME)));
+            }
+
             registerProfile(
                 new AuthenticationProfile(
                     authnExtension,
-                    ExtensionsManager.getInstance().getExtensionByName(
-                        authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(AUTHN_AUTHZ_PLUGIN)
-                    ),
-                    ExtensionsManager.getInstance().getExtensionByName(
-                        authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(AUTHN_MAPPING_PLUGIN)
+                    EngineExtensionsManager.getInstance().getExtensionByName(authzName),
+                    mapperName != null ? EngineExtensionsManager.getInstance().getExtensionByName(mapperName) : null
                     )
-                )
-            );
+                );
         }
     }
 
