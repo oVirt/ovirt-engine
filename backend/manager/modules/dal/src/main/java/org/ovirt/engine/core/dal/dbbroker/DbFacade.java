@@ -89,6 +89,7 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDAO;
 import org.ovirt.engine.core.dao.TagDAO;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDAO;
 import org.ovirt.engine.core.dao.VdcOptionDAO;
 import org.ovirt.engine.core.dao.VdsCpuStatisticsDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -353,6 +354,15 @@ public class DbFacade {
      */
     public VdsDAO getVdsDao() {
         return getDao(VdsDAO.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link UnregisteredOVFDataDAO}.
+     *
+     * @return the dao
+     */
+    public UnregisteredOVFDataDAO getUnregisteredOVFDataDao() {
+        return getDao(UnregisteredOVFDataDAO.class);
     }
 
     /**

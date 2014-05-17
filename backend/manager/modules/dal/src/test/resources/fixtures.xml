@@ -3603,6 +3603,27 @@
         </row>
     </table>
 
+    <table name="unregistered_ovf_of_entities">
+        <column>entity_guid</column>
+        <column>entity_name</column>
+        <column>entity_type</column>
+        <column>architecture</column>
+        <column>lowest_comp_version</column>
+        <column>storage_domain_id</column>
+        <column>ovf_data</column>
+        <column>ovf_extra_data</column>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>rhel5-pool-50</value>
+            <value>VM</value>
+            <value>1</value>
+            <value>3.4</value>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
+            <value>null</value>
+            <value>null</value>
+        </row>
+    </table>
+
     <table name="storage_pool_iso_map">
         <column>storage_id</column>
         <column>storage_pool_id</column>
