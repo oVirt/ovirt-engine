@@ -467,7 +467,9 @@ public class VmSnapshotListModel extends SearchableListModel
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
                     model.stopProgress();
-                    cancel();
+                    if (result.getReturnValue().getSucceeded()) {
+                        cancel();
+                    }
                 }
             });
     }
