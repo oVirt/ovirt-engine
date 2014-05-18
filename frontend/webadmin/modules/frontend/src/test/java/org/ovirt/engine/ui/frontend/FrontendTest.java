@@ -540,7 +540,7 @@ public class FrontendTest {
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), eventArgs.capture());
         assertEquals("Message text didn't match", //$NON-NLS-1$
                 "A Request to the Server failed with the following Status Code: 404", //$NON-NLS-1$
-                eventArgs.getValue().getMessage().getText());
+                eventArgs.getValue().getMessages().get(0).getText());
     }
 
     /**

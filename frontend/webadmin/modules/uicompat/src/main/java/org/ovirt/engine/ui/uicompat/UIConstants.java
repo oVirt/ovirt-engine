@@ -1501,6 +1501,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("A Request to the Server failed")
     String requestToServerFailed();
 
+    @DefaultStringValue("No Message")
+    String noCanDoActionMessage();
+
     // Volume
     @DefaultStringValue("Add Bricks")
     String addBricksVolume();

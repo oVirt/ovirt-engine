@@ -96,6 +96,8 @@ public class FrontendActionTest {
     @Captor
     ArgumentCaptor<FrontendActionAsyncResult> callbackParam;
 
+    private static String NO_MESSAGE = "No Message"; //$NON-NLS-1$
+
     @Before
     public void setUp() throws Exception {
         fakeScheduler = new FakeGWTScheduler();
@@ -111,6 +113,7 @@ public class FrontendActionTest {
         frontend.frontendFailureEvent = mockFrontendFailureEvent;
         frontend.setLoginHandler(mockLoginHandler);
         when(mockAsyncQuery.getDel()).thenReturn(mockAsyncCallback);
+        when(mockConstants.noCanDoActionMessage()).thenReturn(NO_MESSAGE);
     }
 
     /**
@@ -462,9 +465,9 @@ public class FrontendActionTest {
                 ArgumentCaptor.forClass(FrontendFailureEventArgs.class);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), failureCaptor.capture());
         assertEquals("Descriptions should match", "This is a description", //$NON-NLS-1$ //$NON-NLS-2$
-                failureCaptor.getValue().getMessage().getDescription());
-        assertEquals("Text should match", "No Message", //$NON-NLS-1$ //$NON-NLS-2$
-                failureCaptor.getValue().getMessage().getText());
+                failureCaptor.getValue().getMessages().get(0).getDescription());
+        assertEquals("Text should match", NO_MESSAGE, //$NON-NLS-1$ //$NON-NLS-2$
+                failureCaptor.getValue().getMessages().get(0).getText());
     }
 
     /**
@@ -503,9 +506,9 @@ public class FrontendActionTest {
                 ArgumentCaptor.forClass(FrontendFailureEventArgs.class);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), failureCaptor.capture());
         assertEquals("Descriptions should match", "This is a description", //$NON-NLS-1$ //$NON-NLS-2$
-                failureCaptor.getValue().getMessage().getDescription());
+                failureCaptor.getValue().getMessages().get(0).getDescription());
         assertEquals("Text should match translation", "Translated Message 1", //$NON-NLS-1$ //$NON-NLS-2$
-                failureCaptor.getValue().getMessage().getText());
+                failureCaptor.getValue().getMessages().get(0).getText());
     }
 
     /**
@@ -545,7 +548,6 @@ public class FrontendActionTest {
         ArgumentCaptor<FrontendFailureEventArgs> failureCaptor =
                 ArgumentCaptor.forClass(FrontendFailureEventArgs.class);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), failureCaptor.capture());
-        assertNull("Message should be null", failureCaptor.getValue().getMessage()); //$NON-NLS-1$
         assertEquals("Text should match", "Translated Message 1", //$NON-NLS-1$ //$NON-NLS-2$
                 failureCaptor.getValue().getMessages().get(0).getText());
         assertEquals("Text should match", "Translated Message 2", //$NON-NLS-1$ //$NON-NLS-2$

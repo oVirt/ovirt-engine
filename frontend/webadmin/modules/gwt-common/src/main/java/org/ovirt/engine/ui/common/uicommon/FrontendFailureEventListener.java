@@ -24,12 +24,7 @@ public class FrontendFailureEventListener implements IEventListener {
     @Override
     public void eventRaised(Event ev, Object sender, EventArgs args) {
         FrontendFailureEventArgs failureArgs = (FrontendFailureEventArgs) args;
-
-        if (failureArgs.getMessage() != null) {
-            errorPopupManager.show(messages.uiCommonRunActionFailed(ErrorMessageFormatter.formatMessage(failureArgs.getMessage())));
-        } else if (failureArgs.getMessages() != null) {
-            errorPopupManager.show(messages.uiCommonRunActionFailed(ErrorMessageFormatter.formatMessages(failureArgs.getMessages())));
-        }
+        errorPopupManager.show(messages.uiCommonRunActionFailed(ErrorMessageFormatter.formatMessages(failureArgs.getMessages())));
     }
 
 }

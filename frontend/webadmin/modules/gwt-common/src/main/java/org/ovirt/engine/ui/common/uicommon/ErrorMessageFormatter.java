@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.uicommon;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -74,10 +73,6 @@ public class ErrorMessageFormatter {
         }
 
         return TEMPLATES.unsignedList(itemBuilder.toSafeHtml());
-    }
-
-    public static String formatMessage(Message value) {
-        return formatMessages(Arrays.asList(value));
     }
 
     public static String formatReturnValues(List<VdcReturnValueBase> values) {

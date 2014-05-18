@@ -886,21 +886,6 @@ public class Frontend implements HasHandlers {
         getOperationManager().retrieveFromHttpSession(key, callback);
     }
 
-    // TODO: Externalize to a better location, should support translation via
-    // resource bundle file.
-    /**
-     * Return the first message from the list of passed in messages.
-     * @param messages A list of message, which can be empty.
-     * @return The first message from the list or 'No Message' if the list is empty.
-     */
-    private String getRunActionErrorMessage(final List<String> messages) {
-        if (messages.size() < 1) {
-            return "No Message"; //$NON-NLS-1$
-        } else {
-            return messages.iterator().next();
-        }
-    }
-
     /**
      * Handle the result(s) of an action.
      * @param actionType The action type.
@@ -916,33 +901,21 @@ public class Frontend implements HasHandlers {
         logger.log(Level.FINER, "Retrieved action result from RunAction."); //$NON-NLS-1$
 
         FrontendActionAsyncResult f = new FrontendActionAsyncResult(actionType, parameters, result, state);
-        boolean success = false;
-        if (!result.getCanDoAction()) {
+        boolean failedOnCanDoAction = !result.getCanDoAction();
+        if (failedOnCanDoAction) {
             result.setCanDoActionMessages((ArrayList<String>) translateError(result));
-            callback.executed(f);
         } else if (showErrorDialog && result.getIsSyncronious() && !result.getSucceeded()) {
             runActionExecutionFailed(actionType, result.getFault());
-            callback.executed(f);
-
-            // Prevent another (untranslated) error message pop-up display
-            // ('runActionExecutionFailed' invokes an error pop-up displaying,
-            // therefore calling 'failureEventHandler' is redundant)
-            success = true;
-        } else {
-            success = true;
-            callback.executed(f);
         }
+        callback.executed(f);
 
-        if ((!success) && (getEventsHandler() != null)
+        // 'runActionExecutionFailed' invokes an error pop-up displaying, therefore calling 'failureEventHandler' is
+        // only needed for canDoAction failure
+        if (failedOnCanDoAction && (getEventsHandler() != null)
                 && (getEventsHandler().isRaiseErrorModalPanel(actionType, result.getFault()))) {
-            if (result.getCanDoActionMessages().size() <= 1) {
-                String errorMessage = !result.getCanDoAction() || !result.getCanDoActionMessages().isEmpty()
-                        ? getRunActionErrorMessage(result.getCanDoActionMessages()) : result.getFault().getMessage();
-
-                failureEventHandler(result.getDescription(), errorMessage);
-            } else {
-                failureEventHandler(result.getDescription(), result.getCanDoActionMessages());
-            }
+            ArrayList<String> messages = result.getCanDoActionMessages();
+            failureEventHandler(result.getDescription(),
+                    messages.isEmpty() ? Collections.singletonList(getConstants().noCanDoActionMessage()) : messages); //$NON-NLS-1$
         }
     }
 
@@ -1196,13 +1169,6 @@ public class Frontend implements HasHandlers {
     private List<String> translateError(final VdcReturnValueBase error) {
         return getAppErrorsTranslator().translateErrorText(error.getCanDoActionMessages());
     }
-    /**
-     * Call failure event handler with the passed in message.
-     * @param errorMessage The error message.
-     */
-    private void failureEventHandler(final String errorMessage) {
-        failureEventHandler(null, errorMessage);
-    }
 
     /**
      * Call failure event handler based on the {@code Throwable} passed in.
@@ -1218,18 +1184,7 @@ public class Frontend implements HasHandlers {
                     getConstants().requestToServerFailed()
                             + ": " + caught.getLocalizedMessage(); //$NON-NLS-1$
         }
-        failureEventHandler(errorMessage);
-    }
-
-    /**
-     * Call failure event handler with the passed in description and message.
-     * @param description A description of the failure (nullable)
-     * @param errorMessage The error message.
-     */
-    private void failureEventHandler(final String description, final String errorMessage) {
-        handleNotLoggedInEvent(errorMessage);
-        frontendFailureEvent.raise(Frontend.class, new FrontendFailureEventArgs(
-                new Message(description, errorMessage)));
+        failureEventHandler(null, Collections.singletonList(errorMessage));
     }
 
     /**
@@ -1237,9 +1192,10 @@ public class Frontend implements HasHandlers {
      * @param description A description of the failure (nullable)
      * @param errorMessages A list of error messages.
      */
-    private void failureEventHandler(final String description, final ArrayList<String> errorMessages) {
+    private void failureEventHandler(final String description, final List<String> errorMessages) {
         ArrayList<Message> messages = new ArrayList<Message>();
         for (String errorMessage : errorMessages) {
+            handleNotLoggedInEvent(errorMessage);
             messages.add(new Message(description, errorMessage));
         }
 
