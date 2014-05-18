@@ -2871,8 +2871,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Tag ID is required.")
     String ACTION_TYPE_FAILED_TAG_ID_REQUIRED();
 
-    @DefaultStringValue("Migrating a VM in paused status due to an error is unsupported.")
-    String MIGRATE_PAUSED_ERR_VM_IS_UNSUPPORTED();
+    @DefaultStringValue("Migrating a VM in paused status due to I/O error is not supported.")
+    String MIGRATE_PAUSED_EIO_VM_IS_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The VM Network Interface does not exist.")
     String VM_INTERFACE_NOT_EXIST();

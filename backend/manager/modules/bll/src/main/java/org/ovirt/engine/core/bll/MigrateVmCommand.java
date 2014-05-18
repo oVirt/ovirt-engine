@@ -308,8 +308,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(VMStatus.NotResponding));
 
         case Paused:
-            if (vm.getVmPauseStatus() != VmPauseStatus.NOERR) {
-                return failCanDoAction(VdcBllMessages.MIGRATE_PAUSED_ERR_VM_IS_UNSUPPORTED);
+            if (vm.getVmPauseStatus() == VmPauseStatus.EIO) {
+                return failCanDoAction(VdcBllMessages.MIGRATE_PAUSED_EIO_VM_IS_NOT_SUPPORTED);
             }
             break;
 
