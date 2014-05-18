@@ -33,7 +33,7 @@ import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthenticationStrategy {
 
     private static final String GSS_API_AUTHENTICATION = "GSSAPI";
-    private static final String LOGIN_MODULE_POLICY_NAME = "EngineKerberosAuth";
+    private static final String LOGIN_MODULE_POLICY_NAME = "oVirtKerb";
     private static final Log log = LogFactory.getLog(GSSAPIDirContextAuthenticationStrategy.class);
     private LoginContext loginContext;
     private String password;

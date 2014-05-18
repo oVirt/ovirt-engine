@@ -280,9 +280,17 @@
           </authorization>
         </security-domain>
 
-        <security-domain name="EngineKerberosAuth">
+        <security-domain name="oVirtKerb">
           <authentication>
             <login-module code="com.sun.security.auth.module.Krb5LoginModule" flag="required"/>
+          </authentication>
+        </security-domain>
+
+        <security-domain name="oVirtKerbDebug">
+          <authentication>
+            <login-module code="com.sun.security.auth.module.Krb5LoginModule" flag="required">
+              <module-option name="debug" value="true"/>
+            </login-module>
           </authentication>
         </security-domain>
 

@@ -168,7 +168,7 @@ public class KerberosConfigCheck {
         AuthenticationResult result = AuthenticationResult.OK;
         try {
 
-            lc = new LoginContext("KerberosUtil", new KerberosUtilCallbackHandler(username, password));
+            lc = new LoginContext("oVirtKerb", new KerberosUtilCallbackHandler(username, password));
             lc.login();
             log.debug("Check authentication finished successfully ");
         } catch (LoginException ex) {
