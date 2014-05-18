@@ -37,6 +37,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         _spm_status = VdsSpmStatus.None;
         mInterfaceList = new ArrayList<VdsNetworkInterface>();
         mNetworkList = new ArrayList<Network>();
+        this.setNumaNodeList(new ArrayList<VdsNumaNode>());
     }
 
     @Override
@@ -1351,6 +1352,10 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public void setSELinuxEnforceMode(Integer value) {
         mVdsDynamic.setSELinuxEnforceMode(value);
+    }
+
+    public void setNumaNodeList(List<VdsNumaNode> numaNodeList) {
+        mVdsDynamic.setNumaNodeList(numaNodeList);
     }
 
     public List<VdsNumaNode> getNumaNodeList() {
