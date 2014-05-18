@@ -320,6 +320,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
                 if (newImageIRS != null) {
                     completeImageData(newImageIRS);
+
+                    // Set volume type/format before updating DB in the 'finally' branch
+                    getDestinationDiskImage().getImage().setVolumeType(newImageIRS.getVolumeType());
+                    getDestinationDiskImage().getImage().setVolumeFormat(newImageIRS.getVolumeFormat());
                 }
             } catch (VdcBLLException e) {
                 // Logging only
