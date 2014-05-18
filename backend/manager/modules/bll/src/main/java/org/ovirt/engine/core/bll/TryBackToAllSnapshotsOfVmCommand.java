@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.DiskSnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -35,8 +36,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -284,15 +283,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
           }
         }
 
-        List<Guid> snapshotIds = LinqUtils.foreach(diskImages, new Function<DiskImage, Guid>() {
-            @Override
-            public Guid eval(DiskImage disk) {
-                return disk.getVmSnapshotId();
-            }
-        });
-        // Allow active VM custom preview (i.e. block only when no images are specified).
-        if (snapshotIds.contains(getParameters().getDstSnapshotId()) && getParameters().getDisks() == null) {
-            return failCanDoAction(VdcBllMessages.CANNOT_PREIEW_CURRENT_IMAGE);
+        DiskSnapshotsValidator diskSnapshotsValidator = new DiskSnapshotsValidator(getParameters().getDisks());
+        if (!validate(diskSnapshotsValidator.canDiskSnapshotsBePreviewed(getParameters().getDstSnapshotId()))) {
+            return false;
         }
 
         return true;

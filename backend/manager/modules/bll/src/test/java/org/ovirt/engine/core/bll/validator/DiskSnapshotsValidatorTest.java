@@ -8,9 +8,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.SnapshotDao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +20,10 @@ import java.util.Arrays;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.both;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
@@ -31,6 +36,9 @@ public class DiskSnapshotsValidatorTest {
     @Mock
     private DiskImageDAO diskImageDao;
 
+    @Mock
+    private SnapshotDao snapshotDao;
+
     @Before
     public void setUp() {
         disk1 = createDisk();
@@ -38,6 +46,9 @@ public class DiskSnapshotsValidatorTest {
         disk2 = createDisk();
         disk2.setDiskAlias("disk2");
         validator = spy(new DiskSnapshotsValidator(Arrays.asList(disk1, disk2)));
+
+        doReturn(diskImageDao).when(validator).getDiskImageDao();
+        doReturn(snapshotDao).when(validator).getSnapshotDao();
     }
 
     private static DiskImage createDisk() {
@@ -96,5 +107,36 @@ public class DiskSnapshotsValidatorTest {
 
         assertThat(validator.imagesAreSnapshots(),
                 failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SNAPSHOTS_ACTIVE));
+    }
+
+    @Test
+    public void diskSnapshotsCanBePreviewed() {
+        Snapshot activeSnapshot = getActiveSnapshot();
+        when(snapshotDao.get(any(Guid.class))).thenReturn(activeSnapshot);
+
+        when(diskImageDao.get(disk1.getImageId())).thenReturn(null);
+        when(diskImageDao.get(disk2.getImageId())).thenReturn(null);
+
+        assertThat(validator.canDiskSnapshotsBePreviewed(activeSnapshot.getId()), isValid());
+    }
+
+    @Test
+    public void diskSnapshotsCannotBePreviewed() {
+        Snapshot activeSnapshot = getActiveSnapshot();
+        when(snapshotDao.get(any(Guid.class))).thenReturn(activeSnapshot);
+
+        when(diskImageDao.get(disk1.getImageId())).thenReturn(disk1);
+        when(diskImageDao.get(disk2.getImageId())).thenReturn(disk2);
+
+        assertThat(validator.canDiskSnapshotsBePreviewed(activeSnapshot.getId()),
+                failsWith(VdcBllMessages.CANNOT_PREVIEW_ACTIVE_SNAPSHOT));
+    }
+
+    private Snapshot getActiveSnapshot() {
+        Snapshot snapshot = new Snapshot();
+        snapshot.setId(Guid.newGuid());
+        snapshot.setType(Snapshot.SnapshotType.ACTIVE);
+
+        return snapshot;
     }
 }
