@@ -203,10 +203,16 @@ public abstract class VmInfoBuilderBase {
                 useAllVdsNodesMem = true;
             }
             if (useAllVdsNodesMem) {
-                createNumaTune.put(VdsProperties.NUMA_TUNE_NODESET, NumaUtils.buildStringFromListForNuma(totalVdsNumaNodesIndexes));
+                if (!totalVdsNumaNodesIndexes.isEmpty()) {
+                    createNumaTune.put(VdsProperties.NUMA_TUNE_NODESET,
+                            NumaUtils.buildStringFromListForNuma(totalVdsNumaNodesIndexes));
+                }
             }
             else {
-                createNumaTune.put(VdsProperties.NUMA_TUNE_NODESET, NumaUtils.buildStringFromListForNuma(vmNumaNodePinInfo));
+                if (!vmNumaNodePinInfo.isEmpty()) {
+                    createNumaTune.put(VdsProperties.NUMA_TUNE_NODESET,
+                            NumaUtils.buildStringFromListForNuma(vmNumaNodePinInfo));
+                }
             }
             createInfo.put(VdsProperties.NUMA_TUNE, createNumaTune);
             if (StringUtils.isEmpty(vm.getCpuPinning())) {
