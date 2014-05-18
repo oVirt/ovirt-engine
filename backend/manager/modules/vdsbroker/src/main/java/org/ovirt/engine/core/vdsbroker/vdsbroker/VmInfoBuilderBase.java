@@ -400,7 +400,7 @@ public abstract class VmInfoBuilderBase {
         CUSTOM_PROPERTIES("Custom Properties"),
         NETWORK_QOS("Network QoS");
 
-        private String featureName;
+        private final String featureName;
 
         private VNIC_PROFILE_PROPERTIES(String featureName) {
             this.featureName = featureName;
