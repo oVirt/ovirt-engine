@@ -208,18 +208,22 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.vmStatic.setDescription(value);
     }
 
+    @Override
     public String getComment() {
         return this.vmStatic.getComment();
     }
 
+    @Override
     public void setComment(String value) {
         this.vmStatic.setComment(value);
     }
 
+    @Override
     public String getStopReason() {
         return this.vmDynamic.getStopReason();
     }
 
+    @Override
     public void setStopReason(String value) {
         this.vmDynamic.setStopReason(value);
     }
