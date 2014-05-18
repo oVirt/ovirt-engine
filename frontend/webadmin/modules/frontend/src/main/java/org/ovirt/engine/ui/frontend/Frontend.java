@@ -718,25 +718,25 @@ public class Frontend implements HasHandlers {
         }
 
         runAction(actionTypes.get(0), parameters.get(0),
-            new IFrontendActionAsyncCallback() {
-                @Override
-                public void executed(final FrontendActionAsyncResult result) {
-                    VdcReturnValueBase returnValue = result.getReturnValue();
-                    boolean success = returnValue != null && returnValue.getSucceeded();
-                    if (success || failureCallback == null) {
-                        IFrontendActionAsyncCallback callback = callbacks.get(0);
-                        if (callback != null) {
-                            callback.executed(result);
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void executed(final FrontendActionAsyncResult result) {
+                        VdcReturnValueBase returnValue = result.getReturnValue();
+                        boolean success = returnValue != null && returnValue.getSucceeded();
+                        if (success || failureCallback == null) {
+                            IFrontendActionAsyncCallback callback = callbacks.get(0);
+                            if (callback != null) {
+                                callback.executed(result);
+                            }
+                            actionTypes.remove(0);
+                            parameters.remove(0);
+                            callbacks.remove(0);
+                            runMultipleActions(actionTypes, parameters, callbacks, failureCallback, state);
+                        } else {
+                            failureCallback.executed(result);
                         }
-                        actionTypes.remove(0);
-                        parameters.remove(0);
-                        callbacks.remove(0);
-                        runMultipleActions(actionTypes, parameters, callbacks, failureCallback, state);
-                    } else {
-                        failureCallback.executed(result);
                     }
-                }
-            }, state, true);
+                }, state, true);
     }
 
     /**
