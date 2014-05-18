@@ -512,6 +512,10 @@ INSERT INTO vm_static(description, free_text_comment, mem_size_mb, os, vds_group
 -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
 DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vm_guid;
 INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id) VALUES (v_vm_guid, (SELECT storage_pool_id FROM vds_groups vg WHERE vg.vds_group_id = v_vds_group_id));
+-- set child_count for the template
+UPDATE vm_static
+    SET child_count =(SELECT COUNT(*) FROM vm_static WHERE vmt_guid = v_vmt_guid and entity_type = 'VM')
+    WHERE vm_guid = v_vmt_guid;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -680,7 +684,11 @@ RETURNS VOID
    AS $procedure$
    DECLARE
    v_val  UUID;
+   v_vmt_guid  UUID;
 BEGIN
+      -- store vmt_guid for setting the child_count
+      SELECT   vm_static.vmt_guid INTO v_vmt_guid FROM vm_static WHERE vm_guid = v_vm_guid;
+
 			-- Get (and keep) a shared lock with "right to upgrade to exclusive"
             -- in order to force locking parent before children
       select   vm_guid INTO v_val FROM vm_static  WHERE vm_guid = v_vm_guid     FOR UPDATE;
@@ -692,6 +700,11 @@ BEGIN
       if v_remove_permissions then
         DELETE FROM permissions where object_id = v_vm_guid;
       end if;
+
+      -- set the child_count for the template
+      UPDATE vm_static
+          SET child_count =(SELECT COUNT(*) FROM vm_static WHERE vmt_guid = v_vmt_guid and entity_type = 'VM')
+          WHERE vm_guid = v_vmt_guid;
 END; $procedure$
 LANGUAGE plpgsql;
 
