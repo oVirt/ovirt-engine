@@ -11,6 +11,7 @@
 
 		.messages {
 			margin-left: 15px;
+            margin-right: 15px;
 		}
 
 		.messageLabel {
@@ -29,7 +30,7 @@
 
 	</ui:style>
 
-	<d:SimpleDialogPanel width="450px" height="270px">
+	<d:SimpleDialogPanel width="450px" height="300px">
 		<d:content>
 			<g:FlowPanel addStyleNames="{style.content}">
 				<g:FlowPanel addStyleNames="{style.messages}">
