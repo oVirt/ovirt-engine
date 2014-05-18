@@ -88,6 +88,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.setStatisticsData(vmStatistics);
         this.setImages(new ArrayList<DiskImage>());
         this.setInterfaces(new ArrayList<VmNetworkInterface>());
+        this.setvNumaNodeList(new ArrayList<VmNumaNode>());
         this.setDiskMap(new HashMap<Guid, Disk>());
         this.setCdPath("");
         this.setFloppyPath("");
@@ -1767,6 +1768,10 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     public void setNumaTuneMode(NumaTuneMode numaTuneMode) {
         vmStatic.setNumaTuneMode(numaTuneMode);
+    }
+
+    public void setvNumaNodeList(List<VmNumaNode> vNumaNodeList) {
+        vmStatic.setvNumaNodeList(vNumaNodeList);
     }
 
     public List<VmNumaNode> getvNumaNodeList() {
