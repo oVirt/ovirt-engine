@@ -2802,8 +2802,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The Network Interface ${IfaceName} has an invalid MAC address ${MacAddress}. MAC address must be in format \"HH:HH:HH:HH:HH:HH\" where H is a hexadecimal character (either a digit or A-F, case is insignificant).")
     String ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID();
 
-    @DefaultStringValue("Migrating a VM in paused status due to an error is unsupported.")
-    String MIGRATE_PAUSED_ERR_VM_IS_UNSUPPORTED();
+    @DefaultStringValue("Migrating a VM in paused status due to I/O error is not supported.")
+    String MIGRATE_PAUSED_EIO_VM_IS_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The VM Network Interface does not exist.")
     String VM_INTERFACE_NOT_EXIST();
