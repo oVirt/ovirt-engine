@@ -97,6 +97,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
                 && ObjectUtils.objectsEqual(vdsGroupGlusterService, other.vdsGroupGlusterService));
     }
 
+    @Override
     public VDS clone() {
         VDS vds = new VDS();
         vds.setVdsGroupId(getVdsGroupId());
@@ -316,10 +317,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         this.mVdsStatic.setHostName(value);
     }
 
+    @Override
     public String getComment() {
         return mVdsStatic.getComment();
     }
 
+    @Override
     public void setComment(String value) {
         mVdsStatic.setComment(value);
     }
@@ -1295,6 +1298,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         return maxSchedulingMemory;
     }
 
+    @Override
     public String toString() {
         // note that mVdsStatic may be null, so the getName with no null protection
         // is not enough, remove this once mVdsStatic can not be null
