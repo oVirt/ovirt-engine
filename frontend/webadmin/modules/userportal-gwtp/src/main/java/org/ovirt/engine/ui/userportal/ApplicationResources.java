@@ -103,6 +103,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/status/vm_run_runonce.png")
     ImageResource runOnceUpImage();
 
+    @Source("images/status/vm_delta.png")
+    ImageResource vmDelta();
+
     @Source("css/SideTabExtendedVmStyle.css")
     SideTabExtendedVmStyle sideTabExtendedVmStyle();
 
