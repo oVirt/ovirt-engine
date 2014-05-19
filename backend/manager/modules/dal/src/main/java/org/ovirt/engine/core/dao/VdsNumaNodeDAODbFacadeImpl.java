@@ -153,7 +153,7 @@ public class VdsNumaNodeDAODbFacadeImpl extends BaseDAODbFacade implements VdsNu
                 .addValue("cpu_core_id", cpuId);
     }
 
-    private MapSqlParameterSource createVnodeToPnodeParametersMapper(
+    protected MapSqlParameterSource createVnodeToPnodeParametersMapper(
             Pair<Guid, Pair<Boolean, Integer>> pNode, Guid vNodeId) {
         return getCustomMapSqlParameterSource()
                 .addValue("id", Guid.newGuid())

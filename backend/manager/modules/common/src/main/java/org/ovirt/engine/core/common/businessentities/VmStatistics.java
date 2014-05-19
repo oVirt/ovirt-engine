@@ -15,6 +15,8 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     private List<VmJob> vmJobs;
     // NOT PERSISTED
     private VmBalloonInfo vmBalloonInfo;
+    // NOT PERSISTED
+    private List<VmNumaNode> vNumaNodeStatisticsList;
 
     public VmStatistics() {
         cpu_sysField = 0.0;
@@ -22,6 +24,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         elapsed_timeField = 0.0;
         roundedElapsedTimeField = 0.0;
         vm_guidField = Guid.Empty;
+        vNumaNodeStatisticsList = new ArrayList<VmNumaNode>();
     }
 
     @Override
@@ -39,6 +42,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         result = prime * result + ((migrationProgressPercent == null) ? 0 : migrationProgressPercent.hashCode());
         result = prime * result + ((disksUsage == null) ? 0 : disksUsage.hashCode());
         result = prime * result + ((vm_guidField == null) ? 0 : vm_guidField.hashCode());
+        result = prime * result + ((vNumaNodeStatisticsList == null) ? 0 : vNumaNodeStatisticsList.hashCode());
         return result;
     }
 
@@ -64,7 +68,8 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
                 && ObjectUtils.objectsEqual(migrationProgressPercent, other.migrationProgressPercent)
                 && ObjectUtils.objectsEqual(usage_network_percentField, other.usage_network_percentField)
                 && ObjectUtils.objectsEqual(disksUsage, other.disksUsage)
-                && ObjectUtils.objectsEqual(vm_guidField, other.vm_guidField));
+                && ObjectUtils.objectsEqual(vm_guidField, other.vm_guidField)
+                && ObjectUtils.objectsEqual(vNumaNodeStatisticsList, other.vNumaNodeStatisticsList));
     }
 
     public Double getcpu_sys() {
@@ -220,4 +225,11 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         this.vmBalloonInfo = vmBalloonInfo;
     }
 
+    public List<VmNumaNode> getvNumaNodeStatisticsList() {
+        return vNumaNodeStatisticsList;
+    }
+
+    public void setvNumaNodeStatisticsList(List<VmNumaNode> vNumaNodeStatisticsList) {
+        this.vNumaNodeStatisticsList = vNumaNodeStatisticsList;
+    }
 }

@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.businessentities.VmJobState;
 import org.ovirt.engine.core.common.businessentities.VmJobType;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -58,6 +59,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -371,6 +373,11 @@ public class VdsBrokerObjectsBuilder {
 
         // ------------- vm jobs -------------
         vm.setVmJobs(getVmJobs(vm.getId(), xmlRpcStruct));
+
+        // ------------- vm numa nodes runtime info -------------------------
+        if (xmlRpcStruct.containsKey(VdsProperties.VM_NUMA_NODES_RUNTIME_INFO)) {
+            updateVmNumaNodesRuntimeInfo(vm, xmlRpcStruct);
+        }
     }
 
     private static VmBalloonInfo getBalloonInfo(Map<String, Object> xmlRpcStruct) {
@@ -1667,6 +1674,25 @@ public class VdsBrokerObjectsBuilder {
             vds.setNumaSupport(newNumaNodeList.size() > 1);
         }
 
+    }
+
+    /**
+     * Build through the received vm NUMA nodes runtime information
+     * @param vm
+     * @param xmlRpcStruct
+     */
+    private static void updateVmNumaNodesRuntimeInfo(VmStatistics vm, Map<String, Object> xmlRpcStruct) {
+        Map<String, Object[]> vNodesRunInfo = (Map<String, Object[]>)xmlRpcStruct.get(
+                VdsProperties.VM_NUMA_NODES_RUNTIME_INFO);
+        for (Map.Entry<String, Object[]> item : vNodesRunInfo.entrySet()) {
+            VmNumaNode vNode = new VmNumaNode();
+            vNode.setIndex(Integer.valueOf(item.getKey()));
+            for (Object pNodeIndex : item.getValue()) {
+                vNode.getVdsNumaNodeList().add(new Pair<>(
+                        Guid.Empty, new Pair<>(false, (Integer)pNodeIndex)));
+            }
+            vm.getvNumaNodeStatisticsList().add(vNode);
+        }
     }
 
     private static List<String> extracStringtList(Map<String, Object> xmlRpcStruct, String propertyName) {

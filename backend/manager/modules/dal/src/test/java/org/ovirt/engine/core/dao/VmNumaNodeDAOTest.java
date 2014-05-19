@@ -267,6 +267,88 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         assertEquals(0, result.size());
     }
 
+    @Test
+    public void testMassUpdateVmNumaNodeRuntimePinning() {
+        List<VmNumaNode> result = vmNumaNodeDao.getAllVmNumaNodeByVmId(ANOTHER_EXISTING_VM_ID);
+        assertNotNull(result);
+        assertEquals(0, result.size());
+
+        Guid vdsNumaNode1 = new Guid("3c2b81e6-5080-4ad1-86a1-cf513b15b515");
+        Guid vdsNumaNode2 = new Guid("3c2b81e6-5080-4ad1-86a1-cf513b15b516");
+        Guid vmNumaNode1 = Guid.newGuid();
+        Guid vmNumaNode2 = Guid.newGuid();
+
+        List<VdsNumaNode> newVmNode = new ArrayList<>();
+        VmNumaNode newVmNumaNode = new VmNumaNode();
+        newVmNumaNode.setCpuIds(generateCpuList(0, 4));
+        newVmNumaNode.setId(vmNumaNode1);
+        newVmNumaNode.setIndex(0);
+        newVmNumaNode.setNumaNodeDistances(generateDistance(2, 0));
+        newVmNumaNode.setNumaNodeStatistics(newNodeStatistics);
+        newVmNumaNode.getVdsNumaNodeList().add(new Pair<>(vdsNumaNode1, new Pair<>(false, 0)));
+        newVmNode.add(newVmNumaNode);
+
+        newVmNumaNode = new VmNumaNode();
+        newVmNumaNode.setCpuIds(generateCpuList(4, 4));
+        newVmNumaNode.setId(vmNumaNode2);
+        newVmNumaNode.setIndex(1);
+        newVmNumaNode.setNumaNodeDistances(generateDistance(2, 1));
+        newVmNumaNode.setNumaNodeStatistics(newNodeStatistics);
+        newVmNumaNode.getVdsNumaNodeList().add(new Pair<>(vdsNumaNode2, new Pair<>(false, 1)));
+        newVmNode.add(newVmNumaNode);
+
+        vmNumaNodeDao.massSaveNumaNode(newVmNode, null, ANOTHER_EXISTING_VM_ID);
+        result = vmNumaNodeDao.getAllVmNumaNodeByVmId(ANOTHER_EXISTING_VM_ID);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+
+        Map<Guid, VmNumaNode> nodes = new HashMap<>(2);
+        nodes.put(result.get(0).getId(), result.get(0));
+        nodes.put(result.get(1).getId(), result.get(1));
+
+        nodes.get(vmNumaNode1).getVdsNumaNodeList().clear();
+        nodes.get(vmNumaNode1).getVdsNumaNodeList().add(new Pair<>(vdsNumaNode2, new Pair<>(false, 1)));
+
+        nodes.get(vmNumaNode2).getVdsNumaNodeList().clear();
+        nodes.get(vmNumaNode2).getVdsNumaNodeList().add(new Pair<>(vdsNumaNode1, new Pair<>(false, 0)));
+
+        List<VmNumaNode> updateNodes = new ArrayList<>();
+        updateNodes.add(nodes.get(vmNumaNode1));
+        updateNodes.add(nodes.get(vmNumaNode2));
+
+        vmNumaNodeDao.massUpdateVmNumaNodeRuntimePinning(updateNodes);
+
+        result = vmNumaNodeDao.getAllVmNumaNodeByVmId(ANOTHER_EXISTING_VM_ID);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+
+        nodes.clear();
+        nodes.put(result.get(0).getId(), result.get(0));
+        nodes.put(result.get(1).getId(), result.get(1));
+
+        assertTrue(nodes.containsKey(vmNumaNode1));
+        assertTrue(nodes.containsKey(vmNumaNode2));
+
+        assertEquals(1, nodes.get(vmNumaNode1).getVdsNumaNodeList().size());
+        assertEquals(false, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getSecond().getFirst());
+        assertEquals(vdsNumaNode2, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getFirst());
+        assertEquals(1, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+
+        assertEquals(1, nodes.get(vmNumaNode2).getVdsNumaNodeList().size());
+        assertEquals(false, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getFirst());
+        assertEquals(vdsNumaNode1, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getFirst());
+        assertEquals(0, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+
+        List<Guid> vmNodeList = new ArrayList<Guid>();
+        vmNodeList.add(vmNumaNode1);
+        vmNodeList.add(vmNumaNode2);
+        vmNumaNodeDao.massRemoveNumaNodeByNumaNodeId(vmNodeList);
+
+        result = vmNumaNodeDao.getAllVmNumaNodeByVmId(ANOTHER_EXISTING_VM_ID);
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
+
     private List<Integer> generateCpuList(int fromIndex, int count) {
         List<Integer> cpuList = new ArrayList<>(count);
         for (int i = fromIndex; i < (fromIndex + count); i++) {

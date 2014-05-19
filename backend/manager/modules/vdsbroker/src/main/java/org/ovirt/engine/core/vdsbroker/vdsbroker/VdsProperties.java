@@ -101,6 +101,7 @@ public final class VdsProperties {
     public static final String VM_NUMA_NODE_MEM = "memory";
     public static final String NUMA_TUNE = "numaTune";
     public static final String VM_NUMA_NODES = "guestNumaNodes";
+    public static final String VM_NUMA_NODES_RUNTIME_INFO = "vNodeRuntimeInfo";
 
     // Network related properties
     public static final String NETWORK = "network";

@@ -232,4 +232,24 @@ public class VmNumaNodeDAODbFacadeImpl extends VdsNumaNodeDAODbFacadeImpl implem
                 vNodePinToPnodeRowMapper, parameterSource);
     }
 
+    @Override
+    public void massUpdateVmNumaNodeRuntimePinning(List<VmNumaNode> vmNumaNodes) {
+        List<MapSqlParameterSource> vNodeToPnodeDeletions = new ArrayList<>();
+        List<MapSqlParameterSource> vNodeToPnodeInsertions = new ArrayList<>();
+        for (VmNumaNode node : vmNumaNodes) {
+            vNodeToPnodeDeletions.add(getCustomMapSqlParameterSource().addValue("vm_numa_node_id", node.getId()));
+            for (Pair<Guid, Pair<Boolean, Integer>> pair : node.getVdsNumaNodeList()) {
+                if (!pair.getSecond().getFirst()) {
+                    vNodeToPnodeInsertions.add(createVnodeToPnodeParametersMapper(pair, node.getId()));
+                }
+            }
+        }
+        if (!vNodeToPnodeDeletions.isEmpty()) {
+            getCallsHandler().executeStoredProcAsBatch("DeleteUnpinnedNumaNodeMapByVmNumaNodeId", vNodeToPnodeDeletions);
+        }
+        if (!vNodeToPnodeInsertions.isEmpty()) {
+            getCallsHandler().executeStoredProcAsBatch("InsertNumaNodeMap", vNodeToPnodeInsertions);
+        }
+    }
+
 }

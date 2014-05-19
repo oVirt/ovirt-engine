@@ -49,4 +49,13 @@ public interface VmNumaNodeDAO extends VdsNumaNodeDAO {
      */
     List<Pair<Guid, Integer>> getPinnedNumaNodeIndex(Guid vmId);
 
+    /**
+     * Update vm numa node runtime pinning data of the given list of numa nodes using a more
+     * efficient method to update all of them at once, rather than each at a time.
+     *
+     * @param vmNumaNodes
+     *            the vm numa nodes to be updated
+     */
+    void massUpdateVmNumaNodeRuntimePinning(List<VmNumaNode> vmNumaNodes);
+
 }
