@@ -71,7 +71,7 @@ public class VmStatic extends VmBase {
         setDefaultDisplayType(DisplayType.qxl);
         setVmType(VmType.Desktop);
         vmtGuid = Guid.Empty;
-        setNumaTuneMode(NumaTuneMode.PREFERRED);
+        setNumaTuneMode(NumaTuneMode.INTERLEAVE);
         vNumaNodeList = new ArrayList<VmNumaNode>();
         customProperties = "";
     }

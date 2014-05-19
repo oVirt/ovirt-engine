@@ -45,8 +45,7 @@ public class VmStaticDAODbFacadeImpl extends VmBaseDaoDbFacade<VmStatic> impleme
                 .addValue("template_version_number", vm.isUseLatestVersion() ?
                         USE_LATEST_VERSION_NUMBER_INDICATOR : DONT_USE_LATEST_VERSION_NUMBER_INDICATOR)
                 .addValue("numatune_mode",
-                        vm.getNumaTuneMode() == null ? NumaTuneMode.PREFERRED.getValue() : vm.getNumaTuneMode()
-                                .getValue());
+                        vm.getNumaTuneMode() == null ? NumaTuneMode.INTERLEAVE.getValue() : vm.getNumaTuneMode().getValue());
     }
 
     @Override

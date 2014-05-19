@@ -186,7 +186,7 @@ public abstract class VmInfoBuilderBase {
     private void addNumaSetting(final String compatibilityVersion) {
         if (Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinningEnabled,
                         compatibilityVersion))) {
-            NumaTuneMode numaTune = vm.getNumaTuneMode() == null ? NumaTuneMode.PREFERRED : vm.getNumaTuneMode();
+            NumaTuneMode numaTune = vm.getNumaTuneMode() == null ? NumaTuneMode.INTERLEAVE : vm.getNumaTuneMode();
             List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(vm.getId());
             List<VdsNumaNode> totalVdsNumaNodes = DbFacade.getInstance().getVdsNumaNodeDAO()
                     .getAllVdsNumaNodeByVdsId(vm.getRunOnVds());
