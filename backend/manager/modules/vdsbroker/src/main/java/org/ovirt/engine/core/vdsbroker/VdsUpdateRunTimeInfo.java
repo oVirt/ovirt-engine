@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmJob;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -75,6 +76,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -282,6 +284,20 @@ public class VdsUpdateRunTimeInfo {
         saveVmDevicesToDb();
         saveVmJobsToDb();
         saveVmGuestAgentNetworkDevices();
+        saveVmNumaNodeRuntimeData();
+        getVdsEventListener().addExternallyManagedVms(_externalVmsToAdd);
+    }
+
+    private void saveVmNumaNodeRuntimeData() {
+        if (!_vmStatisticsToSave.isEmpty()) {
+            final List<VmNumaNode> vmNumaNodesToUpdate = new ArrayList<>();
+            for(VmStatistics vmStats : _vmStatisticsToSave.values()) {
+                vmNumaNodesToUpdate.addAll(vmStats.getvNumaNodeStatisticsList());
+            }
+            if (!vmNumaNodesToUpdate.isEmpty()) {
+                getDbFacade().getVmNumaNodeDAO().massUpdateVmNumaNodeRuntimePinning(vmNumaNodesToUpdate);
+            }
+        }
     }
 
     private void saveVmGuestAgentNetworkDevices() {
@@ -2038,6 +2054,7 @@ public class VdsUpdateRunTimeInfo {
         if (_vdsManager.getRefreshStatistics()) {
             VmStatistics vmStatistics = _runningVms.get(vmToUpdate.getId()).getVmStatistics();
             vmToUpdate.updateRunTimeStatisticsData(vmStatistics, vmToUpdate);
+            updateVmNumaNodeRuntimeInfo(vmStatistics, vmToUpdate);
             addVmStatisticsToList(vmToUpdate.getStatisticsData());
             updateInterfaceStatistics(vmToUpdate, vmStatistics);
 
@@ -2047,6 +2064,51 @@ public class VdsUpdateRunTimeInfo {
                 _vmDiskImageDynamicToSave.add(new Pair<>(vmId, diskImageDynamic));
             }
         }
+    }
+
+    private void updateVmNumaNodeRuntimeInfo(VmStatistics statistics, VM vm) {
+        if (!vm.getStatus().isRunning()) {
+            vm.getStatisticsData().getvNumaNodeStatisticsList().clear();
+            return;
+        }
+
+        //Build numa nodes map of the host which the vm is running on with node index as the key
+        Map<Integer, VdsNumaNode> runOnVdsAllNumaNodesMap = new HashMap<>();
+        List<VdsNumaNode> runOnVdsAllNumaNodes = getDbFacade().getVdsNumaNodeDAO().getAllVdsNumaNodeByVdsId(vm.getRunOnVds());
+        for (VdsNumaNode vdsNumaNode : runOnVdsAllNumaNodes) {
+            runOnVdsAllNumaNodesMap.put(vdsNumaNode.getIndex(), vdsNumaNode);
+        }
+
+        //Build numa nodes map of the vm with node index as the key
+        Map<Integer, VmNumaNode> vmAllNumaNodesMap = new HashMap<>();
+        List<VmNumaNode> vmAllNumaNodes = getDbFacade().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(vm.getId());
+        for (VmNumaNode vmNumaNode : vmAllNumaNodes) {
+            vmAllNumaNodesMap.put(vmNumaNode.getIndex(), vmNumaNode);
+        }
+
+        //Initialize the unpinned vm numa nodes list with the runtime pinning information
+        List<VmNumaNode> vmNumaNodesNeedUpdate = new ArrayList<>();
+        for (VmNumaNode vNode : statistics.getvNumaNodeStatisticsList()) {
+            VmNumaNode dbVmNumaNode = vmAllNumaNodesMap.get(vNode.getIndex());
+            if (dbVmNumaNode != null) {
+                vNode.setId(dbVmNumaNode.getId());
+                List<Integer> pinnedNodes = NumaUtils.getPinnedNodeIndexList(dbVmNumaNode.getVdsNumaNodeList());
+                List<Pair<Guid, Pair<Boolean, Integer>>> runTimePinList = new ArrayList<>();
+                for (Pair<Guid, Pair<Boolean, Integer>> pair : vNode.getVdsNumaNodeList()){
+                    if ((!pinnedNodes.contains(pair.getSecond().getSecond())) &&
+                            (runOnVdsAllNumaNodesMap.containsKey(pair.getSecond().getSecond()))) {
+                        pair.setFirst(runOnVdsAllNumaNodesMap.get(pair.getSecond().getSecond()).getId());
+                        pair.getSecond().setFirst(false);
+                        runTimePinList.add(pair);
+                    }
+                }
+                if (!runTimePinList.isEmpty()) {
+                    vNode.setVdsNumaNodeList(runTimePinList);
+                    vmNumaNodesNeedUpdate.add(vNode);
+                }
+            }
+        }
+        vm.getStatisticsData().getvNumaNodeStatisticsList().addAll(vmNumaNodesNeedUpdate);
     }
 
     private void updateInterfaceStatistics(VM vm, VmStatistics statistics) {

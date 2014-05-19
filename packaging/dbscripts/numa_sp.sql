@@ -267,6 +267,21 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION DeleteUnpinnedNumaNodeMapByVmNumaNodeId(v_vm_numa_node_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+   BEGIN
+      DELETE FROM vm_vds_numa_node_map
+      WHERE vm_numa_node_id = v_vm_numa_node_id AND is_pinned = FALSE;
+   END;
+
+   RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
 ----------------------------------------------------------------
 -- [numa_node_cpus_view] View
 --

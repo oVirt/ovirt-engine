@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -340,6 +341,10 @@ public class ResourceManager {
             statistics.setTransmitRate(0D);
             statistics.setReceiveRate(0D);
             statistics.setReceiveDropRate(0D);
+        }
+        List<VmNumaNode> vmNumaNodes = vm.getvNumaNodeList();
+        for (VmNumaNode node : vmNumaNodes) {
+            node.getVdsNumaNodeList().clear();
         }
     }
 

@@ -30,6 +30,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
 
             final VM curVm = DbFacade.getInstance().getVmDao().get(parameters.getVmId());
             curVm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(curVm.getId()));
+            curVm.setvNumaNodeList(DbFacade.getInstance().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(curVm.getId()));
 
             DestroyVDSCommand<DestroyVmVDSCommandParameters> vdsBrokerCommand =
                     new DestroyVDSCommand<DestroyVmVDSCommandParameters>(parameters);
@@ -61,6 +62,9 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                                 .getVdsDynamicDao()
                                 .updatePartialVdsDynamicCalc(getVdsId(), 0, 0, 0,
                                         -curVm.getVmMemSizeMb(), -curVm.getNumOfCpus());
+                        DbFacade.getInstance()
+                                .getVmNumaNodeDAO()
+                                .massUpdateVmNumaNodeRuntimePinning(curVm.getvNumaNodeList());
                         return null;
                     }
                 });

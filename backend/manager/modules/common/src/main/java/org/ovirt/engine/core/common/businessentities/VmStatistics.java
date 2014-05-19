@@ -17,6 +17,8 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     private List<VmJob> vmJobs;
     // NOT PERSISTED
     private VmBalloonInfo vmBalloonInfo;
+    // NOT PERSISTED
+    private List<VmNumaNode> vNumaNodeStatisticsList;
 
     private List<Integer> memoryUsageHistory;
     private List<Integer> cpuUsageHistory;
@@ -28,6 +30,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         elapsed_timeField = 0.0;
         roundedElapsedTimeField = 0.0;
         vm_guidField = Guid.Empty;
+        vNumaNodeStatisticsList = new ArrayList<VmNumaNode>();
     }
 
     @Override
@@ -48,6 +51,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         result = prime * result + ((cpuUsageHistory == null) ? 0 : cpuUsageHistory.hashCode());
         result = prime * result + ((networkUsageHistory == null) ? 0 : networkUsageHistory.hashCode());
         result = prime * result + ((memoryUsageHistory == null) ? 0 : memoryUsageHistory.hashCode());
+        result = prime * result + ((vNumaNodeStatisticsList == null) ? 0 : vNumaNodeStatisticsList.hashCode());
         return result;
     }
 
@@ -76,7 +80,8 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
                 && ObjectUtils.objectsEqual(vm_guidField, other.vm_guidField)
                 && ObjectUtils.objectsEqual(cpuUsageHistory, other.cpuUsageHistory)
                 && ObjectUtils.objectsEqual(networkUsageHistory, other.networkUsageHistory)
-                && ObjectUtils.objectsEqual(memoryUsageHistory, other.memoryUsageHistory));
+                && ObjectUtils.objectsEqual(memoryUsageHistory, other.memoryUsageHistory)
+                && ObjectUtils.objectsEqual(vNumaNodeStatisticsList, other.vNumaNodeStatisticsList));
     }
 
     public Double getcpu_sys() {
@@ -288,5 +293,13 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         }
 
         return res.subList(res.size() - limit, res.size());
+    }
+
+    public List<VmNumaNode> getvNumaNodeStatisticsList() {
+        return vNumaNodeStatisticsList;
+    }
+
+    public void setvNumaNodeStatisticsList(List<VmNumaNode> vNumaNodeStatisticsList) {
+        this.vNumaNodeStatisticsList = vNumaNodeStatisticsList;
     }
 }
