@@ -13,7 +13,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Properties;
-import java.util.ServiceLoader;
 
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
@@ -69,7 +68,7 @@ public class ExtensionsManager extends Observable {
             // be instantiated and initialized.
             Module module = loadModule(moduleName);
             Class<?> serviceClass = null;
-            for (Object service : ServiceLoader.load(serviceInterface, module.getClassLoader())) {
+            for (Object service : module.loadService(serviceInterface)) {
                 if (service.getClass().getName().equals(serviceClassName)) {
                     serviceClass = service.getClass();
                     break;
