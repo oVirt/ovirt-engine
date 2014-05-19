@@ -102,6 +102,7 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
 	color: #888888;
 }
 
-.gwt-PopupPanelGlass {
-	z-index: 1;
+/* right click menu spacing */
+.gwt-MenuBar .gwt-MenuItem {
+    padding: 0 10px !important;
 }
