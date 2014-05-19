@@ -224,7 +224,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                         "Can't login user \"{0}\" with authentication profile \"{1}\" because the user doesn't exist in the "
                                 +
                                 "directory.",
-                        loginName,
+                        authRecord.<String> get(Authn.AuthRecord.PRINCIPAL),
                         profileName
                         );
                 addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
