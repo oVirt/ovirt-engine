@@ -22,12 +22,16 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -39,6 +43,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateCommand<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
     private VmTemplate mOldTemplate;
+    private List<GraphicsDevice> cachedGraphics;
 
     public UpdateVmTemplateCommand(T parameters) {
         super(parameters);
@@ -133,6 +138,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         // Check if the display type is supported
+        // todo osinfo followup
         if (returnValue) {
             returnValue = VmHandler.isDisplayTypeSupported(getParameters().getVmTemplateData().getOsId(),
                     getParameters().getVmTemplateData().getDefaultDisplayType(),
@@ -218,6 +224,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         UpdateVmTemplate();
         updateWatchdog(getParameters().getVmTemplateData().getId());
         updateRngDevice(getParameters().getVmTemplateData().getId());
+        updateGraphicsDevice();
         checkTrustedService();
         updateVmsOfInstanceType();
         setSucceeded(true);
@@ -368,6 +375,52 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     private VmPropertiesUtils getVmPropertiesUtils() {
         return VmPropertiesUtils.getInstance();
+    }
+
+    private void updateGraphicsDevice() {
+        for (GraphicsType type : getParameters().getGraphicsDevices().keySet()) {
+            GraphicsDevice vmGraphicsDevice = getGraphicsDevOfType(type);
+            if (vmGraphicsDevice == null) {
+                if (getParameters().getGraphicsDevices().get(type) != null) {
+                    getParameters().getGraphicsDevices().get(type).setVmId(getVmTemplateId());
+                    GraphicsParameters parameters = new GraphicsParameters(getParameters().getGraphicsDevices().get(type));
+                    parameters.setVm(false);
+                    getBackend().runInternalAction(VdcActionType.AddGraphicsDevice, parameters);
+                }
+            } else {
+                if (getParameters().getGraphicsDevices().get(type) == null) {
+                    GraphicsParameters parameters = new GraphicsParameters(vmGraphicsDevice);
+                    parameters.setVm(false);
+                    getBackend().runInternalAction(VdcActionType.RemoveGraphicsDevice, parameters);
+                } else {
+                    getParameters().getGraphicsDevices().get(type).setVmId(getVmTemplateId());
+                    GraphicsParameters parameters = new GraphicsParameters(getParameters().getGraphicsDevices().get(type));
+                    parameters.setVm(false);
+                    getBackend().runInternalAction(VdcActionType.UpdateGraphicsDevice, parameters);
+                }
+            }
+        }
+    }
+
+    // first dev or null
+    private GraphicsDevice getGraphicsDevOfType(GraphicsType type) {
+        List<GraphicsDevice> graphicsDevices = getGraphicsDevices();
+
+        for (GraphicsDevice dev : graphicsDevices) {
+            if (dev.getGraphicsType() == type) {
+                return dev;
+            }
+        }
+
+        return null;
+    }
+
+    private List<GraphicsDevice> getGraphicsDevices() {
+        if (cachedGraphics == null) {
+            cachedGraphics = getBackend()
+                    .runInternalQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(getVmTemplateId())).getReturnValue();
+        }
+        return cachedGraphics;
     }
 
 }

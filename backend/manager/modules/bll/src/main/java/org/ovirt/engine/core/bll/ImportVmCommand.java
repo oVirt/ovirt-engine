@@ -462,6 +462,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         // Check if the display type is supported
+        // todo osinfo followup
         if (!VmHandler.isDisplayTypeSupported(vmFromParams.getOs(),
                 vmFromParams.getDefaultDisplayType(),
                 getReturnValue().getCanDoActionMessages(),

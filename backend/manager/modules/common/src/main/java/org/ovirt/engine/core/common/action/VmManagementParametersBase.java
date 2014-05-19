@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.HashMap;
-
+import java.util.Map;
 import javax.validation.Valid;
-
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
@@ -70,16 +71,29 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.CONTROLLER, type = VmDeviceType.VIRTIOSCSI)
     private Boolean virtioScsiEnabled;
 
+    /**
+     * This attribute contains information about graphics devices.
+     *
+     * Graphics device of VM is touched only if there is an entry in this map (non-null for adding/updating,
+     * null for removing the device. If the map doesn't contain entry for graphics type, VM's graphics card
+     * of this type is not modified.
+     */
+    private Map<GraphicsType, GraphicsDevice> graphicsDevices;
+
     public VmManagementParametersBase() {
-        privateStorageDomainId = Guid.Empty;
-        consoleEnabled = Boolean.FALSE;
+        init();
     }
 
     public VmManagementParametersBase(VmStatic vmStatic) {
         super(vmStatic.getId());
         _vmStatic = vmStatic;
+        init();
+    }
+
+    private void init() {
         privateStorageDomainId = Guid.Empty;
         consoleEnabled = Boolean.FALSE;
+        graphicsDevices = new HashMap<GraphicsType, GraphicsDevice>();
     }
 
     public VmManagementParametersBase(VM vm) {
@@ -252,4 +266,9 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     public void setUpdateNuma(boolean updateNuma) {
         this.updateNuma = updateNuma;
     }
+
+    public Map<GraphicsType, GraphicsDevice> getGraphicsDevices() {
+        return graphicsDevices;
+    }
+
 }

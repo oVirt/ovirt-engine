@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.Collection;
 import java.util.HashMap;
-
+import java.util.Map;
 import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -24,15 +27,22 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
     private Boolean virtioScsiEnabled;
     private boolean balloonEnabled;
     private VmRngDevice rngDevice;
+    private Map<GraphicsType, GraphicsDevice> graphicsDevices;
 
     public AddVmPoolWithVmsParameters() {
+        init();
     }
 
     public AddVmPoolWithVmsParameters(VmPool vmPool, VM vm, int count, int diskSize) {
         super(vmPool);
+        init();
         _vm = vm;
         _vmsCount = count;
         _diskSize = diskSize;
+    }
+
+    private void init() {
+        graphicsDevices = new HashMap<GraphicsType, GraphicsDevice>();
     }
 
     @Valid
@@ -96,4 +106,9 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
     public void setBalloonEnabled(boolean isBallonEnabled) {
         this.balloonEnabled = isBallonEnabled;
     }
+
+    public Collection<GraphicsDevice> getGraphicsDevices() {
+        return graphicsDevices.values();
+    }
+
 }

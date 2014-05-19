@@ -1,9 +1,13 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import java.util.Map;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -16,6 +20,15 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
     private VmWatchdog watchdog;
     private Boolean virtioScsiEnabled;
     private boolean balloonEnabled;
+
+   /**
+    * This attribute contains information about graphics devices.
+    *
+    * Graphics device of VM is touched only if there is an entry in this map (non-null for adding/updating,
+    * null for removing the device. If the map doesn't contain entry for graphics type, VM's graphics card
+    * of this type is not modified.
+    */
+    private Map<GraphicsType, GraphicsDevice> graphicsDevices;
 
     private VmRngDevice rngDevice;
     /*
@@ -40,6 +53,7 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
 
     public VmTemplateParametersBase(Guid vmTemplateId) {
         this.vmTemplateId = vmTemplateId;
+        graphicsDevices = new HashMap<GraphicsType, GraphicsDevice>();
     }
 
     public Guid getVmTemplateId() {
@@ -57,7 +71,7 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
     }
 
     public VmTemplateParametersBase() {
-        vmTemplateId = Guid.Empty;
+        this(Guid.Empty);
     }
 
     public void setRemoveTemplateFromDb(boolean removeTemplateFromDb) {
@@ -132,4 +146,9 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
     public void setCpuProfileId(Guid cpuProfileId) {
         this.cpuProfileId = cpuProfileId;
     }
+
+    public Map<GraphicsType, GraphicsDevice> getGraphicsDevices() {
+        return graphicsDevices;
+    }
+
 }

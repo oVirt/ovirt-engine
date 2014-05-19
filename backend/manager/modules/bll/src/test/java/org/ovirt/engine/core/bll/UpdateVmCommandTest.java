@@ -33,17 +33,21 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -243,14 +247,22 @@ public class UpdateVmCommandTest {
 
         assertTrue("canDoAction should have passed.", command.canDoAction());
     }
+    // todo os info followup
+//    @Test
+//    public void testInvalidNumberOfMonitors() {
+//        prepareVmToPassCanDoAction();
+//        vmStatic.setNumOfMonitors(99);
+//
+//        assertFalse("canDoAction should have failed with invalid number of monitors.", command.canDoAction());
+//        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
+//    }
 
-    @Test
-    public void testInvalidNumberOfMonitors() {
-        prepareVmToPassCanDoAction();
-        vmStatic.setNumOfMonitors(99);
-
-        assertFalse("canDoAction should have failed with invalid number of monitors.", command.canDoAction());
-        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
+    private void mockGraphicsDevice() {
+        doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
+        VmDevice graphicsDevice = new GraphicsDevice(VmDeviceType.SPICE);
+        graphicsDevice.setDeviceId(Guid.Empty);
+        graphicsDevice.setVmId(vm.getId());
+        when(vmDeviceDAO.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.GRAPHICS)).thenReturn(Arrays.asList(graphicsDevice));
     }
 
     @Test
@@ -348,6 +360,7 @@ public class UpdateVmCommandTest {
         mockValidateCustomProperties();
         mockValidatePciAndIdeLimit();
         doReturn(true).when(command).setAndValidateCpuProfile();
+        mockGraphicsDevice();
     }
 
     private void assertCanDoActionMessage(VdcBllMessages msg) {

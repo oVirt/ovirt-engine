@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.EditableField;
 import org.ovirt.engine.core.common.businessentities.EditableOnVm;
 import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -582,27 +583,29 @@ public class VmHandler {
     }
 
     /**
-     * Checks number of monitors validation according to VM and Display types.
+     * Checks number of monitors validation according to VM and Graphics types.
      *
-     * @param displayType
-     *            Display type : Spice or Vnc
+     * @param graphicsTypes
+     *            Collection of graphics types of a VM.
      * @param numOfMonitors
      *            Number of monitors
      * @param reasons
      *            Messages for CanDoAction().
      * @return
      */
-    public static boolean isNumOfMonitorsLegal(DisplayType displayType, int numOfMonitors, List<String> reasons) {
-        boolean legal = true;
-        if (displayType == DisplayType.vnc) {
+    public static boolean isNumOfMonitorsLegal(Collection<GraphicsType> graphicsTypes, int numOfMonitors, List<String> reasons) {
+        boolean legal = false;
+
+        if (graphicsTypes.contains(GraphicsType.VNC)) {
             legal = (numOfMonitors <= 1);
-        }
-        else { // Spice
+        } else if (graphicsTypes.contains(GraphicsType.SPICE)) { // contains spice and doesn't contain vnc
             legal = (numOfMonitors <= getMaxNumberOfMonitors());
         }
+
         if (!legal) {
             reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS.toString());
         }
+
         return legal;
     }
 

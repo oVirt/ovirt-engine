@@ -288,6 +288,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             getParameters().isConsoleEnabled(),
                             getParameters().isVirtioScsiEnabled(),
                             VmDeviceUtils.isBalloonEnabled(getVmId()),
+                            getParameters().getGraphicsDevices().keySet(),
                             false);
                 } else {
                     // for instance type and new template without a VM
@@ -298,6 +299,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             getParameters().isConsoleEnabled(),
                             getParameters().isVirtioScsiEnabled(),
                             getParameters().isBalloonEnabled(),
+                            getParameters().getGraphicsDevices().keySet(),
                             false);
                 }
 
@@ -341,6 +343,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         // Check if the display type is supported
+        // todo osinfo followup
         if (!VmHandler.isDisplayTypeSupported(getParameters().getMasterVm().getOsId(),
                 getParameters().getMasterVm().getDefaultDisplayType(),
                 getReturnValue().getCanDoActionMessages(),

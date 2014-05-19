@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -394,12 +395,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                         getVdsGroup().getcompatibility_version()));
     }
 
-    protected boolean checkNumberOfMonitors() {
-        return VmHandler.isNumOfMonitorsLegal(getParameters().getVmStaticData().getDefaultDisplayType(),
-                getParameters().getVmStaticData().getNumOfMonitors(),
-                getReturnValue().getCanDoActionMessages());
-    }
-
     protected boolean hostToRunExist() {
         if (getParameters().getVmStaticData().getDedicatedVmForVds() != null) {
             if (DbFacade.getInstance().getVdsDao().get(getParameters().getVmStaticData().getDedicatedVmForVds()) == null) {
@@ -564,6 +559,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         // Check if the display type is supported
+        // todo os info follow up
         if (!VmHandler.isDisplayTypeSupported(getParameters().getVmStaticData().getOsId(),
                 vmFromParams.getDefaultDisplayType(),
                 getReturnValue().getCanDoActionMessages(),
@@ -831,6 +827,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                         addVmPayload();
                         updateSmartCardDevices();
                         addVmWatchdog();
+                        addGraphicsDevice();
                         setActionReturnValue(getVm().getId());
                         setSucceeded(true);
                         return null;
@@ -839,6 +836,17 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
         } else {
             log.error("Failed to add vm . The reasons are: {}", StringUtils.join(errorMessages, ','));
+        }
+    }
+
+    private void addGraphicsDevice() {
+        for (GraphicsDevice graphicsDevice : getParameters().getGraphicsDevices().values()) {
+            if (graphicsDevice == null) {
+                continue;
+            }
+
+            graphicsDevice.setVmId(getVmId());
+            getBackend().runInternalAction(VdcActionType.AddGraphicsDevice, new GraphicsParameters(graphicsDevice));
         }
     }
 
@@ -897,6 +905,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 getParameters().isConsoleEnabled(),
                 isVirtioScsiEnabled(),
                 isBalloonEnabled(),
+                getParameters().getGraphicsDevices().keySet(),
                 false);
 
         if (getInstanceTypeId() != null) {
@@ -1396,6 +1405,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         // Choose a proper default display type according to the cluster architecture
+        // todo os info follow up
         if (getParameters().getVmStaticData().getOsId() != OsRepository.AUTO_SELECT_OS &&
                 getParameters().getVmStaticData().getDefaultDisplayType() == null) {
             DisplayType defaultDisplayType =
@@ -1417,4 +1427,15 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             iface.setVnicProfileId(null);
         }
     }
+    protected boolean checkNumberOfMonitors() {
+        // todo os info follow up
+//        Set<GraphicsType> graphicsTypesToBeSet = getParameters().graphicsTypesToBeSet();
+//        int numOfMonitors = getParameters().getVmStaticData().getNumOfMonitors();
+//
+//        return VmHandler.isNumOfMonitorsLegal(graphicsTypesToBeSet,
+//                numOfMonitors,
+//                getReturnValue().getCanDoActionMessages());
+        return true;
+    }
+
 }

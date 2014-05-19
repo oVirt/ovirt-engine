@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -51,6 +52,8 @@ public class VmDeviceUtils {
     private final static String UHCI_MODEL = "ich9-uhci";
     private final static int SLOTS_PER_CONTROLLER = 6;
     private final static int COMPANION_USB_CONTROLLERS = 3;
+    private final static int VNC_MIN_MONITORS = 1;
+    private final static int SINGLE_QXL_MONITORS = 1;
     private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     /**
@@ -273,8 +276,12 @@ public class VmDeviceUtils {
                                      boolean isConsoleEnabled,
                                      Boolean isVirtioScsiEnabled,
                                      boolean isBalloonEnabled,
+                                     Set<GraphicsType> graphicsToSkip,
                                      boolean copySnapshotDevices) {
         Guid id;
+        if (graphicsToSkip == null) {
+            graphicsToSkip = new HashSet<>();
+        }
         String isoPath=vmBase.getIsoPath();
         // indicates that VM should have CD either from its own (iso_path) or from the snapshot it was cloned from.
         boolean shouldHaveCD = StringUtils.isNotEmpty(isoPath);
@@ -386,6 +393,17 @@ public class VmDeviceUtils {
                     }
                     break;
 
+                case GRAPHICS:
+                    GraphicsType type = GraphicsType.fromVmDeviceType(VmDeviceType.getByName(device.getDevice()));
+                    // don't add device from the template if it should be skipped (i.e. it's overriden in params)
+                    // OR if we already have it
+                    if (graphicsToSkip.contains(type) ||
+                            hasVmGraphicsDeviceOfType(dstId, GraphicsType.fromString(device.getDevice())))
+                    {
+                        continue;
+                    }
+                    break;
+
                 default:
                     break;
             }
@@ -420,13 +438,20 @@ public class VmDeviceUtils {
             //  update devices boot order
             updateBootOrderInVmDeviceAndStoreToDB(vmBase);
 
-            int numOfMonitors = (vmBase.getDefaultDisplayType() == DisplayType.vnc) ? Math.max(1, vmBase.getNumOfMonitors()) :
-                vmBase.getSingleQxlPci() ? 1 : vmBase.getNumOfMonitors();
+            int numOfMonitors = getNumOfMonitors(vm);
+
             // create Video device. Multiple if display type is spice
             for (int i = 0; i < numOfMonitors; i++) {
                 addVideoDevice(vmBase);
             }
         }
+    }
+
+    private static int getNumOfMonitors(VM vm) {
+        int maxMonitorsSpice = vm.getSingleQxlPci() ? SINGLE_QXL_MONITORS : vm.getNumOfMonitors();
+        int maxMonitorsVnc = Math.max(VNC_MIN_MONITORS, vm.getNumOfMonitors());
+
+        return Math.min(maxMonitorsSpice, maxMonitorsVnc);
     }
 
     private static void addSoundCard(VmBase vmBase) {
@@ -451,6 +476,7 @@ public class VmDeviceUtils {
                                      boolean isConsoleEnabled,
                                      Boolean isVirtioScsiEnabled,
                                      boolean isBalloonEnabled,
+                                     Set<GraphicsType> graphicsToSkip,
                                      boolean copySnapshotDevices) {
         VM vm = DbFacade.getInstance().getVmDao().get(dstId);
         VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
@@ -462,7 +488,7 @@ public class VmDeviceUtils {
 
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
         copyVmDevices(srcId, dstId, vm, vmBase, isVm, devices, srcDeviceIdToTargetDeviceIdMapping,
-                soundDeviceEnabled, isConsoleEnabled, isVirtioScsiEnabled, isBalloonEnabled, copySnapshotDevices);
+                soundDeviceEnabled, isConsoleEnabled, isVirtioScsiEnabled, isBalloonEnabled, graphicsToSkip, copySnapshotDevices);
     }
 
     public static void copyDiskDevices(Guid dstId, List<VmDevice> devicesDataToUse, Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
@@ -1057,6 +1083,13 @@ public class VmDeviceUtils {
         return !DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,
                 VmDeviceGeneralType.RNG).isEmpty();
     }
+
+    public static boolean hasVmGraphicsDeviceOfType(Guid vmId, GraphicsType type) {
+        return !DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(vmId,
+                VmDeviceGeneralType.GRAPHICS,
+                type.name().toLowerCase()).isEmpty();
+    }
+
 
     public static List<VmDevice> getSoundDevices(Guid vmId) {
         return DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,

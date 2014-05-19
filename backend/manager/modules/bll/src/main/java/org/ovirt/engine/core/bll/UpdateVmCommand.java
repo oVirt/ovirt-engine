@@ -39,6 +39,8 @@ import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -82,6 +84,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private boolean quotaSanityOnly = false;
     private VmStatic newVmStatic;
     private VdcReturnValueBase setNumberOfCpusResult;
+    private List<GraphicsDevice> cachedGraphics;
 
     public UpdateVmCommand(T parameters) {
         this(parameters, null);
@@ -159,6 +162,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             VmDeviceUtils.updateVmDevices(getParameters(), oldVm);
             updateWatchdog();
             updateRngDevice();
+            updateGraphicsDevice();
         }
         VmHandler.updateVmInitToDB(getParameters().getVmStaticData());
 
@@ -299,6 +303,49 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
 
         }
+    }
+
+    private void updateGraphicsDevice() {
+        for (GraphicsType type : getParameters().getGraphicsDevices().keySet()) {
+            GraphicsDevice vmGraphicsDevice = getGraphicsDevOfType(type);
+            if (vmGraphicsDevice == null) {
+                if (getParameters().getGraphicsDevices().get(type) != null) {
+                    getParameters().getGraphicsDevices().get(type).setVmId(getVmId());
+                    getBackend().runInternalAction(VdcActionType.AddGraphicsDevice,
+                            new GraphicsParameters(getParameters().getGraphicsDevices().get(type)));
+                }
+            } else {
+                if (getParameters().getGraphicsDevices().get(type) == null) {
+                    getBackend().runInternalAction(VdcActionType.RemoveGraphicsDevice,
+                            new GraphicsParameters(vmGraphicsDevice));
+                } else {
+                    getParameters().getGraphicsDevices().get(type).setVmId(getVmId());
+                    getBackend().runInternalAction(VdcActionType.UpdateGraphicsDevice,
+                            new GraphicsParameters(getParameters().getGraphicsDevices().get(type)));
+                }
+            }
+        }
+    }
+
+    // first dev or null
+    private GraphicsDevice getGraphicsDevOfType(GraphicsType type) {
+        List<GraphicsDevice> graphicsDevices = getGraphicsDevices();
+
+        for (GraphicsDevice dev : graphicsDevices) {
+            if (dev.getGraphicsType() == type) {
+                return dev;
+            }
+        }
+
+        return null;
+    }
+
+    private List<GraphicsDevice> getGraphicsDevices() {
+        if (cachedGraphics == null) {
+            cachedGraphics = getBackend()
+                    .runInternalQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(getParameters().getVmId())).getReturnValue();
+        }
+        return cachedGraphics;
     }
 
     protected void updateVmPayload() {
@@ -511,11 +558,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         // Check if number of monitors passed is legal
-        if (!VmHandler.isNumOfMonitorsLegal(vmFromParams.getDefaultDisplayType(),
-                vmFromParams.getNumOfMonitors(),
-                getReturnValue().getCanDoActionMessages())) {
-            return false;
-        }
+        // todo os info follow up
+//        if (!checkNumberOfMonitors()) {
+//            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
+//        }
 
         // Check PCI and IDE limits are ok
         if (!isValidPciAndIdeLimit(vmFromParams)) {
@@ -566,6 +612,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         // Check if the display type is supported
+        // todo address this in os info follow up
         if (!VmHandler.isDisplayTypeSupported(vmFromParams.getOs(),
                 vmFromParams.getDefaultDisplayType(),
                 getReturnValue().getCanDoActionMessages(),
