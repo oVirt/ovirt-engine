@@ -98,7 +98,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
                 && ObjectUtils.objectsEqual(vdsGroupGlusterService, other.vdsGroupGlusterService));
     }
 
-    @Override
     public VDS clone() {
         VDS vds = new VDS();
         vds.setVdsGroupId(getVdsGroupId());
