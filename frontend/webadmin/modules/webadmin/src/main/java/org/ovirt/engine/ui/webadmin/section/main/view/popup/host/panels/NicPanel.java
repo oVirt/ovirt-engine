@@ -18,6 +18,7 @@ public class NicPanel extends NetworkItemPanel {
     public NicPanel(NetworkInterfaceModel item, NetworkPanelsStyle style, boolean draggable) {
         super(item, style, draggable);
         getElement().addClassName(style.nicPanel());
+        this.actionButton.setStyleName(style.actionButtonNetwork());
     }
 
     @Override
