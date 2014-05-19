@@ -147,6 +147,88 @@ public class VdsUpdateRunTimeInfo {
         UNCHANGEABLE_FIELDS_BY_VDSM = Collections.unmodifiableList(tmpList);
     }
 
+    public VdsUpdateRunTimeInfo(VdsManager vdsManager, VDS vds, MonitoringStrategy monitoringStrategy) {
+        _vdsManager = vdsManager;
+        _vds = vds;
+        _firstStatus = _vds.getStatus();
+        this.monitoringStrategy = monitoringStrategy;
+        _vmDict = getDbFacade().getVmDao().getAllRunningByVds(_vds.getId());
+    }
+
+    public void refresh() {
+        try {
+            refreshVdsRunTimeInfo();
+        } finally {
+            try {
+                if (_firstStatus != _vds.getStatus() && _vds.getStatus() == VDSStatus.Up) {
+                    // use this lock in order to allow only one host updating DB and
+                    // calling UpEvent in a time
+                    VdsManager.cancelRecoveryJob(_vds.getId());
+                    if (log.isDebugEnabled()) {
+                        log.debugFormat("vds {0}-{1} firing up event.", _vds.getId(), _vds.getName());
+                    }
+                    _vdsManager.setIsSetNonOperationalExecuted(!getVdsEventListener().vdsUpEvent(_vds));
+                }
+                // save all data to db
+                saveDataToDb();
+            } catch (IRSErrorException ex) {
+                logFailureMessage("ResourceManager::refreshVdsRunTimeInfo:", ex);
+                if (log.isDebugEnabled()) {
+                    log.error(ExceptionUtils.getMessage(ex), ex);
+                }
+            } catch (RuntimeException ex) {
+                logFailureMessage("ResourceManager::refreshVdsRunTimeInfo:", ex);
+                log.error(ExceptionUtils.getMessage(ex), ex);
+            }
+        }
+    }
+
+    public void refreshVdsRunTimeInfo() {
+        boolean isVdsUpOrGoingToMaintenance = _vds.getStatus() == VDSStatus.Up
+                || _vds.getStatus() == VDSStatus.PreparingForMaintenance || _vds.getStatus() == VDSStatus.Error
+                || _vds.getStatus() == VDSStatus.NonOperational;
+        try {
+            if (isVdsUpOrGoingToMaintenance) {
+                // check if its time for statistics refresh
+                if (_vdsManager.getRefreshStatistics() || _vds.getStatus() == VDSStatus.PreparingForMaintenance) {
+                    refreshVdsStats();
+                }
+            } else {
+                // refresh dynamic data
+                final AtomicBoolean processHardwareNeededAtomic = new AtomicBoolean();
+                VDSStatus refreshReturnStatus =
+                        _vdsManager.refreshCapabilities(processHardwareNeededAtomic, _vds);
+                processHardwareCapsNeeded = processHardwareNeededAtomic.get();
+                refreshedCapabilities = true;
+                if (refreshReturnStatus != VDSStatus.NonOperational) {
+                    _vdsManager.setStatus(VDSStatus.Up, _vds);
+                }
+                _saveVdsDynamic = true;
+            }
+            beforeFirstRefreshTreatment(isVdsUpOrGoingToMaintenance);
+            refreshVmStats();
+        } catch (VDSRecoveringException e) {
+            // if PreparingForMaintenance and vds is in install failed keep to
+            // move vds to maintenance
+            if (_vds.getStatus() != VDSStatus.PreparingForMaintenance) {
+                throw e;
+            }
+        } catch (ClassCastException cce) {
+            // This should occur only if the vdsm API is not the same as the cluster API (version mismatch)
+            log.error(String.format("Failure to refresh Vds %s runtime info. Incorrect vdsm version for cluster %s",
+                    _vds.getName(),
+                    _vds.getVdsGroupName()), cce);
+            if (_vds.getStatus() != VDSStatus.PreparingForMaintenance && _vds.getStatus() != VDSStatus.Maintenance) {
+                ResourceManager.getInstance().runVdsCommand(VDSCommandType.SetVdsStatus,
+                        new SetVdsStatusVDSCommandParameters(_vds.getId(), VDSStatus.Error));
+            }
+        } catch (Throwable t) {
+            log.error("Failure to refresh Vds runtime info", t);
+            throw t;
+        }
+        moveVDSToMaintenanceIfNeeded();
+    }
+
     private void saveDataToDb() {
         if (_saveVdsDynamic) {
             _vdsManager.updateDynamicData(_vds.getDynamicData());
@@ -472,42 +554,6 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    public VdsUpdateRunTimeInfo(VdsManager vdsManager, VDS vds, MonitoringStrategy monitoringStrategy) {
-        _vdsManager = vdsManager;
-        _vds = vds;
-        _firstStatus = _vds.getStatus();
-        this.monitoringStrategy = monitoringStrategy;
-        _vmDict = getDbFacade().getVmDao().getAllRunningByVds(_vds.getId());
-    }
-
-    public void refresh() {
-        try {
-            refreshVdsRunTimeInfo();
-        } finally {
-            try {
-                if (_firstStatus != _vds.getStatus() && _vds.getStatus() == VDSStatus.Up) {
-                    // use this lock in order to allow only one host updating DB and
-                    // calling UpEvent in a time
-                    VdsManager.cancelRecoveryJob(_vds.getId());
-                    if (log.isDebugEnabled()) {
-                        log.debugFormat("vds {0}-{1} firing up event.", _vds.getId(), _vds.getName());
-                    }
-                    _vdsManager.setIsSetNonOperationalExecuted(!getVdsEventListener().vdsUpEvent(_vds));
-                }
-                // save all data to db
-                saveDataToDb();
-            } catch (IRSErrorException ex) {
-                logFailureMessage("ResourceManager::refreshVdsRunTimeInfo:", ex);
-                if (log.isDebugEnabled()) {
-                    log.error(ExceptionUtils.getMessage(ex), ex);
-                }
-            } catch (RuntimeException ex) {
-                logFailureMessage("ResourceManager::refreshVdsRunTimeInfo:", ex);
-                log.error(ExceptionUtils.getMessage(ex), ex);
-            }
-        }
-    }
-
     private void logFailureMessage(String messagePrefix, RuntimeException ex) {
         log.errorFormat("{0} Error: {1}, vds = {2} : {3}",
                 messagePrefix,
@@ -611,52 +657,6 @@ public class VdsUpdateRunTimeInfo {
                 _vdsManager.setIsSetNonOperationalExecuted(true);
             }
         }
-    }
-
-    public void refreshVdsRunTimeInfo() {
-        boolean isVdsUpOrGoingToMaintenance = _vds.getStatus() == VDSStatus.Up
-                || _vds.getStatus() == VDSStatus.PreparingForMaintenance || _vds.getStatus() == VDSStatus.Error
-                || _vds.getStatus() == VDSStatus.NonOperational;
-        try {
-            if (isVdsUpOrGoingToMaintenance) {
-                // check if its time for statistics refresh
-                if (_vdsManager.getRefreshStatistics() || _vds.getStatus() == VDSStatus.PreparingForMaintenance) {
-                    refreshVdsStats();
-                }
-            } else {
-                // refresh dynamic data
-                final AtomicBoolean processHardwareNeededAtomic = new AtomicBoolean();
-                VDSStatus refreshReturnStatus =
-                        _vdsManager.refreshCapabilities(processHardwareNeededAtomic, _vds);
-                processHardwareCapsNeeded = processHardwareNeededAtomic.get();
-                refreshedCapabilities = true;
-                if (refreshReturnStatus != VDSStatus.NonOperational) {
-                    _vdsManager.setStatus(VDSStatus.Up, _vds);
-                }
-                _saveVdsDynamic = true;
-            }
-            beforeFirstRefreshTreatment(isVdsUpOrGoingToMaintenance);
-            refreshVmStats();
-        } catch (VDSRecoveringException e) {
-            // if PreparingForMaintenance and vds is in install failed keep to
-            // move vds to maintenance
-            if (_vds.getStatus() != VDSStatus.PreparingForMaintenance) {
-                throw e;
-            }
-        } catch (ClassCastException cce) {
-            // This should occur only if the vdsm API is not the same as the cluster API (version mismatch)
-            log.error(String.format("Failure to refresh Vds %s runtime info. Incorrect vdsm version for cluster %s",
-                    _vds.getName(),
-                    _vds.getVdsGroupName()), cce);
-            if (_vds.getStatus() != VDSStatus.PreparingForMaintenance && _vds.getStatus() != VDSStatus.Maintenance) {
-                ResourceManager.getInstance().runVdsCommand(VDSCommandType.SetVdsStatus,
-                        new SetVdsStatusVDSCommandParameters(_vds.getId(), VDSStatus.Error));
-            }
-        } catch (Throwable t) {
-            log.error("Failure to refresh Vds runtime info", t);
-            throw t;
-        }
-        moveVDSToMaintenanceIfNeeded();
     }
 
     public void refreshVdsStats() {
