@@ -73,6 +73,7 @@ public class VmStatic extends VmBase {
         vmtGuid = Guid.Empty;
         setNumaTuneMode(NumaTuneMode.PREFERRED);
         vNumaNodeList = new ArrayList<VmNumaNode>();
+        customProperties = "";
     }
 
     public VmStatic(VmStatic vmStatic) {
