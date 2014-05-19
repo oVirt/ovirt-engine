@@ -71,7 +71,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
-import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils.VMCustomProperties;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -891,17 +890,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         vmStatic.setCreatedByUserId(getUserId());
         // Parses the custom properties field that was filled by frontend to
         // predefined and user defined fields
-        if (vmStatic.getCustomProperties() != null) {
-            VMCustomProperties properties =
-                    VmPropertiesUtils.getInstance().parseProperties(getVdsGroupDAO()
-                            .get(getParameters().getVm().getVdsGroupId())
-                            .getcompatibility_version(),
-                            vmStatic.getCustomProperties());
-            String predefinedProperties = properties.getPredefinedProperties();
-            String userDefinedProperties = properties.getUseDefinedProperties();
-            vmStatic.setPredefinedProperties(predefinedProperties);
-            vmStatic.setUserDefinedProperties(userDefinedProperties);
-        }
+        VmPropertiesUtils.getInstance().separeteCustomPropertiesToUserAndPredefined(
+                getVdsGroup().getcompatibility_version(), vmStatic);
 
         updateOriginalTemplate(vmStatic);
 

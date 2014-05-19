@@ -54,10 +54,10 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
-import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils.VMCustomProperties;
 import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -81,9 +81,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (isVmExist()) {
-            setCustomDefinedProperties(parameters.getVmStaticData());
-            setCustomDefinedProperties(getVm().getStaticData());
+            Version clusterVersion = getVdsGroup().getcompatibility_version();
+            getVmPropertiesUtils().separeteCustomPropertiesToUserAndPredefined(clusterVersion, parameters.getVmStaticData());
+            getVmPropertiesUtils().separeteCustomPropertiesToUserAndPredefined(clusterVersion, getVm().getStaticData());
         }
+    }
+
+    private VmPropertiesUtils getVmPropertiesUtils() {
+        return VmPropertiesUtils.getInstance();
     }
 
     @Override
@@ -609,16 +614,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         return permissionList;
-    }
-
-    private void setCustomDefinedProperties(VmStatic vmStaticDataFromParams) {
-        VMCustomProperties properties =
-                VmPropertiesUtils.getInstance().parseProperties(getVdsGroup()
-                        .getcompatibility_version(),
-                        vmStaticDataFromParams.getCustomProperties());
-
-        vmStaticDataFromParams.setPredefinedProperties(properties.getPredefinedProperties());
-        vmStaticDataFromParams.setUserDefinedProperties(properties.getUseDefinedProperties());
     }
 
     @Override
