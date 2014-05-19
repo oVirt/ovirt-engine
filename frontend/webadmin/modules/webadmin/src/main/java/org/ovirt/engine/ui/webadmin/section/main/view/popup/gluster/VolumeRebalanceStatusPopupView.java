@@ -173,12 +173,14 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
             }
         }, constants.rebalanceFailedFileCount());
 
-        rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
-            @Override
-            protected String getText(GlusterVolumeTaskStatusForHost entity) {
-                return String.valueOf(entity.getFilesSkipped());
-            }
-        }, constants.rebalanceSkippedFileCount());
+        if (isSkippedFileCountNeeded()){
+            rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
+                @Override
+                protected String getText(GlusterVolumeTaskStatusForHost entity) {
+                    return String.valueOf(entity.getFilesSkipped());
+                }
+            }, constants.rebalanceSkippedFileCount());
+        }
 
         rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
             @Override
@@ -194,6 +196,10 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
                 return ((GlusterVolumeTaskStatusForHost)(object.getEntity())).getRunTime();
             }
         }, constants.rebalanceRunTime());
+    }
+
+    public boolean isSkippedFileCountNeeded(){
+        return true;
     }
 
     public String getColumnHeaderForFilesMoved() {

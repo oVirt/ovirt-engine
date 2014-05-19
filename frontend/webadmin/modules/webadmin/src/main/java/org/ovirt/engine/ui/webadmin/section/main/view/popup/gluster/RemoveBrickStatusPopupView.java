@@ -23,4 +23,8 @@ public class RemoveBrickStatusPopupView extends VolumeRebalanceStatusPopupView i
         return constants.filesMigrated();
     }
 
+    @Override
+    public boolean isSkippedFileCountNeeded(){
+        return false;
+    }
 }
