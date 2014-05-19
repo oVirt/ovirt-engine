@@ -9,6 +9,8 @@
     bottom: 0px;
     left: 0px;
     right: 0px;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 .detailsContentPanel {
