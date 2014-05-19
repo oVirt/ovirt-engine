@@ -168,7 +168,7 @@ public class HostSetupNetworksModel extends EntityModel {
         getCheckConnectivity().setEntity(true);
         setConnectivityTimeout(new EntityModel<Integer>());
         setCommitChanges(new EntityModel<Boolean>());
-        getCommitChanges().setEntity(false);
+        getCommitChanges().setEntity(true);
 
         // ok command
         okCommand = new UICommand("OnSetupNetworks", this); //$NON-NLS-1$
