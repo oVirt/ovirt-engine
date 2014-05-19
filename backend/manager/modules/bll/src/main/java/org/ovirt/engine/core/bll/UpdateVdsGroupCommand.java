@@ -84,10 +84,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
         getVdsGroupDAO().update(getParameters().getVdsGroup());
 
-        if ((oldGroup.getStoragePoolId() != null
-                && !oldGroup.getStoragePoolId().equals(getVdsGroup().getStoragePoolId()))
-                || (oldGroup.getStoragePoolId() == null
-                && getVdsGroup().getStoragePoolId() != null)) {
+        if (oldGroup.getStoragePoolId() == null && getVdsGroup().getStoragePoolId() != null) {
             for (VDS vds : allForVdsGroup) {
                 VdsActionParameters parameters = new VdsActionParameters();
                 parameters.setVdsId(vds.getId());
@@ -100,37 +97,16 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 }
             }
 
-            if (oldGroup.getStoragePoolId() != null) {
-                for (VDS vds : allForVdsGroup) {
-                    getVdsSpmIdMapDAO().removeByVdsAndStoragePool(vds.getId(), oldGroup.getStoragePoolId());
-                }
-            }
-        }
-
-        // when changing data center we check that default networks exists in
-        // cluster
-        List<Network> networks = getNetworkDAO()
-                .getAllForCluster(getVdsGroup().getId());
-        boolean exists = false;
-        String managementNetwork = NetworkUtils.getEngineNetwork();
-        for (Network net : networks) {
-            if (StringUtils.equals(net.getName(), managementNetwork)) {
-                exists = true;
-            }
-        }
-        if (!exists) {
-            if (getVdsGroup().getStoragePoolId() != null) {
-                List<Network> storagePoolNets =
-                        getNetworkDAO()
-                                .getAllForDataCenter(
-                                        getVdsGroup().getStoragePoolId());
-                for (Network net : storagePoolNets) {
-                    if (StringUtils.equals(net.getName(), managementNetwork)) {
-                        getNetworkClusterDAO().save(new NetworkCluster(getVdsGroup().getId(), net.getId(),
-                                NetworkStatus.OPERATIONAL, true, true, true));
-                    }
-                }
-            }
+            // when moving the cluster back into a DC, need to add its management network
+            Network managementNetwork =
+                    getNetworkDAO().getByNameAndDataCenter(NetworkUtils.getEngineNetwork(),
+                            getVdsGroup().getStoragePoolId());
+            getNetworkClusterDAO().save(new NetworkCluster(getVdsGroup().getId(),
+                    managementNetwork.getId(),
+                    NetworkStatus.OPERATIONAL,
+                    true,
+                    true,
+                    true));
         }
 
         setSucceeded(true);
