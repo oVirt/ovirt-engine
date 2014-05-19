@@ -78,7 +78,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             Guid baseTemplateId, String templateVersionName,
             SerialNumberPolicy serialNumberPolicy, String customSerialNumber,
             boolean bootMenuEnabled, boolean spiceFIleTransferEnabled, boolean spiceCopyPasteEnabled,
-            Guid cpuProfileId) {
+            Guid cpuProfileId, NumaTuneMode numaTuneMode) {
         super(name,
                 vmtGuid,
                 vdsGroupId,
@@ -126,7 +126,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 bootMenuEnabled,
                 spiceFIleTransferEnabled,
                 spiceCopyPasteEnabled,
-                cpuProfileId);
+                cpuProfileId,
+                numaTuneMode);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
         diskImageMap = new HashMap<Guid, DiskImage>();
@@ -192,6 +193,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         setCustomSerialNumber(template.getCustomSerialNumber());
         setBootMenuEnabled(template.isBootMenuEnabled());
         setSpiceFileTransferEnabled(template.isSpiceFileTransferEnabled());
+        setNumaTuneMode(template.getNumaTuneMode());
         setSpiceCopyPasteEnabled(template.isSpiceCopyPasteEnabled());
     }
 

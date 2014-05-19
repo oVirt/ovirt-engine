@@ -38,10 +38,6 @@ public enum NumaTuneMode {
         value = name().toLowerCase();
     }
 
-    private NumaTuneMode(String value) {
-        this.value = value;
-    }
-
     public String getValue() {
         return value;
     }

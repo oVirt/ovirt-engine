@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
@@ -68,7 +69,8 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
                 .addValue("is_boot_menu_enabled", entity.isBootMenuEnabled())
                 .addValue("is_spice_file_transfer_enabled", entity.isSpiceFileTransferEnabled())
                 .addValue("is_spice_copy_paste_enabled", entity.isSpiceCopyPasteEnabled())
-                .addValue("cpu_profile_id", entity.getCpuProfileId());
+                .addValue("cpu_profile_id", entity.getCpuProfileId())
+                .addValue("numatune_mode", entity.getNumaTuneMode().getValue());
     }
 
     /**
@@ -123,6 +125,7 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
             entity.setQuotaId(getGuid(rs, "quota_id"));
             entity.setCpuProfileId(getGuid(rs, "cpu_profile_id"));
+            entity.setNumaTuneMode(NumaTuneMode.forValue(rs.getString("numatune_mode")));
         }
     }
 }

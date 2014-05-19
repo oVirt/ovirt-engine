@@ -221,6 +221,12 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @Min(value = 0, message = "VALIDATION.VM.MIGRATION_DOWNTIME_RANGE")
     private Integer migrationDowntime;
 
+    @EditableField
+    private NumaTuneMode numaTuneMode;
+
+    @EditableField
+    private List<VmNumaNode> vNumaNodeList;
+
     public VmBase() {
         name = "";
         interfaces = new ArrayList<VmNetworkInterface>();
@@ -241,6 +247,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         singleQxlPci = true;
         spiceFileTransferEnabled = true;
         spiceCopyPasteEnabled = true;
+        setNumaTuneMode(NumaTuneMode.INTERLEAVE);
+        vNumaNodeList = new ArrayList<VmNumaNode>();
     }
 
     @EditableField
@@ -379,7 +387,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.isBootMenuEnabled(),
                 vmBase.isSpiceFileTransferEnabled(),
                 vmBase.isSpiceCopyPasteEnabled(),
-                vmBase.getCpuProfileId());
+                vmBase.getCpuProfileId(),
+                vmBase.getNumaTuneMode());
     }
 
     public VmBase(
@@ -430,7 +439,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             boolean bootMenuEnabled,
             boolean spiceFileTransferEnabled,
             boolean spiceCopyPasteEnabled,
-            Guid cpuProfileId) {
+            Guid cpuProfileId,
+            NumaTuneMode numaTuneMode) {
         this();
         this.name = name;
         this.id = id;
@@ -478,6 +488,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.customSerialNumber = customSerialNumber;
         this.bootMenuEnabled = bootMenuEnabled;
         this.spiceFileTransferEnabled = spiceFileTransferEnabled;
+        this.numaTuneMode = numaTuneMode;
         this.spiceCopyPasteEnabled = spiceCopyPasteEnabled;
         this.cpuProfileId = cpuProfileId;
     }
@@ -821,6 +832,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + (spiceFileTransferEnabled ? 1231 : 1237);
         result = prime * result + (spiceCopyPasteEnabled ? 1231 : 1237);
         result = prime * result + ((cpuProfileId == null) ? 0 : cpuProfileId.hashCode());
+        result = prime * result + ((numaTuneMode == null) ? 0 : numaTuneMode.getValue().hashCode());
+        result = prime * result + ((vNumaNodeList == null) ? 0 : vNumaNodeList.hashCode());
         return result;
     }
 
@@ -870,13 +883,15 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && ObjectUtils.objectsEqual(vncKeyboardLayout, other.vncKeyboardLayout)
                 && ObjectUtils.objectsEqual(createdByUserId, other.createdByUserId)
                 && cpuShares == other.cpuShares
-                && ObjectUtils.objectsEqual(migrationDowntime, other.migrationDowntime))
+                && ObjectUtils.objectsEqual(migrationDowntime, other.migrationDowntime)
                 && serialNumberPolicy == other.serialNumberPolicy
                 && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber)
                 && bootMenuEnabled == other.bootMenuEnabled
                 && spiceFileTransferEnabled == other.spiceFileTransferEnabled
                 && spiceCopyPasteEnabled == other.spiceCopyPasteEnabled
-                && ObjectUtils.objectsEqual(cpuProfileId, other.cpuProfileId);
+                && ObjectUtils.objectsEqual(cpuProfileId, other.cpuProfileId)
+                && ObjectUtils.objectsEqual(numaTuneMode.getValue(), other.numaTuneMode.getValue())
+                && ObjectUtils.objectsEqual(vNumaNodeList, other.vNumaNodeList));
     }
 
     public Guid getQuotaId() {
@@ -1055,4 +1070,21 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     public void setCpuProfileId(Guid cpuProfileId) {
         this.cpuProfileId = cpuProfileId;
     }
+
+    public NumaTuneMode getNumaTuneMode() {
+        return numaTuneMode;
+    }
+
+    public void setNumaTuneMode(NumaTuneMode numaTuneMode) {
+        this.numaTuneMode = numaTuneMode;
+    }
+
+    public List<VmNumaNode> getvNumaNodeList() {
+        return vNumaNodeList;
+    }
+
+    public void setvNumaNodeList(List<VmNumaNode> vNumaNodeList) {
+        this.vNumaNodeList = vNumaNodeList;
+    }
+
 }
