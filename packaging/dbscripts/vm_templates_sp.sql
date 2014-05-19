@@ -59,7 +59,8 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_is_boot_menu_enabled BOOLEAN,
  v_is_spice_file_transfer_enabled BOOLEAN,
  v_is_spice_copy_paste_enabled BOOLEAN,
- v_cpu_profile_id UUID)
+ v_cpu_profile_id UUID,
+ v_numatune_mode VARCHAR(20))
 
 RETURNS VOID
    AS $procedure$
@@ -132,7 +133,8 @@ INTO vm_static(
     is_boot_menu_enabled,
     is_spice_file_transfer_enabled,
     is_spice_copy_paste_enabled,
-    cpu_profile_id)
+    cpu_profile_id,
+    numatune_mode)
 VALUES(
     v_child_count,
     v_creation_date,
@@ -187,7 +189,8 @@ VALUES(
     v_is_boot_menu_enabled,
     v_is_spice_file_transfer_enabled,
     v_is_spice_copy_paste_enabled,
-    v_cpu_profile_id);
+    v_cpu_profile_id,
+    v_numatune_mode);
 -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
 DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vmt_guid;
 INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id)
@@ -252,7 +255,8 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_is_boot_menu_enabled BOOLEAN,
  v_is_spice_file_transfer_enabled BOOLEAN,
  v_is_spice_copy_paste_enabled BOOLEAN,
- v_cpu_profile_id UUID)
+ v_cpu_profile_id UUID,
+ v_numatune_mode VARCHAR(20))
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -280,7 +284,8 @@ BEGIN
       template_version_name = v_template_version_name,
       serial_number_policy = v_serial_number_policy, custom_serial_number = v_custom_serial_number,
       is_boot_menu_enabled = v_is_boot_menu_enabled,
-      is_spice_file_transfer_enabled = v_is_spice_file_transfer_enabled, is_spice_copy_paste_enabled = v_is_spice_copy_paste_enabled, cpu_profile_id = v_cpu_profile_id
+      is_spice_file_transfer_enabled = v_is_spice_file_transfer_enabled, is_spice_copy_paste_enabled = v_is_spice_copy_paste_enabled, cpu_profile_id = v_cpu_profile_id,
+      numatune_mode = v_numatune_mode
       WHERE vm_guid = v_vmt_guid
       AND   entity_type = v_template_type;
 

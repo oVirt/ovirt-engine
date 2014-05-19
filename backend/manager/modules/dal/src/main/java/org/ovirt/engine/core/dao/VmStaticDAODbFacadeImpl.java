@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -43,10 +42,7 @@ public class VmStaticDAODbFacadeImpl extends VmBaseDaoDbFacade<VmStatic> impleme
                 .addValue("original_template_name", vm.getOriginalTemplateName())
                 .addValue("original_template_id", vm.getOriginalTemplateGuid())
                 .addValue("template_version_number", vm.isUseLatestVersion() ?
-                        USE_LATEST_VERSION_NUMBER_INDICATOR : DONT_USE_LATEST_VERSION_NUMBER_INDICATOR)
-                .addValue("numatune_mode",
-                        vm.getNumaTuneMode() == null ? NumaTuneMode.PREFERRED.getValue() : vm.getNumaTuneMode()
-                                .getValue());
+                        USE_LATEST_VERSION_NUMBER_INDICATOR : DONT_USE_LATEST_VERSION_NUMBER_INDICATOR);
     }
 
     @Override
@@ -190,7 +186,6 @@ public class VmStaticDAODbFacadeImpl extends VmBaseDaoDbFacade<VmStatic> impleme
             entity.setOriginalTemplateGuid(getGuid(rs, "original_template_id"));
             // if template_version_number is null it means use latest version
             entity.setUseLatestVersion(rs.getObject("template_version_number") == USE_LATEST_VERSION_NUMBER_INDICATOR);
-            entity.setNumaTuneMode(NumaTuneMode.forValue(rs.getString("numatune_mode")));
 
             return entity;
         }
