@@ -267,6 +267,10 @@ public class VdsUpdateRunTimeInfo {
             saveNumaStatisticsDataToDb();
         }
 
+        saveVmsToDb();
+    }
+
+    private void saveVmsToDb() {
         getDbFacade().getVmDynamicDao().updateAllInBatch(_vmDynamicToSave.values());
         getDbFacade().getVmStatisticsDao().updateAllInBatch(_vmStatisticsToSave.values());
 
@@ -602,7 +606,6 @@ public class VdsUpdateRunTimeInfo {
                 if (!_vdsManager.isSetNonOperationalExecuted()) {
                     getVdsEventListener().vdsNonOperational(_vds.getId(), _vds.getNonOperationalReason(), true, Guid.Empty);
                 } else {
-
                     log.info("Host '{}'({}) is already in NonOperational status for reason '{}'. SetNonOperationalVds command is skipped.",
                             _vds.getName(),
                             _vds.getId(),
@@ -610,39 +613,7 @@ public class VdsUpdateRunTimeInfo {
                                     : "unknown");
                 }
             }
-            getVdsEventListener().destroyVms(vmsToDestroy);
-            // rerun all vms from rerun list
-            for (Guid vm_guid : _vmsToRerun) {
-                log.error("Rerun vm '{}'. Called from vds '{}'", vm_guid, _vds.getName());
-                ResourceManager.getInstance().RerunFailedCommand(vm_guid, _vds.getId());
-
-            }
-            for (Guid vm_guid : _succededToRunVms) {
-                _vdsManager.succededToRunVm(vm_guid);
-            }
-            getVdsEventListener().updateSlaPolicies(_succededToRunVms, _vds.getId());
-
-            // Refrain from auto-start HA VM during its re-run attempts.
-            _autoVmsToRun.removeAll(_vmsToRerun);
-            // run all vms that crushed that marked with auto startup
-            getVdsEventListener().runFailedAutoStartVMs(_autoVmsToRun);
-
-            // process all vms that their ip changed.
-            for (Entry<VM, VmDynamic> pair : _vmsClientIpChanged.entrySet()) {
-                getVdsEventListener().processOnClientIpChange(_vds, pair.getValue().getId());
-            }
-
-            // process all vms that powering up.
-            for (VmDynamic runningVm : _poweringUpVms) {
-                getVdsEventListener().processOnVmPoweringUp(runningVm.getId());
-            }
-
-            // process all vms that went down
-            getVdsEventListener().processOnVmStop(_vmsMovedToDown);
-
-            for (Guid vm_guid : _vmsToRemoveFromAsync) {
-                ResourceManager.getInstance().RemoveAsyncRunningVm(vm_guid);
-            }
+            afterVMsRefreshTreatment();
         } catch (IRSErrorException ex) {
             logFailureMessage("Could not finish afterRefreshTreatment", ex);
             log.debug("Exception", ex);
@@ -655,6 +626,45 @@ public class VdsUpdateRunTimeInfo {
     private void handleVdsMaintenanceTimeout() {
         getVdsEventListener().handleVdsMaintenanceTimeout(_vds.getId());
         _vdsManager.calculateNextMaintenanceAttemptTime();
+    }
+
+    private void afterVMsRefreshTreatment() {
+        // destroy
+        getVdsEventListener().destroyVms(vmsToDestroy);
+
+        // rerun all vms from rerun list
+        for (Guid vm_guid : _vmsToRerun) {
+            log.error("Rerun vm '{}'. Called from vds '{}'", vm_guid, _vds.getName());
+            ResourceManager.getInstance().RerunFailedCommand(vm_guid, _vds.getId());
+        }
+
+        for (Guid vm_guid : _succededToRunVms) {
+            _vdsManager.succededToRunVm(vm_guid);
+        }
+
+        getVdsEventListener().updateSlaPolicies(_succededToRunVms, _vds.getId());
+
+        // Refrain from auto-start HA VM during its re-run attempts.
+        _autoVmsToRun.removeAll(_vmsToRerun);
+        // run all vms that crushed that marked with auto startup
+        getVdsEventListener().runFailedAutoStartVMs(_autoVmsToRun);
+
+        // process all vms that their ip changed.
+        for (Entry<VM, VmDynamic> pair : _vmsClientIpChanged.entrySet()) {
+            getVdsEventListener().processOnClientIpChange(_vds, pair.getValue().getId());
+        }
+
+        // process all vms that powering up.
+        for (VmDynamic runningVm : _poweringUpVms) {
+            getVdsEventListener().processOnVmPoweringUp(runningVm.getId());
+        }
+
+        // process all vms that went down
+        getVdsEventListener().processOnVmStop(_vmsMovedToDown);
+
+        for (Guid vm_guid : _vmsToRemoveFromAsync) {
+            ResourceManager.getInstance().RemoveAsyncRunningVm(vm_guid);
+        }
     }
 
     private void markIsSetNonOperationalExecuted() {
