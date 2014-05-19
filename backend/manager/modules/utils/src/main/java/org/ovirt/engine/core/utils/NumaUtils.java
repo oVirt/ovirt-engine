@@ -42,7 +42,7 @@ public class NumaUtils {
     public static List<Integer> getPinnedNodeIndexList(List<Pair<Guid, Pair<Boolean, Integer>>> nodeList) {
         List<Integer> nodeIndexes = new ArrayList<>(nodeList.size());
         for (Pair<Guid, Pair<Boolean, Integer>> item : nodeList) {
-            if (item.getSecond().getFirst()) {
+            if (item.getSecond().getFirst() && item.getFirst() != null) {
                 nodeIndexes.add(item.getSecond().getSecond());
             }
         }
