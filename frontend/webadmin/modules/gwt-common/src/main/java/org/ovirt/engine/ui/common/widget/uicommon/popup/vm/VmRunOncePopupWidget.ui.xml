@@ -246,7 +246,7 @@
             </g:FlowPanel>
         </g:DisclosurePanel>
 
-		<g:DisclosurePanel ui:field="displayProtocolPanel" label="{constants.runOncePopupDisplayProtocolLabel}" addStyleNames="{style.panelStyle}">
+		<g:DisclosurePanel ui:field="displayProtocolPanel" label="{constants.consoleVmPopup}" addStyleNames="{style.panelStyle}">
 			<g:VerticalPanel>
 				<ge:EntityModelRadioButtonEditor ui:field="displayConsoleVncEditor" />
 				<e:ListModelListBoxEditor ui:field="vncKeyboardLayoutEditor" />

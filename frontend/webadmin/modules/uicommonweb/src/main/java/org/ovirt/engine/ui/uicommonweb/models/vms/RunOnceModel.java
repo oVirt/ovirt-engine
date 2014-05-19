@@ -12,6 +12,8 @@ import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -812,6 +814,10 @@ public abstract class RunOnceModel extends Model
             params.setVmInit(getVmInit().buildCloudInitParameters(this));
         }
 
+        params.getRunOnceGraphics().add(Boolean.TRUE.equals(getDisplayConsole_Vnc_IsSelected().getEntity())
+                ? GraphicsType.VNC
+                : GraphicsType.SPICE);
+
         params.setVncKeyboardLayout(getVncKeyboardLayout().getSelectedItem());
 
         String selectedDomain = getSysPrepSelectedDomainName().getEntity();
@@ -934,9 +940,20 @@ public abstract class RunOnceModel extends Model
     }
 
     private void updateDisplayProtocols() {
-        boolean isVncSelected = vm.getDefaultDisplayType() == DisplayType.vga;
-        getDisplayConsole_Vnc_IsSelected().setEntity(isVncSelected);
-        getDisplayConsole_Spice_IsSelected().setEntity(!isVncSelected);
+        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vm.getId()), new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                boolean selectVnc = false;
+
+                List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                if (graphicsDevices.size() == 1 && graphicsDevices.get(0).getGraphicsType() == GraphicsType.VNC) {
+                    selectVnc = true;
+                }
+
+                getDisplayConsole_Vnc_IsSelected().setEntity(selectVnc);
+                getDisplayConsole_Spice_IsSelected().setEntity(!selectVnc);
+            }
+        }));
     }
 
     public void updateIsoList() {

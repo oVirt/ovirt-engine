@@ -1,6 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -446,15 +450,15 @@ public abstract class InstanceTypeManager {
         return false;
     }
 
-    protected void updateDefaultDisplayRelatedFields(VmBase vmBase) {
+    protected void updateDefaultDisplayRelatedFields(final VmBase vmBase) {
         // Update display protocol selected item
-        if (model.getDisplayProtocol().getItems() == null) {
+        if (model.getDisplayType().getItems() == null) {
             return;
         }
 
         EntityModel<DisplayType> displayProtocol = null;
         boolean isFirst = true;
-        for (EntityModel<DisplayType> item : model.getDisplayProtocol().getItems()) {
+        for (EntityModel<DisplayType> item : model.getDisplayType().getItems()) {
             if (isFirst) {
                 displayProtocol = item;
                 isFirst = false;
@@ -466,11 +470,38 @@ public abstract class InstanceTypeManager {
             }
         }
 
-        maybeSetSelectedItem(model.getDisplayProtocol(), displayProtocol);
+        maybeSetSelectedItem(model.getDisplayType(), displayProtocol);
         maybeSetSelectedItem(model.getNumOfMonitors(), vmBase.getNumOfMonitors());
         maybeSetSelectedItem(model.getUsbPolicy(), vmBase.getUsbPolicy());
         maybeSetEntity(model.getIsSmartcardEnabled(), vmBase.isSmartcardEnabled());
         maybeSetSingleQxlPci(vmBase);
+
+        // graphics
+        AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery(model, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                deactivate();
+                getModel().getIsSoundcardEnabled().setEntity((Boolean) returnValue);
+                activate();
+
+                Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vmBase.getId()), new AsyncQuery(this, new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        deactivate();
+                        Set<GraphicsType> graphicsTypes = new HashSet<GraphicsType>();
+                        List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        for (GraphicsDevice graphicsDevice : graphicsDevices) {
+                            graphicsTypes.add(graphicsDevice.getGraphicsType());
+                        }
+                        UnitVmModel.GraphicsTypes selected = UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypes);
+                        if (selected != null && getModel().getGraphicsType().getItems().contains(selected)) {
+                            maybeSetSelectedItem(getModel().getGraphicsType(), selected);
+                        }
+                        activate();
+                    }
+                }));
+            }
+        }), vmBase.getId());
     }
 
     protected void maybeSetSingleQxlPci(VmBase vmBase) {

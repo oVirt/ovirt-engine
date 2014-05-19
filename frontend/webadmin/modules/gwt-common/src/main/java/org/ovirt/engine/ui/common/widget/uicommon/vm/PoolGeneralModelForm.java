@@ -24,6 +24,7 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
     @Ignore
     TextBoxLabel oS = new TextBoxLabel();
     TextBoxLabel cpuInfo = new TextBoxLabel();
+    TextBoxLabel graphicsType = new TextBoxLabel();
     TextBoxLabel defaultDisplayType = new TextBoxLabel();
     TextBoxLabel usbPolicy = new TextBoxLabel();
     TextBoxLabel defaultHost = new TextBoxLabel();
@@ -36,7 +37,7 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
     private final Driver driver = GWT.create(Driver.class);
 
     public PoolGeneralModelForm(ModelProvider<PoolGeneralModel> modelProvider, CommonApplicationConstants constants) {
-        super(modelProvider, 3, 5);
+        super(modelProvider, 3, 6);
         this.constants = constants;
     }
 
@@ -52,7 +53,8 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
         formBuilder.addFormItem(new FormItem(constants.descriptionPoolGeneral(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.templatePoolGeneral(), template, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.osPoolGeneral(), oS, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.defaultDisplayTypePoolGeneral(), defaultDisplayType, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 5, 0));
 
         formBuilder.addFormItem(new FormItem(constants.definedMemPoolGeneral(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.physMemGaurPoolGeneral(), minAllocatedMemory, 1, 1));

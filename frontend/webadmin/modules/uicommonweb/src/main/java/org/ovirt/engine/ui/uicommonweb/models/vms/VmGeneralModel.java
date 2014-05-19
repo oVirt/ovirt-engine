@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -28,8 +27,7 @@ import org.ovirt.engine.ui.uicompat.Translator;
 
 
 @SuppressWarnings("unused")
-public class VmGeneralModel extends EntityModel
-{
+public class VmGeneralModel extends AbstractGeneralModel {
 
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
@@ -141,6 +139,7 @@ public class VmGeneralModel extends EntityModel
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
     }
+
 
     private String defaultDisplayType;
 
@@ -545,9 +544,10 @@ public class VmGeneralModel extends EntityModel
         updateProperties();
     }
 
-    private void updateProperties()
-    {
+    private void updateProperties() {
         VM vm = (VM) getEntity();
+
+        super.updateProperties(vm.getId());
 
         setName(vm.getName());
         setDescription(vm.getVmDescription());

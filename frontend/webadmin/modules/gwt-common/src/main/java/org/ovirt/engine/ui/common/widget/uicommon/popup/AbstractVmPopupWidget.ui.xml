@@ -553,7 +553,8 @@
             <t:DialogTab ui:field="consoleTab">
                 <t:content>
                     <g:FlowPanel>
-                        <e:ListModelListBoxEditor ui:field="displayProtocolEditor" />
+                        <e:ListModelListBoxEditor ui:field="displayTypeEditor" />
+                        <e:ListModelListBoxEditor ui:field="graphicsTypeEditor" />
                         <e:ListModelListBoxEditor ui:field="vncKeyboardLayoutEditor" />
                         <e:ListModelListBoxEditor ui:field="usbSupportEditor" />
                         <g:FlowPanel width="100%">

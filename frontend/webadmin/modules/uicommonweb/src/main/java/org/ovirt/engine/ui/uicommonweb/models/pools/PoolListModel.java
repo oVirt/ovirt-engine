@@ -9,6 +9,8 @@ import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -454,7 +456,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                             pool.setSpiceProxy(model.getSpiceProxy().getEntity());
                         }
 
-
                         VM vm = buildVmOnSave(model);
                         vm.setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
                         vm.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
@@ -477,6 +478,8 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
                         param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                         param.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
+
+                        setGraphicsDevicesToParams(model, param);
 
                         if (model.getQuota().getSelectedItem() != null) {
                             vm.setQuotaId(model.getQuota().getSelectedItem().getId());
@@ -514,6 +517,17 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                     }
                 }),
                 name);
+    }
+
+    private void setGraphicsDevicesToParams(PoolModel model, AddVmPoolWithVmsParameters params) {
+        if (model.getDisplayType().getSelectedItem() == null || model.getGraphicsType().getSelectedItem() == null) {
+            return;
+        }
+
+        for (GraphicsType graphicsType : model.getGraphicsType().getSelectedItem().getBackingGraphicsType()) {
+            GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
+            params.getGraphicsDevices().add(d);
+        }
     }
 
     protected static VM buildVmOnSave(PoolModel model) {

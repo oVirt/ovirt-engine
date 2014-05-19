@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -167,6 +170,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         updateRngDevice(getVm().getId());
         updateTimeZone(vm.getTimeZone());
 
+        updateGraphics();
         getModel().getHostCpu().setEntity(vm.isUseHostCpuFlags());
 
         // Storage domain and provisioning are not available for an existing VM.
@@ -204,6 +208,33 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                               new NameAndDescriptionVmBaseToUnitBuilder(),
                               new CommentVmBaseToUnitBuilder(),
                               new CommonVmBaseToUnitBuilder());
+    }
+
+    private void updateGraphics() {
+        AsyncQuery callback = new AsyncQuery();
+        callback.setModel(getModel());
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                VdcQueryReturnValue retVal = (VdcQueryReturnValue) returnValue;
+                List<VmDevice> graphicsVmDevs = retVal.getReturnValue();
+
+                List<GraphicsType> graphicsTypes = new ArrayList<GraphicsType>();
+                for (VmDevice graphicsVmDev : graphicsVmDevs) {
+                    graphicsTypes.add(GraphicsType.fromString(graphicsVmDev.getDevice()));
+                }
+
+                if (graphicsTypes.size() == 2
+                        && graphicsTypes.containsAll(Arrays.asList(GraphicsType.SPICE, GraphicsType.VNC))) {
+                    getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.SPICE_AND_VNC);
+                } else if (graphicsVmDevs.size() == 1) {
+                    GraphicsType type = GraphicsType.fromString(graphicsVmDevs.get(0).getDevice());
+                    getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.fromGraphicsType(type));
+                }
+            }
+        };
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vm.getId()), callback);
     }
 
     @Override

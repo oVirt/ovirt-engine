@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.DisplayType;
+import java.util.Map;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.searchbackend.VmConditionFieldAutoCompleter;
@@ -20,6 +22,7 @@ import org.ovirt.engine.ui.common.widget.table.column.StatusCompositeCellWithEle
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -177,18 +180,15 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         migrationProgressColumn.makeSortable(VmConditionFieldAutoCompleter.MIGRATION_PROGRESS_PERCENT);
         getTable().addColumn(migrationProgressColumn, constants.migrationProgress(), "70px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> displayColumn = new EnumColumn<VM, DisplayType>() {
+        TextColumnWithTooltip<VM> displayColumn = new EnumColumn<VM, UnitVmModel.GraphicsTypes>() {
             @Override
-            protected DisplayType getRawValue(VM object) {
-                return object.getDisplayType();
-            }
+            protected UnitVmModel.GraphicsTypes getRawValue(VM vm) {
+                if ((vm.getStatus() == VMStatus.Down) || (vm.getStatus() == VMStatus.ImageLocked)) {
+                    return null;
+                }
 
-            @Override
-            public String getValue(VM object) {
-                if ((object.getStatus() == VMStatus.Down) || (object.getStatus() == VMStatus.ImageLocked))
-                    return ""; //$NON-NLS-1$
-                else
-                    return renderer.render(getRawValue(object));
+                Map<GraphicsType, GraphicsInfo> graphicsInfos = vm.getGraphicsInfos();
+                return UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsInfos.keySet());
             }
         };
         getTable().addColumn(displayColumn, constants.displayVm(), "70px"); //$NON-NLS-1$

@@ -9,9 +9,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import java.util.SortedSet;
+import java.util.TreeSet;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -36,6 +40,7 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -237,7 +242,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getTimeZone().setIsChangable(false);
 
             // ==Console Tab==
-            getDisplayProtocol().setIsChangable(false);
+            getDisplayType().setIsChangable(false);
+            getGraphicsType().setIsChangable(false);
             getUsbPolicy().setIsChangable(false);
             getNumOfMonitors().setIsChangable(false);
             getIsSingleQxlEnabled().setIsChangable(false);
@@ -853,16 +859,77 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.memoryBalloonDeviceEnabled = memoryBalloonDeviceEnabled;
     }
 
-    private NotChangableForVmInPoolListModel<EntityModel<DisplayType>> privateDisplayProtocol;
+    private NotChangableForVmInPoolListModel<EntityModel<DisplayType>> displayType;
 
-    public ListModel<EntityModel<DisplayType>> getDisplayProtocol()
-    {
-        return privateDisplayProtocol;
+    public ListModel<EntityModel<DisplayType>> getDisplayType() {
+        return displayType;
     }
 
-    private void setDisplayProtocol(NotChangableForVmInPoolListModel<EntityModel<DisplayType>> value)
-    {
-        privateDisplayProtocol = value;
+    private void setDisplayType(NotChangableForVmInPoolListModel<EntityModel<DisplayType>> value) {
+        displayType = value;
+    }
+
+    private NotChangableForVmInPoolListModel<GraphicsTypes> graphicsType;
+
+    public ListModel<GraphicsTypes> getGraphicsType() {
+        return graphicsType;
+    }
+
+    public enum GraphicsTypes {
+        SPICE,
+        VNC,
+        SPICE_AND_VNC;
+
+        Set<GraphicsType> spice = new HashSet<GraphicsType>();
+        Set<GraphicsType> vnc = new HashSet<GraphicsType>();
+        Set<GraphicsType> spiceAndVnc = new HashSet<GraphicsType>();
+
+        {
+            spice.add(GraphicsType.SPICE);
+            vnc.add(GraphicsType.VNC);
+            spiceAndVnc.add(GraphicsType.SPICE);
+            spiceAndVnc.add(GraphicsType.VNC);
+        }
+
+        public Collection<GraphicsType> getBackingGraphicsType() {
+            switch (this) {
+                case SPICE:
+                    return spice;
+                case VNC:
+                    return vnc;
+                case SPICE_AND_VNC:
+                    return spiceAndVnc;
+                default:
+                    return null;
+            }
+        }
+
+        public static GraphicsTypes fromGraphicsType(GraphicsType type) {
+            switch (type) {
+                case SPICE:
+                    return SPICE;
+                case VNC:
+                    return VNC;
+            }
+            return null;
+        }
+
+        public static GraphicsTypes fromGraphicsTypes(Collection<GraphicsType> types) {
+            if (types.containsAll(Arrays.asList(GraphicsType.SPICE, GraphicsType.VNC))) {
+                return UnitVmModel.GraphicsTypes.SPICE_AND_VNC;
+            } else if (types.contains(GraphicsType.SPICE)) {
+                return UnitVmModel.GraphicsTypes.SPICE;
+            } else if (types.contains(GraphicsType.VNC)) {
+                return UnitVmModel.GraphicsTypes.VNC;
+            }
+
+            return null;
+        }
+
+    }
+
+    private void setGraphicsType(NotChangableForVmInPoolListModel<GraphicsTypes> graphicsType) {
+        this.graphicsType = graphicsType;
     }
 
     private NotChangableForVmInPoolEntityModel<Boolean> privateProvisioning;
@@ -1498,7 +1565,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setInitrd_path(new NotChangableForVmInPoolEntityModel<String>());
         setCustomProperties(new NotChangableForVmInPoolEntityModel<String>());
         setCustomPropertySheet(new NotChangableForVmInPoolKeyValueModel());
-        setDisplayProtocol(new NotChangableForVmInPoolListModel<EntityModel<DisplayType>>());
+        setDisplayType(new NotChangableForVmInPoolListModel<EntityModel<DisplayType>>());
+        setGraphicsType(new NotChangableForVmInPoolListModel<GraphicsTypes>());
         setSecondBootDevice(new NotChangableForVmInPoolListModel<EntityModel<BootSequence>>());
         setBootMenuEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setPriority(new NotChangableForVmInPoolListModel<EntityModel<Integer>>());
@@ -1716,7 +1784,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         getCdImage().setIsChangable(false);
 
-        initDisplayProtocol();
+        initGraphicsAndDisplayListeners();
         initFirstBootDevice();
         initNumOfMonitors();
         initAllowConsoleReconnect();
@@ -1748,7 +1816,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             } else if (sender == getDataCenterWithClustersList())
             {
                 dataCenterWithClusterSelectedItemChanged(sender, args);
-                updateDisplayProtocol();
+                updateDisplayAndGraphics();
                 updateMemoryBalloonDevice();
                 initUsbPolicy();
                 behavior.updateEmulatedMachines();
@@ -1779,7 +1847,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 oSType_SelectedItemChanged(sender, args);
                 getBehavior().oSType_SelectedItemChanged();
                 getVmInitModel().osTypeChanged(getOSType().getSelectedItem());
-                updateDisplayProtocol();
+                updateDisplayAndGraphics();
                 updateMemoryBalloonDevice();
                 initUsbPolicy();
 
@@ -1789,9 +1857,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             {
                 firstBootDevice_SelectedItemChanged(sender, args);
             }
-            else if (sender == getDisplayProtocol())
+            else if (sender == getDisplayType())
             {
-                displayProtocol_SelectedItemChanged(sender, args);
+                displayTypeSelectedItemChanged(sender, args);
+                initUsbPolicy();
+            }
+            else if (sender == getGraphicsType()) {
+                upgradeGraphicsRelatedModels();
                 initUsbPolicy();
             }
             else if (sender == getNumOfSockets())
@@ -1949,10 +2021,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void initUsbPolicy() {
         VDSGroup cluster = getSelectedCluster();
         Integer osType = getOSType().getSelectedItem();
-        DisplayType displayType = (getDisplayProtocol().getSelectedItem() != null ?
-                getDisplayProtocol().getSelectedItem().getEntity() : null);
+        DisplayType displayType = (getDisplayType().getSelectedItem() != null
+                ? getDisplayType().getSelectedItem().getEntity()
+                : null);
+        GraphicsTypes graphicsTypes = getGraphicsType().getSelectedItem();
 
-        if (osType == null || cluster == null || displayType == null) {
+        if (osType == null || cluster == null || displayType == null || graphicsTypes == null) {
             return;
         }
 
@@ -1988,7 +2062,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
         }
 
-        if (displayType != DisplayType.qxl) {
+        if (!graphicsTypes.getBackingGraphicsType().contains(GraphicsType.SPICE)) {
             getUsbPolicy().setIsChangable(false);
         }
 
@@ -2026,12 +2100,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         migrateCompressed.updateChangeability(ConfigurationValues.MigrationCompressionSupported, version);
     }
 
-    private void initDisplayProtocol()
-    {
-        getDisplayProtocol().getSelectedItemChangedEvent().addListener(this);
+    private void initGraphicsAndDisplayListeners() {
+        getDisplayType().getSelectedItemChangedEvent().addListener(this);
+        getGraphicsType().getSelectedItemChangedEvent().addListener(this);
     }
 
-    private void updateDisplayProtocol() {
+    private void updateDisplayAndGraphics() {
         VDSGroup cluster = getSelectedCluster();
         Integer osType = getOSType().getSelectedItem();
 
@@ -2039,47 +2113,38 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        List<DisplayType> displayTypes = AsyncDataProvider.getInstance().getDisplayTypes(osType, cluster.getcompatibility_version());
-        if (displayTypes == null) {
-            Integer defaultOs = AsyncDataProvider.getInstance().getDefaultOs(cluster.getArchitecture());
-            displayTypes = AsyncDataProvider.getInstance().getDisplayTypes(defaultOs, cluster.getcompatibility_version());
-        }
-        initDisplayProtocolWithTypes(displayTypes);
+        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = AsyncDataProvider.getInstance().getGraphicsAndDisplays(osType, cluster.getcompatibility_version());
+        initDisplayModels(graphicsAndDisplays);
     }
 
-    public void initDisplayProtocolWithTypes(List<DisplayType> displayTypes) {
+    public void initDisplayModels(List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays) {
         DisplayType oldDisplayProtocolOption = null;
         EntityModel<DisplayType> oldDisplayProtocolEntity = null;
 
-        if (getDisplayProtocol().getSelectedItem() != null) {
-            oldDisplayProtocolOption = getDisplayProtocol().getSelectedItem().getEntity();
+        if (getDisplayType().getSelectedItem() != null) {
+            oldDisplayProtocolOption = getDisplayType().getSelectedItem().getEntity();
         }
 
-        List<EntityModel<DisplayType>> displayProtocolOptions = new ArrayList<EntityModel<DisplayType>>();
-        if (displayTypes.contains(DisplayType.vga)) {
-            EntityModel<DisplayType> vncProtocol = new EntityModel<DisplayType>();
-            vncProtocol.setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
-            vncProtocol.setEntity(DisplayType.vga);
-            displayProtocolOptions.add(vncProtocol);
-            if (DisplayType.vga == oldDisplayProtocolOption) {
-                oldDisplayProtocolEntity = vncProtocol;
+        SortedSet<DisplayType> displayTypes = new TreeSet<DisplayType>();
+        for (Pair<GraphicsType, DisplayType> graphicsTypeDisplayTypePair : graphicsAndDisplays) {
+            displayTypes.add(graphicsTypeDisplayTypePair.getSecond());
+        }
+
+        List<EntityModel<DisplayType>> displayTypeOptions = new ArrayList<EntityModel<DisplayType>>();
+
+        for (DisplayType displayType : displayTypes) {
+            EntityModel<DisplayType> displayTypeEntityModel = new EntityModel<DisplayType>(displayType);
+            displayTypeEntityModel.setTitle(displayType.name());
+            displayTypeOptions.add(displayTypeEntityModel);
+            if (oldDisplayProtocolOption == displayTypeEntityModel.getEntity()) {
+                oldDisplayProtocolEntity = new EntityModel<DisplayType>(oldDisplayProtocolOption);
             }
         }
 
-        if (displayTypes.contains(DisplayType.qxl)) {
-            EntityModel<DisplayType> spiceProtocol = new EntityModel<DisplayType>();
-            spiceProtocol.setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
-            spiceProtocol.setEntity(DisplayType.qxl);
-            displayProtocolOptions.add(spiceProtocol);
-            if (oldDisplayProtocolOption == DisplayType.qxl) {
-                oldDisplayProtocolEntity = spiceProtocol;
-            }
-        }
-
-        if (displayProtocolOptions.contains(oldDisplayProtocolEntity)) {
-            getDisplayProtocol().setItems(displayProtocolOptions, oldDisplayProtocolEntity);
-        } else if (displayProtocolOptions.size() > 0) {
-            getDisplayProtocol().setItems(displayProtocolOptions, displayProtocolOptions.iterator().next());
+        if (displayTypeOptions.contains(oldDisplayProtocolEntity)) {
+            getDisplayType().setItems(displayTypeOptions, oldDisplayProtocolEntity);
+        } else if (displayTypeOptions.size() > 0) {
+            getDisplayType().setItems(displayTypeOptions, displayTypeOptions.iterator().next());
         }
     }
 
@@ -2129,7 +2194,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private void initVncKeyboardLayout() {
-
         final List<String> layouts =
                 (List<String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
         final ArrayList<String> vncKeyboardLayoutItems = new ArrayList<String>();
@@ -2137,7 +2201,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         vncKeyboardLayoutItems.addAll(layouts);
         getVncKeyboardLayout().setItems(vncKeyboardLayoutItems);
 
-        getVncKeyboardLayout().setIsAvailable(isVncSelected());
+        GraphicsTypes graphicsTypes = getGraphicsType().getSelectedItem();
+        if (graphicsTypes != null) {
+            getVncKeyboardLayout().setIsAvailable(graphicsTypes.getBackingGraphicsType().contains(GraphicsType.VNC));
+        }
     }
 
     private void dataCenterWithClusterSelectedItemChanged(Object sender, EventArgs args)
@@ -2172,18 +2239,19 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     public boolean getIsQxlSupported() {
         // Enable Single PCI only on cluster 3.3 and high and on Linux OS
         boolean isLinux = getIsLinuxOS();
-        boolean isQxl = getDisplayType() == DisplayType.qxl;
+        boolean isQxl = extractSelectedDisplayTypeEntity() == DisplayType.qxl;
+        boolean isSpice = getGraphicsType().getSelectedItem() == GraphicsTypes.SPICE;
         boolean clusterSupportsSinglePci = getSelectedCluster() != null &&
         Version.v3_3.compareTo(getSelectedCluster().getcompatibility_version()) <= 0;
 
-        return isLinux && isQxl && clusterSupportsSinglePci;
+        return isLinux && isQxl && isSpice && clusterSupportsSinglePci;
     }
 
     private void handleQxlClusterLevel() {
         getBehavior().enableSinglePCI(getIsQxlSupported());
 
         if (getSelectedCluster() != null) {
-            boolean isQxl = getDisplayType() == DisplayType.qxl;
+            boolean isQxl = extractSelectedDisplayTypeEntity() == DisplayType.qxl;
             boolean spiceFileTransferToggle = isQxl
                     && AsyncDataProvider.getInstance().isSpiceFileTransferToggleSupported(getSelectedCluster().getcompatibility_version().toString());
             if (!spiceFileTransferToggle) {
@@ -2191,7 +2259,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
             getSpiceFileTransferEnabled().setIsChangable(spiceFileTransferToggle);
 
-            boolean spiceCopyPasteToggle = isQxl
+            GraphicsTypes selectedGraphics = getGraphicsType().getSelectedItem();
+            boolean spiceCopyPasteToggle = selectedGraphics != null
+                    && selectedGraphics.getBackingGraphicsType().contains(GraphicsType.SPICE)
                     && AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(getSelectedCluster().getcompatibility_version().toString());
             if (!spiceCopyPasteToggle) {
                 handleQxlChangeProhibitionReason(getSpiceCopyPasteEnabled(), getSelectedCluster().getcompatibility_version().toString(), isQxl);
@@ -2332,37 +2402,60 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getMigrationDowntime().setIsChangable(Boolean.TRUE.equals(entity));
     }
 
-    public DisplayType getDisplayType() {
-        EntityModel<DisplayType> entityModel = getDisplayProtocol().getSelectedItem();
-        if (entityModel == null)
-        {
+    private DisplayType extractSelectedDisplayTypeEntity() {
+        EntityModel<DisplayType> entityModel = getDisplayType().getSelectedItem();
+        if (entityModel == null) {
             return null;
         }
         return entityModel.getEntity();
     }
 
-    private void displayProtocol_SelectedItemChanged(Object sender, EventArgs args)
-    {
-        if (getDisplayType() == null)
-        {
+    private void displayTypeSelectedItemChanged(Object sender, EventArgs args) {
+        if (extractSelectedDisplayTypeEntity() == null) {
             getBehavior().activateInstanceTypeManager();
             return;
         }
-        DisplayType type = getDisplayType();
 
-        if (type == DisplayType.vga)
-        {
+        VDSGroup cluster = getSelectedCluster();
+        Integer osType = getOSType().getSelectedItem();
+
+        if (cluster == null || osType == null) {
+            return;
+        }
+
+        SortedSet<GraphicsTypes> graphicsTypes = new TreeSet<GraphicsTypes>();
+        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = AsyncDataProvider.getInstance().getGraphicsAndDisplays(osType, cluster.getcompatibility_version());
+        for (Pair<GraphicsType, DisplayType> graphicsAndDisplay : graphicsAndDisplays) {
+            if (graphicsAndDisplay.getSecond() == getDisplayType().getSelectedItem().getEntity()) {
+                graphicsTypes.add(GraphicsTypes.fromGraphicsType(graphicsAndDisplay.getFirst()));
+            }
+        }
+
+        if (graphicsTypes.contains(GraphicsTypes.SPICE) && graphicsTypes.contains(GraphicsTypes.VNC)) {
+            graphicsTypes.add(GraphicsTypes.SPICE_AND_VNC);
+        }
+
+        getGraphicsType().setItems(graphicsTypes);
+
+        upgradeGraphicsRelatedModels();
+    }
+
+    private void upgradeGraphicsRelatedModels() {
+        DisplayType display = extractSelectedDisplayTypeEntity();
+        GraphicsTypes graphics = getGraphicsType().getSelectedItem();
+        if (display == null || graphics == null) {
+            return;
+        }
+
+        if (display != DisplayType.qxl || !graphics.getBackingGraphicsType().contains(GraphicsType.SPICE)) {
             getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.DISABLED);
             getIsSmartcardEnabled().setEntity(false);
         }
 
         handleQxlClusterLevel();
-
-        getUsbPolicy().setIsChangable(type == DisplayType.qxl);
-        getIsSmartcardEnabled().setIsChangable(type == DisplayType.qxl);
-
-        getVncKeyboardLayout().setIsAvailable(type == DisplayType.vga);
-
+        getUsbPolicy().setIsChangable(graphics.getBackingGraphicsType().contains(GraphicsType.SPICE));
+        getIsSmartcardEnabled().setIsChangable(graphics.getBackingGraphicsType().contains(GraphicsType.SPICE));
+        getVncKeyboardLayout().setIsAvailable(graphics.getBackingGraphicsType().contains(GraphicsType.VNC));
         updateNumOfMonitors();
     }
 
@@ -2394,22 +2487,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         behavior.coresPerSocketChanged();
     }
 
-    private boolean isVncSelected() {
-        boolean isVnc = false;
+    private void updateNumOfMonitors() {
+        EntityModel<DisplayType> selectedDisplayType = getDisplayType().getSelectedItem();
 
-        if (getDisplayProtocol().getSelectedItem() != null)
-        {
-            DisplayType displayType = getDisplayProtocol().getSelectedItem().getEntity();
-            isVnc = displayType == DisplayType.vga;
-        }
-
-        return isVnc;
-    }
-
-    private void updateNumOfMonitors()
-    {
-        if (isVncSelected())
-        {
+        if (selectedDisplayType != null && selectedDisplayType.getEntity() != DisplayType.qxl) {
             getNumOfMonitors().setSelectedItem(1);
             getNumOfMonitors().setIsChangable(false);
         } else {

@@ -27,6 +27,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     TextBoxLabel oS = new TextBoxLabel();
     TextBoxLabel cpuInfo = new TextBoxLabel();
     TextBoxLabel guestCpuCount = new TextBoxLabel();
+    TextBoxLabel graphicsType = new TextBoxLabel();
     TextBoxLabel defaultDisplayType = new TextBoxLabel();
     TextBoxLabel origin = new TextBoxLabel();
     TextBoxLabel priority = new TextBoxLabel();
@@ -66,8 +67,9 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         formBuilder.addFormItem(new FormItem(constants.descriptionVm(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.templateVm(), template, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.osVm(), oS, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.defaultDisplayTypeVm(), defaultDisplayType, 4, 0));
-        formBuilder.addFormItem(new FormItem(constants.priorityVm(), priority, 5, 0));
+        formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 5, 0));
+        formBuilder.addFormItem(new FormItem(constants.priorityVm(), priority, 6, 0));
 
         formBuilder.addFormItem(new FormItem(constants.definedMemoryVm(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.physMemGauranteedVm(), minAllocatedMemory, 1, 1));

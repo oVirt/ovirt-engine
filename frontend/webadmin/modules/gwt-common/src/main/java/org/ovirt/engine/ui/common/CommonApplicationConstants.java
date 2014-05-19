@@ -103,9 +103,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Down")
     String bootSequenceDownButtonLabel();
 
-    @DefaultStringValue("Display Protocol")
-    String runOncePopupDisplayProtocolLabel();
-
     @DefaultStringValue("Custom Properties")
     String runOncePopupCustomPropertiesLabel();
 
@@ -459,8 +456,8 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Operating System")
     String osVm();
 
-    @DefaultStringValue("Default Display Type")
-    String defaultDisplayTypeVm();
+    @DefaultStringValue("Video Type")
+    String videoType();
 
     @DefaultStringValue("Priority")
     String priorityVm();
@@ -642,9 +639,6 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Console")
     String consoleVmPopup();
-
-    @DefaultStringValue("Protocol")
-    String protocolVmPopup();
 
     @DefaultStringValue("VNC Keyboard Layout")
     String vncKeyboardLayoutVmPopup();
@@ -1043,9 +1037,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Operating System")
     String osTemplateGeneral();
 
-    @DefaultStringValue("Default Display Type")
-    String defaultDisTypeTemplateGeneral();
-
     @DefaultStringValue("Defined Memory")
     String definedMemTemplateGeneral();
 
@@ -1238,9 +1229,6 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Operating System")
     String osPoolGeneral();
-
-    @DefaultStringValue("Default Display Type")
-    String defaultDisplayTypePoolGeneral();
 
     @DefaultStringValue("Defined Memory")
     String definedMemPoolGeneral();
@@ -2004,4 +1992,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Inherit from global setting")
     String inheritFromGlobal();
+
+    @DefaultStringValue("Graphics protocol")
+    String graphicsProtocol();
 }

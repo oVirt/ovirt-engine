@@ -452,9 +452,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     protected DialogTab consoleTab;
 
     @UiField(provided = true)
-    @Path(value = "displayProtocol.selectedItem")
-    @WithElementId("displayProtocol")
-    public ListModelListBoxEditor<EntityModel<DisplayType>> displayProtocolEditor;
+    @Path(value = "displayType.selectedItem")
+    @WithElementId("displayType")
+    public ListModelListBoxEditor<EntityModel<DisplayType>> displayTypeEditor;
+
+    @UiField(provided = true)
+    @Path(value = "graphicsType.selectedItem")
+    @WithElementId("graphicsType")
+    public ListModelListBoxEditor<UnitVmModel.GraphicsTypes> graphicsTypeEditor;
 
     @UiField(provided = true)
     @Path(value = "vncKeyboardLayout.selectedItem")
@@ -1272,12 +1277,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         timeZoneEditorWithInfo.setExplanation(applicationTemplates.italicText(constants.timeZoneInfo()));
 
         // Console tab
-        displayProtocolEditor = new ListModelListBoxEditor<EntityModel<DisplayType>>(new NullSafeRenderer<EntityModel<DisplayType>>() {
+        displayTypeEditor = new ListModelListBoxEditor<EntityModel<DisplayType>>(new NullSafeRenderer<EntityModel<DisplayType>>() {
             @Override
             public String renderNullSafe(EntityModel<DisplayType> object) {
-                return object.getTitle();
+                return EnumTranslator.getInstance().get(object.getEntity());
             }
         }, new ModeSwitchingVisibilityRenderer());
+
+        graphicsTypeEditor = new ListModelListBoxEditor<UnitVmModel.GraphicsTypes>(new EnumRenderer<UnitVmModel.GraphicsTypes>());
 
         usbSupportEditor =
                 new ListModelListBoxEditor<UsbPolicy>(new EnumRenderer<UsbPolicy>(), new ModeSwitchingVisibilityRenderer());
@@ -1431,7 +1438,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         // Console Tab
         consoleTab.setLabel(constants.consoleVmPopup());
-        displayProtocolEditor.setLabel(constants.protocolVmPopup());
+        displayTypeEditor.setLabel(constants.videoType());
+        graphicsTypeEditor.setLabel(constants.graphicsProtocol());
         vncKeyboardLayoutEditor.setLabel(constants.vncKeyboardLayoutVmPopup());
         usbSupportEditor.setLabel(constants.usbPolicyVmPopup());
         numOfMonitorsEditor.setLabel(constants.monitorsVmPopup());
@@ -1914,7 +1922,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         // ==Console Tab==
         nextTabIndex = consoleTab.setTabIndexes(nextTabIndex);
-        displayProtocolEditor.setTabIndex(nextTabIndex++);
+        displayTypeEditor.setTabIndex(nextTabIndex++);
+        graphicsTypeEditor.setTabIndex(nextTabIndex++);
         vncKeyboardLayoutEditor.setTabIndex(nextTabIndex++);
         usbSupportEditor.setTabIndex(nextTabIndex++);
         isSingleQxlEnabledEditor.setTabIndex(nextTabIndex++);
@@ -2006,7 +2015,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     protected List<Widget> consoleTabWidgets() {
         return Arrays.<Widget> asList(
-                displayProtocolEditor,
+                displayTypeEditor,
+                graphicsTypeEditor,
                 usbSupportEditor,
                 isSmartcardEnabledEditor,
                 nativeUsbWarningMessage,

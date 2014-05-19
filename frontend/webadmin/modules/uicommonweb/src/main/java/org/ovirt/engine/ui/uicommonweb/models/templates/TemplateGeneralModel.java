@@ -9,15 +9,15 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractGeneralModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
 
 @SuppressWarnings("unused")
-public class TemplateGeneralModel extends EntityModel {
+public class TemplateGeneralModel extends AbstractGeneralModel {
 
     @Override
     public VmTemplate getEntity() {
@@ -339,6 +339,8 @@ public class TemplateGeneralModel extends EntityModel {
 
     private void updateProperties() {
         VmTemplate template = getEntity();
+
+        super.updateProperties(template.getId());
 
         setName(template.getName());
         setDescription(template.getDescription());

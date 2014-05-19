@@ -1,7 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -32,23 +36,43 @@ public class InstanceTypeModelBehaviorBase extends VmModelBehaviorBase<UnitVmMod
         getModel().getCustomCpu().setItems(Arrays.asList("")); //$NON-NLS-1$
     }
 
-    protected void initDisplayTypes(DisplayType selected) {
-        getModel().getDisplayProtocol().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+    protected void initDisplayTypes(DisplayType selected, UnitVmModel.GraphicsTypes selectedGrahicsTypes) {
+        getModel().getDisplayType().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                EntityModel<DisplayType> displayType = getModel().getDisplayProtocol().getSelectedItem();
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                EntityModel<DisplayType> displayType = getModel().getDisplayType().getSelectedItem();
                 enableSinglePCI(displayType.getEntity() == DisplayType.qxl);
             }
         });
 
-        getModel().initDisplayProtocolWithTypes(Arrays.asList(DisplayType.values()));
+        List<Pair<GraphicsType, DisplayType>> allGraphicsAndDisplays = new ArrayList<Pair<GraphicsType, DisplayType>>();
+        for (GraphicsType graphicsType : GraphicsType.values()) {
+            for (DisplayType displayType : DisplayType.values()) {
+                allGraphicsAndDisplays.add(new Pair<GraphicsType, DisplayType>(
+                        graphicsType,
+                        displayType
+                ));
+            }
+        }
 
-        for (EntityModel<DisplayType> displayType : getModel().getDisplayProtocol().getItems()) {
+        getModel().initDisplayModels(allGraphicsAndDisplays);
+        initGraphicsModel(selectedGrahicsTypes);
+
+        for (EntityModel<DisplayType> displayType : getModel().getDisplayType().getItems()) {
             if (displayType.getEntity() == selected) {
-                getModel().getDisplayProtocol().setSelectedItem(displayType);
+                getModel().getDisplayType().setSelectedItem(displayType);
                 break;
             }
         }
+    }
+
+    private void initGraphicsModel(UnitVmModel.GraphicsTypes selectedGrahicsTypes) {
+        List graphicsTypes = new ArrayList();
+        graphicsTypes.add(UnitVmModel.GraphicsTypes.SPICE);
+        graphicsTypes.add(UnitVmModel.GraphicsTypes.VNC);
+        graphicsTypes.add(UnitVmModel.GraphicsTypes.SPICE_AND_VNC);
+        getModel().getGraphicsType().setItems(graphicsTypes);
+        getModel().getGraphicsType().setSelectedItem(selectedGrahicsTypes);
     }
 
     @Override

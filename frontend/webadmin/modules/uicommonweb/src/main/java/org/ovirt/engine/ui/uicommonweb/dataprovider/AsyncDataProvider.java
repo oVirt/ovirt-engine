@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -231,8 +232,8 @@ public class AsyncDataProvider {
     // default OS per architecture
     private HashMap<ArchitectureType, Integer> defaultOSes;
 
-    // cached os's support for display types (given compatibility version)
-    private HashMap<Integer, Map<Version, List<DisplayType>>> displayTypes;
+    // cached os's support for graphics and display types (given compatibility version)
+    private Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> graphicsAndDisplays;
 
     // cached architecture support for live migration
     private Map<ArchitectureType, Map<Version, Boolean>> migrationSupport;
@@ -3396,17 +3397,16 @@ public class AsyncDataProvider {
     }
 
     public boolean hasSpiceSupport(int osId, Version version) {
-        List<DisplayType> osDisplayTypes = getDisplayTypes(osId, version);
-        return osDisplayTypes == null
-                ? false
-                : osDisplayTypes.contains(DisplayType.qxl);
+        for (Pair<GraphicsType, DisplayType> graphicsDisplayPair : getGraphicsAndDisplays(osId, version)) {
+            if (graphicsDisplayPair.getFirst() == GraphicsType.SPICE) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public List<DisplayType> getDisplayTypes(int osId, Version version) {
-        Map<Version, List<DisplayType>> osDisplayTypes = displayTypes.get(osId);
-        return osDisplayTypes == null
-                ? null
-                : osDisplayTypes.get(version);
+    public List<Pair<GraphicsType, DisplayType>> getGraphicsAndDisplays(int osId, Version version) {
+        return graphicsAndDisplays.get(osId).get(version);
     }
 
     private void initDisplayTypes() {
@@ -3414,7 +3414,7 @@ public class AsyncDataProvider {
         callback.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                displayTypes = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                graphicsAndDisplays = ((VdcQueryReturnValue) returnValue).getReturnValue();
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetDisplayTypes), callback);

@@ -38,6 +38,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
     }
 
     TextBoxLabel cpuInfo = new TextBoxLabel();
+    TextBoxLabel graphicsType = new TextBoxLabel();
     TextBoxLabel defaultDisplayType = new TextBoxLabel();
     TextBoxLabel defaultHost = new TextBoxLabel();
     TextBoxLabel definedMemory = new TextBoxLabel();
@@ -80,14 +81,15 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         generateIds();
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 3, 6);
+        formBuilder = new FormBuilder(formPanel, 3, 7);
 
         formBuilder.addFormItem(new FormItem(constants.namePoolGeneral(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionPoolGeneral(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.templatePoolGeneral(), template, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.osPoolGeneral(), oS, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.defaultDisplayTypePoolGeneral(), defaultDisplayType, 4, 0));
-        formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 5, 0));
+        formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 5, 0));
+        formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 6, 0));
 
         formBuilder.addFormItem(new FormItem(constants.definedMemPoolGeneral(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.physMemGaurPoolGeneral(), minAllocatedMemory, 1, 1));

@@ -63,7 +63,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getQuota()).thenReturn(quotaListModel);
         when(model.getVncKeyboardLayout().getSelectedItem()).thenReturn(VNC_KEYBOARD_LAYOUT);
         EntityModel<DisplayType> displayTypeEntityModel = mockEntityModel(DISPLAY_TYPE);
-        when(model.getDisplayProtocol().getSelectedItem()).thenReturn(displayTypeEntityModel);
+        when(model.getDisplayType().getSelectedItem()).thenReturn(displayTypeEntityModel);
         EntityModel<Integer> priorityEntityModel = mockEntityModel(PRIORITY);
         when(model.getPriority().getSelectedItem()).thenReturn(priorityEntityModel);
         when(model.getIsRunAndPause().getEntity()).thenReturn(true);

@@ -320,13 +320,13 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getProvisioning().setIsAvailable(false);
 
         // Select display protocol.
-        for (EntityModel<DisplayType> model : getModel().getDisplayProtocol().getItems())
+        for (EntityModel<DisplayType> model : getModel().getDisplayType().getItems())
         {
             DisplayType displayType = model.getEntity();
 
             if (displayType == this.vm.getDefaultDisplayType())
             {
-                getModel().getDisplayProtocol().setSelectedItem(model);
+                getModel().getDisplayType().setSelectedItem(model);
                 break;
             }
         }

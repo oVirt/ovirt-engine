@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class NewInstanceTypeModelBehavior extends InstanceTypeModelBehaviorBase 
         super.initialize(systemTreeSelectedItem);
         updateNumOfSockets();
 
-        initDisplayTypes(DisplayType.qxl);
+        initDisplayTypes(DisplayType.qxl, UnitVmModel.GraphicsTypes.SPICE);
 
         // no way to pick a specific host
         getModel().getIsAutoAssign().setEntity(true);

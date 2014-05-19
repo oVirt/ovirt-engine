@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmTemplateNameRenderer;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
@@ -27,7 +27,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
 
 @SuppressWarnings("unused")
-public class PoolGeneralModel extends EntityModel
+public class PoolGeneralModel extends AbstractGeneralModel
 {
 
     public static final EventDefinition updateCompleteEventDefinition;
@@ -408,12 +408,15 @@ public class PoolGeneralModel extends EntityModel
 
     private void updateProperties()
     {
-        VmPool pool = (VmPool) getEntity();
+        final VmPool pool = (VmPool) getEntity();
+
 
         setName(pool.getName());
         setDescription(pool.getVmPoolDescription());
 
         AsyncQuery _asyncQuery = new AsyncQuery();
+
+
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
@@ -441,7 +444,8 @@ public class PoolGeneralModel extends EntityModel
                     poolGeneralModel.setMinAllocatedMemory(getvm().getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 
                     Translator translator = EnumTranslator.getInstance();
-                    poolGeneralModel.setDefaultDisplayType(translator.get(getvm().getDefaultDisplayType()));
+                    setDefaultDisplayType(translator.get(getvm().getDefaultDisplayType()));
+
                     poolGeneralModel.setOrigin(translator.get(getvm().getOrigin()));
                     poolGeneralModel.setUsbPolicy(translator.get(getvm().getUsbPolicy()));
 
@@ -485,6 +489,9 @@ public class PoolGeneralModel extends EntityModel
                                 .getConstants()
                                 .anyHostInCluster());
                     }
+                    if (getvm() != null) {
+                        PoolGeneralModel.super.updateProperties(getvm().getId());
+                    }
                 }
                 else
                 {
@@ -502,6 +509,7 @@ public class PoolGeneralModel extends EntityModel
                     poolGeneralModel.setUsbPolicy(null);
                     poolGeneralModel.setDefaultHost(null);
                     poolGeneralModel.setIsStateless(false);
+                    poolGeneralModel.setGraphicsType(""); //$NON-NLS-1$
 
                     poolGeneralModel.getUpdateCompleteEvent().raise(this, EventArgs.EMPTY);
                 }

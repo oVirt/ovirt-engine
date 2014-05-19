@@ -16,7 +16,10 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -668,6 +671,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         addVmTemplateParameters.setCopyVmPermissions(model.getCopyPermissions().getEntity());
         addVmTemplateParameters.setUpdateRngDevice(true);
         addVmTemplateParameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
+        setGraphicsDevicesToParams(model, addVmTemplateParameters);
         if (model.getIsSubTemplate().getEntity()) {
             addVmTemplateParameters.setBaseTemplateId(model.getBaseTemplate().getSelectedItem().getId());
             addVmTemplateParameters.setTemplateVersionName(model.getTemplateVersionName().getEntity());
@@ -1134,6 +1138,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         setRngDeviceToParams(model, parameters);
+        setGraphicsDevicesToParams(model, parameters);
 
         if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
             vm.setId(new Guid(model.getVmId().getEntity()));
@@ -1160,7 +1165,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {
                             VmManagementParametersBase param = getUpdateVmParameters(applyCpuChangesLater);
-
                             Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
                         }
                     }, this);
@@ -1180,7 +1184,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         setRngDeviceToParams(model, params);
         params.setApplyChangesLater(applyCpuChangesLater);
-        setRngDeviceToParams(model, params);
+        setGraphicsDevicesToParams(model, params);
 
         return params;
     }
@@ -1285,7 +1289,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             VM vm = (VM) selectedItem.getEntity();
             EntityModel<DisplayType> displayType = null;
 
-            for (EntityModel<DisplayType> item : model.getDisplayProtocol().getItems())
+            for (EntityModel<DisplayType> item : model.getDisplayType().getItems())
             {
                 DisplayType dt = item.getEntity();
                 if (dt == vm.getDefaultDisplayType())
@@ -1294,7 +1298,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                     break;
                 }
             }
-            model.getDisplayProtocol().setSelectedItem(displayType);
+            model.getDisplayType().setSelectedItem(displayType);
         }
     }
 
@@ -1368,7 +1372,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         {
             vmModel_DefaultHost_ItemsChanged();
         }
-        else if (ev.matchesDefinition(itemsChangedEventDefinition) && sender == model.getDisplayProtocol())
+        else if (ev.matchesDefinition(itemsChangedEventDefinition) && sender == model.getDisplayType())
         {
             vmModel_DisplayProtocol_ItemsChanged();
         }
@@ -1465,4 +1469,33 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     protected ConsoleContext getConsoleContext() {
         return ConsoleContext.UP_EXTENDED;
     }
+
+    private void setGraphicsDevicesToParams(final UnitVmModel model, VmManagementParametersBase params) {
+        if (model.getDisplayType().getSelectedItem() == null || model.getGraphicsType().getSelectedItem() == null) {
+            return;
+        }
+
+        for (GraphicsType graphicsType : GraphicsType.values()) {
+            params.getGraphicsDevices().put(graphicsType, null); // reset
+            if (model.getGraphicsType().getSelectedItem().getBackingGraphicsType().contains(graphicsType)) {
+                GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
+                params.getGraphicsDevices().put(d.getGraphicsType(), d);
+            }
+        }
+    }
+
+    private void setGraphicsDevicesToParams(final UnitVmModel model, VmTemplateParametersBase params) {
+        if (model.getDisplayType().getSelectedItem() == null || model.getGraphicsType().getSelectedItem() == null) {
+            return;
+        }
+
+        for (GraphicsType graphicsType : GraphicsType.values()) {
+            params.getGraphicsDevices().put(graphicsType, null); // reset
+            if (model.getGraphicsType().getSelectedItem().getBackingGraphicsType().contains(graphicsType)) {
+                GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
+                params.getGraphicsDevices().put(d.getGraphicsType(), d);
+            }
+        }
+    }
+
 }

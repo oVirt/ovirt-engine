@@ -145,7 +145,19 @@ public interface Enums extends LocalizedEnums {
 
     String DisplayType___qxl();
 
-    String DisplayType___vnc();
+    String DisplayType___cirrus();
+
+    String DisplayType___vga();
+
+    String GraphicsType___SPICE();
+
+    String GraphicsType___VNC();
+
+    String UnitVmModel$GraphicsTypes___SPICE();
+
+    String UnitVmModel$GraphicsTypes___VNC();
+
+    String UnitVmModel$GraphicsTypes___SPICE_AND_VNC();
 
     String OriginType___RHEV();
 

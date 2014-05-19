@@ -9,6 +9,8 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -240,6 +242,7 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
 
         setVmWatchdogToParams(model, addInstanceTypeParameters);
         setRngDeviceToParams(model, addInstanceTypeParameters);
+        setGraphicsDevicesToParams(model, addInstanceTypeParameters);
 
         getWindow().startProgress(null);
 
@@ -272,6 +275,7 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
 
         setVmWatchdogToParams(model, updateInstanceTypeParameters);
         setRngDeviceToParams(model, updateInstanceTypeParameters);
+        setGraphicsDevicesToParams(model, updateInstanceTypeParameters);
 
         getWindow().startProgress(null);
 
@@ -396,6 +400,20 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
     private void setRngDeviceToParams(UnitVmModel model, VmTemplateParametersBase parameters) {
         parameters.setUpdateRngDevice(true);
         parameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
+    }
+
+    private void setGraphicsDevicesToParams(final UnitVmModel model, VmTemplateParametersBase params) {
+        if (model.getDisplayType().getSelectedItem() == null || model.getGraphicsType().getSelectedItem() == null) {
+            return;
+        }
+
+        for (GraphicsType graphicsType : GraphicsType.values()) {
+            params.getGraphicsDevices().put(graphicsType, null); // reset
+            if (model.getGraphicsType().getSelectedItem().getBackingGraphicsType().contains(graphicsType)) {
+                GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
+                params.getGraphicsDevices().put(d.getGraphicsType(), d);
+            }
+        }
     }
 
     public UICommand getNewInstanceTypeCommand() {

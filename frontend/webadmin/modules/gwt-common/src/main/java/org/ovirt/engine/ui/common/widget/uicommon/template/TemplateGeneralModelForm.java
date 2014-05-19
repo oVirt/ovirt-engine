@@ -24,6 +24,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     @Path("OS")
     TextBoxLabel oS = new TextBoxLabel();
     TextBoxLabel cpuInfo = new TextBoxLabel();
+    TextBoxLabel graphicsType = new TextBoxLabel();
     TextBoxLabel defaultDisplayType = new TextBoxLabel();
     TextBoxLabel origin = new TextBoxLabel();
     TextBoxLabel priority = new TextBoxLabel();
@@ -63,7 +64,8 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         formBuilder.addFormItem(new FormItem(constants.descriptionTemplateGeneral(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.hostClusterTemplateGeneral(), hostCluster, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.osTemplateGeneral(), oS, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.defaultDisTypeTemplateGeneral(), defaultDisplayType, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 5, 0));
 
         formBuilder.addFormItem(new FormItem(constants.definedMemTemplateGeneral(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresTemplateGeneral(), cpuInfo, 1, 1));
