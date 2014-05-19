@@ -42,4 +42,7 @@
     <set-property name="locale" value="${gwt.locale}" />
     <set-property-fallback name="locale" value="en_US" />
 
+    <!-- GWT CSS obfuscation style -->
+    <set-configuration-property name="CssResource.style" value="${gwt.cssResourceStyle}"/>
+
 </module>
