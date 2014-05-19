@@ -8,8 +8,9 @@ import org.ovirt.engine.api.extensions.Extension;
 
 public class ExtensionProxy implements Extension {
 
-    private Extension proxied;
-    private ExtMap context;
+    private final ClassLoader classLoader;
+    private final Extension proxied;
+    private final ExtMap context;
 
     private void dumpMap(String prefix, ExtMap map) {
         Log logger = context.<Log> get(ExtensionsManager.TRACE_LOG_CONTEXT_KEY);
@@ -20,9 +21,14 @@ public class ExtensionProxy implements Extension {
         }
     }
 
-    public ExtensionProxy(Extension proxied, ExtMap context) {
+    public ExtensionProxy(ClassLoader classLoader, Extension proxied) {
+        this.classLoader = classLoader;
         this.proxied = proxied;
-        this.context = context;
+        this.context = new ExtMap();
+    }
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 
     public Extension getExtension() {
@@ -38,7 +44,9 @@ public class ExtensionProxy implements Extension {
         input.putIfAbsent(Base.InvokeKeys.CONTEXT, context);
 
         dumpMap("Invoke Input", input);
+        ClassLoader savedClassLoader = Thread.currentThread().getContextClassLoader();
         try {
+            Thread.currentThread().setContextClassLoader(classLoader);
             proxied.invoke(input, output);
         } catch (Throwable e) {
             output.mput(
@@ -55,6 +63,8 @@ public class ExtensionProxy implements Extension {
                 ExtensionsManager.CAUSE_OUTPUT_KEY,
                 e
             );
+        } finally {
+            Thread.currentThread().setContextClassLoader(savedClassLoader);
         }
         dumpMap("Invoke Output", output);
     }

@@ -293,6 +293,8 @@ public class Base {
      * Extension record.
      */
     public static class ExtensionRecord {
+        /** Extension class loader. */
+        public static final ExtKey CLASS_LOADER = new ExtKey("EXTENSION_RECORD_CLASS_LOADER", ClassLoader.class, "92e67266-0418-4e58-9995-73d6254b466e");
         /** Extension reference. */
         public static final ExtKey EXTENSION = new ExtKey("EXTENSION_RECORD_EXTENSION", Extension.class, "fa110e1b-bf17-441d-8bd6-0fca24542405");
         /** Extension context. */

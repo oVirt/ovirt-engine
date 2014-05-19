@@ -36,7 +36,7 @@ public class ExtensionsManager extends Observable {
     public static final ExtKey CAUSE_OUTPUT_KEY = new ExtKey("EXTENSION_MANAGER_CAUSE_OUTPUT_KEY", Throwable.class, "894e1c86-518b-40a2-a92b-29ea1eb0403d");
 
     private static interface BindingsLoader {
-        Extension load(Properties props) throws Exception;
+        ExtensionProxy load(Properties props) throws Exception;
     }
 
     private static class JBossBindingsLoader implements BindingsLoader {
@@ -62,14 +62,11 @@ public class ExtensionsManager extends Observable {
             }
         }
 
-        private Class<?> lookupService(Class<?> serviceInterface, String serviceClassName, String moduleName) {
-            // Iterate over the service classes, and find the one that should
-            // be instantiated and initialized.
-            Module module = loadModule(moduleName);
-            Class<?> serviceClass = null;
+        private <T extends Class> T lookupService(Module module, T serviceInterface, String serviceClassName) {
+            T serviceClass = null;
             for (Object service : module.loadService(serviceInterface)) {
                 if (service.getClass().getName().equals(serviceClassName)) {
-                    serviceClass = service.getClass();
+                    serviceClass = (T)service.getClass();
                     break;
                 }
             }
@@ -81,12 +78,19 @@ public class ExtensionsManager extends Observable {
             return serviceClass;
         }
 
-        public Extension load(Properties props) throws Exception {
-            return (Extension) lookupService(
-                Extension.class,
-                props.getProperty(Base.ConfigKeys.BINDINGS_JBOSSMODULE_CLASS),
+        public ExtensionProxy load(Properties props) throws Exception {
+            Module module = loadModule(
                 props.getProperty(Base.ConfigKeys.BINDINGS_JBOSSMODULE_MODULE)
-            ).newInstance();
+            );
+
+            return new ExtensionProxy(
+                module.getClassLoader(),
+                lookupService(
+                    module,
+                    Extension.class,
+                    props.getProperty(Base.ConfigKeys.BINDINGS_JBOSSMODULE_CLASS)
+                ).newInstance()
+            );
         }
     }
 
@@ -175,39 +179,35 @@ public class ExtensionsManager extends Observable {
              ));
         }
         try {
-            entry.extension = new ExtensionProxy(
-                    loadExtension(props),
-                    (
-                    new ExtMap().mput(
-                            Base.ContextKeys.GLOBAL_CONTEXT,
-                            globalContext
-                            ).mput(
-                                    TRACE_LOG_CONTEXT_KEY,
-                                    traceLog
-                            ).mput(
-                                    Base.ContextKeys.INTERFACE_VERSION_MIN,
-                                    0
-                            ).mput(
-                                    Base.ContextKeys.INTERFACE_VERSION_MAX,
-                                    Base.INTERFACE_VERSION_CURRENT
-                            ).mput(
-                                    Base.ContextKeys.LOCALE,
-                                    Locale.getDefault().toString()
-                            ).mput(
-                                    Base.ContextKeys.CONFIGURATION,
-                                    props
-                            ).mput(
-                                    Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS,
-                                    splitString(props.getProperty(Base.ConfigKeys.SENSITIVE_KEYS, ""))
-                            ).mput(
-                                    Base.ContextKeys.INSTANCE_NAME,
-                                    entry.name
-                            ).mput(
+            entry.extension = loadExtension(props);
+            entry.extension.getContext().mput(
+                    Base.ContextKeys.GLOBAL_CONTEXT,
+                    globalContext
+                    ).mput(
+                            TRACE_LOG_CONTEXT_KEY,
+                            traceLog
+                    ).mput(
+                            Base.ContextKeys.INTERFACE_VERSION_MIN,
+                            0
+                    ).mput(
+                            Base.ContextKeys.INTERFACE_VERSION_MAX,
+                            Base.INTERFACE_VERSION_CURRENT
+                    ).mput(
+                            Base.ContextKeys.LOCALE,
+                            Locale.getDefault().toString()
+                    ).mput(
+                            Base.ContextKeys.CONFIGURATION,
+                            props
+                    ).mput(
+                            Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS,
+                            splitString(props.getProperty(Base.ConfigKeys.SENSITIVE_KEYS, ""))
+                    ).mput(
+                            Base.ContextKeys.INSTANCE_NAME,
+                            entry.name
+                    ).mput(
                             Base.ContextKeys.PROVIDES,
                             splitString(props.getProperty(Base.ConfigKeys.PROVIDES, ""))
-                            )
-                    )
-            );
+                    );
             ExtMap output = entry.extension.invoke(
                     new ExtMap().mput(
                             Base.InvokeKeys.COMMAND,
@@ -322,6 +322,9 @@ public class ExtensionsManager extends Observable {
                                     Base.ExtensionRecord.PROVIDES,
                                     entry.extension.getContext().get(Base.ContextKeys.PROVIDES)
                             ).mput(
+                                    Base.ExtensionRecord.CLASS_LOADER,
+                                    entry.extension.getClassLoader()
+                            ).mput(
                                     Base.ExtensionRecord.EXTENSION,
                                     entry.extension.getExtension()
                             ).mput(
@@ -335,13 +338,12 @@ public class ExtensionsManager extends Observable {
         return entry.extension;
     }
 
-    private Extension loadExtension(Properties props) throws Exception {
+    private ExtensionProxy loadExtension(Properties props) throws Exception {
         BindingsLoader loader = bindingsLoaders.get(props.getProperty(Base.ConfigKeys.BINDINGS_METHOD));
         if (loader == null) {
             throw new ConfigurationException(String.format("Invalid binding method '%1$s'.",
                     props.getProperty(Base.ConfigKeys.BINDINGS_METHOD)));
         }
-
         return loader.load(props);
     }
 
