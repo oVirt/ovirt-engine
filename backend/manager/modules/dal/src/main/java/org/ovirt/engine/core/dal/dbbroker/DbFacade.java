@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.ExternalVariable;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -68,6 +69,7 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.EventDAO;
+import org.ovirt.engine.core.dao.ExternalVariableDao;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
@@ -190,6 +192,7 @@ public class DbFacade {
             put(VdsNumaNode.class, VdsNumaNodeDAO.class);
             put(VmNumaNode.class, VmNumaNodeDAO.class);
             put(CommandEntity.class, CommandEntityDao.class);
+            put(ExternalVariable.class, ExternalVariableDao.class);
         }
     };
 
@@ -1011,6 +1014,15 @@ public class DbFacade {
      */
     public AffinityGroupDao getAffinityGroupDao() {
         return getDao(AffinityGroupDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link ExternalVariableDao}.
+     *
+     * @return the dao instance
+     */
+    public ExternalVariableDao getExternalVariableDao() {
+        return getDao(ExternalVariableDao.class);
     }
 
     /**

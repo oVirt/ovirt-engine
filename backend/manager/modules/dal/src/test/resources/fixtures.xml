@@ -6688,4 +6688,15 @@
             <value>false</value>
         </row>
     </table>
+
+    <table name="external_variable">
+        <column>var_name</column>
+        <column>var_value</column>
+        <column>_update_date</column>
+        <row>
+            <value>fence-kdump-listener</value>
+            <null />
+            <value>2014-04-22 15:00:05 UTC</value>
+        </row>
+    </table>
 </dataset>
