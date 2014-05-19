@@ -21,6 +21,7 @@ public class NumaSettingFactory {
             Map<String, Object> createVmNumaNode = new HashMap<>();
             createVmNumaNode.put(VdsProperties.NUMA_NODE_CPU_LIST, NumaUtils.buildStringFromListForNuma(node.getCpuIds()));
             createVmNumaNode.put(VdsProperties.VM_NUMA_NODE_MEM, String.valueOf(node.getMemTotal()));
+            createVmNumaNode.put(VdsProperties.NUMA_NODE_INDEX, node.getIndex());
             createVmNumaNodes.add(createVmNumaNode);
         }
         return createVmNumaNodes;

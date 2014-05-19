@@ -35,6 +35,8 @@ public class NumaSettingFactoryTest {
         List<Map<String, Object>> vmNumaNodesSetting =
                 NumaSettingFactory.buildVmNumaNodeSetting(vmNumaNodes);
         assertEquals(2, vmNumaNodesSetting.size());
+        assertTrue(vmNumaNodesSetting.get(0).containsKey(VdsProperties.NUMA_NODE_INDEX));
+        assertEquals(0, vmNumaNodesSetting.get(0).get(VdsProperties.NUMA_NODE_INDEX));
         assertTrue(vmNumaNodesSetting.get(0).containsKey(VdsProperties.NUMA_NODE_CPU_LIST));
         assertEquals("0,1,2,3", vmNumaNodesSetting.get(0).get(VdsProperties.NUMA_NODE_CPU_LIST));
         assertTrue(vmNumaNodesSetting.get(1).containsKey(VdsProperties.VM_NUMA_NODE_MEM));
