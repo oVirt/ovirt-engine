@@ -237,30 +237,32 @@ public class Authn {
         public static final int ACCOUNT_LOCKED = 5;
         /** Account login time violation. */
         public static final int ACCOUNT_TIME_VIOLATION = 6;
+        /** Account restriction violation. */
+        public static final int ACCOUNT_RESTRICTION = 7;
         /**
          * Redirect is required.
          * @see InvokeKeys#REDIRECT
          */
-        public static final int REDIRECT = 7;
+        public static final int REDIRECT = 8;
         /**
          * Challenge is required.
          * @see InvokeKeys#CREDENTIALS_CHALLENGE_RECORD
          */
-        public static final int CHALLENGE_REQUIRED = 8;
+        public static final int CHALLENGE_REQUIRED = 9;
         /** Credentials are expired. */
-        public static final int CREDENTIALS_EXPIRED = 9;
+        public static final int CREDENTIALS_EXPIRED = 10;
         /** Credentials are incorrect. */
-        public static final int CREDENTIALS_INCORRECT = 10;
+        public static final int CREDENTIALS_INCORRECT = 11;
         /** Credentials are invalid. */
-        public static final int CREDENTIALS_INVALID = 11;
+        public static final int CREDENTIALS_INVALID = 12;
         /** Remote server is unavailable. */
-        public static final int REMOTE_UNAVAILABLE = 12;
+        public static final int REMOTE_UNAVAILABLE = 13;
         /** Request timeout. */
-        public static final int TIMED_OUT = 13;
+        public static final int TIMED_OUT = 14;
         /** Negotiate is incomplete/in progress. */
-        public static final int NEGOTIATION_INCOMPLETE = 14;
+        public static final int NEGOTIATION_INCOMPLETE = 15;
         /** Negotiate is complete and no authorization is established. */
-        public static final int NEGOTIATION_UNAUTHORIZED = 15;
+        public static final int NEGOTIATION_UNAUTHORIZED = 16;
     }
 
     /**
