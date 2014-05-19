@@ -18,11 +18,14 @@ import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -57,9 +60,11 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private final List<Map<String, Object>> devices = new ArrayList<Map<String, Object>>();
     private List<VmDevice> managedDevices = null;
     private final boolean hasNonDefaultBootOrder;
+    private Guid vdsId;
 
-    public VmInfoBuilder(VM vm, Map createInfo) {
+    public VmInfoBuilder(VM vm, Guid vdsId, Map createInfo) {
         this.vm = vm;
+        this.vdsId = vdsId;
         this.createInfo = createInfo;
         hasNonDefaultBootOrder = (vm.getBootSequence() != vm.getDefaultBootSequence());
         if (hasNonDefaultBootOrder) {
@@ -1117,4 +1122,45 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             addDevice(struct, vmDevice, null);
         }
     }
+
+    protected void buildVmNumaProperties() {
+        final String compatibilityVersion = vm.getVdsGroupCompatibilityVersion().toString();
+        addNumaSetting(compatibilityVersion);
+    }
+
+    /**
+     * Numa will use the same compatibilityVersion as cpu pinning since
+     * numa may also add cpu pinning configuration and the two features
+     * have almost the same libvirt version support
+     *
+     * @param compatibilityVersion
+     */
+    private void addNumaSetting(final String compatibilityVersion) {
+        if (Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinningEnabled,
+                        compatibilityVersion))) {
+            NumaTuneMode numaTune = vm.getNumaTuneMode();
+            List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(vm.getId());
+            List<VdsNumaNode> totalVdsNumaNodes = DbFacade.getInstance().getVdsNumaNodeDAO()
+                    .getAllVdsNumaNodeByVdsId(vdsId);
+            if (numaTune != null) {
+                Map<String, Object> numaTuneSetting =
+                        NumaSettingFactory.buildVmNumatuneSetting(numaTune, vmNumaNodes, totalVdsNumaNodes);
+                if (!numaTuneSetting.isEmpty()) {
+                    createInfo.put(VdsProperties.NUMA_TUNE, numaTuneSetting);
+                }
+            }
+            List<Map<String, Object>> createVmNumaNodes = NumaSettingFactory.buildVmNumaNodeSetting(vmNumaNodes);
+            if (!createVmNumaNodes.isEmpty()) {
+                createInfo.put(VdsProperties.VM_NUMA_NODES, createVmNumaNodes);
+            }
+            if (StringUtils.isEmpty(vm.getCpuPinning())) {
+                Map<String, Object> cpuPinDict =
+                        NumaSettingFactory.buildCpuPinningWithNumaSetting(vmNumaNodes, totalVdsNumaNodes);
+                if (!cpuPinDict.isEmpty()) {
+                    createInfo.put(VdsProperties.cpuPinning, cpuPinDict);
+                }
+            }
+        }
+    }
+
 }
