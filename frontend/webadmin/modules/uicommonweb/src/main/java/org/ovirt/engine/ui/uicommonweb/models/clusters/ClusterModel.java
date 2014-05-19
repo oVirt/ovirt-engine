@@ -1440,7 +1440,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
         } else {
             getArchitecture().setSelectedItem(ArchitectureType.undefined);
         }
-
+        getArchitecture().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
     }
 
     private void initSupportedArchitectures(ClusterModel clusterModel) {
