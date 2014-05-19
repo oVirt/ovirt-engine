@@ -54,7 +54,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
             // backward compatibility for 3.0
             return new VmOldInfoBuilder(vm, createInfo);
         } else {
-            return new VmInfoBuilder(vm, createInfo);
+            return new VmInfoBuilder(vm, getParameters().getVdsId(), createInfo);
         }
     }
 
@@ -79,6 +79,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         builder.buildVmRngDevice();
         builder.buildUnmanagedDevices();
         builder.buildVmSerialNumber();
+        builder.buildVmNumaProperties();
     }
 
     private static final Log log = LogFactory.getLog(CreateVDSCommand.class);

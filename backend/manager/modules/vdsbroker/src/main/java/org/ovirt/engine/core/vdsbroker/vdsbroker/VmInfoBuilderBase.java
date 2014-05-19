@@ -6,11 +6,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,13 +15,10 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskImageByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -40,7 +34,6 @@ import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -149,8 +142,6 @@ public abstract class VmInfoBuilderBase {
         createInfo.put(VdsProperties.transparent_huge_pages,
                 vm.isTransparentHugePages() ? "true" : "false");
 
-        addNumaSetting(compatibilityVersion);
-
         if (vm.getDisplayType() == DisplayType.qxl) {
             createInfo.put(VdsProperties.spiceFileTransferEnable,
                 Boolean.toString(vm.isSpiceFileTransferEnabled()));
@@ -186,89 +177,6 @@ public abstract class VmInfoBuilderBase {
             }
             createInfo.put(VdsProperties.cpuPinning, pinDict);
         }
-    }
-
-    /**
-     * Numa will use the same compatibilityVersion as cpu pinning since
-     * numa may also add cpu pinning configuration and the two features
-     * have almost the same libvirt version support
-     *
-     * @param compatibilityVersion
-     */
-    private void addNumaSetting(final String compatibilityVersion) {
-        if (Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinningEnabled,
-                        compatibilityVersion))) {
-            NumaTuneMode numaTune = vm.getNumaTuneMode() == null ? NumaTuneMode.PREFERRED : vm.getNumaTuneMode();
-            List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(vm.getId());
-            List<VdsNumaNode> totalVdsNumaNodes = DbFacade.getInstance().getVdsNumaNodeDAO()
-                    .getAllVdsNumaNodeByVdsId(vm.getRunOnVds());
-            List<Integer> totalVdsNumaNodesIndexes = NumaUtils.getNodeIndexList(totalVdsNumaNodes);
-            Map<String, Object> createNumaTune = new HashMap<>(2);
-            createNumaTune.put(VdsProperties.NUMA_TUNE_MODE, numaTune.getValue());
-            boolean useAllVdsNodesMem = false;
-            Set<Integer> vmNumaNodePinInfo = new HashSet<>();
-            if (!vmNumaNodes.isEmpty()) {
-                List<Map<String, Object>> createVmNumaNodes = new ArrayList<>();
-                for (VmNumaNode node : vmNumaNodes) {
-                    Map<String, Object> createVmNumaNode = new HashMap<>();
-                    createVmNumaNode.put(VdsProperties.NUMA_NODE_CPU_LIST, NumaUtils.buildStringFromListForNuma(node.getCpuIds()));
-                    createVmNumaNode.put(VdsProperties.VM_NUMA_NODE_MEM, String.valueOf(node.getMemTotal()));
-                    createVmNumaNodes.add(createVmNumaNode);
-                    if (node.getVdsNumaNodeList().isEmpty()) {
-                        useAllVdsNodesMem = true;
-                    }
-                    else {
-                        vmNumaNodePinInfo.addAll(NumaUtils.getPinnedNodeIndexList(node.getVdsNumaNodeList()));
-                    }
-                }
-                createInfo.put(VdsProperties.VM_NUMA_NODES, createVmNumaNodes);
-            }
-            else {
-                useAllVdsNodesMem = true;
-            }
-            if (useAllVdsNodesMem) {
-                if (!totalVdsNumaNodesIndexes.isEmpty()) {
-                    createNumaTune.put(VdsProperties.NUMA_TUNE_NODESET,
-                            NumaUtils.buildStringFromListForNuma(totalVdsNumaNodesIndexes));
-                }
-            }
-            else {
-                if (!vmNumaNodePinInfo.isEmpty()) {
-                    createNumaTune.put(VdsProperties.NUMA_TUNE_NODESET,
-                            NumaUtils.buildStringFromListForNuma(vmNumaNodePinInfo));
-                }
-            }
-            createInfo.put(VdsProperties.NUMA_TUNE, createNumaTune);
-            if (StringUtils.isEmpty(vm.getCpuPinning())) {
-                Map<String, Object> cpuPinDict = addCpuPinningForNumaSetting(vmNumaNodes, totalVdsNumaNodes);
-                if (!cpuPinDict.isEmpty()) {
-                    createInfo.put(VdsProperties.cpuPinning, cpuPinDict);
-                }
-            }
-        }
-    }
-
-    private Map<String, Object> addCpuPinningForNumaSetting(List<VmNumaNode> vmNodes, List<VdsNumaNode> vdsNodes) {
-        Map<Integer, List<Integer>> vdsNumaNodeCpus = new HashMap<>();
-        Map<String, Object> cpuPinDict = new HashMap<>();
-        for (VdsNumaNode node : vdsNodes) {
-            vdsNumaNodeCpus.put(node.getIndex(), node.getCpuIds());
-        }
-        for (VmNumaNode node : vmNodes) {
-            List<Integer> pinnedNodeIndexes = NumaUtils.getPinnedNodeIndexList(node.getVdsNumaNodeList());
-            if (!pinnedNodeIndexes.isEmpty()) {
-                Set <Integer> totalPinnedVdsCpus = new LinkedHashSet<>();
-                for (Integer vCpu : node.getCpuIds()) {
-                    for (Integer pinnedVdsNode : pinnedNodeIndexes) {
-                        if (vdsNumaNodeCpus.containsKey(pinnedVdsNode)) {
-                            totalPinnedVdsCpus.addAll(vdsNumaNodeCpus.get(pinnedVdsNode));
-                        }
-                    }
-                    cpuPinDict.put(String.valueOf(vCpu), NumaUtils.buildStringFromListForNuma(totalPinnedVdsCpus));
-                }
-            }
-        }
-        return cpuPinDict;
     }
 
     protected void buildVmNetworkCluster() {
@@ -429,6 +337,8 @@ public abstract class VmInfoBuilderBase {
 
     protected abstract void buildVmVirtioSerial();
 
+    protected abstract void buildVmNumaProperties();
+
     protected static enum VNIC_PROFILE_PROPERTIES {
         PORT_MIRRORING("Port Mirroring"),
         CUSTOM_PROPERTIES("Custom Properties"),
@@ -451,4 +361,5 @@ public abstract class VmInfoBuilderBase {
         }
         return vdsGroup;
     }
+
 }
