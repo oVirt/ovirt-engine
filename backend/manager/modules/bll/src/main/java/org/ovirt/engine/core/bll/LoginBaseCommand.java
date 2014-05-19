@@ -375,7 +375,11 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                     addCanDoActionMessage(VdcBllMessages.USER_PASSWORD_EXPIRED);
                 }
             } else {
-                addCanDoActionMessage(vdcBllMessagesMap.get(authResult));
+                VdcBllMessages msg = vdcBllMessagesMap.get(authResult);
+                if (msg == null) {
+                    msg = VdcBllMessages.USER_FAILED_TO_AUTHENTICATE;
+                }
+                addCanDoActionMessage(msg);
             }
             result = null;
         } else {
