@@ -319,7 +319,7 @@ validations:	generated-files
 			require="10240"; \
 			current="$$(ulimit -n)"; \
 			if [ "$${current}" -lt "$${require}" ]; then \
-				echo "Building locales requires more than $${require} available file descriptors, currently $${require}" >&2; \
+				echo "Building locales requires more than $${require} available file descriptors, currently $${current}" >&2; \
 				echo "Refer to README.developer for further instructions" >&2; \
 				false; \
 			fi; \
