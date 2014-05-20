@@ -49,12 +49,15 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         auditLogMap.put(Authn.AuthResult.CREDENTIALS_EXPIRED, AuditLogType.USER_ACCOUNT_PASSWORD_EXPIRED);
         auditLogMap.put(Authn.AuthResult.GENERAL_ERROR, AuditLogType.USER_VDC_LOGIN_FAILED);
         auditLogMap.put(Authn.AuthResult.CREDENTIALS_INVALID, AuditLogType.AUTH_FAILED_INVALID_CREDENTIALS);
+        auditLogMap.put(Authn.AuthResult.CREDENTIALS_INCORRECT, AuditLogType.AUTH_FAILED_INVALID_CREDENTIALS);
         auditLogMap.put(Authn.AuthResult.ACCOUNT_LOCKED, AuditLogType.USER_ACCOUNT_DISABLED_OR_LOCKED);
         auditLogMap.put(Authn.AuthResult.ACCOUNT_DISABLED, AuditLogType.USER_ACCOUNT_DISABLED_OR_LOCKED);
         auditLogMap.put(Authn.AuthResult.TIMED_OUT, AuditLogType.USER_ACCOUNT_DISABLED_OR_LOCKED);
 
         vdcBllMessagesMap.put(Authn.AuthResult.GENERAL_ERROR, VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
         vdcBllMessagesMap.put(Authn.AuthResult.CREDENTIALS_INVALID,
+                VdcBllMessages.USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD);
+        vdcBllMessagesMap.put(Authn.AuthResult.CREDENTIALS_INCORRECT,
                 VdcBllMessages.USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD);
         vdcBllMessagesMap.put(Authn.AuthResult.ACCOUNT_LOCKED, VdcBllMessages.USER_ACCOUNT_DISABLED);
         vdcBllMessagesMap.put(Authn.AuthResult.ACCOUNT_DISABLED, VdcBllMessages.USER_ACCOUNT_DISABLED);
