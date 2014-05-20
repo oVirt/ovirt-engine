@@ -84,23 +84,23 @@ public class VmsMonitoring {
     private final Map<Guid, VM> vmDict;
     private Map<Guid, VmInternalData> runningVms;
 
-    private final Map<Guid, VmDynamic> _vmDynamicToSave = new HashMap<>();
-    private final Map<Guid, VmStatistics> _vmStatisticsToSave = new HashMap<>();
-    private final Map<Guid, List<VmNetworkInterface>> _vmInterfaceStatisticsToSave = new HashMap<>();
-    private final Map<Guid, DiskImageDynamic> _vmDiskImageDynamicToSave = new HashMap<>();
+    private final Map<Guid, VmDynamic> vmDynamicToSave = new HashMap<>();
+    private final Map<Guid, VmStatistics> vmStatisticsToSave = new HashMap<>();
+    private final Map<Guid, List<VmNetworkInterface>> vmInterfaceStatisticsToSave = new HashMap<>();
+    private final Map<Guid, DiskImageDynamic> vmDiskImageDynamicToSave = new HashMap<>();
     private final Map<VmDeviceId, VmDevice> vmDeviceToSave = new HashMap<>();
-    private final Map<VM, VmDynamic> _vmsClientIpChanged = new HashMap<>();
+    private final Map<VM, VmDynamic> vmsClientIpChanged = new HashMap<>();
     private final Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics = new HashMap<>();
-    private final List<VmDynamic> _poweringUpVms = new ArrayList<>();
-    private final List<Guid> _vmsMovedToDown = new ArrayList<>();
-    private final List<Guid> _vmsToRemoveFromAsync = new ArrayList<>();
-    private final List<Guid> _succededToRunVms = new ArrayList<>();
+    private final List<VmDynamic> poweringUpVms = new ArrayList<>();
+    private final List<Guid> vmsMovedToDown = new ArrayList<>();
+    private final List<Guid> vmsToRemoveFromAsync = new ArrayList<>();
+    private final List<Guid> succededToRunVms = new ArrayList<>();
     private final List<VmDevice> newVmDevices = new ArrayList<>();
     private final List<VmDeviceId> removedDeviceIds = new ArrayList<>();
     private final List<LUNs> vmLunDisksToSave = new ArrayList<>();
-    private final List<Guid> _vmsToRerun = new ArrayList<>();
-    private final List<Guid> _autoVmsToRun = new ArrayList<>();
-    private final List<VmStatic> _externalVmsToAdd = new ArrayList<>();
+    private final List<Guid> vmsToRerun = new ArrayList<>();
+    private final List<Guid> autoVmsToRun = new ArrayList<>();
+    private final List<VmStatic> externalVmsToAdd = new ArrayList<>();
     private final Map<Guid, VmJob> vmJobsToUpdate = new HashMap<>();
     private final List<Guid> vmJobIdsToRemove = new ArrayList<>();
     private final List<Guid> existingVmJobIds = new ArrayList<>();
@@ -438,7 +438,7 @@ public class VmsMonitoring {
                 vmStatic.setMemSizeMb(parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
                 vmStatic.setSingleQxlPci(false);
 
-                _externalVmsToAdd.add(vmStatic);
+                externalVmsToAdd.add(vmStatic);
                 log.info("Importing VM '{}' as '{}', as it is running on the on Host, but does not exist in the engine.", vmNameOnHost, vmStatic.getName());
             }
         }
@@ -454,7 +454,7 @@ public class VmsMonitoring {
                 if (vmToUpdate != null) {
                     if (vmDict.containsKey(vmToUpdate.getId())
                             && !StringUtils.equals(runningVm.getClientIp(), vmToUpdate.getClientIp())) {
-                        _vmsClientIpChanged.put(vmToUpdate, runningVm);
+                        vmsClientIpChanged.put(vmToUpdate, runningVm);
                     }
                 }
                 if (vmToUpdate != null) {
@@ -462,7 +462,7 @@ public class VmsMonitoring {
 
                     if ((vmToUpdate.getStatus() != VMStatus.Up && vmToUpdate.getStatus() != VMStatus.PoweringUp && runningVm.getStatus() == VMStatus.Up)
                             || (vmToUpdate.getStatus() != VMStatus.PoweringUp && runningVm.getStatus() == VMStatus.PoweringUp)) {
-                        _poweringUpVms.add(runningVm);
+                        poweringUpVms.add(runningVm);
                     }
 
                     // Generate an event for those machines that transition from "PoweringDown" to
@@ -479,8 +479,8 @@ public class VmsMonitoring {
                         if (log.isDebugEnabled()) {
                             log.debug("removing VM '{}' from successful run VMs list", vmToUpdate.getId());
                         }
-                        if (!_succededToRunVms.contains(vmToUpdate.getId())) {
-                            _succededToRunVms.add(vmToUpdate.getId());
+                        if (!succededToRunVms.contains(vmToUpdate.getId())) {
+                            succededToRunVms.add(vmToUpdate.getId());
                         }
                     }
                     afterMigrationFrom(runningVm, vmToUpdate);
@@ -492,7 +492,7 @@ public class VmsMonitoring {
                     }
                     // check if vm is suspended and remove it from async list
                     else if (runningVm.getStatus() == VMStatus.Paused) {
-                        _vmsToRemoveFromAsync.add(vmToUpdate.getId());
+                        vmsToRemoveFromAsync.add(vmToUpdate.getId());
                         if (vmToUpdate.getStatus() != VMStatus.Paused) {
                             // check exit message to determine why the VM is paused
                             AuditLogType logType = vmPauseStatusToAuditLogType(runningVm.getPauseStatus());
@@ -528,7 +528,7 @@ public class VmsMonitoring {
 
                 VmDynamic vmDynamic = getDbFacade().getVmDynamicDao().get(runningVm.getId());
                 if (vmDynamic == null || vmDynamic.getStatus() != VMStatus.Unknown) {
-                    _vmDynamicToSave.remove(runningVm.getId());
+                    vmDynamicToSave.remove(runningVm.getId());
                 }
             }
         }
@@ -550,8 +550,8 @@ public class VmsMonitoring {
 
                 vmDict.put(vmToUpdate.argvalue.getId(), vmToUpdate.argvalue);
                 if (vmNewDynamicData.getStatus() == VMStatus.Up) {
-                    if (!_succededToRunVms.contains(vmToUpdate.argvalue.getId())) {
-                        _succededToRunVms.add(vmToUpdate.argvalue.getId());
+                    if (!succededToRunVms.contains(vmToUpdate.argvalue.getId())) {
+                        succededToRunVms.add(vmToUpdate.argvalue.getId());
                     }
                 }
             }
@@ -605,7 +605,7 @@ public class VmsMonitoring {
                     DiskImage diskImage = (DiskImage) disk;
                     Guid activeImageId = diskImage.getImageId();
                     imageDynamic.setId(activeImageId);
-                    _vmDiskImageDynamicToSave.put(activeImageId, imageDynamic);
+                    vmDiskImageDynamicToSave.put(activeImageId, imageDynamic);
                 }
             }
         }
@@ -697,8 +697,8 @@ public class VmsMonitoring {
                             && !dbHash.equals(vmDynamic.getHash())) {
                         vmsToUpdateFromVds.add(vmDynamic.getId().toString());
                         // update new hash value
-                        if (_vmDynamicToSave.containsKey(vm.getId())) {
-                            _vmDynamicToSave.get(vm.getId()).setHash(vmDynamic.getHash());
+                        if (vmDynamicToSave.containsKey(vm.getId())) {
+                            vmDynamicToSave.get(vm.getId()).setHash(vmDynamic.getHash());
                         } else {
                             addVmDynamicToList(vmDynamic);
                         }
@@ -731,8 +731,8 @@ public class VmsMonitoring {
                         vmGuestAgentNics.put(vmDynamic.getId(), vmGuestAgentInterfaces);
 
                         // update new hash value
-                        if (_vmDynamicToSave.containsKey(vm.getId())) {
-                            updateGuestAgentInterfacesChanges(_vmDynamicToSave.get(vm.getId()),
+                        if (vmDynamicToSave.containsKey(vm.getId())) {
+                            updateGuestAgentInterfacesChanges(vmDynamicToSave.get(vm.getId()),
                                     vmGuestAgentInterfaces,
                                     guestAgentNicHash);
                         } else {
@@ -828,11 +828,11 @@ public class VmsMonitoring {
     }
 
     void saveVmsToDb() {
-        getDbFacade().getVmDynamicDao().updateAllInBatch(_vmDynamicToSave.values());
-        getDbFacade().getVmStatisticsDao().updateAllInBatch(_vmStatisticsToSave.values());
+        getDbFacade().getVmDynamicDao().updateAllInBatch(vmDynamicToSave.values());
+        getDbFacade().getVmStatisticsDao().updateAllInBatch(vmStatisticsToSave.values());
 
         final List<VmNetworkStatistics> allVmInterfaceStatistics = new LinkedList<VmNetworkStatistics>();
-        for (List<VmNetworkInterface> list : _vmInterfaceStatisticsToSave.values()) {
+        for (List<VmNetworkInterface> list : vmInterfaceStatisticsToSave.values()) {
             for (VmNetworkInterface iface : list) {
                 allVmInterfaceStatistics.add(iface.getStatistics());
             }
@@ -840,9 +840,9 @@ public class VmsMonitoring {
 
         getDbFacade().getVmNetworkStatisticsDao().updateAllInBatch(allVmInterfaceStatistics);
 
-        getDbFacade().getDiskImageDynamicDao().updateAllInBatch(_vmDiskImageDynamicToSave.values());
+        getDbFacade().getDiskImageDynamicDao().updateAllInBatch(vmDiskImageDynamicToSave.values());
         getDbFacade().getLunDao().updateAllInBatch(vmLunDisksToSave);
-        getVdsEventListener().addExternallyManagedVms(_externalVmsToAdd);
+        getVdsEventListener().addExternallyManagedVms(externalVmsToAdd);
         saveVmDevicesToDb();
         saveVmJobsToDb();
         saveVmGuestAgentNetworkDevices();
@@ -855,37 +855,37 @@ public class VmsMonitoring {
         getVdsEventListener().destroyVms(vmsToDestroy);
 
         // rerun all vms from rerun list
-        for (Guid vm_guid : _vmsToRerun) {
+        for (Guid vm_guid : vmsToRerun) {
             log.error("Rerun VM '{}'. Called from VDS '{}'", vm_guid, vds.getName());
             ResourceManager.getInstance().RerunFailedCommand(vm_guid, vds.getId());
 
         }
 
-        for (Guid vm_guid : _succededToRunVms) {
+        for (Guid vm_guid : succededToRunVms) {
             vdsManager.succededToRunVm(vm_guid);
         }
 
-        getVdsEventListener().updateSlaPolicies(_succededToRunVms, vds.getId());
+        getVdsEventListener().updateSlaPolicies(succededToRunVms, vds.getId());
 
         // Refrain from auto-start HA VM during its re-run attempts.
-        _autoVmsToRun.removeAll(_vmsToRerun);
+        autoVmsToRun.removeAll(vmsToRerun);
         // run all vms that crushed that marked with auto startup
-        getVdsEventListener().runFailedAutoStartVMs(_autoVmsToRun);
+        getVdsEventListener().runFailedAutoStartVMs(autoVmsToRun);
 
         // process all vms that their ip changed.
-        for (Map.Entry<VM, VmDynamic> pair : _vmsClientIpChanged.entrySet()) {
+        for (Map.Entry<VM, VmDynamic> pair : vmsClientIpChanged.entrySet()) {
             getVdsEventListener().processOnClientIpChange(vds, pair.getValue().getId());
         }
 
         // process all vms that powering up.
-        for (VmDynamic runningVm : _poweringUpVms) {
+        for (VmDynamic runningVm : poweringUpVms) {
             getVdsEventListener().processOnVmPoweringUp(runningVm.getId());
         }
 
         // process all vms that went down
-        getVdsEventListener().processOnVmStop(_vmsMovedToDown);
+        getVdsEventListener().processOnVmStop(vmsMovedToDown);
 
-        for (Guid vm_guid : _vmsToRemoveFromAsync) {
+        for (Guid vm_guid : vmsToRemoveFromAsync) {
             ResourceManager.getInstance().RemoveAsyncRunningVm(vm_guid);
         }
     }
@@ -959,9 +959,9 @@ public class VmsMonitoring {
     }
 
     private void saveVmNumaNodeRuntimeData() {
-        if (!_vmStatisticsToSave.isEmpty()) {
+        if (!vmStatisticsToSave.isEmpty()) {
             final List<VmNumaNode> vmNumaNodesToUpdate = new ArrayList<>();
-            for(VmStatistics vmStats : _vmStatisticsToSave.values()) {
+            for(VmStatistics vmStats : vmStatisticsToSave.values()) {
                 vmNumaNodesToUpdate.addAll(vmStats.getvNumaNodeStatisticsList());
             }
             if (!vmNumaNodesToUpdate.isEmpty()) {
@@ -1046,9 +1046,9 @@ public class VmsMonitoring {
             if (cacheVm != null) {
                 if (ResourceManager.getInstance().IsVmInAsyncRunningList(vmDynamic.getId())) {
                     log.info("Running on vds during rerun failed vm: '{}'", vmDynamic.getRunOnVds());
-                    _vmsToRerun.add(vmDynamic.getId());
+                    vmsToRerun.add(vmDynamic.getId());
                 } else if (cacheVm.isAutoStartup()) {
-                    _autoVmsToRun.add(vmDynamic.getId());
+                    autoVmsToRun.add(vmDynamic.getId());
                 }
             }
             // if failed in destination right after migration
@@ -1087,7 +1087,7 @@ public class VmsMonitoring {
         if (vm.getStatus() != VMStatus.MigratingFrom) {
             // we must check that vm.getStatus() != VMStatus.Down because if it was set to down
             // the exit status and message were set, and we don't want to override them here.
-            // we will add it to _vmDynamicToSave though because it might been removed from it in #updateRepository
+            // we will add it to vmDynamicToSave though because it might been removed from it in #updateRepository
             if (vm.getStatus() != VMStatus.Suspended && vm.getStatus() != VMStatus.Down) {
                 ResourceManager.getInstance().InternalSetVmStatus(vm, VMStatus.Down, exitStatus, exitMessage, exitReason);
             }
@@ -1095,7 +1095,7 @@ public class VmsMonitoring {
             addVmStatisticsToList(vm.getStatisticsData());
             addVmInterfaceStatisticsToList(vm.getInterfaces());
             if (!ResourceManager.getInstance().IsVmInAsyncRunningList(vm.getId())) {
-                _vmsMovedToDown.add(vm.getId());
+                vmsMovedToDown.add(vm.getId());
             }
         }
     }
@@ -1377,9 +1377,9 @@ public class VmsMonitoring {
                     vmToRemove.getName(), vmToRemove.getId(), vds.getName());
 
             vmGuid = vmToRemove.getId();
-            if (!migrating && !_vmsToRerun.contains(vmGuid)
+            if (!migrating && !vmsToRerun.contains(vmGuid)
                     && ResourceManager.getInstance().IsVmInAsyncRunningList(vmGuid)) {
-                _vmsToRerun.add(vmGuid);
+                vmsToRerun.add(vmGuid);
                 log.info("add VM '{}' to rerun treatment", vmToRemove.getName());
             }
             // vm should be auto startup
@@ -1387,10 +1387,10 @@ public class VmsMonitoring {
             // not in reported from vdsm at all
             // or reported from vdsm with error code
             else if (vmToRemove.isAutoStartup()
-                    && !_autoVmsToRun.contains(vmGuid)
+                    && !autoVmsToRun.contains(vmGuid)
                     && (!runningVms.containsKey(vmGuid)
                         || runningVms.get(vmGuid).getVmDynamic().getExitStatus() != VmExitStatus.Normal)) {
-                _autoVmsToRun.add(vmGuid);
+                autoVmsToRun.add(vmGuid);
                 log.info("add VM '{}' to HA rerun treatment", vmToRemove.getName());
             }
         }
@@ -1456,7 +1456,7 @@ public class VmsMonitoring {
         // is not MigratingFrom, it means the migration failed
         if (oldVmStatus == VMStatus.MigratingFrom && currentVmStatus != VMStatus.MigratingFrom
                 && currentVmStatus.isRunning()) {
-            _vmsToRerun.add(runningVm.getId());
+            vmsToRerun.add(runningVm.getId());
             log.info("Adding VM '{}' to re-run list", runningVm.getId());
             vmToUpdate.setMigratingToVds(null);
             vmToUpdate.setMigrationProgressPercent(0);
@@ -1569,7 +1569,7 @@ public class VmsMonitoring {
      * @param vmDynamic
      */
     private void addVmDynamicToList(VmDynamic vmDynamic) {
-        _vmDynamicToSave.put(vmDynamic.getId(), vmDynamic);
+        vmDynamicToSave.put(vmDynamic.getId(), vmDynamic);
     }
 
     /**
@@ -1578,14 +1578,14 @@ public class VmsMonitoring {
      * @param vmStatistics
      */
     private void addVmStatisticsToList(VmStatistics vmStatistics) {
-        _vmStatisticsToSave.put(vmStatistics.getId(), vmStatistics);
+        vmStatisticsToSave.put(vmStatistics.getId(), vmStatistics);
     }
 
     private void addVmInterfaceStatisticsToList(List<VmNetworkInterface> list) {
         if (list.isEmpty()) {
             return;
         }
-        _vmInterfaceStatisticsToSave.put(list.get(0).getVmId(), list);
+        vmInterfaceStatisticsToSave.put(list.get(0).getVmId(), list);
     }
 
     /**
@@ -1632,7 +1632,7 @@ public class VmsMonitoring {
         return runningVms;
     }
     protected List<VmDynamic> getPoweringUpVms() {
-        return _poweringUpVms;
+        return poweringUpVms;
     }
 
     protected DbFacade getDbFacade() {
