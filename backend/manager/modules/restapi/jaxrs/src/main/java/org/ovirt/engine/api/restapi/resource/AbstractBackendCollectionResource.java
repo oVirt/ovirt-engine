@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -13,6 +14,7 @@ import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.BaseResource;
+import org.ovirt.engine.api.utils.ExpectationHelper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -28,7 +30,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public abstract class AbstractBackendCollectionResource<R extends BaseResource, Q /* extends IVdcQueryable */>
         extends AbstractBackendResource<R, Q> {
 
-    private static final String EXPECT_HEADER = "Expect";
     private static final String BLOCKING_EXPECTATION = "201-created";
     private static final String CREATION_STATUS_REL = "creation_status";
     public static final String FROM_CONSTRAINT_PARAMETER = "from";
@@ -136,12 +137,8 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     }
 
     protected boolean expectBlocking() {
-        boolean expectBlocking = false;
-        List<String> expect = httpHeaders.getRequestHeader(EXPECT_HEADER);
-        if (expect != null && expect.size() > 0) {
-            expectBlocking = expect.get(0).equalsIgnoreCase(BLOCKING_EXPECTATION);
-        }
-        return expectBlocking;
+        Set<String> expectations = ExpectationHelper.getExpectations(httpHeaders);
+        return expectations.contains(BLOCKING_EXPECTATION);
     }
 
     protected void handleAsynchrony(VdcReturnValueBase result, R model) {

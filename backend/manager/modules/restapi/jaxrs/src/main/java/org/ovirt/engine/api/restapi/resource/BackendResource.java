@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.core.Response;
@@ -20,6 +21,7 @@ import org.ovirt.engine.api.restapi.resource.exception.UrlParamException;
 import org.ovirt.engine.api.restapi.resource.validation.Validator;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
+import org.ovirt.engine.api.utils.ExpectationHelper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -46,7 +48,6 @@ public class BackendResource extends BaseBackendResource {
     private static final String ASYNC_CONSTRAINT = "async";
     public static final String FORCE_CONSTRAINT = "force";
     protected static final String MAX = "max";
-    private static final String EXPECT_HEADER = "Expect";
     private static final String NON_BLOCKING_EXPECTATION = "202-accepted";
     protected static final Log LOG = LogFactory.getLog(BackendResource.class);
     public static final String POPULATE = "All-Content";
@@ -226,12 +227,8 @@ public class BackendResource extends BaseBackendResource {
     }
 
     protected boolean expectNonBlocking() {
-        boolean expectNonBlocking = false;
-        List<String> expect = httpHeaders.getRequestHeader(EXPECT_HEADER);
-        if (expect != null && expect.size() > 0) {
-            expectNonBlocking = expect.get(0).equalsIgnoreCase(NON_BLOCKING_EXPECTATION);
-        }
-        return expectNonBlocking;
+        Set<String> expectations = ExpectationHelper.getExpectations(httpHeaders);
+        return expectations.contains(NON_BLOCKING_EXPECTATION);
     }
     protected Response performNonBlockingAction(VdcActionType task, VdcActionParametersBase params, Action action) {
         try {
