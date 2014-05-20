@@ -12,11 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.config.ConfigCommon;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
+import org.ovirt.engine.core.utils.servlet.UnsupportedLocaleHelper;
 
 /**
  * This Servlet serves the welcome page to allow users to select either web admin or user portal.
@@ -78,7 +80,9 @@ public class WelcomeServlet extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
         ServletException {
-        request.setAttribute(LOCALE_KEYS, LocaleFilter.getLocaleKeys());
+        request.setAttribute(LOCALE_KEYS, UnsupportedLocaleHelper.getDisplayedLocales(LocaleFilter.getLocaleKeys(),
+                UnsupportedLocaleHelper.getLocalesKeys(ConfigValues.UnsupportedLocalesFilterOverrides),
+                        UnsupportedLocaleHelper.getLocalesKeys(ConfigValues.UnsupportedLocalesFilter)));
         String oVirtVersion = backend.runPublicQuery(VdcQueryType.GetConfigurationValue,
                 new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion,
                         ConfigCommon.defaultConfigurationVersion)).getReturnValue();
@@ -91,4 +95,5 @@ public class WelcomeServlet extends HttpServlet {
             dispatcher.include(request, response);
         }
     }
+
 }

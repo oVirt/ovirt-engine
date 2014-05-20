@@ -65,6 +65,7 @@
     <engine.port.http>8080</engine.port.http>
     <!-- GWT CSS obfuscation style. production should be 'obf', use 'pretty' in development for easier css debugging -->
     <gwt.cssResourceStyle>obf</gwt.cssResourceStyle>
+    <allLocaleFile>backend/manager/modules/utils/src/main/resources/languages.properties</allLocaleFile>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -206,7 +207,7 @@
     <profile>
       <id>all-langs</id>
       <properties>
-        <gwt.locale>en_US,es_ES,fr_FR,ja_JP,pt_BR,zh_CN,de_DE,ko_KR</gwt.locale>
+        <gwt.locale>${gwt.availableLocales}</gwt.locale>
       </properties>
     </profile>
     <profile>
