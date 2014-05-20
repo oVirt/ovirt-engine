@@ -85,7 +85,7 @@ public class VdsManager {
     private boolean initialized;
     private IVdsServer vdsProxy;
     private boolean mBeforeFirstRefresh = true;
-    private VdsUpdateRunTimeInfo vdsUpdater;
+    private HostMonitoring hostMonitoring;
 
     private VdsManager(VDS vds) {
         log.info("Entered VdsManager constructor");
@@ -197,8 +197,8 @@ public class VdsManager {
                         }
                         if (isMonitoringNeeded()) {
                             setStartTime();
-                            vdsUpdater = new VdsUpdateRunTimeInfo(VdsManager.this, vds, monitoringStrategy);
-                            vdsUpdater.refresh();
+                            hostMonitoring = new HostMonitoring(VdsManager.this, vds, monitoringStrategy);
+                            hostMonitoring.refresh();
                             mUnrespondedAttempts.set(0);
                             sshSoftFencingExecuted.set(false);
                             setLastUpdate();
@@ -218,8 +218,8 @@ public class VdsManager {
                         logFailureMessage(ex);
                     }
                     try {
-                        if (vdsUpdater != null) {
-                            vdsUpdater.afterRefreshTreatment();
+                        if (hostMonitoring != null) {
+                            hostMonitoring.afterRefreshTreatment();
 
                             // Get vds data for updating domains list, ignoring vds which is down, since it's not
                             // connected
@@ -232,7 +232,7 @@ public class VdsManager {
                         }
 
                         vds = null;
-                        vdsUpdater = null;
+                        hostMonitoring = null;
                     } catch (IRSErrorException ex) {
                         logAfterRefreshFailureMessage(ex);
                         if (log.isDebugEnabled()) {

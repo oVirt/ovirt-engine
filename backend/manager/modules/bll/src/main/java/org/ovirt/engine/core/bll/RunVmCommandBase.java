@@ -328,7 +328,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      * throttle bulk run of VMs by waiting for the update of run-time to kick in and fire <br>
      * the DecreasePendingVms event.
      * @see VdsEventListener
-     * @See VdsUpdateRunTimeInfo
+     * @See HostMonitoring
      */
     @Override
     public void delay(Guid vdsId) {

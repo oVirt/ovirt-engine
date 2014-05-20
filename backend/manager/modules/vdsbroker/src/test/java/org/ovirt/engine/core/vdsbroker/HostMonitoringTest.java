@@ -55,7 +55,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 
 @RunWith(MockitoJUnitRunner.class)
-public class VdsUpdateRunTimeInfoTest {
+public class HostMonitoringTest {
 
     private static final Guid VM_1 = Guid.createGuidFromString("7eeabc50-325f-49bb-acb6-15e786599423");
     private static final Version vdsCompVersion = Version.v3_4;
@@ -84,7 +84,7 @@ public class VdsUpdateRunTimeInfoTest {
     HashMap[] vmInfo;
     List<VmDynamic> poweringUpVms;
 
-    VdsUpdateRunTimeInfo updater;
+    HostMonitoring updater;
 
     @Mock
     VdsGroupDAO groupDAO;
@@ -125,7 +125,7 @@ public class VdsUpdateRunTimeInfoTest {
         initConditions();
         when(vdsManager.getRefreshStatistics()).thenReturn(false);
         updater = Mockito.spy(
-                    new VdsUpdateRunTimeInfo(vdsManager, vds, mock(MonitoringStrategy.class)) {
+                    new HostMonitoring(vdsManager, vds, mock(MonitoringStrategy.class)) {
 
             @Override
             public DbFacade getDbFacade() {
@@ -258,16 +258,16 @@ public class VdsUpdateRunTimeInfoTest {
     public void isNewWatchdogEvent() {
         VmDynamic dynamic = new VmDynamic();
         VM vm = new VM();
-        assertFalse(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
+        assertFalse(HostMonitoring.isNewWatchdogEvent(dynamic, vm));
         dynamic.setLastWatchdogEvent(1L);
-        assertTrue(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
+        assertTrue(HostMonitoring.isNewWatchdogEvent(dynamic, vm));
         vm.setLastWatchdogEvent(1L);
         dynamic.setLastWatchdogEvent(1L);
-        assertFalse(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
+        assertFalse(HostMonitoring.isNewWatchdogEvent(dynamic, vm));
         dynamic.setLastWatchdogEvent(2L);
-        assertTrue(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
+        assertTrue(HostMonitoring.isNewWatchdogEvent(dynamic, vm));
         dynamic.setLastWatchdogEvent(null);
-        assertFalse(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
+        assertFalse(HostMonitoring.isNewWatchdogEvent(dynamic, vm));
     }
 
     /**

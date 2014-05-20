@@ -94,7 +94,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings({ "synthetic-access", "unchecked", "rawtypes" })
-public class VdsUpdateRunTimeInfo {
+public class HostMonitoring {
     private Map<Guid, VmInternalData> _runningVms;
     private final Map<Guid, VmDynamic> _vmDynamicToSave = new HashMap<>();
     private final Map<Guid, VmStatistics> _vmStatisticsToSave = new HashMap<>();
@@ -133,7 +133,7 @@ public class VdsUpdateRunTimeInfo {
     /** Pairs of VM and the ID of the VDS it should be destroyed from */
     private final List<Pair<VM, Guid>> vmsToDestroy = new LinkedList<>();
 
-    private static final Logger log = LoggerFactory.getLogger(VdsUpdateRunTimeInfo.class);
+    private static final Logger log = LoggerFactory.getLogger(HostMonitoring.class);
 
     private static final int TO_MEGA_BYTES = 1024;
     private static final String HOSTED_ENGINE_VM_NAME = "HostedEngine";
@@ -152,7 +152,7 @@ public class VdsUpdateRunTimeInfo {
         UNCHANGEABLE_FIELDS_BY_VDSM = Collections.unmodifiableList(tmpList);
     }
 
-    public VdsUpdateRunTimeInfo(VdsManager vdsManager, VDS vds, MonitoringStrategy monitoringStrategy) {
+    public HostMonitoring(VdsManager vdsManager, VDS vds, MonitoringStrategy monitoringStrategy) {
         _vdsManager = vdsManager;
         _vds = vds;
         _firstStatus = _vds.getStatus();
