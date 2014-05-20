@@ -1502,7 +1502,12 @@ public class ClusterModel extends EntityModel<VDSGroup>
                         !versions.contains(selectedVersion) ||
                         selectedVersion.compareTo(selectedDataCenter.getcompatibility_version()) > 0)
                 {
-                    clusterModel.getVersion().setSelectedItem(selectedDataCenter.getcompatibility_version());
+                    if(ApplicationModeHelper.getUiMode().equals(ApplicationMode.GlusterOnly)){
+                        clusterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(versions));
+                    }
+                    else {
+                        clusterModel.getVersion().setSelectedItem(selectedDataCenter.getcompatibility_version());
+                    }
                 }
                 else if (clusterModel.getIsEdit()) {
                     clusterModel.getVersion().setSelectedItem(Linq.firstOrDefault(versions,
