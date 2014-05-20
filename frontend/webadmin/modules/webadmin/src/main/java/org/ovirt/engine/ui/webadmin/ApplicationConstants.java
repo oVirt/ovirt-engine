@@ -3649,4 +3649,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Disk Snapshots")
     String snapshotsLabel();
+
+    @DefaultStringValue("Attached by label")
+    String attachedByLabel();
 }

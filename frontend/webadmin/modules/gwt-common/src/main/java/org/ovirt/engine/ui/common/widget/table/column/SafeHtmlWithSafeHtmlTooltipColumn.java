@@ -46,9 +46,9 @@ public abstract class SafeHtmlWithSafeHtmlTooltipColumn<T> extends Column<T, Saf
 
 
     @Override
-    public abstract SafeHtml getValue(T networkView);
+    public abstract SafeHtml getValue(T object);
 
-    public abstract SafeHtml getTooltip(T networkView);
+    public abstract SafeHtml getTooltip(T object);
 
     @Override
     public void onBrowserEvent(Context context, final Element elem, T object, NativeEvent event) {
@@ -63,8 +63,8 @@ public abstract class SafeHtmlWithSafeHtmlTooltipColumn<T> extends Column<T, Saf
             };
 
             SafeHtml tooltipHtml= getTooltip(object);
-            if(!"".equals(tooltipHtml.asString())){ //$NON-NLS-1$
-                tooltip.setHTML(getTooltip(object));
+            if(tooltipHtml != null && !"".equals(tooltipHtml.asString())){ //$NON-NLS-1$
+                tooltip.setHTML(tooltipHtml);
                 tooltipPanel.showRelativeTo(widget);
             }
         }

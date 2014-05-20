@@ -23,12 +23,15 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 @SuppressWarnings("unused")
 public class NetworkHostListModel extends SearchableListModel
 {
     private UICommand setupNetworksCommand;
     private NetworkHostFilter viewFilterType;
+
+    private Collection<VdsNetworkInterface> attachedByLabelInterfaces;
 
     public NetworkHostListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
@@ -65,21 +68,19 @@ public class NetworkHostListModel extends SearchableListModel
         asyncQuery.setModel(getViewFilterType());
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
+            public void onSuccess(final Object model, Object ReturnValue) {
                 if (model.equals(getViewFilterType())) {
-                    Iterable returnList = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                    List<PairQueryable<VdsNetworkInterface, VDS>> items =
-                            new ArrayList<PairQueryable<VdsNetworkInterface, VDS>>();
-                    for (Object obj : returnList) {
-                        if (obj instanceof VDS) {
+                    final Iterable returnList = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                    if (NetworkHostFilter.unattached.equals(getViewFilterType())) {
+                        final List<PairQueryable<VdsNetworkInterface, VDS>> items =
+                                new ArrayList<PairQueryable<VdsNetworkInterface, VDS>>();
+                        for (Object obj : returnList) {
                             items.add(new PairQueryable<VdsNetworkInterface, VDS>(null, (VDS) obj));
-                        } else {
-                            items.add((PairQueryable<VdsNetworkInterface, VDS>) obj);
                         }
+                        setItems(items);
+                    } else if (NetworkHostFilter.attached.equals(getViewFilterType())) {
+                        initAttachedInterfaces((List<PairQueryable<VdsNetworkInterface, VDS>>) returnList);
                     }
-
-                    NetworkHostListModel.this.setItems(items);
                 }
             }
         };
@@ -94,6 +95,38 @@ public class NetworkHostListModel extends SearchableListModel
         }
 
         setIsQueryFirstTime(false);
+    }
+
+    private void initAttachedInterfaces(final List<PairQueryable<VdsNetworkInterface, VDS>> items) {
+        if (StringUtils.isEmpty(getEntity().getLabel()) || items.isEmpty()) {
+            setItems(items);
+            return;
+        }
+
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.setModel(getViewFilterType());
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValueObj) {
+                if (!model.equals(getViewFilterType())) {
+                    return;
+                }
+
+                attachedByLabelInterfaces =
+                        (Collection<VdsNetworkInterface>) ((VdcQueryReturnValue) returnValueObj).getReturnValue();
+                setItems(items);
+            }
+        };
+
+        IdQueryParameters params = new IdQueryParameters(getEntity().getId());
+        params.setRefresh(false);
+        Frontend.getInstance().runQuery(VdcQueryType.GetInterfacesByLabelForNetwork,
+                params,
+                asyncQuery);
+    }
+
+    public Boolean isInterfaceAttachedByLabel(VdsNetworkInterface iface) {
+        return attachedByLabelInterfaces != null && attachedByLabelInterfaces.contains(iface);
     }
 
     @Override
@@ -202,4 +235,5 @@ public class NetworkHostListModel extends SearchableListModel
     protected String getListName() {
         return "NetworkHostListModel"; //$NON-NLS-1$
     }
+
 }

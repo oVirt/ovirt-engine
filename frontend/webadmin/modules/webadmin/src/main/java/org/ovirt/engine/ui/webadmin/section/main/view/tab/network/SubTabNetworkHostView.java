@@ -11,12 +11,14 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.ViewRadioGroup;
 import org.ovirt.engine.ui.common.widget.table.column.RxTxRateColumn;
+import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlWithSafeHtmlTooltipColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostFilter;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
@@ -28,6 +30,9 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminImageResourceCol
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.RadioButton;
 
 public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel>
@@ -37,14 +42,21 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     private final ApplicationConstants constants;
     private final ApplicationTemplates templates;
 
+    private final SafeHtml labelImage;
+
     @Inject
-    public SubTabNetworkHostView(SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> modelProvider, ApplicationConstants constants, ApplicationTemplates templates) {
+    public SubTabNetworkHostView(SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> modelProvider,
+            ApplicationConstants constants,
+            ApplicationTemplates templates,
+            ApplicationResources resources) {
         super(modelProvider);
         this.constants = constants;
         this.templates = templates;
         viewRadioGroup = new ViewRadioGroup<NetworkHostFilter>(Arrays.asList(NetworkHostFilter.values()));
         viewRadioGroup.setSelectedValue(NetworkHostFilter.attached);
         viewRadioGroup.addStyleName("stnhv_radioGroup_pfly_fix"); //$NON-NLS-1$
+        labelImage =
+                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.tagImage()).getHTML());
         initTable();
         initWidget(getTable());
     }
@@ -97,16 +109,27 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         }
     };
 
+    private final SafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VdsNetworkInterface, VDS>> nicColumn =
+            new SafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+                @Override
+                public SafeHtml getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
+                    if (object.getFirst() != null) {
+                        VdsNetworkInterface nic = object.getFirst();
+                        return getDetailModel().isInterfaceAttachedByLabel(nic) ? templates.textImageLabels(nic.getName(),
+                                labelImage)
+                                : SafeHtmlUtils.fromTrustedString(nic.getName());
+                    }
+                    return null;
+                }
 
-    private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> nicColumn = new TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
-        @Override
-        public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
-            if (object.getFirst() != null){
-                return object.getFirst().getName();
-            }
-            return null;
-        }
-    };
+                @Override
+                public SafeHtml getTooltip(PairQueryable<VdsNetworkInterface, VDS> object) {
+                    return object.getFirst() != null
+                            && getDetailModel().isInterfaceAttachedByLabel(object.getFirst()) ? SafeHtmlUtils.fromTrustedString(getDetailModel().getEntity()
+                            .getLabel())
+                            : null;
+                }
+            };
 
     private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> speedColumn =
             new TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
