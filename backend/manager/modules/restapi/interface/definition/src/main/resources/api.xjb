@@ -27,6 +27,14 @@
       xmlType="xs:unsignedShort"
       parseMethod="org.ovirt.engine.api.utils.IntegerParser.parseUnsignedShort"
       />
+
+    <!-- Replace the default JAXB boolean parser with one that only accepts
+         the values "true" and "false": -->
+    <jaxb:javaType
+      name="boolean"
+      xmlType="xs:boolean"
+      parseMethod="org.ovirt.engine.api.utils.BooleanParser.parseBoolean"
+      />
   </jaxb:globalBindings>
 
 </jaxb:bindings>
