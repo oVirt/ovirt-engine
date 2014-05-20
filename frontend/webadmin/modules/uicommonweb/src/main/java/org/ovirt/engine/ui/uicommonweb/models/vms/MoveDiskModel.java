@@ -12,14 +12,20 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class MoveDiskModel extends MoveOrCopyDiskModel
@@ -61,6 +67,54 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
                 moveDiskModel.onInitStorageDomains(storageDomains);
             }
         }), ((DiskImage) disk).getStoragePoolId());
+    }
+
+    @Override
+    protected void postInitStorageDomains() {
+        super.postInitStorageDomains();
+
+        // Add warning for raw/thin disks that reside on a file domain
+        // and selected to be cold moved to a block domain (as it will cause
+        // the disks to become preallocated, and it may consume considerably
+        // more space on the target domain).
+        final List<String> problematicDisks = new ArrayList<String>();
+        for (final DiskModel diskModel : getDisks()) {
+            if (diskModel.isPluggedToRunningVm()) {
+                continue;
+            }
+
+            ListModel<StorageDomain> sourceStorageDomains = diskModel.getSourceStorageDomain();
+            if (sourceStorageDomains.getItems().iterator().hasNext() &&
+                    !sourceStorageDomains.getItems().iterator().next().getStorageType().isFileDomain()) {
+                continue;
+            }
+
+            DiskImage diskImage = (DiskImage) diskModel.getDisk();
+            if (diskImage.getVolumeType() != VolumeType.Sparse || diskImage.getVolumeFormat() != VolumeFormat.RAW) {
+                continue;
+            }
+
+            diskModel.getStorageDomain().getSelectedItemChangedEvent().addListener(new IEventListener() {
+                @Override
+                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    StorageDomain storageDomain = (StorageDomain) ((ListModel) sender).getSelectedItem();
+                    if (storageDomain.getStorageType().isBlockDomain()) {
+                        problematicDisks.add(diskModel.getDisk().getDiskAlias());
+                    }
+                    else {
+                        problematicDisks.remove(diskModel.getDisk().getDiskAlias());
+                    }
+
+                    if (!problematicDisks.isEmpty()) {
+                        getDynamicWarning().setEntity(messages.moveDisksPreallocatedWarning(
+                                StringHelper.join(", ", problematicDisks.toArray()))); //$NON-NLS-1$
+                        getDynamicWarning().setIsAvailable(true);
+                    } else {
+                        getDynamicWarning().setIsAvailable(false);
+                    }
+                }
+            });
+        }
     }
 
     @Override
