@@ -38,21 +38,26 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
             getReturnValue().setSucceeded(false);
             return;
         }
-
-        VdsValidator validator = new VdsValidator(getVds());
-        if (validator.shouldVdsBeFenced()) {
-            boolean result = executeSshSoftFencingCommand(getVds().getVdsGroupCompatibilityVersion().toString());
-            if (result) {
-                // SSH Soft Fencing executed without errors, tell VdsManager about it
-                ResourceManager.getInstance().GetVdsManager(getVds().getId()).finishSshSoftFencingExecution(getVds());
-            }
-            getReturnValue().setSucceeded(result);
-        } else {
-            setCommandShouldBeLogged(false);
-            log.infoFormat("SSH Soft Fencing will not be executed on host {0}({1}) since it's status is ok.",
-                    getVdsName(),
-                    getVdsId());
+        if (isPmReportsStatusDown()) {
+            // do not try to soft-fence if Host is reported as Down via PM
             getReturnValue().setSucceeded(false);
+        }
+        else {
+            VdsValidator validator = new VdsValidator(getVds());
+            if (validator.shouldVdsBeFenced()) {
+                boolean result = executeSshSoftFencingCommand(getVds().getVdsGroupCompatibilityVersion().toString());
+                if (result) {
+                    // SSH Soft Fencing executed without errors, tell VdsManager about it
+                    ResourceManager.getInstance().GetVdsManager(getVds().getId()).finishSshSoftFencingExecution(getVds());
+                }
+                getReturnValue().setSucceeded(result);
+            } else {
+                setCommandShouldBeLogged(false);
+                log.infoFormat("SSH Soft Fencing will not be executed on host {0}({1}) since it's status is ok.",
+                        getVdsName(),
+                        getVdsId());
+                getReturnValue().setSucceeded(false);
+            }
         }
     }
 

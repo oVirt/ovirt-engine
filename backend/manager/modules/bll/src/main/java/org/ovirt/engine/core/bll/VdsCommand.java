@@ -8,6 +8,9 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
+import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -300,5 +303,53 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         public VDSStatus getStatus() {
             return status;
         }
+    }
+
+    /**
+     * Checks if Host status is Down via its PM card (if defined)
+     * @param vds
+     *              The host to check
+     * @return
+     *              boolean
+     */
+    protected boolean isPmReportsStatusDown() {
+        boolean result = false;
+        VDS vds = getVds();
+        VDSReturnValue returnValue=null;
+        // Check first if Host has configured PM
+        if (vds != null && vds.getpm_enabled()) {
+            FenceExecutor executor = new FenceExecutor(vds, FenceActionType.Status);
+            if (executor.findProxyHost()) {
+                // try to get status via Primary card
+                returnValue = executor.fence(FenceAgentOrder.Primary);
+                if (returnValue.getSucceeded()) {
+                    result = isHostStatusOff(returnValue);
+                }
+                // try to get status via Secondary card (if configured)
+                if (!result && !StringUtils.isEmpty(vds.getPmSecondaryIp())) {
+                    returnValue = executor.fence(FenceAgentOrder.Secondary);
+                    if (returnValue.getSucceeded()) {
+                        result = isHostStatusOff(returnValue);
+                    }
+                }
+            }
+        }
+        if (result) {
+            Backend.getInstance()
+                    .getResourceManager()
+                    .RunVdsCommand(VDSCommandType.SetVdsStatus,
+                            new SetVdsStatusVDSCommandParameters(getVds().getId(), VDSStatus.Down));
+        }
+        return result;
+    }
+
+    private static boolean isHostStatusOff(VDSReturnValue returnValue) {
+        String OFF = "off";
+        boolean result = false;
+        if (returnValue != null && returnValue.getReturnValue() != null) {
+            FenceStatusReturnValue value = (FenceStatusReturnValue) returnValue.getReturnValue();
+            result = value.getStatus().equalsIgnoreCase(OFF);
+        }
+        return result;
     }
 }

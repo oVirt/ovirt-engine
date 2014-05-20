@@ -68,12 +68,18 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
      */
     @Override
     protected void executeCommand() {
-        VdcReturnValueBase returnValueBase;
+        VdcReturnValueBase returnValueBase = new VdcReturnValueBase();
         final Guid vdsId = getVdsId();
         final String sessionId = getParameters().getSessionId();
 
-        // execute StopVds action
-        returnValueBase = executeVdsFenceAction(vdsId, sessionId, FenceActionType.Stop, VdcActionType.StopVds);
+        // do not try to stop Host if Host is reported as Down via PM
+        if (isPmReportsStatusDown()) {
+            returnValueBase.setSucceeded(true);
+        }
+        else {
+            // execute StopVds action
+            returnValueBase = executeVdsFenceAction(vdsId, sessionId, FenceActionType.Stop, VdcActionType.StopVds);
+        }
         if (returnValueBase.getSucceeded()) {
             executeFenceVdsManuallyAction(vdsId, sessionId);
 
