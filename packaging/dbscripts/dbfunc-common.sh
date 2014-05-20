@@ -47,6 +47,19 @@ dbfunc_common_schema_drop() {
 	dbfunc_psql_die --command="${statement}" > /dev/null
 }
 
+dbfunc_common_restore_permissions() {
+	local permissions="$1"
+	echo "Applying custom users permissions on database objects..."
+	if ! local output=$(dbfunc_psql_allow_errors --command="${permissions}" 2>&1); then
+		echo "While running:"
+		echo "${permissions}"
+		echo "Output was:"
+		echo "${output}"
+		local fatal=$(echo "${output}" | grep -v 'ERROR: *relation [^ ]* does not exist')
+		[ -n "${fatal}" ] && die "Errors while restoring custom permissions: ${fatal}"
+	fi
+}
+
 dbfunc_common_schema_apply() {
 	# check database connection
 	dbfunc_psql_die --command="select 1;" > /dev/null
@@ -69,8 +82,7 @@ dbfunc_common_schema_apply() {
 
 	_dbfunc_common_schema_upgrade
 
-	echo "Applying custom users permissions on database objects..."
-	dbfunc_psql_die --command="${permissions}"
+	dbfunc_common_restore_permissions "${permissions}"
 }
 
 dbfunc_common_schema_refresh() {
@@ -82,8 +94,7 @@ dbfunc_common_schema_refresh() {
 	_dbfunc_common_schema_refresh_drop
 	_dbfunc_common_schema_refresh_create
 
-	echo "Applying custom users permissions on database objects..."
-	dbfunc_psql_die --command="${permissions}"
+	dbfunc_common_restore_permissions "${permissions}"
 }
 
 # gets the configuration value of the given option name and version.

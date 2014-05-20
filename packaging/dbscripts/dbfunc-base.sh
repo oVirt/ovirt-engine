@@ -31,7 +31,6 @@ dbfunc_psql_raw() {
 	LC_ALL="C" "${PSQL}" \
 		-w \
 		--pset=tuples_only=on \
-		--set ON_ERROR_STOP=1 \
 		${DBFUNC_LOGFILE:+--log-file="${DBFUNC_LOGFILE}"} \
 		--host="${DBFUNC_DB_HOST}" \
 		--port="${DBFUNC_DB_PORT}" \
@@ -42,12 +41,19 @@ dbfunc_psql_raw() {
 
 dbfunc_psql() {
 	dbfunc_psql_raw \
+		--set ON_ERROR_STOP=1 \
 		${DBFUNC_VERBOSE:+--echo-all} \
 		"$@"
 }
 
 dbfunc_psql_die() {
 	dbfunc_psql "$@" || die "Cannot execute sql command: $*"
+}
+
+dbfunc_psql_allow_errors() {
+	dbfunc_psql_raw \
+		${DBFUNC_VERBOSE:+--echo-all} \
+		"$@"
 }
 
 dbfunc_psql_statement_parsable() {
