@@ -25,4 +25,9 @@ public class EntityModelTextAreaLabel<T> extends ValueBoxBase<T> implements Edit
         getElement().getStyle().setBorderWidth(0, Unit.PX);
     }
 
+    public void addContentWidgetStyleName(String style) {
+        if (style != null) {
+            getElement().getElementsByTagName("textarea").getItem(0).addClassName(style); //$NON-NLS-1$
+        }
+    }
 }

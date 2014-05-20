@@ -2,23 +2,39 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage">
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage">
 
-	<ui:style>
+    <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.DisksAllocationPopupView.WidgetStyle">
 		.messagePanel {
 			color: #CD2127;
             position: absolute;
             bottom: 0;
-            height: 50px;
+            height: 60px;
+            width: 100%;
             overflow: auto;
 		}
+
+        .dynamicWarningTextArea {
+            color: #CD2127;
+            width: 480px !important;
+            height: 50px;
+            resize: none;
+        }
 	</ui:style>
 	
-	<d:SimpleDialogPanel width="540px" height="400px">
+	<d:SimpleDialogPanel width="540px" height="410px">
 		<d:content>
 			<g:FlowPanel>
 				<w:DisksAllocationView ui:field="disksAllocationView" listHeight="230px" listWidth="525px" showSource="true" />
-                <g:FlowPanel ui:field="messagePanel" visible="false" addStyleNames="{style.messagePanel}" />
+                <g:FlowPanel addStyleNames="{style.messagePanel}" >
+                    <g:FlowPanel ui:field="messagePanel" visible="false" />
+                    <g:HorizontalPanel ui:field="warningPanel" visible="false">
+                        <g:Image resource='{resources.logWarningImage}' />
+                        <ge:StringEntityModelTextAreaLabelEditor ui:field="dynamicWarningLabel" />
+                    </g:HorizontalPanel>
+                </g:FlowPanel>
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

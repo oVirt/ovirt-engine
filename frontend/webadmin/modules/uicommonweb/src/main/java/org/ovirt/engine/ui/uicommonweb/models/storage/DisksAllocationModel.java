@@ -133,6 +133,9 @@ public class DisksAllocationModel extends EntityModel
     public DisksAllocationModel()
     {
         setImageToDestinationDomainMap(new HashMap<Guid, DiskImage>());
+
+        setDynamicWarning(new EntityModel<String>());
+        getDynamicWarning().setIsAvailable(false);
     }
 
     private void updateQuota(Guid storageDomainId, final ListModel isItem) {
@@ -307,6 +310,18 @@ public class DisksAllocationModel extends EntityModel
 
     public void setWarningAvailable(boolean isWarningAvailable) {
         this.isWarningAvailable = isWarningAvailable;
+    }
+
+    private EntityModel<String> dynamicWarning;
+
+    public EntityModel<String> getDynamicWarning()
+    {
+        return dynamicWarning;
+    }
+
+    public void setDynamicWarning(EntityModel<String> value)
+    {
+        dynamicWarning = value;
     }
 
 }
