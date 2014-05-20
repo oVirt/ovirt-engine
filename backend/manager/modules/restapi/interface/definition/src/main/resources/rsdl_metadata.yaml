@@ -1273,7 +1273,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /datacenters/{datacenter:id}/networks/{network:id}/labels/|rel=add
+- name: /datacenters/{datacenter:id}/networks/{network:id}/labels|rel=add
   description: add a new label to the network
   request:
     body:
@@ -2846,7 +2846,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /hosts/{host:id}/nics/{nic:id}/labels/|rel=add
+- name: /hosts/{host:id}/nics/{nic:id}/labels|rel=add
   description: add a new label to the interface
   request:
     body:
@@ -3148,7 +3148,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /networks/{network:id}/labels/|rel=add
+- name: /networks/{network:id}/labels|rel=add
   description: add a new label to the network
   request:
     body:
