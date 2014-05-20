@@ -118,6 +118,7 @@ public class HostMonitoring {
             }
             beforeFirstRefreshTreatment(isVdsUpOrGoingToMaintenance);
             vmsMonitoring.refreshVmStats();
+            updateVirtualMemAndCpu();
         } catch (VDSRecoveringException e) {
             // if PreparingForMaintenance and vds is in install failed keep to
             // move vds to maintenance
@@ -741,6 +742,17 @@ public class HostMonitoring {
             } else {
                 vdsMaintenanceTimeoutOccurred = vdsManager.isTimeToRetryMaintenance();
             }
+        }
+    }
+
+    private void updateVirtualMemAndCpu() {
+        if (vmsMonitoring.getMemCommited() != vds.getMemCommited()) {
+            vds.setMemCommited(vmsMonitoring.getMemCommited());
+            saveVdsDynamic = true;
+        }
+        if (vmsMonitoring.getVmsCoresCount() != vds.getVmsCoresCount()) {
+            vds.setVmsCoresCount(vmsMonitoring.getVmsCoresCount());
+            saveVdsDynamic = true;
         }
     }
 

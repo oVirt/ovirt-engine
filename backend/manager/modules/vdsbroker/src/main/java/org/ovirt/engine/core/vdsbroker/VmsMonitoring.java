@@ -84,6 +84,8 @@ public class VmsMonitoring {
     private final Map<Guid, VM> vmDict;
     private Map<Guid, VmInternalData> runningVms;
 
+    private int memCommited;
+    private int vmsCoresCount;
     private final Map<Guid, VmDynamic> vmDynamicToSave = new HashMap<>();
     private final Map<Guid, VmStatistics> vmStatisticsToSave = new HashMap<>();
     private final Map<Guid, List<VmNetworkInterface>> vmInterfaceStatisticsToSave = new HashMap<>();
@@ -215,8 +217,9 @@ public class VmsMonitoring {
     }
 
     private void refreshCommitedMemory() {
-        Integer memCommited = vds.getGuestOverhead();
-        int vmsCoresCount = 0;
+        memCommited = vds.getGuestOverhead();
+        vmsCoresCount = 0;
+
         for (VmInternalData runningVm : runningVms.values()) {
             VmDynamic vmDynamic = runningVm.getVmDynamic();
             // VMs' pending resources are cleared in powering up, so in launch state
@@ -230,14 +233,6 @@ public class VmsMonitoring {
                     vmsCoresCount += vm.getNumOfCpus();
                 }
             }
-        }
-        if (memCommited == null || !memCommited.equals(vds.getMemCommited())) {
-            vds.setMemCommited(memCommited);
-            _saveVdsDynamic = true;
-        }
-        if (vds.getVmsCoresCount() == null || !vds.getVmsCoresCount().equals(vmsCoresCount)) {
-            vds.setVmsCoresCount(vmsCoresCount);
-            _saveVdsDynamic = true;
         }
     }
 
@@ -1652,5 +1647,13 @@ public class VmsMonitoring {
 
     protected IVdsEventListener getVdsEventListener() {
         return ResourceManager.getInstance().getEventListener();
+    }
+
+    public int getMemCommited() {
+        return memCommited;
+    }
+
+    public int getVmsCoresCount() {
+        return vmsCoresCount;
     }
 }
