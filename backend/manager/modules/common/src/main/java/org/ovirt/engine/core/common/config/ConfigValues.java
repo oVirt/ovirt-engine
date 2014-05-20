@@ -1930,5 +1930,16 @@ public enum ConfigValues {
     @DefaultValueAttribute("100")
     MaxCpuLimitQosValue,
 
+    @Reloadable
+    @TypeConverterAttribute(List.class)
+    @DefaultValueAttribute("")
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
+    UnsupportedLocalesFilterOverrides,
+
+    @TypeConverterAttribute(List.class)
+    @DefaultValueAttribute("")
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
+    UnsupportedLocalesFilter,
+
     Invalid;
 }

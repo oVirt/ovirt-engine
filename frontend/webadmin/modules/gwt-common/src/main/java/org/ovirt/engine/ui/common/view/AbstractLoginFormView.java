@@ -1,10 +1,13 @@
 package org.ovirt.engine.ui.common.view;
 
+import java.util.Arrays;
+
 import org.gwtbootstrap3.client.ui.Label;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.Well;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.utils.VisibleLocalesInfoData;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.PatternflyUiCommandButton;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -113,6 +116,7 @@ public abstract class AbstractLoginFormView extends AbstractView {
         // Add the option to change the locale
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
         String[] localeNames = LocaleInfo.getAvailableLocaleNames();
+        localeNames = VisibleLocalesInfoData.instance().getFilteredLocaleNames(Arrays.asList(localeNames));
 
         // Populate the locale list box with available locales
         boolean foundDefaultLocale = false;
