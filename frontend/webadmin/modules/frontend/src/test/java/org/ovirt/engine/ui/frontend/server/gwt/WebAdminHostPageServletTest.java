@@ -12,6 +12,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -26,16 +27,23 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginData;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServletTest<WebAdminHostPageServlet> {
 
     private static final String APPLICATION_MODE = "{ \"value\": \"123\" }"; //$NON-NLS-1$
+
+    @ClassRule
+    public static MockConfigRule mcr =
+    new MockConfigRule(mockConfig(ConfigValues.UnsupportedLocalesFilterOverrides, new ArrayList<String>()));
 
     @Mock
     private ObjectNode mockApplicationModeObject;
