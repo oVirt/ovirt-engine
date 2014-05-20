@@ -538,6 +538,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
             optimizationTab.setVisible(false);
             resiliencePolicyTab.setVisible(false);
             clusterPolicyTab.setVisible(false);
+            consoleTab.setVisible(false);
             dataCenterPanel.addStyleName(style.generalTabTopDecoratorEmpty());
         }
     }
