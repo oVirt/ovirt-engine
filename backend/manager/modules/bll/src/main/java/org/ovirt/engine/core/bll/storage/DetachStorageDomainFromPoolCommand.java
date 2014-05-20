@@ -1,9 +1,5 @@
 package org.ovirt.engine.core.bll.storage;
 
-import java.util.Collections;
-import java.util.Map;
-
-import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
@@ -12,8 +8,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -99,12 +93,5 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DETACH);
-    }
-
-    @Override
-    protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 }
