@@ -1411,7 +1411,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following networks cannot be removed from the network interface since they are managed by the label: ${ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST}. Please remove the label from the network interface in order to remove the network.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The display network ${DisplayNetwork} must have a DHCP or Static boot protocol when conifgured on a host.")
+    @DefaultStringValue("Cannot ${action} ${type}. The display network ${DisplayNetwork} must have a DHCP or Static boot protocol when configured on a host.")
     String ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL();
 
     @DefaultStringValue("Cannot ${action} ${type}. The following networks are already attached to a different interface: ${AssignedNetworks}. Please remove the networks in order to label the interface.")
