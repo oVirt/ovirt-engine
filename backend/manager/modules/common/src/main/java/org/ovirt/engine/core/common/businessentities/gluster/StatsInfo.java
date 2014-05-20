@@ -3,6 +3,8 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 import java.io.Serializable;
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.Pair;
+
 public class StatsInfo implements Serializable {
 
     private static final long serialVersionUID = 3609367118733238971L;
@@ -10,8 +12,9 @@ public class StatsInfo implements Serializable {
     private List<BlockStats> blockStats;
     private List<FopStats> fopStats;
     private int duration;
-    private int totalRead;
-    private int totalWrite;
+    private Pair<Integer, String> durationFormatted;
+    private long totalRead;
+    private long totalWrite;
     private ProfileStatsType profileStatsType;
 
     public List<BlockStats> getBlockStats() {
@@ -30,27 +33,19 @@ public class StatsInfo implements Serializable {
         this.fopStats = fopStats;
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public int getTotalRead() {
+    public long getTotalRead() {
         return totalRead;
     }
 
-    public void setTotalRead(int totalRead) {
+    public void setTotalRead(long totalRead) {
         this.totalRead = totalRead;
     }
 
-    public int getTotalWrite() {
+    public long getTotalWrite() {
         return totalWrite;
     }
 
-    public void setTotalWrite(int totalWrite) {
+    public void setTotalWrite(long totalWrite) {
         this.totalWrite = totalWrite;
     }
 
@@ -60,5 +55,21 @@ public class StatsInfo implements Serializable {
 
     public void setProfileStatsType(ProfileStatsType profileStatsType) {
         this.profileStatsType = profileStatsType;
+    }
+
+    public Pair<Integer, String> getDurationFormatted() {
+        return durationFormatted;
+    }
+
+    public void setDurationFormatted(Pair<Integer, String> duration) {
+        this.durationFormatted = duration;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

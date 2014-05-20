@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.gluster;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.common.businessentities.gluster.BlockStats;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProfileDetails;
@@ -13,6 +14,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfil
 import org.ovirt.engine.core.common.businessentities.gluster.NfsProfileDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.ProfileStatsType;
 import org.ovirt.engine.core.common.businessentities.gluster.StatsInfo;
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.TimeConverter;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -112,9 +115,12 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
 
     private StatsInfo getStatInfo(Map<String, Object> statsInfoMap, String statType) {
         StatsInfo statsInfo = new StatsInfo();
-        statsInfo.setDuration(Integer.valueOf((String) statsInfoMap.get(DURATION)));
-        statsInfo.setTotalWrite(Integer.valueOf((String) statsInfoMap.get(TOTAL_WRITE)));
-        statsInfo.setTotalRead(Integer.valueOf((String) statsInfoMap.get(TOTAL_READ)));
+        int statsDuration = Integer.valueOf((String) statsInfoMap.get(DURATION));
+        statsInfo.setDuration(statsDuration);
+        Pair<Long, TimeUnit> statsDurationFormatted = TimeConverter.autoConvert(statsDuration, TimeUnit.SECONDS);
+        statsInfo.setDurationFormatted(new Pair<Integer, String>(statsDurationFormatted.getFirst().intValue(), statsDurationFormatted.getSecond().toString()));
+        statsInfo.setTotalWrite(Long.valueOf((String) statsInfoMap.get(TOTAL_WRITE)));
+        statsInfo.setTotalRead(Long.valueOf((String) statsInfoMap.get(TOTAL_READ)));
         statsInfo.setBlockStats(getBlockStats((Object[]) statsInfoMap.get(BLOCK_STATS)));
         statsInfo.setFopStats(getFopStats((Object[]) statsInfoMap.get(FOP_STATS)));
         statsInfo.setProfileStatsType((statType.equals(CUMULATIVE_STATS) ? ProfileStatsType.CUMULATIVE
@@ -129,9 +135,22 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
             Map<String, Object> fopStatsMap = (Map<String, Object>) fopStatsObj;
             fopStats.setHits(Integer.valueOf((String) fopStatsMap.get(HITS)));
             fopStats.setName((String) fopStatsMap.get(NAME));
-            fopStats.setMinLatency(Double.valueOf((String) fopStatsMap.get(LATENCY_MIN)));
-            fopStats.setMaxLatency(Double.valueOf((String) fopStatsMap.get(LATENCY_MAX)));
-            fopStats.setAvgLatency(Double.valueOf((String) fopStatsMap.get(LATENCY_AVG)));
+
+            Double minLatency = Double.valueOf((String) fopStatsMap.get(LATENCY_MIN));
+            fopStats.setMinLatency(minLatency);
+            Pair<Long, TimeUnit> minLatencyConverted = TimeConverter.autoConvert(minLatency.longValue(), TimeUnit.MICROSECONDS);
+            fopStats.setMinLatencyFormatted(new Pair<Double, String>(minLatencyConverted.getFirst().doubleValue(), minLatencyConverted.getSecond().toString()));
+
+            Double maxLatency = Double.valueOf((String) fopStatsMap.get(LATENCY_MAX));
+            fopStats.setMaxLatency(maxLatency);
+            Pair<Long, TimeUnit> maxLatencyConverted = TimeConverter.autoConvert(maxLatency.longValue(), TimeUnit.MICROSECONDS);
+            fopStats.setMaxLatencyFormatted(new Pair<Double, String>(maxLatencyConverted.getFirst().doubleValue(), maxLatencyConverted.getSecond().toString()));
+
+            Double avgLatency = Double.valueOf((String) fopStatsMap.get(LATENCY_AVG));
+            fopStats.setAvgLatency(avgLatency);
+            Pair<Long, TimeUnit> avgLatencyConverted = TimeConverter.autoConvert(avgLatency.longValue(), TimeUnit.MICROSECONDS);
+            fopStats.setAvgLatencyFormatted(new Pair<Double, String>(avgLatencyConverted.getFirst().doubleValue(), avgLatencyConverted.getSecond().toString()));
+
             fopStatsList.add(fopStats);
         }
         return fopStatsList;

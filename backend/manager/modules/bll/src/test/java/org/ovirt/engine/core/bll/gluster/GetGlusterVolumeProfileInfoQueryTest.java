@@ -8,6 +8,7 @@ import static org.mockito.Mockito.doReturn;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.StatsInfo;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeProfileParameters;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -116,6 +118,7 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     private List<StatsInfo> getStatsInfo() {
         StatsInfo statInfo = new StatsInfo();
         statInfo.setDuration(2);
+        statInfo.setDurationFormatted(new Pair<Integer, String>(new Integer(2), TimeUnit.SECONDS.toString()));
         statInfo.setTotalRead(0);
         statInfo.setTotalWrite(0);
         statInfo.setBlockStats(getBlockStats());
@@ -126,10 +129,13 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     private List<FopStats> getFopStats() {
         FopStats fopStats = new FopStats();
         fopStats.setAvgLatency(78.12500);
+        fopStats.setAvgLatencyFormatted(new Pair<Double, String>(78.12500, TimeUnit.MICROSECONDS.toString()));
         fopStats.setName("STATFS");
         fopStats.setHits(2);
         fopStats.setMinLatency(39.00000);
+        fopStats.setMinLatencyFormatted(new Pair<Double, String>(39.00000, TimeUnit.MICROSECONDS.toString()));
         fopStats.setMaxLatency(143.00000);
+        fopStats.setMaxLatencyFormatted(new Pair<Double, String>(143.00000, TimeUnit.MICROSECONDS.toString()));
         return Collections.singletonList(fopStats);
     }
 
