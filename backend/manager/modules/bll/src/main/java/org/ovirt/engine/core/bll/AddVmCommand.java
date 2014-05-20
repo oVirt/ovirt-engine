@@ -890,7 +890,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         vmStatic.setCreatedByUserId(getUserId());
         // Parses the custom properties field that was filled by frontend to
         // predefined and user defined fields
-        VmPropertiesUtils.getInstance().separeteCustomPropertiesToUserAndPredefined(
+        VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
                 getVdsGroup().getcompatibility_version(), vmStatic);
 
         updateOriginalTemplate(vmStatic);

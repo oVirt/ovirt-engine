@@ -30,7 +30,7 @@ public class GetVmUpdatesOnNextRunExistsQueryTest extends AbstractQueryTest<GetV
     public void init() {
         VmHandler.init();
         mockVmPropertiesUtils();
-        doNothing().when(vmPropertiesUtils).separeteCustomPropertiesToUserAndPredefined(any(Version.class), any(VmStatic.class));
+        doNothing().when(vmPropertiesUtils).separateCustomPropertiesToUserAndPredefined(any(Version.class), any(VmStatic.class));
     }
 
     private void mockVmPropertiesUtils() {

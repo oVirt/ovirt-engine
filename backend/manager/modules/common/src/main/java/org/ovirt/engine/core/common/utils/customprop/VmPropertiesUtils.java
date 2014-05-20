@@ -116,7 +116,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
      * @return map containing the VM custom properties
      */
     public Map<String, String> getVMProperties(Version version, VmStatic vmStatic) {
-        separeteCustomPropertiesToUserAndPredefined(version, vmStatic);
+        separateCustomPropertiesToUserAndPredefined(version, vmStatic);
         Map<String, String> map = new HashMap<String, String>();
         getPredefinedProperties(version, vmStatic, map);
         getUserDefinedProperties(version, vmStatic, map);
@@ -204,7 +204,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         return result.toString();
     }
 
-    public void separeteCustomPropertiesToUserAndPredefined(Version version, VmStatic vmStatic) {
+    public void separateCustomPropertiesToUserAndPredefined(Version version, VmStatic vmStatic) {
         String customProperties = vmStatic.getCustomProperties();
         VMCustomProperties properties = parseProperties(version, customProperties);
         vmStatic.setPredefinedProperties(properties.getPredefinedProperties());

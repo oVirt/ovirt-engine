@@ -82,8 +82,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (isVmExist()) {
             Version clusterVersion = getVdsGroup().getcompatibility_version();
-            getVmPropertiesUtils().separeteCustomPropertiesToUserAndPredefined(clusterVersion, parameters.getVmStaticData());
-            getVmPropertiesUtils().separeteCustomPropertiesToUserAndPredefined(clusterVersion, getVm().getStaticData());
+            getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(clusterVersion, parameters.getVmStaticData());
+            getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(clusterVersion, getVm().getStaticData());
         }
     }
 

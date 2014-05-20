@@ -29,9 +29,9 @@ public class GetVmUpdatesOnNextRunExistsQuery<P extends GetVmUpdatesOnNextRunExi
 
         VmPropertiesUtils vmPropertiesUtils = SimpleDependecyInjector.getInstance().get(VmPropertiesUtils.class);
 
-        vmPropertiesUtils.separeteCustomPropertiesToUserAndPredefined(
+        vmPropertiesUtils.separateCustomPropertiesToUserAndPredefined(
                 srcVm.getVdsGroupCompatibilityVersion(), srcStatic);
-        vmPropertiesUtils.separeteCustomPropertiesToUserAndPredefined(
+        vmPropertiesUtils.separateCustomPropertiesToUserAndPredefined(
                 dstVm.getVdsGroupCompatibilityVersion(), dstStatic);
 
         setReturnValue(!VmHandler.isUpdateValid(srcStatic, dstStatic, VMStatus.Up));
