@@ -104,7 +104,7 @@ public class ReportedDeviceMapper {
     }
 
     public static Guid generateDeviceId(VmGuestAgentInterface vmGuestAgentInterface) {
-        return new Guid((vmGuestAgentInterface.getInterfaceName() + vmGuestAgentInterface.getMacAddress()).getBytes(),
+        return GuidUtils.asGuid((vmGuestAgentInterface.getInterfaceName() + vmGuestAgentInterface.getMacAddress()).getBytes(),
                 true);
     }
 }

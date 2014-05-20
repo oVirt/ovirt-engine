@@ -290,6 +290,14 @@ public class BaseBackendResource {
         }
     }
 
+    protected Guid asGuid(byte[] guid, boolean keepByteOrder) {
+        try {
+            return new Guid(guid, keepByteOrder);
+        } catch (IllegalArgumentException e) {
+            throw new MalformedIdException(e);
+        }
+    }
+
     protected Long asLong(String id) {
         try {
             return Long.valueOf(id);

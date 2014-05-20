@@ -16,6 +16,14 @@ public class GuidUtils {
         }
     }
 
+    public static Guid asGuid(byte[] guid, boolean keepByteOrder) {
+        try {
+            return new Guid(guid, keepByteOrder);
+        } catch (IllegalArgumentException e) {
+            throw new MalformedIdException(e);
+        }
+    }
+
     /**
      * There are some business entities in the API, which are not regarded as business entities in the engine, and
      * therefore they don't have IDs. The API generates uniqute GUIDs for them, according to their attributes. This

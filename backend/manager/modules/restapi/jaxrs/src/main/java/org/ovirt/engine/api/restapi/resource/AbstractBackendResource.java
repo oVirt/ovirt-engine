@@ -357,7 +357,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
 
     protected Guid getHostId(Host host) {
         return host.isSetId()
-               ? new Guid(host.getId())
+                ? asGuid(host.getId())
                : getEntity(VDS.class,
                            VdcQueryType.GetVdsByName,
                            new NameQueryParameters(host.getName()),

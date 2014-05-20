@@ -13,6 +13,7 @@ import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.api.resource.QuotasResource;
+import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -107,8 +108,14 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
         StoragePool pool = null;
         if (cluster.getDataCenter().isSetId()) {
             String id = cluster.getDataCenter().getId();
+            Guid guid;
+            try {
+                guid = new Guid(id); // can't use asGuid() because the method is static.
+            } catch (IllegalArgumentException e) {
+                throw new MalformedIdException(e);
+            }
             pool = parent.getEntity(StoragePool.class, VdcQueryType.GetStoragePoolById,
-                    new IdQueryParameters(new Guid(id)), "Datacenter: id=" + id);
+                    new IdQueryParameters(guid), "Datacenter: id=" + id);
         } else {
             String clusterName = cluster.getDataCenter().getName();
             pool = parent.getEntity(StoragePool.class, VdcQueryType.GetStoragePoolByDatacenterName,

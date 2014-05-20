@@ -87,7 +87,7 @@ public class BackendUsersResource
                VdcQueryType.GetDomainList,
                new GetDomainListParameters());
             for (String domain :domains) {
-                Guid domainId = new Guid(domain.getBytes(), true);
+                Guid domainId = asGuid(domain.getBytes(), true);
                 if (domainId.toString().equals(user.getDomain().getId())) {
                    return domain;
                 }

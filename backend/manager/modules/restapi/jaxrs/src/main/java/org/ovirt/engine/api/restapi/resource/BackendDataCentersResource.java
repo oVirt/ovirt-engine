@@ -91,7 +91,7 @@ public class BackendDataCentersResource extends
 
     @Override
     protected DataCenter deprecatedPopulate(DataCenter model, StoragePool entity) {
-        IdQueryParameters parameters = new IdQueryParameters(new Guid(model.getId()));
+        IdQueryParameters parameters = new IdQueryParameters(asGuid(model.getId()));
         model.setSupportedVersions(getMapper(List.class,
                                              SupportedVersions.class).map(getEntity(List.class,
                                                                                     VdcQueryType.GetAvailableStoragePoolVersions,

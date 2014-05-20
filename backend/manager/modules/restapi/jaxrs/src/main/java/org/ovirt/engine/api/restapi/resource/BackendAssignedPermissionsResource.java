@@ -278,7 +278,7 @@ public class BackendAssignedPermissionsResource
     protected Permissions getPermissions(String id) {
         return getEntity(Permissions.class,
                          VdcQueryType.GetPermissionById,
-                         new IdQueryParameters(new Guid(id)),
+                new IdQueryParameters(asGuid(id)),
                          id);
     }
 

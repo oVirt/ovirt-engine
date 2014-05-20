@@ -138,7 +138,7 @@ public class BackendVmDisksResource
     protected VdcActionParametersBase getAddParameters(org.ovirt.engine.core.common.businessentities.Disk entity, Disk disk) {
         AddDiskParameters parameters = new AddDiskParameters(parentId, entity);
         if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
-            parameters.setStorageDomainId(new Guid(disk.getStorageDomains().getStorageDomains().get(0).getId()));
+            parameters.setStorageDomainId(asGuid(disk.getStorageDomains().getStorageDomains().get(0).getId()));
         } else if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetName()) {
             Guid storageDomainId = getStorageDomainId(disk.getStorageDomains().getStorageDomains().get(0).getName());
             if (storageDomainId == null) {

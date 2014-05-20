@@ -396,7 +396,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     public String generateId(Version v) {
-        Guid guid = new Guid((v.getMajor()+"."+v.getMinor()).getBytes(), true);
+        Guid guid = asGuid((v.getMajor() + "." + v.getMinor()).getBytes(), true);
         return guid.toString();
     }
 

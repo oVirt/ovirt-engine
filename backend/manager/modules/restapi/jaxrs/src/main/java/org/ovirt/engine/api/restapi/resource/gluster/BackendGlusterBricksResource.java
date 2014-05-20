@@ -232,7 +232,7 @@ public class BackendGlusterBricksResource
         for (GlusterBrick brick : bricks.getGlusterBricks()) {
             GlusterBrickEntity entity = new GlusterBrickEntity();
             entity.setBrickDirectory(brick.getBrickDir());
-            entity.setVolumeId(new Guid(getVolumeId()));
+            entity.setVolumeId(asGuid(getVolumeId()));
             if (brick.getName() != null) {
                 String[] arr = brick.getName().split("\\:");
                 if (arr.length > 1) {

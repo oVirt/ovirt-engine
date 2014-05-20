@@ -25,7 +25,6 @@ import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
-import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.action.RemoveBondParameters;
@@ -395,7 +394,7 @@ public class BackendHostNicsResource
             if (nic.isSetName() && nicsByName.containsKey(nic.getName())) {
                 iface.setLabels(nicsByName.get(nic.getName()).getLabels());
             } else if (nic.isSetId()) {
-                Guid nicId = GuidUtils.asGuid(nic.getId());
+                Guid nicId = asGuid(nic.getId());
                 if (nicsById.containsKey(nicId)) {
                     iface.setLabels(nicsById.get(nicId).getLabels());
                 }

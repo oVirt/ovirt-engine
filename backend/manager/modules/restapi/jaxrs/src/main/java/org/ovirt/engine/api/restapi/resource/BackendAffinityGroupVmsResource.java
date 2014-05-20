@@ -6,7 +6,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.AffinityGroupVmsResource;
-import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -53,7 +52,7 @@ public class BackendAffinityGroupVmsResource extends AbstractBackendCollectionRe
     public Response add(VM vm) {
         AffinityGroup affinityGroup = getEntity();
 
-        affinityGroup.getEntityIds().add(GuidUtils.asGuid(vm.getId()));
+        affinityGroup.getEntityIds().add(asGuid(vm.getId()));
         return performAction(VdcActionType.EditAffinityGroup, new AffinityGroupCRUDParameters(affinityGroup.getId(),
                 affinityGroup));
     }
@@ -62,7 +61,7 @@ public class BackendAffinityGroupVmsResource extends AbstractBackendCollectionRe
     protected Response performRemove(String id) {
         AffinityGroup affinityGroup = getEntity();
 
-        if (!affinityGroup.getEntityIds().remove(GuidUtils.asGuid(id))) {
+        if (!affinityGroup.getEntityIds().remove(asGuid(id))) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         return performAction(VdcActionType.EditAffinityGroup, new AffinityGroupCRUDParameters(affinityGroup.getId(),

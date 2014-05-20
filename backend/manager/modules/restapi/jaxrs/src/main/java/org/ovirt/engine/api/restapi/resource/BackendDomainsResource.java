@@ -51,7 +51,7 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
         for(String domain : getDomainList()){
             Directory ds = new Directory();
             ds.setDomain(domain);
-            Guid guid = new Guid(domain.getBytes(), true);
+            Guid guid = asGuid(domain.getBytes(), true);
             ds.setId(guid.toString());
             dsl.add(ds);
         }

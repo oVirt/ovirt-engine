@@ -182,7 +182,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         if (host.isSetCluster()) {
             Cluster cluster = host.getCluster();
             if (cluster.isSetId()) {
-                return new Guid(cluster.getId());
+                return asGuid(cluster.getId());
             }
             if (cluster.isSetName()) {
                 return getClusterIdByName(cluster.getName());

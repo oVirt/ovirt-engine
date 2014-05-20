@@ -13,6 +13,7 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.TypeConversionHelper;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -92,31 +93,31 @@ public class EventMapper {
         auditLog.setlog_time(event.isSetTime() ? event.getTime().toGregorianCalendar().getTime()
                 : new Date((Calendar.getInstance().getTimeInMillis())));
         auditLog.setmessage(event.getDescription());
-        Guid guid = (event.isSetUser()) ? new Guid(event.getUser().getId()) : Guid.Empty;
+        Guid guid = (event.isSetUser()) ? GuidUtils.asGuid(event.getUser().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
             auditLog.setuser_id(guid);
         }
-        guid = (event.isSetVm()) ? new Guid(event.getVm().getId()) : Guid.Empty;
+        guid = (event.isSetVm()) ? GuidUtils.asGuid(event.getVm().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
             auditLog.setvm_id(guid);
         }
-        guid = (event.isSetStorageDomain()) ? new Guid(event.getStorageDomain().getId()) : Guid.Empty;
+        guid = (event.isSetStorageDomain()) ? GuidUtils.asGuid(event.getStorageDomain().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
             auditLog.setstorage_domain_id(guid);
         }
-        guid = (event.isSetHost()) ? new Guid(event.getHost().getId()) : Guid.Empty;
+        guid = (event.isSetHost()) ? GuidUtils.asGuid(event.getHost().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
             auditLog.setvds_id(guid);
         }
-        guid = (event.isSetTemplate()) ? new Guid(event.getTemplate().getId()) : Guid.Empty;
+        guid = (event.isSetTemplate()) ? GuidUtils.asGuid(event.getTemplate().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
             auditLog.setvm_template_id(guid);
         }
-        guid = (event.isSetCluster()) ? new Guid(event.getCluster().getId()) : Guid.Empty;
+        guid = (event.isSetCluster()) ? GuidUtils.asGuid(event.getCluster().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
             auditLog.setvds_group_id(guid);
         }
-        guid = (event.isSetDataCenter()) ? new Guid(event.getDataCenter().getId()) : Guid.Empty;
+        guid = (event.isSetDataCenter()) ? GuidUtils.asGuid(event.getDataCenter().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
             auditLog.setstorage_pool_id(guid);
         }
