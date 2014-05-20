@@ -5,6 +5,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,20 +18,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.branding.BrandingTheme;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WelcomeServletTest {
+    @ClassRule
+    public static MockConfigRule mcr =
+    new MockConfigRule(mockConfig(ConfigValues.UnsupportedLocalesFilterOverrides, new ArrayList<String>()));
+
     WelcomeServlet testServlet;
 
     @Mock

@@ -1939,4 +1939,16 @@ public enum ConfigValues {
 
     Invalid;
 
+    @Reloadable
+    @TypeConverterAttribute(List.class)
+    @DefaultValueAttribute("")
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
+    UnsupportedLocalesFilterOverrides,
+
+    @TypeConverterAttribute(List.class)
+    @DefaultValueAttribute("")
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
+    UnsupportedLocalesFilter,
+
+    Invalid
 }

@@ -186,6 +186,11 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     public void testRunPublicQuery_GetConfigurationValue() {
         String sessionId = "sessionId"; //$NON-NLS-1$
         VdcQueryType queryType = VdcQueryType.GetConfigurationValue;
+        VdcQueryReturnValue returnIntValue = new VdcQueryReturnValue();
+        returnIntValue.setSucceeded(true);
+        returnIntValue.setReturnValue(Integer.valueOf(255));
+        when(mockBackend.runPublicQuery(eq(VdcQueryType.GetConfigurationValue),
+                eq(mockConfigQueryParams))).thenReturn(returnIntValue);
         Object result = testServlet.runPublicQuery(queryType, mockConfigQueryParams, sessionId);
         assertThat(result, is(instanceOf(Integer.class)));
         verify(mockConfigQueryParams).setSessionId(sessionId);
