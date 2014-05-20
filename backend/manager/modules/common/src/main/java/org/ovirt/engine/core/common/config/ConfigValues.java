@@ -1937,8 +1937,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("100")
     MaxCpuLimitQosValue,
 
-    Invalid;
-
     @Reloadable
     @TypeConverterAttribute(List.class)
     @DefaultValueAttribute("")
@@ -1950,5 +1948,5 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     UnsupportedLocalesFilter,
 
-    Invalid
+    Invalid;
 }
