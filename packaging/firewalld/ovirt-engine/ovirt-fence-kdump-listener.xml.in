@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>ovirt-fence-kdump-listener</short>
+  <description>oVirt configured fence_kdump listener service</description>
+  <port protocol="udp" port="7410"/>
+</service>

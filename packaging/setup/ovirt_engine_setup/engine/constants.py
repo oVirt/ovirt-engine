@@ -358,6 +358,7 @@ class Const(object):
     ENGINE_SERVICE_NAME = 'ovirt-engine'
 
     WEBSOCKET_PROXY_SERVICE_NAME = 'ovirt-websocket-proxy'
+    FENCE_KDUMP_LISTENER_SERVICE_NAME = 'ovirt-fence-kdump-listener'
     PKI_PASSWORD = 'mypass'
     MINIMUM_SPACE_ISODOMAIN_MB = 350
     ISO_DOMAIN_IMAGE_UID = '11111111-1111-1111-1111-111111111111'
@@ -516,6 +517,15 @@ class ConfigEnv(object):
     )
     def WEBSOCKET_PROXY_CONFIG(self):
         return 'OVESETUP_CONFIG/websocketProxyConfig'
+
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('Configure fence_kdump listener'),
+        postinstallfile=True,
+    )
+    def FENCE_KDUMP_LISTENER_CONFIG(self):
+        return 'OVESETUP_CONFIG/fenceKdumpListenerConfig'
 
 
 @util.export

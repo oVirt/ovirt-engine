@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,22 +16,18 @@
 #
 
 
-"""ovirt-engine-common core plugin."""
+"""ovirt-host-setup fence_kdump listener plugin."""
 
 
 from otopi import util
 
 
-from . import misc
-from . import engine
-from . import fence_kdump_listener
+from . import config
 
 
 @util.export
 def createPlugins(context):
-    misc.Plugin(context=context)
-    engine.Plugin(context=context)
-    fence_kdump_listener.Plugin(context=context)
+    config.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

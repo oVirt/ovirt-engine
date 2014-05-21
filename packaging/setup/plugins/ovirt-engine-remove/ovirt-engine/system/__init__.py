@@ -23,12 +23,14 @@ from otopi import util
 
 
 from . import engine
+from . import fence_kdump_listener
 from . import sysctl
 
 
 @util.export
 def createPlugins(context):
     engine.Plugin(context=context)
+    fence_kdump_listener.Plugin(context=context)
     sysctl.Plugin(context=context)
 
 
