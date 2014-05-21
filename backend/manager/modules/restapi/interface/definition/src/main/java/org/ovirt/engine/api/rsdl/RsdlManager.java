@@ -3,10 +3,12 @@ package org.ovirt.engine.api.rsdl;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXB;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.RSDL;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -27,6 +29,7 @@ public class RsdlManager {
     private static final String GENERAL_METADATA_REL = "*";
     private static final String GENERAL_METADATA_NAME = "The oVirt RESTful API generic descriptor.";
     private static final String GENERAL_METADATA_DESCRIPTION = "These options are valid for entire application.";
+    private static final String ILLEGAL_ACTION_LINK_SUFFIX = "/";
 
     private static final String METADATA_FILE_NAME = "/rsdl_metadata.yaml";
 
@@ -37,11 +40,26 @@ public class RsdlManager {
         String outputFileNameGluster = args[2];
 
         MetaData metadata = loadMetaData();
+        validateActionLinksFormat(metadata);
         generateRsdlFile(metadata, baseUri, outputFileName, ApiRootLinksCreator.getAllRels(baseUri));
         generateRsdlFile(metadata, baseUri, outputFileNameGluster, ApiRootLinksCreator.getGlusterRels(baseUri));
 
         System.out.println("The following files have been generated: \n" + outputFileName + "\n"
                 + outputFileNameGluster);
+    }
+
+    private static void validateActionLinksFormat(MetaData metadata) {
+        List<String> illegalActionLinks = new ArrayList<>();
+        for (Action action : metadata.getActions()) {
+            String actionLink = action.getName().split("[|]")[0];
+            if (actionLink.endsWith(ILLEGAL_ACTION_LINK_SUFFIX)) {
+                illegalActionLinks.add(action.getName());
+            }
+        }
+
+        if (!illegalActionLinks.isEmpty()) {
+            throw new RuntimeException("Invalid link suffix:\n" + StringUtils.join(illegalActionLinks, '\n'));
+        }
     }
 
     private static void generateRsdlFile(MetaData metadata, String baseUri, String outputFileName, List<String> rels)
