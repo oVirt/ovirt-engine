@@ -71,8 +71,10 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
             }
             ret.append(entry.getKey());
             ret.append("=");
-            if (entry.getKey().isSensitive()) {
+            if ((entry.getKey().getFlags() & ExtKey.Flags.SENSITIVE) != 0) {
                 ret.append("***");
+            } else if ((entry.getKey().getFlags() & ExtKey.Flags.SKIP_DUMP) != 0) {
+                ret.append("*skip*");
             } else {
                 ret.append(entry.getValue());
             }

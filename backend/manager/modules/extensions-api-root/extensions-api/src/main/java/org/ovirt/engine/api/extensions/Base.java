@@ -177,7 +177,7 @@ public class Base {
      */
     public static class ContextKeys {
         /** Global context. */
-        public static final ExtKey GLOBAL_CONTEXT = new ExtKey("EXTENSION_GLOBAL_CONTEXT", ExtMap.class, "9799e72f-7af6-4cf1-bf08-297bc8903676");
+        public static final ExtKey GLOBAL_CONTEXT = new ExtKey("EXTENSION_GLOBAL_CONTEXT", ExtMap.class, "9799e72f-7af6-4cf1-bf08-297bc8903676", ExtKey.Flags.SKIP_DUMP);
         /** Minimum usable interface version. */
         public static final ExtKey INTERFACE_VERSION_MIN = new ExtKey("EXTENSION_INTERFACE_VERSION_MIN", Integer.class, "2b84fc91-305b-497b-a1d7-d961b9d2ce0b");
         /** Maximum usable interface version. */
@@ -202,7 +202,7 @@ public class Base {
          * Extension configuration as loaded.
          * @see ConfigKeys
          */
-        public static final ExtKey CONFIGURATION = new ExtKey("EXTENSION_CONFIGURATION", Properties.class, "2d48ab72-f0a1-4312-b4ae-5068a226b0fc", true);
+        public static final ExtKey CONFIGURATION = new ExtKey("EXTENSION_CONFIGURATION", Properties.class, "2d48ab72-f0a1-4312-b4ae-5068a226b0fc", ExtKey.Flags.SENSITIVE);
         /**
          * Extension's build interface version.
          * Set by extension during {@link InvokeCommands#INITIALIZE} to {@link #INTERFACE_VERSION_CURRENT}.
@@ -288,7 +288,7 @@ public class Base {
         /** Extension reference. */
         public static final ExtKey EXTENSION = new ExtKey("EXTENSION_RECORD_EXTENSION", Extension.class, "fa110e1b-bf17-441d-8bd6-0fca24542405");
         /** Extension context. */
-        public static final ExtKey CONTEXT = new ExtKey("EXTENSION_RECORD_CONTEXT", ExtMap.class, "9003f5f6-ada6-4f5d-8b8b-3d4bbed39be8");
+        public static final ExtKey CONTEXT = new ExtKey("EXTENSION_RECORD_CONTEXT", ExtMap.class, "9003f5f6-ada6-4f5d-8b8b-3d4bbed39be8", ExtKey.Flags.SKIP_DUMP);
         /** Instance name. */
         public static final ExtKey INSTANCE_NAME = new ExtKey("EXTENSION_RECORD_INSTANCE_NAME", String.class, "6e1f2c27-b89e-42bd-94c1-e709eb8ce0d4");
         /**

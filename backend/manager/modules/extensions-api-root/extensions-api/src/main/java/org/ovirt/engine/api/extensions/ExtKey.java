@@ -11,12 +11,17 @@ import java.util.UUID;
  */
 public class ExtKey implements Cloneable, Serializable {
 
+    public static class Flags {
+        public static final int SENSITIVE = 1<<0;
+        public static final int SKIP_DUMP = 1<<1;
+    }
+
     private static final long serialVersionUID = 7373830750276947742L;
 
     private transient Class type;
     private String typeName;
     private ExtUUID uuid;
-    private boolean sensitive;
+    private int flags;
 
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
         ois.defaultReadObject();
@@ -34,12 +39,12 @@ public class ExtKey implements Cloneable, Serializable {
      * Constructor.
      * @param type value type.
      * @param uuid unique identifier for key.
-     * @param sensitive do not print value.
+     * @param flags key flags see {@link Flags}.
      */
-    public ExtKey(Class type, ExtUUID uuid, boolean sensitive) {
+    public ExtKey(Class type, ExtUUID uuid, int flags) {
         this.type = type;
         this.uuid = uuid;
-        this.sensitive = sensitive;
+        this.flags = flags;
 
         this.typeName = this.type.getName();
     }
@@ -49,10 +54,10 @@ public class ExtKey implements Cloneable, Serializable {
      * @param name key name, used only for debugging.
      * @param type value type.
      * @param uuid unique identifier for key.
-     * @param sensitive do not print value.
+     * @param flags key flags see {@link Flags}.
      */
-    public ExtKey(String name, Class type, UUID uuid, boolean sensitive) {
-        this(type, new ExtUUID(name, uuid), sensitive);
+    public ExtKey(String name, Class type, UUID uuid, int flags) {
+        this(type, new ExtUUID(name, uuid), flags);
     }
 
     /**
@@ -60,10 +65,10 @@ public class ExtKey implements Cloneable, Serializable {
      * @param name key name, used only for debugging.
      * @param type value type.
      * @param uuid unique identifier for key.
-     * @param sensitive do not print value.
+     * @param flags key flags see {@link Flags}.
      */
-    public ExtKey(String name, Class type, String uuid, boolean sensitive) {
-        this(name, type, UUID.fromString(uuid), sensitive);
+    public ExtKey(String name, Class type, String uuid, int flags) {
+        this(name, type, UUID.fromString(uuid), flags);
     }
 
     /**
@@ -73,7 +78,7 @@ public class ExtKey implements Cloneable, Serializable {
      * @param uuid unique identifier for key.
      */
     public ExtKey(String name, Class type, String uuid) {
-        this(name, type, uuid, false);
+        this(name, type, uuid, 0);
     }
 
     /**
@@ -117,7 +122,7 @@ public class ExtKey implements Cloneable, Serializable {
         return new ExtKey(
             type,
             uuid,
-            sensitive
+            flags
         );
     }
 
@@ -138,10 +143,10 @@ public class ExtKey implements Cloneable, Serializable {
     }
 
     /**
-     * Returns true if sensitive.
-     * @return true if sensitive.
+     * Returns flags see {@link Flags}.
+     * @return flags.
      */
-    public boolean isSensitive() {
-        return sensitive;
+    public int getFlags() {
+        return flags;
     }
 }
