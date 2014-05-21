@@ -12,7 +12,6 @@ import org.ovirt.engine.api.extensions.ExtUUID;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.api.extensions.aaa.Authz.QueryFilterOperator;
 import org.ovirt.engine.api.extensions.aaa.Authz.QueryFilterRecord;
-import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 
 /**
  * This class is a helper class to transform searchbackend related search queries to Extension API structures. This
@@ -128,9 +127,9 @@ public class SearchQueryParsingUtils {
         return queryPrefix;
     }
 
-    public static List<List<String>> getIdsBatches(final ExtensionProxy extension, final List<String> ids) {
+    public static List<List<String>> getIdsBatches(final ExtMap context, final List<String> ids) {
 
-        int chunk = extension.getContext().<Integer> get(Authz.ContextKeys.QUERY_MAX_FILTER_SIZE, 100) - 10;
+        int chunk = context.<Integer> get(Authz.ContextKeys.QUERY_MAX_FILTER_SIZE, 100) - 10;
         List<List<String>> batchOfIdsList = new ArrayList<>();
         for (int counter = 0; counter < ids.size(); counter = counter + chunk) {
             batchOfIdsList.add(ids.subList(counter, counter + chunk > ids.size() ? ids.size() : counter + chunk));
