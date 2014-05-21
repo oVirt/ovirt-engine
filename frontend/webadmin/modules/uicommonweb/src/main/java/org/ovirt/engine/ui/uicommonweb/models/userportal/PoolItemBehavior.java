@@ -130,5 +130,6 @@ public class PoolItemBehavior extends ItemBehavior
         getItem().getPauseCommand().setIsExecutionAllowed(false);
         getItem().getShutdownCommand().setIsExecutionAllowed(false);
         getItem().getStopCommand().setIsExecutionAllowed(false);
+        getItem().getRebootCommand().setIsExecutionAllowed(false);
     }
 }
