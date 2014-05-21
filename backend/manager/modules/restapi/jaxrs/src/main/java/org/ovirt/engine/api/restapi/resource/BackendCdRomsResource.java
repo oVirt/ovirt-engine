@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.resource.DeviceResource;
@@ -14,6 +15,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
+
+import java.util.List;
 
 import static org.ovirt.engine.api.restapi.types.CdRomMapper.CDROM_ID;
 
@@ -63,6 +66,18 @@ public class BackendCdRomsResource
     @Override
     protected VdcActionParametersBase getRemoveParameters(String id) {
         return new VmManagementParametersBase(getUpdatable(null));
+    }
+
+    @Override
+    protected CdRoms mapCollection(List<VM> entities) {
+        if (QueryHelper.hasCurrentConstraint(getUriInfo())) {
+            for (VM entity : entities) {
+                // change the iso path so the result of 'map' will contain current cd instead of the
+                // persistent configuration
+                entity.setIsoPath(entity.getCurrentCd());
+            }
+        }
+        return super.mapCollection(entities);
     }
 
     protected VmStatic getUpdatable(String isoPath) {

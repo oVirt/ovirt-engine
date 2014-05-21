@@ -476,6 +476,7 @@ actions:
       signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+      current: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /vms/{vm:id}/cdroms/{cdrom:id}|rel=get
   description: get the cdrom for a virtual machine identified by the given id

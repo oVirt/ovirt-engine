@@ -46,6 +46,8 @@ public class QueryHelper {
     public static final String CONSTRAINT_PARAMETER = "search";
     private static final String RETURN_TYPE_SEPARTOR = " : ";
 
+    public static final String CURRENT_CONSTRAINT_PARAMETER = "current";
+
     private QueryHelper() {}
 
     /**
@@ -191,5 +193,13 @@ public class QueryHelper {
     public static String getMatrixConstraint(UriInfo uriInfo, String constraint) {
         HashMap<String, String> constraints = getMatrixConstraints(uriInfo, constraint);
         return constraints.containsKey(constraint) ? constraints.get(constraint) : null;
+    }
+
+    public static boolean hasCurrentConstraint(UriInfo uriInfo) {
+        // TODO: CURRENT_CONSTRAINT_PARAMETER as query parameter is depreciated and supported
+        // for backward compatibility only - should be dropped at 4.0.
+        return QueryHelper.hasConstraint(uriInfo.getQueryParameters(), CURRENT_CONSTRAINT_PARAMETER) ||
+                (hasMatrixParam(uriInfo, CURRENT_CONSTRAINT_PARAMETER) &&
+                 !"false".equalsIgnoreCase(QueryHelper.getMatrixConstraint(uriInfo, CURRENT_CONSTRAINT_PARAMETER)));
     }
 }
