@@ -1748,17 +1748,19 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    // del from cache all vms that not in vdsm
+    /**
+     * Delete all VMs that not reported by VDSM from cache
+     *
+     * @param staleRunningVms - VMs that didn't change their status
+     */
     private void removeVmsFromCache(List<Guid> staleRunningVms) {
-        Guid vmGuid;
         for (VM vmToRemove : _vmDict.values()) {
             if (staleRunningVms.contains(vmToRemove.getId())) {
                 continue;
             }
             proceedVmBeforeDeletion(vmToRemove, null);
-            boolean isInMigration = false;
-            if (vmToRemove.getStatus() == VMStatus.MigratingFrom) {
-                isInMigration = true;
+            boolean migrating = vmToRemove.getStatus() == VMStatus.MigratingFrom;
+            if (migrating) {
                 handOverVM(vmToRemove);
             } else {
                 clearVm(vmToRemove,
@@ -1771,8 +1773,8 @@ public class VdsUpdateRunTimeInfo {
             log.infoFormat("VM {0} ({1}) is running in db and not running in VDS {2}",
                     vmToRemove.getName(), vmToRemove.getId(), _vds.getName());
 
-            vmGuid = vmToRemove.getId();
-            if (!isInMigration && !_vmsToRerun.contains(vmGuid)
+            Guid vmGuid = vmToRemove.getId();
+            if (!migrating && !_vmsToRerun.contains(vmGuid)
                     && ResourceManager.getInstance().IsVmInAsyncRunningList(vmGuid)) {
                 _vmsToRerun.add(vmGuid);
                 log.infoFormat("add VM {0} to rerun treatment", vmToRemove.getName());
@@ -1783,9 +1785,8 @@ public class VdsUpdateRunTimeInfo {
             // or reported from vdsm with error code
             else if (vmToRemove.isAutoStartup()
                     && !_autoVmsToRun.contains(vmGuid)
-                    && (!_runningVms.containsKey(vmGuid) || (_runningVms.containsKey(vmGuid) && _runningVms.get(vmGuid)
-                            .getVmDynamic()
-                            .getExitStatus() != VmExitStatus.Normal))) {
+                    && (!_runningVms.containsKey(vmGuid) ||
+                            _runningVms.get(vmGuid).getVmDynamic().getExitStatus() != VmExitStatus.Normal)) {
                 _autoVmsToRun.add(vmGuid);
                 log.infoFormat("add VM {0} to HA rerun treatment", vmToRemove.getName());
             }
