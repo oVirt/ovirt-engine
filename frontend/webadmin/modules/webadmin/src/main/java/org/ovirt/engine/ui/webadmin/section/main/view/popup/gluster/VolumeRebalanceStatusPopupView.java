@@ -238,7 +238,12 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
         }, new Parser<Date>() {
             @Override
             public Date parse(CharSequence text) throws ParseException {
-                return new Date(Date.parse(text.toString()));
+                if(text == null || text.toString().isEmpty()) {
+                    return null;
+                }
+                else {
+                    return new Date(Date.parse(text.toString()));
+                }
             }
         });
     }

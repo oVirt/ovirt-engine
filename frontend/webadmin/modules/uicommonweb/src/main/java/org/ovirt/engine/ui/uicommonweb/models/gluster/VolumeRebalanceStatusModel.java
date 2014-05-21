@@ -55,10 +55,8 @@ public class VolumeRebalanceStatusModel extends Model {
         setVolume(new EntityModel<String>());
         setCluster(new EntityModel<String>());
         setStartTime(new EntityModel<Date>());
-        getStartTime().setEntity(new Date());
         setStatusTime(new EntityModel<Date>());
         setStopTime(new EntityModel<Date>());
-        getStopTime().setEntity(new Date());
         setRebalanceSessions(new ListModel<EntityModel<GlusterVolumeTaskStatusForHost>>());
         setEntity(volumeEntity);
         refresh = new Timer() {
