@@ -133,6 +133,7 @@ BUILD_TARGET=install
 	-e "s|@ENGINE_VARS@|$(PKG_SYSCONF_DIR)/engine.conf|g" \
 	-e "s|@ENGINE_SETUP_VARS@|$(SYSCONF_DIR)/ovirt-engine-setup.conf|g" \
 	-e "s|@ENGINE_NOTIFIER_VARS@|$(PKG_SYSCONF_DIR)/notifier/notifier.conf|g" \
+	-e "s|@ENGINE_FKLSNR_VARS@|$(PKG_SYSCONF_DIR)/ovirt-fence-kdump-listener.conf|g" \
 	-e "s|@ENGINE_WSPROXY_VARS@|$(PKG_SYSCONF_DIR)/ovirt-websocket-proxy.conf|g" \
 	-e "s|@ENGINE_USER@|$(PKG_USER)|g" \
 	-e "s|@ENGINE_GROUP@|$(PKG_GROUP)|g" \
@@ -173,6 +174,7 @@ GENERATED = \
 	packaging/etc/engine.conf.d/README \
 	packaging/etc/notifier/log4j.xml \
 	packaging/etc/notifier/notifier.conf.d/README \
+	packaging/etc/ovirt-fence-kdump-listener.conf.d/README \
 	packaging/etc/ovirt-websocket-proxy.conf.d/README \
 	packaging/pythonlib/ovirt_engine/config.py \
 	packaging/services/ovirt-engine-notifier/config.py \
@@ -183,6 +185,10 @@ GENERATED = \
 	packaging/services/ovirt-engine/ovirt-engine.conf \
 	packaging/services/ovirt-engine/ovirt-engine.systemd \
 	packaging/services/ovirt-engine/ovirt-engine.sysv \
+	packaging/services/ovirt-fence-kdump-listener/config.py \
+	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.conf \
+	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.systemd \
+	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.sysv \
 	packaging/services/ovirt-websocket-proxy/config.py \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.conf \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.systemd \
@@ -206,6 +212,7 @@ generated-files:	$(GENERATED)
 	chmod a+x build/python-check.sh
 	chmod a+x packaging/services/ovirt-engine/ovirt-engine.sysv
 	chmod a+x packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.sysv
+	chmod a+x packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.sysv
 	chmod a+x packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.sysv
 	chmod a+x packaging/bin/ovirt-engine-log-setup-event.sh
 

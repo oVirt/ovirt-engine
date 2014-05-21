@@ -1,0 +1,12 @@
+[Unit]
+Description=oVirt Engine fence_kdump listener
+
+[Service]
+Type=notify
+User=@ENGINE_USER@
+Group=@ENGINE_GROUP@
+ExecStart=@ENGINE_USR@/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.py --systemd=notify $EXTRA_ARGS start
+EnvironmentFile=-/etc/sysconfig/ovirt-fence-kdump-listener
+
+[Install]
+WantedBy=multi-user.target

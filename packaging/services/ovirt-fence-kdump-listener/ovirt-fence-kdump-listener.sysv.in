@@ -1,0 +1,78 @@
+#!/bin/sh
+#
+# Start/stop oVirt fence_kdump listener
+#
+# chkconfig: - 65 34
+# description: oVirt fence_kdump listener
+# pidfile: /var/run/ovirt-fence-kdump-listener.pid
+
+### BEGIN INIT INFO
+# Provides: ovirt-fence-kdump-listener
+# Short-Description: oVirt fence_kdump listener
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+NAME="ovirt-fence-kdump-listener"
+PROG="oVirt fence_kdump listener"
+
+[ -f "/etc/sysconfig/${NAME}" ] && . "/etc/sysconfig/${NAME}"
+
+RETVAL=0
+LOCKFILE="/var/lock/subsys/${NAME}"
+PIDFILE="${PIDFILE:-/var/run/${NAME}.pid}"
+USER="@ENGINE_USER@"
+ENGINE_USR="@ENGINE_USR@"
+
+# See how we were called.
+case "$1" in
+	start)
+		if [ `id -u` -ne 0 ]; then
+			echo $"Insufficient privilege" 1>&2
+			exit 4
+		fi
+		echo -n $"Starting $PROG: "
+		touch "${PIDFILE}"
+		chown "${USER}" "${PIDFILE}"
+		daemon --user "${USER}" --pidfile="${PIDFILE}" \
+			"${ENGINE_USR}/services/${NAME}/${NAME}.py" \
+				--pidfile="${PIDFILE}" \
+				--background \
+				--redirect-output \
+				${EXTRA_ARGS} \
+				start
+		RETVAL=$?
+		echo
+		if [ $RETVAL -eq 0 ]; then
+			touch "${LOCKFILE}"
+		else
+			if [ -f "${LOCKFILE}" ]; then
+				RETVAL=0
+			fi
+		fi
+		[ $RETVAL -ne 0 -a ! -s "${PIDFILE}" ] && rm -f "${PIDFILE}"
+		;;
+	stop)
+		echo -n $"Stopping $PROG: "
+		killproc -p "${PIDFILE}" -d 60
+		RETVAL=$?
+		echo
+		[ $RETVAL -eq 0 ] && rm -f "${LOCKFILE}"
+		;;
+	status)
+		status -p "${PIDFILE}" "${NAME}"
+		RETVAL=$?
+		;;
+	restart)
+		$0 stop
+		$0 start
+		RETVAL=$?
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|status|restart}"
+		exit 2
+		;;
+esac
+
+exit $RETVAL

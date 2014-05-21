@@ -56,6 +56,7 @@ packaging/etc/engine-manage-domains/log4j.xml
 packaging/etc/engine.conf.d/README
 packaging/etc/notifier/log4j.xml
 packaging/etc/notifier/notifier.conf.d/README
+packaging/etc/ovirt-fence-kdump-listener.conf.d/README
 packaging/etc/ovirt-websocket-proxy.conf.d/README
 packaging/pythonlib/ovirt_engine/config.py
 packaging/services/*/*.conf

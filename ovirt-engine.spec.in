@@ -436,6 +436,7 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	java
 Requires:	logrotate
+Requires:	python-psycopg2
 
 %if %{ovirt_install_systemd}
 Requires(post):		systemd
@@ -462,25 +463,31 @@ Provides:	%{name}-tools-common = %{version}-%{release}
 %post tools
 %if %{ovirt_install_systemd}
 %systemd_post ovirt-engine-notifier.service
+%systemd_post ovirt-fence-kdump-listener.service
 %endif
 %if %{ovirt_install_systemv}
 chkconfig --add ovirt-engine-notifier
+chkconfig --add ovirt-fence-kdump-listener
 %endif
 
 %postun tools
 %if %{ovirt_install_systemd}
 %systemd_postun ovirt-engine-notifier.service
+%systemd_postun ovirt-fence-kdump-listener.service
 %endif
 
 %preun tools
 %if %{ovirt_install_systemd}
 %systemd_preun ovirt-engine-notifier.service
+%systemd_preun ovirt-fence-kdump-listener.service
 %endif
 
 %if %{ovirt_install_systemv}
 if [ $1 -eq 0 ]; then
 	service ovirt-engine-notifier stop > /dev/null 2>&1 || true
 	chkconfig --del ovirt-engine-notifier
+	service ovirt-fence-kdump-listener stop > /dev/null 2>&1 || true
+	chkconfig --del ovirt-fence-kdump-listener
 fi
 %endif
 
@@ -735,14 +742,14 @@ __EOF__
 #
 %if %{ovirt_install_systemd}
 install -dm 755 "%{buildroot}%{_unitdir}"
-for service in ovirt-engine ovirt-engine-notifier ovirt-websocket-proxy; do
+for service in ovirt-engine ovirt-engine-notifier ovirt-fence-kdump-listener ovirt-websocket-proxy; do
 	cp "%{buildroot}%{engine_data}/services/${service}/${service}.systemd" "%{buildroot}%{_unitdir}/${service}.service"
 done
 %endif
 
 %if %{ovirt_install_systemv}
 install -dm 755 "%{buildroot}%{_initddir}"
-for service in ovirt-engine ovirt-engine-notifier ovirt-websocket-proxy; do
+for service in ovirt-engine ovirt-engine-notifier ovirt-fence-kdump-listener ovirt-websocket-proxy; do
 	cp "%{buildroot}%{engine_data}/services/${service}/${service}.sysv" "%{buildroot}%{_initddir}/${service}"
 done
 %endif
@@ -1040,14 +1047,18 @@ fi
 %{engine_data}/bin/ovirt-engine-role.sh
 %{engine_data}/conf/jaas.conf
 %{engine_data}/services/ovirt-engine-notifier
+%{engine_data}/services/ovirt-fence-kdump-listener/
 %{engine_etc}/engine-config/engine-config.*properties
 %{engine_etc}/notifier/notifier.conf.d/
+%{engine_etc}/ovirt-fence-kdump-listener.conf.d/
 
 %if %{ovirt_install_systemd}
 %{_unitdir}/ovirt-engine-notifier.service
+%{_unitdir}/ovirt-fence-kdump-listener.service
 %endif
 %if %{ovirt_install_systemv}
 %{_initddir}/ovirt-engine-notifier
+%{_initddir}/ovirt-fence-kdump-listener
 %endif
 
 %changelog

@@ -1,0 +1,53 @@
+#
+# This is a default configuration file for oVirt/RHEV-M fence_kdump listener
+#
+
+#
+# Defines the IP address to receive fence_kdump messages on
+#
+# WARNING: If it's changed to specific address, please make sure the new
+#          address is contained in FenceKdumpDestinationAddress value
+#          in engine-config
+#
+LISTENER_ADDRESS=0.0.0.0
+
+#
+# Defines the port to receive fence_kdump messages on
+#
+# WARNING: If it's changed to different value, please make sure it matches
+#          FenceKdumpDestinationPort value in engine-config
+#
+LISTENER_PORT=7410
+
+#
+# Defines the interval in seconds of listener's heartbeat updates to database
+#
+# WARNING: If it's changed, please make sure the new value is at least half
+#          or smaller than FenceKdumpListenerAliveTimeout value
+#          in engine-config
+#
+HEARTBEAT_INTERVAL=30
+
+#
+# Defines the interval in seconds to synchronize listener's host kdumping
+# sessions in memory to database
+#
+# WARNING: If it's changed, please make sure the new value is at least couple
+#          times smaller than KdumpStartedTimeout value in engine-config
+#
+SESSION_SYNC_INTERVAL=5
+
+#
+# Defines the interval in seconds to reopen database connection which was
+# previously unavailable
+#
+REOPEN_DB_CONNECTION_INTERVAL=30
+
+#
+# Defines maximum timeout in seconds after last received message from kdumping
+# hosts after which the host kdump flow is marked as FINISHED
+#
+# WARNING: If it's changed, please make sure the new value is at least couple
+#          times higher than FenceKdumpMessageInterval value in engine-config
+#
+KDUMP_FINISHED_TIMEOUT=30
