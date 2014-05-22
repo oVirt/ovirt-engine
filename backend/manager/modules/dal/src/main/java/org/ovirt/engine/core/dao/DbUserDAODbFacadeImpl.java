@@ -39,9 +39,6 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             entity.setGroupIds(rs.getString("group_ids"));
             entity.setExternalId(rs.getString("external_id"));
 
-            if (entity.isGroup())
-                entity.setDomain("");
-
             return entity;
         }
     }
