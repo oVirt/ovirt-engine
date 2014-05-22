@@ -178,7 +178,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     protected boolean canDoAction() {
         Map<Guid, StorageDomain> domainsMap = new HashMap<Guid, StorageDomain>();
 
-        if (getVdsGroup() == null || getVm().getVdsGroupId() == null) {
+        if (getVdsGroup() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }
@@ -1024,7 +1024,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             minAllocatedMem = getVm().getMinAllocatedMem();
         } else {
             // first get cluster memory over commit value
-            VDSGroup vdsGroup = getVdsGroupDAO().get(getVm().getVdsGroupId());
+            VDSGroup vdsGroup = getVdsGroup();
             if (vdsGroup != null && vdsGroup.getmax_vds_memory_over_commit() > 0) {
                 minAllocatedMem = (vmMem * 100) / vdsGroup.getmax_vds_memory_over_commit();
             }
@@ -1065,7 +1065,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
 
         VnicProfileHelper vnicProfileHelper =
-                new VnicProfileHelper(getVm().getVdsGroupId(),
+                new VnicProfileHelper(getVdsGroupId(),
                         getStoragePoolId(),
                         getVdsGroup().getcompatibility_version(),
                         AuditLogType.IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES);
@@ -1241,7 +1241,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
         // special permission is needed to use custom properties
         if (getVm() != null && !StringUtils.isEmpty(getVm().getCustomProperties())) {
-            permissionList.add(new PermissionSubject(getVm().getVdsGroupId(),
+            permissionList.add(new PermissionSubject(getVdsGroupId(),
                     VdcObjectType.VdsGroups,
                     ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
         }
@@ -1257,11 +1257,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             jobProperties.put(VdcObjectType.VdsGroups.name().toLowerCase(), getVdsGroupName());
         }
         return jobProperties;
-    }
-
-    @Override
-    public VDSGroup getVdsGroup() {
-        return super.getVdsGroup();
     }
 
     @Override
