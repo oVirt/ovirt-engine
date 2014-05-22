@@ -385,9 +385,13 @@ public class OvfDataUpdater {
 
                 loadVmData(vm);
                 Long currentDbGeneration = getVmStaticDao().getDbGeneration(vm.getId());
-
-                // currentDbGeneration can be null in case that the vm was deleted during the run of OvfDataUpdater.
-                if (currentDbGeneration != null && vm.getStaticData().getDbGeneration() == currentDbGeneration) {
+                if (currentDbGeneration == null) {
+                    log.warnFormat("currentDbGeneration of VM (name: {0}, id: {1}) is null, probably because the VM was deleted during the run of OvfDataUpdater.",
+                            vm.getName(),
+                            vm.getId());
+                    continue;
+                }
+                if (vm.getStaticData().getDbGeneration() == currentDbGeneration) {
                     proccessedOvfConfigurationsInfo.add(buildMetadataDictionaryForVm(vm, vmsAndTemplateMetadata, vmImages));
                     proccessedIdsInfo.add(vm.getId());
                     proccessedOvfGenerationsInfo.add(vm.getStaticData().getDbGeneration());
