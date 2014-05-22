@@ -223,6 +223,13 @@ select fn_db_add_config_value_for_versions_up_to('MixedDomainTypesInDataCenter',
 select fn_db_add_config_value_for_versions_up_to('ClusterRequiredRngSourcesDefault', '', '3.5');
 
 select fn_db_add_config_value_for_versions_up_to('SpiceCopyPasteToggleSupported', 'false', '3.4');
+-- Graphics Framebuffer Device support
+select fn_db_add_config_value('GraphicsDeviceEnabled','false','3.0');
+select fn_db_add_config_value('GraphicsDeviceEnabled','false','3.1');
+select fn_db_add_config_value('GraphicsDeviceEnabled','false','3.2');
+select fn_db_add_config_value('GraphicsDeviceEnabled','false','3.3');
+select fn_db_add_config_value('GraphicsDeviceEnabled','false','3.4');
+select fn_db_add_config_value('GraphicsDeviceEnabled','false','3.5');
 
 select fn_db_add_config_value_for_versions_up_to('SpiceFileTransferToggleSupported', 'false', '3.5');
 select fn_db_add_config_value_for_versions_up_to('StoragePoolMemoryBackend', 'false', '3.4');

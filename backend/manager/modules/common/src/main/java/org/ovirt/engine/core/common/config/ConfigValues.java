@@ -2000,5 +2000,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     DefaultMigrationCompression,
 
+    /**
+     * Specifies graphics framebuffer device representation is supported.
+     */
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GraphicsDeviceEnabled,
+
     Invalid
+
 }

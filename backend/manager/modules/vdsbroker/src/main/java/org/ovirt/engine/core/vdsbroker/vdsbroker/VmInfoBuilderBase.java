@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskImageByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -306,6 +307,8 @@ public abstract class VmInfoBuilderBase {
 
     protected abstract void buildVmVideoCards();
 
+    protected abstract void buildVmGraphicsDevices();
+
     protected abstract void buildVmCD();
 
     protected abstract void buildVmFloppy();
@@ -361,6 +364,39 @@ public abstract class VmInfoBuilderBase {
             vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vm.getVdsGroupId());
         }
         return vdsGroup;
+    }
+
+
+    /**
+     * Derives display type from vm configuration, used with legacy vdsm.
+     * @return either "vnc" or "qxl" string or null if the vm is headless
+     */
+    protected String deriveDisplayTypeLegacy() {
+        List<VmDevice> vmDevices =
+            DbFacade.getInstance()
+                    .getVmDeviceDao()
+                    .getVmDeviceByVmIdAndType(vm.getId(),
+                            VmDeviceGeneralType.GRAPHICS);
+
+        if (vmDevices.isEmpty()) {
+            return null;
+        } else if (vmDevices.size() == 2) { // we have spice & vnc together, we prioritize SPICE
+            return VdsProperties.QXL;
+        }
+
+        GraphicsType deviceType = GraphicsType.fromString(vmDevices.get(0).getDevice());
+        return graphicsTypeToLegacyDisplayType(deviceType);
+    }
+
+    protected String graphicsTypeToLegacyDisplayType(GraphicsType graphicsType) {
+        switch (graphicsType) {
+            case SPICE:
+                return VdsProperties.QXL;
+            case VNC:
+                return VdsProperties.VNC;
+            default:
+                return null;
+        }
     }
 
 }

@@ -388,6 +388,9 @@ public final class VdsProperties {
     // fencing policy parameters
     public static final String STORAGE_DOMAIN_HOST_ID_MAP = "storageDomainHostIdMap";
 
+    // legacy display types
+    protected static final String QXL = "qxl";
+    protected static final String VNC = "vnc";
 
     public static String migrationMethodtoString(MigrationMethod method) {
         switch (method) {

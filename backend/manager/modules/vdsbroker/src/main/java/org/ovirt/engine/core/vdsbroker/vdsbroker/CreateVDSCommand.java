@@ -64,6 +64,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     private void buildVmData() {
         builder.buildVmProperties();
         builder.buildVmVideoCards();
+        builder.buildVmGraphicsDevices();
         builder.buildVmCD();
         builder.buildVmFloppy();
         builder.buildVmDrives();

@@ -32,8 +32,15 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmVideoCards() {
-        createInfo.put(VdsProperties.display, vm.getDisplayType().toString()); // vnc,qxl
         createInfo.put(VdsProperties.num_of_monitors, String.valueOf(vm.getNumOfMonitors()));
+    }
+
+    @Override
+    protected void buildVmGraphicsDevices() {
+        String legacyDisplay = deriveDisplayTypeLegacy();
+        if (legacyDisplay != null) {
+            createInfo.put(VdsProperties.display, legacyDisplay); // vnc,qxl
+        }
     }
 
     @Override

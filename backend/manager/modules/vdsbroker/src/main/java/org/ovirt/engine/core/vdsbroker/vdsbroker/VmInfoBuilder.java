@@ -18,6 +18,8 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
@@ -74,43 +76,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmVideoCards() {
-        createInfo.put(VdsProperties.display, vm.getDisplayType().toString());
-        // the requested display type might be different than the default display of
-        // the VM in Run Once scenario, in that case we need to add proper video device.
-        if (vm.getDisplayType() != vm.getDefaultDisplayType()) {
-            addVideoCardByDisplayType(vm.getDisplayType(), vm.getNumOfMonitors(), vm.getSingleQxlPci());
-        }
-        else {
-            addVideoCardsDefinedForVmInDB(vm.getId());
-        }
-    }
-
-    /**
-     * Add video device according to the given display type
-     */
-    private void addVideoCardByDisplayType(DisplayType displayType, int numOfMonitors, boolean singleQxlPci) {
-        Map<String, Object> struct = new HashMap<String, Object>();
-        VmDeviceType vmDeviceType = displayType.getDefaultVmDeviceType();
-        // create a monitor as an unmanaged device
-        struct.put(VdsProperties.Type, VmDeviceGeneralType.VIDEO.getValue());
-        struct.put(VdsProperties.Device, vmDeviceType.getName());
-        struct.put(VdsProperties.SpecParams, getNewMonitorSpecParams(displayType, numOfMonitors, singleQxlPci));
-        struct.put(VdsProperties.DeviceId, String.valueOf(Guid.newGuid()));
-        devices.add(struct);
-    }
-
-    private static OsRepository getOsRepository() {
-        return SimpleDependecyInjector.getInstance().get(OsRepository.class);
-    }
-
-    /**
-     * Add the video cards defined for the VM with the given id in the DB
-     */
-    private void addVideoCardsDefinedForVmInDB(Guid vmId) {
         List<VmDevice> vmVideoDevices =
                 DbFacade.getInstance()
                         .getVmDeviceDao()
-                        .getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.VIDEO);
+                        .getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.VIDEO);
         for (VmDevice vmVideoDevice : vmVideoDevices) {
             // skip unmanaged devices (handled separately)
             if (!vmVideoDevice.getIsManaged()) {
@@ -126,6 +95,72 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             addToManagedDevices(vmVideoDevice);
             devices.add(struct);
         }
+    }
+
+    /**
+     * Builds graphics cards for a vm.
+     * If there is a pre-filled information about graphics in graphics info (this means vm is run via run once ),
+     * this information is used to create graphics devices. Otherwise graphics devices are build from database.
+     */
+    @Override
+    protected void buildVmGraphicsDevices() {
+        boolean graphicsOverriden = vm.isRunOnce() && vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty();
+        boolean usesGraphicsAsDevice = FeatureSupported.graphicsDeviceEnabled(vm.getVdsGroupCompatibilityVersion());
+
+        if (graphicsOverriden) {
+            buildVmGraphicsDevicesOverriden(vm.getGraphicsInfos(), usesGraphicsAsDevice);
+        } else {
+            buildVmGraphicsDevicesFromDb(usesGraphicsAsDevice);
+        }
+    }
+
+    /**
+     * Creates graphics devices from graphics info - this will override the graphics devices from the db.
+     * Used when vm is run via run once.
+     *
+     * @param graphicsInfos - vm graphics
+     * @param usesGraphicsAsDevice - true if vdsm understands graphics as a separate device, false when vdsm creates
+     *                             video and graphics from conf.
+     */
+    private void buildVmGraphicsDevicesOverriden(Map<GraphicsType, GraphicsInfo> graphicsInfos, boolean usesGraphicsAsDevice) {
+        if (usesGraphicsAsDevice) {
+            for (Entry<GraphicsType, GraphicsInfo> graphicsInfo : graphicsInfos.entrySet()) {
+                Map struct = new HashMap();
+                struct.put(VdsProperties.Type, VmDeviceGeneralType.GRAPHICS.getValue());
+                struct.put(VdsProperties.Device, graphicsInfo.getKey().name().toLowerCase());
+                struct.put(VdsProperties.DeviceId, String.valueOf(Guid.newGuid()));
+                devices.add(struct);
+            }
+        }
+
+        if (!graphicsInfos.isEmpty()) {
+            String legacyGraphicsType = (graphicsInfos.size() == 2)
+                    ? VdsProperties.QXL
+                    : graphicsTypeToLegacyDisplayType(graphicsInfos.keySet().iterator().next());
+
+            createInfo.put(VdsProperties.display, legacyGraphicsType);
+        }
+    }
+
+    /**
+     * Builds vm graphics from database.
+     *
+     * @param usesGraphicsAsDevice - true if vdsm understands graphics as a separate device, false when vdsm creates
+     *                             video and graphics from conf.
+     */
+    private void buildVmGraphicsDevicesFromDb(boolean usesGraphicsAsDevice) {
+        if (usesGraphicsAsDevice) {
+            buildVmDevicesFromDb(VmDeviceGeneralType.GRAPHICS, false);
+        }
+
+        String legacyDisplay = deriveDisplayTypeLegacy();
+        if (legacyDisplay != null) {
+            createInfo.put(VdsProperties.display, legacyDisplay);
+        }
+    }
+
+    private static OsRepository getOsRepository() {
+        return SimpleDependecyInjector.getInstance().get(OsRepository.class);
     }
 
     @Override

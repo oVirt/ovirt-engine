@@ -459,4 +459,16 @@ public class FeatureSupported {
     public static boolean migrationCompression(Version version) {
         return supportedInConfig(ConfigValues.MigrationCompressionSupported, version);
     }
+
+    /**
+     * Determines whether engine should represent graphics framebuffer as a generic device when sending VM to VDSM.
+     * @param version - compatibility version to check for
+     * @return
+     *   <code>true</code> - graphics will be send to VDSM as a part of devices structure,
+     *   <code>false</code> - grapihcs will be send to VDSM the old way (top level VM structure).
+     */
+    public static boolean graphicsDeviceEnabled(Version version) {
+        return supportedInConfig(ConfigValues.GraphicsDeviceEnabled, version);
+    }
+
 }
