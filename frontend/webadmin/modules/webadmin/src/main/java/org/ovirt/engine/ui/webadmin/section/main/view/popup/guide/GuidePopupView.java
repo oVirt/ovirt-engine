@@ -120,7 +120,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
                 GuideModel guideModel = (GuideModel) sender;
                 String propertyName = ((PropertyChangedEventArgs) args).propertyName;
 
-                if (PropertyChangedEventArgs.Args.PROGRESS.toString().equals(propertyName)) {
+                if (PropertyChangedEventArgs.PROGRESS.equals(propertyName)) {
                     if (guideModel.getProgress() == null) {
 
                         // Check whether there any available actions.

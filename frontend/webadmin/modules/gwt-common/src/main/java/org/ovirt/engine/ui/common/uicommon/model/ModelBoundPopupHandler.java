@@ -132,7 +132,7 @@ public class ModelBoundPopupHandler<M extends Model> {
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
 
-                if (PropertyChangedEventArgs.Args.PROGRESS.toString().equals(pcArgs.propertyName)) { //$NON-NLS-1$
+                if (PropertyChangedEventArgs.PROGRESS.equals(pcArgs.propertyName)) { //$NON-NLS-1$
                     updatePopupProgress(model, popup);
                 }
             }

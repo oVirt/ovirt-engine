@@ -19,7 +19,6 @@ public class UserPortalVmEventListModel extends VmEventListModel {
         }
 
         VM vm = (VM) getEntity();
-
         super.syncSearch(VdcQueryType.GetAllAuditLogsByVMId, new IdQueryParameters(vm.getId()));
     }
 
@@ -35,5 +34,12 @@ public class UserPortalVmEventListModel extends VmEventListModel {
             Collections.sort(list, Collections.reverseOrder(new Linq.AuditLogComparer()));
         }
         super.setItems(list);
+    }
+
+    @Override
+    protected void onEntityContentChanged()
+    {
+        startProgress(null);
+        super.onEntityContentChanged();
     }
 }

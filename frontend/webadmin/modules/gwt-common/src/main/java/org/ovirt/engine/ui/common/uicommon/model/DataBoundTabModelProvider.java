@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.uicommon.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -10,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.AsyncDataProvider;
@@ -61,6 +61,21 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
                 }
             }
         });
+        getModel().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (args instanceof PropertyChangedEventArgs) {
+                    PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
+                    if (PropertyChangedEventArgs.PROGRESS.equals(pcArgs.propertyName)) {
+                        clearData();
+                    }
+                }
+            }
+        });
+    }
+
+    void clearData() {
+        getDataProvider().updateRowCount(0, false);
     }
 
     /**
@@ -126,7 +141,7 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
      */
     @SuppressWarnings("unchecked")
     protected void updateData() {
-        List<T> items = getModel().getItems() == null ? null : new ArrayList<T>((Collection<T>) getModel().getItems());
+        List<T> items = getModel().getItems() == null ? null : new ArrayList<T>(getModel().getItems());
 
         if (items != null) {
             updateDataProvider(items);

@@ -16,6 +16,8 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
@@ -212,11 +214,16 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
-                if (PropertyChangedEventArgs.Args.PROGRESS.toString().equals(pcArgs.propertyName)) {
+                if (PropertyChangedEventArgs.PROGRESS.equals(pcArgs.propertyName)) {
                     if (modelProvider.getModel().getProgress() != null) {
-                        if (getTable() != null) {
-                            getTable().setLoadingState(LoadingState.LOADING);
-                        }
+                        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+                            @Override
+                            public void execute() {
+                                if (getTable() != null) {
+                                    getTable().setLoadingState(LoadingState.LOADING);
+                                }
+                            }
+                        });
                     }
                 }
             }

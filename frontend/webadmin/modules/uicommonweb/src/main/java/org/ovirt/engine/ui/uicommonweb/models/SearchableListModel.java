@@ -441,7 +441,7 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
             if (getIsTimerDisabled() == false)
             {
                 setIsQueryFirstTime(true);
-                onPropertyChanged(new PropertyChangedEventArgs(PropertyChangedEventArgs.Args.PROGRESS.toString()));
+                onPropertyChanged(new PropertyChangedEventArgs(PropertyChangedEventArgs.PROGRESS));
                 syncSearch();
                 setIsQueryFirstTime(false);
                 if (getTimer() != null) {

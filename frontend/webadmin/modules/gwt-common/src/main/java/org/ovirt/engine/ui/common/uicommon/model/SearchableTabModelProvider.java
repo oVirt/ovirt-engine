@@ -48,13 +48,14 @@ public abstract class SearchableTabModelProvider<T, M extends SearchableListMode
                         updateData();
                     }
                 }
-                if (PropertyChangedEventArgs.Args.PROGRESS.toString().equals(pcArgs.propertyName)) {
+                if (PropertyChangedEventArgs.PROGRESS.equals(pcArgs.propertyName)) {
                     clearData();
                 }
             }
         });
     }
 
+    @Override
     void clearData() {
         // Remove locally cached row data and enforce "loading" state
         getDataProvider().updateRowCount(0, false);
