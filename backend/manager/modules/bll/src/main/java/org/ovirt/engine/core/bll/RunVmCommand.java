@@ -604,7 +604,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         // if we attach floppy we don't need the sysprep
-        if (!StringUtils.isEmpty(getParameters().getFloppyPath())) {
+        if (!getVm().isRunOnce() && !StringUtils.isEmpty(getParameters().getFloppyPath())) {
             getVmStaticDAO().update(getVm().getStaticData());
         }
         // get what cpu flags should be passed to vdsm according to cluster
