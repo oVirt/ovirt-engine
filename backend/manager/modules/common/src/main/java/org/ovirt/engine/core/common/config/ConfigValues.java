@@ -1755,5 +1755,41 @@ public enum ConfigValues {
     @DefaultValueAttribute("1500")
     DefaultMtu,
 
+    /**
+     * Defines the hostname(s) or IP address(es) to send fence_kdump messages to. If empty, engine FQDN is used.
+     */
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    FenceKdumpDestinationAddress,
+
+    /**
+     * Defines the port to send fence_kdump messages to.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("7410")
+    FenceKdumpDestinationPort,
+
+    /**
+     * Defines the interval in seconds between messages sent by fence_kdump_send.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("5")
+    FenceKdumpMessageInterval,
+
+    /**
+     * Defines max timeout in seconds since last heartbeat to consider fence_kdump listener alive.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("90")
+    FenceKdumpListenerTimeout,
+
+    /**
+     * Defines maximum timeout in seconds to wait until 1st message from kdumping host is received (host kdump flow
+     * started).
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("30")
+    KdumpStartedTimeout,
+
     Invalid
 }

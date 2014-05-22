@@ -747,6 +747,13 @@ select fn_db_add_config_value('DefaultCustomSerialNumber','Dummy serial number.'
 
 select fn_db_add_config_value('DefaultMtu', '1500', 'general');
 
+select fn_db_add_config_value('FenceKdumpDestinationAddress','','general');
+select fn_db_add_config_value('FenceKdumpDestinationPort','7410','general');
+select fn_db_add_config_value('FenceKdumpMessageInterval','5','general');
+select fn_db_add_config_value('FenceKdumpListenerTimeout','90','general');
+select fn_db_add_config_value('KdumpStartedTimeout','30','general');
+
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
