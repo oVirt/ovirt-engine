@@ -202,7 +202,13 @@ div.avw_contentWidget_pfly_fix {
 }
 .cpv_enableGlusterService_pfly_fix span.gwt-CheckBox {
     position: relative;
-    top: -32px;
+    top: -2px;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .cpv_enableGlusterService_pfly_fix span.gwt-CheckBox {
+        position: relative;
+        top: -32px;
+    }
 }
 .cvp_consoleContent_pfly_fix, .cvp_clusterPolicyContent_pfly_fix {
     padding-top: 5px;
