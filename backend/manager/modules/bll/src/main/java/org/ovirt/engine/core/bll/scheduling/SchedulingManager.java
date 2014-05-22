@@ -903,13 +903,13 @@ public class SchedulingManager {
         if (policyUnit != null) {
             for (ClusterPolicy clusterPolicy : policyMap.values()) {
                 switch (policyUnit.getPolicyUnitType()) {
-                case Filter:
+                case FILTER:
                     Collection<Guid> filters = clusterPolicy.getFilters();
                     if (filters != null && filters.contains(policyUnitId)) {
                         list.add(clusterPolicy.getName());
                     }
                     break;
-                case Weight:
+                case WEIGHT:
                     Collection<Pair<Guid, Integer>> functions = clusterPolicy.getFunctions();
                     if (functions == null) {
                         break;
@@ -921,7 +921,7 @@ public class SchedulingManager {
                         }
                     }
                     break;
-                case LoadBalancing:
+                case LOAD_BALANCING:
                     if (policyUnitId.equals(clusterPolicy.getBalance())) {
                         list.add(clusterPolicy.getName());
                     }

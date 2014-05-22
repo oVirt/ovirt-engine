@@ -41,19 +41,19 @@ public class ExternalSchedulerDiscoveryThread extends Thread {
         List<PolicyUnit> allPolicyUnits = getPolicyUnitDao().getAll();
         List<PolicyUnit> foundInBoth = new LinkedList<PolicyUnit>();
         for (ExternalSchedulerDiscoveryUnit unit : discoveryResult.getFilters()) {
-            PolicyUnit found = compareToDB(allPolicyUnits, unit, PolicyUnitType.Filter);
+            PolicyUnit found = compareToDB(allPolicyUnits, unit, PolicyUnitType.FILTER);
             if (found != null) {
                 foundInBoth.add(found);
             }
         }
         for (ExternalSchedulerDiscoveryUnit unit : discoveryResult.getScores()) {
-            PolicyUnit found = compareToDB(allPolicyUnits, unit, PolicyUnitType.Weight);
+            PolicyUnit found = compareToDB(allPolicyUnits, unit, PolicyUnitType.WEIGHT);
             if (found != null) {
                 foundInBoth.add(found);
             }
         }
         for (ExternalSchedulerDiscoveryUnit unit : discoveryResult.getBalance()) {
-            PolicyUnit found = compareToDB(allPolicyUnits, unit, PolicyUnitType.LoadBalancing);
+            PolicyUnit found = compareToDB(allPolicyUnits, unit, PolicyUnitType.LOAD_BALANCING);
             if (found != null) {
                 foundInBoth.add(found);
             }

@@ -51,58 +51,58 @@ public class PolicyUnitImpl {
         case "Network":
             return new NetworkPolicyUnit(policyUnit);
         case "HA":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
                 return new HostedEngineHAClusterWeightPolicyUnit(policyUnit);
-            } else if (policyUnit.getPolicyUnitType() == PolicyUnitType.Filter) {
+            } else if (policyUnit.getPolicyUnitType() == PolicyUnitType.FILTER) {
                 return new HostedEngineHAClusterFilterPolicyUnit(policyUnit);
             }
             break;
         case "OptimalForHaReservation":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
                 return new HaReservationWeightPolicyUnit(policyUnit);
             }
-            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
+            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
                 return new HaReservationBalancePolicyUnit(policyUnit);
             }
             break;
         case "CPU-Level":
             return new CpuLevelFilterPolicyUnit(policyUnit);
         case "None":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
                 return new NoneWeightPolicyUnit(policyUnit);
             }
-            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
+            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
                 return new NoneBalancePolicyUnit(policyUnit);
             }
             break;
         case "OptimalForPowerSaving":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
                 return new PowerSavingWeightPolicyUnit(policyUnit);
             }
-            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
+            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
                 return new PowerSavingBalancePolicyUnit(policyUnit);
             }
             break;
         case "OptimalForEvenDistribution":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
                 return new EvenDistributionWeightPolicyUnit(policyUnit);
             }
-            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
+            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
                 return new EvenDistributionBalancePolicyUnit(policyUnit);
             }
             break;
         case "OptimalForEvenGuestDistribution":
-                if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+                if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
                     return new EvenGuestDistributionWeightPolicyUnit(policyUnit);
                 }
-                else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
+                else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
                     return new EvenGuestDistributionBalancePolicyUnit(policyUnit);
                 }
                 break;
         case "VmAffinityGroups":
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Filter) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.FILTER) {
                 return new VmAffinityFilterPolicyUnit(policyUnit);
-            } else if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+            } else if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
                 return new VmAffinityWeightPolicyUnit(policyUnit);
             }
         default:

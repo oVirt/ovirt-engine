@@ -183,7 +183,7 @@ public class NewClusterPolicyModel extends Model {
         }
         ArrayList<PolicyUnit> balancePolicyUnits = new ArrayList<PolicyUnit>();
         for (PolicyUnit policyUnit : list) {
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
                 balancePolicyUnits.add(policyUnit);
             }
         }
@@ -196,7 +196,7 @@ public class NewClusterPolicyModel extends Model {
         }
         ArrayList<PolicyUnit> filterPolicyUnits = new ArrayList<PolicyUnit>();
         for (PolicyUnit policyUnit : list) {
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Filter) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.FILTER) {
                 filterPolicyUnits.add(policyUnit);
             }
         }
@@ -209,7 +209,7 @@ public class NewClusterPolicyModel extends Model {
         }
         ArrayList<PolicyUnit> functionPolicyUnits = new ArrayList<PolicyUnit>();
         for (PolicyUnit policyUnit : list) {
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
                 functionPolicyUnits.add(policyUnit);
             }
         }

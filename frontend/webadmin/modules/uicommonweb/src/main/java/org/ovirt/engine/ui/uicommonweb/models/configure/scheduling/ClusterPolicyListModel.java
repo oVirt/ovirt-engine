@@ -57,7 +57,7 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
     public List<PolicyUnit> getBalancePolicyUnits() {
         ArrayList<PolicyUnit> list = new ArrayList<PolicyUnit>();
         for (PolicyUnit policyUnit : getPolicyUnits()) {
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
                 list.add(policyUnit);
             }
 
@@ -68,7 +68,7 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
     public ArrayList<PolicyUnit> getFilterPolicyUnits() {
         ArrayList<PolicyUnit> list = new ArrayList<PolicyUnit>();
         for (PolicyUnit policyUnit : getPolicyUnits()) {
-            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Filter) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.FILTER) {
                 list.add(policyUnit);
             }
         }

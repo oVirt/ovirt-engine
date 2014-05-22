@@ -1340,12 +1340,12 @@ public final class Linq
                 return !pu1.isEnabled() ? -1 : 1;
             }
             if (pu1.getPolicyUnitType() != pu2.getPolicyUnitType()) {
-                if (pu1.getPolicyUnitType().equals(PolicyUnitType.Filter)
-                        || pu2.getPolicyUnitType().equals(PolicyUnitType.LoadBalancing)) {
+                if (pu1.getPolicyUnitType().equals(PolicyUnitType.FILTER)
+                        || pu2.getPolicyUnitType().equals(PolicyUnitType.LOAD_BALANCING)) {
                     return -1;
                 }
-                if (pu2.getPolicyUnitType().equals(PolicyUnitType.Filter)
-                        || pu1.getPolicyUnitType().equals(PolicyUnitType.LoadBalancing)) {
+                if (pu2.getPolicyUnitType().equals(PolicyUnitType.FILTER)
+                        || pu1.getPolicyUnitType().equals(PolicyUnitType.LOAD_BALANCING)) {
                     return 1;
                 }
             }

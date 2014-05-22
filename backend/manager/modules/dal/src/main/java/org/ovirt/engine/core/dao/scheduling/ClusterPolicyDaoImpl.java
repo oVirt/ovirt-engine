@@ -86,7 +86,7 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
         }
         for (ClusterPolicyUnit clusterPolicyUnit : clusterPolicyUnits) {
             ClusterPolicy clusterPolicy = map.get(clusterPolicyUnit.getClusterPolicyId());
-            if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.Filter) {
+            if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.FILTER) {
                 if (clusterPolicy.getFilters() == null) {
                     clusterPolicy.setFilters(new ArrayList<Guid>());
                 }
@@ -99,14 +99,14 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
                             clusterPolicyUnit.getFilterSequence());
                 }
             }
-            if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.Weight) {
+            if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.WEIGHT) {
                 if(clusterPolicy.getFunctions() == null){
                     clusterPolicy.setFunctions(new ArrayList<Pair<Guid, Integer>>());
                 }
                 clusterPolicy.getFunctions().add(new Pair<Guid, Integer>(clusterPolicyUnit.getPolicyUnitId(),
                         clusterPolicyUnit.getFactor()));
             }
-            if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
+            if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
                 clusterPolicy.setBalance(clusterPolicyUnit.getPolicyUnitId());
             }
         }

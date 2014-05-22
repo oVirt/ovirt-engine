@@ -24,7 +24,7 @@ public class PolicyUnitDaoImpl extends DefaultGenericDaoDbFacade<PolicyUnit, Gui
                 .addValue("name", entity.getName())
                 .addValue("is_internal", entity.isInternal())
                 .addValue("type",
-                        entity.getPolicyUnitType() == null ? PolicyUnitType.Filter.getValue()
+                        entity.getPolicyUnitType() == null ? PolicyUnitType.FILTER.getValue()
                                 : entity.getPolicyUnitType()
                                 .getValue())
                 .addValue("description", entity.getDescription())

@@ -5,9 +5,9 @@ import java.util.HashMap;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 
 public enum PolicyUnitType implements Identifiable {
-    Filter(0),
-    Weight(1),
-    LoadBalancing(2);
+    FILTER(0),
+    WEIGHT(1),
+    LOAD_BALANCING(2);
 
     private int intValue;
     private static final HashMap<Integer, PolicyUnitType> mappings = new HashMap<Integer, PolicyUnitType>();
