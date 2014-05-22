@@ -21,6 +21,14 @@ public class Authn {
          * @see Capabilities
          */
         public static final ExtKey CAPABILITIES = new ExtKey("AAA_AUTHN_CAPABILITIES", Long.class, "9d16bee3-10fd-46f2-83f9-3d3c54cf258d");
+
+        /**
+         * HTTP authentication scheme. A list of authentication
+         * scheme elements a client will receive with an HTTP
+         * (unauthorized) response message as a value of the
+         * WWW-Authenticate header.
+         */
+        public static final ExtKey HTTP_AUTHENTICATION_SCHEME = new ExtKey("AAA_HTTP_AUTHENTICATION_SCHEME", List/*<String>*/.class, "c0a5c8b4-870b-436e-aeb9-1cd5307b2058");
     }
 
     /**
@@ -92,6 +100,9 @@ public class Authn {
          * Inspect HttpServletRequest and optionally interact with remote using
          * HttpServletResponse. {@link InvokeKeys#RESULT} must be set with
          * negotiation result.
+         * {@link ContextKeys#HTTP_AUTHENTICATION_SCHEME} value is
+         * sent when HTTP 401 response is sent, to enable client
+         * negotiation.
          *
          * <p>
          * Input:
