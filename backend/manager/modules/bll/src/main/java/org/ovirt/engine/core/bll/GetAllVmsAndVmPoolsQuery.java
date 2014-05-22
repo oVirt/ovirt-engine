@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class GetAllVmsAndVmPoolsQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     public GetAllVmsAndVmPoolsQuery(P parameters) {
@@ -18,12 +19,34 @@ public class GetAllVmsAndVmPoolsQuery<P extends VdcQueryParametersBase> extends 
     protected void executeQueryCommand() {
         boolean isSucceeded = true;
         List<Object> retValList = new ArrayList<Object>();
+
+        // Add all VMs that the user has direct or indirect privileges on
+        // that do not belong to a VM Pool
         VdcQueryReturnValue queryResult = Backend.getInstance().runInternalQuery(VdcQueryType.GetAllVms, getParameters());
         if (queryResult != null && queryResult.getSucceeded()) {
-            retValList.addAll(queryResult.<List<VM>>getReturnValue());
+            for (VM vm : queryResult.<List<VM>>getReturnValue()) {
+                if (Guid.isNullOrEmpty(vm.getVmPoolId())) {
+                    retValList.add(vm);
+                }
+            }
         } else {
             isSucceeded = false;
         }
+
+
+        // Query for all VMs the user has direct permissions on, if
+        // a user has taken a VM from VM Pool it should be returned here
+        queryResult = Backend.getInstance().runInternalQuery(VdcQueryType.GetAllVmsForUser, getParameters());
+        if (queryResult != null && queryResult.getSucceeded()) {
+            for (VM vm : queryResult.<List<VM>>getReturnValue()) {
+                if (!retValList.contains(vm)) {
+                    retValList.add(vm);
+                }
+            }
+        } else {
+            isSucceeded = false;
+        }
+
         if (isSucceeded) {
             queryResult =
                     Backend.getInstance().runInternalQuery(VdcQueryType.GetAllVmPoolsAttachedToUser,
