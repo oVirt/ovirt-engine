@@ -24,6 +24,9 @@ public class FormatUtils {
      * @param directoryName the name of the directory
      */
     public static String getFullLoginName(String loginName, String directoryName) {
+        if (loginName == null || loginName.length() == 0) {
+            return "";
+        }
         if (directoryName != null && directoryName.length() > 0) {
             return loginName + "@" + directoryName; //$NON-NLS-1$
         }
