@@ -25,6 +25,8 @@ import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
@@ -182,39 +184,10 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.containsKey(VdsProperties.status)) {
             vm.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.display_port)) {
-            try {
-                vm.setDisplay(Integer.parseInt(xmlRpcStruct.get(VdsProperties.display_port).toString()));
-            } catch (NumberFormatException e) {
-                log.error("Illegal vm display_port '{}'.", xmlRpcStruct.get(VdsProperties.display_port));
-            }
-        } else if (xmlRpcStruct.containsKey(VdsProperties.display)) {
-            try {
-                vm.setDisplay(VNC_START_PORT + Integer.parseInt(xmlRpcStruct.get(VdsProperties.display).toString()));
-            } catch (NumberFormatException e) {
-                log.error("Illegal vm display '{}'.", xmlRpcStruct.get(VdsProperties.display));
-            }
-        }
-        if (xmlRpcStruct.containsKey(VdsProperties.display_secure_port)) {
-            try {
-                vm.setDisplaySecurePort(Integer.parseInt(xmlRpcStruct.get(VdsProperties.display_secure_port)
-                        .toString()));
-            } catch (NumberFormatException e) {
-                log.error("Illegal vm display_secure_port '{}'.",
-                        xmlRpcStruct.get(VdsProperties.display_secure_port));
-            }
-        }
-        if (xmlRpcStruct.containsKey((VdsProperties.displayType))) {
-            String displayType = xmlRpcStruct.get(VdsProperties.displayType).toString();
-            try {
-                vm.setDisplayType(DisplayType.valueOf(displayType));
 
-            } catch (Exception e2) {
-                log.error("Illegal vm display type '{}'.", displayType);
-            }
-        }
-        if (xmlRpcStruct.containsKey((VdsProperties.displayIp))) {
-            vm.setDisplayIp((String) xmlRpcStruct.get(VdsProperties.displayIp));
+        boolean hasGraphicsInfo = updateGraphicsInfo(vm, xmlRpcStruct);
+        if (!hasGraphicsInfo) {
+            updateGraphicsInfoFromConf(vm, xmlRpcStruct);
         }
 
         if (xmlRpcStruct.containsKey((VdsProperties.utc_diff))) {
@@ -331,6 +304,111 @@ public class VdsBrokerObjectsBuilder {
 
         if (xmlRpcStruct.containsKey(VdsProperties.GUEST_CPU_COUNT)) {
             vm.setGuestCpuCount(AssignIntValue(xmlRpcStruct, VdsProperties.GUEST_CPU_COUNT));
+        }
+    }
+
+    /**
+     * Updates graphics runtime information according displayInfo VDSM structure if it exists.
+     *
+     * @param vm - VmDynamic to update
+     * @param xmlRpcStruct - data from VDSM
+     * @return true if displayInfo exists, false otherwise
+     */
+    private static boolean updateGraphicsInfo(VmDynamic vm, Map<String, Object> xmlRpcStruct) {
+        Object displayInfo = xmlRpcStruct.get(VdsProperties.displayInfo);
+
+        if (displayInfo == null) {
+            return false;
+        }
+
+        for (Object info : (Object[]) displayInfo) {
+            Map<String, String> infoMap = (Map<String, String>) info;
+            GraphicsType graphicsType = GraphicsType.fromString(infoMap.get(VdsProperties.type));
+
+            GraphicsInfo graphicsInfo = new GraphicsInfo();
+            graphicsInfo.setIp(infoMap.get(VdsProperties.ipAddress))
+                        .setPort(parseIntegerOrNull(infoMap.get(VdsProperties.port)))
+                        .setTlsPort(parseIntegerOrNull(infoMap.get(VdsProperties.tlsPort)));
+
+            if (graphicsInfo.getPort() != null || graphicsInfo.getTlsPort() != null) {
+                vm.getGraphicsInfos().put(graphicsType, graphicsInfo);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Updates graphics runtime information according to vm.conf vdsm structure. It's used with legacy VDSMs that have
+     * no notion about graphics device.
+     * @param vm - VmDynamic to update
+     * @param xmlRpcStruct - data from VDSM
+     */
+    private static void updateGraphicsInfoFromConf(VmDynamic vm, Map<String, Object> xmlRpcStruct) {
+        DisplayType displayType = parseDisplayType(xmlRpcStruct);
+
+        if (displayType == null) {
+            log.warn("Can't set display type from XML.");
+            return;
+        }
+
+        vm.setDisplayType(displayType);
+
+        GraphicsType vmGraphicsType = (displayType == DisplayType.qxl)
+                ? GraphicsType.SPICE
+                : GraphicsType.VNC;
+        GraphicsInfo graphicsInfo = vm.getGraphicsInfos().get(vmGraphicsType);
+
+        if (graphicsInfo != null) {
+            if (xmlRpcStruct.containsKey(VdsProperties.display_port)) {
+                try {
+                    graphicsInfo.setPort(Integer.parseInt(xmlRpcStruct.get(VdsProperties.display_port).toString()));
+                } catch (NumberFormatException e) {
+                    log.error("vm display_port value illegal : {0}", xmlRpcStruct.get(VdsProperties.display_port));
+                }
+            } else if (xmlRpcStruct.containsKey(VdsProperties.display)) {
+                try {
+                    graphicsInfo
+                            .setPort(VNC_START_PORT + Integer.parseInt(xmlRpcStruct.get(VdsProperties.display).toString()));
+                } catch (NumberFormatException e) {
+                    log.error("vm display value illegal : {0}", xmlRpcStruct.get(VdsProperties.display));
+                }
+            }
+            if (xmlRpcStruct.containsKey(VdsProperties.display_secure_port)) {
+                try {
+                    graphicsInfo
+                            .setTlsPort(Integer.parseInt(xmlRpcStruct.get(VdsProperties.display_secure_port).toString()));
+                } catch (NumberFormatException e) {
+                    log.error("vm display_secure_port value illegal : {0}",
+                            xmlRpcStruct.get(VdsProperties.display_secure_port));
+                }
+            }
+            if (xmlRpcStruct.containsKey((VdsProperties.displayIp))) {
+                graphicsInfo.setIp((String) xmlRpcStruct.get(VdsProperties.displayIp));
+            }
+        }
+    }
+
+    /**
+     * Retrieves display type from xml.
+     * @param xmlRpcStruct
+     * @return
+     *  - display type derived from xml on success
+     *  - null on error
+     */
+    private static DisplayType parseDisplayType(Map<String, Object> xmlRpcStruct) {
+        try {
+            String displayTypeStr = xmlRpcStruct.get(VdsProperties.displayType).toString();
+            return DisplayType.valueOf(displayTypeStr);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static Integer parseIntegerOrNull(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch (Exception e) {
+            return null;
         }
     }
 

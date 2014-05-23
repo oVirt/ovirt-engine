@@ -357,6 +357,7 @@ public class ResourceManager {
         vm.setNetworkUsageHistory(null);
         vm.setMigratingToVds(null);
         vm.setRunOnVdsName("");
+        vm.getGraphicsInfos().clear();
         vm.setGuestCurrentUserName(null);
         vm.setConsoleCurrentUserName(null);
         vm.setConsoleUserId(null);

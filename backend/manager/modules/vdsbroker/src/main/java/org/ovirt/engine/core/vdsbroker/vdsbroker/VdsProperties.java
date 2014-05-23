@@ -392,6 +392,13 @@ public final class VdsProperties {
     protected static final String QXL = "qxl";
     protected static final String VNC = "vnc";
 
+    // Display info
+    public static final String displayInfo = "displayInfo";
+    public static final String type = "type";
+    public static final String port = "port";
+    public static final String tlsPort = "tlsPort";
+    public static final String ipAddress = "ipAddress";
+
     public static String migrationMethodtoString(MigrationMethod method) {
         switch (method) {
         case OFFLINE:
