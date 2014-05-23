@@ -85,6 +85,7 @@ public enum VdcActionType {
     UpgradeOvirtNodeInternal(129, QuotaDependency.NONE),
     InstallVds(130, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
     UpgradeOvirtNode(131, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
+    VdsKdumpDetection(132, QuotaDependency.NONE),
 
     // Network
     UpdateNetworkToVdsInterface(149, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),

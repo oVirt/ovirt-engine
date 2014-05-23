@@ -5,11 +5,13 @@ import java.util.Map;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 
@@ -57,6 +59,17 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         boolean shouldBeFenced = validator.shouldVdsBeFenced();
         if (shouldBeFenced) {
             getParameters().setParentCommand(VdcActionType.VdsNotRespondingTreatment);
+            VdcReturnValueBase retVal =
+                    Backend.getInstance().runInternalAction(VdcActionType.VdsKdumpDetection,
+                            getParameters(),
+                            ExecutionHandler.createInternalJobContext());
+
+            if (retVal.getSucceeded()) {
+                // kdump on host detected and finished successfully, stop hard fencing execution
+                getReturnValue().setSucceeded(true);
+                return;
+            }
+
             // Make sure that the StopVdsCommand that runs by the RestartVds
             // don't write over our job, and disrupt marking the job status correctly
             ExecutionContext ec = (ExecutionContext) ObjectUtils.clone(this.getExecutionContext());

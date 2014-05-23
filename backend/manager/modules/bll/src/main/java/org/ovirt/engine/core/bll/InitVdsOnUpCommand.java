@@ -116,6 +116,9 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
         boolean initSucceeded = true;
 
+        // host is UP, remove kdump status
+        getDbFacade().getVdsKdumpStatusDao().remove(getVdsId());
+
         /* Host is UP, re-set the policy controlled power management flag */
         getVds().setPowerManagementControlledByPolicy(true);
         DbFacade.getInstance().getVdsDynamicDao().updateVdsDynamicPowerManagementPolicyFlag(
@@ -532,5 +535,4 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             return false;
         }
     }
-
 }

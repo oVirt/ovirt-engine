@@ -3252,4 +3252,10 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Memory size exceeds supported limit for given cluster version.")
     String ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Kdump detection support is not enabled for host '${VdsName}'.")
+    String KDUMP_DETECTION_NOT_ENABLED_FOR_VDS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Kdump detection support is not properly configured on host '${VdsName}'.")
+    String KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS();
 }
