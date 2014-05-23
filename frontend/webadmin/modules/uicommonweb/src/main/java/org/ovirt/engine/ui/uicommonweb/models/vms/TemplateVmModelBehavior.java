@@ -220,6 +220,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getVmInitModel().init(template);
         getModel().getTemplateVersionName().setEntity(template.getTemplateVersionName());
 
+        getModel().getBootMenuEnabled().setEntity(template.isBootMenuEnabled());
+
         getModel().getSpiceFileTransferEnabled().setEntity(template.isSpiceFileTransferEnabled());
         getModel().getSpiceCopyPasteEnabled().setEntity(template.isSpiceCopyPasteEnabled());
 
