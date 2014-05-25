@@ -131,6 +131,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     private void updateEditorStyle(AbstractValidatedWidgetWithLabel editor, String contentStyle) {
         editor.setContentWidgetStyleName(contentStyle);
+        editor.addContentWidgetStyleName("avw_contentWidget_pfly_fix"); //$NON-NLS-1$
         editor.addWrapperStyleName(style.editorWrapper());
         editor.setLabelStyleName(style.editorLabel());
     }
