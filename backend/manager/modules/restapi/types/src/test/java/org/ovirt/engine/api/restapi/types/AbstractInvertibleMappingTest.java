@@ -53,8 +53,12 @@ public abstract class AbstractInvertibleMappingTest<F extends BaseResource, T, I
         Mapper<I, F> back = mappingLocator.getMapper(inverseClass, fromClass);
         T to = out.map(model, null);
         I inverse = getInverse(to);
-        F transform = back.map(inverse, null);
+        F transform = back.map(inverse, getModel(null));
         verify(model, transform);
+    }
+
+    protected F getModel(F model) {
+        return model;
     }
 
     protected void setUpConfigExpectations() {

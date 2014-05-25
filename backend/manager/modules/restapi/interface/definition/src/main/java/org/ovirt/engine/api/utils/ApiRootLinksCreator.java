@@ -52,6 +52,8 @@ public class ApiRootLinksCreator {
         links.add(createLink("jobs", baseUri));
         links.add(createLink("storageconnections", baseUri));
         links.add(createLink("vnicprofiles", baseUri));
+        links.add(createLink("schedulingpolicyunits", baseUri));
+        links.add(createLink("schedulingpolicies", baseUri));
         links.add(createLink("permissions", baseUri));
         return links;
     }

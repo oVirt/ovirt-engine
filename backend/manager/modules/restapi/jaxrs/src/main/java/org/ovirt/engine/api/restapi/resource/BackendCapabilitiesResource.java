@@ -67,6 +67,7 @@ import org.ovirt.engine.api.model.PermitType;
 import org.ovirt.engine.api.model.Permits;
 import org.ovirt.engine.api.model.PmProxyType;
 import org.ovirt.engine.api.model.PmProxyTypes;
+import org.ovirt.engine.api.model.PolicyUnitType;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.PowerManagementStates;
 import org.ovirt.engine.api.model.PowerManagementStatus;
@@ -79,6 +80,7 @@ import org.ovirt.engine.api.model.RngSource;
 import org.ovirt.engine.api.model.RngSources;
 import org.ovirt.engine.api.model.SchedulingPolicies;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
+import org.ovirt.engine.api.model.SchedulingPolicyUnitTypes;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.api.model.ScsiGenericIoOptions;
 import org.ovirt.engine.api.model.SerialNumberPolicies;
@@ -265,7 +267,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addSerialNumberPolicies(version, SerialNumberPolicy.values());
         addSELinuxModes(version, SELinuxMode.values());
         addRngSources(version, RngSource.values());
-
+        addPolicyUnitTypes(version, PolicyUnitType.values());
         // External tasks types
         addStepEnumTypes(version, StepEnum.values());
 
@@ -856,6 +858,13 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             for (RngSource src : vals) {
                 ver.getRngSources().getRngSources().add(src.name());
             }
+        }
+    }
+
+    private void addPolicyUnitTypes(VersionCaps version, PolicyUnitType[] values) {
+        version.setSchedulingPolicyUnitTypes(new SchedulingPolicyUnitTypes());
+        for (PolicyUnitType policyUnitType : values) {
+            version.getSchedulingPolicyUnitTypes().getSchedulingPolicyUnitTypes().add(policyUnitType.name().toLowerCase());
         }
     }
 

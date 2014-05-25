@@ -32,6 +32,7 @@ import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.ActionsBuilder;
 import org.ovirt.engine.api.model.AffinityGroup;
 import org.ovirt.engine.api.model.Application;
+import org.ovirt.engine.api.model.Balance;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.api.model.CdRom;
@@ -43,6 +44,7 @@ import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.File;
+import org.ovirt.engine.api.model.Filter;
 import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.model.GlusterHook;
 import org.ovirt.engine.api.model.GlusterVolume;
@@ -68,6 +70,8 @@ import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Role;
+import org.ovirt.engine.api.model.SchedulingPolicy;
+import org.ovirt.engine.api.model.SchedulingPolicyUnit;
 import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Statistic;
@@ -85,6 +89,7 @@ import org.ovirt.engine.api.model.VirtualNumaNode;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.model.WatchDog;
+import org.ovirt.engine.api.model.Weight;
 import org.ovirt.engine.api.resource.AffinityGroupResource;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
 import org.ovirt.engine.api.resource.AssignedNetworkResource;
@@ -95,6 +100,8 @@ import org.ovirt.engine.api.resource.AssignedTagResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
+import org.ovirt.engine.api.resource.BalanceResource;
+import org.ovirt.engine.api.resource.BalancesResource;
 import org.ovirt.engine.api.resource.BookmarkResource;
 import org.ovirt.engine.api.resource.BookmarksResource;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
@@ -119,6 +126,8 @@ import org.ovirt.engine.api.resource.EventResource;
 import org.ovirt.engine.api.resource.EventsResource;
 import org.ovirt.engine.api.resource.FileResource;
 import org.ovirt.engine.api.resource.FilesResource;
+import org.ovirt.engine.api.resource.FilterResource;
+import org.ovirt.engine.api.resource.FiltersResource;
 import org.ovirt.engine.api.resource.GroupResource;
 import org.ovirt.engine.api.resource.GroupsResource;
 import org.ovirt.engine.api.resource.HostHookResource;
@@ -149,6 +158,10 @@ import org.ovirt.engine.api.resource.QuotasResource;
 import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.api.resource.RolesResource;
+import org.ovirt.engine.api.resource.SchedulingPoliciesResource;
+import org.ovirt.engine.api.resource.SchedulingPolicyResource;
+import org.ovirt.engine.api.resource.SchedulingPolicyUnitResource;
+import org.ovirt.engine.api.resource.SchedulingPolicyUnitsResource;
 import org.ovirt.engine.api.resource.SnapshotResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticResource;
@@ -190,6 +203,8 @@ import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.resource.VnicProfileResource;
 import org.ovirt.engine.api.resource.VnicProfilesResource;
 import org.ovirt.engine.api.resource.WatchdogResource;
+import org.ovirt.engine.api.resource.WeightResource;
+import org.ovirt.engine.api.resource.WeightsResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBrickResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBricksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterHookResource;
@@ -418,6 +433,22 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(VmSessionResource.class, VmSessionsResource.class, VM.class);
         TYPES.put(Session.class, map);
+
+        map = new ParentToCollectionMap(SchedulingPolicyUnitResource.class, SchedulingPolicyUnitsResource.class);
+        TYPES.put(SchedulingPolicyUnit.class, map);
+
+        map = new ParentToCollectionMap(SchedulingPolicyResource.class, SchedulingPoliciesResource.class);
+        TYPES.put(SchedulingPolicy.class, map);
+
+        map = new ParentToCollectionMap(FilterResource.class, FiltersResource.class, SchedulingPolicy.class);
+        TYPES.put(Filter.class, map);
+
+        map = new ParentToCollectionMap(WeightResource.class, WeightsResource.class, SchedulingPolicy.class);
+        TYPES.put(Weight.class, map);
+
+        map = new ParentToCollectionMap(BalanceResource.class, BalancesResource.class, SchedulingPolicy.class);
+        TYPES.put(Balance.class, map);
+
     }
 
     /**

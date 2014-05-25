@@ -71,6 +71,7 @@ public class FeaturesHelper {
             addFeatureReportVmFQDN(features);
             addFeatureAttachDiskSnapshot(features);
             addFeatureCloudInit(features);
+            addFeatureSchedulingPolicy(features);
         }
         if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_4)) {
             addGlusterBricksFeature(features);
@@ -88,6 +89,17 @@ public class FeaturesHelper {
             addNumaNodesFeature(features);
         }
         return features;
+    }
+
+    private void addFeatureSchedulingPolicy(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Scheduling policy units list");
+        feature.setDescription("Internal/External policy units used by VM Scheduler (filter/weight/balance)");
+        features.getFeature().add(feature);
+        feature = new Feature();
+        feature.setName("Scheduling policies collection");
+        feature.setDescription("Ability to get a list of oVirt's scheduling policies");
+        features.getFeature().add(feature);
     }
 
     private void addFeatureDiskSnapshotsResourceInStorageDomainContext(Features features) {

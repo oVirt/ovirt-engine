@@ -653,6 +653,7 @@
           <xs:element ref="serial_number_policies" minOccurs="0" />
           <xs:element ref="selinux_modes" minOccurs="0" />
           <xs:element ref="rng_sources" minOccurs="0" />
+          <xs:element ref="scheduling_policy_unit_types" minOccurs="0" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -680,9 +681,16 @@
   <xs:element name="scheduling_policies" type="SchedulingPolicies"/>
 
   <xs:complexType name="SchedulingPolicies">
-    <xs:sequence>
-      <xs:element name="policy" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element name="scheduling_policy" type="SchedulingPolicy" minOccurs="0" maxOccurs="unbounded"/>
+          <!-- deprecated - start -->
+          <xs:element name="policy" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+          <!-- deprecated - end -->
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="features" type="Features"/>
@@ -1140,6 +1148,20 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="scheduling_policy_unit_types" type="SchedulingPolicyUnitTypes" />
+
+  <xs:complexType name="SchedulingPolicyUnitTypes">
+    <xs:sequence>
+      <xs:element name="scheduling_policy_unit_type" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="SchedulingPolicyUnitTypes" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
   <!-- Common to all resources -->
 
   <xs:complexType name="ActionableResource">
@@ -1351,11 +1373,160 @@
     </xs:attribute>
   </xs:complexType>
 
+  <xs:element name="scheduling_policy_unit" type="SchedulingPolicyUnit"/>
+
+  <xs:complexType name="SchedulingPolicyUnit">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="internal" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="properties" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="PropertiesMetaData"/>
+              </xs:appinfo>
+            </xs:annotation>
+        </xs:element>
+        </xs:sequence>
+        <xs:attribute name="type" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="scheduling_policy_units" type="SchedulingPolicyUnits"/>
+
+  <xs:complexType name="SchedulingPolicyUnits">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="SchedulingPolicyUnits" />
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="scheduling_policy_unit" minOccurs="0"
+            maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="filter" type="Filter" />
+
+  <xs:complexType name="Filter">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="scheduling_policy_unit" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element name="position" type="xs:int" minOccurs="0"
+            maxOccurs="1" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="filters" type="Filters" />
+
+  <xs:complexType name="Filters">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="filter" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="Filters" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="weight" type="Weight" />
+
+  <xs:complexType name="Weight">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="scheduling_policy" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="scheduling_policy_unit" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element name="factor" type="xs:int" minOccurs="0"
+            maxOccurs="1" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="weights" type="Weights" />
+
+  <xs:complexType name="Weights">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="weight" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="Weights" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="balance" type="Balance" />
+
+  <xs:complexType name="Balance">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="scheduling_policy" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="scheduling_policy_unit" minOccurs="0"
+            maxOccurs="1" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="balances" type="Balances" />
+
+  <xs:complexType name="Balances">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="balance" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="Balances" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="scheduling_policy" type="SchedulingPolicy"/>
+
   <xs:complexType name="SchedulingPolicy">
-    <xs:sequence>
-      <xs:element name="policy" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="thresholds" type="SchedulingPolicyThresholds" minOccurs="0" maxOccurs="1"/>
-    </xs:sequence>
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <!-- deprecated - start -->
+          <xs:element name="policy" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="thresholds" type="SchedulingPolicyThresholds" minOccurs="0" maxOccurs="1"/>
+          <!-- deprecated - end-->
+          <xs:element name="locked" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="default_policy" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="properties" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="Cluster">

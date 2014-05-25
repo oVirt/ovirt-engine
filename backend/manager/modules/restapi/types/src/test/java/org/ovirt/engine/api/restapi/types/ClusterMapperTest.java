@@ -6,7 +6,6 @@ import org.ovirt.engine.api.model.ErrorHandling;
 import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.RngSource;
 import org.ovirt.engine.api.model.SchedulingPolicy;
-import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,16 +20,17 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
 
     @Override
     protected Cluster postPopulate(Cluster model) {
-        model.getSchedulingPolicy().setPolicy(MappingTestHelper.shuffle(SchedulingPolicyType.class).value());
         ErrorHandling errorHandling = new ErrorHandling();
         errorHandling.setOnError(MappingTestHelper.shuffle(MigrateOnError.class).value());
         model.setErrorHandling(errorHandling);
         SchedulingPolicy policy = new SchedulingPolicy();
-        policy.setPolicy("power_saving");
+        policy.setPolicy(NONE);
         model.setSchedulingPolicy(policy);
         model.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
         model.getRequiredRngSources().getRngSources().clear();
         model.getRequiredRngSources().getRngSources().add(RngSource.RANDOM.name());
+        model.getSchedulingPolicy().setPolicy(NONE);
+        model.getSchedulingPolicy().setName(NONE);
         return model;
     }
 
@@ -46,7 +46,7 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         assertNotNull(transform.getDataCenter());
         assertEquals(model.getDataCenter().getId(), transform.getDataCenter().getId());
         assertNotNull(transform.getSchedulingPolicy());
-        assertEquals(model.getSchedulingPolicy().getPolicy(), transform.getSchedulingPolicy().getPolicy());
+        assertEquals(model.getSchedulingPolicy().getId(), transform.getSchedulingPolicy().getId());
         assertEquals(model.getErrorHandling().getOnError(), transform.getErrorHandling().getOnError());
         assertNotNull(transform.getMemoryPolicy());
         assertNotNull(transform.getMemoryPolicy().getTransparentHugepages());
@@ -100,7 +100,9 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
     public void testSchedulingPolicyNone() {
         Cluster cluster = new Cluster();
         SchedulingPolicy policy = new SchedulingPolicy();
+        policy.setId(Guid.Empty.toString());
         policy.setPolicy(NONE);
+        policy.setName(NONE);
         cluster.setSchedulingPolicy(policy);
         VDSGroup transform = getMapper().map(cluster, null);
         assertNotNull(transform.getClusterPolicyName());

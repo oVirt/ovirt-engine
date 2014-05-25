@@ -17,9 +17,9 @@ import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.model.SchedulingPolicyThresholds;
-import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.Version;
+import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -142,7 +142,7 @@ public class ClusterMapper {
             model.getVersion().setMinor(entity.getcompatibility_version().getMinor());
         }
         model.setMemoryPolicy(map(entity, (MemoryPolicy)null));
-        model.setSchedulingPolicy(map(entity, (SchedulingPolicy)null));
+        model.setSchedulingPolicy(map(entity, (SchedulingPolicy) null));
         model.setErrorHandling(map(entity.getMigrateOnError(), (ErrorHandling)null));
         model.setVirtService(entity.supportsVirtService());
         model.setGlusterService(entity.supportsGlusterService());
@@ -198,12 +198,11 @@ public class ClusterMapper {
     @Mapping(from = SchedulingPolicy.class, to = VDSGroup.class)
     public static VDSGroup map(SchedulingPolicy model, VDSGroup template) {
         VDSGroup entity = template != null ? template : new VDSGroup();
-        if (model.isSetPolicy()) {
-            SchedulingPolicyType policyType = SchedulingPolicyType.fromValue(model.getPolicy());
-            if (policyType != null) {
-                entity.setClusterPolicyId(null);
-                entity.setClusterPolicyName(policyType.name().toLowerCase());
-            }
+        if (model.isSetId()) {
+            entity.setClusterPolicyId(GuidUtils.asGuid(model.getId()));
+        }
+        if (model.isSetPolicy() || model.isSetName()) {
+            entity.setClusterPolicyName(model.isSetName() ? model.getName() : model.getPolicy());
         }
         if (model.isSetThresholds()) {
             SchedulingPolicyThresholds thresholds = model.getThresholds();
@@ -228,7 +227,9 @@ public class ClusterMapper {
     public static SchedulingPolicy map(VDSGroup entity, SchedulingPolicy template) {
         SchedulingPolicy model = template != null ? template : new SchedulingPolicy();
         if (entity.getClusterPolicyName() != null) {
+            model.setId(entity.getClusterPolicyId() != null ? entity.getClusterPolicyId().toString() : null);
             model.setPolicy(entity.getClusterPolicyName().toLowerCase());
+            model.setName(entity.getClusterPolicyName().toLowerCase());
             if (entity.getClusterPolicyProperties() != null && !entity.getClusterPolicyProperties().isEmpty()) {
                 model.setThresholds(new SchedulingPolicyThresholds());
                 String lowUtilization = entity.getClusterPolicyProperties().get(LOW_UTILIZATION);
@@ -246,6 +247,9 @@ public class ClusterMapper {
                     model.getThresholds().setDuration(duration);
                 }
             }
+        }
+        if (entity.getClusterPolicyProperties() != null && !entity.getClusterPolicyProperties().isEmpty()) {
+            model.setProperties(CustomPropertiesParser.fromMap(entity.getClusterPolicyProperties()));
         }
         return model;
     }
