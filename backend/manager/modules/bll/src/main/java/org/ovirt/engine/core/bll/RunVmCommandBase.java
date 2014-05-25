@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.RemoveVmHibernationVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -146,7 +147,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
-                VmPoolHandler.processVmPoolOnStopVm(getVm().getId(),
+                Backend.getInstance().runInternalAction(VdcActionType.ProcessDownVm,
+                        new IdParameters(getVm().getId()),
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             }
         });
