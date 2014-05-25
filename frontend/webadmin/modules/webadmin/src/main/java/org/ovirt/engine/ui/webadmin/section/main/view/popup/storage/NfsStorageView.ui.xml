@@ -22,7 +22,7 @@
         }
 
         .pathHintLabel {
-            margin: -8px 0px 0px 50px;
+            margin: 2px 0px 0px 50px;
             font-size: 8pt;
             width: 450px;
         }
