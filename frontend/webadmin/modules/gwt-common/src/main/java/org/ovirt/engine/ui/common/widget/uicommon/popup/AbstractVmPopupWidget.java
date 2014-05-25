@@ -669,6 +669,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     protected FlowPanel disksAllocationPanel;
 
     @UiField
+    protected FlowPanel disksPanel;
+
+    @UiField
     @Ignore
     @WithElementId("provisioning")
     public ListModelListBoxEditor provisioningEditor;
@@ -706,10 +709,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Ignore
     public InfoIcon isVirtioScsiEnabledInfoIcon;
-
-    @UiField
-    @Ignore
-    Label disksAllocationLabel;
 
     @UiField(provided = true)
     @Ignore
@@ -1420,8 +1419,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 boolean isDisksAvailable = object.getIsDisksAvailable();
                 changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable);
 
-                changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable || isDisksAvailable ||
-                        object.getIsVirtioScsiEnabled().getIsAvailable());
+                changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable);
             }
         });
 
@@ -1599,11 +1597,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                     }
                 } else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
                     boolean isDisksAvailable = vm.getIsDisksAvailable();
-                    changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable);
+                    changeApplicationLevelVisibility(disksPanel, isDisksAvailable);
 
                     boolean isProvisioningAvailable = vm.getProvisioning().getIsAvailable();
-                    changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable
-                            || isDisksAvailable || vm.getIsVirtioScsiEnabled().getIsAvailable());
+                    changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable);
+
+                    changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable ||
+                            vm.getIsVirtioScsiEnabled().getIsAvailable());
 
                     if (isDisksAvailable) {
                         // Update warning message by disks status

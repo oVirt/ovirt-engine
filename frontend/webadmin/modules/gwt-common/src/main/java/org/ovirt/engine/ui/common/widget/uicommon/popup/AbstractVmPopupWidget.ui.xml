@@ -112,15 +112,10 @@
             width: 100%;
         }
 
-        .disksAllocation {
-            padding-left: 5px;
-            padding-top: 10px;
-        }
-
-        .disksAllocationPanel {
+        .disksPanel {
             width: 490px;
-            padding-top: 5px;
-            padding-bottom: 10px;
+            margin: 10px 0;
+            display: inline-table;
         }
 
         .textBox {
@@ -650,17 +645,19 @@
                                     <ge:EntityModelRadioButtonEditor ui:field="provisioningCloneEditor"/>
                                 </g:VerticalPanel>
                             </g:HorizontalPanel>
-                            <g:FlowPanel ui:field="disksAllocationPanel">
-                                <g:Label ui:field="disksAllocationLabel" text="{constants.disksAllocation}"  addStyleNames="{style.disksAllocation}" visible="false" />
-                                <g:VerticalPanel>
-                                    <s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="490px" showVolumeType="true" addStyleNames="{style.disksAllocationPanel}" />
-                                </g:VerticalPanel>
+                        </g:FlowPanel>
+                        <g:FlowPanel ui:field="disksAllocationPanel" addStyleNames="{style.sectionPanelTight}">
+                            <g:HorizontalPanel>
+                                <g:Label addStyleNames="{style.sectionLabel}" text="{constants.disksAllocation}" />
+                            </g:HorizontalPanel>
+                            <g:HorizontalPanel addStyleNames="{style.floatLeft}">
+                                <ge:EntityModelDetachableWidget ui:field="isVirtioScsiEnabledWithDetachable" addStyleNames="{style.checkbox}" />
+                                <d:InfoIcon ui:field="isVirtioScsiEnabledInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
+                            </g:HorizontalPanel>
+                            <g:FlowPanel ui:field="disksPanel">
+                                <s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="490px" showVolumeType="true" addStyleNames="{style.disksPanel}" />
                             </g:FlowPanel>
                         </g:FlowPanel>
-                        <g:HorizontalPanel addStyleNames="{style.floatLeft}">
-                            <ge:EntityModelDetachableWidget ui:field="isVirtioScsiEnabledWithDetachable" addStyleNames="{style.checkbox}" />
-                            <d:InfoIcon ui:field="isVirtioScsiEnabledInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
-                        </g:HorizontalPanel>
                     </g:FlowPanel>
                 </t:content>
             </t:DialogTab>
