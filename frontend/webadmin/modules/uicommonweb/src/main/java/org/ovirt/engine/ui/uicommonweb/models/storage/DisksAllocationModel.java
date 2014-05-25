@@ -184,7 +184,7 @@ public class DisksAllocationModel extends EntityModel
     protected void onPropertyChanged(PropertyChangedEventArgs e)
     {
         super.onPropertyChanged(e);
-        if (e.propertyName.equals("Disks")) //$NON-NLS-1$
+        if (e.propertyName.equals("Disks") || e.propertyName.equals("VolumeFormat")) //$NON-NLS-1$ //$NON-NLS-2$
         {
             updateStorageDomainsAvailability();
             updateQuotaAvailability();
@@ -290,7 +290,10 @@ public class DisksAllocationModel extends EntityModel
     }
 
     public void setIsVolumeFormatChangable(boolean isVolumeFormatChangable) {
-        this.isVolumeFormatChangable = isVolumeFormatChangable;
+        if (this.isVolumeFormatChangable != isVolumeFormatChangable) {
+            this.isVolumeFormatChangable = isVolumeFormatChangable;
+            onPropertyChanged(new PropertyChangedEventArgs("VolumeFormat")); //$NON-NLS-1$
+        }
     }
 
     public void setIsSourceStorageDomainAvailable(boolean isSourceStorageDomainAvailable) {
