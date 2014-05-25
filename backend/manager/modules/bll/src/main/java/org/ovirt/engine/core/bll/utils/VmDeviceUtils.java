@@ -106,17 +106,18 @@ public class VmDeviceUtils {
     }
 
     public static void updateSmartcardDevice(Guid vmId, boolean smartcardEnabled) {
+        List<VmDevice> vmDevices =
+                DbFacade.getInstance()
+                        .getVmDeviceDao()
+                        .getVmDeviceByVmIdTypeAndDevice(vmId,
+                                VmDeviceGeneralType.SMARTCARD,
+                                VmDeviceType.SMARTCARD.getName());
+
         if (!smartcardEnabled) {
-            List<VmDevice> vmDevices =
-                    DbFacade.getInstance()
-                            .getVmDeviceDao()
-                            .getVmDeviceByVmIdTypeAndDevice(vmId,
-                                    VmDeviceGeneralType.SMARTCARD,
-                                    VmDeviceType.SMARTCARD.getName());
             for (VmDevice device : vmDevices) {
                 dao.remove(device.getId());
             }
-        } else {
+        } else if (vmDevices.isEmpty()) {
             addSmartcardDevice(vmId);
         }
     }
