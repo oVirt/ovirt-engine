@@ -115,11 +115,21 @@ public class HostMapper {
     @Mapping(from = PowerManagement.class, to = VdsStatic.class)
     public static VdsStatic map(PowerManagement model, VdsStatic template) {
         VdsStatic entity = template != null ? template : new VdsStatic();
-        entity.setManagementIp(getManagementIp(model, entity));
-        entity.setPmType(getManagementType(model, entity));
-        entity.setPmUser(getManagementUser(model, entity));
-        entity.setPmPassword(getManagementPassword(model, entity));
-        entity.setPmOptions(getManagementOptions(model, entity));
+        boolean hasAgents=StringUtils.isNotEmpty(model.getAddress()) || (model.isSetAgents() && model.getAgents().getAgents().size() > 0);
+        boolean removeSecondaryAgent=StringUtils.isNotEmpty(entity.getPmSecondaryIp()) && model.isSetAgents() && model.getAgents().getAgents().size() < 2;
+        if (hasAgents) {
+            entity.setManagementIp(getManagementIp(model, entity));
+            entity.setPmType(getManagementType(model, entity));
+            entity.setPmUser(getManagementUser(model, entity));
+            entity.setPmPassword(getManagementPassword(model, entity));
+            entity.setPmOptions(getManagementOptions(model, entity));
+        }
+        else {
+            clearPmAgentsSettings(entity);
+        }
+        if (removeSecondaryAgent) {
+            clearSecondaryPmAgentSettings(entity);
+        }
         if (model.isSetEnabled()) {
             entity.setPmEnabled(model.isEnabled());
         }
@@ -173,6 +183,27 @@ public class HostMapper {
             entity.setPmKdumpDetection(model.isKdumpDetection());
         }
         return entity;
+    }
+
+    private static void clearPmAgentsSettings(VdsStatic entity) {
+        clearPrimaryPmAgentSettings(entity);
+        clearSecondaryPmAgentSettings(entity);
+    }
+
+    private static void clearPrimaryPmAgentSettings(VdsStatic entity) {
+        entity.setManagementIp(null);
+        entity.setPmType(null);
+        entity.setPmUser(null);
+        entity.setPmPassword(null);
+        entity.setPmOptions(StringUtils.EMPTY);
+    }
+
+    private static void clearSecondaryPmAgentSettings(VdsStatic entity) {
+        entity.setPmSecondaryType(null);
+        entity.setPmSecondaryIp(null);
+        entity.setPmSecondaryUser(null);
+        entity.setPmSecondaryPassword(null);
+        entity.setPmSecondaryOptions(StringUtils.EMPTY);
     }
 
     /**
