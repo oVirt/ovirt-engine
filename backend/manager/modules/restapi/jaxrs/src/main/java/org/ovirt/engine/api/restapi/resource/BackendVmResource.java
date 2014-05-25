@@ -307,6 +307,12 @@ public class BackendVmResource extends
         validateParameters(action, "snapshot.id");
         TryBackToAllSnapshotsOfVmParameters tryBackParams =
                 new TryBackToAllSnapshotsOfVmParameters(guid, asGuid(action.getSnapshot().getId()));
+        if (action.isSetRestoreMemory()) {
+            tryBackParams.setRestoreMemory(action.isRestoreMemory());
+        }
+        if (action.isSetDisks()) {
+            tryBackParams.setDisks(getParent().mapDisks(action.getDisks()));
+        }
         Response response = doAction(VdcActionType.TryBackToAllSnapshotsOfVm,
                 tryBackParams,
                 action);

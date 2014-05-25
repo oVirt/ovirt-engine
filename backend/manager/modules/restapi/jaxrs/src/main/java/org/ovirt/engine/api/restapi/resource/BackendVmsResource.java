@@ -413,7 +413,7 @@ public class BackendVmsResource extends
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
-    private ArrayList<DiskImage> mapDisks(Disks disks) {
+    public ArrayList<DiskImage> mapDisks(Disks disks) {
         ArrayList<DiskImage> diskImages = null;
         if (disks!=null && disks.isSetDisks()) {
             diskImages = new ArrayList<DiskImage>();
