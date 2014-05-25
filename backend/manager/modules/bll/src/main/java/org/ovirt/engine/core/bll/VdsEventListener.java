@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
@@ -106,7 +107,8 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void processOnVmStop(Guid vmId) {
-        VmPoolHandler.processVmPoolOnStopVm(vmId, null);
+        Backend.getInstance().runInternalAction(VdcActionType.ProcessDownVm,
+                new IdParameters(vmId));
     }
 
     @Override

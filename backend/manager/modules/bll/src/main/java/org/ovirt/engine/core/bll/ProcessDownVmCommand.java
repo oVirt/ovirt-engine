@@ -1,9 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
@@ -17,19 +21,23 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
-public class VmPoolHandler {
+@InternalCommandAttribute
+@NonTransactiveCommandAttribute
+public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T> {
 
-    /**
-     * VM should be return to pool after it stopped unless Manual Return VM To Pool chosen.
-     *
-     * @param vmId
-     *            The VM's id.
-     * @FIXME BLL commands should invoke IVDSEventListener.processOnVmStop instead of directly calling this class. This
-     *        is not duable now since callers which aren't on BLL don't know CommandContext to avid bugs this method
-     *        must be treated as the real implementor of VdsEventListener.processOnVmStop meanwhile till a better
-     *        solution supplied
-     */
-    public static void processVmPoolOnStopVm(Guid vmId, CommandContext context) {
+    private static final Log log = LogFactory.getLog(ProcessDownVmCommand.class);
+
+    protected ProcessDownVmCommand(Guid commandId) {
+        super(commandId);
+    }
+
+    public ProcessDownVmCommand(T parameters) {
+        super(parameters);
+    }
+
+    @Override
+    protected void executeCommand() {
+        Guid vmId = getParameters().getId();
         VmPoolMap map = DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(vmId);
         List<DbUser> users = DbFacade.getInstance().getDbUserDao().getAllForVm(vmId);
         // Check if this is a Vm from a Vm pool, and is attached to a user
@@ -39,27 +47,32 @@ public class VmPoolHandler {
                 // should be only one user in the collection
                 for (DbUser dbUser : users) {
                     Backend.getInstance().runInternalAction(VdcActionType.DetachUserFromVmFromPool,
-                            new VmPoolSimpleUserParameters(map.getvm_pool_id(), dbUser.getId(), vmId), context);
+                            new VmPoolSimpleUserParameters(map.getvm_pool_id(), dbUser.getId(), vmId),
+                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
                 }
             }
         } else {
             // If we are dealing with a prestarted Vm or a regular Vm - clean stateless images
             // Otherwise this was already done in DetachUserFromVmFromPoolCommand
-            removeVmStatelessImages(vmId, context);
+            removeVmStatelessImages(vmId,
+                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
         }
 
         QuotaManager.getInstance().rollbackQuotaByVmId(vmId);
         VmHandler.removeStatelessVmUnmanagedDevices(vmId);
     }
 
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.emptyList();
+    }
+
     public static void removeVmStatelessImages(Guid vmId, CommandContext context) {
         if (DbFacade.getInstance().getSnapshotDao().exists(vmId, SnapshotType.STATELESS)) {
-            log.infoFormat("VdcBll.VmPoolHandler.processVmPoolOnStopVm - Deleting snapshot for stateless vm {0}", vmId);
+            log.infoFormat("Deleting snapshot for stateless vm {0}", vmId);
             Backend.getInstance().runInternalAction(VdcActionType.RestoreStatelessVm,
                     new VmOperationParameterBase(vmId),
                     context);
         }
     }
-
-    private static Log log = LogFactory.getLog(VmPoolHandler.class);
 }

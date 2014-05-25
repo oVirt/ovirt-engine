@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
@@ -481,7 +482,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             setVmId(vm.getId());
             setVmName(vm.getName());
             setVm(vm);
-            VmPoolHandler.processVmPoolOnStopVm(vm.getId(),
+            Backend.getInstance().runInternalAction(VdcActionType.ProcessDownVm,
+                    new IdParameters(vm.getId()),
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
             // Handle highly available VMs
