@@ -33,8 +33,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -48,8 +46,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
-import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -645,52 +641,6 @@ public class VmHandler {
         if (osRepository.isLinux(vmBase.getOsId()) && vmBase.getUsbPolicy().equals(UsbPolicy.ENABLED_LEGACY)) {
             vmBase.setUsbPolicy(UsbPolicy.DISABLED);
         }
-    }
-
-    /**
-     * remove VMs unmanaged devices that are created during run-once or stateless run.
-     *
-     * @param vmId
-     */
-    public static void removeStatelessVmUnmanagedDevices(Guid vmId) {
-        VM vm = DbFacade.getInstance().getVmDao().get(vmId);
-
-        if (vm != null && vm.isStateless() || isRunOnce(vmId)) {
-
-            final List<VmDevice> vmDevices =
-                    DbFacade.getInstance()
-                            .getVmDeviceDao()
-                            .getUnmanagedDevicesByVmId(vmId);
-
-            for (VmDevice device : vmDevices) {
-                // do not remove device if appears in white list
-                if (!VmDeviceCommonUtils.isInWhiteList(device.getType(), device.getDevice())) {
-                    DbFacade.getInstance().getVmDeviceDao().remove(device.getId());
-                }
-            }
-        }
-    }
-
-    /**
-     * This method checks if we are stopping a VM that was started by run-once In such case we will may have 2 devices,
-     * one managed and one unmanaged for CD or Floppy This is not supported currently by libvirt that allows only one
-     * CD/Floppy This code should be removed if libvirt will support in future multiple CD/Floppy
-     */
-    private static boolean isRunOnce(Guid vmId) {
-        List<VmDevice> cdList =
-                DbFacade.getInstance()
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdTypeAndDevice(vmId,
-                                VmDeviceGeneralType.DISK,
-                                VmDeviceType.CDROM.getName());
-        List<VmDevice> floppyList =
-                DbFacade.getInstance()
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdTypeAndDevice(vmId,
-                                VmDeviceGeneralType.DISK,
-                                VmDeviceType.FLOPPY.getName());
-
-        return (cdList.size() > 1 || floppyList.size() > 1);
     }
 
     /**
