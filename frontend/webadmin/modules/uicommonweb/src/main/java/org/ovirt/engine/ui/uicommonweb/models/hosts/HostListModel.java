@@ -318,6 +318,16 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         this.hostBricksListModel = hostBricksListModel;
     }
 
+    private HostVmListModel hostVmListModel;
+
+    public HostVmListModel getHostVmListModel(){
+        return this.hostVmListModel;
+    }
+
+    public void setHostVmListModel(HostVmListModel hostVmListModel){
+        this.hostVmListModel = hostVmListModel;
+    }
+
     protected Object[] getSelectedKeys()
     {
         if (getSelectedItems() == null)
@@ -1525,11 +1535,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         setGlusterSwiftModel(new HostGlusterSwiftListModel());
         setHostBricksListModel(new HostBricksListModel());
-
+        setHostVmListModel(new HostVmListModel());
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(generalModel);
         list.add(new HostHardwareGeneralModel());
-        list.add(new HostVmListModel());
+        list.add(getHostVmListModel());
         list.add(new HostInterfaceListModel());
         setHostEventListModel(new HostEventListModel());
         list.add(getHostEventListModel());
@@ -1547,6 +1557,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         getGlusterSwiftModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsGlusterService()
                 && GlusterFeaturesUtil.isGlusterSwiftSupported(vds.getVdsGroupCompatibilityVersion()));
         getHostBricksListModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsGlusterService());
+        getHostVmListModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsVirtService());
     }
 
     @Override
