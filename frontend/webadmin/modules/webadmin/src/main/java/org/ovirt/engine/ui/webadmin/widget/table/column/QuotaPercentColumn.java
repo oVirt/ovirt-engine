@@ -16,7 +16,7 @@ public abstract class QuotaPercentColumn<T> extends ProgressBarColumn<T> {
     @Override
     protected String getProgressText(T object) {
         Integer progressValue = getProgressValue(object);
-        if (progressValue != null && progressValue >= 100) {
+        if (progressValue != null && progressValue > 100) {
             return getaApplicationConstants().exceeded();
         }
         if (progressValue != null && progressValue < 0) {
