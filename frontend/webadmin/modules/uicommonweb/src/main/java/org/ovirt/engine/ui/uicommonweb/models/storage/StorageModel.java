@@ -652,7 +652,9 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
 
                 getFormat().setIsChangable(true);
 
-                formats.add(StorageFormatType.V1);
+                if (getSelectedItem().getType() != StorageType.POSIXFS && getSelectedItem().getType() != StorageType.GLUSTERFS) {
+                    formats.add(StorageFormatType.V1);
+                }
 
                 if ((getSelectedItem().getType() == StorageType.FCP || getSelectedItem().getType() == StorageType.ISCSI)
                         && getSelectedItem().getRole() == StorageDomainType.Data)
