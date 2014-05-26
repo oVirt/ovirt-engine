@@ -45,13 +45,6 @@
 %global ovirt_install_systemv 0
 %global ovirt_install_poms 1
 %global ovirt_require_maven 1
-%if %{fedora} >= 20
-%global ovirt_provides_jboss 1
-%global jboss ovirt-engine-jboss-as >= 7.1.1
-%else
-%global ovirt_provides_jboss 0
-%global jboss jboss-as >= 7.1.1-9.3
-%endif
 %endif
 
 %if 0%{?rhel}
@@ -59,8 +52,6 @@
 %global ovirt_install_systemv 1
 %global ovirt_install_poms 0
 %global ovirt_require_maven 0
-%global ovirt_provides_jboss 1
-%global jboss ovirt-engine-jboss-as >= 7.1.1
 %endif
 
 %global ovirt_product_name oVirt Engine
@@ -171,7 +162,6 @@ BuildRequires:	maven
 %endif
 BuildRequires:	unzip
 
-Requires:	%{jboss}
 Requires:	%{name}-backend = %{version}-%{release}
 Requires:	%{name}-cli
 Requires:	%{name}-dbscripts = %{version}-%{release}
@@ -182,6 +172,7 @@ Requires:	%{name}-webadmin-portal = %{version}-%{release}
 Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	java
 Requires:	java-1.7.0-openjdk >= 1:1.7.0.9-2.3.3.2
+Requires:	jboss-as >= 7.1.1-9.3
 Requires:	jpackage-utils
 Requires:	ovirt-image-uploader >= 3.3.0
 Requires:	ovirt-iso-uploader >= 3.3.0
@@ -710,13 +701,6 @@ cat > "%{buildroot}%{_sysconfdir}/ovirt-host-deploy.conf.d/10-packaging-aio.conf
 VDSM/disableNetworkManager=bool:False
 __EOF__
 
-%if %{ovirt_provides_jboss}
-cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf" << __EOF__
-[environment:default]
-OVESETUP_CONFIG/jbossHome=str:/usr/share/ovirt-engine-jboss-as
-__EOF__
-%endif
-
 #
 # bakcward compatibility
 # keep ovirt-engine-setup package to pull ovirt-engine-setup-plugin-ovirt-engine
@@ -936,10 +920,7 @@ fi
 %{engine_data}/setup/plugins/*/ovirt-engine/
 %{engine_data}/setup/plugins/ovirt-engine-rename/
 
-%if %{ovirt_provides_jboss}
-%config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf
-%endif
-
+# backward compatibility
 # backward compatibility (pre-3.4)
 %ghost %config(noreplace) %{engine_etc}/sysprep/
 %ghost %config(noreplace) %{_sysconfdir}/firewalld/services/ovirt.xml
