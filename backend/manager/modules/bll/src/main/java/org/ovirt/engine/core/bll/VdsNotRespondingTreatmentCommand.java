@@ -11,13 +11,7 @@ import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 /**
  * @see RestartVdsCommand on why this command is requiring a lock
@@ -28,7 +22,6 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     /**
      * use this member to determine if fence failed but vms moved to unknown mode (for the audit log type)
      */
-    private boolean _vmsMovedToUnknown;
     private static final String RESTART = "Restart";
 
     public VdsNotRespondingTreatmentCommand(T parameters) {
@@ -92,7 +85,6 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
 
     @Override
     protected void handleError() {
-        MoveVMsToUnknown();
         // if fence failed on spm, move storage pool to non operational
         if (getVds().getSpmStatus() != VdsSpmStatus.None) {
             log.infoFormat("Fence failed on vds {0} which is spm of pool {1} - moving pool to non operational",
@@ -102,40 +94,13 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
                     new SetStoragePoolStatusParameters(getVds().getStoragePoolId(), StoragePoolStatus.NotOperational,
                             AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM));
         }
-        _vmsMovedToUnknown = true;
-        log.errorFormat("Failed to run Fence script on vds:{0}, VMs moved to UnKnown instead.", getVdsName());
+        log.errorFormat("Failed to run Fence script on vds:{0}.", getVdsName());
         AlertIfPowerManagementOperationSkipped(RESTART, null);
     }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? _vmsMovedToUnknown ? AuditLogType.VDS_RECOVER_FAILED_VMS_UNKNOWN
-                : AuditLogType.VDS_RECOVER : AuditLogType.VDS_RECOVER_FAILED;
-    }
-
-    private void MoveVMsToUnknown() {
-        addMigratedVmsNotUpYet();
-        for (VM vm : getVmList()) {
-            destroyVmOnDestination(vm);
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.SetVmStatus,
-                            new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Unknown));
-            // log VM transition to unknown status
-            AuditLogableBase logable = new AuditLogableBase();
-            logable.setVmId(vm.getId());
-            AuditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
-        }
-    }
-
-    private void addMigratedVmsNotUpYet() {
-        for (VM incomingVm : getVmDAO().getAllMigratingToHost(getVdsId())) {
-            if (incomingVm.getStatus() == VMStatus.MigratingTo) {
-                // this VM is finished the migration handover and is running on this host now
-                // and should be treated as well.
-                getVmList().add(incomingVm);
-            }
-        }
+        return getSucceeded() ? AuditLogType.VDS_RECOVER : AuditLogType.VDS_RECOVER_FAILED;
     }
 
     @Override

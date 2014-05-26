@@ -20,6 +20,8 @@ import org.ovirt.engine.core.common.businessentities.SELinuxMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -29,7 +31,9 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
@@ -45,6 +49,7 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -694,6 +699,7 @@ public class VdsManager {
                 return true;
             }
             setStatus(VDSStatus.NonResponsive, vds);
+            moveVMsToUnknown();
             log.infoFormat(
                     "Server failed to respond, vds_id = {0}, vds_name = {1}, vm_count = {2}, " +
                     "spm_status = {3}, non-responsive_timeout (seconds) = {4}, error = {5}",
@@ -797,4 +803,61 @@ public class VdsManager {
     public boolean isTimeToRetryMaintenance() {
         return System.currentTimeMillis() > nextMaintenanceAttemptTime;
     }
+
+    private void moveVMsToUnknown() {
+        List<VM> vmList = getVmsToMoveToUnknown();
+        for (VM vm :vmList) {
+            destroyVmOnDestination(vm);
+            ResourceManager.getInstance()
+                    .runVdsCommand(VDSCommandType.SetVmStatus,
+                            new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Unknown));
+            // log VM transition to unknown status
+            AuditLogableBase logable = new AuditLogableBase();
+            logable.setVmId(vm.getId());
+            AuditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
+        }
+    }
+
+    private void destroyVmOnDestination(final VM vm) {
+        if (vm.getStatus() != VMStatus.MigratingFrom || vm.getMigratingToVds() == null) {
+            return;
+        }
+        // avoid nested locks by doing this in a separate thread
+        ThreadPoolUtil.execute(new Runnable() {
+            @Override
+            public void run() {
+                VDSReturnValue returnValue = null;
+                returnValue =
+                        ResourceManager.getInstance()
+                                .runVdsCommand(
+                                        VDSCommandType.DestroyVm,
+                                        new DestroyVmVDSCommandParameters(vm.getMigratingToVds()
+                                                , vm.getId(), true, false, 0)
+                                );
+                if (returnValue != null && returnValue.getSucceeded()) {
+                    log.infoFormat("Stopped migrating vm: {0} on vds: {1}", vm.getName(), vm.getMigratingToVds());
+                }
+                else {
+                    log.infoFormat("Could not stop migrating vm: {0} on vds: {1}", vm.getName(),
+                            vm.getMigratingToVds());
+                }
+            }
+        });
+    }
+
+    private List<VM> getVmsToMoveToUnknown() {
+        List<VM> vmList = DbFacade.getInstance().getVmDao().getAllRunningForVds(
+                getVdsId());
+        List<VM> migratingVms = DbFacade.getInstance().getVmDao().getAllMigratingToHost(
+                getVdsId());
+        for (VM incomingVm : migratingVms) {
+            if (incomingVm.getStatus() == VMStatus.MigratingTo) {
+                // this VM is finished the migration handover and is running on this host now
+                // and should be treated as well.
+                vmList.add(incomingVm);
+            }
+        }
+        return vmList;
+    }
+
 }
