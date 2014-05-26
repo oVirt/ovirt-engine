@@ -52,9 +52,19 @@ public class NetworkConfigurator {
     public void createManagementNetworkIfRequired() {
         final String managementNetwork = NetworkUtils.getEngineNetwork();
 
-        if (host == null
-                || managementNetwork.equals(host.getActiveNic())
-                || !FeatureSupported.setupManagementNetwork(host.getVdsGroupCompatibilityVersion())) {
+        if (host == null) {
+            return;
+        }
+
+        if (managementNetwork.equals(host.getActiveNic())) {
+            log.infoFormat("The management network {0} is already configured on host {1}",
+                    managementNetwork,
+                    host.getName());
+            return;
+        }
+
+        if (!FeatureSupported.setupManagementNetwork(host.getVdsGroupCompatibilityVersion())) {
+            log.warnFormat("Host {0}'s cluster does not support normalize management network feature", host.getName());
             return;
         }
 
@@ -250,8 +260,9 @@ public class NetworkConfigurator {
         return DbFacade.getInstance();
     }
 
-    @SuppressWarnings("serial")
     public static class NetworkConfiguratorException extends RuntimeException {
+        private static final long serialVersionUID = 3526212482581207006L;
+
         public NetworkConfiguratorException(String message) {
             super(message);
         }
