@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -16,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -84,10 +84,10 @@ public class AutoRecoveryManager {
                                 nics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(vds.getId());
                             }
 
-                            Pair<List<String>, List<String>> problematicNics =
+                            Map<String, Set<String>> problematicNics =
                                     NetworkMonitoringHelper.determineProblematicNics(nics, getDbFacade().getNetworkDao()
                                     .getAllForCluster(vds.getVdsGroupId()));
-                            if (problematicNics.getFirst().isEmpty()) {
+                            if (problematicNics.isEmpty()) {
                                 filtered.add(vds);
                             }
                         }

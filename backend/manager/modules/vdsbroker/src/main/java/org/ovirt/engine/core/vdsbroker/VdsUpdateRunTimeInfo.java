@@ -57,7 +57,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
@@ -741,20 +740,16 @@ public class VdsUpdateRunTimeInfo {
             return;
         }
 
-        List<String> networks = new ArrayList<String>();
-        List<String> brokenNics = new ArrayList<String>();
-
+        Map<String, Set<String>> problematicNicsWithNetworks = new HashMap<String, Set<String>>();
         try {
             reportNicStatusChanges();
-            Pair<List<String>, List<String>> problematicNics = NetworkMonitoringHelper.determineProblematicNics(_vds.getInterfaces(),
+            problematicNicsWithNetworks = NetworkMonitoringHelper.determineProblematicNics(_vds.getInterfaces(),
                     getDbFacade().getNetworkDao().getAllForCluster(_vds.getVdsGroupId()));
-            brokenNics.addAll(problematicNics.getFirst());
-            networks.addAll(problematicNics.getSecond());
         } catch (Exception e) {
             log.error(String.format("Failure on checkInterfaces on update runtimeinfo for vds: %s", _vds.getName()),
                     e);
         } finally {
-            if (!brokenNics.isEmpty()) {
+            if (!problematicNicsWithNetworks.isEmpty()) {
                 // we give 1 minutes to a nic to get up in case the nic get the ip from DHCP server
                 if (!hostDownTimes.containsKey(_vds.getId())) {
                     hostDownTimes.put(_vds.getId(), System.currentTimeMillis());
@@ -772,24 +767,18 @@ public class VdsUpdateRunTimeInfo {
                 hostDownTimes.remove(_vds.getId());
 
                 try {
-                    String networkNames = StringUtils.join(networks, ", ");
-                    String nicNames = StringUtils.join(brokenNics, ", ");
-
-                    String message =
-                            String.format(
-                                    "Host '%s' moved to Non-Operational state because interface/s '%s' are down which needed by network/s '%s' in the current cluster",
-                                    _vds.getName(),
-                                    nicNames,
-                                    networkNames);
+                    String problematicNicsWithNetworksString =
+                            constructNicsWithNetworksString(problematicNicsWithNetworks);
 
                     _vds.setNonOperationalReason(NonOperationalReason.NETWORK_INTERFACE_IS_DOWN);
                     _vdsManager.setStatus(VDSStatus.NonOperational, _vds);
-                    log.info(message);
+                    log.infoFormat("Host '{0}' moved to Non-Operational state because interface/s which are down are needed by required network/s in the current cluster: '{1}'",
+                            _vds.getName(),
+                            problematicNicsWithNetworksString);
 
                     AuditLogableBase logable = new AuditLogableBase(_vds.getId());
-                    logable.addCustomValue("Networks", networkNames);
-                    logable.addCustomValue("Interfaces", nicNames);
-                    logable.setCustomId(nicNames + networkNames);
+                    logable.addCustomValue("NicsWithNetworks", problematicNicsWithNetworksString);
+                    logable.setCustomId(problematicNicsWithNetworksString);
                     auditLog(logable, AuditLogType.VDS_SET_NONOPERATIONAL_IFACE_DOWN);
                 } catch (Exception e) {
                     log.error(String.format("checkInterface: Failure on moving host: %s to non-operational.",
@@ -801,6 +790,17 @@ public class VdsUpdateRunTimeInfo {
                 hostDownTimes.remove(_vds.getId());
             }
         }
+    }
+
+    private String constructNicsWithNetworksString(Map<String, Set<String>> nicsWithNetworks) {
+        List<String> reportedNics = new ArrayList<>(nicsWithNetworks.size());
+        for (Entry<String, Set<String>> nicToNetworks : nicsWithNetworks.entrySet()) {
+            reportedNics.add(String.format("%s (%s)",
+                    nicToNetworks.getKey(),
+                    StringUtils.join(nicToNetworks.getValue(), ", ")));
+        }
+
+        return StringUtils.join(reportedNics, ", ");
     }
 
     private void reportNicStatusChanges() {
