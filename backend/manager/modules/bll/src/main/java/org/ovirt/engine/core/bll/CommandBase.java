@@ -634,6 +634,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 logable.addCustomValue("EntityType", entityType);
                 logable.addCustomValue("OldEntityName", oldEntityName);
                 logable.addCustomValue("NewEntityName", newEntityName);
+                logable.addCustomValue("UserName", getCurrentUser().getLoginName());
                 renameable.setEntityId(logable);
                 auditLog(logable, AuditLogType.ENTITY_RENAMED);
             }
