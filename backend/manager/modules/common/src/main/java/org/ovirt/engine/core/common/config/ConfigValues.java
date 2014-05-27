@@ -1747,5 +1747,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     StoragePoolMemoryBackend,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1500")
+    DefaultMtu,
+
     Invalid
 }

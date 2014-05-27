@@ -744,6 +744,8 @@ select fn_db_add_config_value('ChangePasswordMsg','','general');
 select fn_db_add_config_value('DefaultSerialNumberPolicy','HOST_ID','general');
 select fn_db_add_config_value('DefaultCustomSerialNumber','Dummy serial number.','general');
 
+select fn_db_add_config_value('DefaultMtu', '1500', 'general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

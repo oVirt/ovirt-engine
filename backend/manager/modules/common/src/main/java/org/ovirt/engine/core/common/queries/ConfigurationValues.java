@@ -130,7 +130,8 @@ public enum ConfigurationValues {
     VirtIoRngDeviceSupported(ConfigAuthType.User),
     ClusterRequiredRngSourcesDefault(ConfigAuthType.User),
     SpiceFileTransferToggleSupported(ConfigAuthType.User),
-    SpiceCopyPasteToggleSupported(ConfigAuthType.User);
+    SpiceCopyPasteToggleSupported(ConfigAuthType.User),
+    DefaultMtu;
 
     public static enum ConfigAuthType {
         Admin,
