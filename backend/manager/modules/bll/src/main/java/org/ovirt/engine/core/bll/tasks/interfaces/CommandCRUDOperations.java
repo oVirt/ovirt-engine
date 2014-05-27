@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 public interface CommandCRUDOperations {
     public CommandEntity getCommandEntity(Guid commandId);
     public void persistCommand(CommandEntity cmdEntity);
-    public void persistCommand(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status);
+    public void persistCommand(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status, boolean enableCallBack);
     public CommandBase<?> retrieveCommand(Guid commandId);
     public void removeCommand(Guid commandId);
     public void removeAllCommandsBeforeDate(DateTime cutoff);

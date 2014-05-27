@@ -14,7 +14,7 @@ public interface CommandsCache {
 
     public void remove(Guid commandId);
 
-    public void put(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status);
+    public void put(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status, boolean enableCallBack);
 
     public void removeAllCommandsBeforeDate(DateTime cutoff);
 

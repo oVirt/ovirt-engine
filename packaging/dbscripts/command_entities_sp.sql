@@ -3,12 +3,13 @@ CREATE OR REPLACE FUNCTION InsertCommandEntity (v_command_id uuid,
        v_root_command_id uuid,
        v_action_parameters text,
        v_action_parameters_class varchar(256),
-       v_status varchar(20))
+       v_status varchar(20),
+       v_callback_enabled boolean)
 RETURNS VOID
    AS $procedure$
 BEGIN
-       INSERT INTO command_entities(command_id, command_type, root_command_id, action_parameters, action_parameters_class, created_at, status)
-              VALUES(v_command_id, v_command_type, v_root_command_id, v_action_parameters, v_action_parameters_class, NOW(), v_status);
+       INSERT INTO command_entities(command_id, command_type, root_command_id, action_parameters, action_parameters_class, created_at, status, callback_enabled)
+              VALUES(v_command_id, v_command_type, v_root_command_id, v_action_parameters, v_action_parameters_class, NOW(), v_status, v_callback_enabled);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -18,7 +19,8 @@ CREATE OR REPLACE FUNCTION UpdateCommandEntity (v_command_id uuid,
        v_root_command_id uuid,
        v_action_parameters text,
        v_action_parameters_class varchar(256),
-       v_status varchar(20))
+       v_status varchar(20),
+       v_callback_enabled boolean)
 RETURNS VOID
    AS $procedure$
 BEGIN
@@ -27,7 +29,8 @@ BEGIN
           root_command_id = v_root_command_id,
           action_parameters = v_action_parameters,
           action_parameters_class = v_action_parameters_class,
-          status = v_status
+          status = v_status,
+          callback_enabled = v_callback_enabled
       WHERE command_id = v_command_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -50,14 +53,15 @@ CREATE OR REPLACE FUNCTION InsertOrUpdateCommandEntity (v_command_id uuid,
        v_root_command_id uuid,
        v_action_parameters text,
        v_action_parameters_class varchar(256),
-       v_status varchar(20))
+       v_status varchar(20),
+       v_callback_enabled boolean)
 RETURNS VOID
    AS $procedure$
 BEGIN
       IF NOT EXISTS (SELECT 1 from command_entities where command_id = v_command_id) THEN
-            PERFORM InsertCommandEntity (v_command_id, v_command_type, v_root_command_id, v_action_parameters, v_action_parameters_class, v_status);
+            PERFORM InsertCommandEntity (v_command_id, v_command_type, v_root_command_id, v_action_parameters, v_action_parameters_class, v_status, v_callback_enabled);
       ELSE
-            PERFORM UpdateCommandEntity (v_command_id, v_command_type, v_root_command_id, v_action_parameters, v_action_parameters_class, v_status);
+            PERFORM UpdateCommandEntity (v_command_id, v_command_type, v_root_command_id, v_action_parameters, v_action_parameters_class, v_status, v_callback_enabled);
       END IF;
 END; $procedure$
 LANGUAGE plpgsql;

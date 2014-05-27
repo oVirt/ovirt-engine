@@ -40,6 +40,7 @@ import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.Command;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -2110,13 +2111,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected void persistCommand(VdcActionType parentCommand) {
+        persistCommand(parentCommand, false);
+    }
+
+    protected void persistCommand(VdcActionType parentCommand, boolean enableCallBack) {
         VdcActionParametersBase parentParameters = getParentParameters(parentCommand);
         TaskManagerUtil.persistCommand(
                 getCommandId(),
                 parentParameters.getCommandId(),
                 getActionType(),
                 getParameters(),
-                commandStatus);
+                commandStatus,
+                enableCallBack);
     }
 
     protected void removeCommand() {
@@ -2130,5 +2136,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     public CommandStatus getCommandStatus() {
         return commandStatus;
+    }
+
+    public CommandCallBack getCallBack() {
+        return null;
     }
 }

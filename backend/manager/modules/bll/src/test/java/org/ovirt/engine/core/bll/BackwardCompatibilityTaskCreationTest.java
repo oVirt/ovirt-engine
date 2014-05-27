@@ -68,7 +68,9 @@ public class BackwardCompatibilityTaskCreationTest {
     public static final MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.AsyncTaskPollingRate, 10),
             mockConfig(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds, 10),
-            mockConfig(ConfigValues.AsyncTaskStatusCachingTimeInMinutes, 10)
+            mockConfig(ConfigValues.AsyncTaskStatusCachingTimeInMinutes, 10),
+            mockConfig(ConfigValues.CommandCoordinatorThreadPoolSize, 10),
+            mockConfig(ConfigValues.AsyncCommandPollingRate, 10)
             );
 
     @ClassRule

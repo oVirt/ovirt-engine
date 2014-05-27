@@ -49,13 +49,13 @@ public class CommandsCacheImpl implements CommandsCache {
     }
 
     @Override
-    public void put(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status) {
-        CommandEntity cmdEntity = buildCommandEntity(commandId, rootCommandId, actionType, params, status);
+    public void put(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status, boolean enableCallBack) {
+        CommandEntity cmdEntity = buildCommandEntity(commandId, rootCommandId, actionType, params, status, enableCallBack);
         commandMap.put(commandId, cmdEntity);
         DbFacade.getInstance().getCommandEntityDao().saveOrUpdate(cmdEntity);
     }
 
-    private CommandEntity buildCommandEntity(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status) {
+    private CommandEntity buildCommandEntity(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status, boolean enableCallBack) {
         CommandEntity entity = new CommandEntity();
         entity.setId(commandId);
         entity.setRootCommandId(rootCommandId);

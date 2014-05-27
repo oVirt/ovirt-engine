@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.tasks;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
@@ -36,10 +38,12 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     private static final Log log = LogFactory.getLog(CommandCoordinator.class);
     private final CommandsCache commandsCache;
     private final CoCoAsyncTaskHelper coCoAsyncTaskHelper;
+    private final CommandExecutor cmdExecutor;
 
     CommandCoordinatorImpl() {
         commandsCache = new CommandsCacheImpl();
         coCoAsyncTaskHelper = new CoCoAsyncTaskHelper(this);
+        cmdExecutor = new CommandExecutor(this);
     }
 
     public <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters) {
@@ -52,7 +56,8 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
                 cmdEntity.getRootCommandId(),
                 cmdEntity.getCommandType(),
                 cmdEntity.getActionParameters(),
-                cmdEntity.getCommandStatus());
+                cmdEntity.getCommandStatus(),
+                cmdEntity.isEnableCallBack());
     }
 
     @Override
@@ -60,13 +65,25 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
                                Guid rootCommandId,
                                VdcActionType actionType,
                                VdcActionParametersBase params,
-                               CommandStatus status) {
+                               CommandStatus status,
+                               boolean enableCallBack) {
         commandsCache.put(
                 commandId,
                 rootCommandId,
                 actionType,
                 params,
-                status);
+                status,
+                enableCallBack);
+    }
+
+    /**
+     * Executes the action using a Thread Pool. Used when the calling function
+     * would like the execute the command with no delay
+     */
+    @Override
+    public Future<VdcReturnValueBase> executeAsyncCommand(VdcActionType actionType,
+                                                          VdcActionParametersBase parameters) {
+        return cmdExecutor.executeAsyncCommand(actionType, parameters);
     }
 
     @Override
@@ -82,6 +99,14 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
             command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getActionParameters());
         }
         return command;
+    }
+
+    public CommandStatus getCommandStatus(final Guid commandId) {
+        CommandEntity cmdEntity = commandsCache.get(commandId);
+        if (cmdEntity != null) {
+            return cmdEntity.getCommandStatus();
+        }
+        return CommandStatus.UNKNOWN;
     }
 
     public void removeCommand(final Guid commandId) {

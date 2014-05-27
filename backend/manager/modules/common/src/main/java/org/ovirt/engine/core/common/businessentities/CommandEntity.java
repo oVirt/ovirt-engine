@@ -17,6 +17,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
     private VdcActionParametersBase actionParameters;
     private Date createdAt;
     private CommandStatus commandStatus = CommandStatus.UNKNOWN;
+    private boolean enableCallBack = false;
 
     @Override
     public int hashCode() {
@@ -92,5 +93,13 @@ public class CommandEntity implements BusinessEntity<Guid> {
 
     public void setCommandStatus(CommandStatus commandStatus) {
         this.commandStatus = commandStatus;
+    }
+
+    public boolean isEnableCallBack() {
+        return enableCallBack;
+    }
+
+    public void setEnableCallBack(boolean enableCallBack) {
+        this.enableCallBack = enableCallBack;
     }
 }

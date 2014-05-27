@@ -161,6 +161,7 @@ public class CoCoAsyncTaskHelper {
             asyncTask.setCommandStatus(cmdEntity.getCommandStatus());
             asyncTask.setCommandType(cmdEntity.getCommandType());
             asyncTask.setCreatedAt(cmdEntity.getCreatedAt());
+            asyncTask.setEnableCallBack(cmdEntity.isEnableCallBack());
         }
     }
 
@@ -173,6 +174,7 @@ public class CoCoAsyncTaskHelper {
         cmdEntity.setCommandStatus(status);
         cmdEntity.setCommandType(asyncTask.getCommandType());
         cmdEntity.setCreatedAt(asyncTask.getCreatedAt());
+        cmdEntity.setEnableCallBack(asyncTask.isEnableCallBack());
         return cmdEntity;
     }
 

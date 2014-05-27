@@ -206,6 +206,14 @@ public class AsyncTasks implements Serializable {
         this.taskType = taskType;
     }
 
+    public void setEnableCallBack(boolean enabled) {
+        cmdEntity.setEnableCallBack(enabled);
+    }
+
+    public boolean isEnableCallBack() {
+        return cmdEntity.isEnableCallBack();
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

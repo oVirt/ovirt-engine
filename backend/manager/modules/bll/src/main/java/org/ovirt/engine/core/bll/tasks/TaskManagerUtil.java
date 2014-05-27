@@ -2,12 +2,14 @@ package org.ovirt.engine.core.bll.tasks;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -130,8 +132,8 @@ public class TaskManagerUtil {
         return coco.retrieveCommand(commandId);
     }
 
-    public static void persistCommand(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status) {
-        coco.persistCommand(commandId, rootCommandId, actionType, params, status);
+    public static void persistCommand(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status, boolean enableCallBack) {
+        coco.persistCommand(commandId, rootCommandId, actionType, params, status, enableCallBack);
     }
 
     public static void removeCommand(Guid commandId) {
@@ -144,6 +146,11 @@ public class TaskManagerUtil {
 
     public static void updateCommandStatus(Guid commandId, AsyncTaskType taskType, CommandStatus status) {
          coco.updateCommandStatus(commandId, taskType, status);
+    }
+
+    public static Future<VdcReturnValueBase> executeAsyncCommand(VdcActionType actionType,
+                                    VdcActionParametersBase parameters) {
+        return coco.executeAsyncCommand(actionType, parameters);
     }
 
     private static AsyncTaskManager getAsyncTaskManager() {

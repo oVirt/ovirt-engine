@@ -64,6 +64,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("10")
     AsyncTaskPollingRate,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    AsyncCommandPollingRate,
+
     /**
      * The rate (in seconds) to refresh the cache that holds the asynchronous tasks' statuses.
      */
@@ -91,6 +95,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     AuditLogAgingThreshold,
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    CommandCoordinatorThreadPoolSize,
     @TypeConverterAttribute(Date.class)
     @DefaultValueAttribute("03:35:35")
     CommandEntityCleanupTime,
