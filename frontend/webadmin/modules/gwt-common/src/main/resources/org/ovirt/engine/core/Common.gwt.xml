@@ -308,6 +308,13 @@
 		<include name="common/queries/gluster/*.java"/>
 		<include name="common/constants/gluster/GlusterConstants.java"/>
 		<include name="common/utils/gluster/GlusterCoreUtil.java"/>
+		<include name="common/businessentities/gluster/StatsInfo.java"/>
+        <include name="common/businessentities/gluster/BlockStats.java"/>
+        <include name="common/businessentities/gluster/ProfileStatsType.java"/>
+        <include name="common/businessentities/gluster/FopStats.java"/>
+        <include name="common/businessentities/gluster/GlusterVolumeProfileInfo.java"/>
+        <include name="common/businessentities/gluster/NfsProfileDetails.java"/>
+        <include name="common/businessentities/gluster/BrickProfileDetails.java"/>
 		<!-- Scheduling -->
 		<include name="common/scheduling/*.java"/>
 		<include name="common/scheduling/parameters/*.java"/>
