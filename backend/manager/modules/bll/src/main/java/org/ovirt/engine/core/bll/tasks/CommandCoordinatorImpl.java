@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.tasks;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -30,8 +32,11 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class CommandCoordinatorImpl extends CommandCoordinator {
 
@@ -39,6 +44,9 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     private final CommandsCache commandsCache;
     private final CoCoAsyncTaskHelper coCoAsyncTaskHelper;
     private final CommandExecutor cmdExecutor;
+    private Object LOCK = new Object();
+    private volatile boolean childHierarchyInitialized;
+    private ConcurrentHashMap<Guid, List<Guid>> childHierarchy = new ConcurrentHashMap<>();
 
     CommandCoordinatorImpl() {
         commandsCache = new CommandsCacheImpl();
@@ -52,28 +60,10 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public void persistCommand(CommandEntity cmdEntity) {
-        this.persistCommand(cmdEntity.getId(),
-                cmdEntity.getRootCommandId(),
-                cmdEntity.getCommandType(),
-                cmdEntity.getActionParameters(),
-                cmdEntity.getCommandStatus(),
-                cmdEntity.isEnableCallBack());
-    }
-
-    @Override
-    public void persistCommand(Guid commandId,
-                               Guid rootCommandId,
-                               VdcActionType actionType,
-                               VdcActionParametersBase params,
-                               CommandStatus status,
-                               boolean enableCallBack) {
-        commandsCache.put(
-                commandId,
-                rootCommandId,
-                actionType,
-                params,
-                status,
-                enableCallBack);
+        commandsCache.put(cmdEntity);
+        if (cmdEntity.isCallBackEnabled()) {
+            buildCmdHierarchy(cmdEntity);
+        }
     }
 
     /**
@@ -91,12 +81,36 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return commandsCache.get(commandId);
     }
 
+    public List<CommandEntity> getCommandsWithCallBackEnabled() {
+        List<CommandEntity> cmdEntities = new ArrayList<>();
+        CommandEntity cmdEntity;
+        for (Guid cmdId : commandsCache.keySet()) {
+            cmdEntity = commandsCache.get(cmdId);
+            if (commandsCache.get(cmdId).isCallBackEnabled()) {
+                cmdEntities.add(cmdEntity);
+            }
+        }
+        return cmdEntities;
+    }
+
     @Override
     public CommandBase<?> retrieveCommand(Guid commandId) {
+        return buildCommand(commandsCache.get(commandId));
+    }
+
+    private CommandBase<?> buildCommand(CommandEntity cmdEntity) {
         CommandBase<?> command = null;
-        CommandEntity cmdEntity = commandsCache.get(commandId);
         if (cmdEntity != null) {
             command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getActionParameters());
+            command.setCommandStatus(cmdEntity.getCommandStatus(), false);
+            if (!Guid.isNullOrEmpty(cmdEntity.getRootCommandId()) &&
+                    ! cmdEntity.getRootCommandId().equals(cmdEntity.getId()) &&
+                    command.getParameters().getParentParameters() == null) {
+                CommandBase<?> parentCommand = retrieveCommand(cmdEntity.getRootCommandId());
+                if (parentCommand != null) {
+                    command.getParameters().setParentParameters(parentCommand.getParameters());
+                }
+            }
         }
         return command;
     }
@@ -109,16 +123,81 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return CommandStatus.UNKNOWN;
     }
 
+    public void removeAllCommandsInHierarchy(final Guid commandId) {
+        for (Guid childCmdId : getChildCommandIds(commandId)) {
+            removeAllCommandsInHierarchy(childCmdId);
+        }
+        removeCommand(commandId);
+    }
+
     public void removeCommand(final Guid commandId) {
         commandsCache.remove(commandId);
+        updateCmdHierarchy(commandId);
     }
 
     public void removeAllCommandsBeforeDate(final DateTime cutoff) {
         commandsCache.removeAllCommandsBeforeDate(cutoff);
+        synchronized(LOCK) {
+            childHierarchyInitialized = false;
+        }
     }
 
     public void updateCommandStatus(final Guid commandId, final AsyncTaskType taskType, final CommandStatus status) {
         commandsCache.updateCommandStatus(commandId, taskType, status);
+    }
+
+    public void updateCallBackNotified(final Guid commandId) {
+        TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                commandsCache.updateCallBackNotified(commandId);
+                return null;
+            }
+        });
+    }
+
+    public List<Guid> getChildCommandIds(Guid cmdId) {
+        initChildHierarchy();
+        List<Guid> childIds = Collections.EMPTY_LIST;
+        if (childHierarchy.containsKey(cmdId)) {
+            childIds = childHierarchy.get(cmdId);
+        }
+        return childIds;
+    }
+
+    private void initChildHierarchy() {
+        if (!childHierarchyInitialized) {
+            synchronized(LOCK) {
+                if (!childHierarchyInitialized) {
+                    childHierarchy.clear();
+                    for (CommandEntity cmd : getCommandsWithCallBackEnabled()) {
+                        buildCmdHierarchy(cmd);
+                    }
+                }
+                childHierarchyInitialized = true;
+            }
+        }
+    }
+
+    private void buildCmdHierarchy(CommandEntity cmdEntity) {
+        if (!Guid.isNullOrEmpty(cmdEntity.getRootCommandId())) {
+            childHierarchy.putIfAbsent(cmdEntity.getRootCommandId(), new ArrayList<Guid>());
+            if (!childHierarchy.get(cmdEntity.getRootCommandId()).contains(cmdEntity.getId())) {
+                childHierarchy.get(cmdEntity.getRootCommandId()).add(cmdEntity.getId());
+            }
+        }
+    }
+
+    private void updateCmdHierarchy(Guid cmdId) {
+        for (List<Guid> childIds : childHierarchy.values()) {
+            if (childIds.contains(cmdId)) {
+                childIds.remove(cmdId);
+                break;
+            }
+        }
+        if (childHierarchy.containsKey(cmdId) && childHierarchy.get(cmdId).size() == 0) {
+            childHierarchy.remove(cmdId);
+        }
     }
 
     public List<AsyncTasks> getAllAsyncTasksFromDb() {

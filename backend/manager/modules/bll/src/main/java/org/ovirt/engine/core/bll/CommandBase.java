@@ -14,8 +14,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ejb.TransactionRolledbackLocalException;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -26,7 +24,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.context.DefaultCompensationContext;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
-import org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -42,6 +39,7 @@ import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.Command;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
+import org.ovirt.engine.core.bll.utils.BackendUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -58,6 +56,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.EntityStatusSnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -104,8 +103,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     /* Multiplier used to convert GB to bytes or vice versa. */
     protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;
     private static final String DEFAULT_TASK_KEY = "DEFAULT_TASK_KEY";
-    private static final String BACKEND_COMMAND_OBJECTS_HANDLER_JNDI_NAME =
-            "java:global/engine/bll/Backend!org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler";
     private T _parameters;
     private VdcReturnValueBase _returnValue;
     private CommandActionState _actionState = CommandActionState.EXECUTE;
@@ -151,7 +148,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected VdcReturnValueBase executeChildCommand(Guid idInCommandsMap) {
         CommandBase<?> command = childCommandsMap.get(idInCommandsMap);
-        return getBackendCommandObjectsHandler().runAction(command, getExecutionContext());
+        return BackendUtils.getBackendCommandObjectsHandler(log).runAction(command, getExecutionContext());
     }
 
 
@@ -195,24 +192,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected CommandBase(Guid commandId) {
         this.commandId = commandId;
-    }
-
-    /**
-     * This method should be used only at {@link CommandBase} code for creating
-     * and execution {@link CommandBase} objects directly.
-     * This is the reason for the method being private and the JNDI name not introduced to
-     * the {@link BeanType} enum.
-     * @return proxy object to create the {@link CommandBase} objects and run them
-     */
-    private BackendCommandObjectsHandler getBackendCommandObjectsHandler() {
-        try {
-            InitialContext ctx = new InitialContext();
-            return (BackendCommandObjectsHandler) ctx.lookup(BACKEND_COMMAND_OBJECTS_HANDLER_JNDI_NAME);
-        } catch (NamingException e) {
-            log.error("Getting backend command objects handler failed" + e.getMessage());
-            log.debug("", e);
-            return null;
-        }
     }
 
     protected List<SPMAsyncTaskHandler> initTaskHandlers() {
@@ -1326,7 +1305,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         buildChildCommandInfos();
                         for (Map.Entry<Guid, Pair<VdcActionType, VdcActionParametersBase>> entry : childCommandInfoMap.entrySet()) {
                             CommandBase<?> command =
-                                    getBackendCommandObjectsHandler().createAction(entry.getValue().getFirst(),
+                                    BackendUtils.getBackendCommandObjectsHandler(log).createAction(entry.getValue().getFirst(),
                                             entry.getValue().getSecond());
                             command.insertAsyncTaskPlaceHolders();
                             childCommandsMap.put(entry.getKey(), command);
@@ -2110,28 +2089,34 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         getReturnValue().setCanDoAction(internalReturnValue.getCanDoAction());
     }
 
-    protected void persistCommand(VdcActionType parentCommand) {
+    public void persistCommand(VdcActionType parentCommand) {
         persistCommand(parentCommand, false);
     }
 
-    protected void persistCommand(VdcActionType parentCommand, boolean enableCallBack) {
+    public void persistCommand(VdcActionType parentCommand, boolean enableCallBack) {
         VdcActionParametersBase parentParameters = getParentParameters(parentCommand);
         TaskManagerUtil.persistCommand(
-                getCommandId(),
-                parentParameters.getCommandId(),
-                getActionType(),
-                getParameters(),
-                commandStatus,
-                enableCallBack);
+                CommandEntity.buildCommandEntity(getCommandId(),
+                        parentParameters.getCommandId(),
+                        getActionType(),
+                        getParameters(),
+                        commandStatus,
+                        enableCallBack));
     }
 
     protected void removeCommand() {
         TaskManagerUtil.removeCommand(getCommandId());
     }
 
-    protected void setCommandStatus(CommandStatus status) {
+    public void setCommandStatus(CommandStatus status) {
+        setCommandStatus(status, true);
+    }
+
+    public void setCommandStatus(CommandStatus status, boolean updateDB) {
         this.commandStatus = status;
-        TaskManagerUtil.updateCommandStatus(getCommandId(), getTaskType(), commandStatus);
+        if (updateDB) {
+            TaskManagerUtil.updateCommandStatus(getCommandId(), getTaskType(), commandStatus);
+        }
     }
 
     public CommandStatus getCommandStatus() {

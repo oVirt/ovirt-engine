@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.tasks;
 
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -10,6 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 import java.util.List;
+import java.util.Set;
 
 public class CommandsCacheImpl implements CommandsCache {
 
@@ -36,6 +35,11 @@ public class CommandsCacheImpl implements CommandsCache {
         }
     }
 
+    public Set<Guid> keySet() {
+        initializeCache();
+        return commandMap.keySet();
+    }
+
     @Override
     public CommandEntity get(Guid commandId) {
         initializeCache();
@@ -49,20 +53,9 @@ public class CommandsCacheImpl implements CommandsCache {
     }
 
     @Override
-    public void put(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status, boolean enableCallBack) {
-        CommandEntity cmdEntity = buildCommandEntity(commandId, rootCommandId, actionType, params, status, enableCallBack);
-        commandMap.put(commandId, cmdEntity);
+    public void put(CommandEntity cmdEntity) {
+        commandMap.put(cmdEntity.getId(), cmdEntity);
         DbFacade.getInstance().getCommandEntityDao().saveOrUpdate(cmdEntity);
-    }
-
-    private CommandEntity buildCommandEntity(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status, boolean enableCallBack) {
-        CommandEntity entity = new CommandEntity();
-        entity.setId(commandId);
-        entity.setRootCommandId(rootCommandId);
-        entity.setCommandType(actionType);
-        entity.setActionParameters(params);
-        entity.setCommandStatus(status);
-        return entity;
     }
 
     public void removeAllCommandsBeforeDate(DateTime cutoff) {
@@ -72,12 +65,21 @@ public class CommandsCacheImpl implements CommandsCache {
     }
 
     public void updateCommandStatus(Guid commandId, AsyncTaskType taskType, CommandStatus status) {
-        CommandEntity cmdEntity = get(commandId);
+        final CommandEntity cmdEntity = get(commandId);
         if (cmdEntity != null) {
             cmdEntity.setCommandStatus(status);
-            if (taskType.equals(AsyncTaskType.notSupported)) {
+            if (taskType.equals(AsyncTaskType.notSupported) || cmdEntity.isCallBackEnabled()) {
                 DbFacade.getInstance().getCommandEntityDao().saveOrUpdate(cmdEntity);
             }
+        }
+    }
+
+
+    public void updateCallBackNotified(Guid commandId) {
+        CommandEntity cmdEntity = get(commandId);
+        if (cmdEntity != null) {
+            cmdEntity.setCallBackNotified(true);
+            DbFacade.getInstance().getCommandEntityDao().updateNotified(commandId);
         }
     }
 }

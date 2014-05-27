@@ -2,12 +2,18 @@ package org.ovirt.engine.core.bll.tasks;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class MapWrapperImpl<K, V> implements CacheWrapper<K, V> {
 
     private final Map<K, V> cache = new HashMap<>();
 
     public MapWrapperImpl() {
+    }
+
+    @Override
+    public Set<K> keySet() {
+        return getCache().keySet();
     }
 
     @Override

@@ -30,7 +30,8 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
             result.setRootCommandId(Guid.createGuidFromString(resultSet.getString("root_command_id")));
             result.setActionParameters(deserializeParameters(resultSet.getString("action_parameters"), resultSet.getString("action_parameters_class")));
             result.setCommandStatus(getCommandStatus(resultSet.getString("status")));
-            result.setEnableCallBack(resultSet.getBoolean("callback_enabled"));
+            result.setCallBackEnabled(resultSet.getBoolean("callback_enabled"));
+            result.setCallBackNotified(resultSet.getBoolean("callback_notified"));
             return result;
         }
     };
@@ -56,7 +57,7 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
                 .addValue("action_parameters", serializeParameters(entity.getActionParameters()))
                 .addValue("action_parameters_class", entity.getActionParameters() == null ? null : entity.getActionParameters().getClass().getName())
                 .addValue("status", entity.getCommandStatus().toString())
-                .addValue("callback_enabled", entity.isEnableCallBack());
+                .addValue("callback_enabled", entity.isCallBackEnabled());
     }
 
     private String serializeParameters(VdcActionParametersBase params) {
@@ -92,6 +93,11 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
     @Override
     public void updateStatus(Guid id, CommandStatus status) {
         getCallsHandler().executeModification("UpdateCommandEntityStatus", createIdParameterMapper(id).addValue("status", status.toString()));
+    }
+
+    @Override
+    public void updateNotified(Guid id) {
+        getCallsHandler().executeModification("UpdateCommandEntityNotified", createIdParameterMapper(id).addValue("callback_notified", true));
     }
 
     @Override

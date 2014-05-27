@@ -48,6 +48,18 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION UpdateCommandEntityNotified(v_command_id uuid,
+       v_callback_notified boolean)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      UPDATE command_entities
+      SET callback_notified = v_callback_notified
+      WHERE command_id = v_command_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE FUNCTION InsertOrUpdateCommandEntity (v_command_id uuid,
        v_command_type int,
        v_root_command_id uuid,

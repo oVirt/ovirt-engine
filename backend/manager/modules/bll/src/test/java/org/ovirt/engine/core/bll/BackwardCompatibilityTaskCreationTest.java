@@ -70,7 +70,7 @@ public class BackwardCompatibilityTaskCreationTest {
             mockConfig(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds, 10),
             mockConfig(ConfigValues.AsyncTaskStatusCachingTimeInMinutes, 10),
             mockConfig(ConfigValues.CommandCoordinatorThreadPoolSize, 10),
-            mockConfig(ConfigValues.AsyncCommandPollingRate, 10)
+            mockConfig(ConfigValues.AsyncCommandPollingRateInSeconds, 10)
             );
 
     @ClassRule

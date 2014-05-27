@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.tasks;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
+import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
@@ -128,20 +130,32 @@ public class TaskManagerUtil {
         coco.addOrUpdateTaskInDB(asyncTask);
     }
 
-    public CommandBase<?> retrieveCommand(Guid commandId) {
-        return coco.retrieveCommand(commandId);
+    public static void persistCommand(CommandEntity cmdEntity) {
+        coco.persistCommand(cmdEntity);
     }
 
-    public static void persistCommand(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status, boolean enableCallBack) {
-        coco.persistCommand(commandId, rootCommandId, actionType, params, status, enableCallBack);
+    public static List<Guid> getChildCommandIds(Guid commandId) {
+        return coco.getChildCommandIds(commandId);
+    }
+
+    public static CommandBase<?> retrieveCommand(Guid commandId) {
+        return coco.retrieveCommand(commandId);
     }
 
     public static void removeCommand(Guid commandId) {
         coco.removeCommand(commandId);
     }
 
+    public static void removeAllCommandsInHierarchy(Guid commandId) {
+        coco.removeAllCommandsInHierarchy(commandId);
+    }
+
     public static void removeAllCommandsBeforeDate(DateTime cutoff) {
         coco.removeAllCommandsBeforeDate(cutoff);
+    }
+
+    public static CommandStatus getCommandStatus(Guid commandId) {
+        return coco.getCommandStatus(commandId);
     }
 
     public static void updateCommandStatus(Guid commandId, AsyncTaskType taskType, CommandStatus status) {

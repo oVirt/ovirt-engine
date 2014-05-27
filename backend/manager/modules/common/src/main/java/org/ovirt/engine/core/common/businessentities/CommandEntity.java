@@ -17,7 +17,8 @@ public class CommandEntity implements BusinessEntity<Guid> {
     private VdcActionParametersBase actionParameters;
     private Date createdAt;
     private CommandStatus commandStatus = CommandStatus.UNKNOWN;
-    private boolean enableCallBack = false;
+    private boolean callBackEnabled = false;
+    private boolean callBackNotified = false;
 
     @Override
     public int hashCode() {
@@ -95,11 +96,30 @@ public class CommandEntity implements BusinessEntity<Guid> {
         this.commandStatus = commandStatus;
     }
 
-    public boolean isEnableCallBack() {
-        return enableCallBack;
+    public boolean isCallBackEnabled() {
+        return callBackEnabled;
     }
 
-    public void setEnableCallBack(boolean enableCallBack) {
-        this.enableCallBack = enableCallBack;
+    public void setCallBackEnabled(boolean callBackEnabled) {
+        this.callBackEnabled = callBackEnabled;
+    }
+
+    public boolean isCallBackNotified() {
+        return callBackNotified;
+    }
+
+    public void setCallBackNotified(boolean callBackNotified) {
+        this.callBackNotified = callBackNotified;
+    }
+
+    public static CommandEntity buildCommandEntity(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status, boolean callBackEnabled) {
+        CommandEntity entity = new CommandEntity();
+        entity.setId(commandId);
+        entity.setRootCommandId(rootCommandId);
+        entity.setCommandType(actionType);
+        entity.setActionParameters(params);
+        entity.setCommandStatus(status);
+        entity.setCallBackEnabled(callBackEnabled);
+        return entity;
     }
 }

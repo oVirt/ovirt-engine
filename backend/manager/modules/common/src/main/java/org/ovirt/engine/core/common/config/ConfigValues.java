@@ -66,7 +66,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    AsyncCommandPollingRate,
+    AsyncCommandPollingRateInSeconds,
 
     /**
      * The rate (in seconds) to refresh the cache that holds the asynchronous tasks' statuses.
