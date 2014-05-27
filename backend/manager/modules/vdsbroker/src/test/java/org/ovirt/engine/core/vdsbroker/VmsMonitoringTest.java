@@ -43,6 +43,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -104,6 +105,9 @@ public class VmsMonitoringTest {
     @Mock
     VmDynamicDAO vmDynamicDao;
 
+    @Mock
+    private VdsDAO vdsDao;
+
     AuditLogDAO mockAuditLogDao = new AuditLogDaoMocker();
 
     VM vm_1_db;
@@ -121,7 +125,7 @@ public class VmsMonitoringTest {
         initConditions();
         when(vdsManager.getRefreshStatistics()).thenReturn(false);
         vmsMonitoring = Mockito.spy(
-                new VmsMonitoring(vdsManager, vds) {
+                new VmsMonitoring(vdsManager) {
 
                     @Override
                     public DbFacade getDbFacade() {
@@ -240,9 +244,11 @@ public class VmsMonitoringTest {
         when(dbFacade.getVmDeviceDao()).thenReturn(vmDeviceDAO);
         when(dbFacade.getVmDynamicDao()).thenReturn(vmDynamicDao);
         when(dbFacade.getDiskDao()).thenReturn(diskDAO);
+        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
         when(groupDAO.get((Guid) any())).thenReturn(cluster);
         initVm();
         when(vmDAO.getAllRunningByVds(vds.getId())).thenReturn(Collections.singletonMap(VM_1, vm_1_db));
+        when(vdsDao.get((Guid) any())).thenReturn(vds);
     }
 
     private void initVds() {

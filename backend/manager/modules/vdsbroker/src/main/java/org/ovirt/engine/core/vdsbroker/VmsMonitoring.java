@@ -1,5 +1,17 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -58,24 +70,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DestroyVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FullListVdsCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSErrorException;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSProtocolException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 public class VmsMonitoring {
 
@@ -83,6 +82,7 @@ public class VmsMonitoring {
     private VdsManager vdsManager;
     private final Map<Guid, VM> vmDict;
     private Map<Guid, VmInternalData> runningVms;
+    private Map<Guid, VmManager> vmManagers;
 
     private int memCommited;
     private int vmsCoresCount;
@@ -130,15 +130,52 @@ public class VmsMonitoring {
         UNCHANGEABLE_FIELDS_BY_VDSM = Collections.unmodifiableList(tmpList);
     }
 
-    private boolean _saveVdsDynamic;
-
-    public VmsMonitoring(VdsManager vdsManager, VDS vds) {
-        this.vds = vds;
+    public VmsMonitoring(VdsManager vdsManager) {
+        //TODO this query for vds is heavy and redundant -
+        //TODO vds will be changed to VdsStatic or even a mini view entity -
+        //TODO there is no need to fetch the whole entity,
+        //TODO this means removing VDS from parameters classes of VdsBrokerCommands
+        vds = getDbFacade().getVdsDao().get(vdsManager.getVdsId());
         this.vdsManager = vdsManager;
         this.vmDict = getDbFacade().getVmDao().getAllRunningByVds(vds.getId());
+        vmManagers = new HashMap<>(vmDict.size()); // max size is the one's that in the db
     }
 
-    public void refreshVmStats() {
+    /**
+     * analyze and react upon changes on the monitoredVms. relevant changes would
+     * be persisted and state transitions and internal commands would
+     * take place accordingly.
+     */
+    public void perform() {
+        try {
+            lockVmsManager();
+            refreshVmStats();
+            saveVmsToDb();
+            afterVMsRefreshTreatment();
+            vdsManager.updateMetrics(memCommited, vmsCoresCount);
+        } finally {
+            unlockVmsManager();
+        }
+
+    }
+
+    private void lockVmsManager() {
+        for (Guid vmId : vmDict.keySet()) {
+            VmManager vmManager = ResourceManager.getInstance().getVmManager(vmId);
+            if (vmManager.trylock()) {
+                // store the locked managers to finally release them at the end of the cycle
+                vmManagers.put(vmId, vmManager);
+            }
+        }
+    }
+
+    private void unlockVmsManager() {
+        for (VmManager vmManager : vmManagers.values()) {
+            vmManager.unlock();
+        }
+    }
+
+    private void refreshVmStats() {
         log.debug("refresh VMs list entered");
 
         // Retrieve the list of existing jobs and/or job placeholders.  Only these jobs
@@ -149,6 +186,9 @@ public class VmsMonitoring {
             // refreshCommitedMemory must be called before we modify runningVms, because
             // we iterate over it there, assuming it is the same as it was received from VDSM
             refreshCommitedMemory();
+
+            filterVmsFromMonitoringCycle();
+
             List<Guid> staleRunningVms = checkVmsStatusChanged();
 
             proceedWatchdogEvents();
@@ -183,10 +223,28 @@ public class VmsMonitoring {
     }
 
     /**
+     * if we can't hold this VM lock we filter it out and
+     * so we don't try to detect state-transition and so on.
+     * - VMs which are anyway not exist in db should never be filtered out
+     * - metrics calculation like memCommited and vmsCoresCount should be calculated *before*
+     *   this filtering.
+     */
+    private void filterVmsFromMonitoringCycle() {
+        for (Guid vmId : runningVms.keySet()) {
+            if (!vmManagers.containsKey(vmId)) {
+                runningVms.remove(vmId);
+                vmDict.remove(vmId);
+                log.debug("skipping VM '{}' from this monitoring cycle -" +
+                        " the VM is locked by its VmManager ", vmId );
+            }
+        }
+    }
+
+    /**
      * fetch running VMs and populate the internal structure. if we fail, handle the error
      * @return true if we could get vms otherwise false
      */
-    public boolean fetchRunningVms() {
+    protected boolean fetchRunningVms() {
         VDSCommandType commandType =
                 vdsManager.getRefreshStatistics()
                         ? VDSCommandType.GetAllVmStats
@@ -822,7 +880,7 @@ public class VmsMonitoring {
         }
     }
 
-    void saveVmsToDb() {
+    private void saveVmsToDb() {
         getDbFacade().getVmDynamicDao().updateAllInBatch(vmDynamicToSave.values());
         getDbFacade().getVmStatisticsDao().updateAllInBatch(vmStatisticsToSave.values());
 
@@ -844,10 +902,7 @@ public class VmsMonitoring {
         saveVmNumaNodeRuntimeData();
     }
 
-    void afterVMsRefreshTreatment() {
-
-        // destroy
-        getVdsEventListener().destroyVms(vmsToDestroy);
+    private void afterVMsRefreshTreatment() {
 
         // rerun all vms from rerun list
         for (Guid vm_guid : vmsToRerun) {
@@ -1103,21 +1158,7 @@ public class VmsMonitoring {
                 // exit status that's OK, otherwise..
                 if (vmDynamic != null && vmDynamic.getExitStatus() != VmExitStatus.Normal) {
                     if (curVm.getMigratingToVds() != null) {
-                        DestroyVmVDSCommand<DestroyVmVDSCommandParameters> destroyCmd =
-                                new DestroyVmVDSCommand<DestroyVmVDSCommandParameters>
-                                        (new DestroyVmVDSCommandParameters(new Guid(curVm.getMigratingToVds().toString()),
-                                                curVm.getId(),
-                                                true,
-                                                false,
-                                                0));
-                        destroyCmd.execute();
-                        if (destroyCmd.getVDSReturnValue().getSucceeded()) {
-                            log.info("Stopped migrating vm: '{}' on vds: '{}'", curVm.getName(),
-                                    curVm.getMigratingToVds());
-                        } else {
-                            log.info("Could not stop migrating vm: '{0}' on vds: '{}', Error: '{}'", curVm.getName(),
-                                    curVm.getMigratingToVds(), destroyCmd.getVDSReturnValue().getExceptionString());
-                        }
+                        vmsToDestroy.add(new Pair<VM, Guid>(curVm, curVm.getMigratingToVds()));
                     }
                     // set vm status to down if source vm crushed
                     ResourceManager.getInstance().InternalSetVmStatus(curVm,
@@ -1647,13 +1688,5 @@ public class VmsMonitoring {
 
     protected IVdsEventListener getVdsEventListener() {
         return ResourceManager.getInstance().getEventListener();
-    }
-
-    public int getMemCommited() {
-        return memCommited;
-    }
-
-    public int getVmsCoresCount() {
-        return vmsCoresCount;
     }
 }

@@ -11,7 +11,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateBrokerVDSCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
+public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends ManagingVmCommand<P> {
 
     private static final Logger log = LoggerFactory.getLogger(MigrateVDSCommand.class);
 
@@ -20,12 +20,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
     }
 
     @Override
-    protected void executeVdsIdCommand() {
-        if (_vdsManager == null) {
-            getVDSReturnValue().setSucceeded(false);
-            return;
-        }
-
+    protected void executeVmCommand() {
         MigrateBrokerVDSCommand<?> command = new MigrateBrokerVDSCommand<>(getParameters());
         command.execute();
         VDSReturnValue vdsReturnValue = command.getVDSReturnValue();
@@ -34,11 +29,9 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
 
         if (vdsReturnValue.getSucceeded()) {
             ResourceManager.getInstance().AddAsyncRunningVm(getParameters().getVmId());
-
             ResourceManager.getInstance().InternalSetVmStatus(vm, VMStatus.MigratingFrom);
             vm.setMigratingToVds(getParameters().getDstVdsId());
-            getVmDynamicDAO().update(vm.getDynamicData());
-
+            vmManager.update(vm.getDynamicData());
             getVDSReturnValue().setReturnValue(VMStatus.MigratingFrom);
         } else {
             log.error("Failed Vm migration");

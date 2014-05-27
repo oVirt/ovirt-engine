@@ -78,6 +78,7 @@ public class VdsManager {
     private long updateStartTime;
     private long nextMaintenanceAttemptTime;
     private String onTimerJobId;
+    private String vmsMonitoringJobId;
     private int refreshIteration = 1;
     private boolean isSetNonOperationalExecuted;
     private MonitoringStrategy monitoringStrategy;
@@ -86,6 +87,9 @@ public class VdsManager {
     private IVdsServer vdsProxy;
     private boolean mBeforeFirstRefresh = true;
     private HostMonitoring hostMonitoring;
+    private AtomicInteger memCommited;
+    private AtomicInteger vmsCoresCount;
+    private boolean monitoringNeeded;
 
     private VdsManager(VDS vds) {
         log.info("Entered VdsManager constructor");
@@ -98,6 +102,8 @@ public class VdsManager {
         monitoringLock = new EngineLock(Collections.singletonMap(vdsId.toString(),
                 new Pair<String, String>(LockingGroup.VDS_INIT.name(), "")), null);
         hostNetworkTopologyPersister = HostNetworkTopologyPersisterImpl.getInstance();
+        memCommited = new AtomicInteger(vds.getMemCommited());
+        vmsCoresCount = new AtomicInteger(vds.getVmsCoresCount());
 
         handlePreviousStatus();
         handleSecureSetup();
@@ -149,6 +155,16 @@ public class VdsManager {
                         refreshRate,
                         refreshRate,
                         TimeUnit.MILLISECONDS);
+
+        vmsMonitoringJobId =
+                sched.scheduleAFixedDelayJob(
+                        this,
+                        "vmsMonitoring",
+                        new Class[0],
+                        new Object[0],
+                        refreshRate,
+                        refreshRate,
+                        TimeUnit.MILLISECONDS);
     }
 
     private void initVdsBroker() {
@@ -182,7 +198,8 @@ public class VdsManager {
                 ArrayList<VDSDomainsData> domainsList = null;
                 VDS tmpVds;
                 synchronized (getLockObj()) {
-                    tmpVds = vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
+                    cacheVds();
+                    tmpVds = vds;
                     if (vds == null) {
                         log.error("VdsManager::refreshVdsRunTimeInfo - onTimer is NULL for '{}'",
                                 getVdsId());
@@ -258,6 +275,26 @@ public class VdsManager {
         }
     }
 
+    private void cacheVds() {
+        vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
+        setMonitoringNeeded();
+    }
+
+    @OnTimerMethodAnnotation("vmsMonitoring")
+    public void vmsMonitoring() {
+        if (isMonitoringNeeded()) {
+            VmsListFetcher fetcher =
+                    getRefreshStatistics() ?
+                            new VmsStatisticsFetcher(this) :
+                            new VmsListFetcher(this);
+            fetcher.fetch();
+            new VmsMonitoring(this,
+                    fetcher.getChangedVms(),
+                    fetcher.getVmsWithChangedDevices()
+            ).perform();
+        }
+    }
+
     private void logFailureMessage(RuntimeException ex) {
         log.warn(
                 "Failed to refresh VDS, continuing, vds ='{}' ('{}'): {}",
@@ -278,8 +315,8 @@ public class VdsManager {
         log.debug("Exception", ex);
     }
 
-    public boolean isMonitoringNeeded() {
-        return (monitoringStrategy.isMonitoringNeeded(vds) &&
+    private void setMonitoringNeeded() {
+        monitoringNeeded = (monitoringStrategy.isMonitoringNeeded(vds) &&
                 vds.getStatus() != VDSStatus.Installing &&
                 vds.getStatus() != VDSStatus.InstallFailed &&
                 vds.getStatus() != VDSStatus.Reboot &&
@@ -288,6 +325,10 @@ public class VdsManager {
                 vds.getStatus() != VDSStatus.InstallingOS &&
                 vds.getStatus() != VDSStatus.Down &&
                 vds.getStatus() != VDSStatus.Kdumping);
+    }
+
+    public boolean isMonitoringNeeded() {
+        return monitoringNeeded;
     }
 
     private void HandleVdsRecoveringException(VDSRecoveringException ex) {
@@ -698,9 +739,15 @@ public class VdsManager {
         return true;
     }
 
+    protected void updateMetrics(int memCommited, int vmsCoresCount) {
+        this.memCommited.set(memCommited);
+        this.vmsCoresCount.set(vmsCoresCount);
+    }
+
     public void dispose() {
         log.info("vdsManager::disposing");
         SchedulerUtilQuartzImpl.getInstance().deleteJob(onTimerJobId);
+        SchedulerUtilQuartzImpl.getInstance().deleteJob(vmsMonitoringJobId);
         vdsProxy.close();
     }
 
@@ -884,5 +931,13 @@ public class VdsManager {
 
     public void setbeforeFirstRefresh(boolean value) {
         mBeforeFirstRefresh = value;
+    }
+
+    public int getMemCommited() {
+        return this.memCommited.get();
+    }
+
+    public int getVmsCoresCount() {
+        return this.vmsCoresCount.get();
     }
 }

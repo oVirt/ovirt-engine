@@ -55,7 +55,6 @@ public class HostMonitoring {
     private boolean saveVdsStatistics;
     private boolean processHardwareCapsNeeded;
     private boolean refreshedCapabilities = false;
-    private VmsMonitoring vmsMonitoring;
     private static Map<Guid, Long> hostDownTimes = new HashMap<>();
     private boolean vdsMaintenanceTimeoutOccurred;
     private Map<String, InterfaceStatus> oldInterfaceStatus = new HashMap<String, InterfaceStatus>();
@@ -67,7 +66,6 @@ public class HostMonitoring {
         this.vds = vds;
         firstStatus = vds.getStatus();
         this.monitoringStrategy = monitoringStrategy;
-        vmsMonitoring = new VmsMonitoring(vdsManager, vds);
     }
 
     public void refresh() {
@@ -117,7 +115,6 @@ public class HostMonitoring {
                 saveVdsDynamic = true;
             }
             beforeFirstRefreshTreatment(isVdsUpOrGoingToMaintenance);
-            vmsMonitoring.refreshVmStats();
             updateVirtualMemAndCpu();
         } catch (VDSRecoveringException e) {
             // if PreparingForMaintenance and vds is in install failed keep to
@@ -177,8 +174,6 @@ public class HostMonitoring {
             saveCpuStatisticsDataToDb();
             saveNumaStatisticsDataToDb();
         }
-
-        vmsMonitoring.saveVmsToDb();
     }
 
     private void saveCpuStatisticsDataToDb() {
@@ -438,7 +433,6 @@ public class HostMonitoring {
                             (vds.getNonOperationalReason() != null) ? vds.getNonOperationalReason().name() : "unknown");
                 }
             }
-            vmsMonitoring.afterVMsRefreshTreatment();
         } catch (IRSErrorException ex) {
             logFailureMessage("Could not finish afterRefreshTreatment", ex);
             log.debug("Exception", ex);
@@ -746,12 +740,12 @@ public class HostMonitoring {
     }
 
     private void updateVirtualMemAndCpu() {
-        if (vmsMonitoring.getMemCommited() != vds.getMemCommited()) {
-            vds.setMemCommited(vmsMonitoring.getMemCommited());
+        if (vdsManager.getMemCommited() != vds.getMemCommited()) {
+            vds.setMemCommited(vdsManager.getMemCommited());
             saveVdsDynamic = true;
         }
-        if (vmsMonitoring.getVmsCoresCount() != vds.getVmsCoresCount()) {
-            vds.setVmsCoresCount(vmsMonitoring.getVmsCoresCount());
+        if (vdsManager.getVmsCoresCount() != vds.getVmsCoresCount()) {
+            vds.setVmsCoresCount(vdsManager.getVmsCoresCount());
             saveVdsDynamic = true;
         }
     }

@@ -7,7 +7,6 @@ import java.util.Map;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
@@ -78,6 +77,4 @@ public interface IVdsEventListener {
      * @param vdsId
      */
     void updateSlaPolicies(List<Guid> vmIds, Guid vdsId);
-
-    public void destroyVms(List<Pair<VM, Guid>> vmsToDestroy);
 }
