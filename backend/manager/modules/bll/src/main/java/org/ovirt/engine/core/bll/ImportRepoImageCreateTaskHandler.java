@@ -37,6 +37,7 @@ public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
     public void execute() {
         if (enclosingCommand.getParameters().getTaskGroupSuccess()) {
             enclosingCommand.getParameters().setImageGroupID(Guid.newGuid());
+            enclosingCommand.getParameters().setDestinationImageId(Guid.newGuid());
             enclosingCommand.getParameters().setEntityInfo(
                     new EntityInfo(VdcObjectType.Disk, enclosingCommand.getParameters().getImageGroupID()));
 
@@ -94,6 +95,7 @@ public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
         parameters.setQuotaId(enclosingCommand.getParameters().getQuotaId());
         parameters.setParentCommand(VdcActionType.ImportRepoImage);
         parameters.setParentParameters(enclosingCommand.getParameters());
+        parameters.setDestinationImageId(enclosingCommand.getParameters().getDestinationImageId());
         return parameters;
     }
 
