@@ -21,6 +21,7 @@ public class AddClusterPolicyCommand extends ClusterPolicyCRUDCommand {
     protected void executeCommand() {
         getClusterPolicy().setId(Guid.newGuid());
         SchedulingManager.getInstance().addClusterPolicy(getClusterPolicy());
+        getReturnValue().setActionReturnValue(getClusterPolicy().getId());
         setSucceeded(true);
     }
 

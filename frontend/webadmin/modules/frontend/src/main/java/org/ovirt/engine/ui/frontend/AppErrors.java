@@ -3045,6 +3045,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Parameters are invalid.")
     String ACTION_TYPE_FAILED_CLUSTER_POLICY_PARAMETERS_INVALID();
 
+    @DefaultStringValue("Cannot ${action} ${type}. policy unit already exists in Cluster Policy.")
+    String ACTION_TYPE_FAILED_CLUSTER_POLICY_DUPLICATE_POLICY_UNIT();
+
     @DefaultStringValue("Cannot ${action} ${type}. Name is in use.")
     String ACTION_TYPE_FAILED_CLUSTER_POLICY_NAME_INUSE();
 

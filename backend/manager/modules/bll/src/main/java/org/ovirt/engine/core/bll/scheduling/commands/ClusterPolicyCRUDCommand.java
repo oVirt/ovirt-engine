@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.scheduling.commands;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
@@ -40,9 +42,13 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
             }
         }
         Map<Guid, PolicyUnitImpl> map = SchedulingManager.getInstance().getPolicyUnitsMap();
+        Set<Guid> existingPolicyUnits = new HashSet<>();
         // check filter policy units
         if (getClusterPolicy().getFilters() != null) {
             for (Guid filterId : getClusterPolicy().getFilters()) {
+                if(isPolicyUnitExists(filterId, existingPolicyUnits)) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_DUPLICATE_POLICY_UNIT);
+                }
                 PolicyUnitImpl policyUnitImpl = map.get(filterId);
                 if (policyUnitImpl == null) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
@@ -75,6 +81,9 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
         // check function policy units
         if (getClusterPolicy().getFunctions() != null) {
             for (Pair<Guid, Integer> functionPair : getClusterPolicy().getFunctions()) {
+                if (isPolicyUnitExists(functionPair.getFirst(), existingPolicyUnits)) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_DUPLICATE_POLICY_UNIT);
+                }
                 PolicyUnitImpl policyUnitImpl = map.get(functionPair.getFirst());
                 if (policyUnitImpl == null) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
@@ -108,6 +117,10 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
             return false;
         }
         return true;
+    }
+
+    private boolean isPolicyUnitExists(Guid policyUnitId, Set<Guid> existingPolicyUnits) {
+        return !existingPolicyUnits.add(policyUnitId);
     }
 
     protected boolean checkRemoveEditValidations() {
