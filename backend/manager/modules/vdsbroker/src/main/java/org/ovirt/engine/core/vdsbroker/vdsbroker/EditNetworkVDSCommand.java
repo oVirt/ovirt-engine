@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 
 public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> extends VdsBrokerCommand<P> {
@@ -51,8 +53,12 @@ public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ex
         options.put("bridged", Boolean.toString(getParameters().isVmNetwork()));
 
         Network network = getParameters().getNetwork();
-        if (network != null && network.getMtu() != 0) {
-            options.put("mtu", String.valueOf(network.getMtu()));
+        if (network != null) {
+            if (network.getMtu() == 0) {
+                options.put("mtu", Config.<Integer> getValue(ConfigValues.DefaultMtu).toString());
+            } else {
+                options.put("mtu", String.valueOf(network.getMtu()));
+            }
         }
 
         // options[VdsProperties.force] = "true";

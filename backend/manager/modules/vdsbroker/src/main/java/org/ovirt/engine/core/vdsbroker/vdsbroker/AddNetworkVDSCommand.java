@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.utils.transaction.RollbackHandler;
@@ -59,8 +61,12 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
         options.put("bridged", Boolean.toString(getParameters().isVmNetwork()));
 
         Network network = getParameters().getNetwork();
-        if (network != null && network.getMtu() != 0) {
-            options.put("mtu", String.valueOf(network.getMtu()));
+        if (network != null) {
+            if (network.getMtu() == 0) {
+                options.put("mtu", Config.<Integer> getValue(ConfigValues.DefaultMtu).toString());
+            } else {
+                options.put("mtu", String.valueOf(network.getMtu()));
+            }
         }
 
         status = getBroker().addNetwork(networkName, vlanId, bond, nics, options);

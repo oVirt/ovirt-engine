@@ -13,6 +13,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
@@ -58,7 +60,9 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 addBootProtocol(opts, iface);
             }
 
-            if (network.getMtu() != 0) {
+            if (network.getMtu() == 0) {
+                opts.put("mtu", Config.<Integer> getValue(ConfigValues.DefaultMtu).toString());
+            } else {
                 opts.put("mtu", String.valueOf(network.getMtu()));
             }
 
