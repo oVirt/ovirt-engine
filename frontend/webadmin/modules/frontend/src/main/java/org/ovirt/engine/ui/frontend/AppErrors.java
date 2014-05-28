@@ -3228,4 +3228,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Random Number Generator device is not supported in cluster.")
     String ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Operation not supported by QEMU.")
+    String ACTION_TYPE_FAILED_QEMU_UNSUPPORTED_OPERATION();
 }

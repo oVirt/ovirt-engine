@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -537,6 +538,11 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         if (!isLiveSnapshotEnabled() && !vm.isDown()) {
             // if there is no live snapshot and the vm is up - snapshot is not possible
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DATA_CENTER_VERSION_DOESNT_SUPPORT_LIVE_SNAPSHOT);
+        }
+        VDS vds = getVds();
+        // it is possible, even if unlikely, that the QEMU on the host does not support live snapshotting
+        if (vds != null && !vds.getLiveSnapshotSupport()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_QEMU_UNSUPPORTED_OPERATION);
         }
         return true;
     }
