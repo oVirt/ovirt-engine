@@ -140,6 +140,7 @@ import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
@@ -974,6 +975,10 @@ public class DbFacade {
 
     public NetworkQoSDao getQosDao() {
         return getDao(NetworkQoSDao.class);
+    }
+
+    public StorageQosDao getStorageQosDao() {
+        return getDao(StorageQosDao.class);
     }
 
     /**

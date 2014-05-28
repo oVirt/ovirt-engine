@@ -1191,6 +1191,59 @@
         </row>
     </table>
 
+    <table name="qos">
+        <column>id</column>
+        <column>qos_type</column>
+        <column>name</column>
+        <column>description</column>
+        <column>storage_pool_id</column>
+        <column>max_throughput</column>
+        <column>max_read_throughput</column>
+        <column>max_write_throughput</column>
+        <column>max_iops</column>
+        <column>max_read_iops</column>
+        <column>max_write_iops</column>
+        <row>
+            <value>ae956031-6be2-43d6-bb90-5191c9253314</value>
+            <value>1</value>
+            <value>qos_a</value>
+            <value>You don't understand. There's relationship George, and then there's the George you know. Baudy George, Funny George</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <value>1000</value>
+            <value>2000</value>
+            <value>500</value>
+            <value>1000</value>
+            <value>2000</value>
+            <value>500</value>
+        </row>
+        <row>
+            <value>ae956031-6be2-43d6-bb90-5191c9253315</value>
+            <value>1</value>
+            <value>qos_b</value>
+            <value>If I owned a company, my employees would love me. They’d have huge pictures of me up the walls and in their home, like Lenin.</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <value>1200</value>
+            <value>2400</value>
+            <value>500</value>
+            <value>1200</value>
+            <value>2400</value>
+            <value>500</value>
+        </row>
+        <row>
+            <value>ae956031-6be2-43d6-bb90-5191c9253316</value>
+            <value>1</value>
+            <value>qos_c</value>
+            <value>Jerry, just remember, it’s not a lie if you believe it.</value>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <value>700</value>
+            <value>1400</value>
+            <value>500</value>
+            <value>700</value>
+            <value>1400</value>
+            <value>500</value>
+        </row>
+    </table>
+
     <table name="vnic_profiles">
         <column>id</column>
         <column>name</column>

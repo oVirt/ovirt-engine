@@ -611,6 +611,15 @@ public class FixturesTool {
     public static final Guid EXISTING_COMMAND_ENTITY_ID = new Guid("340fd52b-3400-4cdd-8d3f-c9d03704b0a1");
 
     /**
+     * UUIDs for QoS objects
+     */
+    public static final Guid QOS_ID_1 = new Guid("ae956031-6be2-43d6-bb90-5191c9253314");
+
+    public static final Guid QOS_ID_2 = new Guid("ae956031-6be2-43d6-bb90-5191c9253315");
+
+    public static final Guid QOS_ID_3 = new Guid("ae956031-6be2-43d6-bb90-5191c9253316");
+
+    /**
      * Number of VMs on clusters
      */
     public static final int NUMBER_OF_VMS_IN_VDS_GROUP_RHEL6_NFS_CLUSTER = 0;
