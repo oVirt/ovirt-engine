@@ -437,6 +437,8 @@ public class HostMapper {
         model.setAutoNumaStatus(map(entity.getAutoNumaBalancing(), null));
         model.setNumaSupported(entity.isNumaSupport());
 
+        model.setLiveSnapshotSupport(entity.getLiveSnapshotSupport());
+
         return model;
     }
 
