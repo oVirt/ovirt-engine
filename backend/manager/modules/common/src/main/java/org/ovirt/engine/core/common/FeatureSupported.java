@@ -190,6 +190,15 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.NetworkQosSupported, version);
     }
 
+     /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> iff Storage QoS is supported for the cluster version.
+     */
+    public static boolean storageQoS(Version version) {
+        return supportedInConfig(ConfigValues.StorageQosSupported, version);
+    }
+
     public static boolean hostNetworkQos(Version version) {
         return supportedInConfig(ConfigValues.HostNetworkQosSupported, version);
     }

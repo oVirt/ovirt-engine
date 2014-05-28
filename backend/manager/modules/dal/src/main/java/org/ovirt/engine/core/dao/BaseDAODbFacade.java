@@ -124,6 +124,18 @@ public abstract class BaseDAODbFacade {
     }
 
     /**
+     * Returns a Integer or a null if the column was NULL.
+     * @param resultSet the ResultSet to extract the result from
+     * @param columnName
+     * @return a Integer or null
+     * @throws SQLException
+     */
+    protected final static Integer getInteger(ResultSet resultSet, String columnName) throws SQLException {
+        Integer value = resultSet.getInt(columnName);
+        return resultSet.wasNull() ? null : value;
+    }
+
+    /**
      * Returns a {@link Guid} representing the column's value or a default value if the column was <code>null</code>.
      *
      * <b>Note:</b> Postgres' driver returns a {@link UUID} when {@link ResultSet#getObject(String)} is called on a
