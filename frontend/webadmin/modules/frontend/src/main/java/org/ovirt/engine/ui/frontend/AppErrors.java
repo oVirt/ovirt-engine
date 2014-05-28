@@ -826,6 +826,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Network QoS")
     String VAR__TYPE__NETWORK_QOS();
 
+    @DefaultStringValue("$type QoS")
+    String VAR__TYPE__QOS();
+
     @DefaultStringValue("$type SPM")
     String VAR__TYPE__SPM();
 
@@ -3069,6 +3072,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Invalid data center")
     String ACTION_TYPE_FAILED_QOS_STORAGE_POOL_NOT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Cannot change QoS data center.")
+    String ACTION_TYPE_FAILED_QOS_STORAGE_POOL_NOT_CONSISTENT();
+
     @DefaultStringValue("QoS name cannot be empty.")
     String QOS_NAME_NOT_NULL();
 
@@ -3077,6 +3083,18 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("QoS name length must be under 50 characters.")
     String QOS_NAME_TOO_LONG();
+
+    @DefaultStringValue("Cannot ${action} ${type}. QoS element has missing values.")
+    String ACTION_TYPE_FAILED_QOS_MISSING_VALUES();
+
+    @DefaultStringValue("Cannot ${action} ${type}. QoS element cannot have negative values.")
+    String ACTION_TYPE_FAILED_QOS_NEGATIVE_VALUES();
+
+    @DefaultStringValue("Cannot ${action} ${type}. QoS element name already exists.")
+    String ACTION_TYPE_FAILED_QOS_NAME_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. QoS element not found.")
+    String ACTION_TYPE_FAILED_QOS_NOT_FOUND();
 
     @DefaultStringValue("Cannot ${action}. New disk size cannot be smaller than the current.")
     String ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL();
