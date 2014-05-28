@@ -54,9 +54,11 @@
 
         .expandButton {
             width: 12px;
-            padding-right: 2px;
-            padding-left: 4px;
+            padding-right: 12px;
+            padding-left: 3px;
             padding-top: 3px;
+            position: relative;
+            top: -4px;
             cursor: pointer;
         }
 
