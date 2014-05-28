@@ -55,7 +55,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
             if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive())) {
                 return false;
             }
-
+            setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), getVm().getImages());
             if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED,
                         String.format("$domainId %1$s", getParameters().getStorageDomainId()),

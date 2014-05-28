@@ -435,4 +435,11 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         disk.setImageId(Guid.newGuid());
         return newGuidForDisk;
     }
+
+    protected void setImagesWithStoragePoolId(Guid storagePoolId, List<DiskImage> diskImages) {
+        for (DiskImage diskImage : diskImages) {
+            diskImage.setStoragePoolId(storagePoolId);
+        }
+    }
+
 }

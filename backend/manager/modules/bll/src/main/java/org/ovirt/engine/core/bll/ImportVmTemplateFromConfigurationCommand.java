@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -51,14 +54,16 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
             if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive())) {
                 return false;
             }
-
             if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED,
                         String.format("$domainId %1$s", getParameters().getStorageDomainId()),
                         String.format("$domainType %1$s", getStorageDomain().getStorageDomainType()));
             }
         }
-        getParameters().setImages(getVmTemplate().getImages());
+        ArrayList<DiskImage> disks = new ArrayList(getVmTemplate().getDiskTemplateMap().values());
+        setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), disks);
+        getParameters().setImages(disks);
+        getVmTemplate().setImages(disks);
         return super.canDoAction();
     }
 
