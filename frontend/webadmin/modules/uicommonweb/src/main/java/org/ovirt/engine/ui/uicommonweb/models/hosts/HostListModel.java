@@ -2204,41 +2204,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         return true;
     }
 
-    // @Override
-    // public void run(TaskContext context)
-    // {
-    // switch ((Integer) context.getState())
-    // {
-    // case 1:
-    // try
-    // {
-    // // override default timeout (60 sec) with 10 minutes
-    // TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 10, 0));
-    // try
-    // {
-    // new AddDataCenterRM(this);
-    // scope.Complete();
-    // } finally
-    // {
-    // scope.dispose();
-    // }
-    // } catch (TransactionAbortedException e)
-    // {
-    // // Do nothing.
-    // } finally
-    // {
-    // context.InvokeUIThread(this, 2);
-    // }
-    // break;
-    //
-    // case 2:
-    // StopProgress();
-    //
-    // Cancel();
-    // break;
-    // }
-    // }
-
     private SystemTreeItemModel systemTreeSelectedItem;
 
     @Override
