@@ -3249,4 +3249,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Kdump detection support is not properly configured on host '${VdsName}'.")
     String KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Target cluster belongs to different Data Center.")
+    String VDS_CLUSTER_ON_DIFFERENT_STORAGE_POOL();
 }

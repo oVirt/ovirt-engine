@@ -343,6 +343,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         }
 
+        // Disallow cross-DC template creation
+        if (!getStoragePoolId().equals(getVdsGroup().getStoragePoolId())) {
+            addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_ON_DIFFERENT_STORAGE_POOL);
+            return false;
+        }
+
         return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
                 getParameters().getMasterVm().getCpuPerSocket(), getVdsGroup()
                 .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
@@ -400,10 +406,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private boolean imagesRelatedChecks() {
         // images related checks
         if (!mImages.isEmpty()) {
-            if (!getVm().getStoragePoolId().equals(getVdsGroup().getStoragePoolId())) {
-                addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
-                return false;
-            }
             if (!validateVmNotDuringSnapshot()) {
                 return false;
             }
