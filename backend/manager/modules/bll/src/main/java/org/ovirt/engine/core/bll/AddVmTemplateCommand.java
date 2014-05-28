@@ -1,5 +1,16 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
@@ -58,17 +69,6 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 @LockIdNameAttribute
@@ -112,6 +112,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             if (getParameters().isConsoleEnabled() == null) {
                 parameters.setConsoleEnabled(false);
             }
+            VmHandler.updateDefaultTimeZone(parameterMasterVm);
         }
         if (getVm() != null) {
             updateVmDevices();

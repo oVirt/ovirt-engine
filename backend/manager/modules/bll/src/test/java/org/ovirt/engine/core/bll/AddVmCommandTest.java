@@ -117,10 +117,10 @@ public class AddVmCommandTest {
 
     @Test
     public void create10GBVmWith11GbAvailableAndA5GbBuffer() throws Exception {
+        mockOsRepository();
         VM vm = createVm();
         AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = createVmFromTemplateCommand(vm);
 
-        mockOsRepository();
         mockStorageDomainDAOGetForStoragePool();
         mockVdsGroupDAOReturnVdsGroup();
         mockVmTemplateDAOReturnVmTemplate();
@@ -140,8 +140,10 @@ public class AddVmCommandTest {
                         .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN.toString()));
     }
 
-    private void mockOsRepository() {
+    protected void mockOsRepository() {
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        VmHandler.init();
+        when(osRepository.isWindows(0)).thenReturn(true);
     }
 
     @Test
@@ -618,11 +620,13 @@ public class AddVmCommandTest {
 
     @Test
     public void testBeanValidations() {
+        mockOsRepository();
         assertTrue(createCommand(initializeMock(1, 1)).validateInputs());
     }
 
     @Test
     public void testPatternBasedNameFails() {
+        mockOsRepository();
         AddVmCommand<VmManagementParametersBase> cmd = createCommand(initializeMock(1, 1));
         cmd.getParameters().getVm().setName("aa-??bb");
         assertFalse("Pattern-based name should not be supported for VM", cmd.validateInputs());

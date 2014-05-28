@@ -26,15 +26,17 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNamespaceManager;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.compat.backendcompat.XmlNodeList;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.VmInitUtils;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -351,11 +353,17 @@ public abstract class OvfReader implements IOvfBuilder {
         }
 
         node = content.SelectSingleNode(OvfProperties.TIMEZONE);
-        if (node != null) {
-            if (StringUtils.isNotEmpty(node.innerText)) {
-                vmBase.setTimeZone(node.innerText);
+        if (node != null && StringUtils.isNotEmpty(node.innerText)) {
+            vmBase.setTimeZone(node.innerText);
+        } else {
+            if (osRepository.isWindows(vmBase.getOsId())) {
+                vmBase.setTimeZone(Config.<String> getValue(ConfigValues.DefaultWindowsTimeZone));
+            } else {
+                vmBase.setTimeZone(Config.<String> getValue(ConfigValues.DefaultGeneralTimeZone));
             }
         }
+
+
 
         node = content.SelectSingleNode(OvfProperties.DEFAULT_BOOT_SEQUENCE);
         if (node != null) {

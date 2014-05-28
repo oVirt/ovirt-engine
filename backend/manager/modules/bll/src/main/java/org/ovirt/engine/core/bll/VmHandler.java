@@ -776,4 +776,14 @@ public class VmHandler {
                .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
                               new UpdateVmDynamicDataVDSCommandParameters(vdsId, vmDynamic));
     }
+
+    public static void updateDefaultTimeZone(VmBase vmBase) {
+        if (vmBase.getTimeZone() == null) {
+            if (osRepository.isWindows(vmBase.getOsId())) {
+                vmBase.setTimeZone(Config.<String> getValue(ConfigValues.DefaultWindowsTimeZone));
+            } else {
+                vmBase.setTimeZone(Config.<String> getValue(ConfigValues.DefaultGeneralTimeZone));
+            }
+        }
+    }
 }

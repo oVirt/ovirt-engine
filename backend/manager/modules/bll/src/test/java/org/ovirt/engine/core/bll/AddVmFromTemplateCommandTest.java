@@ -38,6 +38,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTest {
 
     @Test
     public void validateSpaceAndThreshold() {
+        mockOsRepository();
         initCommand();
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForClonedDisks(anyList());
@@ -50,6 +51,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTest {
 
     @Test
     public void validateSpaceNotEnough() throws Exception {
+        mockOsRepository();
         initCommand();
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN)).
@@ -64,6 +66,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTest {
 
     @Test
     public void validateSpaceNotWithinThreshold() throws Exception {
+        mockOsRepository();
         initCommand();
         doReturn((new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN))).
                 when(storageDomainValidator).isDomainWithinThresholds();

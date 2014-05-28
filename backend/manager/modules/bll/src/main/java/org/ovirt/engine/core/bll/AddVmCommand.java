@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -164,6 +165,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         if (diskInfoDestinationMap == null) {
             diskInfoDestinationMap = new HashMap<Guid, DiskImage>();
         }
+        VmHandler.updateDefaultTimeZone(parameters.getVmStaticData());
 
     }
 

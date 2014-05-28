@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -26,11 +31,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateCommand<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
     private VmTemplate mOldTemplate;
@@ -44,6 +44,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             setStoragePoolId(getVdsGroup().getStoragePoolId() != null ? getVdsGroup().getStoragePoolId()
                     : Guid.Empty);
         }
+        VmHandler.updateDefaultTimeZone(parameters.getVmTemplateData());
     }
 
     @Override
