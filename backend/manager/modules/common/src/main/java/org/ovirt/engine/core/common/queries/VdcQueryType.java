@@ -340,6 +340,10 @@ public enum VdcQueryType implements Serializable {
     //Network QoS
     GetAllNetworkQosByStoragePoolId,
 
+    // QoS
+    GetQosById,
+    GetAllQosByStoragePoolIdAndType,
+
     GetWatchdog(VdcQueryAuthType.User),
     GetConsoleDevices(VdcQueryAuthType.User),
     GetRngDevice(VdcQueryAuthType.User),
