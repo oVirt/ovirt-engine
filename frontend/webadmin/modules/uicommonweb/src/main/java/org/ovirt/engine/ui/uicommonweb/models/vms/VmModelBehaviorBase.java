@@ -162,6 +162,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         getModel().getDefaultHost().setIsChangable(!isLocalSD);
     }
 
+    protected void buildModel(VmBase vmBase) {
+    }
+
     public abstract void template_SelectedItemChanged();
 
     public abstract void postDataCenterWithClusterSelectedItemChanged();

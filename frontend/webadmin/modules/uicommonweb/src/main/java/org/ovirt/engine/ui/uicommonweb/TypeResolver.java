@@ -10,7 +10,7 @@ public class TypeResolver
         return privateInstance;
     }
 
-    private static void setInstance(TypeResolver value)
+    public static void setInstance(TypeResolver value)
     {
         privateInstance = value;
     }

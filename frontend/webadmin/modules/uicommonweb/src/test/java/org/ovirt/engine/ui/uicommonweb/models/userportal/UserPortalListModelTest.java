@@ -7,7 +7,7 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.uicommonweb.models.pools.BaseVmListModelTest;
+import org.ovirt.engine.ui.uicommonweb.models.vms.BaseVmListModelTest;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 @RunWith(MockitoJUnitRunner.class)

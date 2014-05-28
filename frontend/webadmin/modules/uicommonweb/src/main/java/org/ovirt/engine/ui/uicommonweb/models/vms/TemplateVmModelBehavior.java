@@ -7,6 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -14,7 +15,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.CommentVmBaseToUnitBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.NameAndDescriptionVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -165,36 +168,19 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         doChangeDefautlHost(template.getDedicatedVmForVds());
     }
 
+    public void buildModel(VmBase vm) {
+        BuilderExecutor.build(vm, getModel(),
+                              new NameAndDescriptionVmBaseToUnitBuilder(),
+                              new CommentVmBaseToUnitBuilder(),
+                              new CommonVmBaseToUnitBuilder());
+    }
+
     private void initTemplate()
     {
         // Update model state according to VM properties.
-        getModel().getName().setEntity(template.getName());
-        getModel().getDescription().setEntity(template.getDescription());
-        getModel().getComment().setEntity(template.getComment());
-        getModel().getMinAllocatedMemory().setEntity(template.getMinAllocatedMem());
+        buildModel(template);
+
         getModel().getMinAllocatedMemory().setIsChangable(false);
-        getModel().getMemSize().setEntity(template.getMemSizeMb());
-        getModel().getOSType().setSelectedItem(template.getOsId());
-        getModel().getUsbPolicy().setSelectedItem(template.getUsbPolicy());
-        getModel().getNumOfMonitors().setSelectedItem(template.getNumOfMonitors());
-        getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
-        getModel().setBootSequence(template.getDefaultBootSequence());
-        getModel().getIsHighlyAvailable().setEntity(template.isAutoStartup());
-        getModel().getTotalCPUCores().setEntity(Integer.toString(template.getNumOfCpus()));
-        getModel().getNumOfSockets().setSelectedItem(template.getNumOfSockets());
-        getModel().getIsStateless().setEntity(template.isStateless());
-        getModel().getIsRunAndPause().setEntity(template.isRunAndPause());
-        getModel().getIsDeleteProtected().setEntity(template.isDeleteProtected());
-        getModel().selectSsoMethod(template.getSsoMethod());
-        getModel().getIsSmartcardEnabled().setEntity(template.isSmartcardEnabled());
-        getModel().getVncKeyboardLayout().setSelectedItem(template.getVncKeyboardLayout());
-        getModel().setSelectedMigrationDowntime(template.getMigrationDowntime());
-
-        getModel().getKernel_parameters().setEntity(template.getKernelParams());
-        getModel().getKernel_path().setEntity(template.getKernelUrl());
-        getModel().getInitrd_path().setEntity(template.getInitrdUrl());
-
-        getModel().getIsSingleQxlEnabled().setEntity(template.getSingleQxlPci());
 
         updateTimeZone(template.getTimeZone());
 
@@ -225,8 +211,6 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getSpiceCopyPasteEnabled().setEntity(template.isSpiceCopyPasteEnabled());
 
         initPriority(template.getPriority());
-
-        BuilderExecutor.build(template, getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
     }
 
     private void initCdImage()

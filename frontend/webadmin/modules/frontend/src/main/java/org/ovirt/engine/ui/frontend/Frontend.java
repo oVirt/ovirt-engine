@@ -225,6 +225,10 @@ public class Frontend implements HasHandlers {
         return InstanceHolder.instance;
     }
 
+    public static void setInstance(Frontend frontend) {
+        InstanceHolder.instance = frontend;
+    }
+
     /**
      * Run a non-public query against the back-end.
      *

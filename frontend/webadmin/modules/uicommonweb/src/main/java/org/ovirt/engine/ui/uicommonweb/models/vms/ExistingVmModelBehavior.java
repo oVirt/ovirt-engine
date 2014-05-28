@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -12,7 +13,9 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.CommentVmBaseToUnitBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.NameAndDescriptionVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.ExistingVmInstanceTypeManager;
@@ -132,29 +135,14 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         // This method will be called even if a VM created from Blank template.
 
         // Update model state according to VM properties.
-        getModel().getName().setEntity(vm.getName());
-        getModel().getDescription().setEntity(vm.getVmDescription());
-        getModel().getComment().setEntity(vm.getComment());
-        getModel().getOSType().setSelectedItem(vm.getVmOsId());
-        getModel().getAllowConsoleReconnect().setEntity(vm.getAllowConsoleReconnect());
+        buildModel(vm.getStaticData());
 
-        getModel().getIsStateless().setEntity(vm.isStateless());
         getModel().getIsStateless().setIsAvailable(vm.getVmPoolId() == null);
 
-        getModel().getIsRunAndPause().setEntity(vm.isRunAndPause());
         getModel().getIsRunAndPause().setIsAvailable(vm.getVmPoolId() == null);
-
-        getModel().getIsDeleteProtected().setEntity(vm.isDeleteProtected());
-        getModel().selectSsoMethod(vm.getSsoMethod());
-
-        getModel().getKernel_parameters().setEntity(vm.getKernelParams());
-        getModel().getKernel_path().setEntity(vm.getKernelUrl());
-        getModel().getInitrd_path().setEntity(vm.getInitrdUrl());
 
         getModel().getCpuSharesAmount().setEntity(vm.getCpuShares());
         updateCpuSharesSelection();
-
-        getModel().getVncKeyboardLayout().setSelectedItem(vm.getDefaultVncKeyboardLayout());
 
         updateRngDevice(getVm().getId());
         updateTimeZone(vm.getTimeZone());
@@ -184,14 +172,14 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                 }
             }), vm.getRunOnVds());
         }
+    }
 
-        getModel().getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
-
-        getModel().getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
-
-        BuilderExecutor.build(vm.getStaticData(), getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
-
-        getModel().getBootMenuEnabled().setEntity(vm.isBootMenuEnabled());
+    @Override
+    protected void buildModel(VmBase vm) {
+        BuilderExecutor.build(vm, getModel(),
+                              new NameAndDescriptionVmBaseToUnitBuilder(),
+                              new CommentVmBaseToUnitBuilder(),
+                              new CommonVmBaseToUnitBuilder());
     }
 
     private int calculateHostCpus() {

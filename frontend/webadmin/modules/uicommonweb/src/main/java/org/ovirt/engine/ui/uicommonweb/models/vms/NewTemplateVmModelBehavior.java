@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
@@ -22,7 +23,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -303,18 +304,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     private void initTemplate()
     {
         // Update model state according to VM properties.
-        getModel().getMemSize().setEntity(this.vm.getVmMemSizeMb());
-        getModel().getMinAllocatedMemory().setEntity(this.vm.getMinAllocatedMem());
-        getModel().getOSType().setSelectedItem(this.vm.getVmOsId());
-        getModel().getNumOfMonitors().setSelectedItem(this.vm.getNumOfMonitors());
-        getModel().getAllowConsoleReconnect().setEntity(this.vm.getAllowConsoleReconnect());
-        getModel().setBootSequence(this.vm.getDefaultBootSequence());
-        getModel().getTotalCPUCores().setEntity(Integer.toString(this.vm.getNumOfCpus()));
-        getModel().getNumOfSockets().setSelectedItem(this.vm.getNumOfSockets());
-        getModel().getIsStateless().setEntity(this.vm.isStateless());
-        getModel().getIsRunAndPause().setEntity(this.vm.isRunAndPause());
-        getModel().getIsDeleteProtected().setEntity(this.vm.isDeleteProtected());
-        getModel().selectSsoMethod(this.vm.getSsoMethod());
+        buildModel(this.vm.getStaticData());
 
         updateSelectedCdImage(this.vm.getStaticData());
         updateTimeZone(this.vm.getTimeZone());
@@ -335,20 +325,12 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             }
         }
 
-        getModel().getUsbPolicy().setSelectedItem(this.vm.getUsbPolicy());
-        getModel().getIsSmartcardEnabled().setEntity(this.vm.isSmartcardEnabled());
-        getModel().getVncKeyboardLayout().setSelectedItem(this.vm.getDefaultVncKeyboardLayout());
-        getModel().setSelectedMigrationDowntime(this.vm.getMigrationDowntime());
-
         initPriority(this.vm.getPriority());
+    }
 
-        getModel().getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
-
-        getModel().getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
-
-        BuilderExecutor.build(vm.getStaticData(), getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
-
-        getModel().getBootMenuEnabled().setEntity(vm.isBootMenuEnabled());
+    @Override
+    protected void buildModel(VmBase vm) {
+        BuilderExecutor.build(vm, getModel(), new CommonVmBaseToUnitBuilder());
     }
 
     @Override

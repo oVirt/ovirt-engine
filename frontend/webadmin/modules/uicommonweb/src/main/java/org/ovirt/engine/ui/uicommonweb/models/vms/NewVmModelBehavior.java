@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
@@ -16,7 +17,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.CoreVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
@@ -87,11 +88,10 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         if (template != null)
         {
             // Copy VM parameters from template.
+            buildModel(template);
+
             setSelectedOSType(template, getModel().getSelectedCluster().getArchitecture());
             doChangeDefautlHost(template.getDedicatedVmForVds());
-
-            getModel().getIsDeleteProtected().setEntity(template.isDeleteProtected());
-            getModel().selectSsoMethod(template.getSsoMethod());
 
             getModel().getIsStateless().setEntity(template.isStateless());
 
@@ -104,13 +104,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             }
 
             updateTimeZone(template.getTimeZone());
-
-            getModel().getVncKeyboardLayout().setSelectedItem(template.getVncKeyboardLayout());
-
-            // By default, take kernel params from template.
-            getModel().getKernel_path().setEntity(template.getKernelUrl());
-            getModel().getKernel_parameters().setEntity(template.getKernelParams());
-            getModel().getInitrd_path().setEntity(template.getInitrdUrl());
 
             if (!template.getId().equals(Guid.Empty))
             {
@@ -149,15 +142,12 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
             getModel().getVmInitModel().init(template);
             getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
-
-            getModel().getSpiceFileTransferEnabled().setEntity(template.isSpiceFileTransferEnabled());
-
-            getModel().getSpiceCopyPasteEnabled().setEntity(template.isSpiceCopyPasteEnabled());
-
-            BuilderExecutor.build(template, getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
-
-            getModel().getBootMenuEnabled().setEntity(template.isBootMenuEnabled());
         }
+    }
+
+    @Override
+    protected void buildModel(VmBase template) {
+        BuilderExecutor.build(template, getModel(), new CoreVmBaseToUnitBuilder());
     }
 
     @Override

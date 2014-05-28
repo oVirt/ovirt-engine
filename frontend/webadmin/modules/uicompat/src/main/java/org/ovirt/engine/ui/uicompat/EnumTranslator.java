@@ -7,10 +7,10 @@ import com.google.gwt.core.client.GWT;
 
 public class EnumTranslator extends Translator<Enum<?>> {
     private static final Logger logger = Logger.getLogger(EnumTranslator.class.getName());
-    private static final UIConstants constants = GWT.create(UIConstants.class);
+    private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private static final EnumTranslator INSTANCE = new EnumTranslator();
 
-    private Enums enums = GWT.create(Enums.class);
+    private Enums enums = ConstantsManager.getInstance().getEnums();
 
     private EnumTranslator() {
     }

@@ -2,25 +2,50 @@ package org.ovirt.engine.ui.uicompat;
 
 import com.google.gwt.core.client.GWT;
 
-public final class ConstantsManager {
+public abstract class ConstantsManager {
 
-    private static final ConstantsManager INSTANCE = new ConstantsManager();
-    private static final UIConstants constants = GWT.create(UIConstants.class);
-    private static final UIMessages messages = GWT.create(UIMessages.class);
-
-    private ConstantsManager() {
-    }
+    private static ConstantsManager instance = new GwtConstantsManager();
 
     public static ConstantsManager getInstance() {
-        return INSTANCE;
+        return instance;
     }
 
-    public UIConstants getConstants() {
-        return constants;
+    public static void setInstance(ConstantsManager manager) {
+        instance = manager;
     }
 
-    public UIMessages getMessages() {
-        return messages;
-    }
+    public abstract UIConstants getConstants();
+    public abstract UIMessages getMessages();
+    public abstract Enums getEnums();
 
+    static class GwtConstantsManager extends ConstantsManager {
+
+        private static UIConstants constants;
+        private static UIMessages messages;
+        private static Enums enums;
+
+        @Override
+        public UIConstants getConstants() {
+            if (constants == null) {
+                constants = GWT.create(UIConstants.class);
+            }
+            return constants;
+        }
+
+        @Override
+        public UIMessages getMessages() {
+            if (messages == null) {
+                messages = GWT.create(UIMessages.class);
+            }
+            return messages;
+        }
+
+        @Override
+        public Enums getEnums() {
+            if (enums == null) {
+                enums = GWT.create(Enums.class);
+            }
+            return enums;
+        }
+    }
 }

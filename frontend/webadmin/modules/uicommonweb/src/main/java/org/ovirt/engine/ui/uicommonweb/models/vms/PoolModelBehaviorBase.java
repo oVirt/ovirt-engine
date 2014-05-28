@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.CoreVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolModel;
@@ -109,10 +109,10 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             updateQuotaByCluster(vmBase.getQuotaId(), vmBase.getQuotaName());
 
             // Copy VM parameters from template.
+            buildModel(vmBase);
+
             setSelectedOSType(vmBase, getModel().getSelectedCluster().getArchitecture());
             getModel().getVmType().setSelectedItem(vmBase.getVmType());
-            getModel().getIsDeleteProtected().setEntity(vmBase.isDeleteProtected());
-            getModel().selectSsoMethod(vmBase.getSsoMethod());
             getModel().getIsRunAndPause().setEntity(false);
 
             boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
@@ -124,13 +124,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             }
 
             updateTimeZone(vmBase.getTimeZone());
-
-            getModel().getVncKeyboardLayout().setSelectedItem(vmBase.getVncKeyboardLayout());
-
-            // By default, take kernel params from template.
-            getModel().getKernel_path().setEntity(vmBase.getKernelUrl());
-            getModel().getKernel_parameters().setEntity(vmBase.getKernelParams());
-            getModel().getInitrd_path().setEntity(vmBase.getInitrdUrl());
 
             if (!vmBase.getId().equals(Guid.Empty))
             {
@@ -164,15 +157,12 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             getModel().getVmInitModel().init(vmBase);
             getModel().getVmInitEnabled().setEntity(vmBase.getVmInit() != null);
-
-            getModel().getSpiceFileTransferEnabled().setEntity(vmBase.isSpiceFileTransferEnabled());
-
-            getModel().getSpiceCopyPasteEnabled().setEntity(vmBase.isSpiceCopyPasteEnabled());
-
-            BuilderExecutor.build(vmBase, getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
-
-            getModel().getBootMenuEnabled().setEntity(vmBase.isBootMenuEnabled());
         }
+    }
+
+    @Override
+    protected void buildModel(VmBase vmBase) {
+        BuilderExecutor.build(vmBase, getModel(), new CoreVmBaseToUnitBuilder());
     }
 
     @Override
