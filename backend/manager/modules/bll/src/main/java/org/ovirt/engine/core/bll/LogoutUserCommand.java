@@ -32,20 +32,22 @@ public class LogoutUserCommand<T extends LogoutUserParameters> extends CommandBa
     protected void executeCommand() {
         ExtensionProxy authn = SessionDataContainer.getInstance().getAuthn();
 
-        if ((authn.getContext().<Long> get(Authn.ContextKeys.CAPABILITIES) & Authn.Capabilities.LOGOUT) != 0) {
-            authn.invoke(new ExtMap().mput(
-                    Base.InvokeKeys.COMMAND,
-                    Authn.InvokeCommands.LOGOUT
-                    ).mput(
-                            Authn.InvokeKeys.PRINCIPAL,
-                            SessionDataContainer.getInstance().getPrincipal()
-                    ));
-        }
+        if (authn != null) {
+            if ((authn.getContext().<Long> get(Authn.ContextKeys.CAPABILITIES) & Authn.Capabilities.LOGOUT) != 0) {
+                authn.invoke(new ExtMap().mput(
+                        Base.InvokeKeys.COMMAND,
+                        Authn.InvokeCommands.LOGOUT
+                        ).mput(
+                                Authn.InvokeKeys.PRINCIPAL,
+                                SessionDataContainer.getInstance().getPrincipal()
+                        ));
+            }
 
-        if (!"".equals(getParameters().getSessionId())) {
-            SessionDataContainer.getInstance().removeSession(getParameters().getSessionId());
-        } else {
-            SessionDataContainer.getInstance().removeSession();
+            if (!"".equals(getParameters().getSessionId())) {
+                SessionDataContainer.getInstance().removeSession(getParameters().getSessionId());
+            } else {
+                SessionDataContainer.getInstance().removeSession();
+            }
         }
         setSucceeded(true);
     }

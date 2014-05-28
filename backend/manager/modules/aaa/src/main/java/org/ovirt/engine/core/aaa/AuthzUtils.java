@@ -175,21 +175,20 @@ public class AuthzUtils {
             final ExtMap input,
             final QueryResultHandler handler
             ) {
-        Object opaque = null;
-        try {
-            for (String namespace : extension.getContext().<List<String>>get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-                opaque = extension.invoke(
-                        new ExtMap().mput(
-                                Base.InvokeKeys.COMMAND,
-                                Authz.InvokeCommands.QUERY_OPEN
-                                ).mput(
-                                    Authz.InvokeKeys.NAMESPACE,
-                                    namespace
-                                ).mput(
-                                        input
-                                )
-                        ).get(Authz.InvokeKeys.QUERY_OPAQUE);
-                List<ExtMap> result = null;
+        for (String namespace : extension.getContext().<List<String>>get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
+            Object opaque = extension.invoke(
+                    new ExtMap().mput(
+                            Base.InvokeKeys.COMMAND,
+                            Authz.InvokeCommands.QUERY_OPEN
+                            ).mput(
+                                Authz.InvokeKeys.NAMESPACE,
+                                namespace
+                            ).mput(
+                                input
+                            )
+                    ).get(Authz.InvokeKeys.QUERY_OPAQUE);
+            List<ExtMap> result = null;
+            try {
                 do {
                     result = extension.invoke(new ExtMap().mput(
                             Base.InvokeKeys.COMMAND,
@@ -203,21 +202,21 @@ public class AuthzUtils {
                                     )
                             ).get(Authz.InvokeKeys.QUERY_RESULT);
                 } while (result != null && handler.handle(result));
-
-                // no conditional in for-in
-                if (result != null) {
-                    break;
-                }
+            } finally {
+                extension.invoke(new ExtMap().mput(
+                        Base.InvokeKeys.COMMAND,
+                        Authz.InvokeCommands.QUERY_CLOSE
+                        ).mput(
+                                Authz.InvokeKeys.QUERY_OPAQUE,
+                                opaque
+                        )
+                );
             }
-        } finally {
-            extension.invoke(new ExtMap().mput(
-                    Base.InvokeKeys.COMMAND,
-                    Authz.InvokeCommands.QUERY_CLOSE
-                    ).mput(
-                            Authz.InvokeKeys.QUERY_OPAQUE,
-                            opaque
-                    )
-                    );
+
+            // no conditional in for-in
+            if (result != null) {
+                break;
+            }
         }
     }
 

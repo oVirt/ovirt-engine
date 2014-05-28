@@ -345,7 +345,10 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                         password
                 ));
 
-        SessionDataContainer.getInstance().setPrincipal(outputMap.<String> get(Authn.InvokeKeys.PRINCIPAL));
+        String principal = outputMap.<String> get(Authn.InvokeKeys.PRINCIPAL);
+        if (principal != null) {
+            SessionDataContainer.getInstance().setPrincipal(principal);
+        }
         int authResult = outputMap.<Integer>get(Authn.InvokeKeys.RESULT);
         if (authResult != Authn.AuthResult.SUCCESS) {
             log.infoFormat(
