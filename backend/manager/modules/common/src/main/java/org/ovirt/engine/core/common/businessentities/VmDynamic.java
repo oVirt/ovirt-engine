@@ -3,6 +3,8 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.Date;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -73,6 +75,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private String stopReason;
     private VmExitReason exitReason;
     private int guestCpuCount;
+    private Map<GraphicsType, GraphicsInfo> graphicsInfos;
 
     public static final String APPLICATIONS_LIST_FIELD_NAME = "appList";
     public static final String STATUS_FIELD_NAME = "status";
@@ -125,6 +128,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + (stopReason == null ? 0 : stopReason.hashCode());
         result = prime * result + exitReason.hashCode();
         result = prime * result + (emulatedMachine == null ? 0 : emulatedMachine.hashCode());
+        result = prime * result + graphicsInfos.hashCode();
         return result;
     }
 
@@ -183,7 +187,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(currentCd, other.currentCd)
                 && ObjectUtils.objectsEqual(stopReason, other.stopReason)
                 && exitReason == other.exitReason
-                && ObjectUtils.objectsEqual(emulatedMachine, other.emulatedMachine));
+                && ObjectUtils.objectsEqual(emulatedMachine, other.emulatedMachine))
+                && ObjectUtils.objectsEqual(graphicsInfos, other.getGraphicsInfos());
     }
 
     public String getExitMessage() {
@@ -246,6 +251,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         session = SessionState.Unknown;
         bootSequence = BootSequence.C;
         exitReason = VmExitReason.Unknown;
+        graphicsInfos = new HashMap<GraphicsType, GraphicsInfo>();
     }
 
     public String getAppList() {
@@ -394,6 +400,10 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setDisplay(Integer value) {
         this.display = value;
+    }
+
+    public Map<GraphicsType, GraphicsInfo> getGraphicsInfos() {
+        return graphicsInfos;
     }
 
     public Boolean getAcpiEnable() {

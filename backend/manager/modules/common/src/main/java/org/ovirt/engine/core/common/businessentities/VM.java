@@ -397,6 +397,10 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         vmStatic.setDefaultDisplayType(value);
     }
 
+    public Map<GraphicsType, GraphicsInfo> getGraphicsInfos() {
+        return vmDynamic.getGraphicsInfos();
+    }
+
     public int getPriority() {
         return vmStatic.getPriority();
     }
@@ -1345,6 +1349,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         setVmPauseStatus(vm.getPauseStatus());
         setLastWatchdogEvent(vm.getLastWatchdogEvent());
         setGuestCpuCount(vm.getGuestCpuCount());
+        getGraphicsInfos().putAll(vm.getGraphicsInfos());
         // TODO: check what to do with update disk data
         // updateDisksData(vm);
 

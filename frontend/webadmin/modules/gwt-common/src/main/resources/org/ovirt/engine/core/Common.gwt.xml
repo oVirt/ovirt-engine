@@ -40,6 +40,9 @@
 		<include name="common/businessentities/DiskInterface.java" />
 		<include name="common/businessentities/DiskType.java" />
 		<include name="common/businessentities/DisplayType.java" />
+        <include name="common/businessentities/GraphicsDevice.java" />
+        <include name="common/businessentities/GraphicsType.java" />
+        <include name="common/businessentities/GraphicsInfo.java" />
 		<include name="common/businessentities/event_subscriber.java" />
 		<include name="common/businessentities/event_subscriber_id.java" />
 		<include name="common/businessentities/BootSequence.java" />
