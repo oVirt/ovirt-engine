@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.host.HostInterfaceForm;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
@@ -63,10 +64,8 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
                         clientStorage);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants, templates);
-        table.setWidth("100%", false); //$NON-NLS-1$
 
         contentPanel = new VerticalPanel();
-        contentPanel.setWidth("100%"); //$NON-NLS-1$
         contentPanel.add(table);
         contentPanel.add(new Label(constants.emptyInterface()));
         initWidget(contentPanel);
@@ -166,6 +165,13 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
             table.showRefreshButton();
         } else {
             table.hideRefreshButton();
+        }
+    }
+
+    @Override
+    public void setParentOverflow() {
+        if (contentPanel.getParent() != null) {
+            contentPanel.getParent().getElement().getStyle().setOverflowX(Overflow.AUTO);
         }
     }
 

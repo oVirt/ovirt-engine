@@ -13,11 +13,8 @@ import com.google.gwt.user.client.ui.Label;
 
 public class BondPanel extends TogglePanel {
 
-    private final boolean isSelectionAvailable;
-
     public BondPanel(HostInterfaceLineModel lineModel, boolean isSelectionEnabled) {
         super(lineModel);
-        this.isSelectionAvailable = isSelectionEnabled;
 
         clear();
 
@@ -27,19 +24,24 @@ public class BondPanel extends TogglePanel {
         style.setBorderStyle(BorderStyle.SOLID);
 
         if (lineModel.getIsBonded()) {
-            if (isSelectionEnabled){
+            if (isSelectionEnabled) {
                 add(getCheckBox());
+                setCellWidth(getCheckBox(), "12%"); //$NON-NLS-1$
             }
 
             // Bond icon
+            Image bondIcon;
             if (InterfaceStatus.UP.equals(lineModel.getInterface().getStatistics().getStatus())) {
-                add(new Image(ClientGinjectorProvider.getApplicationResources().splitUpImage()));
+                bondIcon = new Image(ClientGinjectorProvider.getApplicationResources().splitUpImage());
             } else {
-                add(new Image(ClientGinjectorProvider.getApplicationResources().splitDownImage()));
+                bondIcon = new Image(ClientGinjectorProvider.getApplicationResources().splitDownImage());
             }
 
+            add(bondIcon);
+            setCellWidth(bondIcon, "20%"); //$NON-NLS-1$
+
             // Bond name
-            add(new Label(lineModel.getBondName()));
+            add(new InterfaceLabelWithToolTip(lineModel.getInterface()).getLabel());
         } else {
             add(new Label("")); //$NON-NLS-1$
         }

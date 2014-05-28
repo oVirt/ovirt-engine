@@ -8,9 +8,8 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterface;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class InterfacePanel extends VerticalPanel {
@@ -53,7 +52,7 @@ class InterfaceElementPanel extends TogglePanel {
         row.getColumnFormatter().setWidth(1, "210px"); //$NON-NLS-1$
 
         // Check box and interface status icon
-        row.setWidget(0, 0, new FlowPanel() {
+        row.setWidget(0, 0, new HorizontalPanel() {
             {
                 if (isSelectionAvailable) {
                     add(getCheckBox());
@@ -64,7 +63,7 @@ class InterfaceElementPanel extends TogglePanel {
         });
 
         // Name
-        row.setWidget(0, 1, new Label(hostInterface.getName()));
+        row.setWidget(0, 1, new InterfaceLabelWithToolTip(hostInterface.getInterface()).getLabel());
 
         return row;
     }

@@ -38,6 +38,7 @@ public class SubTabHostInterfacePresenter extends AbstractSubTabPresenter<VDS, H
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDS> {
         void removeContent();
         void setRefreshButtonVisibility(boolean visible);
+        void setParentOverflow();
     }
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
@@ -77,6 +78,12 @@ public class SubTabHostInterfacePresenter extends AbstractSubTabPresenter<VDS, H
                 getView().setRefreshButtonVisibility(!getModelProvider().getModel().getTimer().isActive());
             }
         });
+    }
+
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+        getView().setParentOverflow();
     }
 
     @ProxyEvent
