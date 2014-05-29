@@ -73,3 +73,7 @@ packaging/sys-etc/logrotate.d/ovirt-engine-setup
 packaging/dbscripts/*.scripts.md5
 packaging/dbscripts/*.schema
 packaging/dbscripts/*.log
+
+# jrebel plugin integration for IDE
+# #########################
+*rebel.xml
