@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.searchbackend.StoragePoolFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
@@ -54,17 +55,20 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
                 return object.getName();
             }
         };
+        nameColumn.makeSortable(StoragePoolFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameDc(), "150px"); //$NON-NLS-1$
 
         CommentColumn<StoragePool> commentColumn = new CommentColumn<StoragePool>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StoragePool> storageTypeColumn = new BooleanColumn<StoragePool>(constants.storageTypeLocal(), constants.storageTypeShared()) {
+        TextColumnWithTooltip<StoragePool> storageTypeColumn = new BooleanColumn<StoragePool>(
+                constants.storageTypeLocal(), constants.storageTypeShared()) {
             @Override
             protected Boolean getRawValue(StoragePool object) {
                 return object.isLocal();
             }
         };
+        storageTypeColumn.makeSortable(StoragePoolFieldAutoCompleter.LOCAL);
         getTable().addColumn(storageTypeColumn, constants.storgeTypeDc(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StoragePool> statusColumn = new EnumColumn<StoragePool, StoragePoolStatus>() {
@@ -73,6 +77,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
                 return object.getStatus();
             }
         };
+        statusColumn.makeSortable(StoragePoolFieldAutoCompleter.STATUS);
         getTable().addColumn(statusColumn, constants.statusDc(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StoragePool> versionColumn = new TextColumnWithTooltip<StoragePool>() {
@@ -89,6 +94,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
                 return object.getdescription();
             }
         };
+        descColumn.makeSortable(StoragePoolFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descColumn, constants.descriptionDc(), "300px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.newDC()) {

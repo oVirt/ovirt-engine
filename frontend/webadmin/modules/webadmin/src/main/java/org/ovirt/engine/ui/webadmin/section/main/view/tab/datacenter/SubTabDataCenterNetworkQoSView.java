@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter;
 
-import com.google.gwt.core.client.GWT;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -14,7 +15,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTab
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
-import javax.inject.Inject;
+import com.google.gwt.core.client.GWT;
 
 public class SubTabDataCenterNetworkQoSView extends AbstractSubTabTableView<StoragePool,
         NetworkQoS, DataCenterListModel, DataCenterNetworkQoSListModel>
@@ -37,60 +38,74 @@ public class SubTabDataCenterNetworkQoSView extends AbstractSubTabTableView<Stor
     void initTable(final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new TextColumnWithTooltip<NetworkQoS>() {
+        TextColumnWithTooltip<NetworkQoS> nameColumn = new TextColumnWithTooltip<NetworkQoS>() {
             @Override
             public String getValue(NetworkQoS object) {
                 return object.getName() == null ? "" : object.getName(); //$NON-NLS-1$
             }
-        }, constants.networkQoSName(), "200px"); //$NON-NLS-1$
+        };
+        nameColumn.makeSortable();
+        getTable().addColumn(nameColumn, constants.networkQoSName(), "200px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<NetworkQoS>() {
+        TextColumnWithTooltip<NetworkQoS> inAverageColumn = new TextColumnWithTooltip<NetworkQoS>() {
             @Override
             public String getValue(NetworkQoS object) {
                 return object.getInboundAverage() == null ? constants.UnlimitedNetworkQoS()
                         : object.getInboundAverage().toString();
             }
-        }, constants.networkQoSInboundAverage(), "100px"); //$NON-NLS-1$
+        };
+        inAverageColumn.makeSortable();
+        getTable().addColumn(inAverageColumn, constants.networkQoSInboundAverage(), "100px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<NetworkQoS>() {
+        TextColumnWithTooltip<NetworkQoS> inPeakColumn = new TextColumnWithTooltip<NetworkQoS>() {
             @Override
             public String getValue(NetworkQoS object) {
                 return object.getInboundPeak() == null ? constants.UnlimitedNetworkQoS()
                         : object.getInboundPeak().toString();
             }
-        }, constants.networkQoSInboundPeak(), "100px"); //$NON-NLS-1$
+        };
+        inPeakColumn.makeSortable();
+        getTable().addColumn(inPeakColumn, constants.networkQoSInboundPeak(), "100px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<NetworkQoS>() {
+        TextColumnWithTooltip<NetworkQoS> inBurstColumn = new TextColumnWithTooltip<NetworkQoS>() {
             @Override
             public String getValue(NetworkQoS object) {
                 return object.getInboundBurst() == null ? constants.UnlimitedNetworkQoS()
                         : object.getInboundBurst().toString();
             }
-        }, constants.networkQoSInboundBurst(), "100px"); //$NON-NLS-1$
+        };
+        inBurstColumn.makeSortable();
+        getTable().addColumn(inBurstColumn, constants.networkQoSInboundBurst(), "100px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<NetworkQoS>() {
+        TextColumnWithTooltip<NetworkQoS> outAverageColumn = new TextColumnWithTooltip<NetworkQoS>() {
             @Override
             public String getValue(NetworkQoS object) {
                 return object.getOutboundAverage() == null ? constants.UnlimitedNetworkQoS()
                         : object.getOutboundAverage().toString();
             }
-        }, constants.networkQoSOutboundAverage(), "100px"); //$NON-NLS-1$
+        };
+        outAverageColumn.makeSortable();
+        getTable().addColumn(outAverageColumn, constants.networkQoSOutboundAverage(), "100px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<NetworkQoS>() {
+        TextColumnWithTooltip<NetworkQoS> outPeakColumn = new TextColumnWithTooltip<NetworkQoS>() {
             @Override
             public String getValue(NetworkQoS object) {
                 return object.getOutboundPeak() == null ? constants.UnlimitedNetworkQoS()
                         : object.getOutboundPeak().toString();
             }
-        }, constants.networkQoSOutboundPeak(), "100px"); //$NON-NLS-1$
+        };
+        outPeakColumn.makeSortable();
+        getTable().addColumn(outPeakColumn, constants.networkQoSOutboundPeak(), "100px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<NetworkQoS>() {
+        TextColumnWithTooltip<NetworkQoS> outBurstColumn = new TextColumnWithTooltip<NetworkQoS>() {
             @Override
             public String getValue(NetworkQoS object) {
                 return object.getOutboundBurst() == null ? constants.UnlimitedNetworkQoS()
                         : object.getOutboundBurst().toString();
             }
-        }, constants.networkQoSOutboundBurst(), "100px"); //$NON-NLS-1$
+        };
+        outBurstColumn.makeSortable();
+        getTable().addColumn(outBurstColumn, constants.networkQoSOutboundBurst(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<NetworkQoS>(constants.newNetworkQoS()) {
             @Override

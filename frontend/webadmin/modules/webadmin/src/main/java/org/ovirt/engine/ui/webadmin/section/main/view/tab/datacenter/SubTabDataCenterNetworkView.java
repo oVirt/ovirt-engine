@@ -41,15 +41,17 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<Storage
                 return object.getName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameNetwork(), "400px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Network> typeColumn = new TextColumnWithTooltip<Network>() {
+        TextColumnWithTooltip<Network> descriptionColumn = new TextColumnWithTooltip<Network>() {
             @Override
             public String getValue(Network object) {
                 return object.getDescription();
             }
         };
-        getTable().addColumn(typeColumn, constants.descriptionNetwork(), "400px"); //$NON-NLS-1$
+        descriptionColumn.makeSortable();
+        getTable().addColumn(descriptionColumn, constants.descriptionNetwork(), "400px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.newNetwork()) {
             @Override
