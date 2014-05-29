@@ -44,7 +44,6 @@ import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
-import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
     private static final HashMap<String, QueryData> mQueriesCache = new HashMap<String, QueryData>();
@@ -178,8 +177,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         }
 
         // Find the directory:
-        String directoryName = data.getDomain();
-        ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(directoryName);
+        ExtensionProxy authz = AuthenticationProfileRepository.getInstance().getProfile(data.getDomain()).getAuthz();
         if (authz == null) {
             return Collections.emptyList();
         }
@@ -195,8 +193,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         }
 
         // Find the directory:
-        String directoryName = data.getDomain();
-        ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(directoryName);
+        ExtensionProxy authz = AuthenticationProfileRepository.getInstance().getProfile(data.getDomain()).getAuthz();
         if (authz == null) {
             return Collections.emptyList();
         }
