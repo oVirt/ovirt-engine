@@ -122,7 +122,7 @@ label {
     padding-left: 5px;
 }
 
-.pite_content_pfly_fix span.avw_label_pfly_fix {
+.pite_content_pfly_fix span.avw_label_pfly_fix, .pite_content_pfly_fix label.avw_label_pfly_fix {
     position: relative !important;
     top: 6px !important;
 }
