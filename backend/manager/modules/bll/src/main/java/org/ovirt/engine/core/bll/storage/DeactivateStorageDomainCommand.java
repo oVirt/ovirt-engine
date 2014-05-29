@@ -57,7 +57,6 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     protected boolean _isLastMaster;
     protected boolean canChooseInactiveDomainAsMaster;
     protected boolean canChooseCurrentMasterAsNewMaster;
-    private VDS spm;
 
     protected StorageDomain getNewMaster(boolean duringReconstruct) {
         if (_newMaster == null && Guid.Empty.equals(_newMasterStorageDomainId)) {
@@ -206,10 +205,6 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
     @Override
     protected void executeCommand() {
-        spm = null;
-        if (getStoragePool().getspm_vds_id() != null) {
-            spm = getVdsDAO().get(getStoragePool().getspm_vds_id());
-        }
         final StoragePoolIsoMap map =
                 getStoragePoolIsoMapDAO().get
                         (new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
@@ -244,6 +239,11 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                             getStoragePool().getmaster_domain_version()));
         }
         freeLock();
+
+        VDS spm = null;
+        if (getStoragePool().getspm_vds_id() != null) {
+            spm = getVdsDAO().get(getStoragePool().getspm_vds_id());
+        }
 
         if (_isLastMaster) {
             if (spm != null) {
