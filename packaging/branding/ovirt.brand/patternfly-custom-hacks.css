@@ -137,18 +137,24 @@ label {
     padding-left: 5px;
     padding-right: 5px;
 }
+#InstanceTypesPopupWidget .avmpw_nameEditor_pfly_fix input {
+    line-height: 16px !important;
+}
 .connect-automatically-checkbox_pfly_fix {
     margin-left: 3px;
 }
 span.label {
     font-family: 'Open Sans', Helvetica, Arial, sans-serif;
 }
-
 .avw_contentWidget_pfly_fix span.gwt-RadioButton label {
     padding-left: 5px !important;
 }
 .avmpw_monitorsLabel_pfly_fix {
     width: 276px !important;
+}
+#InstanceTypesPopupWidget .avmpw_smartcard_pfly_fix {
+    position: relative;
+    left: -9px;
 }
 .cpv_panelInfo_pfly_fix {
     margin-left: 5px !important;
@@ -478,4 +484,17 @@ a.dropdown-toggle {
     top: -6px !important;
     right: 3px !important;
 }
-
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .cppv_editors_pfly_fix input {
+        position: relative;
+        top: -31px;
+    }
+}
+.cppv_labelStyle_pfly_fix {
+    position: relative !important;
+    top: 4px !important;
+}
+.cppv_infoIcon_pfly_fix {
+    position: relative !important;
+    top: 3px !important;
+}

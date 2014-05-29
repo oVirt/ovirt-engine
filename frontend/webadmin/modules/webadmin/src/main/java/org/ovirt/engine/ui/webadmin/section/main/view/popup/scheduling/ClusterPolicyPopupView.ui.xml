@@ -86,16 +86,16 @@
         <d:content>
             <g:VerticalPanel>
                 <g:FlowPanel>
-                    <g:HorizontalPanel>
+                    <g:HorizontalPanel addStyleNames="cppv_editors_pfly_fix">
                         <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
                         <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
                     </g:HorizontalPanel>
                     <g:HorizontalPanel>
                         <g:Label addStyleNames="{style.sectionLabel}"
                             text="{constants.clusterPolicyFilterLabel}" />
-                        <g:Label addStyleNames="{style.labelStyle}"
+                        <g:Label addStyleNames="{style.labelStyle} cppv_labelStyle_pfly_fix"
                             text="{constants.clusterPolicyExplanationMessage}" />
-                        <d:InfoIcon ui:field="filterInfoIcon" addStyleNames="{style.iconInfoStyle}"/>
+                        <d:InfoIcon ui:field="filterInfoIcon" addStyleNames="{style.iconInfoStyle} cppv_infoIcon_pfly_fix"/>
                     </g:HorizontalPanel>
                     <g:HTML>
                         <hr style="width:100%;" />
@@ -125,9 +125,9 @@
                     <g:HorizontalPanel>
                         <g:Label addStyleNames="{style.sectionLabel}"
                             text="{constants.clusterPolicyFunctionLabel}" />
-                        <g:Label addStyleNames="{style.labelStyle}"
+                        <g:Label addStyleNames="{style.labelStyle} cppv_labelStyle_pfly_fix"
                             text="{constants.clusterPolicyExplanationMessage}" />
-                        <d:InfoIcon ui:field="functionInfoIcon" addStyleNames="{style.iconInfoStyle}"/>
+                        <d:InfoIcon ui:field="functionInfoIcon" addStyleNames="{style.iconInfoStyle} cppv_infoIcon_pfly_fix"/>
                     </g:HorizontalPanel>
                     <g:HTML>
                         <hr style="width:100%;" />
@@ -157,7 +157,7 @@
                     <g:HorizontalPanel>
                         <g:Label addStyleNames="{style.sectionLabel}"
                             text="{constants.clusterPolicyLoadBalancerLabel}" />
-                        <d:InfoIcon ui:field="loadBalancingInfoIcon" addStyleNames="{style.iconInfoStyle}"/>
+                        <d:InfoIcon ui:field="loadBalancingInfoIcon" addStyleNames="{style.iconInfoStyle} cppv_infoIcon_pfly_fix"/>
                     </g:HorizontalPanel>
                     <g:HTML>
                         <hr style="width:100%;" />
@@ -172,7 +172,7 @@
                     <g:HorizontalPanel>
                         <g:Label addStyleNames="{style.sectionLabel}"
                             text="{constants.clusterPolicyPropertiesLabel}" />
-                        <d:InfoIcon ui:field="propertiesInfoIcon" addStyleNames="{style.iconInfoStyle}"/>
+                        <d:InfoIcon ui:field="propertiesInfoIcon" addStyleNames="{style.iconInfoStyle} cppv_infoIcon_pfly_fix"/>
                     </g:HorizontalPanel>
                     <g:HTML>
                         <hr style="width:100%;" />

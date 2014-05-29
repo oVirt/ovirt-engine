@@ -514,7 +514,7 @@
                                  </g:HorizontalPanel>
                               </g:FlowPanel>
                         </g:FlowPanel>
-                        <ge:EntityModelDetachableWidget ui:field="isSmartcardEnabledEditorWithDetachable" addStyleNames="{style.floatLeft}" />
+                        <ge:EntityModelDetachableWidget ui:field="isSmartcardEnabledEditorWithDetachable" addStyleNames="{style.floatLeft} avmpw_smartcard_pfly_fix" />
                         <g:Label ui:field="nativeUsbWarningMessage" text="{constants.nativeUsbSupportWarning}" addStyleNames="{style.warningMessageLabel}" />
 
                         <g:Label ui:field="ssoMethodLabel" text="{constants.ssoMethod}" addStyleNames="{style.sectionLabel} {style.floatLeft} {style.fullWidth}" />
