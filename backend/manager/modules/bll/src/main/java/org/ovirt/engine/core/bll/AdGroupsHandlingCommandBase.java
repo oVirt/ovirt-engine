@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -13,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
+import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
 public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extends CommandBase<T> {
     private DirectoryGroup mGroup;
@@ -46,8 +46,7 @@ public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extend
         if (mGroup == null && !getGroupId().equals(Guid.Empty)) {
             DbGroup dbGroup = DbFacade.getInstance().getDbGroupDao().get(getGroupId());
             if (dbGroup != null) {
-                ExtensionProxy authz =
-                        AuthenticationProfileRepository.getInstance().getAuthz(dbGroup.getDomain());
+                ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(dbGroup.getDomain());
                 if (authz != null) {
                     mGroup = AuthzUtils.findGroupById(authz, dbGroup.getExternalId());
                 }

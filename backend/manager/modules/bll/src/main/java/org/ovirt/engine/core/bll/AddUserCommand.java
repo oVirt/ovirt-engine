@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.DirectoryUtils;
@@ -16,6 +15,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
+import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
 public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase<T> {
     // We save a reference to the directory user to avoid looking it up once when checking the conditions and another
@@ -55,7 +55,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
         }
 
         // Check that the directory exists:
-        ExtensionProxy authz = AuthenticationProfileRepository.getInstance().getAuthz(directoryName);
+        ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(directoryName);
         if (authz == null) {
             log.errorFormat(
                 "Can't add user with id \"{0}\" because directory \"{1}\" doesn't exist.",

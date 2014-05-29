@@ -33,8 +33,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.SearchEngineIllegalCharacterException;
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.utils.ListUtils.Filter;
+import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.dao.SearchDAO;
@@ -44,6 +44,7 @@ import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
+import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
     private static final HashMap<String, QueryData> mQueriesCache = new HashMap<String, QueryData>();
@@ -178,7 +179,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
         // Find the directory:
         String directoryName = data.getDomain();
-        ExtensionProxy authz = AuthenticationProfileRepository.getInstance().getAuthz(directoryName);
+        ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(directoryName);
         if (authz == null) {
             return Collections.emptyList();
         }
@@ -195,7 +196,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
         // Find the directory:
         String directoryName = data.getDomain();
-        ExtensionProxy authz = AuthenticationProfileRepository.getInstance().getAuthz(directoryName);
+        ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(directoryName);
         if (authz == null) {
             return Collections.emptyList();
         }

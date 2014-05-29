@@ -52,10 +52,6 @@ public class AuthenticationProfileRepository {
         return profiles.get(name);
     }
 
-    public ExtensionProxy getAuthz(String name) {
-        return getProfile(name).getAuthz();
-    }
-
     /**
      * Register an authentication profile.
      * @param profile
