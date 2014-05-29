@@ -622,21 +622,19 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             Version vdsGroupCompatibilityVersion) {
 
         Guid qosId = vnicProfile.getNetworkQosId();
-        if (qosId != null) {
-            if (!FeatureSupported.networkQoS(vdsGroupCompatibilityVersion)) {
-                return false;
-            }
-
-            Map<String, Object> specParams = (Map<String, Object>) struct.get(VdsProperties.SpecParams);
-            if (specParams == null) {
-                specParams = new HashMap<>();
-                struct.put(VdsProperties.SpecParams, specParams);
-            }
-            NetworkQoS networkQoS = DbFacade.getInstance().getQosDao().get(qosId);
-            NetworkQosMapper qosMapper =
-                    new NetworkQosMapper(specParams, VdsProperties.QOS_INBOUND, VdsProperties.QOS_OUTBOUND);
-            qosMapper.serialize(networkQoS);
+        if (!FeatureSupported.networkQoS(vdsGroupCompatibilityVersion)) {
+            return qosId == null;
         }
+
+        Map<String, Object> specParams = (Map<String, Object>) struct.get(VdsProperties.SpecParams);
+        if (specParams == null) {
+            specParams = new HashMap<>();
+            struct.put(VdsProperties.SpecParams, specParams);
+        }
+        NetworkQoS networkQoS = (qosId == null) ? new NetworkQoS() : DbFacade.getInstance().getQosDao().get(qosId);
+        NetworkQosMapper qosMapper =
+                new NetworkQosMapper(specParams, VdsProperties.QOS_INBOUND, VdsProperties.QOS_OUTBOUND);
+        qosMapper.serialize(networkQoS);
 
         return true;
     }
