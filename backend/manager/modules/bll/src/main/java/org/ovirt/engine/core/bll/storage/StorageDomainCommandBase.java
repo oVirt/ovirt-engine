@@ -347,32 +347,37 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
      * @return an elected master domain or null
      */
     protected StorageDomain electNewMaster(boolean duringReconstruct, boolean selectInactiveWhenNoActiveUnknownDomains, boolean canChooseCurrentMasterAsNewMaster) {
+        if (getStoragePool() == null) {
+            log.warnFormat("Cannot elect new master: storage pool not found");
+            return null;
+        }
+
         StorageDomain newMaster = null;
-        if (getStoragePool() != null) {
-            List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
-            Collections.sort(storageDomains, LastTimeUsedAsMasterComp.instance);
-            if (storageDomains.size() > 0) {
-                StorageDomain storageDomain = getStorageDomain();
-                for (StorageDomain dbStorageDomain : storageDomains) {
-                    if ((storageDomain == null || (duringReconstruct || !dbStorageDomain.getId()
-                            .equals(storageDomain.getId())))
-                            && ((dbStorageDomain.getStorageDomainType() == StorageDomainType.Data)
-                            ||
-                            (canChooseCurrentMasterAsNewMaster && dbStorageDomain.getStorageDomainType() == StorageDomainType.Master))) {
-                        if (dbStorageDomain.getStatus() == StorageDomainStatus.Active
-                                || dbStorageDomain.getStatus() == StorageDomainStatus.Unknown) {
-                            newMaster = dbStorageDomain;
-                            break;
-                        } else if (selectInactiveWhenNoActiveUnknownDomains && newMaster == null
-                                && dbStorageDomain.getStatus() == StorageDomainStatus.Inactive) {
-                            // if the found domain is inactive, we don't break to continue and look for
-                            // active/unknown domain.
-                            newMaster = dbStorageDomain;
-                        }
+
+        List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
+        Collections.sort(storageDomains, LastTimeUsedAsMasterComp.instance);
+        if (storageDomains.size() > 0) {
+            StorageDomain storageDomain = getStorageDomain();
+            for (StorageDomain dbStorageDomain : storageDomains) {
+                if ((storageDomain == null || (duringReconstruct || !dbStorageDomain.getId()
+                        .equals(storageDomain.getId())))
+                        && ((dbStorageDomain.getStorageDomainType() == StorageDomainType.Data)
+                        ||
+                        (canChooseCurrentMasterAsNewMaster && dbStorageDomain.getStorageDomainType() == StorageDomainType.Master))) {
+                    if (dbStorageDomain.getStatus() == StorageDomainStatus.Active
+                            || dbStorageDomain.getStatus() == StorageDomainStatus.Unknown) {
+                        newMaster = dbStorageDomain;
+                        break;
+                    } else if (selectInactiveWhenNoActiveUnknownDomains && newMaster == null
+                            && dbStorageDomain.getStatus() == StorageDomainStatus.Inactive) {
+                        // if the found domain is inactive, we don't break to continue and look for
+                        // active/unknown domain.
+                        newMaster = dbStorageDomain;
                     }
                 }
             }
         }
+
         return newMaster;
     }
 
