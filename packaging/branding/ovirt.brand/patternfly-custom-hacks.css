@@ -252,11 +252,6 @@ div.avw_contentWidget_pfly_fix {
 .avmpw_poolEditVms_pfly_fix {
     padding-bottom: 30px !important;
 }
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-    .contentPanel_pfly_fix {
-        padding: 3px !important;
-    }
-}
 .table_contentWidget_pfly_fix .avw_contentWidget_pfly_fix {
     top: 0 !important;
 }

@@ -651,7 +651,8 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         iscsiStorageModel.getPropertyChangedEvent().addListener(progressEventHandler);
         iscsiStorageModel.setIsGrouppedByTarget(true);
         iscsiStorageModel.setIgnoreGrayedOut(true);
-        iscsiStorageView = new IscsiStorageView(false, 107, 206, 246, 275, 125, 55, -59);
+
+        iscsiStorageView = new IscsiStorageView(false, 107, 201, 240, 275, 135, 55, -62);
         iscsiStorageView.edit(iscsiStorageModel);
 
         // Create FcpStorageModel

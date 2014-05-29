@@ -50,11 +50,13 @@
 		.formatListEditor {
 			width: 140px;
 			float: right;
+            padding-top: 5px;
 		}
 
 		.storageTypeListEditor {
 			width: 510px;
 			padding-left: 5px;
+            padding-top: 5px;
 		}
 
 		.storageTypeLabel {

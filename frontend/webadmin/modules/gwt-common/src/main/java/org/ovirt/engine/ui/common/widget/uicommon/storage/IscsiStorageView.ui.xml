@@ -6,8 +6,9 @@
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiStorageView.WidgetStyle">
 		.bar {
-			width: 20px !important;
+			width: 22px !important;
             border-right: none;
+            background-color: #fff;
 		}
 
 		.dialogTab {
