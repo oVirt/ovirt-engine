@@ -13,6 +13,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 
 public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<HostModel, HostPopupPresenterWidget.ViewDef> {
 
@@ -45,6 +46,28 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
         addPowerManagementListener(model);
         addHostProviderListener(model);
         addCiscoUcsPmTypeListener(model);
+        addRadioButtonsListeners(model);
+    }
+
+    private void addRadioButtonsListeners(final HostModel model) {
+        registerHandler(
+                ((HostPopupView)getView()).rbDiscoveredHost.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        if (((HostPopupView)getView()).rbDiscoveredHost.getValue()) {
+                            model.getIsDiscorveredHosts().setEntity(true);
+                        }
+                    }
+                }));
+        registerHandler(
+                ((HostPopupView)getView()).rbProvisionedHost.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        if (((HostPopupView)getView()).rbProvisionedHost.getValue()) {
+                            model.getIsDiscorveredHosts().setEntity(false);
+                        }
+                    }
+                }));
     }
 
     private void addPowerManagementListener(final HostModel model) {

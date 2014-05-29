@@ -2015,6 +2015,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Secondary")
     String secondaryPmVariant();
 
+    @DefaultStringValue("Discovered Hosts")
+    String externalHostsDiscovered();
+
+    @DefaultStringValue("Provisioned Hosts")
+    String externalHostsProvisioned();
+
     @DefaultStringValue("Eject")
     String eject();
 
@@ -2298,5 +2304,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Random Number Generator is not supported by your cluster compatibility version.")
     String rngNotSupportedByClusterCV();
+
+    @DefaultStringValue("Random Number Generator not supported for this cluster level or is disabled in the engine config.")
+    String rngNotSupported();
 }
 

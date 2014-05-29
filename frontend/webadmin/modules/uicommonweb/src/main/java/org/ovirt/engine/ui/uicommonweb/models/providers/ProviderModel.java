@@ -138,8 +138,7 @@ public class ProviderModel extends Model {
     }
 
     private boolean isTypeRequiresAuthentication() {
-        ProviderType type = getType().getSelectedItem();
-        return type == ProviderType.FOREMAN;
+        return false;
     }
 
     private String getDefaultUrl(ProviderType type) {

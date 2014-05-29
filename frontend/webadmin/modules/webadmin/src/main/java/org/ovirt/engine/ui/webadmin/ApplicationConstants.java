@@ -205,6 +205,24 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("External Provider")
     String externalProviderLabel();
 
+    @DefaultStringValue("Host Provider")
+    String hostProviderTabLabel();
+
+    @DefaultStringValue("Discovered Hosts")
+    String discoveredHostsLabel();
+
+    @DefaultStringValue("Provisioned Hosts")
+    String provisionedHostsLabel();
+
+    @DefaultStringValue("Hosts Type")
+    String hostProviderType();
+
+    @DefaultStringValue("Host Groups")
+    String hostGroupsLabel();
+
+    @DefaultStringValue("Compute Resources")
+    String computeResourceLabel();
+
     @DefaultStringValue("If you would like this host's networks to be provisioned by an external provider, please choose it from the list.")
     String externalProviderExplanation();
 
@@ -500,16 +518,19 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Authentication")
     String hostPopupAuthLabel();
 
+    @DefaultStringValue("Set Root Password")
+    String hostPopupAuthLabelForExternalHost();
+
     @DefaultStringValue("Automatically configure host firewall")
     String hostPopupOverrideIpTablesLabel();
 
     @DefaultStringValue("Use JSON protocol")
     String hostPopupProtocolLabel();
 
-    @DefaultStringValue("Use External Providers")
+    @DefaultStringValue("Use Foreman Hosts Providers")
     String hostPopupEnableExternalHostProvider();
 
-    @DefaultStringValue("External Hosts")
+    @DefaultStringValue("Providers Hosts")
     String hostPopupExternalHostName();
 
     @DefaultStringValue("Update Hosts")
@@ -2775,8 +2796,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("If after changing the networks configuration the connectivity from the Host to the Engine is lost, changes are rolled back .")
     String checkConnectivityInfoPart2();
 
-    @DefaultStringValue("Provider specific search. Check provider documentation for more information. Empty filter returns all hosts .")
+    @DefaultStringValue("Provider specific search. Check provider documentation for more information. Empty filter returns all hosts.")
     String providerSearchInfo();
+
+    @DefaultStringValue("List of provisioned hosts.")
+    String provisionedHostInfo();
+
+    @DefaultStringValue("List of servers that require OS provisioning. After provision the host will be added to the selected cluster.")
+    String discoveredHostInfoIcon();
 
     @DefaultStringValue("Changes done to the Networking configuration are temporary until explicitly saved.")
     String commitChangesInfoPart1();

@@ -91,6 +91,8 @@ public abstract class HostModel extends Model
         return getHostId() == null;
     }
 
+    public boolean getIsProvisioning() { return getExternalDiscoveredHosts().getSelectedItem() != null; }
+
     private Guid privateHostId;
 
     public Guid getHostId()
@@ -149,6 +151,24 @@ public abstract class HostModel extends Model
     private void setPkSection(EntityModel value)
     {
         privatePkSection = value;
+    }
+
+    private EntityModel privateDiscoveredHostSection;
+
+    public EntityModel getDiscoveredHostSection() { return privateDiscoveredHostSection; }
+
+    private void setDiscoveredHostSection(EntityModel value)
+    {
+        privateDiscoveredHostSection = value;
+    }
+
+    private EntityModel privateProvisionedHostSection;
+
+    public EntityModel getProvisionedHostSection() { return privateProvisionedHostSection; }
+
+    private void setProvisionedHostSection(EntityModel value)
+    {
+        privateProvisionedHostSection = value;
     }
 
     private EntityModel privatePasswordSection;
@@ -798,6 +818,24 @@ public abstract class HostModel extends Model
         privateExternalHostName = value;
     }
 
+    private ListModel privateExternalDiscoveredHosts;
+
+    public ListModel getExternalDiscoveredHosts() { return privateExternalDiscoveredHosts; }
+
+    protected void setExternalDiscoveredHosts(ListModel value) { privateExternalDiscoveredHosts = value; }
+
+    private ListModel privateExternalHostGroups;
+
+    public ListModel getExternalHostGroups() { return privateExternalHostGroups; }
+
+    protected void setExternalHostGroups(ListModel value) { privateExternalHostGroups = value; }
+
+    private ListModel privateExternalComputeResource;
+
+    public ListModel getExternalComputeResource() { return privateExternalComputeResource; }
+
+    protected void setExternalComputeResource(ListModel value) { privateExternalComputeResource = value; }
+
     private EntityModel<String> privateComment;
 
     public EntityModel<String> getComment()
@@ -840,6 +878,18 @@ public abstract class HostModel extends Model
 
     private void setNetworkProviderModel(HostNetworkProviderModel value) {
         networkProviderModel = value;
+    }
+
+    private EntityModel<Boolean> isDiscorveredHosts;
+
+    public EntityModel<Boolean> getIsDiscorveredHosts()
+    {
+        return isDiscorveredHosts;
+    }
+
+    public void setDiscorveredHosts(EntityModel<Boolean> value)
+    {
+        isDiscorveredHosts = value;
     }
 
     public ListModel<Provider<org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties>> getNetworkProviders() {
@@ -913,6 +963,8 @@ public abstract class HostModel extends Model
         setHost(new EntityModel<String>());
         setPkSection(new EntityModel());
         setPasswordSection(new EntityModel());
+        setDiscoveredHostSection(new EntityModel());
+        setProvisionedHostSection(new EntityModel());
         setAuthSshPort(new EntityModel<Integer>());
         getAuthSshPort().setEntity(Integer.parseInt(constants.defaultHostSSHPort()));
         setUserName(new EntityModel<String>());
@@ -954,7 +1006,11 @@ public abstract class HostModel extends Model
         getProviderSearchFilter().setIsAvailable(false);
         setProviderSearchFilterLabel(new EntityModel<String>());
         getProviderSearchFilterLabel().setIsAvailable(false);
+        setExternalDiscoveredHosts(new ListModel());
+        setExternalHostGroups(new ListModel());
+        setExternalComputeResource(new ListModel());
         getUpdateHostsCommand().setIsExecutionAllowed(false);
+
         // Initialize primary PM fields.
         setManagementIp(new EntityModel<String>());
         setPmUserName(new EntityModel<String>());
@@ -1028,6 +1084,7 @@ public abstract class HostModel extends Model
         fetchPublicKey();
 
         setNetworkProviderModel(new HostNetworkProviderModel());
+        setDiscorveredHosts(new EntityModel<Boolean>());
     }
 
     private void proxyUp() {
@@ -1769,7 +1826,9 @@ public abstract class HostModel extends Model
             getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
         }
 
-        if (vds.getStatus() != VDSStatus.Maintenance && vds.getStatus() != VDSStatus.PendingApproval) {
+        if (vds.getStatus() != VDSStatus.Maintenance &&
+            vds.getStatus() != VDSStatus.PendingApproval &&
+            vds.getStatus() != VDSStatus.InstallingOS) {
             setAllowChangeHostPlacementPropertiesWhenNotInMaintenance();
         }
         else if (selectedSystemTreeItem != null)
@@ -1802,6 +1861,16 @@ public abstract class HostModel extends Model
         }
     }
 
+    public void cleanHostParametersFields() {
+        getName().setEntity(constants.empty());
+        getComment().setEntity(constants.empty());
+        getAuthSshPort().setEntity(Integer.parseInt(constants.defaultHostSSHPort()));
+        getHost().setEntity(constants.empty());
+        getUserPassword().setEntity(constants.empty());
+        getFetchSshFingerprint().setEntity(constants.empty());
+
+    }
+
     protected abstract boolean showInstallationProperties();
 
     protected abstract boolean showTransportProperties();
@@ -1816,7 +1885,7 @@ public abstract class HostModel extends Model
 
     protected abstract void setAllowChangeHostPlacementPropertiesWhenNotInMaintenance();
 
-    protected abstract void updateHosts();
+    public abstract void updateHosts();
 
     protected abstract void setPort(VDS vds);
 

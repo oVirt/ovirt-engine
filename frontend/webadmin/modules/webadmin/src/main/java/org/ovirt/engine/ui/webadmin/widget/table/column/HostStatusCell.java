@@ -57,6 +57,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
             statusImage = resources.nonOperationalImage();
             break;
         case PendingApproval:
+        case InstallingOS:
             statusImage = resources.unconfiguredImage();
             break;
         case Initializing:

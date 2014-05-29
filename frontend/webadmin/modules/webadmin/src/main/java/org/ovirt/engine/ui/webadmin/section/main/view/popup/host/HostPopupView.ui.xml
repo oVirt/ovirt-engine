@@ -53,10 +53,19 @@
             margin: 5px;
             margin-bottom: 5px;
         }
+
         .fetchResultLabel {
             font-color: red;
             color: red;
             margin-left: 4px;
+        }
+
+        .providerStatusLabel {
+            font-color: red;
+            margin-left: 15px;
+            margin: 5px;
+            font-size: 12px;
+            font-style: italic;
         }
 
         .sourceLabel {
@@ -103,6 +112,10 @@
 
         .radioButton {
             margin-right: 2px;
+        }
+
+        .radioButtonProvider {
+            margin-left: 30px;
         }
 
         .overrideIpStyle {
@@ -238,7 +251,18 @@
                                       <ge:EntityModelCheckBoxEditor ui:field="externalHostProviderEnabledEditor"/>
                                       <e:ListModelListBoxEditor ui:field="providersEditor"/>
                                     </g:HorizontalPanel>
+                                    <g:FlowPanel>
+                                        <g:HorizontalPanel ui:field="discoveredHostSection" addStyleNames="{style.radioButtonProvider}">
+                                            <g:RadioButton ui:field="rbDiscoveredHost" />
+                                            <d:InfoIcon ui:field="discoveredHostInfoIcon" addStyleNames="{style.filterIcon}"/>
+                                        </g:HorizontalPanel>
+                                        <g:HorizontalPanel ui:field="provisionedHostSection" addStyleNames="{style.radioButtonProvider}">
+                                            <g:RadioButton ui:field="rbProvisionedHost" />
+                                            <d:InfoIcon ui:field="provisionedHostInfoIcon" addStyleNames="{style.filterIcon}"/>
+                                        </g:HorizontalPanel>
+                                    </g:FlowPanel>
                                     <g:FlowPanel ui:field="searchProviderPanel" width="100%">
+                                        <e:ListModelListBoxEditor ui:field="externalHostNameEditor"/>
                                         <g:FlowPanel addStyleNames="{style.filterIcon}">
                                           <ge:StringEntityModelTextBoxEditor ui:field="providerSearchFilterLabel"/>
                                           <d:InfoIcon ui:field="providerSearchInfoIcon" addStyleNames="{style.filterIcon}"/>
@@ -250,7 +274,11 @@
                                            </g:HorizontalPanel>
                                         </g:FlowPanel>
                                     </g:FlowPanel>
-                                    <e:ListModelListBoxEditor ui:field="externalHostNameEditor"/>
+                                    <g:FlowPanel ui:field="discoveredHostsPanel">
+                                        <e:ListModelListBoxEditor ui:field="externalDiscoveredHostsEditor"/>
+                                        <e:ListModelListBoxEditor ui:field="externalHostGroupsEditor"/>
+                                        <e:ListModelListBoxEditor ui:field="externalComputeResourceEditor"/>
+                                    </g:FlowPanel>
                                 </g:FlowPanel>
                                 <g:FlowPanel>
                                     <ge:StringEntityModelTextBoxEditor ui:field="nameEditor"/>

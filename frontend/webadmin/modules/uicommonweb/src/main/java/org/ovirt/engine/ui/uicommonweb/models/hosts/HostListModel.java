@@ -28,6 +28,9 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
+import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
+import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -966,6 +969,19 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             if (networkProvider != null) {
                 parameters.setProviderId(networkProvider.getId());
                 parameters.setNetworkMappings(model.getInterfaceMappings().getEntity());
+            }
+
+            if (model.getIsProvisioning()) {
+                Provider provider = (Provider) model.getProviders().getSelectedItem();
+                ExternalHostGroup hostGroup = (ExternalHostGroup) model.getExternalHostGroups().getSelectedItem();
+                ExternalComputeResource computeResource = (ExternalComputeResource) model.getExternalComputeResource().getSelectedItem();
+                ExternalDiscoveredHost discoveredHost = (ExternalDiscoveredHost)model.getExternalDiscoveredHosts().getSelectedItem();
+                parameters.initVdsActionParametersForProvision(
+                        provider.getId(),
+                        hostGroup,
+                        computeResource,
+                        discoveredHost.getMac(),
+                        discoveredHost.getName());
             }
 
             Frontend.getInstance().runAction(VdcActionType.AddVds, parameters,

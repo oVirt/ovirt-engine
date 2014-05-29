@@ -55,7 +55,7 @@ public class EditHostModel extends HostModel {
     }
 
     @Override
-    protected void updateHosts() {
+    public void updateHosts() {
     }
 
     @Override

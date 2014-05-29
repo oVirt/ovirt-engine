@@ -32,6 +32,9 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
+import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
+import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -2972,8 +2975,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                if (source == null)
-                {
+                if (source == null) {
                     return new ArrayList<VDS>();
                 }
                 return source;
@@ -2988,13 +2990,62 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void getExternalProviderDiscoveredHostList(AsyncQuery aQuery, Provider provider) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source == null) {
+                    return new ArrayList<ExternalDiscoveredHost>();
+                }
+                return source;
+            }
+        };
+        ProviderQueryParameters params = new ProviderQueryParameters();
+        params.setProvider(provider);
+        Frontend.getInstance().runQuery(VdcQueryType.GetDiscoveredHostListFromExternalProvider, params, aQuery);
+    }
+
+    public static void getExternalProviderHostGroupList(AsyncQuery aQuery, Provider provider) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source == null) {
+                    return new ArrayList<ExternalHostGroup>();
+                }
+                return source;
+            }
+        };
+
+        ProviderQueryParameters params = new ProviderQueryParameters();
+        params.setProvider(provider);
+        Frontend.getInstance().runQuery(VdcQueryType.GetHostGroupsFromExternalProvider, params, aQuery);
+    }
+
+    public static void getExternalProviderComputeResourceList(AsyncQuery aQuery, Provider provider) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source == null) {
+                    return new ArrayList<ExternalComputeResource>();
+                }
+                return source;
+            }
+        };
+
+        ProviderQueryParameters params = new ProviderQueryParameters();
+        params.setProvider(provider);
+        Frontend.getInstance().runQuery(VdcQueryType.GetComputeResourceFromExternalProvider, params, aQuery);
+    }
+
     public static void getAllProviders(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                if (source == null)
-                {
+                if (source == null) {
                     return new ArrayList<Provider>();
                 }
                 Collections.sort((List<Provider>) source, new NameableComparator());
@@ -3029,8 +3080,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                if (source == null)
-                {
+                if (source == null) {
                     return new ArrayList<Provider>();
                 }
                 return source;
