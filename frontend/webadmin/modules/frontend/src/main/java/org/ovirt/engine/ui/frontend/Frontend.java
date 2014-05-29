@@ -603,7 +603,7 @@ public class Frontend implements HasHandlers {
 
     /**
      * A convenience method that calls {@link #runMultipleActions(VdcActionType, List, List, Object, boolean)} with just a single
-     * callback to be called when all actions have succeeded and no error aggregation.
+     * callback to be called when all actions have succeeded and error aggregation.
      *
      * @param actionType The action to be repeated.
      * @param parameters The parameters of each action.
@@ -629,11 +629,11 @@ public class Frontend implements HasHandlers {
         runMultipleActions(actionType, parameters,
                 new LinkedList<IFrontendActionAsyncCallback>(Arrays.asList(callbacks)),
                 state,
-                false);
+                true);
     }
 
     /**
-     * A convenience method that calls {@link #runMultipleActions(VdcActionType, List, List, Object)} with
+     * A convenience method that calls {@link #runMultipleActions(VdcActionType, List, IFrontendActionAsyncCallback, Object, boolean)}
      * running callbacks even on empty run.
      *
      * @param actionType The action to be repeated.
@@ -650,7 +650,7 @@ public class Frontend implements HasHandlers {
 
     /**
      * Overloaded method for {@link #runMultipleActions(VdcActionType, List, IFrontendActionAsyncCallback, Object, boolean)} with
-     * state = null.
+     * state = null and running callbacks even on empty run.
      * @param actionType The action type of the actions.
      * @param parameters A list of parameters, once for each action.
      * @param successCallback The callback to call on success.
@@ -692,21 +692,22 @@ public class Frontend implements HasHandlers {
     }
 
     /**
-     * Overloaded method for {@link #runMultipleActions(VdcActionType, List, List, Object, boolean)} with state = null.
+     * Overloaded method for {@link #runMultipleActions(VdcActionType, List, List, Object, boolean)} with state = null
+     * and error aggregation.
+     *
      * @param actionType The action to be repeated.
      * @param parameters The parameters of each action.
      * @param callbacks A list of callbacks.
      */
     public void runMultipleActions(final VdcActionType actionType,
             final List<VdcActionParametersBase> parameters,
-            final List<IFrontendActionAsyncCallback> callbacks,
-            final boolean aggregateErrors) {
-        runMultipleActions(actionType, parameters, callbacks, null, aggregateErrors);
+            final List<IFrontendActionAsyncCallback> callbacks) {
+        runMultipleActions(actionType, parameters, callbacks, null, true);
     }
 
     /**
      * Overloaded method for
-     * {@link #runMultipleActions(List, List, List, IFrontendActionAsyncCallback, Object, boolean, List)} without error
+     * {@link #runMultipleActions(List, List, List, IFrontendActionAsyncCallback, Object, boolean)} with error
      * message aggregation.
      */
     public void runMultipleActions(final List<VdcActionType> actionTypes,
@@ -714,7 +715,7 @@ public class Frontend implements HasHandlers {
             final List<IFrontendActionAsyncCallback> callbacks,
             final IFrontendActionAsyncCallback failureCallback,
             final Object state) {
-        runMultipleActions(actionTypes, parameters, callbacks, failureCallback, state, false);
+        runMultipleActions(actionTypes, parameters, callbacks, failureCallback, state, true);
     }
 
     /**
