@@ -20,9 +20,11 @@ import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -40,7 +42,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
     private static final Logger log = LoggerFactory.getLogger(InitBackendServicesOnStartupBean.class);
 
-    /**
+     /**
      * This method is called upon the bean creation as part
      * of the management Service bean life cycle.
      */
@@ -49,13 +51,19 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
     public void create() {
 
         try {
+            // This must be done before starting to sample the hosts status from VDSM since the sampling will turn such host from Reboot to NonResponsive
+            List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
+            // Initialize Power Management Health Check
+            PmHealthCheckManager.getInstance().initialize();
+            // recover from engine failure
+            PmHealthCheckManager.getInstance().recover(hosts);
+
             // Create authentication profiles for all the domains that exist in the database:
             // TODO: remove this later, and rely only on the custom and built in extensions directories configuration
             DbUserCacheManager.getInstance().init();
             TaskManagerUtil.initAsyncTaskManager();
             ResourceManager.getInstance().init();
             OvfDataUpdater.getInstance().initOvfDataUpdater();
-
             SchedulingManager.getInstance().setMigrationHandler(new MigrationHandler() {
 
                 @Override
@@ -98,8 +106,6 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
             new DwhHeartBeat().init();
 
-            // Initialize Power Management Health Check
-            PmHealthCheckManager.getInstance().initialize();
         } catch (Exception ex) {
             log.error("Failed to initialize backend", ex);
             throw ex;

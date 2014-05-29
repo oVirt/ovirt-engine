@@ -312,7 +312,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * @return
      *              boolean
      */
-    protected boolean isPmReportsStatusDown() {
+    public boolean isPmReportsStatusDown() {
         boolean result = false;
         VDS vds = getVds();
         VDSReturnValue returnValue=null;

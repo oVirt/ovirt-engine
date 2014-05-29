@@ -1,17 +1,28 @@
 package org.ovirt.engine.core.bll.pm;
 
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.FenceExecutor;
+import org.ovirt.engine.core.bll.RestartVdsCommand;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
+import org.ovirt.engine.core.utils.ThreadUtils;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
@@ -102,6 +113,60 @@ public class PmHealthCheckManager {
         }
         else {
             AlertDirector.RemoveVdsAlert(hostId, seqAlert);
+        }
+    }
+
+    /**
+     * recovers from engine crash
+     * @param hostsWithPMInReboot
+     */
+    public void recover(List<VDS> hosts) {
+        startHostsWithPMInReboot(hosts);
+    }
+
+    private void startHostsWithPMInReboot(List<VDS> hosts) {
+        final List<VDS> hostsWithPMInReboot = LinqUtils.filter(hosts,
+                new Predicate<VDS>() {
+                    @Override
+                    public boolean eval(VDS host) {
+                        return (host.getpm_enabled() && host.getStatus() == VDSStatus.Reboot);
+                    }
+                });
+        if (hostsWithPMInReboot.size() > 0) {
+            ThreadPoolUtil.execute(new Runnable() {
+                @Override
+                public void run() {
+                    // wait the quiet time from engine start in which we skip fencing operations
+                    int mSecToWait = Config.<Integer>getValue(ConfigValues.DisableFenceAtStartupInSec) * 1000;
+                    ThreadUtils.sleep(mSecToWait);
+                    startHosts(hostsWithPMInReboot);
+                }
+            });
+        }
+    }
+
+    /**
+     * This method starts hosts remained in off status because of the following flow
+     * non-responding -> stop -> wait -> off -> engine restart
+     * Such hosts will stay DOWN while its status will show Reboot
+     * We should try to catch such hosts and attempt to restart it.
+     * @param hostWithPMInStatusReboot
+     */
+    public void startHosts(List<VDS> hostWithPMInStatusReboot) {
+        VDSReturnValue returnValue = null;
+        for (VDS host : hostWithPMInStatusReboot) {
+            RestartVdsCommand restartVdsCommand = new RestartVdsCommand(new
+                    FenceVdsActionParameters(host.getId(), FenceActionType.Status));
+            if (restartVdsCommand.isPmReportsStatusDown()) {
+                VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(VdcActionType.RestartVds, restartVdsCommand.getParameters());
+                if (retValue!= null && retValue.getSucceeded()) {
+                    log.infoFormat("Host {0} was started successfully by PM Health Check Manager",
+                            host.getName());
+                }
+                else {
+                    log.infoFormat("PM Health Check Manager failed to start Host {0}", host.getName());
+                }
+            }
         }
     }
 
