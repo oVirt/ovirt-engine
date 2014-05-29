@@ -31,6 +31,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<Storage
                 return object.getName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameCluster(), "300px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDSGroup> versionColumn = new TextColumnWithTooltip<VDSGroup>() {
@@ -39,6 +40,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<Storage
                 return object.getcompatibility_version().getValue();
             }
         };
+        versionColumn.makeSortable();
         getTable().addColumn(versionColumn, constants.comptVersCluster(), "300px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDSGroup> descColumn = new TextColumnWithTooltip<VDSGroup>() {
@@ -47,6 +49,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<Storage
                 return object.getdescription();
             }
         };
+        descColumn.makeSortable();
         getTable().addColumn(descColumn, constants.descriptionCluster());
     }
 

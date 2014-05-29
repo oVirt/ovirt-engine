@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -15,7 +16,6 @@ import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -144,6 +144,11 @@ public class EventListModel extends ListWithDetailsModel
         return false;
     }
 
+    @Override
+    public boolean supportsServerSideSorting() {
+        return true;
+    }
+
     protected void refreshModel()
     {
         AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
@@ -164,7 +169,8 @@ public class EventListModel extends ListWithDetailsModel
             }
         });
 
-        SearchParameters params = new SearchParameters(getSearchString(), SearchType.AuditLog, isCaseSensitiveSearch());
+        SearchParameters params = new SearchParameters(applySortOptions(getSearchString()), SearchType.AuditLog,
+                isCaseSensitiveSearch());
         params.setMaxCount(getSearchPageSize());
         params.setSearchFrom(getLastEvent() != null ? getLastEvent().getaudit_log_id() : 0);
         params.setRefresh(false);
