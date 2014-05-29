@@ -9,10 +9,11 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.SnapshotDao;
 
 @InternalCommandAttribute
 public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
@@ -44,28 +45,37 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
                     getVm().getName(),
                     getVmId());
 
-            boolean returnVal = true;
-            Guid snapshotId = DbFacade.getInstance().getSnapshotDao().getId(getVmId(), SnapshotType.STATELESS);
-            List<DiskImage> imagesList = null;
-
-            if (snapshotId != null) {
-                imagesList = DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
-            }
-
-            if (imagesList != null && imagesList.size() > 0) {
-                /**
-                 * restore all snapshots
-                 */
-                RestoreAllSnapshotsParameters restoreParameters = new RestoreAllSnapshotsParameters(getVm().getId(), SnapshotActionEnum.RESTORE_STATELESS);
-                restoreParameters.setShouldBeLogged(false);
-                restoreParameters.setImages(imagesList);
-                VdcReturnValueBase vdcReturn =
-                        Backend.getInstance().runInternalAction(VdcActionType.RestoreAllSnapshots,
-                                restoreParameters,
-                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
-                returnVal = vdcReturn.getSucceeded();
-            }
-            setSucceeded(returnVal);
+            setSucceeded(restoreInitialState());
         }
+    }
+
+    private boolean restoreInitialState() {
+        Guid snapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.STATELESS);
+        if (snapshotId == null) {
+            return true;
+        }
+
+        List<DiskImage> imagesList = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
+        if (imagesList == null || imagesList.isEmpty()) {
+            return true;
+        }
+
+        // restore all snapshots
+        VdcReturnValueBase vdcReturn =
+                Backend.getInstance().runInternalAction(VdcActionType.RestoreAllSnapshots,
+                        buildRestoreAllSnapshotsParameters(imagesList),
+                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
+        return vdcReturn.getSucceeded();
+    }
+
+    private RestoreAllSnapshotsParameters buildRestoreAllSnapshotsParameters(List<DiskImage> imagesList) {
+        RestoreAllSnapshotsParameters restoreParameters = new RestoreAllSnapshotsParameters(getVm().getId(), SnapshotActionEnum.RESTORE_STATELESS);
+        restoreParameters.setShouldBeLogged(false);
+        restoreParameters.setImages(imagesList);
+        return restoreParameters;
+    }
+
+    private SnapshotDao getSnapshotDao() {
+        return DbFacade.getInstance().getSnapshotDao();
     }
 }
