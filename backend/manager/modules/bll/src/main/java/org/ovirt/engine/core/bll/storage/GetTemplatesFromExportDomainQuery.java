@@ -24,7 +24,7 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
     @Override
     protected Map<VmTemplate, List<DiskImage>> buildFromOVFs(List<String> ovfList) {
         OvfManager ovfManager = new OvfManager();
-        Map<VmTemplate, List<DiskImage>> templates = new HashMap<VmTemplate, List<DiskImage>>();
+        Map<VmTemplate, List<DiskImage>> templates = new HashMap<>();
         OvfHelper ovfHelper = new OvfHelper();
         for (String ovf : ovfList) {
             try {
