@@ -111,8 +111,15 @@ public class UploadStreamVDSCommand<P extends UploadStreamVDSCommandParameters> 
                 throw createNetworkException(e);
             }
 
-            if (responseCode != HttpStatus.SC_OK) {
-                throwVdsErrorException("upload failed with response code " + responseCode, VdcBllErrors.UPLOAD_FAILURE);
+            if (responseCode == HttpStatus.SC_OK) {
+                Guid createdTask =
+                        Guid.createGuidFromString(processResponseHeaderValue(putMethod, "Task-Id", null));
+                getVDSReturnValue().setCreationInfo(
+                        new AsyncTaskCreationInfo(createdTask, AsyncTaskType.downloadImageFromStream, getParameters()
+                                .getStoragePoolId()));
+
+                getVDSReturnValue().setSucceeded(true);
+                return;
             }
 
             processResponseHeaderValue(putMethod, "Content-type", "application/json");
@@ -133,16 +140,6 @@ public class UploadStreamVDSCommand<P extends UploadStreamVDSCommandParameters> 
             }
 
             proceedProxyReturnValue();
-
-            String createdTaskId = new OneUuidReturnForXmlRpc(resultMap).mUuid;
-
-            Guid createdTask = Guid.createGuidFromString(createdTaskId);
-
-            getVDSReturnValue().setCreationInfo(
-                    new AsyncTaskCreationInfo(createdTask, AsyncTaskType.downloadImageFromStream, getParameters()
-                            .getStoragePoolId()));
-
-            getVDSReturnValue().setSucceeded(true);
         } finally {
             try {
                 putMethod.releaseConnection();
