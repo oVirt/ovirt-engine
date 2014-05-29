@@ -13,6 +13,8 @@ import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 
+import com.google.gwt.dom.client.Style.TextOverflow;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -37,7 +39,10 @@ public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
         panel.setWidth("100%"); //$NON-NLS-1$
 
         addItemToPanel(panel, new Image(getStatusImage(task.getStatus())), "25px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), task.getDescription(), ""); //$NON-NLS-1$
+        TextBoxLabel descriptionTextBoxLabel = new TextBoxLabel();
+        descriptionTextBoxLabel.getElement().getStyle().setPaddingRight(5, Unit.PX);
+        descriptionTextBoxLabel.getElement().getStyle().setTextOverflow(TextOverflow.ELLIPSIS);
+        addTextBoxToPanel(panel, descriptionTextBoxLabel, task.getDescription(), ""); //$NON-NLS-1$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), task.getStartTime(), "150px"); //$NON-NLS-1$
         addTextBoxToPanel(panel, new TextBoxLabel(), task.getEndTime() == null ? "" : constants.untilEndTime(), "80px"); //$NON-NLS-1$ //$NON-NLS-2$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), task.getEndTime(), "150px"); //$NON-NLS-1$
@@ -94,7 +99,10 @@ public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
         panel.setWidth("100%"); //$NON-NLS-1$
 
         addItemToPanel(panel, new Image(getStatusImage(step.getStatus())), "25px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), step.getDescription(), ""); //$NON-NLS-1$
+        TextBoxLabel descriptionTextBoxLabel = new TextBoxLabel();
+        descriptionTextBoxLabel.getElement().getStyle().setPaddingRight(5, Unit.PX);
+        descriptionTextBoxLabel.getElement().getStyle().setTextOverflow(TextOverflow.ELLIPSIS);
+        addTextBoxToPanel(panel, descriptionTextBoxLabel, step.getDescription(), ""); //$NON-NLS-1$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), step.getStartTime(), "150px"); //$NON-NLS-1$
         addTextBoxToPanel(panel, new TextBoxLabel(), step.getEndTime() == null ? "" : constants.until(), "80px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), step.getEndTime(), "150px"); //$NON-NLS-1$
@@ -116,14 +124,14 @@ public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
 
     public void collapseAllTasks() {
         for (int i = 0; i < tree.getItemCount(); i++) {
-            collapseAllTasksHelper((TreeItem) tree.getItem(i));
+            collapseAllTasksHelper(tree.getItem(i));
         }
     }
 
     private void collapseAllTasksHelper(TreeItem item) {
         item.setState(false);
         for (int i = 0; i < item.getChildCount(); i++) {
-            collapseAllTasksHelper((TreeItem) item.getChild(i));
+            collapseAllTasksHelper(item.getChild(i));
         }
     }
 
