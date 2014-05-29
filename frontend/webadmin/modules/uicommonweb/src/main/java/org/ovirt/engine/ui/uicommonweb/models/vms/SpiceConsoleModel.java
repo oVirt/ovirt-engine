@@ -14,7 +14,8 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
@@ -186,12 +187,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
     @Override
     public boolean canBeSelected() {
-        DisplayType displayType = getEntity().getDisplayType() != null
-                ? getEntity().getDisplayType()
-                : getEntity().getDefaultDisplayType();
         boolean hasVmSpiceSupport = Boolean.TRUE.equals(AsyncDataProvider.getInstance().hasSpiceSupport(getEntity().getOs(), getEntity().getVdsGroupCompatibilityVersion()));
-
-        return displayType == DisplayType.qxl && hasVmSpiceSupport;
+        return getEntity().getGraphicsInfos().containsKey(GraphicsType.SPICE) && hasVmSpiceSupport;
     }
 
     @Override
@@ -367,16 +364,19 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             caCertificate = (String) returnValues.get(5).getReturnValue();
         }
 
-        getspice().setHost(getEntity().getDisplayIp());
+        GraphicsInfo spiceInfo = getEntity().getGraphicsInfos().get(GraphicsType.SPICE);
+        if (spiceInfo == null) {
+            throw new IllegalStateException("Trying to invoke SPICE console but VM GraphicsInfo is null.");//$NON-NLS-1$
+        }
         getspice().setSmartcardEnabled(getEntity().isSmartcardEnabled());
-        getspice().setPort((getEntity().getDisplay() == null ? 0 : getEntity().getDisplay()));
+        Integer port = spiceInfo.getPort();
+        getspice().setPort(port == null ? 0 : port);
         getspice().setPassword(ticket);
         getspice().setTicketValiditySeconds(TICKET_VALIDITY_SECONDS);
         getspice().setNumberOfMonitors(getEntity().getNumOfMonitors());
         getspice().setGuestHostName(getEntity().getVmHost().split("[ ]", -1)[0]); //$NON-NLS-1$
-        if (getEntity().getDisplaySecurePort() != null)
-        {
-            getspice().setSecurePort(getEntity().getDisplaySecurePort());
+        if (spiceInfo.getTlsPort() != null) {
+            getspice().setSecurePort(spiceInfo.getTlsPort());
         }
         if (!StringHelper.isNullOrEmpty(spiceSecureChannels)) {
             getspice().setSslChanels(spiceSecureChannels);
@@ -404,11 +404,11 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         getspice().setToggleFullscreenHotKey(getToggleFullScreenKeys());
         getspice().setReleaseCursorHotKey(getReleaseCursorKeys());
 
-        getspice().setLocalizedStrings(new String[] {
+        getspice().setLocalizedStrings(new String[]{
                 ConstantsManager.getInstance().getConstants().usb(),
                 ConstantsManager.getInstance()
                         .getConstants()
-                        .usbDevicesNoUsbdevicesClientSpiceUsbRedirectorNotInstalled() });
+                        .usbDevicesNoUsbdevicesClientSpiceUsbRedirectorNotInstalled()});
 
         // Create menu.
         int id = 1;
@@ -465,13 +465,13 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         getspice().getDisconnectedEvent().addListener(this);
         getspice().getMenuItemSelectedEvent().addListener(this);
 
-        if (StringHelper.isNullOrEmpty(getEntity().getDisplayIp())
-                || "0".equals(getEntity().getDisplayIp())) //$NON-NLS-1$
-        {
+        String displayIp = spiceInfo.getIp();
+        if (StringHelper.isNullOrEmpty(displayIp) || "0".equals(displayIp)) { //$NON-NLS-1$
             determineIpAndConnect(getEntity().getId());
         }
         else {
             // Try to connect.
+            getspice().setHost(displayIp);
             spiceConnect();
         }
     }

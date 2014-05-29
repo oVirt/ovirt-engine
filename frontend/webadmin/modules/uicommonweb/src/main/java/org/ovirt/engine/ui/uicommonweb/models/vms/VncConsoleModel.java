@@ -3,9 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -34,14 +35,6 @@ public class VncConsoleModel extends ConsoleModel {
     private String otp64 = null;
 
     private IVnc vncImpl;
-
-    private String getPort() {
-        if (getEntity() == null && getEntity().getDisplay() == null) {
-            return null;
-        }
-
-        return getEntity().getDisplay().toString();
-    }
 
     private String getHost() {
         return host;
@@ -109,14 +102,15 @@ public class VncConsoleModel extends ConsoleModel {
 
     @Override
     public boolean canBeSelected() {
-        DisplayType vmDisplayType = getEntity().getDisplayType() != null
-                ? getEntity().getDisplayType()
-                : getEntity().getDefaultDisplayType();
-
-        return vmDisplayType == DisplayType.vga;
+        return getEntity().getGraphicsInfos().containsKey(GraphicsType.VNC);
     }
 
     private void setVmTicket() {
+        final GraphicsInfo vncInfo = getEntity().getGraphicsInfos().get(GraphicsType.VNC);
+        if (vncInfo == null) {
+            throw new IllegalStateException("Trying to invoke VNC console but VM GraphicsInfo is null."); //$NON-NLS-1$
+        }
+
         Frontend.getInstance().runAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(),
                     null,
                     TICKET_VALIDITY_SECONDS), new IFrontendActionAsyncCallback() {
@@ -129,8 +123,9 @@ public class VncConsoleModel extends ConsoleModel {
                     {
                         otp64 = (String) ticketReturnValue.getActionReturnValue();
                         // Determine the display IP.
-                        if (StringHelper.isNullOrEmpty(getEntity().getDisplayIp())
-                                || "0".equals(getEntity().getDisplayIp())) //$NON-NLS-1$
+                        String displayIp = vncInfo.getIp();
+                        if (StringHelper.isNullOrEmpty(displayIp)
+                                || "0".equals(displayIp)) //$NON-NLS-1$
                         {
                             AsyncQuery _asyncQuery = new AsyncQuery();
                             _asyncQuery.setModel(this);
@@ -138,9 +133,8 @@ public class VncConsoleModel extends ConsoleModel {
                                 @Override
                                 public void onSuccess(Object model, Object ReturnValue)
                                 {
-                                    VncConsoleModel consoleModel = (VncConsoleModel) model;
-                                    VncConsoleModel.this.host = (String) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                                    consoleModel.setAndInvokeClient();
+                                    VncConsoleModel.this.host = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                                    VncConsoleModel.this.setAndInvokeClient();
                                 }
                             };
 
@@ -148,7 +142,7 @@ public class VncConsoleModel extends ConsoleModel {
                                     new IdQueryParameters(getEntity().getId()), _asyncQuery);
                         }
                         else {
-                            VncConsoleModel.this.host = getEntity().getDisplayIp();
+                            VncConsoleModel.this.host = displayIp;
                             setAndInvokeClient();
                         }
                     }
@@ -158,7 +152,9 @@ public class VncConsoleModel extends ConsoleModel {
 
     private void setAndInvokeClient() {
         vncImpl.setVncHost(getHost());
-        vncImpl.setVncPort(getPort());
+        GraphicsInfo vncInfo = getEntity().getGraphicsInfos().get(GraphicsType.VNC);
+        Integer port = vncInfo.getPort();
+        vncImpl.setVncPort(port == null ? null : port.toString());
         vncImpl.setTicket(getOtp64());
         vncImpl.setTitle(getClientTitle());
         vncImpl.setToggleFullscreenHotKey(getToggleFullScreenKeys());

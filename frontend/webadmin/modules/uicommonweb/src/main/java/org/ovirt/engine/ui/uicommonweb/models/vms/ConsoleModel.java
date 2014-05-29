@@ -7,6 +7,8 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -317,4 +319,11 @@ public abstract class ConsoleModel extends EntityModel<VM> {
         return getEntity().getName() + ":%d" + releaseCursorMsg; //$NON-NLS-1$
     }
 
+    protected Integer extractDisplayPort(GraphicsType graphicsType) {
+        GraphicsInfo graphicsInfo = getEntity().getGraphicsInfos().get(graphicsType);
+        if (graphicsInfo != null && graphicsInfo.getPort() != null) {
+            return graphicsInfo.getPort();
+        }
+        return 0;
+    }
 }
