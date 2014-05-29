@@ -68,7 +68,8 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                 // if using stop then call to ProcessOnVmStop because
                 // will not be called from UpdateRunTimeInfo
                 if (!parameters.getGracefully()) {
-                    onVmStop(curVm);
+                    ResourceManager.getInstance().getEventListener()
+                       .processOnVmStop(Collections.singleton(curVm.getId()));
                 }
 
                 getVDSReturnValue().setReturnValue(curVm.getStatus());
@@ -97,25 +98,6 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
             ResourceManager.getInstance().InternalSetVmStatus(curVm,
                     parameters.getGracefully() ? VMStatus.PoweringDown : VMStatus.Down);
         }
-    }
-
-    /**
-     * signal the event listener that this VM is down. Because we don't care for failures, to prevent a side effect of
-     * aborting the current TX this method is being invoked in a new TX of its own.
-     * @param curVm
-     *            current VM
-     */
-    private void onVmStop(final VM curVm) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                ResourceManager.getInstance()
-                        .getEventListener()
-                        .processOnVmStop(Collections.singleton(curVm.getId()));
-                return null;
-            }
-        });
     }
 
     private static final Log log = LogFactory.getLog(DestroyVmVDSCommand.class);
