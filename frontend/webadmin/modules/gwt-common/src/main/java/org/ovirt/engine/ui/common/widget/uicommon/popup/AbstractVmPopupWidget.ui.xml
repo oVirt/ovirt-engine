@@ -180,14 +180,14 @@
             float: left;
         }
 
-		.expanderContent,.generalExpanderContent {
-			padding-left: 10px;
-		}
-		
-		.monitorsStyles {
-			width: 40px;
-			padding-left: 5px;
-		}
+        .expanderContent,.generalExpanderContent {
+            padding-left: 10px;
+        }
+
+        .monitorsStyles {
+            width: 40px;
+            padding-left: 5px;
+        }
 
         .monitorsStyles {
             width: 40px;
@@ -692,9 +692,9 @@
             </t:DialogTab>
         </t:tab>
         <t:tab>
-			<t:DialogTab ui:field="rngDeviceTab">
-				<t:content>
-					<g:FlowPanel>
+            <t:DialogTab ui:field="rngDeviceTab">
+                <t:content>
+                    <g:FlowPanel>
                         <w:EntityModelWidgetWithInfo ui:field="isRngEnabledCheckboxWithInfoIcon" addStyleNames="{style.checkbox}" />
                         <g:FlowPanel ui:field="rngPanel">
                             <ge:IntegerEntityModelTextBoxEditor ui:field="rngPeriodEditor"/>
@@ -705,8 +705,8 @@
                         </g:FlowPanel>
                     </g:FlowPanel>
                 </t:content>
-			</t:DialogTab>
-		</t:tab>
+            </t:DialogTab>
+        </t:tab>
         <t:tab>
             <t:DialogTab ui:field="customPropertiesTab">
                 <t:content>
