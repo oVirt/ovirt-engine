@@ -1436,7 +1436,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 changeApplicationLevelVisibility(provisionSelectionPanel, isProvisioningAvailable);
 
                 boolean isDisksAvailable = object.getIsDisksAvailable();
-                changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable);
+                changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable ||
+                        object.getIsVirtioScsiEnabled().getIsAvailable());
 
                 changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable);
             }
