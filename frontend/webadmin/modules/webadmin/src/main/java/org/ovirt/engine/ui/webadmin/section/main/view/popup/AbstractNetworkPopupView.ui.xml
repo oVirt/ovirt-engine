@@ -34,7 +34,7 @@
         }
 
         .dependentField {
-            padding-left: 10px;
+            margin-left: 10px;
         }
 
         .valueBox {
@@ -112,7 +112,7 @@
                                         <ge:EntityModelCheckBoxEditor ui:field="hasMtuEditor"/>
                                         <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="mtuEditor" />
                                     </g:HorizontalPanel>
-                                    <w:EntityModelWidgetWithInfo ui:field="networkLabelWithInfo" addStyleNames="{style.dependentField} {style.propertyWidth}" width="470px" />
+                                    <w:EntityModelWidgetWithInfo ui:field="networkLabelWithInfo" addStyleNames="{style.dependentField} {style.propertyWidth} anpv_networkLabelPanel_pfly_fix" />
                                     <g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" visible="false">
                                         <e:ListModelListBoxEditor ui:field="qosEditor" addStyleNames="{style.dependentField} {style.propertyWidth}" />
                                         <w:UiCommandButton ui:field="addQosButton" addStyleNames="{style.qosStyle}" />
