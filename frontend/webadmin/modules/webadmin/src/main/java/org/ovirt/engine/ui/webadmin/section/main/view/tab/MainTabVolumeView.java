@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.searchbackend.gluster.GlusterVolumeConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
@@ -62,6 +63,8 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 return object.getName();
             }
         };
+        nameColumn.makeSortable(GlusterVolumeConditionFieldAutoCompleter.FIELDS.NAME.toString());
+
         getTable().addColumn(nameColumn, constants.NameVolume(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterVolumeEntity> clusterColumn = new TextColumnWithTooltip<GlusterVolumeEntity>() {
@@ -80,6 +83,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                         return object.getVolumeType();
                     }
                 };
+        volumeTypeColumn.makeSortable(GlusterVolumeConditionFieldAutoCompleter.FIELDS.TYPE.toString());
         getTable().addColumn(volumeTypeColumn, constants.volumeTypeVolume(), "150px"); //$NON-NLS-1$
 
         getTable().addColumn(new VolumeBrickStatusColumn(), constants.bricksStatusVolume(), "150px"); //$NON-NLS-1$

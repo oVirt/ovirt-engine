@@ -56,6 +56,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
                 return brick.getServerName();
             }
         };
+        serverColumn.makeSortable();
         getTable().addColumn(serverColumn, constants.serverVolumeBrick(), "300px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterBrickEntity> directoryColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
@@ -64,6 +65,8 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
                 return brick.getBrickDirectory();
             }
         };
+        directoryColumn.makeSortable();
+
         getTable().addColumn(directoryColumn, constants.brickDirectoryVolumeBrick(), "400px"); //$NON-NLS-1$
 
         getTable().addColumn(new PercentColumn<GlusterBrickEntity>() {
