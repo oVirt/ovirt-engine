@@ -30,12 +30,13 @@ public class UpdateVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> e
         List<VdsNumaNode> nodes = new ArrayList<>();
         for (VmNumaNode vmNumaNode : vmNumaNodes) {
             for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
-                int index = pair.getSecond().getSecond();
-                for (VdsNumaNode vdsNumaNode : vdsNumaNodes) {
-                    if (vdsNumaNode.getIndex() == index) {
-                        pair.setFirst(vdsNumaNode.getId());
-                        pair.getSecond().setFirst(true);
-                        break;
+                if (pair.getSecond() != null && pair.getSecond().getFirst()) {
+                    int index = pair.getSecond().getSecond();
+                    for (VdsNumaNode vdsNumaNode : vdsNumaNodes) {
+                        if (vdsNumaNode.getIndex() == index) {
+                            pair.setFirst(vdsNumaNode.getId());
+                            break;
+                        }
                     }
                 }
             }

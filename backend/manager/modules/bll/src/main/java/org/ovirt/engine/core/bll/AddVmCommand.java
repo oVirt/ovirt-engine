@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -56,6 +57,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -81,6 +83,7 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
@@ -760,6 +763,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     addVmStatic();
                     addVmDynamic();
                     addVmNetwork();
+                    addVmNumaNodes();
                     addVmStatistics();
                     addActiveSnapshot();
                     addVmPermission();
@@ -920,6 +924,21 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             getCompensationContext().snapshotNewEntity(iface);
             DbFacade.getInstance().getVmNetworkStatisticsDao().save(iface.getStatistics());
             getCompensationContext().snapshotNewEntity(iface.getStatistics());
+        }
+    }
+
+    protected void addVmNumaNodes() {
+        List<VmNumaNode> numaNodes = getParameters().getVmStaticData().getvNumaNodeList();
+        VmNumaNodeOperationParameters params = new VmNumaNodeOperationParameters(getVmId(), numaNodes);
+        params.setNumaTuneMode(getParameters().getVmStaticData().getNumaTuneMode());
+        params.setDedicatedHost(getParameters().getVmStaticData().getDedicatedVmForVds());
+        params.setMigrationSupport(getParameters().getVmStaticData().getMigrationSupport());
+        if (numaNodes == null || numaNodes.isEmpty()) {
+            return;
+        }
+        VdcReturnValueBase returnValueBase = getBackend().runInternalAction(VdcActionType.AddVmNumaNodes, params);
+        if (!returnValueBase.getSucceeded()) {
+            AuditLogDirector.log(this, AuditLogType.NUMA_ADD_VM_NUMA_NODE_FAILED);
         }
     }
 

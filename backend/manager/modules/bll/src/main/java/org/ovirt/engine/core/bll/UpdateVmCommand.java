@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,6 +33,7 @@ import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -42,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -67,6 +70,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmNumaNodeDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -143,6 +147,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         UpdateVmNetworks();
+        updateVmNumaNodes();
         if (!getParameters().isApplyChangesLater()) {
             hotSetCpus(cpuPerSocket, numOfSockets);
         }
@@ -352,6 +357,61 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
     }
 
+    private void updateVmNumaNodes() {
+        if (!getParameters().isUpdateNuma()) {
+            return;
+        }
+        VmNumaNodeDAO dao = DbFacade.getInstance().getVmNumaNodeDAO();
+        List<VmNumaNode> addList = new ArrayList<>();
+        List<VmNumaNode> oldList = dao.getAllVmNumaNodeByVmId(getVmId());
+        Map<Guid, VmNumaNode> removeMap = new HashMap<>();
+        for (VmNumaNode node : oldList) {
+            removeMap.put(node.getId(), node);
+        }
+        List<VmNumaNode> newList = getParameters().getVmStaticData().getvNumaNodeList();
+        List<VmNumaNode> updateList = new ArrayList<>();
+        if (newList != null) {
+            for (VmNumaNode node : newList) {
+                // no id means new entity
+                if (node.getId() == null) {
+                    addList.add(node);
+                } else {
+                    updateList.add(node);
+                }
+            }
+        }
+        for (VmNumaNode vmNumaNode : updateList) {
+            removeMap.remove(vmNumaNode.getId());
+        }
+        VmNumaNodeOperationParameters params;
+        if (!removeMap.isEmpty()) {
+            params = new VmNumaNodeOperationParameters(getVmId(), new ArrayList<>(removeMap.values()));
+            addAddtionalParams(params);
+            addLogMessages(getBackend().runInternalAction(VdcActionType.RemoveVmNumaNodes, params));
+        }
+        if (!updateList.isEmpty()) {
+            params = new VmNumaNodeOperationParameters(getVmId(), updateList);
+            addAddtionalParams(params);
+            addLogMessages(getBackend().runInternalAction(VdcActionType.UpdateVmNumaNodes, params));
+        }
+        if (!addList.isEmpty()) {
+            params = new VmNumaNodeOperationParameters(getVmId(), addList);
+            addAddtionalParams(params);
+            addLogMessages(getBackend().runInternalAction(VdcActionType.AddVmNumaNodes, params));
+        }
+    }
+
+    private void addLogMessages(VdcReturnValueBase returnValueBase) {
+        if (!returnValueBase.getSucceeded()) {
+            AuditLogDirector.log(this, AuditLogType.NUMA_UPDATE_VM_NUMA_NODE_FAILED);
+        }
+    }
+
+    private void addAddtionalParams(VmNumaNodeOperationParameters params) {
+        params.setDedicatedHost(getParameters().getVmStaticData().getDedicatedVmForVds());
+        params.setNumaTuneMode(getParameters().getVmStaticData().getNumaTuneMode());
+        params.setMigrationSupport(getParameters().getVmStaticData().getMigrationSupport());
+    }
 
     @Override
     protected List<Class<?>> getValidationGroups() {

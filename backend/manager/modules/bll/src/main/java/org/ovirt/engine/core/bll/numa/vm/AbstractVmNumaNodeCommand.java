@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.config.Config;
@@ -31,6 +31,30 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
         return getDbFacade().getVmNumaNodeDAO();
     }
 
+    protected Guid getDedicatedHost() {
+        Guid dedicatedHost = getParameters().getDedicatedHost();
+        if (dedicatedHost != null) {
+            return dedicatedHost;
+        }
+        return getVm().getDedicatedVmForVds();
+    }
+
+    protected NumaTuneMode getNumaTuneMode() {
+        NumaTuneMode numaTuneMode = getParameters().getNumaTuneMode();
+        if (numaTuneMode != null) {
+            return numaTuneMode;
+        }
+        return getVm().getNumaTuneMode();
+    }
+
+    protected MigrationSupport getMigrationSupport() {
+        MigrationSupport migrationSupport = getParameters().getMigrationSupport();
+        if (migrationSupport != null) {
+            return migrationSupport;
+        }
+        return getVm().getMigrationSupport();
+    }
+
     @Override
     protected boolean canDoAction() {
         List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
@@ -39,10 +63,9 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
             return true;
         }
 
-        VM vm = getVm();
         boolean pinHost = !Config.<Boolean> getValue(ConfigValues.SupportNUMAMigration);
-        Guid vdsId = vm.getDedicatedVmForVds();
-        if (pinHost && vdsId == null) {
+        Guid vdsId = getDedicatedHost();
+        if (pinHost && vdsId == null && getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
             return failCanDoAction(VdcBllMessages.VM_NUMA_PINNED_VDS_NOT_EXIST);
         }
 
@@ -54,7 +77,7 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
             }
         }
 
-        boolean memStrict = vm.getNumaTuneMode() == NumaTuneMode.STRICT;
+        boolean memStrict = getNumaTuneMode() == NumaTuneMode.STRICT;
         for (VmNumaNode vmNumaNode : vmNumaNodes) {
             for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
                 if (pair.getSecond() == null || pair.getSecond().getSecond() == null) {

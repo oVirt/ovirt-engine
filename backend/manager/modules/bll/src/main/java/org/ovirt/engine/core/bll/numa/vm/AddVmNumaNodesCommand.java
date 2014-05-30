@@ -22,7 +22,7 @@ public class AddVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> exte
     protected void executeCommand() {
         Guid vmId = getParameters().getVmId();
         List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
-        Guid vdsId = getVm().getDedicatedVmForVds();
+        Guid vdsId = getDedicatedHost();
         List<VdsNumaNode> vdsNumaNodes = new ArrayList<>();
         if (vdsId != null) {
             vdsNumaNodes = getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(vdsId);
@@ -30,13 +30,18 @@ public class AddVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> exte
 
         List<VdsNumaNode> nodes = new ArrayList<>();
         for (VmNumaNode vmNumaNode : vmNumaNodes) {
+            vmNumaNode.setId(Guid.newGuid());
             for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
-                int index = pair.getSecond().getSecond();
-                for (VdsNumaNode vdsNumaNode : vdsNumaNodes) {
-                    if (vdsNumaNode.getIndex() == index) {
-                        pair.setFirst(vdsNumaNode.getId());
-                        pair.getSecond().setFirst(true);
-                        break;
+                if (pair.getSecond() != null && pair.getSecond().getSecond() != null) {
+                    int index = pair.getSecond().getSecond();
+                    // if pinned set pNode
+                    if (pair.getSecond().getFirst()) {
+                        for (VdsNumaNode vdsNumaNode : vdsNumaNodes) {
+                            if (vdsNumaNode.getIndex() == index) {
+                                pair.setFirst(vdsNumaNode.getId());
+                                break;
+                            }
+                        }
                     }
                 }
             }

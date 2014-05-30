@@ -32,6 +32,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private VmRngDevice rngDevice;
     private boolean copyTemplatePermissions;
     private boolean applyChangesLater;
+    private boolean updateNuma;
 
     /*
      * This parameter is needed at update to make sure that when we get a null watchdog from rest-api it is not meant to
@@ -238,5 +239,17 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
 
     public void setApplyChangesLater(boolean applyChangesLater) {
         this.applyChangesLater = applyChangesLater;
+    }
+
+    /**
+     * Since NUMA configuration can be updated, this flag indicates whether client
+     * sends NUMA info that needs to be updated.
+     */
+    public boolean isUpdateNuma() {
+        return updateNuma;
+    }
+
+    public void setUpdateNuma(boolean updateNuma) {
+        this.updateNuma = updateNuma;
     }
 }
