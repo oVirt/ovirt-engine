@@ -129,8 +129,8 @@ public enum ConfigurationValues {
     KeystoneAuthUrl,
     VirtIoRngDeviceSupported(ConfigAuthType.User),
     ClusterRequiredRngSourcesDefault(ConfigAuthType.User),
-    SpiceFileTransferToggleSupported,
-    SpiceCopyPasteToggleSupported;
+    SpiceFileTransferToggleSupported(ConfigAuthType.User),
+    SpiceCopyPasteToggleSupported(ConfigAuthType.User);
 
     public static enum ConfigAuthType {
         Admin,
