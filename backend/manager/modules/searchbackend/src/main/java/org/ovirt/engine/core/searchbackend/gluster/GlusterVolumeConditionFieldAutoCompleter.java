@@ -26,7 +26,7 @@ import org.ovirt.engine.core.searchbackend.StringConditionRelationAutoCompleter;
 public class GlusterVolumeConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public final static GlusterVolumeConditionFieldAutoCompleter INSTANCE = new GlusterVolumeConditionFieldAutoCompleter();
 
-    private enum FIELDS {
+    public enum FIELDS {
         NAME,
         TYPE,
         TRANSPORT_TYPE,

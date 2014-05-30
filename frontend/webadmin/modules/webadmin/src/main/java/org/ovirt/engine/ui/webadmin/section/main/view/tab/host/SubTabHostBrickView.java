@@ -34,6 +34,7 @@ public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBri
                 return object.getVolumeName();
             }
         };
+        volNameColumn.makeSortable();
         getTable().addColumn(volNameColumn, constants.volumeName()); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterBrickEntity> brickDirColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
@@ -42,6 +43,7 @@ public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBri
                 return object.getBrickDirectory();
             }
         };
+        brickDirColumn.makeSortable();
         getTable().addColumn(brickDirColumn, constants.brickDirectoryBricks(), "220px"); //$NON-NLS-1$
 
    }

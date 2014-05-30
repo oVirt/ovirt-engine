@@ -39,6 +39,7 @@ public class SubTabVolumeParameterView extends AbstractSubTabTableView<GlusterVo
                 return option.getKey();
             }
         };
+        optionKeyColumn.makeSortable();
         getTable().addColumn(optionKeyColumn, constants.optionKeyVolumeParameter(), "400px"); //$NON-NLS-1$
         TextColumnWithTooltip<GlusterVolumeOptionEntity> optionValueColumn =
                 new TextColumnWithTooltip<GlusterVolumeOptionEntity>() {
@@ -47,6 +48,7 @@ public class SubTabVolumeParameterView extends AbstractSubTabTableView<GlusterVo
                         return option.getValue();
                     }
                 };
+        optionValueColumn.makeSortable();
         getTable().addColumn(optionValueColumn, constants.optionValueVolumeParameter(), "400px"); //$NON-NLS-1$;
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeOptionEntity>(constants.addVolumeParameter()) {
