@@ -49,61 +49,65 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
     @PostConstruct
     public void create() {
 
-        // Create authentication profiles for all the domains that exist in the database:
-        // TODO: remove this later, and rely only on the custom and built in extensions directories configuration
-
-        EngineExtensionsManager.getInstance().engineInitialize();
-        AuthenticationProfileRepository.getInstance();
-        DbUserCacheManager.getInstance().init();
-        AsyncTaskManager.getInstance().initAsyncTaskManager();
-        ResourceManager.getInstance().init();
-        OvfDataUpdater.getInstance().initOvfDataUpdater();
-
-        SchedulingManager.getInstance().setMigrationHandler(new MigrationHandler() {
-
-            @Override
-            public void migrateVM(List<Guid> initialHosts, Guid vmToMigrate) {
-                MigrateVmParameters parameters = new MigrateVmParameters(false, vmToMigrate);
-                parameters.setInitialHosts(new ArrayList<Guid>(initialHosts));
-                Backend.getInstance().runInternalAction(VdcActionType.MigrateVm,
-                        parameters,
-                        ExecutionHandler.createInternalJobContext());
-            }
-        });
-
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                MacPoolManager.getInstance().initialize();
-            }
-        });
-        StoragePoolStatusHandler.init();
-
-        GlusterJobsManager.init();
-
-        ExternalTrustStoreInitializer.init();
-
         try {
-            log.info("Init VM custom properties utilities");
-            VmPropertiesUtils.getInstance().init();
-        } catch (InitializationException e) {
-            log.error("Initialization of vm custom properties failed.", e);
+            // Create authentication profiles for all the domains that exist in the database:
+            // TODO: remove this later, and rely only on the custom and built in extensions directories configuration
+
+            EngineExtensionsManager.getInstance().engineInitialize();
+            AuthenticationProfileRepository.getInstance();
+            DbUserCacheManager.getInstance().init();
+            AsyncTaskManager.getInstance().initAsyncTaskManager();
+            ResourceManager.getInstance().init();
+            OvfDataUpdater.getInstance().initOvfDataUpdater();
+
+            SchedulingManager.getInstance().setMigrationHandler(new MigrationHandler() {
+
+                @Override
+                public void migrateVM(List<Guid> initialHosts, Guid vmToMigrate) {
+                    MigrateVmParameters parameters = new MigrateVmParameters(false, vmToMigrate);
+                    parameters.setInitialHosts(new ArrayList<Guid>(initialHosts));
+                    Backend.getInstance().runInternalAction(VdcActionType.MigrateVm,
+                            parameters,
+                            ExecutionHandler.createInternalJobContext());
+                }
+            });
+
+            ThreadPoolUtil.execute(new Runnable() {
+                @Override
+                public void run() {
+                    MacPoolManager.getInstance().initialize();
+                }
+            });
+            StoragePoolStatusHandler.init();
+
+            GlusterJobsManager.init();
+
+            ExternalTrustStoreInitializer.init();
+
+            try {
+                log.info("Init VM custom properties utilities");
+                VmPropertiesUtils.getInstance().init();
+            } catch (InitializationException e) {
+                log.error("Initialization of vm custom properties failed.", e);
+            }
+
+            try {
+                log.info("Init device custom properties utilities");
+                DevicePropertiesUtils.getInstance().init();
+            } catch (InitializationException e) {
+                log.error("Initialization of device custom properties failed.", e);
+            }
+
+            SchedulingManager.getInstance().init();
+
+            new DwhHeartBeat().init();
+
+            // Initialize Power Management Health Check
+            PmHealthCheckManager.getInstance().initialize();
+        } catch (Exception ex) {
+            log.error("Failed to initialize backend", ex);
+            throw ex;
         }
-
-        try {
-            log.info("Init device custom properties utilities");
-            DevicePropertiesUtils.getInstance().init();
-        } catch (InitializationException e) {
-            log.error("Initialization of device custom properties failed.", e);
-        }
-
-        SchedulingManager.getInstance().init();
-
-        new DwhHeartBeat().init();
-
-        // Initialize Power Management Health Check
-        PmHealthCheckManager.getInstance().initialize();
-
     }
 
 

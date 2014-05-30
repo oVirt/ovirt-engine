@@ -141,7 +141,7 @@ public class ExtensionsManager extends Observable {
             return loadImpl(props, file);
         } catch (IOException exception) {
             throw new ConfigurationException(String.format("Can't load object configuration file '%1$s'",
-                    file.getAbsolutePath()));
+                    file.getAbsolutePath()), exception);
         }
     }
 
@@ -234,7 +234,7 @@ public class ExtensionsManager extends Observable {
                );
            }
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Error loading extension %1$s", entry.name));
+            throw new RuntimeException(String.format("Error loading extension %1$s", entry.name), e);
         }
         loadedEntries.put(entry.name, entry);
         dumpConfig(entry.extension);
