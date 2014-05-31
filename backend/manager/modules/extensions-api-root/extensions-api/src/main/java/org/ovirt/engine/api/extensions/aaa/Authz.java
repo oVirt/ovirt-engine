@@ -321,17 +321,17 @@ public class Authz {
          * Equals.
          * '*' wildcard may be placed at suffix of value to match any.
          */
-        public static int EQ = 0;
+        public static final int EQ = 0;
         /** Less or equals to. */
-        public static int LE = 1;
+        public static final int LE = 1;
         /** Greater or equals to. */
-        public static int GE = 2;
+        public static final int GE = 2;
         /** Not. */
-        public static int NOT = 100;
+        public static final int NOT = 100;
         /** And. */
-        public static int AND = 101;
+        public static final int AND = 101;
         /** Or. */
-        public static int OR = 102;
+        public static final int OR = 102;
     }
 
     /**
