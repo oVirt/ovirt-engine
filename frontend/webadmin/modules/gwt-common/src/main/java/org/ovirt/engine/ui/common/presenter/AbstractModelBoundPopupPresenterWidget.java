@@ -299,7 +299,8 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         String documentationPath = DocumentationPathTranslator.getPath(helpTag);
         String documentationLibURL = model.getConfigurator().getDocumentationLibURL();
 
-        WebUtils.openUrlInNewWindow("_blank", documentationLibURL + documentationPath); //$NON-NLS-1$
+        WebUtils.openUrlInNewWindow("_blank", documentationLibURL + documentationPath,  //$NON-NLS-1$
+                WebUtils.OPTION_SCROLLBARS);
     }
 
 }
