@@ -454,7 +454,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The VM is performing an operation on a Snapshot. Please wait for the operation to finish, and try again.")
     String ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT();
 
-    @DefaultStringValue("Cannot ${action} ${type} because it is in ${vmStatus} status.")
+    @DefaultStringValue("Cannot ${action} ${type} because the VM is in ${vmStatus} status.")
     String ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL();
 
     @DefaultStringValue("Cannot ${action} ${type}. The VM is running as Stateless. Please try again when VM is not running as Stateless.")
