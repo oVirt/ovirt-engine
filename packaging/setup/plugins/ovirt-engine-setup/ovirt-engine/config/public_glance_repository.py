@@ -30,6 +30,7 @@ from otopi import plugin
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine_common \
     import constants as oengcommcons
+from ovirt_engine_setup.engine import constants as oenginecons
 
 
 @util.export
@@ -58,7 +59,7 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _misc(self):
-        self.environment[oengcommcons.EngineDBEnv.STATEMENT].execute(
+        self.environment[oenginecons.EngineDBEnv.STATEMENT].execute(
             statement="""
                 select inst_add_glance_provider(
                     %(provider_id)s,

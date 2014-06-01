@@ -87,7 +87,7 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
-            self.environment[oengcommcons.EngineDBEnv.PASSWORD] is not None and
+            self.environment[oenginecons.EngineDBEnv.PASSWORD] is not None and
             self.environment[osetupcons.RemoveEnv.REMOVE_DATABASE]
         ),
         after=(
@@ -99,7 +99,7 @@ class Plugin(plugin.PluginBase):
         try:
             dbovirtutils = database.OvirtUtils(
                 plugin=self,
-                dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
+                dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
             )
             dbovirtutils.tryDatabaseConnect()
             self._bkpfile = dbovirtutils.backup(
@@ -109,7 +109,7 @@ class Plugin(plugin.PluginBase):
             self.logger.info(
                 _('Clearing Engine database {database}').format(
                     database=self.environment[
-                        oengcommcons.EngineDBEnv.DATABASE
+                        oenginecons.EngineDBEnv.DATABASE
                     ],
                 )
             )

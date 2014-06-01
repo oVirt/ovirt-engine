@@ -127,10 +127,10 @@ class Plugin(plugin.PluginBase):
             args=(
                 oenginecons.FileLocations.OVIRT_ENGINE_TASKCLEANER,
                 '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
-                '-u', self.environment[oengcommcons.EngineDBEnv.USER],
-                '-s', self.environment[oengcommcons.EngineDBEnv.HOST],
-                '-p', str(self.environment[oengcommcons.EngineDBEnv.PORT]),
-                '-d', self.environment[oengcommcons.EngineDBEnv.DATABASE],
+                '-u', self.environment[oenginecons.EngineDBEnv.USER],
+                '-s', self.environment[oenginecons.EngineDBEnv.HOST],
+                '-p', str(self.environment[oenginecons.EngineDBEnv.PORT]),
+                '-d', self.environment[oenginecons.EngineDBEnv.DATABASE],
                 '-R',
                 '-A',
                 '-J',
@@ -139,7 +139,7 @@ class Plugin(plugin.PluginBase):
             raiseOnError=False,
             envAppend={
                 'DBFUNC_DB_PGPASSFILE': self.environment[
-                    oengcommcons.EngineDBEnv.PGPASS_FILE
+                    oenginecons.EngineDBEnv.PGPASS_FILE
                 ]
             },
         )
@@ -244,7 +244,7 @@ class Plugin(plugin.PluginBase):
 
     def _checkRunningTasks(self):
         dbstatement = database.Statement(
-            dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
         return (
@@ -310,7 +310,7 @@ class Plugin(plugin.PluginBase):
     def _validateEnv(self):
         self._enabled = (
             not self.environment[
-                oengcommcons.EngineDBEnv.NEW_DATABASE
+                oenginecons.EngineDBEnv.NEW_DATABASE
             ] and
             self.environment[
                 oenginecons.AsyncTasksEnv.CLEAR_TASKS
@@ -343,7 +343,7 @@ class Plugin(plugin.PluginBase):
         if runningTasks or compensations:
             self._askUserToStopTasks(runningTasks, compensations)
             dbstatement = database.Statement(
-                dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
+                dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
                 environment=self.environment,
             )
             try:

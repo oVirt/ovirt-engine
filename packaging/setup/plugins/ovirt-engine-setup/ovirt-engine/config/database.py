@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,8 +34,6 @@ from ovirt_engine import util as outil
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
-from ovirt_engine_setup.engine_common \
-    import constants as oengcommcons
 
 
 @util.export
@@ -78,23 +76,23 @@ class Plugin(plugin.PluginBase):
                     ) +
                     ''
                 ).format(
-                    host=self.environment[oengcommcons.EngineDBEnv.HOST],
-                    port=self.environment[oengcommcons.EngineDBEnv.PORT],
-                    user=self.environment[oengcommcons.EngineDBEnv.USER],
+                    host=self.environment[oenginecons.EngineDBEnv.HOST],
+                    port=self.environment[oenginecons.EngineDBEnv.PORT],
+                    user=self.environment[oenginecons.EngineDBEnv.USER],
                     password=outil.escape(
-                        self.environment[oengcommcons.EngineDBEnv.PASSWORD],
+                        self.environment[oenginecons.EngineDBEnv.PASSWORD],
                         '"\\$',
                     ),
-                    db=self.environment[oengcommcons.EngineDBEnv.DATABASE],
-                    secured=self.environment[oengcommcons.EngineDBEnv.SECURED],
+                    db=self.environment[oenginecons.EngineDBEnv.DATABASE],
+                    secured=self.environment[oenginecons.EngineDBEnv.SECURED],
                     securedValidation=self.environment[
-                        oengcommcons.EngineDBEnv.SECURED_HOST_VALIDATION
+                        oenginecons.EngineDBEnv.SECURED_HOST_VALIDATION
                     ],
                     jdbcTlsOptions='&'.join(
                         s for s in (
                             'ssl=true'
                             if self.environment[
-                                oengcommcons.EngineDBEnv.SECURED
+                                oenginecons.EngineDBEnv.SECURED
                             ] else '',
 
                             (
@@ -102,7 +100,7 @@ class Plugin(plugin.PluginBase):
                                 'org.postgresql.ssl.NonValidatingFactory'
                             )
                             if not self.environment[
-                                oengcommcons.EngineDBEnv.
+                                oenginecons.EngineDBEnv.
                                 SECURED_HOST_VALIDATION
                             ] else ''
                         ) if s

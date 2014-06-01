@@ -62,13 +62,13 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
         condition=lambda self: self.environment[
-            oengcommcons.EngineDBEnv.NEW_DATABASE
+            oenginecons.EngineDBEnv.NEW_DATABASE
         ]
     )
     def _misc(self):
         vdcoption.VdcOption(
             statement=self.environment[
-                oengcommcons.EngineDBEnv.STATEMENT
+                oenginecons.EngineDBEnv.STATEMENT
             ]
         ).updateVdcOptions(
             options=(

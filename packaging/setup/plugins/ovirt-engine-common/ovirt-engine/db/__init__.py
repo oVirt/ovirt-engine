@@ -23,11 +23,13 @@ from otopi import util
 
 
 from . import connection
+from . import pgpass
 
 
 @util.export
 def createPlugins(context):
     connection.Plugin(context=context)
+    pgpass.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

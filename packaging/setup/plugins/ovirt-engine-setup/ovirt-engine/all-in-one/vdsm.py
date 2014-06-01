@@ -197,7 +197,7 @@ class Plugin(plugin.PluginBase):
 
         SupportedClusterLevels = vdcoption.VdcOption(
             statement=self.environment[
-                oengcommcons.EngineDBEnv.STATEMENT
+                oenginecons.EngineDBEnv.STATEMENT
             ]
         ).getVdcOption(
             name='SupportedClusterLevels'

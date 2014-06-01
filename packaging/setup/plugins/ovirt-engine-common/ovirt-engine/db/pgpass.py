@@ -29,6 +29,7 @@ from otopi import plugin
 
 from ovirt_engine_setup.engine_common \
     import constants as oengcommcons
+from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import database
 
 
@@ -42,20 +43,20 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
-        self.environment[oengcommcons.EngineDBEnv.PGPASS_FILE] = None
+        self.environment[oenginecons.EngineDBEnv.PGPASS_FILE] = None
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         name=oengcommcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
         condition=lambda self: self.environment[
-            oengcommcons.EngineDBEnv.PASSWORD
+            oenginecons.EngineDBEnv.PASSWORD
         ] is not None
     )
     def _validation(self):
         # this required for dbvalidations
         database.OvirtUtils(
             plugin=self,
-            dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
         ).createPgPass()
 
     @plugin.event(
@@ -65,7 +66,7 @@ class Plugin(plugin.PluginBase):
     def _misc(self):
         database.OvirtUtils(
             plugin=self,
-            dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
         ).createPgPass()
 
 

@@ -72,7 +72,7 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self.environment[
             oenginecons.AIOEnv.ENABLE
         ] and self.environment[
-            oengcommcons.EngineDBEnv.NEW_DATABASE
+            oenginecons.EngineDBEnv.NEW_DATABASE
         ],
     )
     def _setup(self):

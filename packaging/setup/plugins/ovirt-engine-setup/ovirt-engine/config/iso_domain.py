@@ -454,7 +454,7 @@ class Plugin(plugin.PluginBase):
             oenginecons.Const.ISO_DOMAIN_IMAGE_UID,
         )
         self.logger.debug('Adding ISO domain into DB')
-        self.environment[oengcommcons.EngineDBEnv.STATEMENT].execute(
+        self.environment[oenginecons.EngineDBEnv.STATEMENT].execute(
             statement="""
                 select inst_add_iso_storage_domain(
                     %(storage_domain_id)s,

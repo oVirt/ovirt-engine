@@ -45,10 +45,53 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+    )
+    def _init(self):
+        self.environment.setdefault(
+            oenginecons.EngineDBEnv.HOST,
+            None
+        )
+        self.environment.setdefault(
+            oenginecons.EngineDBEnv.PORT,
+            None
+        )
+        self.environment.setdefault(
+            oenginecons.EngineDBEnv.SECURED,
+            None
+        )
+        self.environment.setdefault(
+            oenginecons.EngineDBEnv.SECURED_HOST_VALIDATION,
+            None
+        )
+        self.environment.setdefault(
+            oenginecons.EngineDBEnv.USER,
+            None
+        )
+        self.environment.setdefault(
+            oenginecons.EngineDBEnv.PASSWORD,
+            None
+        )
+        self.environment.setdefault(
+            oenginecons.EngineDBEnv.DATABASE,
+            None
+        )
+
+        self.environment[oenginecons.EngineDBEnv.CONNECTION] = None
+        self.environment[oenginecons.EngineDBEnv.STATEMENT] = None
+        self.environment[oenginecons.EngineDBEnv.NEW_DATABASE] = True
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
         name=oengcommcons.Stages.DB_CONNECTION_SETUP,
     )
     def _setup(self):
+        dbovirtutils = database.OvirtUtils(
+            plugin=self,
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+        )
+        dbovirtutils.detectCommands()
+
         config = configfile.ConfigFile([
             oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_DEFAULTS,
             oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG
@@ -57,30 +100,26 @@ class Plugin(plugin.PluginBase):
             try:
                 dbenv = {}
                 for e, k in (
-                    (oengcommcons.EngineDBEnv.HOST, 'ENGINE_DB_HOST'),
-                    (oengcommcons.EngineDBEnv.PORT, 'ENGINE_DB_PORT'),
-                    (oengcommcons.EngineDBEnv.USER, 'ENGINE_DB_USER'),
-                    (oengcommcons.EngineDBEnv.PASSWORD, 'ENGINE_DB_PASSWORD'),
-                    (oengcommcons.EngineDBEnv.DATABASE, 'ENGINE_DB_DATABASE'),
+                    (oenginecons.EngineDBEnv.HOST, 'ENGINE_DB_HOST'),
+                    (oenginecons.EngineDBEnv.PORT, 'ENGINE_DB_PORT'),
+                    (oenginecons.EngineDBEnv.USER, 'ENGINE_DB_USER'),
+                    (oenginecons.EngineDBEnv.PASSWORD, 'ENGINE_DB_PASSWORD'),
+                    (oenginecons.EngineDBEnv.DATABASE, 'ENGINE_DB_DATABASE'),
                 ):
                     dbenv[e] = config.get(k)
                 for e, k in (
-                    (oengcommcons.EngineDBEnv.SECURED, 'ENGINE_DB_SECURED'),
+                    (oenginecons.EngineDBEnv.SECURED, 'ENGINE_DB_SECURED'),
                     (
-                        oengcommcons.EngineDBEnv.SECURED_HOST_VALIDATION,
+                        oenginecons.EngineDBEnv.SECURED_HOST_VALIDATION,
                         'ENGINE_DB_SECURED_VALIDATION'
                     )
                 ):
                     dbenv[e] = config.getboolean(k)
 
-                dbovirtutils = database.OvirtUtils(
-                    plugin=self,
-                    dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
-                )
                 dbovirtutils.tryDatabaseConnect(dbenv)
                 self.environment.update(dbenv)
                 self.environment[
-                    oengcommcons.EngineDBEnv.NEW_DATABASE
+                    oenginecons.EngineDBEnv.NEW_DATABASE
                 ] = dbovirtutils.isNewDatabase()
             except RuntimeError as e:
                 self.logger.debug(
@@ -91,10 +130,10 @@ class Plugin(plugin.PluginBase):
                     'Cannot connect to Engine database using existing '
                     'credentials: {user}@{host}:{port}'
                 ).format(
-                    host=dbenv[oengcommcons.EngineDBEnv.HOST],
-                    port=dbenv[oengcommcons.EngineDBEnv.PORT],
-                    database=dbenv[oengcommcons.EngineDBEnv.DATABASE],
-                    user=dbenv[oengcommcons.EngineDBEnv.USER],
+                    host=dbenv[oenginecons.EngineDBEnv.HOST],
+                    port=dbenv[oenginecons.EngineDBEnv.PORT],
+                    database=dbenv[oenginecons.EngineDBEnv.DATABASE],
+                    user=dbenv[oenginecons.EngineDBEnv.USER],
                 )
                 if self.environment[
                     osetupcons.CoreEnv.ACTION

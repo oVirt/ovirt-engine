@@ -43,22 +43,22 @@ class Plugin(plugin.PluginBase):
             oenginecons.FileLocations.OVIRT_ENGINE_DB_VALIDATOR,
             '--user={user}'.format(
                 user=self.environment[
-                    oengcommcons.EngineDBEnv.USER
+                    oenginecons.EngineDBEnv.USER
                 ],
             ),
             '--host={host}'.format(
                 host=self.environment[
-                    oengcommcons.EngineDBEnv.HOST
+                    oenginecons.EngineDBEnv.HOST
                 ],
             ),
             '--port={port}'.format(
                 port=self.environment[
-                    oengcommcons.EngineDBEnv.PORT
+                    oenginecons.EngineDBEnv.PORT
                 ],
             ),
             '--database={database}'.format(
                 database=self.environment[
-                    oengcommcons.EngineDBEnv.DATABASE
+                    oenginecons.EngineDBEnv.DATABASE
                 ],
             ),
             '--log={logfile}'.format(
@@ -75,7 +75,7 @@ class Plugin(plugin.PluginBase):
             raiseOnError=False,
             envAppend={
                 'DBFUNC_DB_PGPASSFILE': self.environment[
-                    oengcommcons.EngineDBEnv.PGPASS_FILE
+                    oenginecons.EngineDBEnv.PGPASS_FILE
                 ]
             },
         )
@@ -103,7 +103,7 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            oengcommcons.EngineDBEnv.FIX_DB_VIOLATIONS,
+            oenginecons.EngineDBEnv.FIX_DB_VIOLATIONS,
             None
         )
 
@@ -115,7 +115,7 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
         ),
         condition=lambda self: not self.environment[
-            oengcommcons.EngineDBEnv.NEW_DATABASE
+            oenginecons.EngineDBEnv.NEW_DATABASE
         ],
     )
     def _validation(self):
@@ -125,7 +125,7 @@ class Plugin(plugin.PluginBase):
         violations, issues_found = self._checkDb()
         if issues_found:
             if self.environment[
-                oengcommcons.EngineDBEnv.FIX_DB_VIOLATIONS
+                oenginecons.EngineDBEnv.FIX_DB_VIOLATIONS
             ] is None:
                 self.logger.warn(
                     _(
@@ -136,7 +136,7 @@ class Plugin(plugin.PluginBase):
                     ),
                 )
                 self.environment[
-                    oengcommcons.EngineDBEnv.FIX_DB_VIOLATIONS
+                    oenginecons.EngineDBEnv.FIX_DB_VIOLATIONS
                 ] = self.dialog.queryBoolean(
                     dialog=self.dialog,
                     name='OVESETUP_FIX_DB_VALIDATIONS',
@@ -149,7 +149,7 @@ class Plugin(plugin.PluginBase):
                 )
 
             if not self.environment[
-                oengcommcons.EngineDBEnv.FIX_DB_VIOLATIONS
+                oenginecons.EngineDBEnv.FIX_DB_VIOLATIONS
             ]:
                 raise RuntimeError(
                     _(
@@ -161,7 +161,7 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_EARLY_MISC,
         condition=lambda self: self.environment[
-            oengcommcons.EngineDBEnv.FIX_DB_VIOLATIONS
+            oenginecons.EngineDBEnv.FIX_DB_VIOLATIONS
         ],
     )
     def _misc(self):

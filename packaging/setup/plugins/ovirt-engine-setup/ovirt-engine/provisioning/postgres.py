@@ -30,6 +30,7 @@ from otopi import plugin
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine_common \
     import constants as oengcommcons
+from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup import dialog
 from ovirt_engine_setup.engine_common import postgres
 
@@ -44,17 +45,8 @@ class Plugin(plugin.PluginBase):
         self._renamedDBResources = False
         self._provisioning = postgres.Provisioning(
             plugin=self,
-            dbenvkeys=oengcommcons.Const.ENGINE_DB_ENV_KEYS,
-            defaults={
-                'user': oengcommcons.Defaults.DEFAULT_DB_USER,
-                'database': oengcommcons.Defaults.DEFAULT_DB_DATABASE,
-                'port': oengcommcons.Defaults.DEFAULT_DB_PORT,
-                'secured': oengcommcons.Defaults.DEFAULT_DB_SECURED,
-                'hostValidation': (
-                    oengcommcons.Defaults.
-                    DEFAULT_DB_SECURED_HOST_VALIDATION
-                ),
-            },
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+            defaults=oenginecons.Const.DEFAULT_ENGINE_DB_ENV_KEYS,
         )
 
     @plugin.event(
@@ -76,7 +68,7 @@ class Plugin(plugin.PluginBase):
                 osetupcons.CoreEnv.DEVELOPER_MODE
             ] and
             self.environment[
-                oengcommcons.EngineDBEnv.NEW_DATABASE
+                oenginecons.EngineDBEnv.NEW_DATABASE
             ]
         ),
     )
@@ -113,10 +105,10 @@ class Plugin(plugin.PluginBase):
                 default=True,
             )
             if local:
-                self.environment[oengcommcons.EngineDBEnv.HOST] = 'localhost'
+                self.environment[oenginecons.EngineDBEnv.HOST] = 'localhost'
                 self.environment[
-                    oengcommcons.EngineDBEnv.PORT
-                ] = oengcommcons.Defaults.DEFAULT_DB_PORT
+                    oenginecons.EngineDBEnv.PORT
+                ] = oenginecons.Defaults.DEFAULT_DB_PORT
 
                 # TODO:
                 # consider creating database and role
@@ -156,7 +148,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         priority=plugin.Stages.PRIORITY_LAST,
         condition=lambda self: self.environment[
-            oengcommcons.EngineDBEnv.HOST
+            oenginecons.EngineDBEnv.HOST
         ] == 'localhost',
     )
     def _customization_firewall(self):
@@ -206,10 +198,10 @@ class Plugin(plugin.PluginBase):
                 '    Database user name: {user}\n'
             ).format(
                 database=self.environment[
-                    oengcommcons.EngineDBEnv.DATABASE
+                    oenginecons.EngineDBEnv.DATABASE
                 ],
                 user=self.environment[
-                    oengcommcons.EngineDBEnv.USER
+                    oenginecons.EngineDBEnv.USER
                 ],
             )
         )

@@ -35,8 +35,6 @@ from otopi import filetransaction
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
-from ovirt_engine_setup.engine_common \
-    import constants as oengcommcons
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup import dialog
 
@@ -120,7 +118,7 @@ class Plugin(plugin.PluginBase):
                 oenginecons.SystemEnv.NFS_CONFIG_ENABLED_LEGACY_IN_POSTINSTALL
             ]
         ):
-            if not self.environment[oengcommcons.EngineDBEnv.NEW_DATABASE]:
+            if not self.environment[oenginecons.EngineDBEnv.NEW_DATABASE]:
                 self.environment[
                     oenginecons.SystemEnv.NFS_CONFIG_ENABLED
                 ] = False

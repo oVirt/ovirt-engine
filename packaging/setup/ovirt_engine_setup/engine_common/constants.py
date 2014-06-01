@@ -27,6 +27,7 @@ _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 from otopi import util
 
+
 from . import config
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.constants import classproperty
@@ -61,14 +62,6 @@ class Defaults(object):
             'default': 4294967295,
         }
         return SHMMAX.get(platform.machine(), SHMMAX['default'])
-
-    DEFAULT_DB_HOST = 'localhost'
-    DEFAULT_DB_PORT = 5432
-    DEFAULT_DB_DATABASE = 'engine'
-    DEFAULT_DB_USER = 'engine'
-    DEFAULT_DB_PASSWORD = ''
-    DEFAULT_DB_SECURED = False
-    DEFAULT_DB_SECURED_HOST_VALIDATION = False
 
     DEFAULT_PKI_COUNTRY = 'US'
     DEFAULT_PKI_STORE_PASS = 'mypass'
@@ -115,6 +108,8 @@ class Stages(object):
 
     DB_CONNECTION_SETUP = 'osetup.db.connection.setup'
     DB_CONNECTION_CUSTOMIZATION = 'osetup.db.connection.customization'
+    DB_OWNERS_CONNECTIONS_CUSTOMIZED = \
+        'osetup.db.owners.connections.customized'
     DB_CONNECTION_STATUS = 'osetup.db.connection.status'
     DB_CREDENTIALS_AVAILABLE_EARLY = 'osetup.db.connection.credentials.early'
     DB_CREDENTIALS_AVAILABLE_LATE = 'osetup.db.connection.credentials.late'
@@ -133,96 +128,6 @@ class Stages(object):
     DIALOG_TITLES_E_PKI = 'osetup.dialog.titles.pki.end'
 
     RENAME_PKI_CONF_MISC = 'osetup.rename.pki.conf.misc'
-
-
-@util.export
-@util.codegen
-class Const(object):
-
-    @classproperty
-    def ENGINE_DB_ENV_KEYS(self):
-        return {
-            'host': EngineDBEnv.HOST,
-            'port': EngineDBEnv.PORT,
-            'secured': EngineDBEnv.SECURED,
-            'hostValidation': EngineDBEnv.SECURED_HOST_VALIDATION,
-            'user': EngineDBEnv.USER,
-            'password': EngineDBEnv.PASSWORD,
-            'database': EngineDBEnv.DATABASE,
-            'connection': EngineDBEnv.CONNECTION,
-            'pgpassfile': EngineDBEnv.PGPASS_FILE,
-        }
-
-
-@util.export
-@util.codegen
-@osetupattrsclass
-class EngineDBEnv(object):
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('Engine database host'),
-    )
-    def HOST(self):
-        return 'OVESETUP_DB/host'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('Engine database port'),
-    )
-    def PORT(self):
-        return 'OVESETUP_DB/port'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('Engine database secured connection'),
-    )
-    def SECURED(self):
-        return 'OVESETUP_DB/secured'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('Engine database host name validation'),
-    )
-    def SECURED_HOST_VALIDATION(self):
-        return 'OVESETUP_DB/securedHostValidation'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('Engine database name'),
-    )
-    def DATABASE(self):
-        return 'OVESETUP_DB/database'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('Engine database user name'),
-    )
-    def USER(self):
-        return 'OVESETUP_DB/user'
-
-    @osetupattrs(
-        answerfile=True,
-    )
-    def PASSWORD(self):
-        return 'OVESETUP_DB/password'
-
-    CONNECTION = 'OVESETUP_DB/connection'
-    STATEMENT = 'OVESETUP_DB/statement'
-    PGPASS_FILE = 'OVESETUP_DB/pgPassFile'
-    NEW_DATABASE = 'OVESETUP_DB/newDatabase'
-
-    @osetupattrs(
-        answerfile=True,
-    )
-    def FIX_DB_VIOLATIONS(self):
-        return 'OVESETUP_DB/fixDbViolations'
 
 
 @util.export

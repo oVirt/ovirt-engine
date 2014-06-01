@@ -74,7 +74,7 @@ class Plugin(plugin.PluginBase):
     )
     def _customization(self):
         self._enabled = self.environment[
-            oengcommcons.EngineDBEnv.NEW_DATABASE
+            oenginecons.EngineDBEnv.NEW_DATABASE
         ]
 
         if not self._enabled:
@@ -146,7 +146,7 @@ class Plugin(plugin.PluginBase):
     def _miscAlways(self):
         vdcoption.VdcOption(
             statement=self.environment[
-                oengcommcons.EngineDBEnv.STATEMENT
+                oenginecons.EngineDBEnv.STATEMENT
             ]
         ).updateVdcOptions(
             options=(
@@ -163,13 +163,13 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
         condition=lambda self: self.environment[
-            oengcommcons.EngineDBEnv.NEW_DATABASE
+            oenginecons.EngineDBEnv.NEW_DATABASE
         ]
     )
     def _miscNewDatabase(self):
         vdcoption.VdcOption(
             statement=self.environment[
-                oengcommcons.EngineDBEnv.STATEMENT
+                oenginecons.EngineDBEnv.STATEMENT
             ]
         ).updateVdcOptions(
             options=(
@@ -213,13 +213,13 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Stages.CONFIG_DB_ENCRYPTION_AVAILABLE,
         ),
         condition=lambda self: self.environment[
-            oengcommcons.EngineDBEnv.NEW_DATABASE
+            oenginecons.EngineDBEnv.NEW_DATABASE
         ]
     )
     def _miscEncrypted(self):
         vdcoption.VdcOption(
             statement=self.environment[
-                oengcommcons.EngineDBEnv.STATEMENT
+                oenginecons.EngineDBEnv.STATEMENT
             ]
         ).updateVdcOptions(
             options=(
@@ -249,7 +249,7 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
         ),
         condition=lambda self: self.environment[
-            oengcommcons.EngineDBEnv.NEW_DATABASE
+            oenginecons.EngineDBEnv.NEW_DATABASE
         ]
     )
     def _closeup(self):

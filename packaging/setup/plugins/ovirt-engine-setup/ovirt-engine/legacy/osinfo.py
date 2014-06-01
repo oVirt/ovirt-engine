@@ -50,7 +50,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
             not self.environment[
-                oengcommcons.EngineDBEnv.NEW_DATABASE
+                oenginecons.EngineDBEnv.NEW_DATABASE
             ] and
             not self.environment[
                 osetupcons.CoreEnv.DEVELOPER_MODE
@@ -82,7 +82,7 @@ class Plugin(plugin.PluginBase):
         ):
             val = vdcoption.VdcOption(
                 statement=self.environment[
-                    oengcommcons.EngineDBEnv.STATEMENT
+                    oenginecons.EngineDBEnv.STATEMENT
                 ]
             ).getVdcOption(name=vdco)
 
@@ -98,7 +98,7 @@ class Plugin(plugin.PluginBase):
             #
             vdcoption.VdcOption(
                 statement=self.environment[
-                    oengcommcons.EngineDBEnv.STATEMENT
+                    oenginecons.EngineDBEnv.STATEMENT
                 ]
             ).updateVdcOptions(
                 options=(

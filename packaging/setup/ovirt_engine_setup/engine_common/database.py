@@ -20,6 +20,7 @@ import atexit
 import os
 import tempfile
 import datetime
+import socket
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -32,6 +33,10 @@ from otopi import util
 
 
 from ovirt_engine import util as outil
+
+
+from ovirt_engine_setup import dialog
+from ovirt_engine_setup import util as osetuputil
 
 
 @util.export
@@ -222,6 +227,10 @@ class OvirtUtils(base.Base):
     @property
     def command(self):
         return self._plugin.command
+
+    @property
+    def dialog(self):
+        return self._plugin.dialog
 
     def __init__(
         self,
@@ -581,6 +590,230 @@ class OvirtUtils(base.Base):
             # errors. We currently always have one about plpgsql already
             # existing. When doing that, verify with both pg 8 and 9.
         )
+
+    def _checkDbEncoding(self, environment, name):
+
+        statement = Statement(
+            environment=environment,
+            dbenvkeys=self._dbenvkeys,
+        )
+        encoding = statement.execute(
+            statement="""
+                show server_encoding
+            """,
+            ownConnection=True,
+            transaction=False,
+        )[0]['server_encoding']
+        if encoding.lower() != 'utf8':
+            raise RuntimeError(
+                _(
+                    'Encoding of the {name} database is {encoding}. '
+                    '{name} installation is only supported on servers '
+                    'with default encoding set to UTF8. Please fix the '
+                    'default DB encoding before you continue'
+                ).format(
+                    encoding=encoding,
+                    name=name,
+                )
+            )
+
+    def getCredentials(
+        self,
+        name,
+        queryprefix,
+        defaultdbenvkeys,
+        show_create_msg=False
+    ):
+        interactive = None in (
+            self.environment[self._dbenvkeys['host']],
+            self.environment[self._dbenvkeys['port']],
+            self.environment[self._dbenvkeys['database']],
+            self.environment[self._dbenvkeys['user']],
+            self.environment[self._dbenvkeys['password']],
+        )
+
+        if interactive and show_create_msg:
+            self.dialog.note(
+                text=_(
+                    "\n"
+                    "ATTENTION\n"
+                    "\n"
+                    "Manual action required.\n"
+                    "Please create database for ovirt-engine use. "
+                    "Use the following commands as an example:\n"
+                    "\n"
+                    "create role {user} with login encrypted password '{user}'"
+                    ";\n"
+                    "create database {database} owner {user}\n"
+                    " template template0\n"
+                    " encoding 'UTF8' lc_collate 'en_US.UTF-8'\n"
+                    " lc_ctype 'en_US.UTF-8';\n"
+                    "\n"
+                    "Make sure that database can be accessed remotely.\n"
+                    "\n"
+                ).format(
+                    user=defaultdbenvkeys['user'],
+                    database=defaultdbenvkeys['database'],
+                ),
+            )
+
+        connectionValid = False
+        while not connectionValid:
+            host = self.environment[self._dbenvkeys['host']]
+            port = self.environment[self._dbenvkeys['port']]
+            secured = self.environment[self._dbenvkeys['secured']]
+            securedHostValidation = self.environment[
+                self._dbenvkeys['hostValidation']
+            ]
+            db = self.environment[self._dbenvkeys['database']]
+            user = self.environment[self._dbenvkeys['user']]
+            password = self.environment[self._dbenvkeys['password']]
+
+            if host is None:
+                while True:
+                    host = self.dialog.queryString(
+                        name='{qpref}HOST'.format(qpref=queryprefix),
+                        note=_(
+                            '{name} database host [@DEFAULT@]: '
+                        ).format(
+                            name=name,
+                        ),
+                        prompt=True,
+                        default=defaultdbenvkeys['host'],
+                    )
+                    try:
+                        socket.getaddrinfo(host, None)
+                        break  # do while missing in python
+                    except socket.error as e:
+                        self.logger.error(
+                            _('Host is invalid: {error}').format(
+                                error=e.strerror
+                            )
+                        )
+
+            if port is None:
+                while True:
+                    try:
+                        port = osetuputil.parsePort(
+                            self.dialog.queryString(
+                                name='{qpref}PORT'.format(qpref=queryprefix),
+                                note=_(
+                                    '{name} database port [@DEFAULT@]: '
+                                ).format(
+                                    name=name,
+                                ),
+                                prompt=True,
+                                default=defaultdbenvkeys['port'],
+                            )
+                        )
+                        break  # do while missing in python
+                    except ValueError:
+                        pass
+
+            if secured is None:
+                secured = dialog.queryBoolean(
+                    dialog=self.dialog,
+                    name='{qpref}SECURED'.format(qpref=queryprefix),
+                    note=_(
+                        '{name} database secured connection (@VALUES@) '
+                        '[@DEFAULT@]: '
+                    ).format(
+                        name=name,
+                    ),
+                    prompt=True,
+                    default=defaultdbenvkeys['secured'],
+                )
+
+            if not secured:
+                securedHostValidation = False
+
+            if securedHostValidation is None:
+                securedHostValidation = dialog.queryBoolean(
+                    dialog=self.dialog,
+                    name='{qpref}SECURED_HOST_VALIDATION'.format(
+                        qpref=queryprefix
+                    ),
+                    note=_(
+                        '{name} database host name validation in secured '
+                        'connection (@VALUES@) [@DEFAULT@]: '
+                    ).format(
+                        name=name,
+                    ),
+                    prompt=True,
+                    default=True,
+                ) == 'yes'
+
+            if db is None:
+                db = self.dialog.queryString(
+                    name='{qpref}DATABASE'.format(qpref=queryprefix),
+                    note=_(
+                        '{name} database name [@DEFAULT@]: '
+                    ).format(
+                        name=name,
+                    ),
+                    prompt=True,
+                    default=defaultdbenvkeys['database'],
+                )
+
+            if user is None:
+                user = self.dialog.queryString(
+                    name='{qpref}USER'.format(qpref=queryprefix),
+                    note=_(
+                        '{name} database user [@DEFAULT@]: '
+                    ).format(
+                        name=name,
+                    ),
+                    prompt=True,
+                    default=defaultdbenvkeys['user'],
+                )
+
+            if password is None:
+                password = self.dialog.queryString(
+                    name='{qpref}PASSWORD'.format(qpref=queryprefix),
+                    note=_(
+                        '{name} database password: '
+                    ).format(
+                        name=name,
+                    ),
+                    prompt=True,
+                    hidden=True,
+                )
+
+            dbenv = {
+                self._dbenvkeys['host']: host,
+                self._dbenvkeys['port']: port,
+                self._dbenvkeys['secured']: secured,
+                self._dbenvkeys['hostValidation']: securedHostValidation,
+                self._dbenvkeys['user']: user,
+                self._dbenvkeys['password']: password,
+                self._dbenvkeys['database']: db,
+            }
+
+            if interactive:
+                try:
+                    self.tryDatabaseConnect(dbenv)
+                    self._checkDbEncoding(environment=dbenv, name=name)
+                    self.environment.update(dbenv)
+                    connectionValid = True
+                except RuntimeError as e:
+                    self.logger.error(
+                        _('Cannot connect to {name} database: {error}').format(
+                            name=name,
+                            error=e,
+                        )
+                    )
+            else:
+                # this is usally reached in provisioning
+                # or if full ansewr file
+                self.environment.update(dbenv)
+                connectionValid = True
+
+        try:
+            self.environment[
+                self._dbenvkeys['newDatabase']
+            ] = self.isNewDatabase()
+        except:
+            self.logger.debug('database connection failed', exc_info=True)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

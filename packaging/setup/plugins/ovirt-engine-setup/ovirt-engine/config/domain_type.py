@@ -68,7 +68,7 @@ class Plugin(plugin.PluginBase):
             oenginecons.Stages.DIALOG_TITLES_S_ENGINE,
         ),
         condition=lambda self: (
-            self.environment[oengcommcons.EngineDBEnv.NEW_DATABASE] and
+            self.environment[oenginecons.EngineDBEnv.NEW_DATABASE] and
             self.environment[
                 osetupcons.ConfigEnv.APPLICATION_MODE
             ] != 'gluster'
@@ -107,7 +107,7 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _misc(self):
-        self.environment[oengcommcons.EngineDBEnv.STATEMENT].execute(
+        self.environment[oenginecons.EngineDBEnv.STATEMENT].execute(
             statement="""
                 select inst_update_default_storage_pool_type (%(type)s)
             """,

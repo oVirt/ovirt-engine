@@ -327,7 +327,7 @@ class Plugin(plugin.PluginBase):
     )
     def miscOptions(self):
         vdcoption.VdcOption(
-            statement=self.environment[oengcommcons.EngineDBEnv.STATEMENT]
+            statement=self.environment[oenginecons.EngineDBEnv.STATEMENT]
         ).updateVdcOptions(
             options=(
                 {

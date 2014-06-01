@@ -64,7 +64,7 @@ class Plugin(plugin.PluginBase):
             oenginecons.Stages.DIALOG_TITLES_S_ENGINE,
         ),
         condition=lambda self: self.environment[
-            oengcommcons.EngineDBEnv.NEW_DATABASE
+            oenginecons.EngineDBEnv.NEW_DATABASE
         ],
         name=osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE
     )
@@ -100,7 +100,7 @@ class Plugin(plugin.PluginBase):
 
         v = self.environment[osetupcons.ConfigEnv.APPLICATION_MODE]
 
-        self.environment[oengcommcons.EngineDBEnv.STATEMENT].execute(
+        self.environment[oenginecons.EngineDBEnv.STATEMENT].execute(
             statement="""
                 select inst_update_service_type(
                     %(clusterId)s,
@@ -111,7 +111,7 @@ class Plugin(plugin.PluginBase):
             args=dict(
                 clusterId=vdcoption.VdcOption(
                     statement=self.environment[
-                        oengcommcons.EngineDBEnv.STATEMENT
+                        oenginecons.EngineDBEnv.STATEMENT
                     ]
                 ).getVdcOption(name='AutoRegistrationDefaultVdsGroupID'),
                 virt=(v in ('both', 'virt')),
@@ -120,7 +120,7 @@ class Plugin(plugin.PluginBase):
         )
 
         if v != 'both':
-            self.environment[oengcommcons.EngineDBEnv.STATEMENT].execute(
+            self.environment[oenginecons.EngineDBEnv.STATEMENT].execute(
                 statement="""
                     select fn_db_update_config_value(
                         'ApplicationMode',
