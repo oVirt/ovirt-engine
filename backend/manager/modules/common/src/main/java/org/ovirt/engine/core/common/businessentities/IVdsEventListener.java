@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public interface IVdsEventListener {
 
     EventResult masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId, boolean isReconstructToInactiveDomains, boolean canReconstructToCurrentMaster); // BLL
 
-    void processOnVmStop(Guid vmId);
+    void processOnVmStop(Collection<Guid> vmIds);
 
     boolean vdsUpEvent(VDS vds);
 
