@@ -106,7 +106,7 @@ public class VdsUpdateRunTimeInfo {
     private final List<VmDynamic> _poweringUpVms = new ArrayList<>();
     private final List<Guid> _vmsToRerun = new ArrayList<>();
     private final List<Guid> _autoVmsToRun = new ArrayList<>();
-    private final List<Guid> _vmsMovedToDown = new ArrayList<>();
+    private final Set<Guid> _vmsMovedToDown = new HashSet<>();
     private final List<Guid> _vmsToRemoveFromAsync = new ArrayList<>();
     private final List<Guid> _succededToRunVms = new ArrayList<>();
     private static final Map<Guid, Integer> vmsWithBalloonDriverProblem = new HashMap<>();
