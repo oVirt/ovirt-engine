@@ -201,6 +201,7 @@ public class CommandBaseTest {
         command.logRenamedEntity();
         when(command.getEntityOldName()).thenReturn("foo");
         when(command.getEntityNewName()).thenReturn("bar");
+        when(command.getCurrentUser()).thenReturn(mock(DbUser.class));
         command.logRenamedEntity();
         when(command.getEntityOldName()).thenReturn(null);
         when(command.getEntityNewName()).thenReturn("bar");
