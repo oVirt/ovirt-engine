@@ -2,15 +2,15 @@ package org.ovirt.engine.core.searchbackend;
 
 
 public class NetworkConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
-    private static final String NAME = "NAME";
-    private static final String DESCRIPTION = "DESCRIPTION";
-    private static final String COMMENT = "COMMENT";
-    private static final String VLAN_ID = "VLANID";
-    private static final String STP = "STP";
-    private static final String MTU = "MTU";
-    private static final String VM_NETWORK = "VMNETWORK";
-    private static final String DATA_CENTER = "DATACENTER";
-    private static final String LABEL = "LABEL";
+    public static final String NAME = "NAME";
+    public static final String DESCRIPTION = "DESCRIPTION";
+    public static final String COMMENT = "COMMENT";
+    public static final String VLAN_ID = "VLANID";
+    public static final String STP = "STP";
+    public static final String MTU = "MTU";
+    public static final String VM_NETWORK = "VMNETWORK";
+    public static final String DATA_CENTER = "DATACENTER";
+    public static final String LABEL = "LABEL";
 
     public NetworkConditionFieldAutoCompleter() {
         // Building the basic verbs dict.

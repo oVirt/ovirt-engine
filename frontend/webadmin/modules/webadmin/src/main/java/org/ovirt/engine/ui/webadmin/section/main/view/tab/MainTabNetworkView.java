@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.searchbackend.NetworkConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.LinkColumnWithTooltip;
@@ -70,6 +71,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                 return object.getName();
             }
         };
+        nameColumn.makeSortable(NetworkConditionFieldAutoCompleter.NAME);
 
         getTable().addColumn(nameColumn, constants.nameNetwork(), "200px"); //$NON-NLS-1$
 
@@ -82,6 +84,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                 return object.getDataCenterName();
             }
         };
+        dcColumn.makeSortable(NetworkConditionFieldAutoCompleter.DATA_CENTER);
 
         getTable().addColumn(dcColumn, constants.dcNetwork(), "200px"); //$NON-NLS-1$
 
@@ -91,6 +94,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                 return object.getDescription();
             }
         };
+        descriptionColumn.makeSortable(NetworkConditionFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descriptionColumn, constants.descriptionNetwork(), "300px"); //$NON-NLS-1$
 
         SafeHtmlWithSafeHtmlTooltipColumn<NetworkView> roleColumn =
@@ -141,6 +145,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                 return object.getVlanId() == null ? "-" : object.getVlanId().toString(); //$NON-NLS-1$
             }
         };
+        vlanColumn.makeSortable(NetworkConditionFieldAutoCompleter.VLAN_ID);
         getTable().addColumn(vlanColumn, constants.vlanNetwork(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<NetworkView> labelColumn = new TextColumnWithTooltip<NetworkView>() {
@@ -149,6 +154,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                 return object.getLabel() == null ? "-" : object.getLabel(); //$NON-NLS-1$
             }
         };
+        labelColumn.makeSortable(NetworkConditionFieldAutoCompleter.LABEL);
         getTable().addColumn(labelColumn, constants.networkLabelNetworksTab(), "200px"); //$NON-NLS-1$
 
         providerColumn = new LinkColumnWithTooltip<NetworkView>() {
