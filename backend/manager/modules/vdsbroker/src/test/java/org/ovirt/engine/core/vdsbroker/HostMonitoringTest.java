@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -22,9 +23,12 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
+
+import java.util.Collections;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -54,30 +58,21 @@ public class HostMonitoringTest {
     );
 
     private VDS vds;
-
-    HostMonitoring updater;
+    private HostMonitoring updater;
 
     @Mock
     VdsGroupDAO groupDAO;
-
-
-
+    @Mock
+    InterfaceDao interfaceDao;
     @Mock
     DbFacade dbFacade;
-
     @Mock
     VDSGroup cluster;
-
-
     AuditLogDAO mockAuditLogDao = new AuditLogDaoMocker();
-
-
     @Mock
     ResourceManager resourceManager;
-
     @Mock
     private VdsManager vdsManager;
-
     @Mock
     private IVdsEventListener vdsEventlistener;
 
@@ -108,6 +103,8 @@ public class HostMonitoringTest {
         when(dbFacade.getVdsGroupDao()).thenReturn(groupDAO);
         when(dbFacade.getAuditLogDao()).thenReturn(mockAuditLogDao);
         when(groupDAO.get((Guid) any())).thenReturn(cluster);
+        when(dbFacade.getInterfaceDao()).thenReturn(interfaceDao);
+        when(interfaceDao.getAllInterfacesForVds(((Guid) any()))).thenReturn(Collections.<VdsNetworkInterface>emptyList());
     }
 
     private void initVds() {

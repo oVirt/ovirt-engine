@@ -69,8 +69,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DestroyVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FullListVdsCommand;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSErrorException;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSProtocolException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
@@ -182,44 +180,43 @@ public class VmsMonitoring {
         // are allowed to be updated by updateVmJobs()
         refreshExistingVmJobList();
 
-        if (fetchRunningVms()) {
-            // refreshCommitedMemory must be called before we modify runningVms, because
-            // we iterate over it there, assuming it is the same as it was received from VDSM
-            refreshCommitedMemory();
+        fetchRunningVms();
+        // refreshCommitedMemory must be called before we modify runningVms, because
+        // we iterate over it there, assuming it is the same as it was received from VDSM
+        refreshCommitedMemory();
 
-            filterVmsFromMonitoringCycle();
+        filterVmsFromMonitoringCycle();
 
-            List<Guid> staleRunningVms = checkVmsStatusChanged();
+        List<Guid> staleRunningVms = checkVmsStatusChanged();
 
-            proceedWatchdogEvents();
+        proceedWatchdogEvents();
 
-            proceedBalloonCheck();
+        proceedBalloonCheck();
 
-            proceedDownVms();
+        proceedDownVms();
 
-            proceedGuaranteedMemoryCheck();
+        proceedGuaranteedMemoryCheck();
 
-            processExternallyManagedVms();
-            // update repository and check if there are any vm in cache that not
-            // in vdsm
-            updateRepository(staleRunningVms);
-            // Going over all returned VMs and updting the data structures
-            // accordingly
+        processExternallyManagedVms();
+        // update repository and check if there are any vm in cache that not
+        // in vdsm
+        updateRepository(staleRunningVms);
+        // Going over all returned VMs and updting the data structures
+        // accordingly
 
-            // checking the db for incoherent vm status;
-            // setVmStatusDownForVmNotFound();
+        // checking the db for incoherent vm status;
+        // setVmStatusDownForVmNotFound();
 
-            // Handle VM devices were changed (for 3.1 cluster and above)
-            if (!VmDeviceCommonUtils.isOldClusterVersion(vds.getVdsGroupCompatibilityVersion())) {
-                handleVmDeviceChange();
-            }
-
-            prepareGuestAgentNetworkDevicesForUpdate();
-
-            updateLunDisks();
-
-            updateVmJobs();
+        // Handle VM devices were changed (for 3.1 cluster and above)
+        if (!VmDeviceCommonUtils.isOldClusterVersion(vds.getVdsGroupCompatibilityVersion())) {
+            handleVmDeviceChange();
         }
+
+        prepareGuestAgentNetworkDevicesForUpdate();
+
+        updateLunDisks();
+
+        updateVmJobs();
     }
 
     /**
@@ -241,10 +238,9 @@ public class VmsMonitoring {
     }
 
     /**
-     * fetch running VMs and populate the internal structure. if we fail, handle the error
-     * @return true if we could get vms otherwise false
+     * fetch running VMs and populate the internal structure.
      */
-    protected boolean fetchRunningVms() {
+    protected void fetchRunningVms() {
         VDSCommandType commandType =
                 vdsManager.getRefreshStatistics()
                         ? VDSCommandType.GetAllVmStats
@@ -252,26 +248,6 @@ public class VmsMonitoring {
         VDSReturnValue vdsReturnValue =
                 getResourceManager().runVdsCommand(commandType, new VdsIdAndVdsVDSCommandParametersBase(vds));
         runningVms = (Map<Guid, VmInternalData>) vdsReturnValue.getReturnValue();
-
-        if (!vdsReturnValue.getSucceeded()) {
-            RuntimeException callException = vdsReturnValue.getExceptionObject();
-            if (callException != null) {
-                if (callException instanceof VDSErrorException) {
-                    log.error("Failed vds listing,  vds='{}'({}): {}",
-                            vds.getName(), vds.getId(), vdsReturnValue.getExceptionString());
-                } else if (callException instanceof VDSNetworkException) {
-                    _saveVdsDynamic = vdsManager.handleNetworkException((VDSNetworkException) callException, vds);
-                } else if (callException instanceof VDSProtocolException) {
-                    log.error("Failed vds listing,  vds='{}'({}): {}",
-                            vds.getName(), vds.getId(), vdsReturnValue.getExceptionString());
-                }
-                throw callException;
-            } else {
-                log.error("{} failed with no exception!", commandType.name());
-            }
-        }
-
-        return vdsReturnValue.getSucceeded();
     }
 
     private void refreshCommitedMemory() {
