@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -692,10 +693,22 @@ public abstract class AbstractDiskModel extends DiskModel
             getIsPlugged().setEntity(false);
         }
         else {
-            getIsPlugged().setIsChangable(isEditEnabled());
-            getIsPlugged().setEntity(true);
+            if (!canDiskBePlugged(getVm())) {
+                getIsPlugged().setChangeProhibitionReason(CONSTANTS.cannotPlugDiskIncorrectVmStatus());
+                getIsPlugged().setIsChangable(false);
+                getIsPlugged().setEntity(false);
+            }
+            else {
+                getIsPlugged().setIsChangable(isEditEnabled());
+                getIsPlugged().setEntity(true);
+            }
         }
     }
+
+    private boolean canDiskBePlugged(VM vm) {
+        return vm.getStatus() == VMStatus.Up || vm.getStatus() == VMStatus.Down || vm.getStatus() == VMStatus.Paused;
+    }
+
 
     private void wipeAfterDelete_EntityChanged(EventArgs e) {
         if (!getIsWipeAfterDelete().getIsChangable() && getIsWipeAfterDelete().getEntity())
