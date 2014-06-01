@@ -201,9 +201,15 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
     @Override
     protected void syncSearch() {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Network, isCaseSensitiveSearch());
+        SearchParameters tempVar =
+                new SearchParameters(applySortOptions(getSearchString()), SearchType.Network, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
+    }
+
+    @Override
+    public boolean supportsServerSideSorting() {
+        return true;
     }
 
     @Override
