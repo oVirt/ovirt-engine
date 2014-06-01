@@ -192,12 +192,7 @@ public class RunVmParams extends VmOperationParameterBase {
         this.cpuShares = cpuShares;
     }
 
-    // for REST-API test compat
     public Boolean getBootMenuEnabled() {
-        return bootMenuEnabled;
-    }
-
-    public Boolean isBootMenuEnabled() {
         return bootMenuEnabled;
     }
 
@@ -205,16 +200,19 @@ public class RunVmParams extends VmOperationParameterBase {
         this.bootMenuEnabled = bootMenuEnabled;
     }
 
-    public Boolean getSpiceFileTransferEnabled() { return spiceFileTransferEnabled; }
+    public Boolean getSpiceFileTransferEnabled() {
+        return spiceFileTransferEnabled;
+    }
 
-    public Boolean isSpiceFileTransferEnabled() { return spiceFileTransferEnabled; }
+    public void setSpiceFileTransferEnabled(Boolean spiceFileTransferEnabled) {
+        this.spiceFileTransferEnabled = spiceFileTransferEnabled;
+    }
 
-    public void setSpiceFileTransferEnabled(Boolean spiceFileTransferEnabled) { this.spiceFileTransferEnabled = spiceFileTransferEnabled; }
+    public Boolean getSpiceCopyPasteEnabled() {
+        return spiceCopyPasteEnabled;
+    }
 
-    // for REST-API test compat
-    public Boolean getSpiceCopyPasteEnabled() { return spiceCopyPasteEnabled; }
-
-    public Boolean isSpiceCopyPasteEnabled() { return spiceCopyPasteEnabled; }
-
-    public void setSpiceCopyPasteEnabled(Boolean spiceCopyPasteEnabled) { this.spiceCopyPasteEnabled = spiceCopyPasteEnabled; }
+    public void setSpiceCopyPasteEnabled(Boolean spiceCopyPasteEnabled) {
+        this.spiceCopyPasteEnabled = spiceCopyPasteEnabled;
+    }
 }

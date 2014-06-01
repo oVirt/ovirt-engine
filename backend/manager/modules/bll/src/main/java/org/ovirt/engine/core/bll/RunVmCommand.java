@@ -624,10 +624,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         getVm().setKvmEnable(getParameters().getKvmEnable());
         getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
         getVm().setAcpiEnable(getParameters().getAcpiEnable());
-        getVm().setBootMenuEnabled(getParameters().getBootMenuEnabled() == null ? getVm().isBootMenuEnabled() : getParameters().isBootMenuEnabled());
-
-        getVm().setSpiceFileTransferEnabled(getParameters().getSpiceFileTransferEnabled() == null ? getVm().isSpiceFileTransferEnabled() : getParameters().isSpiceFileTransferEnabled());
-        getVm().setSpiceCopyPasteEnabled(getParameters().getSpiceCopyPasteEnabled() == null ? getVm().isSpiceCopyPasteEnabled() : getParameters().isSpiceCopyPasteEnabled());
+        if (getParameters().getBootMenuEnabled() != null) {
+            getVm().setBootMenuEnabled(getParameters().getBootMenuEnabled());
+        }
+        if (getParameters().getSpiceFileTransferEnabled() != null) {
+            getVm().setSpiceFileTransferEnabled(getParameters().getSpiceFileTransferEnabled());
+        }
+        if (getParameters().getSpiceCopyPasteEnabled() != null) {
+            getVm().setSpiceCopyPasteEnabled(getParameters().getSpiceCopyPasteEnabled());
+        }
 
         // Clear the first user:
         getVm().setConsoleUserId(null);
