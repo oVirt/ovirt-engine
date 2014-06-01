@@ -335,7 +335,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void processOnClientIpChange(final VDS vds, final Guid vmId) {
+    public void processOnClientIpChange(final Guid vmId) {
         final VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
         final AuditLogableBase event = new AuditLogableBase();
         event.setVmId(vmId);

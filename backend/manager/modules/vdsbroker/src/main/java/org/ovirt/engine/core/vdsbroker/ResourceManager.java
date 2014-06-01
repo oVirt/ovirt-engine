@@ -458,7 +458,10 @@ public class ResourceManager {
     }
 
     public VmManager getVmManager(Guid vmId) {
-        return vmManagers.putIfAbsent(vmId, new VmManager(vmId));
+        if (!vmManagers.containsKey(vmId)) {
+            vmManagers.putIfAbsent(vmId, new VmManager(vmId));
+        }
+        return vmManagers.get(vmId);
     }
 
     public void onVmDelete(@Observes @VmDeleted Guid vmId) {

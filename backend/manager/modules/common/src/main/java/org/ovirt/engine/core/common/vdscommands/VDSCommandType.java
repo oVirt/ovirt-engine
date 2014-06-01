@@ -165,7 +165,8 @@ public enum VDSCommandType {
     UpdateVmPolicy("org.ovirt.engine.core.vdsbroker"),
     List("org.ovirt.engine.core.vdsbroker.vdsbroker"),           // get a list of VMs with status only
     GetVmStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),     // get a VM with full data and statistics
-    GetAllVmStats("org.ovirt.engine.core.vdsbroker.vdsbroker");  // get a list of VMs with full data and statistics
+    GetAllVmStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),  // get a list of VMs with full data and statistics
+    Destroy("org.ovirt.engine.core.vdsbroker.vdsbroker");        // Clean a DOWN VM from the vms list
 
     String packageName;
 
