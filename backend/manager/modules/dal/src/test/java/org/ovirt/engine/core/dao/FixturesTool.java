@@ -53,6 +53,11 @@ public class FixturesTool {
     protected static final Guid STORAGE_DOAMIN_NFS2_2 = new Guid("d9ede37f-e6c3-4bf9-a984-19174070aa32");
 
     /**
+     * Predefined NFS  storage domain.
+     */
+    protected static final Guid STORAGE_DOAMIN_NFS2_3 = new Guid("d9ede37f-e6c3-4bf9-a984-19174070aa41");
+
+    /**
      * Predefined NFS master storage domain.
      */
     protected static final Guid STORAGE_DOAMIN_NFS_MASTER = new Guid("c2211b56-8869-41cd-84e1-78d7cb96f31d");

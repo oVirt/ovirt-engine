@@ -2,9 +2,13 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
@@ -53,12 +57,25 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
 
     @Override
     public List<StorageServerConnections> getConnectableStorageConnectionsByStorageType(Guid pool,
-                                                                                        StorageType storageType) {
-        return getCallsHandler().executeReadList("GetConnectableStorageConnectionsByStorageType",
+            StorageType storageType) {
+        return getStorageConnectionsByStorageTypeAndStatus(pool,
+                storageType,
+                EnumSet.of(StorageDomainStatus.Active, StorageDomainStatus.Inactive, StorageDomainStatus.Unknown));
+    }
+
+    @Override
+    public List<StorageServerConnections> getStorageConnectionsByStorageTypeAndStatus(Guid pool,
+                                                                                      StorageType storageType, Set<StorageDomainStatus> statuses) {
+        List<String> statusesVals = new LinkedList<>();
+        for (StorageDomainStatus status : statuses) {
+            statusesVals.add(Integer.toString(status.getValue()));
+        }
+        return getCallsHandler().executeReadList("GetStorageConnectionsByStorageTypeAndStatus",
                 mapper,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", pool)
-                        .addValue("storage_type", (storageType != null) ? storageType.getValue() : null));
+                        .addValue("storage_type", (storageType != null) ? storageType.getValue() : null)
+                        .addValue("statuses", StringUtils.join(statusesVals, ",")));
     }
 
     @Override

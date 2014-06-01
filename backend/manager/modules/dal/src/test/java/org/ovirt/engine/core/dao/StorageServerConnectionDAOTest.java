@@ -8,10 +8,16 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
@@ -133,6 +139,73 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
         assertFalse(result.isEmpty());
     }
 
+
+    @Test
+    public void getStorageConnectionsByStorageTypeNoRecordsOfType() {
+        List<StorageServerConnections> result =
+                dao.getStorageConnectionsByStorageTypeAndStatus(EXISTING_STORAGE_POOL_ID, StorageType.FCP, EnumSet.allOf(StorageDomainStatus.class));
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void getStorageConnectionsByStorageTypeNoRecordsOfStatus() {
+        List<StorageServerConnections> result =
+                dao.getStorageConnectionsByStorageTypeAndStatus(EXISTING_STORAGE_POOL_ID, StorageType.NFS, EnumSet.of(StorageDomainStatus.Locked));
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void getStorageConnectionsByStorageTypeWithRecordsMultipleStatuses() {
+        getStorageConnectionsByStorageTypeWithRecords(EnumSet.of(StorageDomainStatus.Maintenance, StorageDomainStatus.Unknown),
+                Arrays.asList(FixturesTool.STORAGE_DOAMIN_NFS2_3, FixturesTool.STORAGE_DOAMIN_NFS2_1));
+    }
+
+    @Test
+    public void getStorageConnectionsByStorageTypeWithRecordsOneStatus() {
+        getStorageConnectionsByStorageTypeWithRecords(EnumSet.of(StorageDomainStatus.Maintenance),
+                Arrays.asList(FixturesTool.STORAGE_DOAMIN_NFS2_3));
+    }
+
+
+    public void getStorageConnectionsByStorageTypeWithRecords(EnumSet<StorageDomainStatus> statuses,
+            Collection<Guid> expectedDomains) {
+        List<StoragePoolIsoMap> poolIsoMap =
+                dbFacade.getStoragePoolIsoMapDao().getAllForStoragePool(FixturesTool.STORAGE_POOL_MIXED_TYPES);
+        List<Guid> storageDomainIds = new LinkedList<>();
+        for (StoragePoolIsoMap isoMap : poolIsoMap) {
+            if (statuses.contains(isoMap.getStatus())) {
+                storageDomainIds.add(isoMap.getstorage_id());
+            }
+        }
+
+        assertTrue("the list of the pool domains expected to be in the given statuses doesn't match the queried data",
+                CollectionUtils.isEqualCollection(expectedDomains, storageDomainIds));
+
+        List<StorageServerConnections> result =
+                dao.getStorageConnectionsByStorageTypeAndStatus(FixturesTool.STORAGE_POOL_MIXED_TYPES,
+                        StorageType.NFS,
+                        statuses);
+
+        assertFalse("there should be connections for the tested domains to verify the correctness", result.isEmpty());
+
+        for (StorageServerConnections storageServerConnection : result) {
+            assertEquals("connections were loaded with incorrect storage type",
+                    StorageType.NFS,
+                    storageServerConnection.getstorage_type());
+        }
+
+        List<StorageServerConnections> domainConnections = new LinkedList<>();
+        for (Guid domainId : storageDomainIds) {
+            domainConnections.addAll(dao.getAllForDomain(domainId));
+        }
+
+        assertTrue("the connections loaded by the given dao function should match the connections loaded separately",
+                CollectionUtils.isEqualCollection(domainConnections, result));
+    }
     /**
      * Retrieves all connections for the given volume group.
      *

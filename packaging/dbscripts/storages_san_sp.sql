@@ -531,22 +531,25 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetConnectableStorageConnectionsByStorageType(v_storage_pool_id UUID, v_storage_type integer)
+Create or replace FUNCTION GetStorageConnectionsByStorageTypeAndStatus(v_storage_pool_id UUID, v_storage_type integer, v_statuses varchar(20))
 RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
+DECLARE
+  statuses int[];
 BEGIN
+statuses := string_to_array(v_statuses,',')::integer[];
 RETURN QUERY SELECT * FROM (SELECT distinct storage_server_connections.*
    FROM
    LUN_storage_server_connection_map LUN_storage_server_connection_map
    INNER JOIN  LUNs ON LUN_storage_server_connection_map.LUN_id = LUNs.LUN_id
    INNER JOIN  storage_domains ON LUNs.volume_group_id = storage_domains.storage
    INNER JOIN  storage_server_connections ON LUN_storage_server_connection_map.storage_server_connection = storage_server_connections.id
-   WHERE     (storage_domains.storage_pool_id = v_storage_pool_id  and storage_domains.status in(0,3,4))
+   WHERE     (storage_domains.storage_pool_id = v_storage_pool_id  and storage_domains.status = any(statuses))
    UNION
    SELECT distinct storage_server_connections.*
    FROM         storage_server_connections
    INNER JOIN  storage_domains ON storage_server_connections.id = storage_domains.storage
-   WHERE     (storage_domains.storage_pool_id = v_storage_pool_id and storage_domains.status in(0,3,4))
+   WHERE     (storage_domains.storage_pool_id = v_storage_pool_id and storage_domains.status = any(statuses))
    ) connections WHERE (v_storage_type is NULL or connections.storage_type = v_storage_type);
 END; $procedure$
 LANGUAGE plpgsql;

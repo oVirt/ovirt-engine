@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.List;
+import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
@@ -69,6 +71,22 @@ public interface StorageServerConnectionDAO extends DAO {
      * @return the list of connections
      */
     List<StorageServerConnections> getConnectableStorageConnectionsByStorageType(Guid pool, StorageType storageType);
+
+    /**
+     * Retrieves all connections of domains in the given statuses of the specified storage type
+     * in the specified storage pool. If storage type is not specified then all connections of the same
+     * domains are returned.
+     * @param pool
+     *          the storage pool
+     * @param storageType
+     *          the storage type
+     * @param statuses
+     *          the applicable statuses
+     * @return the list of connections
+     */
+    public List<StorageServerConnections> getStorageConnectionsByStorageTypeAndStatus(Guid pool,
+            StorageType storageType,
+            Set<StorageDomainStatus> statuses);
 
     /**
      * Retrieves all connections for the specified volume group.

@@ -129,6 +129,21 @@
             <value>7</value>
         </row>
         <row>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c2983</value>
+            <value>10.35.64.25:/export/nfs3</value>
+            <null />
+            <null />
+            <null />
+            <value></value>
+            <value></value>
+            <value>1</value>
+            <value></value>
+            <value>nfs</value>
+            <value>auto</value>
+            <value>42</value>
+            <value>7</value>
+        </row>
+        <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297f</value>
             <value>10.35.64.25:/export/share</value>
             <null />
@@ -3545,6 +3560,17 @@
             <value>description4</value>
         </row>
         <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa41</value>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c2983</value>
+            <value>nfs_3</value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+            <value>5</value>
+            <value>description4</value>
+        </row>
+        <row>
             <value>17e7489d-d490-4681-a322-073ca19bd33d</value>
             <value>12bd6d9a-84e0-47af-85cd-91fcc038ce06</value>
             <value>nfs_iso</value>
@@ -3631,6 +3657,12 @@
             <null />
         </row>
         <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa41</value>
+            <value>14</value>
+            <value>14</value>
+            <null />
+        </row>
+        <row>
             <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
             <value>14</value>
             <value>14</value>
@@ -3699,7 +3731,12 @@
         <row>
             <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
         	<value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
-            <value>3</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa41</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <value>6</value>
         </row>
         <row>
             <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
