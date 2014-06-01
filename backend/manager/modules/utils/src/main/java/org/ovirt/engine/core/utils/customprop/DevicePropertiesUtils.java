@@ -251,16 +251,16 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
      */
     public Map<String, String> getDeviceProperties(Version version, VmDeviceGeneralType type) {
         if (!FeatureSupported.deviceCustomProperties(version)) {
-            return Collections.emptyMap();
+            return new HashMap<String, String>();
         }
 
         Map<String, String> map = deviceProperties.get(version).get(type);
         if (map == null) {
             // no defined properties for specified type
-            map = Collections.emptyMap();
+            map = new HashMap<String, String>();
         } else {
             // prevent client to modify map of properties
-            map = Collections.unmodifiableMap(map);
+            map = new HashMap<String, String>(map);
         }
         return map;
     }
