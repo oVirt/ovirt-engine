@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -110,7 +111,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
             public Void runInTransaction() {
                 ResourceManager.getInstance()
                         .getEventListener()
-                        .processOnVmStop(curVm.getId());
+                        .processOnVmStop(Collections.singleton(curVm.getId()));
                 return null;
             }
         });

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -106,9 +107,16 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void processOnVmStop(Guid vmId) {
-        Backend.getInstance().runInternalAction(VdcActionType.ProcessDownVm,
-                new IdParameters(vmId));
+    public void processOnVmStop(final Collection<Guid> vmIds) {
+        ThreadPoolUtil.execute(new Runnable() {
+            @Override
+            public void run() {
+                for (Guid vmId : vmIds) {
+                    Backend.getInstance().runInternalAction(VdcActionType.ProcessDownVm,
+                            new IdParameters(vmId));
+                }
+            }
+        });
     }
 
     @Override
