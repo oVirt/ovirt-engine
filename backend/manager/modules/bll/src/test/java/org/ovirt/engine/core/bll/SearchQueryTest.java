@@ -132,7 +132,6 @@ public class SearchQueryTest {
      * be returned. <BR/>
      * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
      * API.
-     *
      * @param diskDao
      *            - The dao to be used
      */
@@ -154,18 +153,17 @@ public class SearchQueryTest {
         query.append(".*")
                 .append(search.getDefaultSort(SearchObjects.QUOTA_OBJ_NAME))
                 .append(".*")
-                .append(search.getRelatedTableNameWithOutTags(SearchObjects.QUOTA_OBJ_NAME))
+                .append(search.getRelatedTableName(SearchObjects.QUOTA_OBJ_NAME, false))
                 .append(".* ");
         return query.toString();
 
     }
 
     /**
-     * Mock vds group DAO so that when getAllWithQuery will be called with the appropriate query string, a unique list will
-     * be returned. <BR/>
+     * Mock vds group DAO so that when getAllWithQuery will be called with the appropriate query string, a unique list
+     * will be returned. <BR/>
      * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
      * API.
-     *
      * @param vdsGroupDAO
      *            - The dao to be used
      */
@@ -176,11 +174,10 @@ public class SearchQueryTest {
     }
 
     /**
-     * Mock storage pool DAO so that when getAllWithQuery will be called with the appropriate query string, a unique list will
-     * be returned. <BR/>
+     * Mock storage pool DAO so that when getAllWithQuery will be called with the appropriate query string, a unique
+     * list will be returned. <BR/>
      * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
      * API.
-     *
      * @param storagePoolDAO
      *            - The dao to be used
      */
@@ -195,7 +192,6 @@ public class SearchQueryTest {
      * list will be returned. <BR/>
      * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
      * API.
-     *
      * @param glusterVolumeDao
      *            - The dao to be used
      */
@@ -213,7 +209,6 @@ public class SearchQueryTest {
 
     /**
      * Regex string which contains all of the disk image properties.
-     *
      * @param search
      */
     private static String getDiskImageRegexString(SearchObjectAutoCompleter search) {
@@ -222,17 +217,16 @@ public class SearchQueryTest {
         query.append(".*")
                 .append(search.getDefaultSort(SearchObjects.DISK_OBJ_NAME))
                 .append(".*")
-                .append(search.getRelatedTableNameWithOutTags(SearchObjects.DISK_OBJ_NAME))
+                .append(search.getRelatedTableName(SearchObjects.DISK_OBJ_NAME, false))
                 .append(".* ");
         return query.toString();
     }
 
     /**
-     * Mock Vds DAO so that when getAllWithQuery will be called with the appropriate query string, a unique list will
-     * be returned. <BR/>
+     * Mock Vds DAO so that when getAllWithQuery will be called with the appropriate query string, a unique list will be
+     * returned. <BR/>
      * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
      * API.
-     *
      * @param diskImageDao
      *            - The dao to be used
      */
@@ -243,11 +237,10 @@ public class SearchQueryTest {
     }
 
     /**
-     * Mock VM DAO so that when getAllWithQuery will be called with the appropriate query string, a unique list will
-     * be returned. <BR/>
+     * Mock VM DAO so that when getAllWithQuery will be called with the appropriate query string, a unique list will be
+     * returned. <BR/>
      * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
      * API.
-     *
      * @param vmDAO
      *            - The dao to be used
      */
@@ -259,7 +252,6 @@ public class SearchQueryTest {
 
     /**
      * Regex string which contains all of the VM properties.
-     *
      * @param search
      */
     private static String getVMRegexString(SearchObjectAutoCompleter search) {
@@ -267,14 +259,13 @@ public class SearchQueryTest {
         query.append(".*")
                 .append(search.getDefaultSort(SearchObjects.VM_OBJ_NAME))
                 .append(".*")
-                .append(search.getRelatedTableNameWithOutTags(SearchObjects.VM_OBJ_NAME))
+                .append(search.getRelatedTableName(SearchObjects.VM_OBJ_NAME, false))
                 .append(".* ");
         return query.toString();
     }
 
     /**
      * Regex string which contains all of the VDS properties.
-     *
      * @param search
      */
     private static String getVdsRegexString(SearchObjectAutoCompleter search) {
@@ -283,7 +274,7 @@ public class SearchQueryTest {
         query.append(".*")
                 .append(search.getDefaultSort(SearchObjects.VDS_OBJ_NAME))
                 .append(".*")
-                .append(search.getRelatedTableNameWithOutTags(SearchObjects.VDS_OBJ_NAME))
+                .append(search.getRelatedTableName(SearchObjects.VDS_OBJ_NAME, false))
                 .append(".* ");
         return query.toString();
     }
@@ -298,14 +289,13 @@ public class SearchQueryTest {
         query.append(".*")
                 .append(search.getDefaultSort(SearchObjects.VDC_CLUSTER_OBJ_NAME))
                 .append(".*")
-                .append(search.getRelatedTableNameWithOutTags(SearchObjects.VDC_CLUSTER_OBJ_NAME))
+                .append(search.getRelatedTableName(SearchObjects.VDC_CLUSTER_OBJ_NAME, false))
                 .append(".* ");
         return query.toString();
     }
 
     /**
      * Regex string which contains all of the storage pool properties.
-     *
      * @param search
      */
     private static String getStoragePoolRegexString(SearchObjectAutoCompleter search) {
@@ -314,14 +304,13 @@ public class SearchQueryTest {
         query.append(".*")
                 .append(search.getDefaultSort(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME))
                 .append(".*")
-                .append(search.getRelatedTableNameWithOutTags(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME))
+                .append(search.getRelatedTableName(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, false))
                 .append(".* ");
         return query.toString();
     }
 
     /**
      * Regex string which contains all of the Gluster Volume properties.
-     *
      * @param search
      */
     private static String getGlusterVolumeRegexString(SearchObjectAutoCompleter search) {
@@ -330,14 +319,13 @@ public class SearchQueryTest {
         query.append(".*")
                 .append(search.getDefaultSort(SearchObjects.GLUSTER_VOLUME_OBJ_NAME))
                 .append(".*")
-                .append(search.getRelatedTableNameWithOutTags(SearchObjects.GLUSTER_VOLUME_OBJ_NAME))
+                .append(search.getRelatedTableName(SearchObjects.GLUSTER_VOLUME_OBJ_NAME, false))
                 .append(".* ");
         return query.toString();
     }
 
     /**
      * Regex string which contains all of the Network properties.
-     *
      * @param search
      */
     private static String getNetworkRegexString(SearchObjectAutoCompleter search) {
@@ -345,7 +333,7 @@ public class SearchQueryTest {
         query.append(".*")
                 .append(search.getDefaultSort(SearchObjects.NETWORK_OBJ_NAME))
                 .append(".*")
-                .append(search.getRelatedTableNameWithOutTags(SearchObjects.NETWORK_OBJ_NAME))
+                .append(search.getRelatedTableName(SearchObjects.NETWORK_OBJ_NAME, false))
                 .append(".* ");
         return query.toString();
     }

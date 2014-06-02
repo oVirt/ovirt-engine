@@ -689,10 +689,6 @@ public class SyntaxChecker implements ISyntaxChecker {
         return retval;
     }
 
-    private String generateFromStatement(SyntaxContainer syntax) {
-        return generateFromStatement(syntax, true);
-    }
-
     private String generateFromStatement(SyntaxContainer syntax, boolean useTags) {
         LinkedList<String> innerJoins = new LinkedList<String>();
         ArrayList<String> refObjList = syntax.getCrossRefObjList();
@@ -700,70 +696,70 @@ public class SyntaxChecker implements ISyntaxChecker {
         if (refObjList.size() > 0) {
             if (SearchObjects.TEMPLATE_OBJ_NAME.equals(searchObjStr)) {
                 innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.TEMPLATE_OBJ_NAME,
-                        SearchObjects.VM_OBJ_NAME));
+                        SearchObjects.VM_OBJ_NAME, useTags));
                 if (refObjList.contains(SearchObjects.VM_OBJ_NAME)) {
                     refObjList.remove(SearchObjects.VM_OBJ_NAME);
                 }
                 if (refObjList.contains(SearchObjects.VDC_USER_OBJ_NAME)) {
                     innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
-                            SearchObjects.VDC_USER_OBJ_NAME));
+                            SearchObjects.VDC_USER_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.VDC_USER_OBJ_NAME);
                 }
                 if (refObjList.contains(SearchObjects.VDS_OBJ_NAME)) {
                     innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
-                            SearchObjects.VDS_OBJ_NAME));
+                            SearchObjects.VDS_OBJ_NAME, true));
                     refObjList.remove(SearchObjects.VDS_OBJ_NAME);
                 }
                 if (refObjList.contains(SearchObjects.AUDIT_OBJ_NAME)) {
                     innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
-                            SearchObjects.AUDIT_OBJ_NAME));
+                            SearchObjects.AUDIT_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.AUDIT_OBJ_NAME);
                 }
             }
             else if (SearchObjects.VDS_OBJ_NAME.equals(searchObjStr)) {
                 if (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME)) {
                     innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.VDS_OBJ_NAME,
-                            SearchObjects.VM_OBJ_NAME));
+                            SearchObjects.VM_OBJ_NAME, useTags));
                     if (refObjList.contains(SearchObjects.VM_OBJ_NAME)) {
                         refObjList.remove(SearchObjects.VM_OBJ_NAME);
                     }
                 }
                 if (refObjList.contains(SearchObjects.VDC_USER_OBJ_NAME)) {
                     innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VDS_OBJ_NAME,
-                            SearchObjects.VDC_USER_OBJ_NAME));
+                            SearchObjects.VDC_USER_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.VDC_USER_OBJ_NAME);
                 }
                 if (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME)) {
                     innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
-                            SearchObjects.TEMPLATE_OBJ_NAME));
+                            SearchObjects.TEMPLATE_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.TEMPLATE_OBJ_NAME);
                 }
             }
             else if (SearchObjects.VDC_USER_OBJ_NAME.equals(searchObjStr)) {
                 if ((refObjList.contains(SearchObjects.VDS_OBJ_NAME))) {
                     innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.VDC_USER_OBJ_NAME,
-                            SearchObjects.VM_OBJ_NAME));
+                            SearchObjects.VM_OBJ_NAME, useTags));
                     if (refObjList.contains(SearchObjects.VM_OBJ_NAME)) {
                         refObjList.remove(SearchObjects.VM_OBJ_NAME);
                     }
                 }
                 if (refObjList.contains(SearchObjects.VDS_OBJ_NAME)) {
                     innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
-                            SearchObjects.VDS_OBJ_NAME));
+                            SearchObjects.VDS_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.VDS_OBJ_NAME);
                 }
                 if (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME)) {
                     innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VDC_USER_OBJ_NAME,
-                            SearchObjects.TEMPLATE_OBJ_NAME));
+                            SearchObjects.TEMPLATE_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.TEMPLATE_OBJ_NAME);
                 }
             }
             else if (SearchObjects.AUDIT_OBJ_NAME.equals(searchObjStr)) {
                 if (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME)) {
                     innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.AUDIT_OBJ_NAME,
-                            SearchObjects.VM_OBJ_NAME));
+                            SearchObjects.VM_OBJ_NAME, useTags));
                     innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
-                            SearchObjects.TEMPLATE_OBJ_NAME));
+                            SearchObjects.TEMPLATE_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.TEMPLATE_OBJ_NAME);
                     if (refObjList.contains(SearchObjects.VM_OBJ_NAME)) {
                         refObjList.remove(SearchObjects.VM_OBJ_NAME);
@@ -773,21 +769,17 @@ public class SyntaxChecker implements ISyntaxChecker {
             else if (SearchObjects.DISK_OBJ_NAME.equals(searchObjStr)) {
                 if (refObjList.contains(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
                     innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.DISK_OBJ_NAME,
-                            SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME));
+                            SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME, useTags));
                     innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME,
-                            SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME));
+                            SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
                 }
             }
         }
         for (String cro : refObjList) {
-            innerJoins.addLast(mSearchObjectAC.getInnerJoin(searchObjStr, cro));
+            innerJoins.addLast(mSearchObjectAC.getInnerJoin(searchObjStr, cro, useTags));
         }
-        if (useTags) {
-            innerJoins.addFirst(mSearchObjectAC.getRelatedTableName(searchObjStr));
-        } else {
-            innerJoins.addFirst(mSearchObjectAC.getRelatedTableNameWithOutTags(searchObjStr));
-        }
+        innerJoins.addFirst(mSearchObjectAC.getRelatedTableName(searchObjStr, useTags));
         StringBuilder sb = new StringBuilder();
         for (String part : innerJoins) {
             sb.append(" ");
@@ -808,12 +800,13 @@ public class SyntaxChecker implements ISyntaxChecker {
             String sortByPhrase = "";
             String fromStatement = "";
             String pageNumber = "";
+            boolean useTags = syntax.isSearchUsingTags();
 
             while (objIter.hasNext()) {
                 SyntaxObject obj = objIter.next();
                 switch (obj.getType()) {
                 case SEARCH_OBJECT:
-                    fromStatement = generateFromStatement(syntax);
+                    fromStatement = generateFromStatement(syntax, useTags);
                     break;
                 case OR:
                 case AND:
@@ -821,7 +814,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     break;
                 case CONDITION_VALUE:
                     whereBuilder.addLast(generateConditionStatment(obj, syntax.listIterator(objIter.previousIndex()),
-                            searchObjStr, syntax.getCaseSensitive(), isSafe));
+                            searchObjStr, syntax.getCaseSensitive(), isSafe, useTags));
                     break;
                 case SORTBY:
                     break;
@@ -864,6 +857,13 @@ public class SyntaxChecker implements ISyntaxChecker {
                     }
                 }
             }
+
+            // Since when we search for events we must only search
+            // for not deleted events, add this to the where clause
+            if (searchObjStr.equalsIgnoreCase("EVENT")) {
+                whereBuilder.add("not deleted");
+            }
+
             // adding WHERE if required and All implicit AND
             StringBuilder wherePhrase = new StringBuilder();
             if (whereBuilder.size() > 0) {
@@ -884,23 +884,9 @@ public class SyntaxChecker implements ISyntaxChecker {
             }
             // adding the paging phrase
             String pagePhrase = getPagePhrase(syntax, pageNumber);
-
             String primeryKey = mSearchObjectAC.getPrimeryKeyName(searchObjStr);
-            String tableName = mSearchObjectAC.getRelatedTableName(searchObjStr);
-            String tableNameWithOutTags = mSearchObjectAC.getRelatedTableNameWithOutTags(searchObjStr);
+            String tableName = mSearchObjectAC.getRelatedTableName(searchObjStr, useTags);
 
-            boolean generalQuery = false;
-            String innerQuery;
-            if (!wherePhrase.toString().contains(TAG_COLUMN_NAME_IN_CRITERIA)
-                    && !wherePhrase.toString().contains(".")
-                    && (searchObjStr.equals(SearchObjects.VDS_OBJ_NAME) || searchObjStr.equals(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME))) {
-                innerQuery = getInnerQuery(tableNameWithOutTags, "*", generateFromStatement(syntax, false),
-                        wherePhrase);
-                generalQuery = true;
-            } else {
-                innerQuery = getInnerQuery(tableName, primeryKey, fromStatement,
-                            wherePhrase);
-            }
             // adding a secondary default sort by entity name
             StringBuilder sortExpr = new StringBuilder();
             sortExpr.append(sortByPhrase);
@@ -912,60 +898,17 @@ public class SyntaxChecker implements ISyntaxChecker {
             // TODO: The database configuration PostgresSearchTemplate has an extra closing braces. Hence our
             // queries in this code have an extra opening one. Fix it in a future patch.
 
-            // only audit log search supports the SearchFrom which enables getting records starting from a certain
-            // audit_log_id, this is done to make search queries from the client more efficient and eliminate the client
-            // from registering to such queries and comparing last data with previous.
             String inQuery = "";
-            if (primeryKey.equals("audit_log_id")) {
-                if (wherePhrase.length() == 0) {
-                    inQuery = StringFormat
-                            .format("SELECT * FROM %1$s WHERE ( %2$s > %3$s and not deleted",
-                                    tableNameWithOutTags, primeryKey,
-                                    syntax.getSearchFrom());
-                } else if (whereBuilder.size() == 1 && wherePhrase.toString().contains("severity")) {
-                    inQuery =
-                            StringFormat.format("SELECT %1$s.* FROM %2$s %3$s and (not deleted",
-                                    tableName,
-                                    fromStatement,
-                                    wherePhrase);
-                } else {
-                    inQuery = StringFormat
-                            .format("SELECT * FROM %1$s WHERE ( %2$s > %3$s and %2$s IN (%4$s) and not deleted",
-                                    tableNameWithOutTags, primeryKey,
-                                    syntax.getSearchFrom(), innerQuery);
-                }
-            } else if ((primeryKey.equals("vmt_guid") || primeryKey.equals("vm_pool_id")) && wherePhrase.length() == 0) {
-                inQuery = StringFormat
-                        .format("(SELECT * FROM %1$s ",
-                                tableNameWithOutTags);
-            } else if (primeryKey.equals("vmt_guid") && wherePhrase.length() > 0
-                    && wherePhrase.toString().contains("storage_pool_name") && whereBuilder.size() == 1) {
-                inQuery = StringFormat
-                        .format("(SELECT * FROM %1$s %2$s",
-                                tableNameWithOutTags, wherePhrase.toString().replace(tableName, tableNameWithOutTags));
-
-            } else if (generalQuery) {
-                inQuery = "(" + innerQuery;
-            } else if (searchObjStr.equals(SearchObjects.VDS_OBJ_NAME) && primeryKey.equals("vds_id")
-                    && wherePhrase.toString().contains("storage_domains_with_hosts_view.storage_name")
-                    && !wherePhrase.toString().contains("AND") && !wherePhrase.toString().contains("OR")) {
-                ListIterator<SyntaxObject> syntaxObjects = syntax.listIterator(0);
-                boolean notFoundValue = true;
-                String value = null;
-                while (syntaxObjects.hasNext() && notFoundValue) {
-                    SyntaxObject obj = syntaxObjects.next();
-                    if (obj.getType() == SyntaxObjectType.CONDITION_VALUE) {
-                        value = obj.getBody();
-                        notFoundValue = false;
-                    }
-                }
-                inQuery =
-                        "SELECT * FROM vds WHERE ( storage_pool_id IN (SELECT storage_pool_id FROM storage_domains WHERE  storage_domains.storage_name LIKE '"
-                                + value + "')";
-            } else {
+            if (useTags) {
                 inQuery = StringFormat.format(
                         "SELECT * FROM %1$s WHERE ( %2$s IN (%3$s)",
-                        tableNameWithOutTags, primeryKey, innerQuery);
+                                mSearchObjectAC.getRelatedTableName(searchObjStr, false),
+                                primeryKey,
+                                getInnerQuery(tableName, primeryKey, fromStatement,
+                                wherePhrase));
+            } else {
+                inQuery = "(" + getInnerQuery(tableName, "*", fromStatement,
+                        wherePhrase);
             }
             retval =
                     StringFormat.format(Config.<String> getValue(ConfigValues.DBSearchTemplate),
@@ -1037,16 +980,17 @@ public class SyntaxChecker implements ISyntaxChecker {
     }
 
     private String generateConditionStatment(SyntaxObject obj, ListIterator<SyntaxObject> objIter,
-            final String searchObjStr, final boolean caseSensitive, final boolean issafe) {
+            final String searchObjStr, final boolean caseSensitive, final boolean issafe, final boolean useTags) {
         final String safeValue = issafe ? obj.getBody() : SqlInjectionChecker.enforceEscapeCharacters(obj.getBody());
-        return generateSafeConditionStatement(obj, objIter, searchObjStr, caseSensitive, safeValue);
+        return generateSafeConditionStatement(obj, objIter, searchObjStr, caseSensitive, safeValue, useTags);
     }
 
     private String generateSafeConditionStatement(final SyntaxObject obj,
             ListIterator<SyntaxObject> objIter,
             final String searchObjStr,
             final boolean caseSensitive,
-            final String safeValue) {
+            final String safeValue,
+            final boolean useTags) {
         IConditionFieldAutoCompleter conditionFieldAC;
         IConditionValueAutoCompleter conditionValueAC = null;
         // check for sql injection
@@ -1165,7 +1109,16 @@ public class SyntaxChecker implements ISyntaxChecker {
             String fieldName,
             String objName,
             ConditionType conditionType) {
-        final String tableName = mSearchObjectAC.getRelatedTableName(objName);
+
+        String tableName;
+
+        // We will take the table with tags for all subtables
+        // TODO: Optimize this
+        if (conditionType == ConditionType.ConditionwithSpesificObj) {
+            tableName = mSearchObjectAC.getRelatedTableName(objName, true);
+        } else {
+            tableName = mSearchObjectAC.getRelatedTableName(objName, fieldName);
+        }
         if (customizedRelation.equalsIgnoreCase("LIKE") || customizedRelation.equalsIgnoreCase("ILIKE")) {
             // Since '_' is treated in Postgres as '?' when using like, (i.e. match any single character)
             // we have to escape this character in the value to make it treated as a regular character.

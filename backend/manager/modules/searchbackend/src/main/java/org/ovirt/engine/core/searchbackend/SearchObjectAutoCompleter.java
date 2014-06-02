@@ -48,40 +48,76 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.add(SearchObjects.IMAGE_TYPE_OBJ_NAME);
 
         // vms - vds
-        addJoin(SearchObjects.VM_OBJ_NAME, "run_on_vds", SearchObjects.VDS_OBJ_NAME, "vds_id");
+        addJoin(SearchObjects.VM_OBJ_NAME,
+                "run_on_vds",
+                SearchObjects.VDS_OBJ_NAME,
+                "vds_id");
 
         // vms - vmt
-        addJoin(SearchObjects.VM_OBJ_NAME, "vmt_guid", SearchObjects.TEMPLATE_OBJ_NAME, "vmt_guid");
+        addJoin(SearchObjects.VM_OBJ_NAME,
+                "vmt_guid",
+                SearchObjects.TEMPLATE_OBJ_NAME,
+                "vmt_guid");
 
         // vms - users
-        addJoin(SearchObjects.VM_OBJ_NAME, "vm_guid", SearchObjects.VDC_USER_OBJ_NAME, "vm_guid");
+        addJoin(SearchObjects.VM_OBJ_NAME,
+                "vm_guid",
+                SearchObjects.VDC_USER_OBJ_NAME,
+                "vm_guid");
 
         // vms - audit
-        addJoin(SearchObjects.VM_OBJ_NAME, "vm_guid", SearchObjects.AUDIT_OBJ_NAME, "vm_id");
+        addJoin(SearchObjects.VM_OBJ_NAME,
+                "vm_guid",
+                SearchObjects.AUDIT_OBJ_NAME,
+                "vm_id");
 
         // vms - vm network interface
-        addJoin(SearchObjects.VM_OBJ_NAME, "vm_guid", SearchObjects.VM_NETWORK_INTERFACE_OBJ_NAME, "vm_guid");
+        addJoin(SearchObjects.VM_OBJ_NAME,
+                "vm_guid",
+                SearchObjects.VM_NETWORK_INTERFACE_OBJ_NAME,
+                "vm_guid");
 
         // vms - storage domain
-        addJoin(SearchObjects.VM_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
+        addJoin(SearchObjects.VM_OBJ_NAME,
+                "storage_id",
+                SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME,
+                "id");
 
         // templates - storage domain
-        addJoin(SearchObjects.TEMPLATE_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
+        addJoin(SearchObjects.TEMPLATE_OBJ_NAME,
+                "storage_id",
+                SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME,
+                "id");
 
         // image-type - storage domain
-        addJoin(SearchObjects.IMAGE_TYPE_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
+        addJoin(SearchObjects.IMAGE_TYPE_OBJ_NAME,
+                "storage_id",
+                SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME,
+                "id");
 
         // templates - vm template network interface
-        addJoin(SearchObjects.TEMPLATE_OBJ_NAME, "vmt_guid", SearchObjects.VM_NETWORK_INTERFACE_OBJ_NAME, "vmt_guid");
+        addJoin(SearchObjects.TEMPLATE_OBJ_NAME,
+                "vmt_guid",
+                SearchObjects.VM_NETWORK_INTERFACE_OBJ_NAME,
+                "vmt_guid");
 
         // instance-types - vm template network interface
-        addJoin(SearchObjects.INSTANCE_TYPE_OBJ_NAME, "vmt_guid", SearchObjects.VM_NETWORK_INTERFACE_OBJ_NAME, "vmt_guid");
+        addJoin(SearchObjects.INSTANCE_TYPE_OBJ_NAME,
+                "vmt_guid",
+                SearchObjects.VM_NETWORK_INTERFACE_OBJ_NAME,
+                "vmt_guid");
 
         // vds - storage domain
-        addJoin(SearchObjects.VDS_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
+        addJoin(SearchObjects.VDS_OBJ_NAME,
+                "storage_pool_id",
+                SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME,
+                "storage_pool_id");
 
         // cluster - storage domain
-        addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
+        addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME,
+                "storage_id",
+                SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME,
+                "id");
 
         // disk - storage domain images
         addJoin(SearchObjects.DISK_OBJ_NAME,
@@ -90,16 +126,28 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                 "image_guid");
 
         // storage domain images - storage domain
-        addJoin(SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME, "id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
+        addJoin(SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME,
+                "id",
+                SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME,
+                "id");
 
         // vds - audit
-        addJoin(SearchObjects.VDS_OBJ_NAME, "vds_id", SearchObjects.AUDIT_OBJ_NAME, "vds_id");
+        addJoin(SearchObjects.VDS_OBJ_NAME,
+                "vds_id",
+                SearchObjects.AUDIT_OBJ_NAME,
+                "vds_id");
 
         // users - audit
-        addJoin(SearchObjects.VDC_USER_OBJ_NAME, "user_id", SearchObjects.AUDIT_OBJ_NAME, "user_id");
+        addJoin(SearchObjects.VDC_USER_OBJ_NAME,
+                "user_id",
+                SearchObjects.AUDIT_OBJ_NAME,
+                "user_id");
 
         // Datacenter(Storage_pool) - Cluster(vds group)
-        addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, "id", SearchObjects.VDC_CLUSTER_OBJ_NAME, "storage_pool_id");
+        addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME,
+                "id",
+                SearchObjects.VDC_CLUSTER_OBJ_NAME,
+                "storage_pool_id");
 
         // Datacenter(Storage_pool) - Storage Domain
         addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME,
@@ -108,13 +156,22 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                 "storage_pool_id");
 
         // Datacenter(Storage_pool) - Disk
-        addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, "id", SearchObjects.DISK_OBJ_NAME, "storage_pool_id");
+        addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME,
+                "id",
+                SearchObjects.DISK_OBJ_NAME,
+                "storage_pool_id");
 
         // audit - cluster
-        addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME, "vds_group_id", SearchObjects.AUDIT_OBJ_NAME, "vds_group_id");
+        addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME,
+                "vds_group_id",
+                SearchObjects.AUDIT_OBJ_NAME,
+                "vds_group_id");
 
         // gluster volume - cluster
-        addJoin(SearchObjects.GLUSTER_VOLUME_OBJ_NAME, "cluster_id", SearchObjects.VDC_CLUSTER_OBJ_NAME, "vds_group_id");
+        addJoin(SearchObjects.GLUSTER_VOLUME_OBJ_NAME,
+                "cluster_id",
+                SearchObjects.VDC_CLUSTER_OBJ_NAME,
+                "vds_group_id");
 
         // cluster - network
         addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME,
@@ -135,28 +192,52 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                 "network_id");
 
         // audit - gluster volume
-        addJoin(SearchObjects.GLUSTER_VOLUME_OBJ_NAME, "id", SearchObjects.AUDIT_OBJ_NAME, "gluster_volume_id");
+        addJoin(SearchObjects.GLUSTER_VOLUME_OBJ_NAME,
+                "id",
+                SearchObjects.AUDIT_OBJ_NAME,
+                "gluster_volume_id");
 
-        //quota - audit
-        addJoin(SearchObjects.AUDIT_OBJ_NAME, "quota_id", SearchObjects.QUOTA_OBJ_NAME, "quota_id");
+        // quota - audit
+        addJoin(SearchObjects.AUDIT_OBJ_NAME,
+                "quota_id",
+                SearchObjects.QUOTA_OBJ_NAME,
+                "quota_id");
 
         // data center - network
-        addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, "id", SearchObjects.NETWORK_OBJ_NAME, "storage_pool_id");
+        addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME,
+                "id",
+                SearchObjects.NETWORK_OBJ_NAME,
+                "storage_pool_id");
 
         // host interface - host
-        addJoin(SearchObjects.VDS_OBJ_NAME, "vds_id", SearchObjects.VDS_NETWORK_INTERFACE_OBJ_NAME, "vds_id");
+        addJoin(SearchObjects.VDS_OBJ_NAME,
+                "vds_id",
+                SearchObjects.VDS_NETWORK_INTERFACE_OBJ_NAME,
+                "vds_id");
 
         // cluster - vm pool
-        addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME, "vds_group_id", SearchObjects.VDC_POOL_OBJ_NAME, "vds_group_id");
+        addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME,
+                "vds_group_id",
+                SearchObjects.VDC_POOL_OBJ_NAME,
+                "vds_group_id");
 
         // provider - network
-        addJoin(SearchObjects.PROVIDER_OBJ_NAME, "id", SearchObjects.NETWORK_OBJ_NAME, "provider_network_provider_id");
+        addJoin(SearchObjects.PROVIDER_OBJ_NAME,
+                "id",
+                SearchObjects.NETWORK_OBJ_NAME,
+                "provider_network_provider_id");
 
-        //users - template
-        addJoin(SearchObjects.VDC_USER_OBJ_NAME, "vm_guid", SearchObjects.TEMPLATE_OBJ_NAME, "vmt_guid");
+        // users - template
+        addJoin(SearchObjects.VDC_USER_OBJ_NAME,
+                "vm_guid",
+                SearchObjects.TEMPLATE_OBJ_NAME,
+                "vmt_guid");
 
-        //users - host
-        addJoin(SearchObjects.VDC_USER_OBJ_NAME, "vm_guid", SearchObjects.VDS_OBJ_NAME, "vds_id");
+        // users - host
+        addJoin(SearchObjects.VDC_USER_OBJ_NAME,
+                "vm_guid",
+                SearchObjects.VDS_OBJ_NAME,
+                "vds_id");
     }
 
     private void addJoin(String firstObj, String firstColumnName, String secondObj, String secondColumnName) {
@@ -342,7 +423,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
             put(SearchObjects.AUDIT_PLU_OBJ_NAME, SearchObjects.AUDIT_OBJ_NAME);
             put(SearchObjects.TEMPLATE_PLU_OBJ_NAME, SearchObjects.TEMPLATE_OBJ_NAME);
             put(SearchObjects.INSTANCE_TYPE_PLU_OBJ_NAME, SearchObjects.INSTANCE_TYPE_OBJ_NAME);
-            put(SearchObjects.IMAGE_TYPE_PLU_OBJ_NAME, SearchObjects.INSTANCE_TYPE_OBJ_NAME);
+            put(SearchObjects.IMAGE_TYPE_PLU_OBJ_NAME, SearchObjects.IMAGE_TYPE_OBJ_NAME);
             put(SearchObjects.VDC_USER_PLU_OBJ_NAME, SearchObjects.VDC_USER_OBJ_NAME);
             put(SearchObjects.VDC_GROUP_PLU_OBJ_NAME, SearchObjects.VDC_GROUP_OBJ_NAME);
             put(SearchObjects.VDS_PLU_OBJ_NAME, SearchObjects.VDS_OBJ_NAME);
@@ -383,10 +464,11 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         return false;
     }
 
-    public String getInnerJoin(String searchObj, String crossRefObj) {
+    public String getInnerJoin(String searchObj, String crossRefObj, boolean useTags) {
         final String[] joinKey = mJoinDictionary.get(StringFormat.format("%1$s.%2$s", searchObj, crossRefObj));
-        final String crossRefTable = getRelatedTableName(crossRefObj);
-        final String searchObjTable = getRelatedTableName(searchObj);
+        // For joins, the table we join with is always the full view (including the tags)
+        final String crossRefTable = getRelatedTableName(crossRefObj, true);
+        final String searchObjTable = getRelatedTableName(searchObj, useTags);
 
         return StringFormat.format(" LEFT OUTER JOIN %3$s ON %1$s.%2$s=%3$s.%4$s ", searchObjTable, joinKey[0],
                 crossRefTable, joinKey[1]);
@@ -402,7 +484,20 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         return null;
     }
 
-    public String getRelatedTableNameWithOutTags(String obj) {
+    public String getRelatedTableName(String obj, String fieldName) {
+        return getRelatedTableName(obj, fieldName == null || fieldName.length() == 0
+                || fieldName.toLowerCase().equalsIgnoreCase("tag"));
+    }
+
+    public String getRelatedTableName(String obj, boolean useTags) {
+        if (useTags) {
+            return getRelatedTableName(obj);
+        }
+
+        return getRelatedTableNameWithoutTags(obj);
+    }
+
+    private String getRelatedTableNameWithoutTags(String obj) {
         if (obj == null) {
             return null;
         } else if (getEntitySearchInfo(obj) != null && getEntitySearchInfo(obj).relatedTableNameWithOutTags != null) {
@@ -413,7 +508,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
     }
 
-    public String getRelatedTableName(String obj) {
+    private String getRelatedTableName(String obj) {
         if (obj == null) {
             return null;
         } else if (getEntitySearchInfo(obj) != null) {

@@ -44,7 +44,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         // building the ColumnName Dict
         columnNameDict.put(NAME, "storage_name");
         columnNameDict.put(STATUS, "storage_domain_shared_status");
-        columnNameDict.put(DATACENTER, "storage_pool_name");
+        columnNameDict.put(DATACENTER, "storage_pool_name::text");
         columnNameDict.put(TYPE, "storage_type");
         columnNameDict.put(SIZE, "available_disk_size");
         columnNameDict.put(USED, "used_disk_size");

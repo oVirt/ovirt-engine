@@ -20,6 +20,12 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
     private long searchFrom = 0;
     private boolean caseSensitive=true;
 
+    public boolean isSearchUsingTags() {
+        return mOrigText.contains("tag")
+                || (getSearchObjectStr() != null && (getSearchObjectStr().equals(SearchObjects.VDC_USER_OBJ_NAME)))
+                || (getCrossRefObjList().contains(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME) && (getSearchObjectStr() == null || !getSearchObjectStr().equals(SearchObjects.VDS_OBJ_NAME)));
+    }
+
     public int getMaxCount() {
         return privateMaxCount;
     }

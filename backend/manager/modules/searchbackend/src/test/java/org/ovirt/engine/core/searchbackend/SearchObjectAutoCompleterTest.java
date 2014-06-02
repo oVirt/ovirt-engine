@@ -2,7 +2,6 @@ package org.ovirt.engine.core.searchbackend;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -26,9 +25,9 @@ public class SearchObjectAutoCompleterTest {
 
     @Test
     public void testGetRelatedTableName() {
-        assertEquals("EVENTS", "audit_log", comp.getRelatedTableName("EVENTS"));
-        assertNull("Garbage", comp.getRelatedTableName("kjfhkjdshkjfs"));
-        assertNull("Null", comp.getRelatedTableName(null));
+        assertEquals("EVENTS", "audit_log", comp.getRelatedTableName("EVENTS", true));
+        assertNull("Garbage", comp.getRelatedTableName("kjfhkjdshkjfs", true));
+        assertNull("Null", comp.getRelatedTableName(null, true));
     }
 
     @Test
@@ -42,7 +41,7 @@ public class SearchObjectAutoCompleterTest {
 
     @Test
     public void testGetInnerJoin() {
-        assertNotNull("Sanity test", comp.getInnerJoin("EVENT", "USER"));
+        assertNotNull("Sanity test", comp.getInnerJoin("EVENT", "USER", true));
     }
 
     @Test
