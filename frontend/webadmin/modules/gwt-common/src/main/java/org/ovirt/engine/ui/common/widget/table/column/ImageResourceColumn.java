@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
@@ -17,7 +16,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  * @param <T>
  *            Table row data type.
  */
-public abstract class ImageResourceColumn<T> extends Column<T, ImageResource> {
+public abstract class ImageResourceColumn<T> extends SortableColumn<T, ImageResource> {
 
     private static final CommonApplicationResources RESOURCES = GWT.create(CommonApplicationResources.class);
     protected static final CommonApplicationConstants CONSTANTS = GWT.create(CommonApplicationConstants.class);

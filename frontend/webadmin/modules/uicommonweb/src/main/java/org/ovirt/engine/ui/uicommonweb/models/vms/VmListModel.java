@@ -697,7 +697,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     @Override
     protected void syncSearch() {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.VM, isCaseSensitiveSearch());
+        SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.VM, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
     }
@@ -2724,6 +2724,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     @Override
     protected String getListName() {
         return "VmListModel"; //$NON-NLS-1$
+    }
+
+    @Override
+    public boolean supportsServerSideSorting() {
+        return true;
     }
 
     @Override

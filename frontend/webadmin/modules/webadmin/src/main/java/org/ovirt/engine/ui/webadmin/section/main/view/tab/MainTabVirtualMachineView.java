@@ -6,16 +6,17 @@ import java.util.List;
 
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
-import com.google.gwt.user.cellview.client.Column;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.searchbackend.VmConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
 import org.ovirt.engine.ui.common.widget.table.column.StatusCompositeCell;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
@@ -65,9 +66,13 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
     void initTable(ApplicationResources resources, ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new VmStatusColumn<VM>(), constants.empty(), "30px"); //$NON-NLS-1$
+        VmStatusColumn<VM> vmStatusColumn = new VmStatusColumn<VM>();
+        vmStatusColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
+        getTable().addColumn(vmStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        VmTypeColumn vmTypeColumn = new VmTypeColumn();
+        vmTypeColumn.makeSortable(VmConditionFieldAutoCompleter.TYPE);
+        getTable().addColumn(vmTypeColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -75,6 +80,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getName();
             }
         };
+        nameColumn.makeSortable(VmConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameVm(), "120px"); //$NON-NLS-1$
 
         CommentColumn<VM> commentColumn = new CommentColumn<VM>();
@@ -86,6 +92,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getRunOnVdsName();
             }
         };
+        hostColumn.makeSortable(VmConditionFieldAutoCompleter.HOST);
         getTable().addColumn(hostColumn, constants.hostVm(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
@@ -94,6 +101,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getVmIp();
             }
         };
+        ipColumn.makeSortable(VmConditionFieldAutoCompleter.IP);
         getTable().addColumn(ipColumn, constants.ipVm(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> fqdnColumn = new TextColumnWithTooltip<VM>() {
@@ -103,6 +111,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
 
         };
+        fqdnColumn.makeSortable(VmConditionFieldAutoCompleter.FQDN);
         getTable().addColumn(fqdnColumn, constants.fqdn(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
@@ -111,6 +120,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getVdsGroupName();
             }
         };
+        clusterColumn.makeSortable(VmConditionFieldAutoCompleter.CLUSTER);
         getTable().addColumn(clusterColumn, constants.clusterVm(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> dcColumn = new TextColumnWithTooltip<VM>() {
@@ -119,6 +129,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getStoragePoolName();
             }
         };
+        dcColumn.makeSortable(VmConditionFieldAutoCompleter.DATACENTER);
         getTable().addColumn(dcColumn, constants.dcVm(), "120px"); //$NON-NLS-1$
 
         PercentColumn<VM> memoryColumn = new PercentColumn<VM>() {
@@ -127,6 +138,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getUsageMemPercent();
             }
         };
+        memoryColumn.makeSortable(VmConditionFieldAutoCompleter.MEM_USAGE);
         getTable().addColumn(memoryColumn, constants.memoryVm(), "60px"); //$NON-NLS-1$
 
         PercentColumn<VM> cpuColumn = new PercentColumn<VM>() {
@@ -135,6 +147,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getUsageCpuPercent();
             }
         };
+        cpuColumn.makeSortable(VmConditionFieldAutoCompleter.CPU_USAGE);
         getTable().addColumn(cpuColumn, constants.cpuVm(), "60px"); //$NON-NLS-1$
 
         PercentColumn<VM> networkColumn = new PercentColumn<VM>() {
@@ -143,6 +156,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getUsageNetworkPercent();
             }
         };
+        networkColumn.makeSortable(VmConditionFieldAutoCompleter.NETWORK_USAGE);
         getTable().addColumn(networkColumn, constants.networkVm(), "60px"); //$NON-NLS-1$
 
         PercentColumn<VM> migrationProgressColumn = new OneColorPercentColumn<VM>(ProgressBarColumn.ProgressBarColors.GREEN) {
@@ -151,6 +165,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getMigrationProgressPercent();
             }
         };
+        migrationProgressColumn.makeSortable(VmConditionFieldAutoCompleter.MIGRATION_PROGRESS_PERCENT);
         getTable().addColumn(migrationProgressColumn, constants.migrationProgress(), "60px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> displayColumn = new EnumColumn<VM, DisplayType>() {
@@ -186,12 +201,14 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                         statusColumn,
                         reasonColumn)));
 
-        getTable().addColumn(new Column<VM, VM>(compositeCell) {
+        SortableColumn<VM, VM> statusTextColumn = new SortableColumn<VM, VM>(compositeCell) {
             @Override
             public VM getValue(VM object) {
                 return object;
             }
-        }, constants.statusVm(), "80px"); //$NON-NLS-1$
+        };
+        statusTextColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
+        getTable().addColumn(statusTextColumn, constants.statusVm(), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
             @Override
@@ -199,6 +216,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getRoundedElapsedTime();
             }
         };
+        uptimeColumn.makeSortable(VmConditionFieldAutoCompleter.UPTIME);
         getTable().addColumn(uptimeColumn, constants.uptimeVm(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> descriptionColumn = new TextColumnWithTooltip<VM>() {
@@ -207,6 +225,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getDescription();
             }
         };
+        descriptionColumn.makeSortable(VmConditionFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descriptionColumn, constants.description(), "150px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.newVm()) {

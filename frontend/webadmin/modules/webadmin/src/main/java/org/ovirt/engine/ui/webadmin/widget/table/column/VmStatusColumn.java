@@ -4,12 +4,12 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 
-import com.google.gwt.user.cellview.client.Column;
+import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
 
 /**
  * Image column that corresponds to XAML {@code VmStatusTemplate}.
  */
-public class VmStatusColumn<T> extends Column<T, VM> {
+public class VmStatusColumn<T> extends SortableColumn<T, VM> {
 
     public VmStatusColumn() {
         super(new VmStatusCell());
