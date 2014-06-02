@@ -225,39 +225,6 @@ public class ResourcesModel extends SearchableListModel
                 ResourcesModel resourcesModel = (ResourcesModel) model;
                 final ArrayList<VM> list =
                         (ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                // TODO: Insert dummy data regarding disks and snapshots.
-                for (VM vm : list)
-                {
-                    // vm.DiskList =
-                    // new[]
-                    // {
-                    // new DiskImage
-                    // {
-                    // internal_drive_mapping = "1",
-                    // SizeInGigabytes = 100,
-                    // ActualSize = 50,
-                    // Snapshots =
-                    // new[]
-                    // {
-                    // new DiskImage(),
-                    // new DiskImage()
-                    // }
-                    // },
-                    // new DiskImage
-                    // {
-                    // internal_drive_mapping = "2",
-                    // SizeInGigabytes = 200,
-                    // ActualSize = 80,
-                    // Snapshots =
-                    // new[]
-                    // {
-                    // new DiskImage(),
-                    // new DiskImage(),
-                    // new DiskImage()
-                    // }
-                    // }
-                    // };
-                }
 
                 // Update calculated properties.
                 int runningVMs = 0;
