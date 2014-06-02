@@ -159,9 +159,15 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
 
     @Override
     protected void syncSearch() {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Provider, isCaseSensitiveSearch());
+        SearchParameters tempVar =
+                new SearchParameters(applySortOptions(getSearchString()), SearchType.Provider, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
+    }
+
+    @Override
+    public boolean supportsServerSideSorting() {
+        return true;
     }
 
     private void add() {

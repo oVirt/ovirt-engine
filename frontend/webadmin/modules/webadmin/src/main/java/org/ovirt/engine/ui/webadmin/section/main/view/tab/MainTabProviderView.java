@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.core.searchbackend.ProviderConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -45,6 +46,7 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
                 return object.getName();
             }
         };
+        nameColumn.makeSortable(ProviderConditionFieldAutoCompleter.NAME);
 
         getTable().addColumn(nameColumn, constants.nameProvider(), "200px"); //$NON-NLS-1$
 
@@ -54,6 +56,7 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
                 return object.getType();
             }
         };
+        typeColumn.makeSortable(ProviderConditionFieldAutoCompleter.TYPE);
 
         getTable().addColumn(typeColumn, constants.typeProvider(), "200px"); //$NON-NLS-1$
 
@@ -63,6 +66,7 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
                 return object.getDescription();
             }
         };
+        descriptionColumn.makeSortable(ProviderConditionFieldAutoCompleter.DESCRIPTION);
 
         getTable().addColumn(descriptionColumn, constants.descriptionProvider(), "300px"); //$NON-NLS-1$
 
@@ -72,6 +76,7 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
                 return object.getUrl();
             }
         };
+        urlColumn.makeSortable(ProviderConditionFieldAutoCompleter.URL);
 
         getTable().addColumn(urlColumn, constants.urlProvider(), "200px"); //$NON-NLS-1$
 
