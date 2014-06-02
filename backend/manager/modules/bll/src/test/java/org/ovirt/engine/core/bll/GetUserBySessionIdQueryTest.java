@@ -29,6 +29,6 @@ public class GetUserBySessionIdQueryTest extends AbstractUserQueryTest<VdcQueryP
 
     @After
     public void tearDown() {
-        SessionDataContainer.getInstance().removeSession(sessionID);
+        SessionDataContainer.getInstance().removeSessionOnLogout(sessionID);
     }
 }

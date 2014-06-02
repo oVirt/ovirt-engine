@@ -7,6 +7,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.ovirt.engine.api.extensions.ExtMap;
+import org.ovirt.engine.api.extensions.aaa.Acct;
+import org.ovirt.engine.core.aaa.AcctUtils;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -28,6 +31,9 @@ public class SessionDataContainer {
     private static final String PRINCIPAL_PARAMETER_NAME = "principal";
     private static final String HARD_LIMIT_PARAMETER_NAME = "hard_limit";
     private static final String SOFT_LIMIT_PARAMETER_NAME = "soft_limit";
+
+    private static final String AUTH_RECORD_PARAMETER_NAME = "auth_record";
+    private static final String PRINCIPAL_RECORD_PARAMETER_NAME = "principal_record";
 
     private static SessionDataContainer dataProviderInstance = new SessionDataContainer();
 
@@ -89,8 +95,8 @@ public class SessionDataContainer {
      * @param sessionId
      *            - id of current session
      */
-    public final void removeSession(String sessionId) {
-        sessionInfoMap.remove(sessionId);
+    public final void removeSessionOnLogout(String sessionId) {
+        removeSessionImpl(sessionId, Acct.ReportReason.PRINCIPAL_LOGOUT, "Prinicial %1$s has performed logout", getPrincipalName(sessionId));
     }
 
     /**
@@ -106,7 +112,7 @@ public class SessionDataContainer {
             Date hardLimit = (Date) sessionMap.get(HARD_LIMIT_PARAMETER_NAME);
             Date softLimit = (Date) sessionMap.get(SOFT_LIMIT_PARAMETER_NAME);
             if ((hardLimit != null && hardLimit.before(now)) || (softLimit != null && softLimit.before(now))) {
-                iter.remove();
+                removeSessionImpl(entry.getKey(), Acct.ReportReason.PRINCIPAL_SESSION_EXPIRED, "Session has expired for principal %1$s", getPrincipal(entry.getKey()));
             }
         }
     }
@@ -176,8 +182,9 @@ public class SessionDataContainer {
     }
 
     public String getPrincipal(String sessionId) {
-        return (String) getData(sessionId, PRINCIPAL_PARAMETER_NAME, false);
+        return getPrincipalName(sessionId);
     }
+
     private void refresh(SessionInfo sessionInfo) {
         int softLimitValue = Config.<Integer> getValue(ConfigValues.UserSessionTimeOutInterval);
         if (softLimitValue > 0) {
@@ -190,4 +197,18 @@ public class SessionDataContainer {
         return sessionInfoMap.containsKey(sessionId);
     }
 
+    private void removeSessionImpl(String sessionId, int reason, String message, Object... msgArgs) {
+        AcctUtils.reportRecords(reason,
+                getPrincipalName(sessionId),
+                (ExtMap) getData(sessionId, AUTH_RECORD_PARAMETER_NAME, false),
+                (ExtMap) getData(sessionId, PRINCIPAL_RECORD_PARAMETER_NAME, false),
+                message,
+                msgArgs
+                );
+        sessionInfoMap.remove(sessionId);
+    }
+
+    private String getPrincipalName(String sessionId) {
+        return (String) getData(sessionId, PRINCIPAL_PARAMETER_NAME, false);
+    }
 }

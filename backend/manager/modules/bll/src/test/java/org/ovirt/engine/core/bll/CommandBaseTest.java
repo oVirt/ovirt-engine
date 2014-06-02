@@ -91,7 +91,7 @@ public class CommandBaseTest {
     @After
     public void clearEnvironment() {
         ThreadLocalParamsContainer.clean();
-        SessionDataContainer.getInstance().removeSession(session);
+        SessionDataContainer.getInstance().removeSessionOnLogout(session);
     }
 
     /** Testing the constructor, which adds the user id to the thread local container */

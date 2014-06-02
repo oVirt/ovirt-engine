@@ -103,7 +103,7 @@ public class QueriesCommandBaseTest {
                                 shouldBeAbleToRunQuery,
                                 query.getQueryReturnValue().getSucceeded());
 
-                        SessionDataContainer.getInstance().removeSession(sessionId);
+                        SessionDataContainer.getInstance().removeSessionOnLogout(sessionId);
                     }
                 }
             }

@@ -16,7 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
+import org.ovirt.engine.api.extensions.aaa.Acct;
 import org.ovirt.engine.api.extensions.aaa.Authn;
+import org.ovirt.engine.core.aaa.AcctUtils;
+import org.ovirt.engine.core.aaa.AuthType;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 
@@ -128,8 +131,20 @@ public class BasicAuthenticationFilter implements Filter {
                     outputMap.<Integer> get(Authn.InvokeKeys.RESULT) == Authn.AuthResult.SUCCESS) {
                 request.setAttribute(FiltersHelper.Constants.REQUEST_AUTH_RECORD_KEY,
                     outputMap.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD));
+                request.setAttribute(FiltersHelper.Constants.REQUEST_AUTH_TYPE_KEY, AuthType.CREDENTIALS);
                 request.setAttribute(FiltersHelper.Constants.REQUEST_PROFILE_KEY, userProfile.profile.getName());
              } else {
+                if (outputMap.<Integer> get(Base.InvokeKeys.RESULT) != Base.InvokeResult.SUCCESS
+                        || outputMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
+                    AcctUtils.reportRecords(
+                            Acct.ReportReason.PRINCIPAL_LOGIN_FAILED,
+                            userProfile.userName,
+                            null,
+                            null,
+                            "Basic authentication failed for User %1$s.",
+                            userProfile.userName
+                            );
+                }
                 log.error("Failure in authentication to profile {}. Invocation Result code is {}. Authn result code is {}",
                                 userProfile.profile,
                                  outputMap.<Integer> get(Base.InvokeKeys.RESULT),

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.api.extensions.ExtMap;
+import org.ovirt.engine.core.aaa.AuthType;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
@@ -48,8 +49,10 @@ public class LoginFilter implements Filter {
                                 LoginUserParameters(
                                         profileName,
                                         authRecord,
-                                        loginAsAdmin ? VdcActionType.LoginAdminUser : VdcActionType.LoginUser)
-                                );
+                                        loginAsAdmin ? VdcActionType.LoginAdminUser : VdcActionType.LoginUser,
+                                        (AuthType)request.getAttribute(FiltersHelper.Constants.REQUEST_AUTH_TYPE_KEY)
+                               )
+                        );
                         if (returnValue.getSucceeded()) {
                             request.setAttribute(
                                     SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY,

@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
+import org.ovirt.engine.core.aaa.AuthType;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 
@@ -152,6 +153,8 @@ public class NegotiationFilter implements Filter {
                         case Authn.AuthResult.SUCCESS:
                             ExtMap authRecord = output.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD);
                             req.setAttribute(FiltersHelper.Constants.REQUEST_AUTH_RECORD_KEY, authRecord);
+                            req.setAttribute(FiltersHelper.Constants.REQUEST_AUTH_TYPE_KEY,
+                                AuthType.NEGOTIATION);
                             req.setAttribute(FiltersHelper.Constants.REQUEST_PROFILE_KEY, profile);
                             session.removeAttribute(STACK_ATTR);
                         stack.clear();

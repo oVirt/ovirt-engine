@@ -38,6 +38,6 @@ public class BackendTest {
 
     @After
     public void tearDown() {
-        SessionDataContainer.getInstance().removeSession(sessionIdToUse);
+        SessionDataContainer.getInstance().removeSessionOnLogout(sessionIdToUse);
     }
 }

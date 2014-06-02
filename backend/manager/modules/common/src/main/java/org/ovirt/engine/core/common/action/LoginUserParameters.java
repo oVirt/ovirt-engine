@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.aaa.AuthType;
+
 
 public class LoginUserParameters extends VdcActionParametersBase implements Serializable {
     private static final long serialVersionUID = -1660445011620552804L;
@@ -10,6 +12,7 @@ public class LoginUserParameters extends VdcActionParametersBase implements Seri
         private String loginName;
         private String password;
         private transient Object authRecord;
+        private AuthType authType;
     }
 
     private AuthenticationInformation authInfo;
@@ -23,6 +26,7 @@ public class LoginUserParameters extends VdcActionParametersBase implements Seri
         this.authInfo = new AuthenticationInformation();
         this.authInfo.loginName = loginName;
         this.authInfo.password = password;
+        this.authInfo.authType = AuthType.CREDENTIALS;
         actionType = VdcActionType.LoginUser;
 
     }
@@ -31,15 +35,19 @@ public class LoginUserParameters extends VdcActionParametersBase implements Seri
         actionType = VdcActionType.LoginUser;
     }
 
-    public LoginUserParameters(String profileName, Object authRecord) {
-        this(profileName, authRecord, VdcActionType.LoginUser);
+    public LoginUserParameters(String profileName, Object authRecord, AuthType authType) {
+        this(profileName, authRecord, VdcActionType.LoginUser, authType);
     }
 
-    public LoginUserParameters(String profileName,
+    public LoginUserParameters(
+            String profileName,
             Object authRecord,
-            VdcActionType vdcActionType) {
+            VdcActionType vdcActionType,
+            AuthType authType
+            ) {
         this.authInfo = new AuthenticationInformation();
         this.authInfo.authRecord = authRecord;
+        this.authInfo.authType = AuthType.CREDENTIALS;
         this.profileName = profileName;
         this.actionType = vdcActionType;
 
@@ -64,6 +72,10 @@ public class LoginUserParameters extends VdcActionParametersBase implements Seri
 
     public Object getAuthRecord() {
         return authInfo.authRecord;
+    }
+
+    public AuthType getAuthType() {
+        return authInfo.authType;
     }
 
     public VdcActionType getActionType() {

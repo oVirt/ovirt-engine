@@ -42,7 +42,7 @@ public class LogoutUserCommand<T extends LogoutUserParameters> extends CommandBa
                                 SessionDataContainer.getInstance().getPrincipal(getParameters().getSessionId())
                         ));
             }
-            SessionDataContainer.getInstance().removeSession(getParameters().getSessionId());
+            SessionDataContainer.getInstance().removeSessionOnLogout(getParameters().getSessionId());
         }
         setSucceeded(true);
     }

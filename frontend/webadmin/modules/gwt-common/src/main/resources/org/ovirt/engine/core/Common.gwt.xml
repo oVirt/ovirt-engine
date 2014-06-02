@@ -15,6 +15,7 @@
 		<include name="common/businessentities/LdapGroup.java" />
 		<include name="common/businessentities/BusinessEntitiesDefinitions.java" />
 		<include name="common/businessentities/LdapUser.java" />
+		<include name="aaa/AuthType.java" />
 		<include name="aaa/DirectoryEntry.java" />
 		<include name="aaa/DirectoryEntryStatus.java" />
 		<include name="aaa/DirectoryGroup.java" />

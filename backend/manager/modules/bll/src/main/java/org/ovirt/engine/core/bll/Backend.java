@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.DependsOn;
@@ -21,6 +22,8 @@ import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
+import org.ovirt.engine.api.extensions.aaa.Acct;
+import org.ovirt.engine.core.aaa.AcctUtils;
 import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interceptors.ThreadLocalSessionCleanerInterceptor;
@@ -129,6 +132,11 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     public void create() {
         checkDBConnectivity();
         initialize();
+    }
+
+    @PreDestroy
+    public void shutdown() {
+        AcctUtils.reportReason(Acct.ReportReason.SHUTDOWN, "Shutting down engine");
     }
 
     private static void checkDBConnectivity() {
@@ -248,7 +256,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         initAttestation();
         EngineExtensionsManager.getInstance().engineInitialize();
         AuthenticationProfileRepository.getInstance();
-
+        AcctUtils.reportReason(Acct.ReportReason.STARTUP, "Starting up engine");
     }
 
     private void initAttestation() {

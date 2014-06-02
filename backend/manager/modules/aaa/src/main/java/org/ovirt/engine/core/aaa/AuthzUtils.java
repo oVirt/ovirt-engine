@@ -27,8 +27,8 @@ public class AuthzUtils {
         return proxy.getContext().<String> get(Base.ContextKeys.INSTANCE_NAME);
     }
 
-    public static DirectoryUser fetchPrincipalRecord(final ExtensionProxy extension, ExtMap authRecord) {
-        return mapPrincipalRecord(extension, extension.invoke(new ExtMap().mput(
+    public static ExtMap fetchPrincipalRecord(final ExtensionProxy extension, ExtMap authRecord) {
+        return extension.invoke(new ExtMap().mput(
                 Base.InvokeKeys.COMMAND,
                 Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
                 ).mput(
@@ -37,8 +37,7 @@ public class AuthzUtils {
                 ).mput(
                         Authz.InvokeKeys.QUERY_FLAGS,
                         Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE
-                )).<ExtMap> get(Authz.InvokeKeys.PRINCIPAL_RECORD));
-
+                )).<ExtMap> get(Authz.InvokeKeys.PRINCIPAL_RECORD);
     }
 
     public static List<DirectoryUser> findPrincipalsByQuery(
@@ -284,7 +283,7 @@ public class AuthzUtils {
         }
     }
 
-    private static DirectoryUser mapPrincipalRecord(final ExtensionProxy extension, final ExtMap principalRecord) {
+    public static DirectoryUser mapPrincipalRecord(final ExtensionProxy extension, final ExtMap principalRecord) {
         DirectoryUser directoryUser = null;
         if (principalRecord != null) {
             directoryUser = new DirectoryUser(

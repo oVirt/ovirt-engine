@@ -65,69 +65,74 @@ public class Acct {
         /** Application shutdown. */
         public static final int SHUTDOWN = 1;
         /**
+         * Authz Principal record was not found.
+         * Will have {@link PrincipalRecord}.
+         */
+        public static final int PRINCIPAL_WAS_NOT_FOUND = 2;
+        /**
          * Login failed by any reason but locked.
          * Will have {@link PrincipalRecord}.
          */
-        public static final int PRINCIPAL_LOGIN_FAILED = 2;
+        public static final int PRINCIPAL_LOGIN_FAILED = 3;
         /**
          * Login failed as account is locked.
          * Will have {@link PrincipalRecord}.
          */
-        public static final int PRINCIPAL_LOGIN_LOCKED = 3;
+        public static final int PRINCIPAL_LOGIN_LOCKED = 4;
         /**
          * Login failed as no permission.
          * Will have {@link PrincipalRecord}.
          */
-        public static final int PRINCIPAL_LOGIN_NO_PERMISSION = 4;
+        public static final int PRINCIPAL_LOGIN_NO_PERMISSION = 5;
         /**
          * Credentials based login.
          * Will have {@link PrincipalRecord}.
          */
-        public static final int PRINCIPAL_LOGIN_CREDENTIALS = 5;
+        public static final int PRINCIPAL_LOGIN_CREDENTIALS = 6;
         /**
          * Login on behalf of user.
          * Will have {@link PrincipalRecord}.
          */
-        public static final int PRINCIPAL_LOGIN_NO_CREDENTAILS = 6;
+        public static final int PRINCIPAL_LOGIN_NO_CREDENTAILS = 7;
         /**
          * Negotiation based login.
          * Will have {@link PrincipalRecord}.
          */
-        public static final int PRINCIPAL_LOGIN_NEGOTIATE = 7;
+        public static final int PRINCIPAL_LOGIN_NEGOTIATE = 8;
         /**
          * Logout.
          * Will have {@link PrincipalRecord}.
          */
-        public static final int PRINCIPAL_LOGOUT = 8;
+        public static final int PRINCIPAL_LOGOUT = 9;
         /**
          * Session expired.
          * Will have {@link PrincipalRecord}.
          */
-        public static final int PRINCIPAL_SESSION_EXPIRED = 9;
+        public static final int PRINCIPAL_SESSION_EXPIRED = 10;
         /**
          * Credentials changed, such as password changed.
          * Will have {@link PrincipalRecord}.
          */
-        public static final int PRINCIPAL_CREDENTIALS_CHANGED = 10;
+        public static final int PRINCIPAL_CREDENTIALS_CHANGED = 11;
         /**
          * Access denied.
          */
-        public static final int ACCESS_DENIED = 11;
+        public static final int ACCESS_DENIED = 12;
         /**
          * Resource access.
          * Will have {@link ResourceRecord}.
          */
-        public static final int RESOURCE_ACCESS = 12;
+        public static final int RESOURCE_ACCESS = 13;
         /**
          * Privileged operation.
          * Will have {@link OperationRecord}.
          */
-        public static final int PRIVILEDGED_OPERATION = 13;
+        public static final int PRIVILEDGED_OPERATION = 14;
         /**
          * Application specific.
          * Will have proprietary record.
          */
-        public static final int APPLICATION_SPECIFIC = 14;
+        public static final int APPLICATION_SPECIFIC = 15;
     }
 
     /**

@@ -41,7 +41,7 @@ public class SessionDataContainerTest {
 
     @After
     public void clearSession() {
-        container.removeSession(TEST_SESSION_ID);
+        container.removeSessionOnLogout(TEST_SESSION_ID);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class SessionDataContainerTest {
     public void testRemoveWithParam() {
         // Set some data on the test sessions
         container.setData(TEST_SESSION_ID, TEST_KEY, TEST_VALUE);
-        container.removeSession(TEST_SESSION_ID);
+        container.removeSessionOnLogout(TEST_SESSION_ID);
         assertNull("Get should return null since the session was removed",
                 container.getData(TEST_SESSION_ID, TEST_KEY, false));
     }

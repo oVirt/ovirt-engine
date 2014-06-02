@@ -13,9 +13,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
+import org.ovirt.engine.api.extensions.aaa.Acct;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.api.extensions.aaa.Authn.AuthRecord;
+import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.api.extensions.aaa.Mapping;
+import org.ovirt.engine.core.aaa.AcctUtils;
+import org.ovirt.engine.core.aaa.AuthType;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.AuthzUtils;
@@ -159,13 +163,20 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             return false;
         }
 
-        // Check that the authenticator provided by the profile supports password authentication:
         authnExtension = profile.getAuthn();
         authRecord = (ExtMap) getParameters().getAuthRecord();
+        int reportReason = Acct.ReportReason.PRINCIPAL_LOGIN_CREDENTIALS;
+        if (getParameters().getAuthType() != null) {
+            if (AuthType.NEGOTIATION == getParameters().getAuthType()) {
+                reportReason = Acct.ReportReason.PRINCIPAL_LOGIN_NEGOTIATE;
+            }
+        }
+        String loginName = null;
         if (authRecord == null) {
+            reportReason = Acct.ReportReason.PRINCIPAL_LOGIN_CREDENTIALS;
 
             // Verify that the login name and password have been provided:
-            String loginName = getParameters().getLoginName();
+            loginName = getParameters().getLoginName();
             if (loginName == null) {
                 log.errorFormat(
                         "Can't login user because no login name has been provided."
@@ -211,9 +222,9 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         }
         // Perform the actual authentication:
         if (authRecord != null) {
-            DirectoryUser directoryUser =
-                    AuthzUtils.fetchPrincipalRecord(profile.getAuthz(), authRecord);
-            if (directoryUser == null) {
+            ExtMap principalRecord = AuthzUtils.fetchPrincipalRecord(profile.getAuthz(), authRecord);
+
+            if (principalRecord == null) {
                 log.infoFormat(
                         "Can't login user \"{0}\" with authentication profile \"{1}\" because the user doesn't exist in the "
                                 +
@@ -222,9 +233,18 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                         profile.getName()
                         );
                 addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
+                AcctUtils.reportRecords(
+                        Acct.ReportReason.PRINCIPAL_WAS_NOT_FOUND,
+                        loginName,
+                        authRecord,
+                        null,
+                        "Principal record was not found. User name is %1$s",
+                        loginName
+                        );
+
                 return false;
             }
-
+            DirectoryUser directoryUser = AuthzUtils.mapPrincipalRecord(profile.getAuthz(), principalRecord);
 
             // Check that the user exists in the database, if it doesn't exist then we need to add it now:
             DbUser dbUser =
@@ -248,6 +268,15 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                     MultiLevelAdministrationHandler.BOTTOM_OBJECT_ID,
                     VdcObjectType.Bottom,
                     true)) {
+                AcctUtils.reportRecords(
+                        Acct.ReportReason.PRINCIPAL_LOGIN_NO_PERMISSION,
+                        dbUser.getLoginName(),
+                        authRecord,
+                        principalRecord,
+
+                        "The user %1$s is not authorized to perform login",
+                        dbUser.getLoginName()
+                        );
                 addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
                 return false;
             }
@@ -259,6 +288,15 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             log.debugFormat("Checking if user {0} is an admin, result {1}", dbUser.getLoginName(), isAdmin);
             dbUser.setAdmin(isAdmin);
             setCurrentUser(dbUser);
+            AcctUtils.reportRecords(
+                    reportReason,
+                    dbUser.getLoginName(),
+                    authRecord,
+                    principalRecord,
+                    "User %1$s which has princnipal name %2$s logged in ",
+                    dbUser.getLoginName(),
+                    principalRecord.<String> get(Authz.PrincipalRecord.NAME)
+                    );
             return true;
         }
         return false;
@@ -338,6 +376,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                     user,
                     getParameters().getProfileName());
 
+
             AuditLogType auditLogType = auditLogMap.get(authResult);
             // if found matching audit log type, and it's not general login failure audit log (which will be logged
             // anyway due to CommandBase.log)
@@ -369,6 +408,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 }
                 addCanDoActionMessage(msg);
             }
+
         } else {
             authRecord = outputMap.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD);
             if (mapper != null) {
@@ -384,7 +424,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                         authRecord
                         );
             }
-
         }
     }
 
