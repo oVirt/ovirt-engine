@@ -1,20 +1,21 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.List;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 public class SortedListModel<T> extends ListModel<T> {
 
-    private static class SortSensitiveComparator<T> implements Comparator<T> {
+    static class SortSensitiveComparator<T> implements Comparator<T> {
 
         private final Comparator<? super T> comparator;
         private final boolean sortAscending;
 
-        public SortSensitiveComparator(Comparator<? super T> comparator, boolean sortAscending) {
+        SortSensitiveComparator(Comparator<? super T> comparator, boolean sortAscending) {
             assert comparator != null : "comparator cannot be null"; //$NON-NLS-1$
             this.comparator = comparator;
             this.sortAscending = sortAscending;
@@ -54,7 +55,7 @@ public class SortedListModel<T> extends ListModel<T> {
 
     }
 
-    protected Comparator<? super T> comparator;
+    protected Comparator<T> comparator;
 
     public SortedListModel(Comparator<? super T> comparator) {
         super();
@@ -84,9 +85,10 @@ public class SortedListModel<T> extends ListModel<T> {
             return items;
         }
 
-        SortedSet<T> sortedItems = new TreeSet<T>(comparator);
-        sortedItems.addAll(items);
-        return sortedItems;
+        List<T> sortedList = new ArrayList<T>(items);
+        Collections.sort(sortedList, comparator);
+
+        return sortedList;
     }
 
 }
