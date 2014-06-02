@@ -106,8 +106,17 @@ public class LiveMigrateVmDisksCommandTest {
         return Arrays.asList(new LiveMigrateDiskParameters(diskImageId, srcStorageId, dstStorageId, vmId, quotaId, diskImageGroupId));
     }
 
+    private List<LiveMigrateDiskParameters> createLiveMigrateVmDisksParameters(Guid srcStorageId, Guid dstStorageId) {
+        return Arrays.asList(new LiveMigrateDiskParameters(diskImageId, srcStorageId, dstStorageId, vmId, quotaId, diskImageGroupId));
+    }
+
     private void createParameters() {
         command.getParameters().setParametersList(createLiveMigrateVmDisksParameters());
+        command.getParameters().setVmId(vmId);
+    }
+
+    private void createParameters(Guid srcStorageId, Guid dstStorageId) {
+        command.getParameters().setParametersList(createLiveMigrateVmDisksParameters(srcStorageId, dstStorageId));
         command.getParameters().setVmId(vmId);
     }
 
@@ -186,6 +195,22 @@ public class LiveMigrateVmDisksCommandTest {
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL.toString()));
+    }
+
+    @Test
+    public void canDoActionSameSourceAndDest() throws Exception {
+        createParameters(srcStorageId, srcStorageId);
+
+        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
+        srcStorageDomain.setStatus(StorageDomainStatus.Active);
+
+        initDiskImage(diskImageGroupId, diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
+
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME.name()));
     }
 
     @Test
