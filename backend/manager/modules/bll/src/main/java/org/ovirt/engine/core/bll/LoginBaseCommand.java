@@ -207,7 +207,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 loginName = curUser.getLoginName();
                 password = curPassword;
             }
-            authRecord = authenticate(loginName, password);
+            authenticate(loginName, password);
         }
         // Perform the actual authentication:
         if (authRecord != null) {
@@ -307,8 +307,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 Authn.Capabilities.AUTHENTICATE_PASSWORD) != 0;
     }
 
-    private ExtMap authenticate(String user, String password) {
-        ExtMap result = null;
+    private void authenticate(String user, String password) {
         ExtensionProxy mapper = profile.getMapper();
         if (mapper != null) {
             user = mapper.invoke(new ExtMap().mput(
@@ -370,25 +369,23 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 }
                 addCanDoActionMessage(msg);
             }
-            result = null;
         } else {
-            result = outputMap.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD);
+            authRecord = outputMap.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD);
             if (mapper != null) {
-                result = mapper.invoke(new ExtMap().mput(
+                authRecord = mapper.invoke(new ExtMap().mput(
                                 Base.InvokeKeys.COMMAND,
                                 Mapping.InvokeCommands.MAP_AUTH_RECORD
                                 ).mput(
                                         Authn.InvokeKeys.AUTH_RECORD,
-                                result
+                                authRecord
                         )
                         , true).<ExtMap> get(
                         Authn.InvokeKeys.AUTH_RECORD,
-                        result
+                        authRecord
                         );
             }
 
         }
-        return result;
     }
 
 }
