@@ -11,6 +11,56 @@ import org.ovirt.engine.core.compat.Guid;
 public class LUNs implements BusinessEntity<String> {
     private static final long serialVersionUID = 3026455643639610091L;
 
+    @Size(min = 1, max = BusinessEntitiesDefinitions.LUN_ID)
+    private String id;
+
+    // TODO rename the column
+    @Size(max = BusinessEntitiesDefinitions.LUN_PHYSICAL_VOLUME_ID)
+    private String physicalVolumeId;
+
+    @Size(max = BusinessEntitiesDefinitions.LUN_VOLUME_GROUP_ID)
+    private String volumeGroupId;
+
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    private String serial;
+
+    private Integer lunMapping;
+
+    @Size(max = BusinessEntitiesDefinitions.LUN_VENDOR_ID)
+    private String vendorId;
+
+    @Size(max = BusinessEntitiesDefinitions.LUN_PRODUCT_ID)
+    private String productId;
+
+    private ArrayList<StorageServerConnections> _lunConnections;
+
+    private int deviceSize;
+
+    private String vendorName;
+
+    private HashMap<String, Boolean> pathsDictionary;
+
+    private StorageType lunType;
+
+    /**
+     * LUN's status
+     */
+    private LunStatus status;
+
+    /**
+     * Disk ID - using Guid since diskId is nullable
+     */
+    private Guid diskId;
+
+    private String diskAlias;
+
+    /**
+     * Storage Domain ID - using storageDomainId since diskId is nullable
+     */
+    private Guid storageDomainId;
+
+    private String storageDomainName;
+
     public LUNs() {
         lunType = StorageType.UNKNOWN;
     }
@@ -70,9 +120,6 @@ public class LUNs implements BusinessEntity<String> {
                 && ObjectUtils.objectsEqual(storageDomainName, other.storageDomainName));
     }
 
-    @Size(min = 1, max = BusinessEntitiesDefinitions.LUN_ID)
-    private String id;
-
     public String getLUN_id() {
         return this.id;
     }
@@ -80,10 +127,6 @@ public class LUNs implements BusinessEntity<String> {
     public void setLUN_id(String value) {
         this.id = value;
     }
-
-    // TODO rename the column
-    @Size(max = BusinessEntitiesDefinitions.LUN_PHYSICAL_VOLUME_ID)
-    private String physicalVolumeId;
 
     public String getphysical_volume_id() {
         return this.physicalVolumeId;
@@ -93,9 +136,6 @@ public class LUNs implements BusinessEntity<String> {
         this.physicalVolumeId = value;
     }
 
-    @Size(max = BusinessEntitiesDefinitions.LUN_VOLUME_GROUP_ID)
-    private String volumeGroupId;
-
     public String getvolume_group_id() {
         return this.volumeGroupId;
     }
@@ -103,9 +143,6 @@ public class LUNs implements BusinessEntity<String> {
     public void setvolume_group_id(String value) {
         this.volumeGroupId = value;
     }
-
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    private String serial;
 
     public String getSerial() {
         return this.serial;
@@ -115,8 +152,6 @@ public class LUNs implements BusinessEntity<String> {
         this.serial = value;
     }
 
-    private Integer lunMapping;
-
     public Integer getLunMapping() {
         return this.lunMapping;
     }
@@ -124,9 +159,6 @@ public class LUNs implements BusinessEntity<String> {
     public void setLunMapping(Integer value) {
         this.lunMapping = value;
     }
-
-    @Size(max = BusinessEntitiesDefinitions.LUN_VENDOR_ID)
-    private String vendorId;
 
     public String getVendorId() {
         return this.vendorId;
@@ -136,9 +168,6 @@ public class LUNs implements BusinessEntity<String> {
         this.vendorId = value;
     }
 
-    @Size(max = BusinessEntitiesDefinitions.LUN_PRODUCT_ID)
-    private String productId;
-
     public String getProductId() {
         return this.productId;
     }
@@ -146,8 +175,6 @@ public class LUNs implements BusinessEntity<String> {
     public void setProductId(String value) {
         this.productId = value;
     }
-
-    private ArrayList<StorageServerConnections> _lunConnections;
 
     public ArrayList<StorageServerConnections> getLunConnections() {
         return _lunConnections;
@@ -157,8 +184,6 @@ public class LUNs implements BusinessEntity<String> {
         _lunConnections = value;
     }
 
-    private int deviceSize;
-
     public int getDeviceSize() {
         return deviceSize;
     }
@@ -166,8 +191,6 @@ public class LUNs implements BusinessEntity<String> {
     public void setDeviceSize(int value) {
         deviceSize = value;
     }
-
-    private String vendorName;
 
     public String getVendorName() {
         return vendorName;
@@ -191,8 +214,6 @@ public class LUNs implements BusinessEntity<String> {
         return (getPathsDictionary() == null ? 0 : getPathsDictionary().size());
     }
 
-    private HashMap<String, Boolean> pathsDictionary;
-
     public HashMap<String, Boolean> getPathsDictionary() {
         return pathsDictionary;
     }
@@ -200,8 +221,6 @@ public class LUNs implements BusinessEntity<String> {
     public void setPathsDictionary(HashMap<String, Boolean> value) {
         pathsDictionary = value;
     }
-
-    private StorageType lunType;
 
     public StorageType getLunType() {
         return lunType;
@@ -211,11 +230,6 @@ public class LUNs implements BusinessEntity<String> {
         lunType = value;
     }
 
-    /**
-     * LUN's status
-     */
-    private LunStatus status;
-
     public LunStatus getStatus() {
         return status;
     }
@@ -223,11 +237,6 @@ public class LUNs implements BusinessEntity<String> {
     public void setStatus(LunStatus value) {
         status = value;
     }
-
-    /**
-     * Disk ID - using Guid since diskId is nullable
-     */
-    private Guid diskId;
 
     public Guid getDiskId() {
         return diskId;
@@ -237,8 +246,6 @@ public class LUNs implements BusinessEntity<String> {
         diskId = value;
     }
 
-    private String diskAlias;
-
     public String getDiskAlias() {
         return diskAlias;
     }
@@ -247,11 +254,6 @@ public class LUNs implements BusinessEntity<String> {
         diskAlias = value;
     }
 
-    /**
-     * Storage Domain ID - using storageDomainId since diskId is nullable
-     */
-    private Guid storageDomainId;
-
     public Guid getStorageDomainId() {
         return storageDomainId;
     }
@@ -259,8 +261,6 @@ public class LUNs implements BusinessEntity<String> {
     public void setStorageDomainId(Guid value) {
         storageDomainId = value;
     }
-
-    private String storageDomainName;
 
     public String getStorageDomainName() {
         return storageDomainName;
