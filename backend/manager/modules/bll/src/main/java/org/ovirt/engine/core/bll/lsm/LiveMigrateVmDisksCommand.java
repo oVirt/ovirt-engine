@@ -279,7 +279,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             getReturnValue().setCanDoAction(isDiskNotShareable(parameters.getImageId())
                     && isDiskSnapshotNotPluggedToOtherVmsThatAreNotDown(parameters.getImageId())
                     && isTemplateInDestStorageDomain(parameters.getImageId(), parameters.getStorageDomainId())
-                    && performStorageDomainsChecks(parameters));
+                    && performStorageDomainsChecks(parameters)
+                    && isSameSourceAndDest(parameters));
 
             if (!getReturnValue().getCanDoAction()) {
                 return false;
@@ -323,6 +324,16 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         List<DiskImage> disksToCheck = ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), true, false, true);
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksToCheck);
         return validate(diskImagesValidator.diskImagesNotLocked());
+    }
+
+    private boolean isSameSourceAndDest(LiveMigrateDiskParameters parameters) {
+        StorageDomain sourceDomain = getImageSourceDomain(parameters.getImageId());
+
+        if (sourceDomain.getId().equals(parameters.getStorageDomainId())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
+        }
+
+        return true;
     }
 
     private boolean isDiskNotShareable(Guid imageId) {
