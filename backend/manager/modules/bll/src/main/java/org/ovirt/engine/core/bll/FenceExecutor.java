@@ -298,6 +298,7 @@ public class FenceExecutor {
         VdsDynamic vdsDynamic = vds.getDynamicData();
         return (vdsDynamic.getStatus() == VDSStatus.Down
                  || vdsDynamic.getStatus() == VDSStatus.Reboot
+                 || vdsDynamic.getStatus() == VDSStatus.Kdumping
                  || (vdsDynamic.getStatus() == VDSStatus.NonOperational
                      && vdsDynamic.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE));
     }

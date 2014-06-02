@@ -318,7 +318,8 @@ public class VdsManager {
                 _vds.getStatus() != VDSStatus.Maintenance &&
                 _vds.getStatus() != VDSStatus.PendingApproval &&
                 _vds.getStatus() != VDSStatus.InstallingOS &&
-                _vds.getStatus() != VDSStatus.Down);
+                _vds.getStatus() != VDSStatus.Down &&
+                _vds.getStatus() != VDSStatus.Kdumping);
     }
 
     private void HandleVdsRecoveringException(VDSRecoveringException ex) {

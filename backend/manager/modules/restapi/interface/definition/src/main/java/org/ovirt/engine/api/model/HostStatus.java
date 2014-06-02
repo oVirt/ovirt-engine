@@ -32,7 +32,8 @@ public enum HostStatus {
     REBOOT,
     UNASSIGNED,
     UP,
-    INSTALLING_OS;
+    INSTALLING_OS,
+    KDUMPING;
 
     public String value() {
         return name().toLowerCase();

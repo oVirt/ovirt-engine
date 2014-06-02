@@ -145,6 +145,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         case Reboot:
         case Installing:
         case Connecting:
+        case Kdumping:
             result = true;
             break;
         default:

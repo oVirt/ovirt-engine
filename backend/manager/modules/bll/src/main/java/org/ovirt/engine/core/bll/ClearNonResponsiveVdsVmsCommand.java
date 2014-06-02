@@ -83,7 +83,10 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
 
         }
 
-        if (hasVMs() && getVds().getStatus() != VDSStatus.NonResponsive && getVds().getStatus() != VDSStatus.Reboot) {
+        if (hasVMs()
+                && getVds().getStatus() != VDSStatus.NonResponsive
+                && getVds().getStatus() != VDSStatus.Reboot
+                && getVds().getStatus() != VDSStatus.Kdumping) {
             return failCanDoAction(VdcBllMessages.VDS_CANNOT_CLEAR_VMS_WRONG_STATUS);
         }
 

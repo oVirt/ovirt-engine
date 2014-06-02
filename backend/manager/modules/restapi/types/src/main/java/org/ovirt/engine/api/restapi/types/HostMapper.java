@@ -619,6 +619,8 @@ public class HostMapper {
             return HostStatus.CONNECTING;
         case InstallingOS:
             return HostStatus.INSTALLING_OS;
+        case Kdumping:
+            return HostStatus.KDUMPING;
         default:
             return null;
         }

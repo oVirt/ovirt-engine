@@ -63,6 +63,9 @@ public class HostStatusCell extends AbstractCell<VDS> {
         case Initializing:
             statusImage = resources.waitImage();
             break;
+        case Kdumping:
+            statusImage = resources.waitImage();
+            break;
         default:
             statusImage = resources.downImage();
         }

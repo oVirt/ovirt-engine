@@ -116,7 +116,9 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
      */
     private boolean canVdsBeReached() {
         VDSStatus vdsStatus = getVds().getStatus();
-        if (vdsStatus == VDSStatus.Down || vdsStatus == VDSStatus.Reboot) {
+        if (vdsStatus == VDSStatus.Down ||
+                vdsStatus == VDSStatus.Reboot ||
+                vdsStatus == VDSStatus.Kdumping) {
             vdsStatus = getVds().getPreviousStatus();
         }
         return vdsStatus != VDSStatus.NonResponsive && getVds().getStatus() != VDSStatus.Connecting;

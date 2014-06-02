@@ -17,7 +17,8 @@ public enum VDSStatus implements Identifiable {
     PendingApproval(11),
     Initializing(12),
     Connecting(13),
-    InstallingOS(14);
+    InstallingOS(14),
+    Kdumping(15);
 
     private static final HashMap<Integer, VDSStatus> mappings = new HashMap<Integer, VDSStatus>();
     private int intValue;
