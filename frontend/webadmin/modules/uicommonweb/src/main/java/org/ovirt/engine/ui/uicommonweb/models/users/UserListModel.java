@@ -74,8 +74,6 @@ public class UserListModel extends ListWithDetailsModel
         privateAssignTagsCommand = value;
     }
 
-    // get { return SelectedItems == null ? new object[0] : SelectedItems.Cast<DbUser>().Select(a =>
-    // a.user_id).Cast<object>().ToArray(); }
     protected Object[] getSelectedKeys()
     {
         if (getSelectedItems() == null)
@@ -527,83 +525,6 @@ public class UserListModel extends ListWithDetailsModel
 
         cancel();
     }
-
-    // private void AssignTags()
-    // {
-    // base.AssignTags();
-
-    // DbUser user = (DbUser)SelectedItem;
-    // AssignTagsModel.AttachedTags = DataProvider.GetAttachedTagsToUser(user.user_id);
-    // }
-
-    // public override void NotifyTagsAttached(IList<tags> tags)
-    // {
-    // base.NotifyTagsAttached(tags);
-
-    // var dbUsers = SelectedItems.Cast<DbUser>();
-
-    // var userIds = dbUsers
-    // .Where(a => !a.IsGroup)
-    // .Select(a => a.user_id)
-    // .ToList();
-
-    // Frontend.RunMultipleActions(VdcActionType.AttachUserToTag,
-    // tags.Select(a =>
-    // (VdcActionParametersBase)new AttachEntityToTagParameters(a.tag_id, userIds)
-    // )
-    // .ToList()
-    // );
-
-    // var groupIds = dbUsers
-    // .Where(a => a.IsGroup)
-    // .Select(a => a.user_id)
-    // .ToList();
-
-    // Frontend.RunMultipleActions(VdcActionType.AttachUserGroupToTag,
-    // tags.Select(a =>
-    // (VdcActionParametersBase)new AttachEntityToTagParameters(a.tag_id, groupIds)
-    // )
-    // .ToList()
-    // );
-    // }
-
-    // public override void NotifyTagsDetached(IList<tags> tags)
-    // {
-    // base.NotifyTagsDetached(tags);
-
-    // var dbUsers = SelectedItems.Cast<DbUser>();
-
-    // var userIds = dbUsers
-    // .Where(a => !a.IsGroup)
-    // .Select(a => a.user_id)
-    // .ToList();
-
-    // Frontend.RunMultipleActions(VdcActionType.DetachUserFromTag,
-    // tags.Select(a =>
-    // (VdcActionParametersBase)new AttachEntityToTagParameters(a.tag_id, userIds)
-    // )
-    // .ToList()
-    // );
-
-    // var groupIds = dbUsers
-    // .Where(a => a.IsGroup)
-    // .Select(a => a.user_id)
-    // .ToList();
-
-    // Frontend.RunMultipleActions(VdcActionType.DetachUserGroupFromTag,
-    // tags.Select(a =>
-    // (VdcActionParametersBase)new AttachEntityToTagParameters(a.tag_id, groupIds)
-    // )
-    // .ToList()
-    // );
-    // }
-
-    // public override void OnSelectionChanged(object item, IList items)
-    // {
-    // base.OnSelectionChanged(item, items);
-
-    // UpdateActionAvailability();
-    // }
 
     @Override
     protected void onSelectedItemChanged()

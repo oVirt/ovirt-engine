@@ -113,8 +113,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
     protected Object[] getSelectedKeys()
     {
-        // return SelectedItems == null ? new object[0] : SelectedItems.Cast<vm_pools>().Select(a =>
-        // a.vm_pool_id).Cast<object>().ToArray(); }
         if (getSelectedItems() == null)
         {
             return new Object[0];

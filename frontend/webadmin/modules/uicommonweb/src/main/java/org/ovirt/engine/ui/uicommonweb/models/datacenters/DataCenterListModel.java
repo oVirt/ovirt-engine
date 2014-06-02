@@ -147,8 +147,6 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         privateRecoveryStorageCommand = value;
     }
 
-    // get { return SelectedItems == null ? new object[0] : SelectedItems.Cast<storage_pool>().Select(a =>
-    // a.id).Cast<object>().ToArray(); }
     protected Object[] getSelectedKeys()
     {
         if (getSelectedItems() == null)
@@ -535,11 +533,6 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
     public void activate()
     {
-        // Frontend.RunMultipleActions(VdcActionType.ActivateStoragePool,
-        // SelectedItems.Cast<storage_pool>()
-        // .Select(a => (VdcActionParametersBase)new StoragePoolParametersBase(a.id))
-        // .ToList()
-        // );
     }
 
     public void onRemove()

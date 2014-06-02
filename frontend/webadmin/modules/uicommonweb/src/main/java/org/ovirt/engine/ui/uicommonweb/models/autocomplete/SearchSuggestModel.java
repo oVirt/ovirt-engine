@@ -204,12 +204,6 @@ public class SearchSuggestModel extends SearchableListModel
         List selectedItem = (List) getSelectedItem();
         if (selectedItem != null)
         {
-            // SearchString = String.Join(String.Empty,
-            // selectedItem
-            // .Cast<SuggestItemPartModel>()
-            // .Select(a => a.PartString)
-            // .ToArray()
-            // );
             ArrayList<String> items = new ArrayList<String>();
             for (Object item : selectedItem)
             {

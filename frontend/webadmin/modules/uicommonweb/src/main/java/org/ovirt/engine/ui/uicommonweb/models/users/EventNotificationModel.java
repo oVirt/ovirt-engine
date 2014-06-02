@@ -102,7 +102,6 @@ public class EventNotificationModel extends Model
 
     public void expandAll()
     {
-        // EventGroupModels.Each(a => a.IsExpanded = true);
         for (SelectionTreeNodeModel a : getEventGroupModels())
         {
             a.setIsExpanded(true);
@@ -111,7 +110,6 @@ public class EventNotificationModel extends Model
 
     public void collapseAll()
     {
-        // EventGroupModels.Each(a => a.IsExpanded = false);
         for (SelectionTreeNodeModel a : getEventGroupModels())
         {
             a.setIsExpanded(false);

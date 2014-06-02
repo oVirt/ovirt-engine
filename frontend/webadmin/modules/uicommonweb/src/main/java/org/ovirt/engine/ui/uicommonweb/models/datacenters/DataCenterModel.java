@@ -295,14 +295,6 @@ public class DataCenterModel extends Model
 
         getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
-        // TODO: add this code to async validate.
-        // string name = (string)Name.Entity;
-        // if (String.Compare(name, OriginalName, true) != 0 && !DataProvider.IsDataCenterNameUnique(name))
-        // {
-        // Name.IsValid = false;
-        // Name.InvalidityReasons.Add("Name must be unique.");
-        // }
-
         return getName().getIsValid() && getDescription().getIsValid() && getComment().getIsValid()
                 && getVersion().getIsValid();
     }

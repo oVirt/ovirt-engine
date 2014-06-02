@@ -418,25 +418,6 @@ public class HostInterfaceListModel extends SearchableListModel
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetVdsInterfacesByVdsId, tempVar, _asyncQuery);
-
-        // VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetVdsInterfacesByVdsId,
-        // new GetVdsByVdsIdParameters(Entity.vds_id) { Refresh = IsQueryFirstTime });
-
-        // if (returnValue != null && returnValue.Succeeded)
-        // {
-        // List<VdsNetworkInterface> items = new List<VdsNetworkInterface>();
-        // foreach (IVdcQueryable item in ((List<IVdcQueryable>)returnValue.ReturnValue))
-        // {
-        // VdsNetworkInterface i = (VdsNetworkInterface)item;
-        // items.Add(i);
-        // }
-
-        // UpdateItems(items);
-        // }
-        // else
-        // {
-        // UpdateItems(new List<VdsNetworkInterface>());
-        // }
     }
 
     private void updateItems(Iterable<VdsNetworkInterface> source)
@@ -1656,15 +1637,7 @@ public class HostInterfaceListModel extends SearchableListModel
             {
                 nics[i] = selectedItems.get(i).getName();
             }
-            // var parameters = new AddBondParameters(
-            // host.vds_id,
-            // model.Bond.ValueAs<Interface>().name,
-            // net,
-            // items.Select(a => a.name).ToArray())
-            // {
-            // BondingOptions = model.BondingOptions.ValueAs<string>(),
-            // BootProtocol = model.BootProtocol
-            // };
+
             AddBondParameters parameters =
                     new AddBondParameters(host.getId(),
                                           model.getBond().getSelectedItem(),

@@ -186,11 +186,9 @@ public class PoolVmListModel extends VmListModel
 
     private void updateActionAvailability()
     {
-        // var items = SelectedItems != null ? SelectedItems.Cast<VM>().ToList() : new List<VM>();
         ArrayList<VM> items =
                 getSelectedItems() != null ? Linq.<VM> cast(getSelectedItems()) : new ArrayList<VM>();
 
-        // DetachCommand.IsExecutionAllowed = items.Count > 0 && items.All(a => a.status == VMStatus.Down);
         boolean value = true;
         for (VM a : items)
         {

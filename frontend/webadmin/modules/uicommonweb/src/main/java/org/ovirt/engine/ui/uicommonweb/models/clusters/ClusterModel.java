@@ -1639,16 +1639,6 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
         validateRngRequiredSource();
 
-        // TODO: async validation for webadmin
-        // string name = (string)Name.Entity;
-
-        // //Check name unicitate.
-        // if (String.Compare(name, OriginalName, true) != 0 && !DataProvider.IsClusterNameUnique(name))
-        // {
-        // Name.IsValid = false;
-        // Name.InvalidityReasons.Add("Name must be unique.");
-        // }
-
         boolean validService = true;
         if (getEnableOvirtService().getIsAvailable() && getEnableGlusterService().getIsAvailable())
         {

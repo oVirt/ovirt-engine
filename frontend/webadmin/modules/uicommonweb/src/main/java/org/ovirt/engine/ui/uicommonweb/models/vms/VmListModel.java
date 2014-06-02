@@ -1671,7 +1671,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
 
         model.setMessage(message);
-        // model.Items = SelectedItems.Cast<VM>().Select(a => a.vm_name);
         ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {

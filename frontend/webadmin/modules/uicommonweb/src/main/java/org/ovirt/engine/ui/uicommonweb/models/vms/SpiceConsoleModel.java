@@ -207,9 +207,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
     private void spice_MenuItemSelected(Object sender, SpiceMenuItemEventArgs e) {
         if (getEntity() != null) {
-            // SpiceMenuCommandItem item = menu.Descendants()
-            // .OfType<SpiceMenuCommandItem>()
-            // .FirstOrDefault(a => a.Id == e.MenuItemId);
             SpiceMenuCommandItem item = null;
             for (SpiceMenuItem a : menu.descendants()) {
                 if (a.getClass() == SpiceMenuCommandItem.class && a.getId() == e.getMenuItemId()) {

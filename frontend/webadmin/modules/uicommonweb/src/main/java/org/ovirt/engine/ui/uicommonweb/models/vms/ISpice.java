@@ -11,8 +11,6 @@ import org.ovirt.engine.ui.uicompat.Event;
  * corresponding HTML.
  */
 public interface ISpice {
-    // event EventHandler<ErrorCodeEventArgs> Disconnected;
-    // event EventHandler<SpiceMenuItemEventArgs> MenuItemSelected;
 
     Event getDisconnectedEvent();
 
