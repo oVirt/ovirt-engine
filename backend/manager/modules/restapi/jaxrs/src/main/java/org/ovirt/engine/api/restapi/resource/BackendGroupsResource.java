@@ -167,6 +167,7 @@ public class BackendGroupsResource
         DirectoryIdParameters parameters = new DirectoryIdParameters();
         parameters.setDirectory(directoryName);
         parameters.setId(directoryGroup.getId());
+        parameters.setNamespace(directoryGroup.getNamespace());
         QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDbGroupById, IdQueryParameters.class);
         return performCreate(VdcActionType.AddGroup, parameters, resolver, BaseResource.class);
     }

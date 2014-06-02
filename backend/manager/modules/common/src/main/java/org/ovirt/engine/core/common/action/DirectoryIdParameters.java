@@ -8,6 +8,8 @@ public class DirectoryIdParameters extends VdcActionParametersBase implements Se
     private String directory;
     private String id;
 
+    private String namespace;
+
     public void setDirectory(String directory) {
         this.directory = directory;
     }
@@ -22,5 +24,13 @@ public class DirectoryIdParameters extends VdcActionParametersBase implements Se
 
     public String getId() {
         return id;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    public String getNamespace() {
+        return namespace;
     }
 }

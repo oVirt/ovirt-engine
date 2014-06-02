@@ -103,6 +103,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected static final String USER = "Aladdin";
     protected static final String SECRET = "open sesame";
     protected static final String DOMAIN = "Maghreb.Maghreb.Maghreb.com";
+    protected static final String NAMESPACE = "*";
 
     protected static final String sessionId = Guid.newGuid().toString();
 

@@ -15,7 +15,8 @@ public class DirectoryEntry extends IVdcQueryable {
      */
     private String directoryName;
 
-    // The values o the attributes:
+    // The values of the attributes:
+    private String namespace;
     private String id;
     private String name;
     private DirectoryEntryStatus status;
@@ -25,12 +26,21 @@ public class DirectoryEntry extends IVdcQueryable {
      */
     private List<DirectoryGroup> groups;
 
-    public DirectoryEntry(String directoryName, String id, String name) {
+    public DirectoryEntry(String directoryName, String namespace, String id, String name) {
         this.directoryName = directoryName;
+        this.namespace = namespace;
         this.id = id;
         this.name = name;
         this.status = DirectoryEntryStatus.UNAVAILABLE;
         this.groups = new ArrayList<DirectoryGroup>(1);
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public String getId() {

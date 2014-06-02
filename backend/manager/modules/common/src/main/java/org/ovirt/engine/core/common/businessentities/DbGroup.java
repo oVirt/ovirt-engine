@@ -19,7 +19,7 @@ public class DbGroup extends IVdcQueryable {
      * This is the identifier assigned by the external directory to this group.
      */
     private String externalId;
-
+    private String namespace;
     private String domain;
     private String name;
     private String distinguishedName;
@@ -38,6 +38,7 @@ public class DbGroup extends IVdcQueryable {
     public DbGroup(DirectoryGroup directoryGroup) {
         externalId = directoryGroup.getId();
         setId(new Guid(directoryGroup.getId().getBytes(), true));
+        namespace = directoryGroup.getNamespace();
         domain = directoryGroup.getDirectoryName();
         name = directoryGroup.getName();
     }
@@ -56,6 +57,14 @@ public class DbGroup extends IVdcQueryable {
 
     public void setExternalId(String value) {
         externalId = value;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String value) {
+        namespace = value;
     }
 
     public String getDomain() {
@@ -109,6 +118,7 @@ public class DbGroup extends IVdcQueryable {
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((externalId == null) ? 0 : externalId.hashCode());
+        result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
         result = prime * result + ((domain == null) ? 0 : domain.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((distinguishedName == null) ? 0 : distinguishedName.hashCode());

@@ -167,9 +167,11 @@ public class Authz {
      * Principal record.
      */
     public static class PrincipalRecord {
+        /** Namespace. */
+        public static final ExtKey NAMESPACE = new ExtKey("AAA_AUTHZ_PRINCIPAL_NAMESPACE", String.class, "79703b8c-1e50-462f-9491-f5cf446f49de");
         /** Principal unique (within provider) id. */
         public static final ExtKey ID = new ExtKey("AAA_AUTHZ_PRINCIPAL_ID", String.class, "4f9440bc-9303-4d95-b317-b827515c782f");
-        /** Principal name */
+        /** User name */
         public static final ExtKey NAME = new ExtKey("AAA_AUTHZ_PRINCIPAL_NAME", String.class, "a0df5bcc-6ead-40a2-8565-2f5cc8773bdd");
         /** Display name. */
         public static final ExtKey DISPLAY_NAME = new ExtKey("AAA_AUTHZ_PRINCIPAL_DISPLAY_NAME", String.class, "1687a9e2-d951-4ee6-9409-36bca8e83ed1");
@@ -201,6 +203,8 @@ public class Authz {
      * Group record.
      */
     public static class GroupRecord {
+        /** Namespace. */
+        public static final ExtKey NAMESPACE = new ExtKey("AAA_AUTHZ_GROUP_NAMESPACE", String.class, "a4763ceb-472f-4f06-a61e-e71289b5afe4");
         /** Group unique (within provider) id. */
         public static final ExtKey ID = new ExtKey("AAA_AUTHZ_GROUP_ID", String.class, "4615d4d3-a1b7-43cc-bc8d-c8a24a2ffd5a");
         /** Group name. */
@@ -225,6 +229,8 @@ public class Authz {
      * Role record.
      */
     public static class RoleRecord {
+        /** Namespace. */
+        public static final ExtKey NAMESPACE = new ExtKey("AAA_AUTHZ_GROUP_NAMESPACE", String.class, "183fb40e-a825-45f8-a655-b6270566fa2e");
         /** Group unique (within provider) id. */
         public static final ExtKey ID = new ExtKey("AAA_AUTHZ_ROLE_ID", String.class, "fbd391cc-29b6-41a5-af42-6ef8c4ed8652");
         /** Group name. */

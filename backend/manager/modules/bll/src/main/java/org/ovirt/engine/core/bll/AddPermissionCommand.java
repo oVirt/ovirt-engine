@@ -99,7 +99,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
                 user = existing;
             }
             else {
-                user = addUser(id, directory, externalId);
+                user = addUser(id, directory, externalId, user.getNamespace());
                 if (user == null) {
                     setSucceeded(false);
                     return;
@@ -116,7 +116,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
                 group = existing;
             }
             else {
-                group = addGroup(id, directory, externalId);
+                group = addGroup(id, directory, externalId, group.getNamespace());
                 if (group == null) {
                     setSucceeded(false);
                     return;
@@ -200,12 +200,13 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         return permissionsSubject;
     }
 
-    private DbUser addUser(Guid id, String directory, String externalId) {
+    private DbUser addUser(Guid id, String directory, String externalId, String namespace) {
         // Try to add the user with the external id:
         if (directory != null && externalId != null) {
             DirectoryIdParameters parameters = new DirectoryIdParameters();
             parameters.setDirectory(directory);
             parameters.setId(externalId);
+            parameters.setNamespace(namespace);
             VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddUser, parameters);
             if (result.getCanDoAction()) {
                 id = (Guid) result.getActionReturnValue();
@@ -219,12 +220,13 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         return null;
     }
 
-    private DbGroup addGroup(Guid id, String directory, String externalId) {
+    private DbGroup addGroup(Guid id, String directory, String externalId, String namespace) {
         // Try to add the user with the external id:
         if (directory != null && externalId != null) {
             DirectoryIdParameters parameters = new DirectoryIdParameters();
             parameters.setDirectory(directory);
             parameters.setId(externalId);
+            parameters.setNamespace(namespace);
             VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddGroup, parameters);
             if (result.getCanDoAction()) {
                 id = (Guid) result.getActionReturnValue();

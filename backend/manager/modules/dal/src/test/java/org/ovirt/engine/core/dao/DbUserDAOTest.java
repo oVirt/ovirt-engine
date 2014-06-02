@@ -43,6 +43,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
         newUser.setEmail("newuser@redhat.com");
         newUser.setDomain("domain");
         newUser.setGroupNames("groups");
+        newUser.setNamespace("*");
     }
 
     /**

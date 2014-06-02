@@ -24,6 +24,9 @@ public class DbUser extends IVdcQueryable {
     @Size(min = 1, max = BusinessEntitiesDefinitions.USER_DOMAIN_SIZE)
     private String domain;
 
+    @Size(min = 1, max = BusinessEntitiesDefinitions.USER_NAMESPACE_SIZE)
+    private String namespace;
+
     @Size(min = 1, max = BusinessEntitiesDefinitions.USER_LOGIN_NAME_SIZE)
     private String loginName;
 
@@ -85,6 +88,7 @@ public class DbUser extends IVdcQueryable {
     public DbUser(LdapUser ldapUser) {
         externalId = ldapUser.getUserId();
         domain = ldapUser.getDomainControler();
+        namespace = ldapUser.getNamespace();
         loginName = ldapUser.getUserName();
         firstName = ldapUser.getName();
         lastName = ldapUser.getSurName();
@@ -99,6 +103,7 @@ public class DbUser extends IVdcQueryable {
     public DbUser(DirectoryUser directoryUser) {
         externalId = directoryUser.getId();
         domain = directoryUser.getDirectoryName();
+        namespace = directoryUser.getNamespace();
         loginName = directoryUser.getName();
         firstName = directoryUser.getFirstName();
         lastName = directoryUser.getLastName();
@@ -134,6 +139,14 @@ public class DbUser extends IVdcQueryable {
 
     public void setExternalId(String externalId) {
         this.externalId = externalId;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String value) {
+        namespace = value;
     }
 
     public String getDomain() {
@@ -249,6 +262,7 @@ public class DbUser extends IVdcQueryable {
         result = prime * result + ((externalId == null) ? 0 : externalId.hashCode());
         result = prime * result + ((department == null) ? 0 : department.hashCode());
         result = prime * result + ((domain == null) ? 0 : domain.hashCode());
+        result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
         result = prime * result + ((groupNames == null) ? 0 : groupNames.hashCode());
         result = prime * result + (isAdmin ? 1231 : 1237);
@@ -277,6 +291,7 @@ public class DbUser extends IVdcQueryable {
                 && ObjectUtils.objectsEqual(externalId, other.externalId)
                 && ObjectUtils.objectsEqual(department, other.department)
                 && ObjectUtils.objectsEqual(domain, other.domain)
+                && ObjectUtils.objectsEqual(namespace, other.namespace)
                 && ObjectUtils.objectsEqual(email, other.email)
                 && ObjectUtils.objectsEqual(groupNames, other.groupNames)
                 && isAdmin == other.isAdmin
@@ -286,5 +301,6 @@ public class DbUser extends IVdcQueryable {
                 && active == other.active
                 && ObjectUtils.objectsEqual(lastName, other.lastName)
                 && ObjectUtils.objectsEqual(loginName, other.loginName));
+
     }
 }

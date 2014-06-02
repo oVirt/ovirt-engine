@@ -73,6 +73,7 @@ public final class BusinessEntitiesDefinitions {
     public static final int USER_GROUP_IDS_SIZE = 2048;
     public static final int USER_DEPARTMENT_SIZE = 255;
     public static final int USER_DOMAIN_SIZE = 255;
+    public static final int USER_NAMESPACE_SIZE = 2048;
     public static final int USER_EMAIL_SIZE = 255;
     public static final int USER_FIRST_NAME_SIZE = 255;
     public static final int USER_NOTE_SIZE = 255;

@@ -356,6 +356,7 @@
             <value>administrators</value>
             <value>true</value>
             <value>rhel</value>
+            <value>*</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
@@ -363,6 +364,7 @@
             <value>qa-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>true</value>
             <value>rhel</value>
+            <value>*</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
@@ -370,6 +372,7 @@
             <value>qb-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>true</value>
             <value>rhel</value>
+            <value>*</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d4</value>
@@ -377,6 +380,7 @@
             <value>qc-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>true</value>
             <value>rhel</value>
+            <value>*</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d5</value>
@@ -384,6 +388,7 @@
             <value>qd-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>true</value>
             <value>rhel</value>
+            <value>*</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d6</value>
@@ -391,6 +396,7 @@
             <value>qe-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>true</value>
             <value>rhel</value>
+            <value>*</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d7</value>
@@ -398,6 +404,7 @@
             <value>qf-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>true</value>
             <value>rhel</value>
+            <value>*</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d8</value>
@@ -405,6 +412,7 @@
             <value>qg-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>true</value>
             <value>rhel</value>
+            <value>*</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d9</value>
@@ -412,6 +420,7 @@
             <value>qh-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>true</value>
             <value>rhel</value>
+            <value>*</value>
         </row>
         <row>
             <value>9bf7c640-b620-456f-a550-0348f366544b</value>
@@ -419,6 +428,7 @@
             <value>philosophers</value>
             <value>true</value>
             <value>rhel</value>
+            <value>*</value>
         </row>
     </table>
 
@@ -4104,6 +4114,7 @@
       <column>active</column>
       <column>last_admin_check_status</column>
       <column>group_ids</column>
+      <column>namespace</column>
       <row>
           <value>9bf7c640-b620-456f-a550-0348f366544a</value>
           <value>a</value>
@@ -4119,6 +4130,7 @@
           <value>true</value>
           <value>0</value>
           <value>35487601-05ef-43b0-932d-8663ea4c9495,fa63c7e0-d9d4-492f-9e4e-6ed8c4719364</value>
+          <value>*</value>
       </row>
       <row>
           <value>9bf7c640-b620-456f-a550-0348f366544b</value>
@@ -4135,6 +4147,7 @@
           <value>true</value>
           <value>0</value>
           <value>26df4393-659b-4b8a-b0f6-3ee94d32e82f,08963ba9-b1c8-498d-989f-75cf8142eab7</value>
+          <value>*</value>
       </row>
     </table>
 

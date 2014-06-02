@@ -297,6 +297,7 @@ public class AdElementListModel extends SearchableListModel
                         tempVar3.setLastName(""); //$NON-NLS-1$
                         tempVar3.setLoginName(""); //$NON-NLS-1$
                         tempVar3.setDomain(a.getDirectoryName());
+                        tempVar3.setNamespace(a.getNamespace());
                         DbUser user = tempVar3;
 
                         EntityModel tempVar4 = new EntityModel();

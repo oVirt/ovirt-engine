@@ -14,6 +14,7 @@ public class LdapUser extends IVdcQueryable implements Serializable {
     // TODO - DesktopDevice ?? (Miki)
 
     private static final long serialVersionUID = 6800096193162766377L;
+    private String mNamespace;
     private String mUserId;
     private String mUserName;
     private String mDomainControler;
@@ -33,6 +34,7 @@ public class LdapUser extends IVdcQueryable implements Serializable {
 
     public LdapUser(DbUser dbUser) {
         setUserId(dbUser.getExternalId());
+        setNamespace(dbUser.getNamespace());
         setUserName(dbUser.getLoginName());
         setName(dbUser.getFirstName());
         setSurName(dbUser.getLastName());
@@ -40,6 +42,14 @@ public class LdapUser extends IVdcQueryable implements Serializable {
         setDomainControler(dbUser.getDomain());
         setEmail(dbUser.getEmail());
         mGroups = new HashMap<String, LdapGroup>();
+    }
+
+    public String getNamespace() {
+        return mNamespace;
+    }
+
+    public void setNamespace(String value) {
+        mNamespace = value;
     }
 
     public String getUserName() {

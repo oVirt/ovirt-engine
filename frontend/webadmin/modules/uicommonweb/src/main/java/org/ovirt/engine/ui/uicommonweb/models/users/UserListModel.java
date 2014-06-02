@@ -465,6 +465,7 @@ public class UserListModel extends ListWithDetailsModel
             DirectoryIdParameters parameters = new DirectoryIdParameters();
             parameters.setDirectory(item.getDomain());
             parameters.setId(item.getExternalId());
+            parameters.setNamespace(item.getNamespace());
             parametersList.add(parameters);
         }
 

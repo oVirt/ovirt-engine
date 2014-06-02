@@ -36,9 +36,13 @@ public class AuthzUtils {
                 )).<ExtMap> get(Authz.InvokeKeys.PRINCIPAL_RECORD));
     }
 
-    public static List<DirectoryUser> findPrincipalsByQuery(final ExtensionProxy extension, final String query) {
+    public static List<DirectoryUser> findPrincipalsByQuery(
+            final ExtensionProxy extension,
+            final String namespace,
+            final String query) {
         return queryPrincipals(
                 extension,
+                namespace,
                 SearchQueryParsingUtils.generateQueryMap(
                         query,
                         Authz.QueryEntity.PRINCIPAL
@@ -46,12 +50,17 @@ public class AuthzUtils {
                 false);
     }
 
-    public static List<DirectoryUser> findPrincipalsByIds(final ExtensionProxy extension, final List<String> ids) {
+    public static List<DirectoryUser> findPrincipalsByIds(
+            final ExtensionProxy extension,
+            final String namespace,
+            final List<String> ids
+            ) {
         List<DirectoryUser> results = new ArrayList<>();
         for (List<String> batch : SearchQueryParsingUtils.getIdsBatches(extension.getContext(), ids)) {
             results.addAll(
                     queryPrincipals(
                             extension,
+                            namespace,
                             SearchQueryParsingUtils.generateQueryMap(
                                     batch,
                                     Authz.QueryEntity.PRINCIPAL
@@ -62,24 +71,36 @@ public class AuthzUtils {
         return results;
     }
 
-    public static DirectoryUser findPrincipalById(final ExtensionProxy extension, final String id) {
-        List<DirectoryUser> users = findPrincipalsByIds(extension, Arrays.asList(id));
+    public static DirectoryUser findPrincipalById(
+            final ExtensionProxy extension,
+            String namespace,
+            final String id) {
+        List<DirectoryUser> users = findPrincipalsByIds(extension, namespace, Arrays.asList(id));
         if (users.isEmpty()) {
             return null;
         }
         return users.get(0);
     }
 
-    public static List<DirectoryGroup> findGroupsByQuery(final ExtensionProxy extension, final String query) {
-        return queryGroups(extension, SearchQueryParsingUtils.generateQueryMap(query, Authz.QueryEntity.GROUP));
+    public static List<DirectoryGroup> findGroupsByQuery(
+            final ExtensionProxy extension,
+            final String namespace,
+            final String query) {
+        return queryGroups(extension,
+                namespace,
+                SearchQueryParsingUtils.generateQueryMap(query, Authz.QueryEntity.GROUP));
     }
 
-    public static List<DirectoryGroup> findGroupsByIds(final ExtensionProxy extension, final List<String> ids) {
+    public static List<DirectoryGroup> findGroupsByIds(
+            final ExtensionProxy extension,
+            final String namespace,
+            final List<String> ids) {
         List<DirectoryGroup> results = new ArrayList<>();
         for (List<String> batch : SearchQueryParsingUtils.getIdsBatches(extension.getContext(), ids)) {
             results.addAll(
                     queryGroups(
                             extension,
+                            namespace,
                             SearchQueryParsingUtils.generateQueryMap(batch, QueryEntity.GROUP)
                         )
                         );
@@ -87,35 +108,46 @@ public class AuthzUtils {
         return results;
     }
 
-    public static DirectoryGroup findGroupById(final ExtensionProxy extension, final String id) {
-        List<DirectoryGroup> groups = findGroupsByIds(extension, Arrays.asList(id));
+    public static DirectoryGroup findGroupById(final ExtensionProxy extension, String namespace, final String id) {
+        List<DirectoryGroup> groups = findGroupsByIds(extension, namespace, Arrays.asList(id));
         if (groups.isEmpty()) {
             return null;
         }
         return groups.get(0);
     }
 
-    private static List<DirectoryUser> queryPrincipals(final ExtensionProxy extension,
+    private static List<DirectoryUser> queryPrincipals(
+            final ExtensionProxy extension,
+            final String namespace,
             final ExtMap filter,
             boolean recursiveGroupsResolving) {
+        ExtMap inputMap = new ExtMap().mput(
+                Authz.InvokeKeys.QUERY_ENTITY,
+                Authz.QueryEntity.PRINCIPAL
+                ).mput(
+                        Authz.InvokeKeys.RESOLVE_GROUPS_RECURSIVE,
+                        recursiveGroupsResolving
+                ).mput(
+                        Authz.InvokeKeys.QUERY_FILTER,
+                        filter
+                ).mput(
+                        Authz.InvokeKeys.NAMESPACE,
+                        namespace
+                );
         return populatePrincipals(
                 extension,
-                new ExtMap().mput(
-                        Authz.InvokeKeys.QUERY_ENTITY,
-                        Authz.QueryEntity.PRINCIPAL
-                        ).mput(
-                                Authz.InvokeKeys.RESOLVE_GROUPS_RECURSIVE,
-                                recursiveGroupsResolving
-                        ).mput(
-                                Authz.InvokeKeys.QUERY_FILTER,
-                                filter
-                        ));
+                namespace,
+                inputMap);
     }
 
 
-    private static List<DirectoryGroup> queryGroups(ExtensionProxy extension, final ExtMap filter) {
+    private static List<DirectoryGroup> queryGroups(
+            final ExtensionProxy extension,
+            final String namespace,
+            final ExtMap filter) {
         return populateGroups(
                 extension,
+                namespace,
                 new ExtMap().mput(
                         Authz.InvokeKeys.QUERY_ENTITY,
                         Authz.QueryEntity.GROUP
@@ -126,10 +158,12 @@ public class AuthzUtils {
 
     }
 
-    private static List<DirectoryUser> populatePrincipals(final ExtensionProxy extension,
+    private static List<DirectoryUser> populatePrincipals(
+            final ExtensionProxy extension,
+            final String namespace,
             final ExtMap input) {
         final List<DirectoryUser> directoryUsers = new ArrayList<>();
-        queryImpl(extension, input, new QueryResultHandler() {
+        queryImpl(extension, namespace, input, new QueryResultHandler() {
 
             @Override
             public boolean handle(List<ExtMap> queryResults) {
@@ -148,10 +182,10 @@ public class AuthzUtils {
         return directoryUsers;
     }
 
-    private static List<DirectoryGroup> populateGroups(final ExtensionProxy extension,
+    private static List<DirectoryGroup> populateGroups(final ExtensionProxy extension, final String namespace,
             final ExtMap input) {
         final List<DirectoryGroup> directoryGroups = new ArrayList<>();
-        queryImpl(extension, input, new QueryResultHandler() {
+        queryImpl(extension, namespace, input, new QueryResultHandler() {
             @Override
             public boolean handle(List<ExtMap> queryResults) {
 
@@ -172,51 +206,45 @@ public class AuthzUtils {
 
     private static void queryImpl(
             final ExtensionProxy extension,
+            final String namespace,
             final ExtMap input,
             final QueryResultHandler handler
             ) {
-        for (String namespace : extension.getContext().<List<String>>get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-            Object opaque = extension.invoke(
-                    new ExtMap().mput(
-                            Base.InvokeKeys.COMMAND,
-                            Authz.InvokeCommands.QUERY_OPEN
-                            ).mput(
+        Object opaque = extension.invoke(
+                new ExtMap().mput(
+                        Base.InvokeKeys.COMMAND,
+                        Authz.InvokeCommands.QUERY_OPEN
+                        ).mput(
                                 Authz.InvokeKeys.NAMESPACE,
                                 namespace
-                            ).mput(
+                        ).mput(
                                 input
-                            )
-                    ).get(Authz.InvokeKeys.QUERY_OPAQUE);
-            List<ExtMap> result = null;
-            try {
-                do {
-                    result = extension.invoke(new ExtMap().mput(
-                            Base.InvokeKeys.COMMAND,
-                            Authz.InvokeCommands.QUERY_EXECUTE
-                            ).mput(
-                                    Authz.InvokeKeys.QUERY_OPAQUE,
-                                    opaque
-                                    ).mput(
-                                            Authz.InvokeKeys.PAGE_SIZE,
-                                            PAGE_SIZE
-                                    )
-                            ).get(Authz.InvokeKeys.QUERY_RESULT);
-                } while (result != null && handler.handle(result));
-            } finally {
-                extension.invoke(new ExtMap().mput(
+                        )
+                ).get(Authz.InvokeKeys.QUERY_OPAQUE);
+        List<ExtMap> result = null;
+        try {
+            do {
+                result = extension.invoke(new ExtMap().mput(
                         Base.InvokeKeys.COMMAND,
-                        Authz.InvokeCommands.QUERY_CLOSE
+                        Authz.InvokeCommands.QUERY_EXECUTE
                         ).mput(
                                 Authz.InvokeKeys.QUERY_OPAQUE,
                                 opaque
+                        ).mput(
+                                Authz.InvokeKeys.PAGE_SIZE,
+                                PAGE_SIZE
                         )
-                );
-            }
-
-            // no conditional in for-in
-            if (result != null) {
-                break;
-            }
+                        ).get(Authz.InvokeKeys.QUERY_RESULT);
+            } while (result != null && handler.handle(result));
+        } finally {
+            extension.invoke(new ExtMap().mput(
+                    Base.InvokeKeys.COMMAND,
+                    Authz.InvokeCommands.QUERY_CLOSE
+                    ).mput(
+                            Authz.InvokeKeys.QUERY_OPAQUE,
+                            opaque
+                    )
+                    );
         }
     }
 
@@ -225,6 +253,7 @@ public class AuthzUtils {
         if (principalRecord != null) {
             directoryUser = new DirectoryUser(
                     extension.getContext().<String> get(Base.ContextKeys.INSTANCE_NAME),
+                    principalRecord.<String> get(Authz.PrincipalRecord.NAMESPACE),
                     principalRecord.<String> get(Authz.PrincipalRecord.ID),
                     principalRecord.<String> get(Authz.PrincipalRecord.NAME)
                     );
@@ -250,6 +279,7 @@ public class AuthzUtils {
         if (group != null) {
             directoryGroup = new DirectoryGroup(
                     extension.getContext().<String> get(Base.ContextKeys.INSTANCE_NAME),
+                    group.<String> get(Authz.GroupRecord.NAMESPACE),
                     group.<String> get(Authz.GroupRecord.ID),
                     group.<String> get(Authz.GroupRecord.NAME)
                     );

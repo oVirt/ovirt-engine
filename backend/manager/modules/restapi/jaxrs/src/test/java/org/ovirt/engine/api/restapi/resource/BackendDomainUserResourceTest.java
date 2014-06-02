@@ -75,7 +75,7 @@ public class BackendDomainUserResourceTest
 
     @Override
     protected DirectoryUser getEntity(int index) {
-        return new DirectoryUser(DOMAIN,
+        return new DirectoryUser(DOMAIN, NAMESPACE,
                 DirectoryEntryIdUtils.decode(EXTERNAL_IDS[index]),
                 NAMES[index]);
     }

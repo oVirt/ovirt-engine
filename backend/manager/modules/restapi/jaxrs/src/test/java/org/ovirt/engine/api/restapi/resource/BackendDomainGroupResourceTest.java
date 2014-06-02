@@ -78,7 +78,7 @@ public class BackendDomainGroupResourceTest
 
     @Override
     protected DirectoryGroup getEntity(int index) {
-        return new DirectoryGroup(DOMAIN, new String(DatatypeConverter.parseHexBinary(EXTERNAL_IDS[index]), Charset.forName("UTF-8")), NAMES[index]);
+        return new DirectoryGroup(DOMAIN, NAMESPACE, new String(DatatypeConverter.parseHexBinary(EXTERNAL_IDS[index]), Charset.forName("UTF-8")), NAMES[index]);
     }
 }
 

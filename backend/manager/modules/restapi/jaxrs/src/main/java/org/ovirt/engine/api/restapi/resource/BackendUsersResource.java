@@ -191,6 +191,7 @@ public class BackendUsersResource
         DirectoryIdParameters parameters = new DirectoryIdParameters();
         parameters.setDirectory(directoryUser.getDirectoryName());
         parameters.setId(directoryUser.getId());
+        parameters.setNamespace(directoryUser.getNamespace());
         QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDbUserByUserId, IdQueryParameters.class);
         return performCreate(VdcActionType.AddUser, parameters, resolver, BaseResource.class);
     }

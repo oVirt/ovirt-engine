@@ -255,6 +255,7 @@ public class PermissionListModel extends SearchableListModel
                 group.setExternalId(user.getExternalId());
                 group.setName(user.getFirstName());
                 group.setDomain(user.getDomain());
+                group.setNamespace(user.getNamespace());
                 PermissionsOperationsParameters tempVar3 = new PermissionsOperationsParameters();
                 tempVar3.setPermission(perm);
                 tempVar3.setGroup(group);

@@ -26,6 +26,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendUsersResourceTest
     extends AbstractBackendCollectionResourceTest<User, DbUser, BackendUsersResource> {
 
+    static final String NAMESPACE = "*";
+
     static final String GROUPS =
         "Schema Admins@Maghreb/Users," +
         "Group Policy Creator Owners@Maghreb/Users," +
@@ -208,12 +210,13 @@ public class BackendUsersResourceTest
         entity.setExternalId(EXTERNAL_IDS[index]);
         entity.setLoginName(NAMES[index]);
         entity.setGroupNames(GROUPS);
+        entity.setNamespace(NAMESPACE);
         entity.setDomain(DOMAIN);
         return entity;
     }
 
     private DirectoryUser getDirectoryUser(int index) {
-        return new DirectoryUser(DOMAIN, EXTERNAL_IDS[index], NAMES[index]);
+        return new DirectoryUser(DOMAIN, NAMESPACE, EXTERNAL_IDS[index], NAMES[index]);
     }
 
     @Override

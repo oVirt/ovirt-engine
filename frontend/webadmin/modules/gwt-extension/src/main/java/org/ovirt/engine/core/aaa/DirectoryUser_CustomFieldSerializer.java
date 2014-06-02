@@ -12,13 +12,15 @@ public class DirectoryUser_CustomFieldSerializer {
 
     public static DirectoryUser instantiate(SerializationStreamReader reader) throws SerializationException {
         String directoryName = reader.readString();
+        String namespace =  reader.readString();
         String id =  reader.readString();
         String name = reader.readString();
-        return new DirectoryUser(directoryName, id, name);
+        return new DirectoryUser(directoryName, namespace, id, name);
     }
 
     public static void serialize(SerializationStreamWriter writer, DirectoryUser user) throws SerializationException {
         writer.writeString(user.getDirectoryName());
+        writer.writeObject(user.getNamespace());
         writer.writeObject(user.getId());
         writer.writeString(user.getName());
         writer.writeBoolean(user.isAdmin());

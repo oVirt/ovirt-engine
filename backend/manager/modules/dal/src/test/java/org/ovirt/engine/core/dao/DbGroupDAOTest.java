@@ -34,7 +34,7 @@ public class DbGroupDAOTest extends BaseDAOTestCase {
         newGroup.setDomain("domain");
         newGroup.setName("name");
         newGroup.setActive(true);
-
+        newGroup.setNamespace("*");
         existingGroup = dao.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1"));
     }
 

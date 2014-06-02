@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -42,8 +44,17 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
             return false;
         }
 
-        directoryGroup = AuthzUtils.findGroupById(authz, id);
-        if (directoryGroup == null) {
+        boolean foundGroup = false;
+        for (String namespace : getParameters().getNamespace() != null ? Arrays.asList(getParameters().getNamespace())
+                : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
+            directoryGroup = AuthzUtils.findGroupById(authz, namespace, id);
+            if (directoryGroup != null) {
+                foundGroup = true;
+                break;
+            }
+        }
+
+        if (!foundGroup) {
             addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
             return false;
         }

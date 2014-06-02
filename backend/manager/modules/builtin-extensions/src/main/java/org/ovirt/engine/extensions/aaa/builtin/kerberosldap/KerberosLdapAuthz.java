@@ -28,6 +28,8 @@ public class KerberosLdapAuthz implements Extension {
 
     private static final Log log = LogFactory.getLog(KerberosLdapAuthz.class);
 
+    private static final String NAMESPACE = "*";
+
     private static final String USERS_QUERY_PREFIX = "(&($USER_ACCOUNT_TYPE)";
 
     private static final String GROUPS_QUERY_PREFIX = "(&($LDAP_GROUP_CATEGORY)";
@@ -243,15 +245,18 @@ public class KerberosLdapAuthz implements Extension {
                         Base.INTERFACE_VERSION_CURRENT
                 ).mput(
                         Authz.ContextKeys.AVAILABLE_NAMESPACES,
-                        Arrays.asList("*")
+                        Arrays.asList(NAMESPACE)
                         );
     }
 
     private ExtMap mapLdapUser(LdapUser user) {
         ExtMap result = new ExtMap();
         result.mput(
-                Authz.PrincipalRecord.ID,
-                user.getUserId()
+                Authz.PrincipalRecord.NAMESPACE,
+                NAMESPACE
+                ).mput(
+                        Authz.PrincipalRecord.ID,
+                        user.getUserId()
                 ).mput(
                         Authz.PrincipalRecord.DEPARTMENT,
                         user.getDepartment()

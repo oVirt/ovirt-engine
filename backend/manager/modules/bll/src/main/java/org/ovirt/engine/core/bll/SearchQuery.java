@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
@@ -176,13 +177,13 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             return Collections.emptyList();
         }
 
-        // Find the directory:
         ExtensionProxy authz = AuthenticationProfileRepository.getInstance().getProfile(data.getDomain()).getAuthz();
-        if (authz == null) {
-            return Collections.emptyList();
+        List<DirectoryUser> results = new ArrayList<>();
+        for (String namespace : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
+            results.addAll(AuthzUtils.findPrincipalsByQuery(authz, namespace, data.getQuery()));
         }
 
-        return AuthzUtils.findPrincipalsByQuery(authz, data.getQuery());
+        return results;
     }
 
     private List<DirectoryGroup> searchDirectoryGroups() {
@@ -192,14 +193,12 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             return Collections.emptyList();
         }
 
-        // Find the directory:
         ExtensionProxy authz = AuthenticationProfileRepository.getInstance().getProfile(data.getDomain()).getAuthz();
-        if (authz == null) {
-            return Collections.emptyList();
+        List<DirectoryGroup> results = new ArrayList<>();
+        for (String namespace : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
+            results.addAll(AuthzUtils.findGroupsByQuery(authz, namespace, data.getQuery()));
         }
-
-        // Run the query:
-        return AuthzUtils.findGroupsByQuery(authz, data.getQuery());
+        return results;
     }
 
     private List<DbUser> searchDbUsers() {
@@ -397,7 +396,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     protected String getDefaultDomain() {
-        return AuthzUtils.getName(AuthenticationProfileRepository.getInstance().getProfiles().get(0).getAuthz());
+        return AuthenticationProfileRepository.getInstance().getProfiles().get(0).getName();
     }
 
     private static boolean containsStaticInValues(String query) {

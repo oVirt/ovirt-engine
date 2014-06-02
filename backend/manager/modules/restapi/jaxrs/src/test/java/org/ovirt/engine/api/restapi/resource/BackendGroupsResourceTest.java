@@ -24,6 +24,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendGroupsResourceTest
     extends AbstractBackendCollectionResourceTest<Group, DbGroup, BackendGroupsResource> {
 
+    private static final String NAMESPACE = "*";
+
     /**
      * This is the query that will be used when the user didn't provide any query explicitly.
      */
@@ -367,11 +369,12 @@ public class BackendGroupsResourceTest
         entity.setExternalId(EXTERNAL_IDS[index]);
         entity.setName(GROUP_NAMES[index]);
         entity.setDomain(DOMAIN);
+        entity.setNamespace(NAMESPACE);
         return entity;
     }
 
     private DirectoryGroup getDirectoryGroup(int index) {
-        return new DirectoryGroup(DOMAIN, EXTERNAL_IDS[index], GROUP_NAMES[index]);
+        return new DirectoryGroup(DOMAIN, NAMESPACE, EXTERNAL_IDS[index], GROUP_NAMES[index]);
     }
 
     @Override

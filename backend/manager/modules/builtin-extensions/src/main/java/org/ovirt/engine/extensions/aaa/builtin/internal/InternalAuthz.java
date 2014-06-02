@@ -15,6 +15,8 @@ import org.ovirt.engine.api.extensions.aaa.Authz;
  */
 public class InternalAuthz implements Extension {
 
+    private static final String NAMESPACE = "*";
+
     private ExtMap context;
 
     private ExtMap adminUser;
@@ -108,11 +110,14 @@ public class InternalAuthz implements Extension {
                         Base.INTERFACE_VERSION_CURRENT
                 ).mput(
                         Authz.ContextKeys.AVAILABLE_NAMESPACES,
-                        Arrays.asList("*")
+                        Arrays.asList(NAMESPACE)
                         );
         adminUser = new ExtMap().mput(
-                Authz.PrincipalRecord.NAME,
-                configuration.getProperty("config.authz.user.name")
+                Authz.PrincipalRecord.NAMESPACE,
+                NAMESPACE
+                ).mput(
+                        Authz.PrincipalRecord.NAME,
+                        configuration.getProperty("config.authz.user.name")
                 ).mput(
                         Authz.PrincipalRecord.ID,
                         configuration.getProperty("config.authz.user.id")

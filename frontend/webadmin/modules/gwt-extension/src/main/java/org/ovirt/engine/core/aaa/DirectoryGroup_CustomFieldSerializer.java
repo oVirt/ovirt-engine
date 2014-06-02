@@ -11,13 +11,15 @@ public class DirectoryGroup_CustomFieldSerializer {
 
     public static DirectoryGroup instantiate(SerializationStreamReader reader) throws SerializationException {
         String directoryName = reader.readString();
+        String namespace = reader.readString();
         String id = reader.readString();
         String name = reader.readString();
-        return new DirectoryGroup(directoryName, id, name);
+        return new DirectoryGroup(directoryName, namespace, id, name);
     }
 
     public static void serialize(SerializationStreamWriter writer, DirectoryGroup group) throws SerializationException {
         writer.writeObject(group.getDirectoryName());
+        writer.writeObject(group.getNamespace());
         writer.writeObject(group.getId());
         writer.writeString(group.getName());
     }

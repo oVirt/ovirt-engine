@@ -101,7 +101,8 @@ public class DbGroupDAODbFacadeImpl extends BaseDAODbFacade implements DbGroupDA
                 .addValue("active", group.isActive())
                 .addValue("domain", group.getDomain())
                 .addValue("distinguishedname", group.getDistinguishedName())
-                .addValue("external_id", group.getExternalId()));
+                .addValue("external_id", group.getExternalId())
+                .addValue("namespace", group.getNamespace()));
     }
 
     @Override
@@ -124,6 +125,7 @@ public class DbGroupDAODbFacadeImpl extends BaseDAODbFacade implements DbGroupDA
             entity.setDomain(rs.getString("domain"));
             entity.setDistinguishedName(rs.getString("distinguishedname"));
             entity.setExternalId(rs.getString("external_id"));
+            entity.setNamespace(rs.getString("namespace"));
             return entity;
         }
     }

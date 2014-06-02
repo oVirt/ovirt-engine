@@ -125,39 +125,44 @@ public class DbUserCacheManager {
      */
     private List<DbUser> refreshUsers(List<DbUser> dbUsers, ExtensionProxy authz) {
         // Find all the users in the directory using a batch operation to improve performance:
+        Map<String, List<String>> idsPerNamespace = new HashMap<>();
+
+        List<DbUser> refreshed = new ArrayList<>();
         List<String> ids = new ArrayList<>(dbUsers.size());
         for (DbUser dbUser : dbUsers) {
-            ids.add(dbUser.getExternalId());
+            MultiValueMapUtils.addToMap(dbUser.getNamespace(), dbUser.getExternalId(), idsPerNamespace);
         }
-        List<DirectoryUser> directoryUsers = null;
-        if (authz != null) {
-            directoryUsers = AuthzUtils.findPrincipalsByIds(authz, ids);
-        }
-        else {
-            directoryUsers = Collections.emptyList();
-        }
+        for (String namespace : idsPerNamespace.keySet()) {
+            List<DirectoryUser> directoryUsers = null;
+            if (authz != null) {
+                directoryUsers = AuthzUtils.findPrincipalsByIds(authz, namespace, ids);
+            }
+            else {
+                directoryUsers = Collections.emptyList();
+            }
 
-        // Build a map of users indexed by directory id to simplify the next step where we want to find the directory
-        // user corresponding to each database user:
-        Map<String, DirectoryUser> index = new HashMap<>();
-        for (DirectoryUser directoryUser : directoryUsers) {
-            index.put(directoryUser.getId(), directoryUser);
-        }
+            // Build a map of users indexed by directory id to simplify the next step where we want to find the directory
+            // user corresponding to each database user:
+            Map<String, DirectoryUser> index = new HashMap<>();
+            for (DirectoryUser directoryUser : directoryUsers) {
+                index.put(directoryUser.getId(), directoryUser);
+            }
 
-        // For each database user refresh it using the corresponding directory user and collect those users that need to
-        // be updated:
-        List<DbUser> refreshed = new ArrayList<>();
-        for (DbUser dbUser : dbUsers) {
-            DirectoryUser directoryUser = index.get(dbUser.getExternalId());
-            if (directoryUser != null) {
-                String groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
-                dbUser.setActive(false);
-                dbUser.setGroupIds(groupIds);
-                dbUser = refreshUser(dbUser, directoryUser);
-                if (dbUser != null) {
-                    refreshed.add(dbUser);
+            // For each database user refresh it using the corresponding directory user and collect those users that need to
+            // be updated:
+            for (DbUser dbUser : dbUsers) {
+                DirectoryUser directoryUser = index.get(dbUser.getExternalId());
+                if (directoryUser != null) {
+                    String groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
+                    dbUser.setActive(false);
+                    dbUser.setGroupIds(groupIds);
+                    dbUser = refreshUser(dbUser, directoryUser);
+                    if (dbUser != null) {
+                        refreshed.add(dbUser);
+                    }
                 }
             }
+
         }
 
         return refreshed;

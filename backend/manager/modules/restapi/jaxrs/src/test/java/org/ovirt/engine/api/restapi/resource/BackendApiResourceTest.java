@@ -59,6 +59,7 @@ public class BackendApiResourceTest extends Assert {
     protected static final String USER = "Aladdin";
     protected static final String SECRET = "open sesame";
     protected static final String DOMAIN = "Maghreb";
+    protected static final String NAMESPACE = "*";
 
     protected static final String URI_ROOT = "http://localhost:8099";
     protected static final String SLASH = "/";

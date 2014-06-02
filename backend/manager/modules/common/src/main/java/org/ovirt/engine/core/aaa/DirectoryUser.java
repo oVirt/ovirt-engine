@@ -15,8 +15,8 @@ public class DirectoryUser extends DirectoryEntry {
     // Flag indicating if this user has the administrator role:
     private boolean isAdmin;
 
-    public DirectoryUser(String directoryName, String id, String name) {
-        super(directoryName, id, name);
+    public DirectoryUser(String directoryName, String namespace, String id, String name) {
+        super(directoryName, namespace, id, name);
         isAdmin = false;
     }
 

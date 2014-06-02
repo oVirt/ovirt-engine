@@ -38,7 +38,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             entity.setAdmin(rs.getBoolean("last_admin_check_status"));
             entity.setGroupIds(rs.getString("group_ids"));
             entity.setExternalId(rs.getString("external_id"));
-
+            entity.setNamespace(rs.getString("namespace"));
             return entity;
         }
     }
@@ -61,6 +61,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             addValue("last_admin_check_status", user.isAdmin());
             addValue("group_ids", user.getGroupIds());
             addValue("external_id", user.getExternalId());
+            addValue("namespace", user.getNamespace());
         }
     }
 

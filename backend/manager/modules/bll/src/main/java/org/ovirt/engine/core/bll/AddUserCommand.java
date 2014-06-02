@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.DirectoryUtils;
@@ -67,8 +69,16 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
 
         // Check that the user is available in the directory (and save the reference to avoid looking it up later when
         // actually adding the user to the database):
-        directoryUser = AuthzUtils.findPrincipalById(authz, id);
-        if (directoryUser == null) {
+        boolean foundUser = false;
+        for (String namespace : getParameters().getNamespace() != null ? Arrays.asList(getParameters().getNamespace())
+                : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
+            directoryUser = AuthzUtils.findPrincipalById(authz, namespace, id);
+            if (directoryUser != null) {
+                foundUser = true;
+                break;
+            }
+        }
+        if (!foundUser) {
             log.errorFormat(
                 "Can't add user with id \"{0}\" because it doesn't exist in directory \"{1}\".",
                 id, directoryName
@@ -76,6 +86,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
             addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
             return false;
         }
+
 
         // Populate information for the audit log:
         addCustomValue("NewUserName", directoryUser.getName());

@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+
+import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
@@ -20,8 +23,13 @@ public class GetDirectoryUserByIdQuery<P extends DirectoryIdQueryParameters> ext
         if (authz == null) {
             getQueryReturnValue().setSucceeded(false);
         } else {
-            DirectoryUser user = AuthzUtils.findPrincipalById(authz, id);
-            getQueryReturnValue().setReturnValue(user);
+            for (String namespace : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
+                DirectoryUser user = AuthzUtils.findPrincipalById(authz, namespace, id);
+                if (user != null) {
+                    getQueryReturnValue().setReturnValue(user);
+                    break;
+                }
+            }
         }
     }
 

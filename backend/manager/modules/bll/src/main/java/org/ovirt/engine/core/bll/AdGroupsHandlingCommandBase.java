@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -48,7 +49,12 @@ public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extend
             if (dbGroup != null) {
                 ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(dbGroup.getDomain());
                 if (authz != null) {
-                    mGroup = AuthzUtils.findGroupById(authz, dbGroup.getExternalId());
+                    for (String namespace : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
+                        mGroup = AuthzUtils.findGroupById(authz, namespace, dbGroup.getExternalId());
+                        if (mGroup != null) {
+                            break;
+                        }
+                    }
                 }
             }
         }
