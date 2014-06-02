@@ -699,9 +699,14 @@ public class QuotaManager {
             parameters.getCanDoActionMessages().add(String.format("$VmName %1$s",
                     parameters.getAuditLogable()
                             .getVmName()));
-            auditLogPair.setFirst(param.getParameterType() == QuotaConsumptionParameter.ParameterType.STORAGE ?
-                    AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE :
-                    AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE);
+            if (QuotaEnforcementTypeEnum.SOFT_ENFORCEMENT == parameters
+                    .getStoragePool()
+                    .getQuotaEnforcementType()) {
+                auditLogPair.setFirst(param.getParameterType() == QuotaConsumptionParameter.ParameterType.STORAGE ?
+                        AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE
+                        :
+                        AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE);
+            }
             log.errorFormat("No Quota id passed from command: {0}", parameters.getAuditLogable().getClass().getName());
             corruptedParameters.add(param);
             return false;
