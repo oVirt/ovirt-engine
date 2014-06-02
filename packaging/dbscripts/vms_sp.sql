@@ -226,7 +226,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION InsertVmDynamic(v_app_list VARCHAR(4000) ,
+Create or replace FUNCTION InsertVmDynamic(v_app_list text ,
 	v_guest_cur_user_name VARCHAR(255) ,
 	v_console_cur_user_name VARCHAR(255) ,
 	v_guest_last_login_time TIMESTAMP WITH TIME ZONE ,
@@ -278,7 +278,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION UpdateVmDynamic(v_app_list VARCHAR(4000) ,
+Create or replace FUNCTION UpdateVmDynamic(v_app_list text ,
 	v_guest_cur_user_name VARCHAR(255) ,
 	v_console_cur_user_name VARCHAR(255) ,
 	v_guest_last_login_time TIMESTAMP WITH TIME ZONE ,
