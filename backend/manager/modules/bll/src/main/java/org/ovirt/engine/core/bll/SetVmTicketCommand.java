@@ -28,7 +28,6 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     private static final Logger log = LoggerFactory.getLogger(SetVmTicketCommand.class);
 
     private String mTicket;
-    private final int mValidTime;
 
     // This flag is calculated during the authorization phase and indicates if
     // the user needed additional permission in order to connect to the console
@@ -38,7 +37,6 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     public SetVmTicketCommand(T parameters) {
         super(parameters);
         mTicket = parameters.getTicket();
-        mValidTime = parameters.getValidTime();
     }
 
     @Override
@@ -199,7 +197,8 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         final DbUser user = getCurrentUser();
         final boolean sent =
                 runVdsCommand(VDSCommandType.SetVmTicket,
-                    new SetVmTicketVDSCommandParameters(getVdsId(), getVmId(), mTicket, mValidTime, user.getLoginName(), user.getId())).getSucceeded();
+                        new SetVmTicketVDSCommandParameters(getVdsId(), getVmId(), mTicket, getParameters().getValidTime(),
+                            user.getLoginName(), user.getId(), getParameters().getGraphicsType())).getSucceeded();
 
         // Return the ticket only if sending it to the virtual machine succeeded:
         if (sent) {

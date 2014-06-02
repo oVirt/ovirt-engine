@@ -449,7 +449,7 @@ public class VmMapper extends VmBaseMapper {
     // for backwards compatibility
     // returns graphics type of a running vm (can be different than static graphics in vm device due to run once)
     // if vm has multiple graphics, returns SPICE
-    private static GraphicsType deriveGraphicsType(Map<GraphicsType, GraphicsInfo> graphicsInfos) {
+    public static GraphicsType deriveGraphicsType(Map<GraphicsType, GraphicsInfo> graphicsInfos) {
         if (graphicsInfos != null) {
             if (graphicsInfos.containsKey(GraphicsType.SPICE)) {
                 return GraphicsType.SPICE;

@@ -695,6 +695,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testTicket() throws Exception {
+        setUpGetEntityExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.SetVmTicket,
                                            SetVmTicketParameters.class,
                                            new String[] { "VmId", "Ticket" },

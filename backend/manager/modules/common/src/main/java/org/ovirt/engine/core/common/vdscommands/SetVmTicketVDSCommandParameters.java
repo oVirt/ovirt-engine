@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
@@ -7,13 +8,20 @@ public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase
     private int validTime;
     private String userName;
     private Guid userId;
+    private GraphicsType graphicsType;
 
-    public SetVmTicketVDSCommandParameters(Guid vdsId, Guid vmId, String ticket, int validTime, String userName, Guid userId) {
+    public SetVmTicketVDSCommandParameters() {
+    }
+
+    public SetVmTicketVDSCommandParameters(Guid vdsId, Guid vmId, String ticket, int validTime, String userName,
+                                           Guid userId, GraphicsType graphicsType)
+    {
         super(vdsId, vmId);
         this.ticket = ticket;
         this.validTime = validTime;
         this.userName = userName;
         this.userId = userId;
+        this.graphicsType = graphicsType;
     }
 
     public String getTicket() {
@@ -32,12 +40,13 @@ public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase
         return userName;
     }
 
-    public SetVmTicketVDSCommandParameters() {
+    public GraphicsType getGraphicsType() {
+        return graphicsType;
     }
 
     @Override
     public String toString() {
-        return String.format("%s, ticket=%s, validTime=%s,m userName=%s, userId=%s", super.toString(), getTicket(), getValidTime(),
-                getUserName(), getUserId());
+        return String.format("%s, protocol=%s, ticket=%s, validTime=%s,m userName=%s, userId=%s", super.toString(),
+                graphicsType, getTicket(), getValidTime(), getUserName(), getUserId());
     }
 }

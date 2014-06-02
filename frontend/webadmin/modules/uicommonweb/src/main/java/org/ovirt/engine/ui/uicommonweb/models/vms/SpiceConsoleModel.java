@@ -522,7 +522,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
     private void setVmTicket() {
         // Create ticket for single sign on.
-        Frontend.getInstance().runAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(), null, TICKET_VALIDITY_SECONDS),
+        Frontend.getInstance().runAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(), null, TICKET_VALIDITY_SECONDS, GraphicsType.SPICE),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {

@@ -113,7 +113,7 @@ public class VncConsoleModel extends ConsoleModel {
 
         Frontend.getInstance().runAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(),
                     null,
-                    TICKET_VALIDITY_SECONDS), new IFrontendActionAsyncCallback() {
+                    TICKET_VALIDITY_SECONDS, GraphicsType.VNC), new IFrontendActionAsyncCallback() {
 
                 @Override
                 public void executed(FrontendActionAsyncResult result) {

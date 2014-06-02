@@ -63,6 +63,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
@@ -433,8 +434,9 @@ public class BackendVmResource extends
     public Response ticket(Action action) {
         final Response response = doAction(VdcActionType.SetVmTicket,
                 new SetVmTicketParameters(guid,
-                                          getTicketValue(action),
-                                          getTicketExpiry(action)),
+                        getTicketValue(action),
+                        getTicketExpiry(action),
+                        deriveGraphicsType()),
                 action);
 
         final Action actionResponse = (Action) response.getEntity();
@@ -445,6 +447,15 @@ public class BackendVmResource extends
         }
 
         return response;
+    }
+
+    private GraphicsType deriveGraphicsType() {
+        org.ovirt.engine.core.common.businessentities.VM vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
+                VdcQueryType.GetVmByVmId, new IdQueryParameters(guid), "GetVmByVmId");
+
+        return (vm == null)
+                ? null
+                : VmMapper.deriveGraphicsType(vm.getGraphicsInfos());
     }
 
     protected String getTicketValue(Action action) {
