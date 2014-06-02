@@ -285,6 +285,47 @@ public class LUNs implements BusinessEntity<String> {
     }
 
     @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("LUNs [id=")
+                .append(getLUN_id())
+                .append(", physicalVolumeId=")
+                .append(getphysical_volume_id())
+                .append(", volumeGroupId=")
+                .append(getvolume_group_id())
+                .append(", serial=")
+                .append(getSerial())
+                .append(", lunMapping=")
+                .append(getLunMapping())
+                .append(", vendorId=")
+                .append(getVendorId())
+                .append(", productId=")
+                .append(getProductId())
+                .append(", _lunConnections=")
+                .append(getLunConnections())
+                .append(", deviceSize=")
+                .append(getDeviceSize())
+                .append(", vendorName=")
+                .append(getVendorName())
+                .append(", pathsDictionary=")
+                .append(getPathsDictionary())
+                .append(", lunType=")
+                .append(getLunType())
+                .append(", status=")
+                .append(getStatus())
+                .append(", diskId=")
+                .append(getDiskId())
+                .append(", diskAlias=")
+                .append(getDiskAlias())
+                .append(", storageDomainId=")
+                .append(getStorageDomainId())
+                .append(", storageDomainName=")
+                .append(getStorageDomainName())
+                .append("]");
+        return builder.toString();
+    }
+
+    @Override
     public String getId() {
         return getLUN_id();
     }
