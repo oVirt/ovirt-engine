@@ -22,6 +22,7 @@ public class GroupMapper {
             model.setDomain(dom);
         }
         model.setDomainEntryId(DirectoryEntryIdUtils.encode(entity.getExternalId()));
+        model.setNamespace(entity.getNamespace());
         return model;
     }
 
@@ -35,6 +36,7 @@ public class GroupMapper {
             model.setDomain(dom);
         }
         model.setId(DirectoryEntryIdUtils.encode(entity.getId()));
+        model.setNamespace(entity.getNamespace());
         return model;
     }
 
@@ -56,6 +58,9 @@ public class GroupMapper {
         }
         if (model.isSetDomainEntryId()) {
             entity.setExternalId(DirectoryEntryIdUtils.decode(model.getDomainEntryId()));
+        }
+        if (model.isSetNamespace()) {
+            entity.setNamespace(model.getNamespace());
         }
         return entity;
     }

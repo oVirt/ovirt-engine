@@ -24,6 +24,7 @@ public class UserMapper {
         model.setEmail(entity.getEmail());
         model.setDepartment(entity.getDepartment());
         model.setDomainEntryId(DirectoryEntryIdUtils.encode(entity.getExternalId()));
+        model.setNamespace(entity.getNamespace());
         if (entity.getGroupNames() != null && entity.getGroupNames().trim().length() > 0) {
             model.setGroups(new Groups());
             for (String name : entity.getGroupNames().split(",")) {
@@ -49,6 +50,7 @@ public class UserMapper {
         model.setLastName(entity.getLastName());
         model.setEmail(entity.getEmail());
         model.setDepartment(entity.getDepartment());
+        model.setNamespace(entity.getNamespace());
         if (entity.getGroups() != null) {
             model.setGroups(new Groups());
             for (DirectoryGroup directoryGroup : entity.getGroups()) {
@@ -83,6 +85,9 @@ public class UserMapper {
         }
         if (model.isSetDomainEntryId()) {
             entity.setExternalId(DirectoryEntryIdUtils.decode(model.getDomainEntryId()));
+        }
+        if (model.isSetNamespace()) {
+            entity.setNamespace(model.getNamespace());
         }
         return entity;
     }
