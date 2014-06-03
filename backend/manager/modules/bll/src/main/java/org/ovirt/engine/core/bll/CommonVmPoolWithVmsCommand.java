@@ -126,8 +126,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
         int subsequentFailedAttempts = 0;
         int vmPoolMaxSubsequentFailures = Config.<Integer> getValue(ConfigValues.VmPoolMaxSubsequentFailures);
-        int numOfVms = 0;
-        do {
+        for (int i=0; i<getParameters().getVmsCount(); i++) {
             String currentVmName = generateUniqueVmName();
             VdcReturnValueBase returnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.AddVmAndAttachToPool,
@@ -153,7 +152,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 break;
             }
             isAtLeastOneVMCreationFailed = isAtLeastOneVMCreationFailed || !addVmsSucceded;
-        } while (++numOfVms < getParameters().getVmsCount());
+        }
 
         getReturnValue().setCanDoAction(!isAtLeastOneVMCreationFailed);
         setSucceeded(!isAtLeastOneVMCreationFailed);
