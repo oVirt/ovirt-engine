@@ -90,7 +90,7 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
             getVDSReturnValue().setCreationInfo(
                     new AsyncTaskCreationInfo(createdTask, getCreatedTaskType(), getParameters()
                             .getStoragePoolId()));
-
+            handleOkResponse();
             getVDSReturnValue().setSucceeded(true);
             return;
         }
@@ -114,6 +114,8 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
 
         proceedProxyReturnValue();
     }
+
+    protected void handleOkResponse() {}
 
     protected String processResponseHeaderValue(HttpMethodBase method, String headerName, String expectedValue) {
         Header header = method.getResponseHeader(headerName);
