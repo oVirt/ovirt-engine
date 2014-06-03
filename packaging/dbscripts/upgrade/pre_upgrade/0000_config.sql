@@ -278,7 +278,7 @@ select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.1');
 select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.2');
 select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.3');
 select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.4');
-select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','RANDOM','3.5');
+select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.5');
 
 select fn_db_add_config_value('SpiceCopyPasteToggleSupported','false','3.0');
 select fn_db_add_config_value('SpiceCopyPasteToggleSupported','false','3.1');
