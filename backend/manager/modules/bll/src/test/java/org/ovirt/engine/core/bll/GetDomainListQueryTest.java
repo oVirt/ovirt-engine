@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -70,11 +69,6 @@ public class GetDomainListQueryTest
         doReturn(authzMock).when(profileMock).getAuthz();
         doReturn(authnMock).when(profileMock).getAuthn();
         AuthenticationProfileRepository.getInstance().registerProfile(profileMock);
-    }
-
-    @After
-    public void tearDown() {
-        AuthenticationProfileRepository.getInstance().clear();
     }
 
     @Test

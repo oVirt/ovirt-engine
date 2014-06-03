@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Properties;
 
 import org.ovirt.engine.api.extensions.Base;
@@ -12,7 +14,7 @@ import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
-public class AuthenticationProfileRepository {
+public class AuthenticationProfileRepository implements Observer {
 
     private static final String AUTHN_SERVICE = Authn.class.getName();
     private static final String AUTHN_AUTHZ_PLUGIN = "ovirt.engine.aaa.authn.authz.plugin";
@@ -20,7 +22,7 @@ public class AuthenticationProfileRepository {
 
 
     private static volatile AuthenticationProfileRepository instance = null;
-    private Map<String, AuthenticationProfile> profiles = new HashMap<String, AuthenticationProfile>();
+    private volatile Map<String, AuthenticationProfile> profiles = null;
 
 
     public static AuthenticationProfileRepository getInstance() {
@@ -52,28 +54,21 @@ public class AuthenticationProfileRepository {
         return profiles.get(name);
     }
 
-    /**
-     * Register an authentication profile.
-     * @param profile
-     *            the profile to register
-     */
     public void registerProfile(AuthenticationProfile profile) {
-        profiles.put(profile.getName(), profile);
-    }
-
-    public void clear() {
-        profiles.clear();
+        registerProfile(profiles, profile);
     }
 
     private AuthenticationProfileRepository() {
-        createProfiles();
+        EngineExtensionsManager.getInstance().addObserver(this);
+        profiles = createProfiles();
     }
 
-    private void createProfiles() throws ConfigurationException {
+    private Map<String, AuthenticationProfile> createProfiles() throws ConfigurationException {
 
         // Get the extensions that correspond to authn (authentication) service.
         // For each extension - get the relevant authn extension.
 
+        Map<String, AuthenticationProfile> results = new HashMap<>();
         for (ExtensionProxy authnExtension : EngineExtensionsManager.getInstance().getExtensionsByService(AUTHN_SERVICE)) {
             String mapperName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(AUTHN_MAPPING_PLUGIN);
             String authzName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(AUTHN_AUTHZ_PLUGIN);
@@ -81,15 +76,24 @@ public class AuthenticationProfileRepository {
                 throw new ConfigurationException(String.format("Authz plugin for %1$s does not exist",
                         authnExtension.getContext().<String> get(Base.ContextKeys.INSTANCE_NAME)));
             }
-
-            registerProfile(
-                new AuthenticationProfile(
+            AuthenticationProfile profile = new AuthenticationProfile(
                     authnExtension,
                     EngineExtensionsManager.getInstance().getExtensionByName(authzName),
                     mapperName != null ? EngineExtensionsManager.getInstance().getExtensionByName(mapperName) : null
-                    )
-                );
+                    );
+
+            results.put(profile.getName(), profile);
         }
+        return results;
+    }
+
+    private void registerProfile(Map<String, AuthenticationProfile> map, AuthenticationProfile profile) {
+        map.put(profile.getName(), profile);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        profiles = createProfiles();
     }
 
 }
