@@ -212,7 +212,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
      * @return
      */
     private boolean connectVdsToNewMaster(VDS vds) {
-        StorageDomain masterDomain = getNewMaster(false);
+        StorageDomain masterDomain = getNewMaster(true);
         if (vds.getId().equals(getVds().getId())
                 || StorageHelperDirector.getInstance().getItem(masterDomain.getStorageType())
                         .connectStorageToDomainByVdsId(masterDomain, vds.getId())) {
