@@ -72,7 +72,7 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
                     && getStorageDomain().getStatus() == StorageDomainStatus.Active) {
                 addStorageDomainStatusIllegalMessage();
                 returnValue = false;
-            } else if (electNewMaster(false) != null) {
+            } else if (electNewMaster() != null) {
                 getReturnValue().getCanDoActionMessages().add(
                         VdcBllMessages.STORAGE_POOL_REINITIALIZE_WITH_MORE_THAN_ONE_DATA_DOMAIN.toString());
                 returnValue = false;

@@ -38,6 +38,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameters> extends
         DeactivateStorageDomainCommand<T> {
 
+    protected StorageDomain newMasterStorageDomain;
+    protected Guid newMasterStorageDomainId;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -53,14 +56,27 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
     public ReconstructMasterDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        _newMasterStorageDomainId = parameters.getNewMasterDomainId();
-        canChooseInactiveDomainAsMaster = parameters.isCanChooseInactiveDomainAsMaster();
-        canChooseCurrentMasterAsNewMaster = parameters.isCanChooseCurrentMasterAsNewMaster();
     }
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties;
+    }
+
+    protected StorageDomain getNewMasterStorageDomain() {
+        if (newMasterStorageDomainId == null) {
+            getNewMasterStorageDomainId();
+        }
+        return newMasterStorageDomain;
+    }
+
+    protected Guid getNewMasterStorageDomainId() {
+        if (newMasterStorageDomainId == null) {
+            newMasterStorageDomain = electNewMaster(true, getParameters().isCanChooseInactiveDomainAsMaster(),
+                    getParameters().isCanChooseCurrentMasterAsNewMaster());
+            newMasterStorageDomainId = newMasterStorageDomain != null ? newMasterStorageDomain.getId() : Guid.Empty;
+        }
+        return newMasterStorageDomainId;
     }
 
     protected StorageDomainValidator createStorageDomainValidator() {
@@ -94,10 +110,10 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     }
 
     protected boolean reconstructMaster() {
-        proceedStorageDomainTreatmentByDomainType(true);
+        proceedStorageDomainTreatmentByDomainType(getNewMasterStorageDomain(), false);
 
         // To issue a reconstructMaster you need to set the domain inactive unless the selected domain is the current master
-        if (getParameters().isInactive() && !getStorageDomain().getId().equals(_newMasterStorageDomainId)) {
+        if (getParameters().isInactive() && !getStorageDomain().getId().equals(getNewMasterStorageDomainId())) {
             executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
@@ -118,7 +134,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         final List<String> disconnectPoolFormats = Config.<List<String>> getValue(
                 ConfigValues.DisconnectPoolOnReconstruct);
 
-        if (commandSucceeded && disconnectPoolFormats.contains(getNewMaster(true).getStorageFormat().getValue())) {
+        if (commandSucceeded && disconnectPoolFormats.contains(getNewMasterStorageDomain().getStorageFormat().getValue())) {
             commandSucceeded = runVdsCommand(
                     VDSCommandType.DisconnectStoragePool,
                     new DisconnectStoragePoolVDSCommandParameters(getVds().getId(),
@@ -140,7 +156,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         return runVdsCommand(VDSCommandType.ReconstructMaster,
                 new ReconstructMasterVDSCommandParameters(getVds().getId(),
                         getVds().getVdsSpmId(), getStoragePool().getId(),
-                        getStoragePool().getName(), _newMasterStorageDomainId, domains,
+                        getStoragePool().getName(), getNewMasterStorageDomainId(), domains,
                         getStoragePool().getMasterDomainVersion())).getSucceeded();
 
     }
@@ -203,7 +219,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
      * @return
      */
     private boolean connectVdsToNewMaster(VDS vds) {
-        StorageDomain masterDomain = getNewMaster(true);
+        StorageDomain masterDomain = getNewMasterStorageDomain();
         if (vds.getId().equals(getVds().getId())
                 || StorageHelperDirector.getInstance().getItem(masterDomain.getStorageType())
                         .connectStorageToDomainByVdsId(masterDomain, vds.getId())) {
@@ -231,7 +247,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                     try {
                         if (!connectVdsToNewMaster(vds)) {
                             log.warn("failed to connect vds '{}' to the new master '{}'",
-                                    vds.getId(), _newMasterStorageDomainId);
+                                    vds.getId(), getNewMasterStorageDomainId());
                             return null;
                         }
 
@@ -241,13 +257,13 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                             runVdsCommand(
                                     VDSCommandType.ConnectStoragePool,
                                     new ConnectStoragePoolVDSCommandParameters(vds, getStoragePool(),
-                                            _newMasterStorageDomainId, storagePoolIsoMap, true));
+                                            getNewMasterStorageDomainId(), storagePoolIsoMap, true));
                         } catch (VdcBLLException ex) {
                             if (VdcBllErrors.StoragePoolUnknown == ex.getVdsError().getCode()) {
                                 VDSReturnValue returnVal = runVdsCommand(
                                         VDSCommandType.ConnectStoragePool,
                                         new ConnectStoragePoolVDSCommandParameters(vds, getStoragePool(),
-                                                _newMasterStorageDomainId, storagePoolIsoMap));
+                                                getNewMasterStorageDomainId(), storagePoolIsoMap));
                                 if (!returnVal.getSucceeded()) {
                                     log.error("Post reconstruct actions (connectPool) did not complete on host '{}' in the pool. error {}",
                                             vds.getId(),

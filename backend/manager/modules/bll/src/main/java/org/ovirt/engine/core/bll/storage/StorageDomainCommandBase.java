@@ -385,8 +385,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
      * returns new master domain which is in Active/Unknown status
      * @return an elected master domain or null
      */
-    protected StorageDomain electNewMaster(boolean duringReconstruct) {
-        return electNewMaster(duringReconstruct, false, false);
+    protected StorageDomain electNewMaster() {
+        return electNewMaster(false, false, false);
     }
 
     @Override

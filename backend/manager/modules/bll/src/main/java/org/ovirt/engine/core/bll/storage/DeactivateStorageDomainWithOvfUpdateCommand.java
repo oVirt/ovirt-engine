@@ -170,8 +170,8 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
     protected void deactivateStorageDomainAfterTaskExecution() {
         final StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(getStorageDomainId(), getStoragePoolId());
         params.setSkipChecks(true);
-        boolean newThread = getStorageDomain().getStorageDomainType() == StorageDomainType.Master && getNewMaster(false) == null;
-        if (newThread) {
+        boolean isLastMaster = getStorageDomain().getStorageDomainType() == StorageDomainType.Master && electNewMaster() == null;
+        if (isLastMaster) {  // Spawning a new thread waiting for tasks cleanup
             StoragePoolIsoMap map = loadStoragePoolIsoMap();
             // The creation of the compensation context is needed in case of an engine restart between the tasks clearance and the
             // execution of the deactivate command from the new thread. If the compensation context won't be created and the tasks

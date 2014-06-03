@@ -93,7 +93,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
 
         if (returnValue && getStorageDomain().getStorageDomainType() == StorageDomainType.Master
                 && getStoragePool() != null) {
-            if (electNewMaster(false) == null) {
+            if (electNewMaster() == null) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN);
             } else if (!initializeVds()) {
