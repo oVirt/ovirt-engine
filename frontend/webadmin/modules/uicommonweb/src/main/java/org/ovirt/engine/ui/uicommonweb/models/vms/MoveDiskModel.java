@@ -30,6 +30,8 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class MoveDiskModel extends MoveOrCopyDiskModel
 {
+    protected List<String> problematicDisksForWarning = new ArrayList<String>();
+
     public MoveDiskModel() {
         super();
 
@@ -77,7 +79,6 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
         // and selected to be cold moved to a block domain (as it will cause
         // the disks to become preallocated, and it may consume considerably
         // more space on the target domain).
-        final List<String> problematicDisks = new ArrayList<String>();
         for (final DiskModel diskModel : getDisks()) {
             if (diskModel.isPluggedToRunningVm()) {
                 continue;
@@ -97,23 +98,35 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
             diskModel.getStorageDomain().getSelectedItemChangedEvent().addListener(new IEventListener() {
                 @Override
                 public void eventRaised(Event ev, Object sender, EventArgs args) {
-                    StorageDomain storageDomain = (StorageDomain) ((ListModel) sender).getSelectedItem();
-                    if (storageDomain.getStorageType().isBlockDomain()) {
-                        problematicDisks.add(diskModel.getDisk().getDiskAlias());
-                    }
-                    else {
-                        problematicDisks.remove(diskModel.getDisk().getDiskAlias());
-                    }
-
-                    if (!problematicDisks.isEmpty()) {
-                        getDynamicWarning().setEntity(messages.moveDisksPreallocatedWarning(
-                                StringHelper.join(", ", problematicDisks.toArray()))); //$NON-NLS-1$
-                        getDynamicWarning().setIsAvailable(true);
-                    } else {
-                        getDynamicWarning().setIsAvailable(false);
-                    }
+                    updateProblematicDisk(diskModel);
                 }
             });
+            updateProblematicDisk(diskModel);
+        }
+    }
+
+    private void updateProblematicDisk(DiskModel diskModel) {
+        StorageDomain storageDomain = diskModel.getStorageDomain().getSelectedItem();
+        if (storageDomain == null) {
+            return;
+        }
+
+        String diskAlias = diskModel.getDisk().getDiskAlias();
+        if (storageDomain.getStorageType().isBlockDomain()) {
+            if (!problematicDisksForWarning.contains(diskAlias)) {
+                problematicDisksForWarning.add(diskAlias);
+            }
+        }
+        else {
+            problematicDisksForWarning.remove(diskAlias);
+        }
+
+        if (!problematicDisksForWarning.isEmpty()) {
+            getDynamicWarning().setEntity(messages.moveDisksPreallocatedWarning(
+                    StringHelper.join(", ", problematicDisksForWarning.toArray()))); //$NON-NLS-1$
+            getDynamicWarning().setIsAvailable(true);
+        } else {
+            getDynamicWarning().setIsAvailable(false);
         }
     }
 
