@@ -70,7 +70,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
         }
     }
 
-    private VdsStatic getAndSetVdsStatic() {
+    protected VdsStatic getAndSetVdsStatic() {
         if (vdsStatic == null) {
             vdsStatic = getDbFacade().getVdsStaticDao().get(getParameters().getVdsId());
         }

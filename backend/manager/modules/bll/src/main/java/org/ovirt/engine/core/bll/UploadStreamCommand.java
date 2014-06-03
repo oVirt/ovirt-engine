@@ -88,8 +88,8 @@ public class UploadStreamCommand<T extends UploadStreamParameters> extends BaseI
                         getParameters().getStorageDomainId(),
                         getParameters().getImageGroupID(),
                         getParameters().getImageId(),
-                        getParameters().getInputStream(),
-                        getParameters().getStreamLength());
+                        getParameters().getStreamLength(),
+                        getParameters().getInputStream());
 
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.UploadStream, vdsCommandParameters);
 

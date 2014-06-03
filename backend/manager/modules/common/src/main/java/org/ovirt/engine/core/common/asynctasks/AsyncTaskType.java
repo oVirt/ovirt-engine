@@ -12,6 +12,7 @@ public enum AsyncTaskType {
     syncImageData,
     extendImageSize,
     downloadImage,
+    uploadImageFromStream,
     downloadImageFromStream;
 
     public int getValue() {
