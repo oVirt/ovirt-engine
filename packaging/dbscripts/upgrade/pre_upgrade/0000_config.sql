@@ -947,7 +947,7 @@ select fn_db_update_default_config_value('DomainName','example.com','','general'
 select fn_db_update_default_config_value('LDAPSecurityAuthentication','GSSAPI','default:GSSAPI','general',false);
 select fn_db_update_default_config_value('LDAPSecurityAuthentication','SIMPLE','default:SIMPLE','general',false);
 select fn_db_update_default_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','500','general',false);
-select fn_db_update_default_config_value('VdsLocalDisksLowFreeSpace','500', '1000','general',false);
+select fn_db_update_default_config_value('VdsLocalDisksLowFreeSpace','1000', '100','general',false);
 select fn_db_update_default_config_value('GuestToolsSetupIsoPrefix','RHEV-toolsSetup_', 'ovirt-guest-tools-','general', false);
 
 -- Reduce the host connection timeout from 180 seconds to 2 seconds and
