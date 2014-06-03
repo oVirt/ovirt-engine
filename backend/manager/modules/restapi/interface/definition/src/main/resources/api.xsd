@@ -106,8 +106,8 @@
 
   <xs:complexType name="Fault">
     <xs:sequence>
-      <xs:element name="reason" type="xs:string"/>
-      <xs:element name="detail" type="xs:string"/>
+      <xs:element name="reason" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="detail" type="xs:string" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 
