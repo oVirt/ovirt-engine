@@ -51,7 +51,7 @@
 
                     <div style="clear: both;"></div>
                     <div class="col-sm-12 locale-div">
-                        <select class="gwt-ListBox obrand_locale_list_box" onchange="localeSelected(this)">
+                        <select class="gwt-ListBox obrand_locale_list_box" onchange="localeSelected(this)" id="localeBox">
                             <c:forEach items="${requestScope['localeKeys']}" var="localeKey">
                                 <c:choose>
                                 <c:when test="${requestScope['locale'].toString() == localeKey}">

@@ -43,6 +43,7 @@ public abstract class AbstractLoginFormView extends AbstractView {
 
     @UiField(provided = true)
     @Ignore
+    @WithElementId("localeBox")
     public ListBox localeBox;
 
     @UiField
