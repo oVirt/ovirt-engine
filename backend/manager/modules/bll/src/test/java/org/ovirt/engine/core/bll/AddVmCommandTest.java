@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -115,9 +116,13 @@ public class AddVmCommandTest {
     @Mock
     OsRepository osRepository;
 
+    @Before
+    public void InitTest() {
+        mockOsRepository();
+    }
+
     @Test
     public void create10GBVmWith11GbAvailableAndA5GbBuffer() throws Exception {
-        mockOsRepository();
         VM vm = createVm();
         AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = createVmFromTemplateCommand(vm);
 
@@ -199,7 +204,6 @@ public class AddVmCommandTest {
 
         VDSGroup vdsGroup = createVdsGroup();
 
-        mockOsRepository();
         mockStorageDomainDAOGetForStoragePool();
         mockVmTemplateDAOReturnVmTemplate();
         mockDiskImageDAOGetSnapshotById();
@@ -224,7 +228,6 @@ public class AddVmCommandTest {
 
     @Test
     public void isVirtioScsiEnabledDefaultedToTrue() {
-        mockOsRepository();
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(0, 0);
         doReturn(createVdsGroup()).when(cmd).getVdsGroup();
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
@@ -620,13 +623,11 @@ public class AddVmCommandTest {
 
     @Test
     public void testBeanValidations() {
-        mockOsRepository();
         assertTrue(createCommand(initializeMock(1, 1)).validateInputs());
     }
 
     @Test
     public void testPatternBasedNameFails() {
-        mockOsRepository();
         AddVmCommand<VmManagementParametersBase> cmd = createCommand(initializeMock(1, 1));
         cmd.getParameters().getVm().setName("aa-??bb");
         assertFalse("Pattern-based name should not be supported for VM", cmd.validateInputs());
