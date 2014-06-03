@@ -19,6 +19,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     public static final String STATUS = "STATUS";
     public static final String HOST = "HOST";
     public static final String IP = "IP";
+    public static final String FQDN = "FQDN";
     public static final String UPTIME = "UPTIME";
     public static final String OS = "OS";
     public static final String CREATIONDATE = "CREATIONDATE";
@@ -26,6 +27,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     public static final String CPU_USAGE = "CPU_USAGE";
     public static final String MEM_USAGE = "MEM_USAGE";
     public static final String NETWORK_USAGE = "NETWORK_USAGE";
+    public static final String MIGRATION_PROGRESS_PERCENT = "MIGRATION_PROGRESS_PERCENT";
     public static final String MEMORY = "MEMORY";
     public static final String APPS = "APPS";
     public static final String CLUSTER = "CLUSTER";
@@ -45,6 +47,8 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mVerbs.add(COMMENT);
         mVerbs.add(STATUS);
         mVerbs.add(IP);
+        mVerbs.add(HOST);
+        mVerbs.add(FQDN);
         mVerbs.add(UPTIME);
         mVerbs.add(OS);
         mVerbs.add(CREATIONDATE);
@@ -53,6 +57,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mVerbs.add(MEM_USAGE);
         mVerbs.add(NETWORK_USAGE);
         mVerbs.add(MEMORY);
+        mVerbs.add(MIGRATION_PROGRESS_PERCENT);
         mVerbs.add(APPS);
         mVerbs.add(CLUSTER);
         mVerbs.add(POOL);
@@ -72,6 +77,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put(COMMENT, String.class);
         getTypeDictionary().put(STATUS, VMStatus.class);
         getTypeDictionary().put(IP, String.class);
+        getTypeDictionary().put(FQDN, String.class);
         getTypeDictionary().put(UPTIME, TimeSpan.class);
         getTypeDictionary().put(OS, String.class);
         getTypeDictionary().put(CREATIONDATE, Date.class);
@@ -79,6 +85,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put(CPU_USAGE, Integer.class);
         getTypeDictionary().put(MEM_USAGE, Integer.class);
         getTypeDictionary().put(NETWORK_USAGE, Integer.class);
+        getTypeDictionary().put(MIGRATION_PROGRESS_PERCENT, Integer.class);
         getTypeDictionary().put(MEMORY, Integer.class);
         getTypeDictionary().put(APPS, String.class);
         getTypeDictionary().put(CLUSTER, String.class);
@@ -98,6 +105,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(COMMENT, "vm_comment");
         columnNameDict.put(STATUS, "status");
         columnNameDict.put(IP, "vm_ip");
+        columnNameDict.put(FQDN, "vm_fqdn");
         columnNameDict.put(UPTIME, "elapsed_time");
         columnNameDict.put(OS, "vm_os");
         columnNameDict.put(CREATIONDATE, "vm_creation_date");
@@ -105,6 +113,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(MEM_USAGE, "usage_mem_percent");
         columnNameDict.put(NETWORK_USAGE, "usage_network_percent");
         columnNameDict.put(CPU_USAGE, "usage_cpu_percent");
+        columnNameDict.put(MIGRATION_PROGRESS_PERCENT, "migration_progress_percent");
         columnNameDict.put(MEMORY, "vm_mem_size_mb");
         columnNameDict.put(APPS, "app_list");
         columnNameDict.put(CLUSTER, "vds_group_name");
@@ -136,7 +145,8 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         if (UPTIME.equals(fieldName) || CREATIONDATE.equals(fieldName)) {
             return BiggerOrSmallerRelationAutoCompleter.INSTANCE;
         } else if (CPU_USAGE.equals(fieldName) || MEM_USAGE.equals(fieldName)
-                || MEMORY.equals(fieldName) || NETWORK_USAGE.equals(fieldName)) {
+                || MEMORY.equals(fieldName) || NETWORK_USAGE.equals(fieldName)
+                || MIGRATION_PROGRESS_PERCENT.equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
         } else if (TAG.equals(fieldName)) {
             return StringOnlyEqualConditionRelationAutoCompleter.INSTANCE;
