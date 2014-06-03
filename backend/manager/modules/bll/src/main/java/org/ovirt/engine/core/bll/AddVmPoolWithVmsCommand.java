@@ -69,7 +69,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if (getAddVmsSucceded()) {
+        if (isAddVmsSucceded()) {
             return AuditLogType.USER_ADD_VM_POOL_WITH_VMS;
         }
 

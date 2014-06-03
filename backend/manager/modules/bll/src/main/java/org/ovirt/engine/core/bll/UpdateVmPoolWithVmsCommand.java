@@ -59,7 +59,7 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getAddVmsSucceded() ? AuditLogType.USER_UPDATE_VM_POOL_WITH_VMS
+        return isAddVmsSucceded() ? AuditLogType.USER_UPDATE_VM_POOL_WITH_VMS
                 : AuditLogType.USER_UPDATE_VM_POOL_WITH_VMS_FAILED;
     }
 

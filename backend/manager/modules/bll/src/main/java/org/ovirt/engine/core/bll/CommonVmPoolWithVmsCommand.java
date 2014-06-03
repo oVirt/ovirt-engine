@@ -57,7 +57,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
-    private boolean addVmsSucceded = true;
+    private boolean addVmsSucceeded = true;
     private NameForVmInPoolGenerator nameForVmInPoolGenerator;
 
     /**
@@ -118,14 +118,22 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         VmHandler.warnMemorySizeLegal(getParameters().getVmStaticData(), getVdsGroup().getcompatibility_version());
 
         Guid poolId = getPoolId();
-        boolean isAtLeastOneVMCreationFailed = false;
         setActionReturnValue(poolId);
-
         VmTemplateHandler.lockVmTemplateInTransaction(getParameters().getVmStaticData().getVmtGuid(),
                 getCompensationContext());
 
+        addVmsToPool(poolId);
+
+        getReturnValue().setCanDoAction(isAddVmsSucceded());
+        setSucceeded(isAddVmsSucceded());
+        VmTemplateHandler.unlockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
+        getCompensationContext().resetCompensation();
+    }
+
+    private void addVmsToPool(Guid poolId) {
         int subsequentFailedAttempts = 0;
         int vmPoolMaxSubsequentFailures = Config.<Integer> getValue(ConfigValues.VmPoolMaxSubsequentFailures);
+
         for (int i=0; i<getParameters().getVmsCount(); i++) {
             String currentVmName = generateUniqueVmName();
             VdcReturnValueBase returnValue =
@@ -139,7 +147,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                         getReturnValue().getCanDoActionMessages().add(msg);
                     }
                 }
-                addVmsSucceded = returnValue.getSucceeded() && addVmsSucceded;
+                addVmsSucceeded = false;
                 subsequentFailedAttempts++;
             }
             else { // Succeed on that , reset subsequentFailedAttempts.
@@ -151,13 +159,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 AuditLogDirector.log(logable, AuditLogType.USER_VM_POOL_MAX_SUBSEQUENT_FAILURES_REACHED);
                 break;
             }
-            isAtLeastOneVMCreationFailed = isAtLeastOneVMCreationFailed || !addVmsSucceded;
         }
-
-        getReturnValue().setCanDoAction(!isAtLeastOneVMCreationFailed);
-        setSucceeded(!isAtLeastOneVMCreationFailed);
-        VmTemplateHandler.unlockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
-        getCompensationContext().resetCompensation();
     }
 
     private String generateUniqueVmName() {
@@ -384,8 +386,8 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         return Config.<Integer> getValue(ConfigValues.InitStorageSparseSizeInGB).intValue();
     }
 
-    protected boolean getAddVmsSucceded() {
-        return addVmsSucceded;
+    protected boolean isAddVmsSucceded() {
+        return addVmsSucceeded;
     }
 
     public String getVmsCount() {
