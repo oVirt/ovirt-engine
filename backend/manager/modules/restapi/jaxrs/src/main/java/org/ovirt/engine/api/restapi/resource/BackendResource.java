@@ -53,6 +53,23 @@ public class BackendResource extends BaseBackendResource {
     public static final String JOB_ID_CONSTRAINT = "JobId";
     public static final String STEP_ID_CONSTRAINT = "StepId";
 
+    private <T> T castQueryResultToEntity(Class<T> clz, VdcQueryReturnValue result,
+                                          String constraint) throws BackendFailureException {
+        T entity;
+
+        if (List.class.isAssignableFrom(clz) && result.getReturnValue() instanceof List) {
+            entity = clz.cast(result.getReturnValue());
+        } else {
+            List<T> list = asCollection(clz, result.getReturnValue());
+            if (list == null || list.isEmpty()) {
+                throw new EntityNotFoundException(constraint);
+            }
+            entity = clz.cast(list.get(0));
+        }
+
+        return entity;
+    }
+
     @Deprecated
     protected <T> T getEntity(Class<T> clz, SearchType searchType, String constraint) {
         try {
@@ -61,18 +78,7 @@ public class BackendResource extends BaseBackendResource {
             if (!result.getSucceeded()) {
                 backendFailure(result.getExceptionString());
             }
-
-            T entity;
-            if (List.class.isAssignableFrom(clz) && result.getReturnValue() instanceof List) {
-                entity = clz.cast(result.getReturnValue());
-            } else {
-                List<T> list = asCollection(clz, result.getReturnValue());
-                if (list == null || list.isEmpty()) {
-                    throw new EntityNotFoundException(constraint);
-                }
-                entity = clz.cast(list.get(0));
-            }
-            return entity;
+            return castQueryResultToEntity(clz, result, constraint);
         } catch (Exception e) {
             return handleError(clz, e, false);
         }
@@ -111,7 +117,7 @@ public class BackendResource extends BaseBackendResource {
                 throw new EntityNotFoundException(identifier);
             }
         }
-        return clz.cast(result.getReturnValue());
+        return castQueryResultToEntity(clz, result, identifier);
     }
 
     protected <T> List<T> getBackendCollection(Class<T> clz, VdcQueryType query, VdcQueryParametersBase queryParams) {
