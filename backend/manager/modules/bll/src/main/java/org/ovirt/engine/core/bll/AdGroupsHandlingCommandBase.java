@@ -50,7 +50,7 @@ public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extend
                 ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(dbGroup.getDomain());
                 if (authz != null) {
                     for (String namespace : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-                        mGroup = AuthzUtils.findGroupById(authz, namespace, dbGroup.getExternalId());
+                        mGroup = AuthzUtils.findGroupById(authz, namespace, dbGroup.getExternalId(), false, false);
                         if (mGroup != null) {
                             break;
                         }

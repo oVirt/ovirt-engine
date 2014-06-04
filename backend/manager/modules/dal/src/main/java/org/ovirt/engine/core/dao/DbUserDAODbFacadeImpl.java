@@ -2,8 +2,10 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
@@ -36,11 +38,22 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             entity.setId(getGuidDefaultEmpty(rs, "user_id"));
             entity.setLoginName(rs.getString("username"));
             entity.setAdmin(rs.getBoolean("last_admin_check_status"));
-            entity.setGroupIds(rs.getString("group_ids"));
+            entity.setGroupIds(convertToGuidSet(rs.getString("group_ids"), ','));
             entity.setExternalId(rs.getString("external_id"));
             entity.setNamespace(rs.getString("namespace"));
             return entity;
         }
+
+        private HashSet<Guid> convertToGuidSet(String str, char delimiter) {
+            HashSet<Guid> results = new HashSet<>();
+            if (str != null) {
+                for (String id : str.split(String.format(" *%s *", delimiter))) {
+                    results.add(Guid.createGuidFromString(id));
+                }
+            }
+            return results;
+        }
+
     }
 
     private class DbUserMapSqlParameterSource extends
@@ -59,7 +72,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             addValue("user_id", user.getId());
             addValue("username", user.getLoginName());
             addValue("last_admin_check_status", user.isAdmin());
-            addValue("group_ids", user.getGroupIds());
+            addValue("group_ids", StringUtils.join(user.getGroupIds(), ","));
             addValue("external_id", user.getExternalId());
             addValue("namespace", user.getNamespace());
         }

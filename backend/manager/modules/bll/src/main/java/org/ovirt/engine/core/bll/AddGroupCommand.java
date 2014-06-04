@@ -47,7 +47,7 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
         boolean foundGroup = false;
         for (String namespace : getParameters().getNamespace() != null ? Arrays.asList(getParameters().getNamespace())
                 : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-            directoryGroup = AuthzUtils.findGroupById(authz, namespace, id);
+            directoryGroup = AuthzUtils.findGroupById(authz, namespace, id, true, true);
             if (directoryGroup != null) {
                 foundGroup = true;
                 break;

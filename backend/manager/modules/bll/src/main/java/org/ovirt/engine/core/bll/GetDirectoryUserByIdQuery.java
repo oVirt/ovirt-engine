@@ -24,7 +24,7 @@ public class GetDirectoryUserByIdQuery<P extends DirectoryIdQueryParameters> ext
             getQueryReturnValue().setSucceeded(false);
         } else {
             for (String namespace : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-                DirectoryUser user = AuthzUtils.findPrincipalById(authz, namespace, id);
+                DirectoryUser user = AuthzUtils.findPrincipalById(authz, namespace, id, false, false);
                 if (user != null) {
                     getQueryReturnValue().setReturnValue(user);
                     break;

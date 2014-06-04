@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -182,30 +181,6 @@ public class DbUserDAOTest extends BaseDAOTestCase {
         DbUser result = dao.getByUsername(newUser.getLoginName());
 
         assertEquals(newUser, result);
-    }
-
-    /**
-     * Ensures that saving a user works as expected.
-     */
-    @Test
-    public void testSaveUserWithTooManyGroups() {
-        DbUser tooManyGroupsUser = new DbUser();
-        tooManyGroupsUser.setExternalId("0");
-        tooManyGroupsUser.setId(Guid.newGuid());
-        tooManyGroupsUser.setFirstName("I");
-        tooManyGroupsUser.setLastName("Have");
-        tooManyGroupsUser.setLoginName("too");
-        tooManyGroupsUser.setEmail("many@redhat.com");
-        tooManyGroupsUser.setDomain("domain");
-        tooManyGroupsUser.setGroupNames("groups");
-        // Using 2048 because that was the field size before the patch that changed it to text
-        tooManyGroupsUser.setGroupIds(StringUtils.leftPad("groups", 2048));
-
-        dao.save(tooManyGroupsUser);
-
-        DbUser result = dao.getByUsername(tooManyGroupsUser.getLoginName());
-
-        assertEquals(tooManyGroupsUser, result);
     }
 
     /**

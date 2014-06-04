@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.aaa;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.compat.Guid;
@@ -9,24 +11,27 @@ import org.ovirt.engine.core.dao.DbGroupDAO;
 
 public class DirectoryUtils {
 
-    public static String getGroupIdsFromUser(DirectoryUser directoryUser) {
-
-        StringBuilder sb = new StringBuilder();
-        List<DirectoryGroup> groups = directoryUser.getGroups();
+    public static HashSet<Guid> getGroupIdsFromUser(DirectoryUser directoryUser) {
+        HashSet<Guid> results = new HashSet<Guid>();
+        Set<DirectoryGroup> groupsSet = new HashSet<DirectoryGroup>();
+        flatGroups(groupsSet, directoryUser.getGroups());
         DbGroupDAO dao = DbFacade.getInstance().getDbGroupDao();
-        if (groups != null) {
-            boolean first = true;
-            for (DirectoryGroup group : groups) {
+        if (groupsSet != null) {
+            for (DirectoryGroup group : groupsSet) {
                 DbGroup dbGroup = dao.getByExternalId(group.getDirectoryName(), group.getId());
-                if (!first) {
-                    sb.append(",");
-                } else {
-                    first = false;
+                if (dbGroup != null) {
+                    results.add(dbGroup.getId());
                 }
-                sb.append(dbGroup != null ? dbGroup.getId() : Guid.Empty);
             }
-
         }
-        return sb.toString();
+        return results;
+    }
+
+    private static void flatGroups(Set<DirectoryGroup> accumulator, List<DirectoryGroup> groupsFrom) {
+        for (DirectoryGroup group : groupsFrom) {
+            flatGroups(accumulator, group.getGroups());
+            accumulator.add(group);
+        }
+
     }
 }

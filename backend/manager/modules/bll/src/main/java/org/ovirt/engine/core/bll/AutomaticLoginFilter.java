@@ -12,6 +12,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
@@ -132,7 +133,7 @@ public class AutomaticLoginFilter implements Filter {
         PermissionDAO permissionDao = DbFacade.getInstance().getPermissionDao();
         Guid permissionId = permissionDao.getEntityPermissionsForUserAndGroups(
             dbUser.getId(),
-            dbUser.getGroupIds(),
+            StringUtils.join(dbUser.getGroupIds(), ","),
             VdcActionType.LoginUser.getActionGroup(),
             MultiLevelAdministrationHandler.BOTTOM_OBJECT_ID,
             VdcObjectType.Bottom,

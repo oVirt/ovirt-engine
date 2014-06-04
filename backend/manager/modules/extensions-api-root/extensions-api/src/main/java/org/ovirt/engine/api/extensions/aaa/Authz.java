@@ -40,10 +40,10 @@ public class Authz {
          */
         public static final ExtKey PAGE_SIZE = new ExtKey("AAA_AUTHZ_PAGE_SIZE", Integer.class, "03197cd2-2d0f-4636-bd88-f65c4a543efe");
         /**
-         * Resolve groups.
-         * Resolve groups recursively within query.
+         * Flag to determine how entries will be queried.
+         * @See QueryFlags
          * */
-        public static final ExtKey RESOLVE_GROUPS_RECURSIVE = new ExtKey("AAA_AUTHZ_RESOLVE_GROUPS_RECURSIVE", Boolean.class, "f766a48d-cd3f-4c71-ad18-7c4bc9965ebe");
+        public static final ExtKey QUERY_FLAGS = new ExtKey("AAA_AUTHZ_QUERY_FLAGS", Integer.class, "97d226e9-8d87-49a0-9a7f-af689320907b");
         /** Principal record. */
         public static final ExtKey PRINCIPAL_RECORD = new ExtKey("AAA_AUTHZ_PRINCIPAL_RECORD", ExtMap.class, "ebc0d5ca-f1ea-402c-86ae-a8ecbdadd6b5");
         /**
@@ -81,6 +81,16 @@ public class Authz {
     }
 
     /**
+     * Authz flags
+     */
+    public static class QueryFlags {
+        /** Resolve groups. */
+        public static final int RESOLVE_GROUPS = (1 << 0);
+        /** Resolve groups recursively when resolving groups. */
+        public static final int RESOLVE_GROUPS_RECURSIVE = (1 << 1);
+    }
+
+    /**
      * Invoke commands.
      */
     public static class InvokeCommands {
@@ -92,7 +102,7 @@ public class Authz {
          * Input:
          * <ul>
          * <li>{@link Authn.InvokeKeys#AUTH_RECORD}[M] - authentication record.</li>
-         * <li>{@link InvokeKeys#RESOLVE_GROUPS_RECURSIVE}[M] - resolve groups recursively.</li>
+         * <li>{@link InvokeKeys#QUERY_FLAGS}[O] - query flags.</li>
          * </ul>
          * </p>
          *
@@ -115,7 +125,7 @@ public class Authz {
          * <li>{@link InvokeKeys#NAMESPACE}[M]</li>
          * <li>{@link InvokeKeys#QUERY_ENTITY}[M]</li>
          * <li>{@link InvokeKeys#QUERY_FILTER}[M]</li>
-         * <li>{@link InvokeKeys#RESOLVE_GROUPS_RECURSIVE}[M] - resolve groups recursively.</li>
+         * <li>{@link InvokeKeys#QUERY_FLAGS}[O] - query flags.</li>
          * </ul>
          * </p>
          *

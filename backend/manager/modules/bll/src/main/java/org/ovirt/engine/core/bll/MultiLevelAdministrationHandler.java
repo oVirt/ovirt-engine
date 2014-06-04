@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -52,7 +53,8 @@ public class MultiLevelAdministrationHandler {
      * @return True if user is admin
      */
     public static boolean isAdminUser(DbUser user) {
-        List<Role> userRoles = getRoleDAO().getAllForUserAndGroups(user.getId(), user.getGroupIds());
+        List<Role> userRoles =
+                getRoleDAO().getAllForUserAndGroups(user.getId(), StringUtils.join(user.getGroupIds(), ","));
 
         for (Role r : userRoles) {
             if (r.getType() == RoleType.ADMIN) {

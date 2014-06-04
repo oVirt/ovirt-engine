@@ -66,7 +66,7 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
             }
             boolean foundUser = false;
             for (String namespace : authz.getContext().<List<String>>get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-                DirectoryUser directoryUser = AuthzUtils.findPrincipalById(authz, namespace, id);
+                DirectoryUser directoryUser = AuthzUtils.findPrincipalById(authz, namespace, id, false, false);
                 if (directoryUser != null) {
                     dbUser = new DbUser(directoryUser);
                     dbUser.setId(Guid.newGuid());

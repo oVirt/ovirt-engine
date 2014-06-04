@@ -24,7 +24,7 @@ public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> ex
             getQueryReturnValue().setSucceeded(false);
         } else {
             for (String namespace : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-                final DirectoryGroup group = AuthzUtils.findGroupById(authz, namespace, id);
+                final DirectoryGroup group = AuthzUtils.findGroupById(authz, namespace, id, false, false);
                 if (group != null) {
                     getQueryReturnValue().setReturnValue(group);
                     break;

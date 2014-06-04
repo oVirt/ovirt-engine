@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.aaa;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -75,19 +74,16 @@ public class DirectoryEntry extends IVdcQueryable {
         this.status = status;
     }
 
-    /**
-     * Returns the list of groups that this user belongs to. Note that the list returned may be unmodifiable, so don't
-     * try to alter it in any way.
-     */
+
     public List<DirectoryGroup> getGroups() {
-        List<DirectoryGroup> result = new ArrayList<DirectoryGroup>(groups.size());
-        result.addAll(groups);
-        return Collections.unmodifiableList(result);
+        if (groups == null) {
+            groups = new ArrayList<DirectoryGroup>();
+        }
+        return groups;
     }
 
     public void setGroups(List<DirectoryGroup> groups) {
-        this.groups = new ArrayList<DirectoryGroup>(groups.size());
-        this.groups.addAll(groups);
+        this.groups = groups;
     }
 
     @Override

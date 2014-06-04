@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.HashSet;
+
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.aaa.DirectoryGroup;
@@ -71,8 +73,7 @@ public class DbUser extends IVdcQueryable {
     /**
      * Comma delimited list of group identifiers.
      */
-    @Size(max = BusinessEntitiesDefinitions.USER_GROUP_IDS_SIZE)
-    private String groupIds;
+    private HashSet<Guid> groupIds;
 
     public DbUser() {
         loginName = "";
@@ -80,7 +81,7 @@ public class DbUser extends IVdcQueryable {
         lastName = "";
         department = "";
         groupNames = "";
-        groupIds = "";
+        groupIds = new HashSet<Guid>();
         role = "";
         note = "";
     }
@@ -114,13 +115,8 @@ public class DbUser extends IVdcQueryable {
         note = "";
 
         StringBuilder namesBuffer = new StringBuilder();
-        boolean first = true;
         for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
-            if (!first) {
-                namesBuffer.append(",");
-            }
-            namesBuffer.append(directoryGroup.getName());
-            first = false;
+            populateGroupNames(namesBuffer, directoryGroup);
         }
         groupNames = namesBuffer.toString();
     }
@@ -246,11 +242,14 @@ public class DbUser extends IVdcQueryable {
         return isAdmin;
     }
 
-    public void setGroupIds(String groupIds) {
+    public void setGroupIds(HashSet<Guid> groupIds) {
         this.groupIds = groupIds;
     }
 
-    public String getGroupIds() {
+    public HashSet<Guid> getGroupIds() {
+        if (groupIds == null) {
+            groupIds = new HashSet<Guid>();
+        }
         return groupIds;
     }
 
@@ -303,4 +302,15 @@ public class DbUser extends IVdcQueryable {
                 && ObjectUtils.objectsEqual(loginName, other.loginName));
 
     }
+
+    private void populateGroupNames(StringBuilder namesBuffer, DirectoryGroup directoryGroup) {
+        if (namesBuffer.length() != 0) {
+            namesBuffer.append(",");
+        }
+        namesBuffer.append(directoryGroup.getName());
+        for (DirectoryGroup memberOf : directoryGroup.getGroups()) {
+            populateGroupNames(namesBuffer, memberOf);
+        }
+    }
+
 }

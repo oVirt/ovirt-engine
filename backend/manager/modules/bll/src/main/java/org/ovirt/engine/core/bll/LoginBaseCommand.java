@@ -242,11 +242,10 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                             directoryUser.getId());
             if (dbUser == null) {
                 dbUser = new DbUser(directoryUser);
-                String groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
-                dbUser.setGroupIds(groupIds);
                 dbUser.setId(Guid.newGuid());
-                getDbUserDAO().save(dbUser);
             }
+            dbUser.setGroupIds(DirectoryUtils.getGroupIdsFromUser(directoryUser));
+            getDbUserDAO().saveOrUpdate(dbUser);
 
             // Check login permissions. We do it here and not via the
             // getPermissionCheckSubjects mechanism, because we need the user to be logged in to

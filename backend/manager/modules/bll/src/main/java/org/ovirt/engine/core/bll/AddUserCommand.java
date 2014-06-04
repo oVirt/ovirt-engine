@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import org.ovirt.engine.api.extensions.aaa.Authz;
@@ -72,7 +73,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
         boolean foundUser = false;
         for (String namespace : getParameters().getNamespace() != null ? Arrays.asList(getParameters().getNamespace())
                 : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-            directoryUser = AuthzUtils.findPrincipalById(authz, namespace, id);
+            directoryUser = AuthzUtils.findPrincipalById(authz, namespace, id, true, true);
             if (directoryUser != null) {
                 foundUser = true;
                 break;
@@ -100,19 +101,17 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
         DbUserDAO dao = getDbUserDAO();
 
         // First check if the user is already in the database, if it is we need to update, if not we need to insert:
+        HashSet<Guid> groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
         DbUser dbUser = dao.getByExternalId(directoryUser.getDirectoryName(), directoryUser.getId());
         if (dbUser == null) {
             dbUser = new DbUser(directoryUser);
-            String groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
-            dbUser.setGroupIds(groupIds);
             dbUser.setId(Guid.newGuid());
+            dbUser.setGroupIds(groupIds);
             dao.save(dbUser);
         }
         else {
             Guid id = dbUser.getId();
             dbUser = new DbUser(directoryUser);
-            dbUser.setId(id);
-            String groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
             dbUser.setId(id);
             dbUser.setGroupIds(groupIds);
             dao.update(dbUser);

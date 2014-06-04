@@ -1,15 +1,15 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.aaa.AuthenticationProfile;
-import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
@@ -24,6 +24,7 @@ import org.ovirt.engine.core.dao.DbGroupDAO;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
+import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -84,9 +85,9 @@ public class DbUserCacheManager {
         Map<String, ExtensionProxy> authzMap = new HashMap<>();
 
         for (DbUser dbUser : dbUsers) {
-            AuthenticationProfile profile = AuthenticationProfileRepository.getInstance().getProfile(dbUser.getDomain());
-            if (profile == null) {
-                log.warn(String.format("No profile was found for user %1$s. It is possible that the relevant " +
+            ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(dbUser.getDomain());
+            if (authz == null) {
+                log.warn(String.format("No authz extension was found for user %1$s. It is possible that the relevant " +
                         "domain for the user was removed for the user. Marking the user as inactive",
                         dbUser.getLoginName()));
                 if (dbUser.isActive()) {
@@ -96,9 +97,9 @@ public class DbUserCacheManager {
                 continue;
 
             }
-            String auhtzName = AuthzUtils.getName(profile.getAuthz());
+            String auhtzName = AuthzUtils.getName(authz);
             MultiValueMapUtils.addToMap(auhtzName, dbUser, authzToPrincipalMap);
-            authzMap.put(auhtzName, profile.getAuthz());
+            authzMap.put(auhtzName, authz);
         }
 
         // Refresh the users for each directory:
@@ -135,7 +136,7 @@ public class DbUserCacheManager {
         for (String namespace : idsPerNamespace.keySet()) {
             List<DirectoryUser> directoryUsers = null;
             if (authz != null) {
-                directoryUsers = AuthzUtils.findPrincipalsByIds(authz, namespace, ids);
+                directoryUsers = AuthzUtils.findPrincipalsByIds(authz, namespace, ids, true, false);
             }
             else {
                 directoryUsers = Collections.emptyList();
@@ -153,9 +154,8 @@ public class DbUserCacheManager {
             for (DbUser dbUser : dbUsers) {
                 DirectoryUser directoryUser = index.get(dbUser.getExternalId());
                 if (directoryUser != null) {
-                    String groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
                     dbUser.setActive(false);
-                    dbUser.setGroupIds(groupIds);
+                    dbUser.setGroupIds(DirectoryUtils.getGroupIdsFromUser(directoryUser));
                     dbUser = refreshUser(dbUser, directoryUser);
                     if (dbUser != null) {
                         refreshed.add(dbUser);
@@ -234,39 +234,31 @@ public class DbUserCacheManager {
         }
 
         // Compare the new list of group names and identifiers:
-        StringBuilder groupNamesBuffer = new StringBuilder();
-        StringBuilder groupIdsBuffer = new StringBuilder();
-        boolean first = true;
+        List<String> groupNamesFromDirectory = new ArrayList<>();
         DbGroupDAO groupDao = DbFacade.getInstance().getDbGroupDao();
+        HashSet<Guid> groupIds = new HashSet<>();
         for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
-            if (!first) {
-                groupNamesBuffer.append(',');
-                groupIdsBuffer.append(',');
-            }
             DbGroup dbGroup = groupsMap.get(directoryGroup.getId());
             if (dbGroup == null) {
                 dbGroup = groupDao.getByExternalId(dbUser.getDomain(), directoryGroup.getId());
             }
-            if (dbGroup == null) {
-                // group is not in map or db
-                groupIdsBuffer.append(Guid.Empty);
-            } else {
-                groupIdsBuffer.append(dbGroup.getId());
+            if (dbGroup != null) {
+                groupIds.add(dbGroup.getId());
             }
-            groupNamesBuffer.append(directoryGroup.getName());
-            first = false;
+            groupNamesFromDirectory.add(directoryGroup.getName());
         }
-        String groupNames = groupNamesBuffer.toString();
-        String groupIds = groupIdsBuffer.toString();
-        if (!StringUtils.equals(dbUser.getGroupNames(), groupNames)) {
-            dbUser.setGroupNames(groupNames);
-            update = true;
-        }
-        if (!StringUtils.equals(dbUser.getGroupIds(), groupIds)) {
-            dbUser.setGroupIds(groupIds);
+        Collections.sort(groupNamesFromDirectory);
+        List<String> groupNamesFromDb = Arrays.asList(dbUser.getGroupNames().split(","));
+        Collections.sort(groupNamesFromDb);
+        if (!groupNamesFromDb.equals(groupNamesFromDirectory)) {
+            dbUser.setGroupNames(StringUtils.join(groupNamesFromDirectory, ","));
             update = true;
         }
 
+        if (!groupIds.equals(dbUser.getGroupIds())) {
+            dbUser.setGroupIds(groupIds);
+            update = true;
+        }
         return update? dbUser: null;
     }
 }

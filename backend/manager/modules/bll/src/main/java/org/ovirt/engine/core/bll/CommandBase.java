@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -918,14 +919,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @return <code>true</code> if the current user is authorized to run the action, <code>false</code> otherwise
      */
     protected boolean checkUserAndGroupsAuthorization(Guid userId,
-            String groupIds,
+            HashSet<Guid> groupIds,
             final ActionGroup actionGroup,
             final Guid object,
             final VdcObjectType type,
             final boolean ignoreEveryone) {
         // Grant if there is matching permission in the database:
         final Guid permId =
-                getPermissionDAO().getEntityPermissionsForUserAndGroups(userId, groupIds, actionGroup, object, type, ignoreEveryone);
+                getPermissionDAO().getEntityPermissionsForUserAndGroups(userId, StringUtils.join(groupIds, ","), actionGroup, object, type, ignoreEveryone);
         if (permId != null) {
             if (log.isDebugEnabled()) {
                 log.debugFormat("Found permission {0} for user when running {1}, on {2} with id {3}",
