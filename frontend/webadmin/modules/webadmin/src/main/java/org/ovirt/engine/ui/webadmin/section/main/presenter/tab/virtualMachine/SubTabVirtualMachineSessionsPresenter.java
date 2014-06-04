@@ -50,7 +50,7 @@ public class SubTabVirtualMachineSessionsPresenter
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.virtualMachineSessionsSubTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.virtualMachineMainTabPlace);
     }
 
     @ProxyEvent
