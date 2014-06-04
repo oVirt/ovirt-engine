@@ -78,7 +78,10 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                         .getStoragePoolIsoMapDao()
                         .get(new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
                                 getParameters().getStoragePoolId()));
-        changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Activating);
+        // Master domain must not go through the Activating status.
+        changeStorageDomainStatusInTransaction(map,
+                (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) ?
+                    StorageDomainStatus.Locked : StorageDomainStatus.Activating);
         freeLock();
 
         log.infoFormat("ActivateStorage Domain. Before Connect all hosts to pool. Time:{0}", new Date());
