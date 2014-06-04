@@ -58,6 +58,14 @@ public class HostVmListModel extends VmListModel
         }
     }
 
+
+    @Override
+    public boolean supportsServerSideSorting() {
+        //Because this uses a non standard search mechanism, we can't use the build in sort feature and thus have
+        //to fall back to using client side sorting.
+        return false;
+    }
+
     @Override
     protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {

@@ -36,15 +36,17 @@ public class SubTabHostGlusterSwiftView extends AbstractSubTabTableView<VDS, Glu
                 return object.getServiceName();
             }
         };
+        serviceColumn.makeSortable();
         getTable().addColumn(serviceColumn, constants.serviceGlusterSwift(), "250px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterServerService> statusColumn =
-                new EnumColumn<GlusterServerService, GlusterServiceStatus>() {
-                    @Override
-                    protected GlusterServiceStatus getRawValue(GlusterServerService object) {
-                        return object.getStatus();
-                    }
-                };
+            new EnumColumn<GlusterServerService, GlusterServiceStatus>() {
+                @Override
+                protected GlusterServiceStatus getRawValue(GlusterServerService object) {
+                    return object.getStatus();
+                }
+            };
+        statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusGlusterSwift(), "250px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterServerService>(constants.startGlusterSwiftInHost()) {

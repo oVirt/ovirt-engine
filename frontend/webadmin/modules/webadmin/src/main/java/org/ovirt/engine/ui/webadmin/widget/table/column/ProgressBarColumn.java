@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import java.util.Comparator;
+
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
@@ -18,7 +20,7 @@ public abstract class ProgressBarColumn<T> extends SafeHtmlColumn<T> {
         ORANGE("#FF9900"), //$NON-NLS-1$
         RED("#FF0000"); //$NON-NLS-1$
 
-        private String colorCode;
+        private final String colorCode;
 
         private ProgressBarColors(String colorCode) {
             this.colorCode = colorCode;
@@ -53,6 +55,20 @@ public abstract class ProgressBarColumn<T> extends SafeHtmlColumn<T> {
         } else {
             return ProgressBarColors.RED.asCode();
         }
+    }
+
+    /**
+     * Enables default <em>client-side</em> sorting for this column, by the integer value, as returned from
+     * getProgressValue method.
+     */
+    public void makeSortable() {
+        makeSortable(new Comparator<T>() {
+
+            @Override
+            public int compare(T arg0, T arg1) {
+                return getProgressValue(arg0).compareTo(getProgressValue(arg1));
+            }
+        });
     }
 
     /**
