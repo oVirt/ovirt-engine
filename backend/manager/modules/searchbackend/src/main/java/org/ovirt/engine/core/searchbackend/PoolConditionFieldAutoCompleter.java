@@ -11,6 +11,8 @@ public class PoolConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
     public static final String CLUSTER = "CLUSTER";
     public static final String DATACENTER = "DATACENTER";
     public static final String ARCHITECTURE = "ARCHITECTURE";
+    public static final String ASSIGNED_VM_COUNT = "ASSIGNED_VM_COUNT";
+    public static final String RUNNING_VM_COUNT = "RUNNING_VM_COUNT";
 
     public PoolConditionFieldAutoCompleter() {
         // Building the basic vervs Dict
@@ -20,6 +22,8 @@ public class PoolConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         mVerbs.add(CLUSTER);
         mVerbs.add(DATACENTER);
         mVerbs.add(ARCHITECTURE);
+        mVerbs.add(ASSIGNED_VM_COUNT);
+        mVerbs.add(RUNNING_VM_COUNT);
 
         // Building the autoCompletion Dict
         buildCompletions();
@@ -30,6 +34,8 @@ public class PoolConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put(CLUSTER, String.class);
         getTypeDictionary().put(DATACENTER, String.class);
         getTypeDictionary().put(ARCHITECTURE, ArchitectureType.class);
+        getTypeDictionary().put(ASSIGNED_VM_COUNT, Integer.class);
+        getTypeDictionary().put(RUNNING_VM_COUNT, Integer.class);
 
         // building the ColumnName Dict
         columnNameDict.put(NAME, "vm_pool_name");
@@ -38,6 +44,8 @@ public class PoolConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         columnNameDict.put(CLUSTER, "vds_group_name");
         columnNameDict.put(DATACENTER, "storage_pool_name");
         columnNameDict.put(ARCHITECTURE, "architecture");
+        columnNameDict.put(ASSIGNED_VM_COUNT, "assigned_vm_count");
+        columnNameDict.put(RUNNING_VM_COUNT, "vm_running_count");
 
         // Building the validation dict
         buildBasicValidationTable();
