@@ -42,7 +42,7 @@ public class ClusterVmListModel extends VmListModel
     @Override
     protected void syncSearch()
     {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.VM);
+        SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.VM);
         tempVar.setRefresh(getIsQueryFirstTime());
         super.syncSearch(VdcQueryType.Search, tempVar);
     }

@@ -326,7 +326,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "vds_groups_view",
                             "vds_groups_storage_domain",
                             "vds_group_id",
-                            "name ASC "));
+                            "name ASC"));
                     put(SearchObjects.QUOTA_OBJ_NAME, new EntitySearchInfo(new QuotaConditionFieldAutoCompleter(),
                             new QuotaConditionFieldAutoCompleter(),
                             "quota_view",

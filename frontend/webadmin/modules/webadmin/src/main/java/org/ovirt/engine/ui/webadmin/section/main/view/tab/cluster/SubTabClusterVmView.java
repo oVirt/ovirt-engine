@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.searchbackend.VmConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -30,7 +31,9 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        VmStatusColumn<VM> statusIconColumn = new VmStatusColumn<VM>();
+        statusIconColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
+        getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -38,9 +41,12 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
                 return object.getName();
             }
         };
+        nameColumn.makeSortable(VmConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameVm(), "220px"); //$NON-NLS-1$
 
-        getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        VmTypeColumn typeColumn = new VmTypeColumn();
+        typeColumn.makeSortable(VmConditionFieldAutoCompleter.TYPE);
+        getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
@@ -48,6 +54,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
                 return object.getStatus();
             }
         };
+        statusColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusColumn, constants.statusVm(), "220px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
@@ -56,6 +63,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
                 return object.getRoundedElapsedTime();
             }
         };
+        uptimeColumn.makeSortable(VmConditionFieldAutoCompleter.UPTIME);
         getTable().addColumn(uptimeColumn, constants.uptimeVm(), "220px"); //$NON-NLS-1$
     }
 

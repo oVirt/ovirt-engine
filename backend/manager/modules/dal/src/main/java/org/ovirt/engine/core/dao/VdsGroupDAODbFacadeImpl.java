@@ -4,7 +4,6 @@ import java.sql.Array;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -187,6 +186,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 parameterSource);
     }
 
+    @Override
     public List<VDSGroup> getTrustedClusters() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("trusted_service", true);
@@ -327,7 +327,9 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
         for (VDSGroupHostsAndVMs groupDetail : dataList) {
             groupsById.get(groupDetail.getVdsGroupId()).setGroupHostsAndVms(groupDetail);
         }
-        return new ArrayList<VDSGroup>(groupsById.values());
+        //The VDS groups have been updated, but we want to keep the order, so return the original list which is
+        //in the right order.
+        return vdsGroups;
 
     }
 }

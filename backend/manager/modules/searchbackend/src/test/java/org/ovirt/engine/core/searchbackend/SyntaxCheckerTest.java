@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 
 import org.junit.Assert;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -280,9 +279,9 @@ public class SyntaxCheckerTest {
         // "SELECT * FROM (SELECT * FROM vds_groups_view WHERE ( vds_group_id IN (SELECT vds_groups_storage_domain.vds_group_id FROM  vds_groups_storage_domain  ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0"
         // Current: 1ms
         testValidSql("Cluster: ",
-                "SELECT * FROM ((SELECT vds_groups_view.* FROM  vds_groups_view  )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM ((SELECT vds_groups_view.* FROM  vds_groups_view  )  ORDER BY name ASC) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("Cluster: storage.name = 111",
-                "SELECT * FROM (SELECT * FROM vds_groups_view WHERE ( vds_group_id IN (SELECT vds_groups_storage_domain.vds_group_id FROM  vds_groups_storage_domain   LEFT OUTER JOIN storage_domains_with_hosts_view ON vds_groups_storage_domain.storage_id=storage_domains_with_hosts_view.id    WHERE  storage_domains_with_hosts_view.storage_name LIKE 111 ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM (SELECT * FROM vds_groups_view WHERE ( vds_group_id IN (SELECT vds_groups_storage_domain.vds_group_id FROM  vds_groups_storage_domain   LEFT OUTER JOIN storage_domains_with_hosts_view ON vds_groups_storage_domain.storage_id=storage_domains_with_hosts_view.id    WHERE  storage_domains_with_hosts_view.storage_name LIKE 111 ))  ORDER BY name ASC) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test
@@ -291,7 +290,7 @@ public class SyntaxCheckerTest {
         // "SELECT * FROM (SELECT * FROM vds_groups_view WHERE ( vds_group_id IN (SELECT vds_groups_storage_domain.vds_group_id FROM  vds_groups_storage_domain  ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0"
         // Current: 1ms
         testValidSql("Clusters: ",
-                "SELECT * FROM ((SELECT vds_groups_view.* FROM  vds_groups_view  )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM ((SELECT vds_groups_view.* FROM  vds_groups_view  )  ORDER BY name ASC) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test

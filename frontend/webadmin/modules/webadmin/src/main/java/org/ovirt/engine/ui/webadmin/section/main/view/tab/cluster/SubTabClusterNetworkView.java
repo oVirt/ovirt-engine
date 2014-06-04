@@ -71,6 +71,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                 return object.getName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameNetwork(), "400px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Network> statusColumn = new EnumColumn<Network, NetworkStatus>() {
@@ -79,6 +80,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                 return object.getCluster().getStatus();
             }
         };
+        statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusNetwork(), "100px"); //$NON-NLS-1$
 
         SafeHtmlWithSafeHtmlTooltipColumn<Network> roleColumn =
@@ -131,6 +133,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                 return object.getDescription();
             }
         };
+        descColumn.makeSortable();
         getTable().addColumn(descColumn, constants.descriptionNetwork(), "400px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)) {

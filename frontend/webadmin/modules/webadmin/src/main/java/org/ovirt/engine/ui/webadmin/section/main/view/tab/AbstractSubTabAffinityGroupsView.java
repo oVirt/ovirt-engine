@@ -32,6 +32,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
                 return object.getName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameAffinityGroup(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<AffinityGroup> descColumn = new TextColumnWithTooltip<AffinityGroup>() {
@@ -40,6 +41,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
                 return object.getDescription();
             }
         };
+        descColumn.makeSortable();
         getTable().addColumn(descColumn, constants.descriptionAffinityGroup(), "150px"); //$NON-NLS-1$
 
         BooleanColumn<AffinityGroup> polarityColumn =
@@ -50,6 +52,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
                 return object.isPositive();
             }
         };
+        polarityColumn.makeSortable();
         getTable().addColumn(polarityColumn, constants.polarityAffinityGroup(), "100px"); //$NON-NLS-1$
 
         BooleanColumn<AffinityGroup> enforceColumn =
@@ -60,9 +63,10 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
                         return object.isEnforcing();
                     }
                 };
+        enforceColumn.makeSortable();
         getTable().addColumn(enforceColumn, constants.enforceAffinityGroup(), "100px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<AffinityGroup>() {
+        TextColumnWithTooltip<AffinityGroup> membersColumn = new TextColumnWithTooltip<AffinityGroup>() {
             @Override
             public String getValue(AffinityGroup object) {
                 String join = join(getEntityNames(object), ", "); //$NON-NLS-1$
@@ -71,7 +75,9 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
                 }
                 return join;
             }
-        }, constants.membersAffinityGroup(), "500px"); //$NON-NLS-1$
+        };
+        membersColumn.makeSortable();
+        getTable().addColumn(membersColumn, constants.membersAffinityGroup(), "500px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<AffinityGroup>(constants.newAffinityGroupLabel()) {
             @Override

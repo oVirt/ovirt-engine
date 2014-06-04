@@ -41,6 +41,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
                 return object.getName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameClusterHost(), "220px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDS> hostColumn = new TextColumnWithTooltip<VDS>() {
@@ -49,6 +50,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
                 return object.getHostName();
             }
         };
+        hostColumn.makeSortable();
         getTable().addColumn(hostColumn, constants.hostIpClusterHost(), "220px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDS> statusColumn = new EnumColumn<VDS, VDSStatus>() {
@@ -57,6 +59,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
                 return object.getStatus();
             }
         };
+        statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusClusterHost(), "120px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)) {
@@ -67,6 +70,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
                     return ConstantsManager.getInstance().getMessages().numberOfVmsForHostsLoad(numOfActiveVMs);
                 }
             };
+            loadColumn.makeSortable();
             getTable().addColumn(loadColumn, constants.loadClusterHost(), "120px"); //$NON-NLS-1$
         }
 
@@ -78,6 +82,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
                 }
 
             };
+            consoleColumn.makeSortable();
             getTable().addColumn(consoleColumn, constants.overriddenConsoleAddress(), "220px"); //$NON-NLS-1$
         }
 

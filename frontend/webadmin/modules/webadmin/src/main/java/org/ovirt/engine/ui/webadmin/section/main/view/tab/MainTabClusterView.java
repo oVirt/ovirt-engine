@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.searchbackend.ClusterConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
@@ -25,7 +26,8 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
-public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSGroup, ClusterListModel> implements MainTabClusterPresenter.ViewDef {
+public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSGroup, ClusterListModel> implements
+    MainTabClusterPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<MainTabClusterView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -49,6 +51,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
                 return object.getName();
             }
         };
+        nameColumn.makeSortable(ClusterConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameCluster(), "150px"); //$NON-NLS-1$
 
         CommentColumn<VDSGroup> commentColumn = new CommentColumn<VDSGroup>();
@@ -78,6 +81,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
                 return object.getdescription();
             }
         };
+        descColumn.makeSortable(ClusterConditionFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descColumn, constants.descriptionCluster(), "300px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
