@@ -144,13 +144,13 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunQuery_ignored_failure() {
+    public void testrunQuery_ignored_failure() {
         VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
         // Repeat 4 times, because of retries.
         for (int i = 1; i < RETRY_COUNT; i++) {
-            verify(mockService, times(i)).RunQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
+            verify(mockService, times(i)).runQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
             // Call the failure handler.
             callback.getValue().onFailure(exception);
         }
@@ -166,14 +166,14 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunQuery_failure_404() {
+    public void testrunQuery_failure_404() {
         VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
         StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND,
                 "404 status code"); //$NON-NLS-1$
         // Repeat 4 times, because of retries.
         for (int i = 1; i < RETRY_COUNT; i++) {
-            verify(mockService, times(i)).RunQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
+            verify(mockService, times(i)).runQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
             // Call the failure handler.
             callback.getValue().onFailure(exception);
         }
@@ -190,7 +190,7 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunQuery_failure_404_callback() {
+    public void testrunQuery_failure_404_callback() {
         Object mockModel = new Object();
         when(mockAsyncQuery.isHandleFailure()).thenReturn(true);
         when(mockAsyncQuery.getModel()).thenReturn(mockModel);
@@ -200,7 +200,7 @@ public class FrontendTest {
                 "404 status code"); //$NON-NLS-1$
         // Repeat 4 times, because of retries.
         for (int i = 1; i < RETRY_COUNT; i++) {
-            verify(mockService, times(i)).RunQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
+            verify(mockService, times(i)).runQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
             // Call the failure handler.
             callback.getValue().onFailure(exception);
         }
@@ -220,7 +220,7 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunQuery_failure_404_with_pending() {
+    public void testrunQuery_failure_404_with_pending() {
         VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
@@ -229,7 +229,7 @@ public class FrontendTest {
         // Repeat 4 times, because of retries.
         for (int i = 1; i < RETRY_COUNT; i++) {
             // Verify that only one request is executed, until the first one is complete.
-            verify(mockService, times(i)).RunQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
+            verify(mockService, times(i)).runQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
             // Now finish the first request.
             // Call the failure handler.
             callback.getValue().onFailure(exception);
@@ -249,7 +249,7 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunQuery_failure_404_with_pending_3times() {
+    public void testrunQuery_failure_404_with_pending_3times() {
         VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
@@ -259,7 +259,7 @@ public class FrontendTest {
         // Repeat 4 times, because of retries.
         for (int i = 1; i < RETRY_COUNT; i++) {
             // Verify that only one request is executed, until the first one is complete.
-            verify(mockService, times(i)).RunQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
+            verify(mockService, times(i)).runQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
             // Call the failure handler.
             callback.getValue().onFailure(exception);
         }
@@ -278,7 +278,7 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunQuery_failure_404_with_pending_5times() {
+    public void testrunQuery_failure_404_with_pending_5times() {
         VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
@@ -290,7 +290,7 @@ public class FrontendTest {
         // Repeat 4 times, because of retries.
         for (int i = 1; i < RETRY_COUNT; i++) {
             // Verify that only one request is executed, until the first one is complete.
-            verify(mockService, times(i)).RunQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
+            verify(mockService, times(i)).runQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
             // Call the failure handler.
             callback.getValue().onFailure(exception);
         }
@@ -308,10 +308,10 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunQuery_success_not_succeeded_noeventshandler_nocallbackhandler() {
+    public void testrunQuery_success_not_succeeded_noeventshandler_nocallbackhandler() {
         VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
-        verify(mockService).RunQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
+        verify(mockService).runQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
         mockReturnValue.setExceptionString("Fake failure for test"); //$NON-NLS-1$
         // Return value set to failure
@@ -332,10 +332,10 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunQuery_success_not_succeeded_eventshandler_nocallbackhandler() {
+    public void testrunQuery_success_not_succeeded_eventshandler_nocallbackhandler() {
         VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
-        verify(mockService).RunQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
+        verify(mockService).runQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
         mockReturnValue.setExceptionString("USER_IS_NOT_LOGGED_IN"); //$NON-NLS-1$
         // Return value set to failure
@@ -357,13 +357,13 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunQuery_success_not_succeeded_eventshandler_callbackhandler() {
+    public void testrunQuery_success_not_succeeded_eventshandler_callbackhandler() {
         Object mockModel = new Object();
         when(mockAsyncQuery.isHandleFailure()).thenReturn(true);
         when(mockAsyncQuery.getModel()).thenReturn(mockModel);
         VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
-        verify(mockService).RunQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
+        verify(mockService).runQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
         mockReturnValue.setExceptionString("USER_IS_NOT_LOGGED_IN"); //$NON-NLS-1$
         // Return value set to failure
@@ -384,12 +384,12 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunQuery_success_succeeded_eventshandler_noconverter() {
+    public void testrunQuery_success_succeeded_eventshandler_noconverter() {
         Object mockModel = new Object();
         when(mockAsyncQuery.getModel()).thenReturn(mockModel);
         VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
-        verify(mockService).RunQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
+        verify(mockService).runQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
         mockReturnValue.setSucceeded(true);
         callback.getValue().onSuccess(mockReturnValue);
@@ -408,7 +408,7 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunQuery_success_succeeded_eventshandler_converter() {
+    public void testrunQuery_success_succeeded_eventshandler_converter() {
         Object mockModel = new Object();
         Object mockResultModel = new Object();
         Object mockConvertedModel = new Object();
@@ -416,7 +416,7 @@ public class FrontendTest {
         when(mockAsyncQuery.getConverter()).thenReturn(mockConverter);
         VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
-        verify(mockService).RunQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
+        verify(mockService).runQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
         mockReturnValue.setReturnValue(mockResultModel);
         mockReturnValue.setExceptionString("USER_IS_NOT_LOGGED_IN"); //$NON-NLS-1$
@@ -440,13 +440,13 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunQuery_success_succeeded_multiple_same_eventshandler_noconverter() {
+    public void testrunQuery_success_succeeded_multiple_same_eventshandler_noconverter() {
         Object mockModel = new Object();
         when(mockAsyncQuery.getModel()).thenReturn(mockModel);
         VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
         frontend.runQuery(VdcQueryType.Search, testParameters, mockAsyncQuery, false);
-        verify(mockService).RunQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
+        verify(mockService).runQuery(eq(VdcQueryType.Search), eq(testParameters), callback.capture());
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
         mockReturnValue.setExceptionString("USER_IS_NOT_LOGGED_IN"); //$NON-NLS-1$
         // Return value set to success
@@ -465,7 +465,7 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunMultipleQueries_ignored_failure() {
+    public void testrunMultipleQueries_ignored_failure() {
         ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
         queryTypeList.add(VdcQueryType.Search);
         ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
@@ -474,7 +474,7 @@ public class FrontendTest {
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         // Repeat 4 times, because of retries.
         for (int i = 1; i < RETRY_COUNT; i++) {
-            verify(mockService, times(i)).RunMultipleQueries(eq(queryTypeList), eq(queryParamsList),
+            verify(mockService, times(i)).runMultipleQueries(eq(queryTypeList), eq(queryParamsList),
                 callbackMultipleQueries.capture());
             // Call the failure handler.
             callbackMultipleQueries.getValue().onFailure(exception);
@@ -492,7 +492,7 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunMultipleQueries_ignored_failure_multiple() {
+    public void testrunMultipleQueries_ignored_failure_multiple() {
         // Don't immediately call process until both queries are in the queue.
         fakeScheduler.setThreshold(2);
         ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
@@ -507,7 +507,7 @@ public class FrontendTest {
         for (int i = 1; i < RETRY_COUNT; i++) {
             // Reset the count so we can re-add both entries again.
             fakeScheduler.resetCount();
-            verify(mockService, times(i)).RunMultipleQueries(eq(queryTypeList), eq(queryParamsList),
+            verify(mockService, times(i)).runMultipleQueries(eq(queryTypeList), eq(queryParamsList),
                     callbackMultipleQueries.capture());
             // Call the failure handler.
             callbackMultipleQueries.getValue().onFailure(exception);
@@ -525,7 +525,7 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunMultipleQueries_404_failure() {
+    public void testrunMultipleQueries_404_failure() {
         // Don't immediately call process until both queries are in the queue.
         fakeScheduler.setThreshold(2);
         when(mockConstants.requestToServerFailedWithCode()).
@@ -543,7 +543,7 @@ public class FrontendTest {
         for (int i = 1; i < RETRY_COUNT; i++) {
             // Reset the count so we can re-add both entries again.
             fakeScheduler.resetCount();
-            verify(mockService, times(i)).RunMultipleQueries(eq(queryTypeList), eq(queryParamsList),
+            verify(mockService, times(i)).runMultipleQueries(eq(queryTypeList), eq(queryParamsList),
                     callbackMultipleQueries.capture());
             // Call the failure handler.
             callbackMultipleQueries.getValue().onFailure(exception);
@@ -565,7 +565,7 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunMultipleQueries_multiple_success() {
+    public void testrunMultipleQueries_multiple_success() {
         // Don't immediately call process until both queries are in the queue.
         fakeScheduler.setThreshold(2);
         ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
@@ -575,7 +575,7 @@ public class FrontendTest {
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         queryParamsList.add(new SearchParameters("*lin*", SearchType.VM)); //$NON-NLS-1$
         frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, "test"); //$NON-NLS-1$
-        verify(mockService).RunMultipleQueries(eq(queryTypeList),
+        verify(mockService).runMultipleQueries(eq(queryTypeList),
                 eq(queryParamsList),
                 callbackMultipleQueries.capture());
         // Call the failure handler.
@@ -602,7 +602,7 @@ public class FrontendTest {
      * </ol>
      */
     @Test
-    public void testRunMultipleQueries_multiple_success_and_failure() {
+    public void testrunMultipleQueries_multiple_success_and_failure() {
         // Don't immediately call process until both queries are in the queue.
         fakeScheduler.setThreshold(2);
         ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
@@ -612,7 +612,7 @@ public class FrontendTest {
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         queryParamsList.add(new SearchParameters("*lin*", SearchType.VM)); //$NON-NLS-1$
         frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, "test"); //$NON-NLS-1$
-        verify(mockService).RunMultipleQueries(eq(queryTypeList), eq(queryParamsList),
+        verify(mockService).runMultipleQueries(eq(queryTypeList), eq(queryParamsList),
                 callbackMultipleQueries.capture());
         // Call the failure handler.
         List<VdcQueryReturnValue> result = new ArrayList<VdcQueryReturnValue>();

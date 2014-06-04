@@ -94,7 +94,7 @@ public class GWTRPCCommunicationProviderTest {
         });
         operationList.add(testOperation);
         testProvider.transmitOperation(testOperation);
-        verify(mockService).RunAction(eq(VdcActionType.AddDisk), eq(testParameters), actionCallback.capture());
+        verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters), actionCallback.capture());
         actionCallback.getValue().onSuccess(testResult);
     }
 
@@ -122,7 +122,7 @@ public class GWTRPCCommunicationProviderTest {
         });
         operationList.add(testOperation);
         testProvider.transmitOperation(testOperation);
-        verify(mockService).RunAction(eq(VdcActionType.AddDisk), eq(testParameters), actionCallback.capture());
+        verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters), actionCallback.capture());
         actionCallback.getValue().onFailure(testException);
     }
 
@@ -150,7 +150,7 @@ public class GWTRPCCommunicationProviderTest {
         });
         operationList.add(testOperation);
         testProvider.transmitOperation(testOperation);
-        verify(mockService).RunQuery(eq(VdcQueryType.Search), eq(testParameters), queryCallback.capture());
+        verify(mockService).runQuery(eq(VdcQueryType.Search), eq(testParameters), queryCallback.capture());
         queryCallback.getValue().onSuccess(testResult);
     }
 
@@ -178,7 +178,7 @@ public class GWTRPCCommunicationProviderTest {
         });
         operationList.add(testOperation);
         testProvider.transmitOperation(testOperation);
-        verify(mockService).RunQuery(eq(VdcQueryType.Search), eq(testParameters), queryCallback.capture());
+        verify(mockService).runQuery(eq(VdcQueryType.Search), eq(testParameters), queryCallback.capture());
         queryCallback.getValue().onFailure(testException);
     }
 
@@ -242,7 +242,7 @@ public class GWTRPCCommunicationProviderTest {
                 VdcActionParametersBase>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackSingle1);
         testList.add(testOperation1);
         testProvider.transmitOperationList(testList);
-        verify(mockService).RunAction(eq(VdcActionType.ActivateVds), eq(testParameters), actionCallback.capture());
+        verify(mockService).runAction(eq(VdcActionType.ActivateVds), eq(testParameters), actionCallback.capture());
         actionCallback.getValue().onSuccess(testResult);
         verify(mockOperationCallbackSingle1).onSuccess(testOperation1, testResult);
     }
@@ -255,7 +255,7 @@ public class GWTRPCCommunicationProviderTest {
                 VdcActionParametersBase>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackSingle1);
         testList.add(testOperation1);
         testProvider.transmitOperationList(testList);
-        verify(mockService).RunAction(eq(VdcActionType.ActivateVds), eq(testParameters), actionCallback.capture());
+        verify(mockService).runAction(eq(VdcActionType.ActivateVds), eq(testParameters), actionCallback.capture());
         Exception testException = new Exception("Failure"); //$NON-NLS-1$
         actionCallback.getValue().onFailure(testException);
         verify(mockOperationCallbackSingle1).onFailure(testOperation1, testException);
@@ -277,7 +277,7 @@ public class GWTRPCCommunicationProviderTest {
         testList.add(testOperation1);
         testList.add(testOperation2);
         testProvider.transmitOperationList(testList);
-        verify(mockService).RunMultipleActions(eq(VdcActionType.ActivateVds),
+        verify(mockService).runMultipleActions(eq(VdcActionType.ActivateVds),
                 (ArrayList<VdcActionParametersBase>) eq(testParameterList), eq(false), eq(true),
                 actionCallbackList.capture());
         actionCallbackList.getValue().onSuccess((ArrayList<VdcReturnValueBase>) testResultList);
@@ -298,7 +298,7 @@ public class GWTRPCCommunicationProviderTest {
         testList.add(testOperation1);
         testList.add(testOperation2);
         testProvider.transmitOperationList(testList);
-        verify(mockService).RunMultipleActions(eq(VdcActionType.ActivateVds),
+        verify(mockService).runMultipleActions(eq(VdcActionType.ActivateVds),
                 (ArrayList<VdcActionParametersBase>) eq(testParameterList), eq(false), eq(true),
                 actionCallbackList.capture());
         Exception testException = new Exception("Failure"); //$NON-NLS-1$
@@ -330,10 +330,10 @@ public class GWTRPCCommunicationProviderTest {
         List<VdcReturnValueBase> testResultList = createActionResultList(testResult, 3);
         List<VdcReturnValueBase> activateVdsResultList = createActionResultList(testResult, 2);
         testProvider.transmitOperationList(testList);
-        verify(mockService).RunMultipleActions(eq(VdcActionType.ActivateVds),
+        verify(mockService).runMultipleActions(eq(VdcActionType.ActivateVds),
                 (ArrayList<VdcActionParametersBase>) eq(activateVdsParameterList), eq(false), eq(true),
                 actionCallbackList.capture());
-        verify(mockService).RunAction(eq(VdcActionType.ActivateStorageDomain), eq(testParameters),
+        verify(mockService).runAction(eq(VdcActionType.ActivateStorageDomain), eq(testParameters),
                 actionCallback.capture());
         actionCallbackList.getValue().onSuccess((ArrayList<VdcReturnValueBase>) testResultList);
         actionCallback.getValue().onSuccess(testResult);
@@ -365,10 +365,10 @@ public class GWTRPCCommunicationProviderTest {
         List<VdcReturnValueBase> testResultList = createActionResultList(testResult, 3);
         List<VdcReturnValueBase> activateVdsResultList = createActionResultList(testResult, 2);
         testProvider.transmitOperationList(testList);
-        verify(mockService).RunMultipleActions(eq(VdcActionType.ActivateVds),
+        verify(mockService).runMultipleActions(eq(VdcActionType.ActivateVds),
                 (ArrayList<VdcActionParametersBase>) eq(activateVdsParameterList), eq(false), eq(true),
                 actionCallbackList.capture());
-        verify(mockService).RunAction(eq(VdcActionType.ActivateStorageDomain), eq(testParameters),
+        verify(mockService).runAction(eq(VdcActionType.ActivateStorageDomain), eq(testParameters),
                 actionCallback.capture());
         actionCallbackList.getValue().onSuccess((ArrayList<VdcReturnValueBase>) testResultList);
         Exception testException = new Exception("This is an exception"); //$NON-NLS-1$
@@ -386,7 +386,7 @@ public class GWTRPCCommunicationProviderTest {
                 mockOperationCallbackSingle1);
         testList.add(testOperation1);
         testProvider.transmitOperationList(testList);
-        verify(mockService).RunQuery(eq(VdcQueryType.Search), eq(testParameters), queryCallback.capture());
+        verify(mockService).runQuery(eq(VdcQueryType.Search), eq(testParameters), queryCallback.capture());
         VdcQueryReturnValue testResult = new VdcQueryReturnValue();
         queryCallback.getValue().onSuccess(testResult);
         verify(mockOperationCallbackSingle1).onSuccess(testOperation1, testResult);
@@ -401,7 +401,7 @@ public class GWTRPCCommunicationProviderTest {
                 mockOperationCallbackSingle1);
         testList.add(testOperation1);
         testProvider.transmitOperationList(testList);
-        verify(mockService).RunQuery(eq(VdcQueryType.Search), eq(testParameters), queryCallback.capture());
+        verify(mockService).runQuery(eq(VdcQueryType.Search), eq(testParameters), queryCallback.capture());
         Exception testException = new Exception("This is an exception"); //$NON-NLS-1$
         queryCallback.getValue().onFailure(testException);
         verify(mockOperationCallbackSingle1).onFailure(testOperation1, testException);
@@ -430,7 +430,7 @@ public class GWTRPCCommunicationProviderTest {
         List<VdcQueryReturnValue> resultList = createQueryResultList(returnValue, 2);
         List<VdcQueryReturnValue> return1List = createQueryResultList(returnValue, 1);
         List<VdcQueryReturnValue> return2List = createQueryResultList(returnValue, 1);
-        verify(mockService).RunMultipleQueries(eq((ArrayList<VdcQueryType>) testQueryList),
+        verify(mockService).runMultipleQueries(eq((ArrayList<VdcQueryType>) testQueryList),
                 (ArrayList<VdcQueryParametersBase>) eq(testParameterList), queryCallbackList.capture());
         queryCallbackList.getValue().onSuccess((ArrayList<VdcQueryReturnValue>) resultList);
         verify(mockOperationCallbackList1).onSuccess(eq(operation1List), eq(return1List));
@@ -456,7 +456,7 @@ public class GWTRPCCommunicationProviderTest {
         List<VdcQueryParametersBase> testParameterList = createQueryParameterList(testParameters, 2);
         List<VdcQueryType> testQueryList = createQueryList(VdcQueryType.Search, 2);
         testProvider.transmitOperationList(testList);
-        verify(mockService).RunMultipleQueries(eq((ArrayList<VdcQueryType>) testQueryList),
+        verify(mockService).runMultipleQueries(eq((ArrayList<VdcQueryType>) testQueryList),
                 (ArrayList<VdcQueryParametersBase>) eq(testParameterList), queryCallbackList.capture());
         Exception testException = new Exception("This is an exception"); //$NON-NLS-1$
         queryCallbackList.getValue().onFailure(testException);
@@ -478,12 +478,12 @@ public class GWTRPCCommunicationProviderTest {
         operationList.add(testOperation1);
         operationList.add(testOperation2);
         testProvider.transmitOperationList(operationList);
-        verify(mockService).RunQuery(eq(VdcQueryType.Search), eq(testQueryParameters), queryCallback.capture());
+        verify(mockService).runQuery(eq(VdcQueryType.Search), eq(testQueryParameters), queryCallback.capture());
         VdcQueryReturnValue testQueryResult = new VdcQueryReturnValue();
         queryCallback.getValue().onSuccess(testQueryResult);
         verify(mockOperationCallbackSingle1).onSuccess(testOperation1, testQueryResult);
         VdcReturnValueBase testActionResult = new VdcReturnValueBase();
-        verify(mockService).RunAction(eq(VdcActionType.ActivateVds), eq(testActionParameters),
+        verify(mockService).runAction(eq(VdcActionType.ActivateVds), eq(testActionParameters),
                 actionCallback.capture());
         actionCallback.getValue().onSuccess(testActionResult);
         verify(mockOperationCallbackSingle2).onSuccess(testOperation2, testActionResult);
@@ -498,7 +498,7 @@ public class GWTRPCCommunicationProviderTest {
         List<VdcOperation<?, ?>> operationList = new ArrayList<VdcOperation<?, ?>>();
         operationList.add(testOperation1);
         testProvider.transmitOperationList(operationList);
-        verify(mockService).RunPublicQuery(eq(VdcQueryType.Search), eq(testQueryParameters), queryCallback.capture());
+        verify(mockService).runPublicQuery(eq(VdcQueryType.Search), eq(testQueryParameters), queryCallback.capture());
         VdcQueryReturnValue testQueryResult = new VdcQueryReturnValue();
         queryCallback.getValue().onSuccess(testQueryResult);
         verify(mockOperationCallbackSingle1).onSuccess(testOperation1, testQueryResult);
@@ -517,12 +517,14 @@ public class GWTRPCCommunicationProviderTest {
         operationList.add(testOperation1);
         operationList.add(testOperation2);
         testProvider.transmitOperationList(operationList);
-        verify(mockService).RunPublicQuery(eq(VdcQueryType.Search), eq(testQueryParameters), queryCallback.capture());
+        verify(mockService).runPublicQuery(eq(VdcQueryType.Search), eq(testQueryParameters), queryCallback.capture());
         VdcQueryReturnValue testQueryResult = new VdcQueryReturnValue();
         queryCallback.getValue().onSuccess(testQueryResult);
         verify(mockOperationCallbackSingle1).onSuccess(testOperation1, testQueryResult);
 
-        verify(mockService).RunPublicQuery(eq(VdcQueryType.GetConfigurationValues), eq(testQueryParameters), queryCallback.capture());
+        verify(mockService).runPublicQuery(eq(VdcQueryType.GetConfigurationValues),
+                eq(testQueryParameters),
+                queryCallback.capture());
         testQueryResult = new VdcQueryReturnValue();
         queryCallback.getValue().onSuccess(testQueryResult);
         verify(mockOperationCallbackSingle2).onSuccess(testOperation2, testQueryResult);

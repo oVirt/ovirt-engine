@@ -46,7 +46,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     }
 
     @Override
-    public VdcQueryReturnValue RunQuery(VdcQueryType search,
+    public VdcQueryReturnValue runQuery(VdcQueryType search,
             VdcQueryParametersBase searchParameters) {
         log.debug("Server: RunQuery invoked!"); //$NON-NLS-1$
         debugQuery(search, searchParameters);
@@ -55,7 +55,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     }
 
     @Override
-    public VdcQueryReturnValue RunPublicQuery(VdcQueryType queryType,
+    public VdcQueryReturnValue runPublicQuery(VdcQueryType queryType,
             VdcQueryParametersBase params) {
         log.debug("Server: runPublicQuery invoked! " + queryType); //$NON-NLS-1$
         debugQuery(queryType, params);
@@ -63,7 +63,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     }
 
     @Override
-    public ArrayList<VdcQueryReturnValue> RunMultipleQueries(
+    public ArrayList<VdcQueryReturnValue> runMultipleQueries(
             ArrayList<VdcQueryType> queryTypeList,
             ArrayList<VdcQueryParametersBase> queryParamsList) {
         int size = queryTypeList == null ? 0 : queryTypeList.size();
@@ -82,7 +82,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         else {
             for (int i = 0; i < queryTypeList.size(); i++) {
                 debugQuery(queryTypeList.get(i), queryParamsList.get(i));
-                ret.add(RunQuery(queryTypeList.get(i), queryParamsList.get(i)));
+                ret.add(runQuery(queryTypeList.get(i), queryParamsList.get(i)));
             }
         }
 
@@ -96,13 +96,13 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     }
 
     @Override
-    public ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
+    public ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllCanDoPass) {
-        return RunMultipleActions(actionType, multipleParams, isRunOnlyIfAllCanDoPass, false);
+        return runMultipleActions(actionType, multipleParams, isRunOnlyIfAllCanDoPass, false);
     }
 
     @Override
-    public ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
+    public ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllCanDoPass, boolean isWaitForResult) {
         log.debug("Server: RunMultipleAction invoked! [amount of actions: " + multipleParams.size() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -117,7 +117,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     }
 
     @Override
-    public VdcReturnValueBase RunAction(VdcActionType actionType,
+    public VdcReturnValueBase runAction(VdcActionType actionType,
             VdcActionParametersBase params) {
         log.debug("Server: RunAction invoked!"); //$NON-NLS-1$
         debugAction(actionType, params);
@@ -138,7 +138,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         queryParams.setSessionId(getSession().getId());
         queryParams.setHttpSessionId(getSession().getId());
 
-        VdcQueryReturnValue vqrv = RunQuery(VdcQueryType.GetUserBySessionId,
+        VdcQueryReturnValue vqrv = runQuery(VdcQueryType.GetUserBySessionId,
                 queryParams);
 
         if (!vqrv.getSucceeded()) {
@@ -163,7 +163,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     }
 
     @Override
-    public VdcReturnValueBase Login(String userName, String password, String profileName, VdcActionType loginType) {
+    public VdcReturnValueBase login(String userName, String password, String profileName, VdcActionType loginType) {
         LoginUserParameters params = new LoginUserParameters(profileName, userName, password);
         HttpSession originalSession = getSession();
         // Prevent session fixation.

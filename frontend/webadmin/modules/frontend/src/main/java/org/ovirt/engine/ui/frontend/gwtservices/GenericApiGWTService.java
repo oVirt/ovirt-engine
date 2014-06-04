@@ -16,26 +16,26 @@ import com.google.gwt.user.server.rpc.NoXsrfProtect;
 @RemoteServiceRelativePath("GenericApiGWTService")
 public interface GenericApiGWTService extends XsrfProtectedRpcService {
 
-    public VdcQueryReturnValue RunQuery(VdcQueryType search,
+    public VdcQueryReturnValue runQuery(VdcQueryType search,
             VdcQueryParametersBase searchParameters);
 
-    public VdcReturnValueBase RunAction(VdcActionType actionType,
+    public VdcReturnValueBase runAction(VdcActionType actionType,
             VdcActionParametersBase params);
 
     @NoXsrfProtect
-    public VdcQueryReturnValue RunPublicQuery(VdcQueryType queryType,
+    public VdcQueryReturnValue runPublicQuery(VdcQueryType queryType,
             VdcQueryParametersBase params);
 
-    public ArrayList<VdcQueryReturnValue> RunMultipleQueries(
+    public ArrayList<VdcQueryReturnValue> runMultipleQueries(
             ArrayList<VdcQueryType> vdcQueryTypeList,
             ArrayList<VdcQueryParametersBase> paramsList);
 
-    public ArrayList<VdcReturnValueBase> RunMultipleActions(
+    public ArrayList<VdcReturnValueBase> runMultipleActions(
             VdcActionType actionType,
             ArrayList<VdcActionParametersBase> multipleParams,
             boolean isRunOnlyIfAllCanDoPass);
 
-    public ArrayList<VdcReturnValueBase> RunMultipleActions(
+    public ArrayList<VdcReturnValueBase> runMultipleActions(
             VdcActionType actionType,
             ArrayList<VdcActionParametersBase> multipleParams,
             boolean isRunOnlyIfAllCanDoPass, boolean isWaitForResult);
@@ -46,7 +46,7 @@ public interface GenericApiGWTService extends XsrfProtectedRpcService {
     public VdcReturnValueBase logOff(DbUser userToLogoff);
 
     @NoXsrfProtect
-    public VdcReturnValueBase Login(String userName, String password, String profileName, VdcActionType loginType);
+    public VdcReturnValueBase login(String userName, String password, String profileName, VdcActionType loginType);
 
     public void storeInHttpSession(String key, String value);
 

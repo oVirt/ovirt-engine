@@ -121,7 +121,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
         getService(new ServiceCallback() {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
-                service.RunPublicQuery((VdcQueryType) operation.getOperation(),
+                service.runPublicQuery((VdcQueryType) operation.getOperation(),
                         (VdcQueryParametersBase) operation.getParameter(), new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
                     public void onFailure(final Throwable exception) {
@@ -150,7 +150,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
         getService(new ServiceCallback() {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
-                service.RunQuery((VdcQueryType) operation.getOperation(),
+                service.runQuery((VdcQueryType) operation.getOperation(),
                         (VdcQueryParametersBase) operation.getParameter(), new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
                     public void onFailure(final Throwable exception) {
@@ -179,7 +179,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
         getService(new ServiceCallback() {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
-                service.RunAction((VdcActionType) operation.getOperation(),
+                service.runAction((VdcActionType) operation.getOperation(),
                         (VdcActionParametersBase) operation.getParameter(), new AsyncCallback<VdcReturnValueBase>() {
                     @Override
                     public void onFailure(final Throwable exception) {
@@ -255,7 +255,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
             getService(new ServiceCallback() {
                 @Override
                 public void serviceFound(GenericApiGWTServiceAsync service) {
-                    service.RunMultipleQueries((ArrayList<VdcQueryType>) queryTypes,
+                    service.runMultipleQueries((ArrayList<VdcQueryType>) queryTypes,
                             (ArrayList<VdcQueryParametersBase>) parameters,
                             new AsyncCallback<ArrayList<VdcQueryReturnValue>>() {
                         @Override
@@ -363,7 +363,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
         getService(new ServiceCallback() {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
-                service.RunMultipleActions(actionType, (ArrayList<VdcActionParametersBase>) parameters,
+                service.runMultipleActions(actionType, (ArrayList<VdcActionParametersBase>) parameters,
                         false, waitForResults, new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
 
                     @Override
@@ -466,7 +466,8 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
         getService(new ServiceCallback() {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
-                service.Login(loginOperation.getParameter().getLoginName(), loginOperation.getParameter().getPassword(),
+                service.login(loginOperation.getParameter().getLoginName(),
+                        loginOperation.getParameter().getPassword(),
                         loginOperation.getParameter().getProfileName(), loginOperation.getOperation(),
                         new AsyncCallback<VdcReturnValueBase>() {
                     @Override
