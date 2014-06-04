@@ -365,7 +365,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/preview_snapshot|rel=preview_snapshot
+- name: /vms/{vm:id}/preview_snapshot|rel=preview_snapshot
   request:
     body:
       parameterType: Action
@@ -375,7 +375,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/commit_snapshot|rel=commit_snapshot
+- name: /vms/{vm:id}/commit_snapshot|rel=commit_snapshot
   request:
     body:
       parameterType: Action
@@ -384,7 +384,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/undo_snapshot|rel=undo_snapshot
+- name: /vms/{vm:id}/undo_snapshot|rel=undo_snapshot
   request:
     body:
       parameterType: Action
