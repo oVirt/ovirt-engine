@@ -221,6 +221,8 @@
         <include name="common/utils/SimpleDependecyInjector.java"/>
         <include name="common/utils/VersionStorageFormatUtil.java"/>
         <include name="common/utils/SizeConverter.java"/>
+        <include name="common/utils/CommonConstants.java"/>
+
 
         <!-- Required by frontend -->
 		<include name="common/interfaces/SearchType.java" />

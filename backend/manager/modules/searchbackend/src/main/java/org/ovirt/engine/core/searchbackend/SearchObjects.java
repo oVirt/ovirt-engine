@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.utils.CommonConstants;
+
 public final class SearchObjects {
     // objects
     public static final String VDS_OBJ_NAME = "HOST";
@@ -55,52 +57,57 @@ public final class SearchObjects {
     private static final String HOST_BY_CPU = "Host: sortby cpu_usage desc";
     private static final String DATACENTER_BY_NAME = "DataCenter: sortby name";
     private static final String VM_BY_STATUS = "Vms: status=Up or status=PoweringUp or status=MigratingTo or status=WaitForLaunch or status=RebootInProgress or status=PoweringDown or status=Paused or status=Unknown sortby cpu_usage desc";
-    @SuppressWarnings("serial")
+
     private static final Set<String> SAFE_SEARCH_EXPR = Collections.unmodifiableSet(new HashSet<String>() {
         {
             final char SEPARATOR = ':';
 
-            add(VDS_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VDS_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VM_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VM_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(AUDIT_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(AUDIT_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(TEMPLATE_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(TEMPLATE_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VDC_USER_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VDC_USER_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VDC_GROUP_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VDC_GROUP_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VDC_POOL_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VDC_POOL_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VDC_CLUSTER_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VDC_CLUSTER_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VDC_STORAGE_POOL_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VDC_STORAGE_DOMAIN_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VDC_STORAGE_DOMAIN_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(DISK_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(DISK_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(GLUSTER_VOLUME_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(GLUSTER_VOLUME_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(QUOTA_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(QUOTA_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(NETWORK_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(NETWORK_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(PROVIDER_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(PROVIDER_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(ALERT.toLowerCase());
-            add(ERROR.toLowerCase());
-            add(HOST_BY_CPU.toLowerCase());
-            add(DATACENTER_BY_NAME.toLowerCase());
-            add(VM_BY_STATUS.toLowerCase());
-            add(INSTANCE_TYPE_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(INSTANCE_TYPE_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(IMAGE_TYPE_OBJ_NAME.toLowerCase() + SEPARATOR);
-            add(IMAGE_TYPE_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
+            add(getName(VDS_OBJ_NAME));
+            add(getName(VDS_PLU_OBJ_NAME));
+            add(getName(VM_OBJ_NAME));
+            add(getName(VM_PLU_OBJ_NAME));
+            add(getName(AUDIT_OBJ_NAME));
+            add(getName(AUDIT_PLU_OBJ_NAME));
+            add(getName(TEMPLATE_OBJ_NAME));
+            add(getName(TEMPLATE_PLU_OBJ_NAME));
+            add(getName(VDC_USER_OBJ_NAME));
+            add(getName(VDC_USER_PLU_OBJ_NAME));
+            add(getName(VDC_GROUP_OBJ_NAME));
+            add(getName(VDC_GROUP_PLU_OBJ_NAME));
+            add(getName(VDC_POOL_OBJ_NAME));
+            add(getName(VDC_POOL_PLU_OBJ_NAME));
+            add(getName(VDC_CLUSTER_OBJ_NAME));
+            add(getName(VDC_CLUSTER_PLU_OBJ_NAME));
+            add(getName(VDC_STORAGE_POOL_OBJ_NAME));
+            add(getName(VDC_STORAGE_DOMAIN_OBJ_NAME));
+            add(getName(VDC_STORAGE_DOMAIN_PLU_OBJ_NAME));
+            add(getName(VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME));
+            add(getName(DISK_OBJ_NAME));
+            add(getName(DISK_PLU_OBJ_NAME));
+            add(getName(GLUSTER_VOLUME_OBJ_NAME));
+            add(getName(GLUSTER_VOLUME_PLU_OBJ_NAME));
+            add(getName(QUOTA_OBJ_NAME));
+            add(getName(QUOTA_PLU_OBJ_NAME));
+            add(getName(NETWORK_OBJ_NAME));
+            add(getName(NETWORK_PLU_OBJ_NAME));
+            add(getName(PROVIDER_OBJ_NAME));
+            add(getName(PROVIDER_PLU_OBJ_NAME));
+            add(getName(ALERT));
+            add(getName(ERROR));
+            add(getName(HOST_BY_CPU));
+            add(getName(DATACENTER_BY_NAME));
+            add(getName(VM_BY_STATUS));
+            add(getName(INSTANCE_TYPE_OBJ_NAME));
+            add(getName(INSTANCE_TYPE_PLU_OBJ_NAME));
+            add(getName(IMAGE_TYPE_OBJ_NAME));
+            add(getName(IMAGE_TYPE_PLU_OBJ_NAME));
         }
     });
+
+    private static String getName(String name) {
+        return name.toLowerCase() + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR;
+    }
+
 
     /**
      * Determines if a search expression is safe.

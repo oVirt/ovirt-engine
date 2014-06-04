@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.utils.CommonConstants;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -346,7 +347,7 @@ public class SearchQueryTest {
 
     @Test
     public void testGetAllMultiDiskImageSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Disks:", SearchType.Disk);
+        SearchParameters searchParam = new SearchParameters("Disks" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Disk);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(diskImageResultList == searchQuery.getQueryReturnValue().getReturnValue());
@@ -357,7 +358,7 @@ public class SearchQueryTest {
         // The query Should be used is : "SELECT * FROM (SELECT *, ROW_NUMBER() OVER( ORDER BY disk_name ASC ) as RowNum
         // FROM (SELECT * FROM vm_images_view WHERE ( image_guid IN (SELECT vm_images_view.image_guid FROM
         // vm_images_view ))) as T1 ) as T2"
-        SearchParameters searchParam = new SearchParameters("Disk:", SearchType.Disk);
+        SearchParameters searchParam = new SearchParameters("Disk" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Disk);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(diskImageResultList == searchQuery.getQueryReturnValue().getReturnValue());
@@ -365,7 +366,7 @@ public class SearchQueryTest {
 
     @Test
     public void testGetAllVMSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("VM:", SearchType.VM);
+        SearchParameters searchParam = new SearchParameters("VM" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.VM);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(vmResultList == searchQuery.getQueryReturnValue().getReturnValue());
@@ -373,7 +374,7 @@ public class SearchQueryTest {
 
     @Test
     public void testGetAllMultiVmSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("VMs:", SearchType.VM);
+        SearchParameters searchParam = new SearchParameters("VMs" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.VM);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(vmResultList == searchQuery.getQueryReturnValue().getReturnValue());
@@ -381,7 +382,7 @@ public class SearchQueryTest {
 
     @Test
     public void testGetAllVdsSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Host:", SearchType.VDS);
+        SearchParameters searchParam = new SearchParameters("Host" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.VDS);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(vdsResultList == searchQuery.getQueryReturnValue().getReturnValue());
@@ -389,7 +390,7 @@ public class SearchQueryTest {
 
     @Test
     public void testGetAllMultiVdsSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Hosts:", SearchType.VDS);
+        SearchParameters searchParam = new SearchParameters("Hosts" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.VDS);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(vdsResultList == searchQuery.getQueryReturnValue().getReturnValue());
@@ -400,7 +401,7 @@ public class SearchQueryTest {
         // The original query should be : SELECT * FROM (SELECT *, ROW_NUMBER() OVER( ORDER BY name ASC ) as RowNum FROM
         // (SELECT * FROM vds_groups WHERE ( vds_group_id IN (SELECT vds_groups_storage_domain.vds_group_id FROM
         // vds_groups_storage_domain ))) as T1 ) as T2
-        SearchParameters searchParam = new SearchParameters("Cluster:", SearchType.Cluster);
+        SearchParameters searchParam = new SearchParameters("Cluster" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Cluster);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(vdsGroupResultList == searchQuery.getQueryReturnValue().getReturnValue());
@@ -411,7 +412,7 @@ public class SearchQueryTest {
         // The original query should be : SELECT * FROM (SELECT *, ROW_NUMBER() OVER( ORDER BY name ASC ) as RowNum FROM
         // (SELECT * FROM vds_groups WHERE ( vds_group_id IN (SELECT vds_groups_storage_domain.vds_group_id FROM
         // vds_groups_storage_domain ))) as T1 ) as T2
-        SearchParameters searchParam = new SearchParameters("Clusters:", SearchType.Cluster);
+        SearchParameters searchParam = new SearchParameters("Clusters" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Cluster);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(vdsGroupResultList == searchQuery.getQueryReturnValue().getReturnValue());
@@ -419,7 +420,7 @@ public class SearchQueryTest {
 
     @Test
     public void testGetAllStoragePoolSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Datacenter:", SearchType.StoragePool);
+        SearchParameters searchParam = new SearchParameters("Datacenter" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.StoragePool);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(storagePoolResultList == searchQuery.getQueryReturnValue().getReturnValue());
@@ -429,7 +430,7 @@ public class SearchQueryTest {
     @Ignore
     @Test
     public void testGetAllMultiStoragePoolSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Datacenters:", SearchType.StoragePool);
+        SearchParameters searchParam = new SearchParameters("Datacenters" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.StoragePool);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(storagePoolResultList == searchQuery.getQueryReturnValue().getReturnValue());
@@ -437,7 +438,7 @@ public class SearchQueryTest {
 
     @Test
     public void testGetAllGlusterVolumesSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Volumes:", SearchType.GlusterVolume);
+        SearchParameters searchParam = new SearchParameters("Volumes" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.GlusterVolume);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(glusterVolumeList == searchQuery.getQueryReturnValue().getReturnValue());
@@ -445,7 +446,7 @@ public class SearchQueryTest {
 
     @Test
     public void testGetAllQuotaSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Quota:", SearchType.Quota);
+        SearchParameters searchParam = new SearchParameters("Quota" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Quota);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(quotaResultList == searchQuery.getQueryReturnValue().getReturnValue());
@@ -453,7 +454,7 @@ public class SearchQueryTest {
 
     @Test
     public void testGetAllNetworkSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Network:", SearchType.Network);
+        SearchParameters searchParam = new SearchParameters("Network" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Network);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(networkResultList == searchQuery.getQueryReturnValue().getReturnValue());

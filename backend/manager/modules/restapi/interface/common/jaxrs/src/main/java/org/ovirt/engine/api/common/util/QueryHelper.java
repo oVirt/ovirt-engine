@@ -16,6 +16,7 @@
 
 package org.ovirt.engine.api.common.util;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmPool;
+import org.ovirt.engine.core.common.utils.CommonConstants;
 
 /**
  * A container of static methods related to query resolution.
@@ -45,7 +47,6 @@ import org.ovirt.engine.api.model.VmPool;
 public class QueryHelper {
 
     public static final String CONSTRAINT_PARAMETER = "search";
-    private static final String RETURN_TYPE_SEPARTOR = " : ";
 
     public static final String CURRENT_CONSTRAINT_PARAMETER = "current";
 
@@ -55,29 +56,34 @@ public class QueryHelper {
      * Map return types per-collection-class, as there's no logical pattern
      * REVISIT: can we safely just drop the return type specifier?
      * (doesn't seem to have any effect in the powershell case)
+     * REVISIT: RHEVM Admin Guide is not very clear on whether these
+     * return type specifiers should always be pluralized
      */
-    private static final Map<Class<?>, String> RETURN_TYPES;
+    private static final Map<Class<?>, String> RETURN_TYPES = createReturnTypes();
 
-    static {
-        RETURN_TYPES = new HashMap<Class<?>, String>();
-        /**
-         * REVISIT: RHEVM Admin Guide is not very clear on whether these
-         * return type specifiers should always be pluralized
-         */
-        RETURN_TYPES.put(VM.class, "VMs" + RETURN_TYPE_SEPARTOR);
-        RETURN_TYPES.put(Host.class, "Hosts" + RETURN_TYPE_SEPARTOR);
-        RETURN_TYPES.put(Cluster.class, "Clusters" + RETURN_TYPE_SEPARTOR);
-        RETURN_TYPES.put(DataCenter.class, "Datacenter" + RETURN_TYPE_SEPARTOR);
-        RETURN_TYPES.put(StorageDomain.class, "Storage" + RETURN_TYPE_SEPARTOR);
-        RETURN_TYPES.put(Template.class, "Template" + RETURN_TYPE_SEPARTOR);
-        RETURN_TYPES.put(InstanceType.class, "Instancetypes" + RETURN_TYPE_SEPARTOR);
-        RETURN_TYPES.put(User.class, "Users" + RETURN_TYPE_SEPARTOR);
-        RETURN_TYPES.put(Group.class, "Groups" + RETURN_TYPE_SEPARTOR);
-        RETURN_TYPES.put(VmPool.class, "Pools" + RETURN_TYPE_SEPARTOR);
-        RETURN_TYPES.put(Event.class, "Events" + RETURN_TYPE_SEPARTOR);
-        RETURN_TYPES.put(GlusterVolume.class, "Volumes" + RETURN_TYPE_SEPARTOR);
-        RETURN_TYPES.put(Disk.class, "Disks" + RETURN_TYPE_SEPARTOR);
-        RETURN_TYPES.put(Network.class, "Networks" + RETURN_TYPE_SEPARTOR);
+    private static Map<Class<?>, String> createReturnTypes() {
+        final Map<Class<?>, String> map = new HashMap<>();
+
+        map.put(VM.class, getName("VMs"));
+        map.put(Host.class, getName("Hosts"));
+        map.put(Cluster.class, getName("Clusters"));
+        map.put(DataCenter.class, getName("Datacenter"));
+        map.put(StorageDomain.class, getName("Storage"));
+        map.put(Template.class, getName("Template"));
+        map.put(InstanceType.class, getName("Instancetypes"));
+        map.put(User.class, getName("Users"));
+        map.put(Group.class, getName("Groups"));
+        map.put(VmPool.class, getName("Pools"));
+        map.put(Event.class, getName("Events"));
+        map.put(GlusterVolume.class, getName("Volumes"));
+        map.put(Disk.class, getName("Disks"));
+        map.put(Network.class, getName("Networks"));
+
+        return Collections.unmodifiableMap(map);
+    }
+
+    private static String getName(String name) {
+        return name + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR;
     }
 
     /**
