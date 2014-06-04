@@ -323,7 +323,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             if(poolDomains.size() > 1) {
                 return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_NONMASTER_DOMAINS);
             }
-            if (!canDetachStorageDomainWithVmsAndDisks(poolDomains.get(0))) {
+            if (!poolDomains.isEmpty() && !canDetachStorageDomainWithVmsAndDisks(poolDomains.get(0))) {
                 return false;
             }
         } else {
