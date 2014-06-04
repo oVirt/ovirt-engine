@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.searchbackend.VdsConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
@@ -98,6 +99,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getName();
             }
         };
+        nameColumn.makeSortable(VdsConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameHost(), "150px"); //$NON-NLS-1$
 
         CommentColumn<VDS> commentColumn = new CommentColumn<VDS>();
@@ -109,6 +111,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getHostName();
             }
         };
+        hostColumn.makeSortable(VdsConditionFieldAutoCompleter.ADDRESS);
         getTable().addColumn(hostColumn, constants.ipHost(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDS> clusterColumn = new TextColumnWithTooltip<VDS>() {
@@ -117,6 +120,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getVdsGroupName();
             }
         };
+        clusterColumn.makeSortable(VdsConditionFieldAutoCompleter.CLUSTER);
         getTable().addColumn(clusterColumn, constants.clusterHost(), "150px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
@@ -126,6 +130,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                     return object.getStoragePoolName();
                 }
             };
+            dcColumn.makeSortable(VdsConditionFieldAutoCompleter.DATACENTER);
             getTable().addColumn(dcColumn, constants.dcHost(), "150px"); //$NON-NLS-1$
         }
 
@@ -135,10 +140,13 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getStatus();
             }
         };
+        statusColumn.makeSortable(VdsConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusColumn, constants.statusHost(), "100px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            getTable().addColumn(new VmCountColumn(), constants.vmsCount(), "110px"); //$NON-NLS-1$
+            VmCountColumn vmCountColumn = new VmCountColumn();
+            vmCountColumn.makeSortable(VdsConditionFieldAutoCompleter.ACTIVE_VMS);
+            getTable().addColumn(vmCountColumn, constants.vmsCount(), "110px"); //$NON-NLS-1$
         }
 
         PercentColumn<VDS> memColumn = new PercentColumn<VDS>() {
@@ -147,6 +155,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getUsageMemPercent();
             }
         };
+        memColumn.makeSortable(VdsConditionFieldAutoCompleter.MEM_USAGE);
         getTable().addColumn(memColumn, constants.memoryHost(), "60px"); //$NON-NLS-1$
 
         PercentColumn<VDS> cpuColumn = new PercentColumn<VDS>() {
@@ -155,6 +164,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getUsageCpuPercent();
             }
         };
+        cpuColumn.makeSortable(VdsConditionFieldAutoCompleter.CPU_USAGE);
         getTable().addColumn(cpuColumn, constants.cpuHost(), "60px"); //$NON-NLS-1$
 
         PercentColumn<VDS> netColumn = new PercentColumn<VDS>() {
@@ -163,6 +173,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getUsageNetworkPercent();
             }
         };
+        netColumn.makeSortable(VdsConditionFieldAutoCompleter.NETWORK_USAGE);
         getTable().addColumn(netColumn, constants.networkHost(), "60px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {

@@ -45,7 +45,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
     void initTable(ApplicationResources resources, ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        getTable().addColumn(new VmStatusColumn<VM>(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -53,9 +53,11 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameVm(), "160px"); //$NON-NLS-1$
 
-        getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        VmTypeColumn typeColumn = new VmTypeColumn();
+        getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -63,6 +65,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getVdsGroupName();
             }
         };
+        clusterColumn.makeSortable();
         getTable().addColumn(clusterColumn, constants.clusterVm(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
@@ -71,6 +74,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getVmIp();
             }
         };
+        ipColumn.makeSortable();
         getTable().addColumn(ipColumn, constants.ipVm(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> fqdnColumn = new TextColumnWithTooltip<VM>() {
@@ -79,6 +83,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getVmFQDN();
             }
         };
+        fqdnColumn.makeSortable();
         getTable().addColumn(fqdnColumn, constants.fqdn(), "200px"); //$NON-NLS-1$
 
         PercentColumn<VM> memColumn = new PercentColumn<VM>() {
@@ -87,6 +92,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getUsageMemPercent();
             }
         };
+        memColumn.makeSortable();
         getTable().addColumn(memColumn, constants.memoryVm(), "120px"); //$NON-NLS-1$
 
         PercentColumn<VM> cpuColumn = new PercentColumn<VM>() {
@@ -95,6 +101,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getUsageCpuPercent();
             }
         };
+        cpuColumn.makeSortable();
         getTable().addColumn(cpuColumn, constants.cpuVm(), "120px"); //$NON-NLS-1$
 
         PercentColumn<VM> netColumn = new PercentColumn<VM>() {
@@ -103,6 +110,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getUsageNetworkPercent();
             }
         };
+        netColumn.makeSortable();
         getTable().addColumn(netColumn, constants.networkVm(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
@@ -117,15 +125,17 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getStatus();
             }
         };
+        statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusVm(), "130px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> hostColumn = new UptimeColumn<VM>() {
+        TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
                 return object.getRoundedElapsedTime();
             }
         };
-        getTable().addColumn(hostColumn, constants.uptimeVm(), "110px"); //$NON-NLS-1$
+        uptimeColumn.makeSortable();
+        getTable().addColumn(uptimeColumn, constants.uptimeVm(), "110px"); //$NON-NLS-1$
 
         // add action buttons
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(),
