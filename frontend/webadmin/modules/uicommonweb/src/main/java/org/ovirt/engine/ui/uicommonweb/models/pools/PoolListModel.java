@@ -168,9 +168,14 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
     @Override
     protected void syncSearch()
     {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.VmPools, isCaseSensitiveSearch());
+        SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.VmPools, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
+    }
+
+    @Override
+    public boolean supportsServerSideSorting() {
+        return true;
     }
 
     @Override

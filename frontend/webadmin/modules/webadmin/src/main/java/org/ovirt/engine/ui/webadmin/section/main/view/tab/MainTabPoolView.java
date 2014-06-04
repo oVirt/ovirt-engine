@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.searchbackend.PoolConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -40,6 +41,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
                 return object.getName();
             }
         };
+        nameColumn.makeSortable(PoolConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.namePool(), "150px"); //$NON-NLS-1$
 
         CommentColumn<VmPool> commentColumn = new CommentColumn<VmPool>();
@@ -51,6 +53,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
                 return Integer.toString(object.getAssignedVmsCount());
             }
         };
+        assignedColumn.makeSortable(PoolConditionFieldAutoCompleter.ASSIGNED_VM_COUNT);
         getTable().addColumn(assignedColumn, constants.assignVmsPool(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmPool> runningColumn = new TextColumnWithTooltip<VmPool>() {
@@ -59,6 +62,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
                 return Integer.toString(object.getRunningVmsCount());
             }
         };
+        runningColumn.makeSortable(PoolConditionFieldAutoCompleter.RUNNING_VM_COUNT);
         getTable().addColumn(runningColumn, constants.runningVmsPool(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmPool> typeColumn = new EnumColumn<VmPool, VmPoolType>() {
@@ -67,6 +71,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
                 return object.getVmPoolType();
             }
         };
+        typeColumn.makeSortable(PoolConditionFieldAutoCompleter.TYPE);
         getTable().addColumn(typeColumn, constants.typePool(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmPool> descColumn = new TextColumnWithTooltip<VmPool>() {
@@ -75,6 +80,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
                 return object.getVmPoolDescription();
             }
         };
+        descColumn.makeSortable(PoolConditionFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descColumn, constants.descriptionPool(), "300px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VmPool>(constants.newPool()) {
