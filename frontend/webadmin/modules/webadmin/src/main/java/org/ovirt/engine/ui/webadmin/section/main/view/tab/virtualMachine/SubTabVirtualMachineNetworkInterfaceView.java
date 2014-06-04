@@ -48,6 +48,7 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
                                 return object.isPortMirroring();
                             }
                         };
+                portMirroringColumn.makeSortable();
                 getTable().addColumnWithHtmlHeader(portMirroringColumn, constants.portMirroring(), "85px"); //$NON-NLS-1$
             }
         });
