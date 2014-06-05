@@ -129,6 +129,21 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        before=(
+            oenginecons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
+        ),
+        after=(
+            osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
+            osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
+        ),
+        priority=plugin.Stages.PRIORITY_HIGH,
+    )
+    def _customization_enable(self):
+        if not self.environment[oenginecons.CoreEnv.ENABLE]:
+            self._enabled = False
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=oenginecons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
@@ -183,7 +198,7 @@ class Plugin(plugin.PluginBase):
             oenginecons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
         ),
         # must be run before firewall_manager plugin
-        condition=lambda self: self._enabled
+        condition=lambda self: self._enabled,
         # must be always enabled to create examples
     )
     def _firewall(self):

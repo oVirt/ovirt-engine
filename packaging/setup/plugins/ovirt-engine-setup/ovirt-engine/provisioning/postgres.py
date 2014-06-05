@@ -86,6 +86,23 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
         ),
+        condition=lambda self: not self.environment[
+            oenginecons.CoreEnv.ENABLE
+        ],
+        priority=plugin.Stages.PRIORITY_HIGH
+    )
+    def _customization_enable(self):
+        self._enabled = False
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        before=(
+            oengcommcons.Stages.DIALOG_TITLES_E_DATABASE,
+            oengcommcons.Stages.DB_CONNECTION_CUSTOMIZATION,
+        ),
+        after=(
+            oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
+        ),
         condition=lambda self: self._enabled,
     )
     def _customization(self):
@@ -147,9 +164,12 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         priority=plugin.Stages.PRIORITY_LAST,
-        condition=lambda self: self.environment[
-            oenginecons.EngineDBEnv.HOST
-        ] == 'localhost',
+        condition=lambda self: (
+            self._enabled and
+            self.environment[
+                oenginecons.EngineDBEnv.HOST
+            ] == 'localhost'
+        ),
     )
     def _customization_firewall(self):
         self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([

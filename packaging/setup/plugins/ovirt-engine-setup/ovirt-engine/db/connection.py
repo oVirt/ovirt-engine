@@ -29,9 +29,9 @@ from otopi import transaction
 from otopi import plugin
 
 
+from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common \
     import constants as oengcommcons
-from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import database
 
 
@@ -70,6 +70,7 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
+        self._enabled = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -81,6 +82,19 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        before=(
+            oengcommcons.Stages.DB_CONNECTION_CUSTOMIZATION,
+        ),
+        after=(
+            oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
+        ),
+    )
+    def _customization_enable(self):
+        if not self.environment[oenginecons.CoreEnv.ENABLE]:
+            self._enabled = False
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=oengcommcons.Stages.DB_CONNECTION_CUSTOMIZATION,
         before=(
             oengcommcons.Stages.DB_OWNERS_CONNECTIONS_CUSTOMIZED,
@@ -88,6 +102,7 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
         ),
+        condition=lambda self: self._enabled,
     )
     def _customization(self):
         database.OvirtUtils(
@@ -106,6 +121,7 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.DB_SCHEMA,
         ),
+        condition=lambda self: self._enabled,
     )
     def _connection(self):
         self.environment[

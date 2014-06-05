@@ -65,9 +65,10 @@ class Plugin(plugin.PluginBase):
         ),
         after=(
             osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
-            oenginecons.Stages.DIALOG_TITLES_S_ENGINE,
+            osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
         ),
         condition=lambda self: (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
             self.environment[oenginecons.EngineDBEnv.NEW_DATABASE] and
             self.environment[
                 osetupcons.ConfigEnv.APPLICATION_MODE

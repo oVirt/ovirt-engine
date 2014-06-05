@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -92,7 +92,10 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        condition=lambda self: self._enabled,
+        condition=lambda self: (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
+            self._enabled
+        ),
         before=(
             oengcommcons.Stages.DIALOG_TITLES_E_APACHE,
         ),
@@ -143,6 +146,15 @@ class Plugin(plugin.PluginBase):
                     )
                 )
                 self._enabled = False
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+        condition=lambda self: self._enabled,
+        priority=plugin.Stages.PRIORITY_HIGH,
+    )
+    def _validate_enable(self):
+        if not self.environment[oenginecons.CoreEnv.ENABLE]:
+            self._enabled = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,

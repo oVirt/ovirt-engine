@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 #
 
 
-"""Apache misc plugin."""
+"""Misc plugin."""
 
 
 import gettext
@@ -27,12 +27,14 @@ from otopi import util
 from otopi import plugin
 
 
+from ovirt_engine_setup import dialog
+from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
 
 
 @util.export
 class Plugin(plugin.PluginBase):
-    """Apache misc plugin."""
+    """Misc plugin."""
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -41,18 +43,33 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
-        self.environment.setdefault(
-            oenginecons.ApacheEnv.CONFIGURED,
-            False
-        )
+        self.environment.setdefault(oenginecons.CoreEnv.ENABLE, None)
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
-        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
-        priority=plugin.Stages.PRIORITY_LOW,
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=oenginecons.Stages.CORE_ENABLE,
+        before=(
+            osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
+        ),
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
+        ),
+        priority=plugin.Stages.PRIORITY_HIGH,
     )
-    def _misc(self):
-        self.environment[oenginecons.ApacheEnv.CONFIGURED] = True
+    def _customization(self):
+        if self.environment[oenginecons.CoreEnv.ENABLE] is None:
+            self.environment[
+                oenginecons.CoreEnv.ENABLE
+            ] = dialog.queryBoolean(
+                dialog=self.dialog,
+                name='OVESETUP_ENGINE_ENABLE',
+                note=_(
+                    'Configure Engine on this host '
+                    '(@VALUES@) [@DEFAULT@]: '
+                ),
+                prompt=True,
+                default=True,
+            )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

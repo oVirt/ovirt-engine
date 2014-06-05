@@ -66,10 +66,28 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self.environment[
             oenginecons.EngineDBEnv.NEW_DATABASE
         ],
-        name=osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE
+        name=osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
+        priority=plugin.Stages.PRIORITY_HIGH,
+    )
+    def _customization_enable(self):
+        if not self.environment[oenginecons.CoreEnv.ENABLE]:
+            self._enabled = False
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        before=(
+            oenginecons.Stages.DIALOG_TITLES_E_ENGINE,
+        ),
+        after=(
+            oenginecons.Stages.DIALOG_TITLES_S_ENGINE,
+        ),
+        condition=lambda self: (
+            self._enabled and
+            self.environment[oenginecons.EngineDBEnv.NEW_DATABASE]
+        ),
+        name=osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
     )
     def _customization(self):
-        self._enabled = True
 
         if self.environment[
             osetupcons.ConfigEnv.APPLICATION_MODE
@@ -86,7 +104,10 @@ class Plugin(plugin.PluginBase):
                     'Gluster',
                 ),
                 caseSensitive=False,
-                default=oenginecons.Defaults.DEFAULT_CONFIG_APPLICATION_MODE,
+                default=(
+                    oenginecons.Defaults.
+                    DEFAULT_CONFIG_APPLICATION_MODE
+                ),
             )
 
     @plugin.event(

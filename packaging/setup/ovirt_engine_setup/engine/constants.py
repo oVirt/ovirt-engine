@@ -344,6 +344,8 @@ class Stages(object):
 
     CONFIG_ISO_DOMAIN_AVAILABLE = 'osetup.config.iso_domain.available'
 
+    CORE_ENABLE = 'osetup.engine.core.enable'
+
     DIALOG_TITLES_S_ENGINE = 'osetup.dialog.titles.engine.start'
     DIALOG_TITLES_E_ENGINE = 'osetup.dialog.titles.engine.end'
 
@@ -495,6 +497,15 @@ class CoreEnv(object):
     )
     def ENGINE_SERVICE_STOP(self):
         return 'OVESETUP_CORE/engineStop'
+
+    @osetupattrs(
+        answerfile=True,
+        postinstallfile=True,
+        summary=True,
+        description=_('Engine installation'),
+    )
+    def ENABLE(self):
+        return 'OVESETUP_ENGINE_CORE/enable'
 
 
 @util.export

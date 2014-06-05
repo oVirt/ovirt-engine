@@ -61,9 +61,10 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
-        condition=lambda self: self.environment[
-            oenginecons.EngineDBEnv.NEW_DATABASE
-        ]
+        condition=lambda self: (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
+            self.environment[oenginecons.EngineDBEnv.NEW_DATABASE]
+        ),
     )
     def _misc(self):
         vdcoption.VdcOption(

@@ -43,9 +43,12 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
         name=oengcommcons.Stages.CORE_ENGINE_START,
-        condition=lambda self: not self.environment[
-            osetupcons.CoreEnv.DEVELOPER_MODE
-        ],
+        condition=lambda self: (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
+            not self.environment[
+                osetupcons.CoreEnv.DEVELOPER_MODE
+            ]
+        ),
     )
     def _closeup(self):
         self.logger.info(_('Starting engine service'))

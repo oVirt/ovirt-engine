@@ -114,9 +114,12 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Stages.DB_CONNECTION_CUSTOMIZATION,
             oengcommcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
         ),
-        condition=lambda self: not self.environment[
-            oenginecons.EngineDBEnv.NEW_DATABASE
-        ],
+        condition=lambda self: (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
+            not self.environment[
+                oenginecons.EngineDBEnv.NEW_DATABASE
+            ]
+        ),
     )
     def _validation(self):
         self.logger.info(

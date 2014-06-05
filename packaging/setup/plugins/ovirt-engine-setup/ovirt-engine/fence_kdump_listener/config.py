@@ -63,6 +63,24 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        before=(
+            osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
+        ),
+        after=(
+            oengcommcons.Stages.DB_CONNECTION_STATUS,
+            osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
+        ),
+        priority=plugin.Stages.PRIORITY_HIGH
+    )
+    def _customization_disable(self):
+        if not self.environment[oenginecons.CoreEnv.ENABLE]:
+            self._enabled = False
+            self.environment[
+                oenginecons.ConfigEnv.FENCE_KDUMP_LISTENER_CONFIG
+            ] = False
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: self.environment[
             oenginecons.ConfigEnv.FENCE_KDUMP_LISTENER_CONFIG
         ],

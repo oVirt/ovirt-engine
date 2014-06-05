@@ -89,7 +89,12 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.DIALOG_TITLES_S_APACHE,
         ),
-        condition=lambda self: self._enabled,
+        condition=lambda self: (
+            self.environment[
+                oenginecons.CoreEnv.ENABLE
+            ] and
+            self._enabled
+        ),
     )
     def _customization(self):
         if self.environment[
@@ -124,7 +129,12 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        condition=lambda self: self._enabled,
+        condition=lambda self: (
+            self.environment[
+                oenginecons.CoreEnv.ENABLE
+            ] and
+            self._enabled
+        ),
     )
     def _misc(self):
         with open(

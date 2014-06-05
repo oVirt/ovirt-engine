@@ -80,7 +80,12 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        condition=lambda self: (
+        condition=lambda self:  self.environment[
+            oenginecons.CoreEnv.ENABLE
+        ] and (
+            self.environment[
+                oenginecons.CoreEnv.ENABLE
+            ] and
             self._enabled and
             self.environment[
                 oenginecons.AIOEnv.SUPPORTED
@@ -89,6 +94,9 @@ class Plugin(plugin.PluginBase):
         name=oenginecons.Stages.AIO_CONFIG_NOT_AVAILABLE,
         before=(
             oenginecons.Stages.AIO_CONFIG_AVAILABLE,
+        ),
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
         ),
     )
     def _continueSetupWithoutAIO(self):
@@ -122,7 +130,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        condition=lambda self: self._enabled,
+        condition=lambda self: self.environment[
+            oenginecons.CoreEnv.ENABLE
+        ] and self._enabled,
         name=oenginecons.Stages.AIO_CONFIG_AVAILABLE,
         before=(
             oengcommcons.Stages.DIALOG_TITLES_E_ALLINONE,

@@ -44,6 +44,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
+        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _misc(self):
         for f in (

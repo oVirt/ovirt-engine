@@ -309,6 +309,7 @@ class Plugin(plugin.PluginBase):
     )
     def _validateEnv(self):
         self._enabled = (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
             not self.environment[
                 oenginecons.EngineDBEnv.NEW_DATABASE
             ] and

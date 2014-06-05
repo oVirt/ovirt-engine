@@ -29,6 +29,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import constants as oenginecons
 
 
 @util.export
@@ -56,9 +57,19 @@ class Plugin(plugin.PluginBase):
         self.command.detect('selinuxenabled')
         self.command.detect('semanage')
         self.command.detect('restorecon')
-        self._enabled = not self.environment[
-            osetupcons.CoreEnv.DEVELOPER_MODE
-        ]
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+        condition=lambda self: self._enabled,
+        priority=plugin.Stages.PRIORITY_HIGH,
+    )
+    def _validation_enable(self):
+        self._enabled = (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
+            not self.environment[
+                osetupcons.CoreEnv.DEVELOPER_MODE
+            ]
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,

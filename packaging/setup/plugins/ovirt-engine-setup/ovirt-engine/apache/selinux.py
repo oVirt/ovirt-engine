@@ -28,6 +28,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import constants as oenginecons
 
 
 @util.export
@@ -47,6 +48,15 @@ class Plugin(plugin.PluginBase):
         self._enabled = not self.environment[
             osetupcons.CoreEnv.DEVELOPER_MODE
         ]
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+        condition=lambda self: self._enabled,
+        priority=plugin.Stages.PRIORITY_HIGH
+    )
+    def _validation_enable(self):
+        if not self.environment[oenginecons.CoreEnv.ENABLE]:
+            self._enabled = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,

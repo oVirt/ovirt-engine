@@ -118,6 +118,7 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         name=oenginecons.Stages.MEMORY_CHECK,
+        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _validateMemory(self):
         """
@@ -144,9 +145,10 @@ class Plugin(plugin.PluginBase):
         after=(
             oenginecons.Stages.MEMORY_CHECK,
         ),
-        condition=lambda self: self.environment[
-            oenginecons.SystemEnv.MEMCHECK_ENABLED
-        ],
+        condition=lambda self: (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
+            self.environment[oenginecons.SystemEnv.MEMCHECK_ENABLED]
+        ),
     )
     def _validateContinueLowMemory(self):
         if (
@@ -181,6 +183,7 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
         ),
+        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _closeup(self):
         self._check_requirements()

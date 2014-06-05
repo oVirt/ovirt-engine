@@ -53,6 +53,7 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
             osetupcons.Stages.CA_AVAILABLE,
         ),
+        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _misc(self):
         uninstall_files = []

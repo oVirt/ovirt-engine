@@ -288,6 +288,7 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
         ),
         condition=lambda self: (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
             self.environment[oenginecons.SystemEnv.NFS_CONFIG_ENABLED] and
             not self.environment[oenginecons.ConfigEnv.ISO_DOMAIN_EXISTS]
         ),
@@ -425,6 +426,7 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
         condition=lambda self: (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
             self.environment[oenginecons.SystemEnv.NFS_CONFIG_ENABLED] and
             not self.environment[oenginecons.ConfigEnv.ISO_DOMAIN_EXISTS]
         ),

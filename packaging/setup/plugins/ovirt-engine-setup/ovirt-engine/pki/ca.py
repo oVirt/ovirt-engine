@@ -124,6 +124,22 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.CONFIG_PROTOCOLS_CUSTOMIZATION,
             oengcommcons.Stages.DIALOG_TITLES_S_PKI,
         ),
+        priority=plugin.Stages.PRIORITY_HIGH
+    )
+    def _customization_enable(self):
+        if not self.environment[oenginecons.CoreEnv.ENABLE]:
+            self._enabled = False
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        before=(
+            oengcommcons.Stages.DIALOG_TITLES_E_PKI,
+        ),
+        after=(
+            osetupcons.Stages.CONFIG_PROTOCOLS_CUSTOMIZATION,
+            oengcommcons.Stages.DIALOG_TITLES_S_PKI,
+        ),
+        condition=lambda self: self._enabled,
     )
     def _customization(self):
         if self._enabled:
@@ -138,7 +154,9 @@ class Plugin(plugin.PluginBase):
                     oenginecons.PKIEnv.ORG
                 ] = self.dialog.queryString(
                     name='OVESETUP_PKI_ORG',
-                    note=_('Organization name for certificate [@DEFAULT@]: '),
+                    note=_(
+                        'Organization name for certificate [@DEFAULT@]: '
+                    ),
                     prompt=True,
                     default=org,
                 )
@@ -347,6 +365,7 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
         ),
+        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _closeup(self):
         x509 = X509.load_cert(

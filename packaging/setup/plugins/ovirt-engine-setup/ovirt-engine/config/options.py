@@ -42,6 +42,7 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
+        self._enabled = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_BOOT,
@@ -69,15 +70,14 @@ class Plugin(plugin.PluginBase):
         ),
         after=(
             oengcommcons.Stages.DB_CONNECTION_STATUS,
-            oenginecons.Stages.DIALOG_TITLES_S_ENGINE,
+            osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
         ),
+        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _customization(self):
-        self._enabled = self.environment[
+        if not self.environment[
             oenginecons.EngineDBEnv.NEW_DATABASE
-        ]
-
-        if not self._enabled:
+        ]:
             self.dialog.note(
                 text=_(
                     'Skipping storing options as database already '
@@ -138,10 +138,21 @@ class Plugin(plugin.PluginBase):
                 ] = password
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+        condition=lambda self: not (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
+            self.environment[oenginecons.EngineDBEnv.NEW_DATABASE]
+        ),
+    )
+    def _validation_enable(self):
+        self._enabled = False
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
             oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
+        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _miscAlways(self):
         vdcoption.VdcOption(
@@ -162,9 +173,7 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
-        condition=lambda self: self.environment[
-            oenginecons.EngineDBEnv.NEW_DATABASE
-        ]
+        condition=lambda self: self._enabled,
     )
     def _miscNewDatabase(self):
         vdcoption.VdcOption(
@@ -212,9 +221,7 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.CONFIG_DB_ENCRYPTION_AVAILABLE,
         ),
-        condition=lambda self: self.environment[
-            oenginecons.EngineDBEnv.NEW_DATABASE
-        ]
+        condition=lambda self: self._enabled,
     )
     def _miscEncrypted(self):
         vdcoption.VdcOption(
@@ -248,9 +255,7 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
         ),
-        condition=lambda self: self.environment[
-            oenginecons.EngineDBEnv.NEW_DATABASE
-        ]
+        condition=lambda self: self._enabled,
     )
     def _closeup(self):
         self.dialog.note(

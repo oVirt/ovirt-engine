@@ -28,9 +28,9 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common \
     import constants as oengcommcons
-from ovirt_engine_setup.engine import constants as oenginecons
 
 
 @util.export
@@ -54,9 +54,10 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
-        condition=lambda self: self.environment[
-            osetupcons.ConfigEnv.ADD_OVIRT_GLANCE_REPOSITORY
-        ],
+        condition=lambda self: (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
+            self.environment[osetupcons.ConfigEnv.ADD_OVIRT_GLANCE_REPOSITORY]
+        )
     )
     def _misc(self):
         self.environment[oenginecons.EngineDBEnv.STATEMENT].execute(

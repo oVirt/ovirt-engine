@@ -30,6 +30,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import constants as oenginecons
 
 
 @util.export
@@ -41,6 +42,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
+        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _misc(self):
         for f in glob.glob(

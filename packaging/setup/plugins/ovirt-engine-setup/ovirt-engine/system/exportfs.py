@@ -115,6 +115,16 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
+        condition=lambda self: not self.environment[
+            oenginecons.CoreEnv.ENABLE
+        ],
+        priority=plugin.Stages.PRIORITY_HIGH
+    )
+    def _validation_enable(self):
+        self._enabled = False
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: self._enabled,
     )
     def _validation(self):
@@ -124,7 +134,10 @@ class Plugin(plugin.PluginBase):
             )
         elif os.path.exists(oenginecons.FileLocations.NFS_EXPORT_DIR):
             self._source = oenginecons.FileLocations.NFS_EXPORT_FILE
-            self._destination = oenginecons.FileLocations.OVIRT_NFS_EXPORT_FILE
+            self._destination = (
+                oenginecons.FileLocations.
+                OVIRT_NFS_EXPORT_FILE
+            )
 
             content, old_line = self._getContentRemovePath(
                 self._source,
@@ -147,7 +160,11 @@ class Plugin(plugin.PluginBase):
             ] is not None
         )
 
-        self.logger.debug('move=%s, generate=%s', self._move, self._generate)
+        self.logger.debug(
+            'move=%s, generate=%s',
+            self._move,
+            self._generate
+        )
 
         self._enabled = self._move or self._generate
 

@@ -100,6 +100,7 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.CA_AVAILABLE,
         ),
+        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _misc(self):
         rc, privkey, stderr = self.execute(
@@ -137,6 +138,7 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
         ),
+        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _closeup(self):
         self.dialog.note(
