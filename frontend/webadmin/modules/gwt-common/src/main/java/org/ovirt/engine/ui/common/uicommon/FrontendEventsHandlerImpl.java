@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.uicommon;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -51,8 +50,11 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 
     @Override
     public void runMultipleActionFailed(VdcActionType action, List<VdcReturnValueBase> returnValues) {
-        List<VdcActionType> actions = new ArrayList<VdcActionType>(returnValues.size());
-        Collections.fill(actions, action);
+        List<VdcActionType> actions = new ArrayList<VdcActionType>();
+        for (int i = 0; i < returnValues.size(); i++) {
+            actions.add(action);
+        }
+
         runMultipleActionsFailed(actions, returnValues);
     }
 
