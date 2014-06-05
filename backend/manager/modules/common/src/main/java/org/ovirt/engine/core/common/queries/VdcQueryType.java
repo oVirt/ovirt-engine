@@ -342,6 +342,7 @@ public enum VdcQueryType implements Serializable {
     GetClusterPolicies,
     GetClusterPolicyById,
     GetAllPolicyUnits,
+    GetPolicyUnitById,
     GetAttachedClustersByClusterPolicyId,
     GetAffinityGroupById,
     GetAffinityGroupsByClusterId,
