@@ -453,14 +453,13 @@ public class VdsManager {
             if (vds == null) {
                 vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
             }
-            if (vds.getPreviousStatus() != vds.getStatus()) {
+            if (vds.getStatus() != status) {
+                if (status == VDSStatus.PreparingForMaintenance) {
+                    calculateNextMaintenanceAttemptTime();
+                }
                 vds.setPreviousStatus(vds.getStatus());
                 if (_vds != null) {
                     _vds.setPreviousStatus(vds.getStatus());
-                    if (_vds.getStatus() == VDSStatus.PreparingForMaintenance) {
-                        calculateNextMaintenanceAttemptTime();
-                    }
-
                 }
             }
             // update to new status
