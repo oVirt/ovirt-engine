@@ -69,13 +69,9 @@ public class AddVmTemplateCommandTest {
         vdsGroup.setStoragePoolId(spId);
         vdsGroup.setcompatibility_version(Version.v3_2);
         when(vdsGroupDao.get(vdsGroupId)).thenReturn(vdsGroup);
-        when(osRepository.getMinimumRam(vm.getVmOsId(), Version.v3_2)).thenReturn(0);
-        when(osRepository.getMaximumRam(vm.getVmOsId(), Version.v3_2)).thenReturn(100);
-        when(osRepository.getArchitectureFromOS(14)).thenReturn(ArchitectureType.x86_64);
         AddVmTemplateParameters params = new AddVmTemplateParameters(vm, "templateName", "Template for testing");
 
-        // init the injector with the osRepository instance
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        mockOsRepository();
 
         // Using the compensation constructor since the normal one contains DB access
         cmd = spy(new AddVmTemplateCommand<AddVmTemplateParameters>(params) {
@@ -97,6 +93,15 @@ public class AddVmTemplateCommandTest {
         doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
         cmd.setVmId(vmId);
         cmd.setVdsGroupId(vdsGroupId);
+    }
+
+    protected void mockOsRepository() {
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        VmHandler.init();
+        when(osRepository.isWindows(0)).thenReturn(true);
+        when(osRepository.getMinimumRam(vm.getVmOsId(), Version.v3_2)).thenReturn(0);
+        when(osRepository.getMaximumRam(vm.getVmOsId(), Version.v3_2)).thenReturn(100);
+        when(osRepository.getArchitectureFromOS(14)).thenReturn(ArchitectureType.x86_64);
     }
 
     @Test
