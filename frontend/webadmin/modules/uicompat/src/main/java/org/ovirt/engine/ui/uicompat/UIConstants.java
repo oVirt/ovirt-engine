@@ -2183,7 +2183,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Fetching Data")
     String fetchingDataMessage();
 
-    @DefaultStringValue("Stop Rebalance")
+    @DefaultStringValue("Stop")
     String stopRebalance();
 
     @DefaultStringValue("Manage Policy Units")
