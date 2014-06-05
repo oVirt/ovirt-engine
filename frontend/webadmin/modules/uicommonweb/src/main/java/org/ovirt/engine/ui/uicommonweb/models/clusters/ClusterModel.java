@@ -1071,6 +1071,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
         getRngHwrngSourceRequired().setEntity(false);
 
         setArchitecture(new ListModel<ArchitectureType>());
+        getArchitecture().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
 
         setIsGeneralTabValid(true);
         setIsResiliencePolicyTabAvailable(true);
@@ -1492,7 +1493,6 @@ public class ClusterModel extends EntityModel<VDSGroup>
         } else {
             getArchitecture().setSelectedItem(ArchitectureType.undefined);
         }
-        getArchitecture().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
     }
 
     private void initSupportedArchitectures(ClusterModel clusterModel) {

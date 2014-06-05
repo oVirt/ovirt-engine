@@ -628,7 +628,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 boolean isCpuNameBlank = object.getCPU().getSelectedItem() == null;
-                architectureEditor.setVisible(isCpuNameBlank);
+                architectureEditor.setVisible(isCpuNameBlank && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
             }
         });
 
