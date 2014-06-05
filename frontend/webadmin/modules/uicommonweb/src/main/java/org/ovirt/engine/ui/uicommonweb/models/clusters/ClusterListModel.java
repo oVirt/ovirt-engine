@@ -323,7 +323,9 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 if (clModel.getSystemTreeSelectedItem() != null
                         && clModel.getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
                 {
-                    StoragePool selectDataCenter = (StoragePool) clModel.getSystemTreeSelectedItem().getEntity();
+                    SystemTreeItemModel treeSelectedItem = clModel.getSystemTreeSelectedItem();
+                    SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, treeSelectedItem);
+                    StoragePool selectDataCenter = (StoragePool) treeSelectedDc.getEntity();
 
                     cModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
                             new Linq.DataCenterPredicate(selectDataCenter.getId())));
