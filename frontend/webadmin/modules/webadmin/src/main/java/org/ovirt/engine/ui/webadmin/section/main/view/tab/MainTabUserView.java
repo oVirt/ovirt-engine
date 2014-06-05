@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -35,28 +36,34 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
 
         getTable().addColumn(new UserStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
+        TextColumnWithTooltip<DbUser> firstNameColumn = new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getFirstName();
             }
-        }, constants.firstnameUser(), "150px"); //$NON-NLS-1$
+        };
+        firstNameColumn.makeSortable(VdcUserConditionFieldAutoCompleter.FIRST_NAME);
+        getTable().addColumn(firstNameColumn, constants.firstnameUser(), "150px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
+        TextColumnWithTooltip<DbUser> lastNameColumn = new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getLastName();
             }
-        }, constants.lastNameUser(), "150px"); //$NON-NLS-1$
+        };
+        lastNameColumn.makeSortable(VdcUserConditionFieldAutoCompleter.LAST_NAME);
+        getTable().addColumn(lastNameColumn, constants.lastNameUser(), "150px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
+        TextColumnWithTooltip<DbUser> userNameColumn = new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return FormatUtils.getFullLoginName(object);
             }
-        }, constants.userNameUser(), "150px"); //$NON-NLS-1$
+        };
+        userNameColumn.makeSortable(VdcUserConditionFieldAutoCompleter.USER_NAME);
+        getTable().addColumn(userNameColumn, constants.userNameUser(), "150px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
+        TextColumnWithTooltip<DbUser> groupColumn = new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 StringBuilder builder = new StringBuilder();
@@ -68,7 +75,9 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
                 }
                 return builder.toString();
             }
-        }, constants.groupUser(), "150px"); //$NON-NLS-1$
+        };
+        groupColumn.makeSortable(VdcUserConditionFieldAutoCompleter.GROUP);
+        getTable().addColumn(groupColumn, constants.groupUser(), "150px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
             @Override

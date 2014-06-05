@@ -1,10 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.user;
 
+import java.util.Comparator;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -41,6 +44,14 @@ public class SubTabUserEventNotifierView extends AbstractSubTabTableView<DbUser,
                 return Enum.valueOf(AuditLogType.class, object.getevent_up_name());
             }
         };
+        eventNameColumn.makeSortable(new Comparator<event_subscriber>() {
+            private final LexoNumericComparator lexoNumericComparator = new LexoNumericComparator();
+
+            @Override
+            public int compare(event_subscriber o1, event_subscriber o2) {
+                return lexoNumericComparator.compare(o1.getevent_up_name(), o2.getevent_up_name());
+            }
+        });
         getTable().addColumn(eventNameColumn, constants.eventNameEventNotifier());
 
         getTable().addActionButton(new WebAdminButtonDefinition<event_subscriber>(constants.manageEventsEventNotifier()) {

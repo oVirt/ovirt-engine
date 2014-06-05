@@ -1,6 +1,11 @@
 package org.ovirt.engine.core.searchbackend;
 
 public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
+    public static final String FIRST_NAME = "NAME";
+    public static final String LAST_NAME = "LASTNAME";
+    public static final String USER_NAME = "USRNAME";
+    public static final String GROUP = "GROUP";
+
     public enum UserOrGroup {
         User,
         Group
@@ -8,14 +13,14 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
 
     public VdcUserConditionFieldAutoCompleter() {
         super();
-        // Building the basic vervs Dict
-        mVerbs.add("NAME");
-        mVerbs.add("LASTNAME");
-        mVerbs.add("USRNAME");
+        // Building the basic verbs dictionary.
+        mVerbs.add(FIRST_NAME);
+        mVerbs.add(LAST_NAME);
+        mVerbs.add(USER_NAME);
         mVerbs.add("LOGIN");
         mVerbs.add("DIRECTORY");
         mVerbs.add("DEPARTMENT");
-        mVerbs.add("GROUP");
+        mVerbs.add(GROUP);
         mVerbs.add("TITLE");
         mVerbs.add("ACTIVE");
         mVerbs.add("ROLE");
@@ -23,17 +28,17 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         mVerbs.add("POOL");
         mVerbs.add("TYPE");
 
-        // Building the autoCompletion Dict
+        // Building the auto completion dictionary.
         buildCompletions();
-        // Building the types dict
-        getTypeDictionary().put("NAME", String.class);
-        getTypeDictionary().put("LASTNAME", String.class);
-        getTypeDictionary().put("USRNAME", String.class);
+        // Building the types dictionary.
+        getTypeDictionary().put(FIRST_NAME, String.class);
+        getTypeDictionary().put(LAST_NAME, String.class);
+        getTypeDictionary().put(USER_NAME, String.class);
         getTypeDictionary().put("LOGIN", String.class);
         getTypeDictionary().put("DIRECTORY", String.class);
         getTypeDictionary().put("DEPARTMENT", String.class);
         getTypeDictionary().put("TITLE", String.class);
-        getTypeDictionary().put("GROUP", String.class);
+        getTypeDictionary().put(GROUP, String.class);
         getTypeDictionary().put("ACTIVE", Boolean.class);
         getTypeDictionary().put("ROLE", String.class);
         getTypeDictionary().put("TAG", String.class);
@@ -41,14 +46,14 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put("TYPE", UserOrGroup.class);
 
         // building the ColumnName Dict
-        columnNameDict.put("NAME", "name");
-        columnNameDict.put("LASTNAME", "surname");
-        columnNameDict.put("USRNAME", "username");
+        columnNameDict.put(FIRST_NAME, "name");
+        columnNameDict.put(LAST_NAME, "surname");
+        columnNameDict.put(USER_NAME, "username");
         columnNameDict.put("LOGIN", "username");
         columnNameDict.put("DIRECTORY", "domain");
         columnNameDict.put("DEPARTMENT", "department");
         columnNameDict.put("TITLE", "role");
-        columnNameDict.put("GROUP", "groups");
+        columnNameDict.put(GROUP, "groups");
         columnNameDict.put("ACTIVE", "active");
         columnNameDict.put("ROLE", "mla_role");
         columnNameDict.put("TAG", "tag_name");
@@ -70,7 +75,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         String customizedRelation,
         String tableName,
         boolean caseSensitive) {
-        if ("USRNAME".equals(fieldName) && customizedValue.contains("@")) {
+        if (USER_NAME.equals(fieldName) && customizedValue.contains("@")) {
             // When the given user name contains the at sign, we need to split it and compare it to two columns in the
             // database: the column containing the login name of the user and the column containg the name of the
             // directory.

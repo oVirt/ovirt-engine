@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.comparators.UserGroupComparator;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGroup;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
@@ -29,15 +30,17 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
                 return object.getGroupName();
             }
         };
+        nameColumn.makeSortable(UserGroupComparator.NAME);
         getTable().addColumn(nameColumn, constants.groupNameGroup());
 
-        TextColumnWithTooltip<UserGroup> OrgUnitColumn = new TextColumnWithTooltip<UserGroup>() {
+        TextColumnWithTooltip<UserGroup> orgUnitColumn = new TextColumnWithTooltip<UserGroup>() {
             @Override
             public String getValue(UserGroup object) {
                 return object.getOrganizationalUnit();
             }
         };
-        getTable().addColumn(OrgUnitColumn, constants.orgUnitGroup());
+        orgUnitColumn.makeSortable(UserGroupComparator.ORG_UNIT);
+        getTable().addColumn(orgUnitColumn, constants.orgUnitGroup());
 
         TextColumnWithTooltip<UserGroup> domainColumn = new TextColumnWithTooltip<UserGroup>() {
             @Override
@@ -45,6 +48,7 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
                 return object.getDomain();
             }
         };
+        domainColumn.makeSortable(UserGroupComparator.DOMAIN);
         getTable().addColumn(domainColumn, constants.domainGroup());
     }
 

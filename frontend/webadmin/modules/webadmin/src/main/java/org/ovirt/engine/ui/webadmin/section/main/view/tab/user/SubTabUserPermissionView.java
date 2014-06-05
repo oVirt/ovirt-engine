@@ -44,6 +44,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
                 return object.getRoleName();
             }
         };
+        roleColumn.makeSortable();
         getTable().addColumn(roleColumn, constants.rolePermission());
 
         TextColumnWithTooltip<Permissions> permissionColumn = new ObjectNameColumn<Permissions>() {
@@ -52,15 +53,17 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
                 return new Object[] { object.getObjectType(), object.getObjectName() };
             }
         };
+        permissionColumn.makeSortable();
         getTable().addColumn(permissionColumn, constants.objectPermission());
 
-        TextColumnWithTooltip<Permissions> groupColumn = new GroupNameColumn<Permissions>() {
+        TextColumnWithTooltip<Permissions> inheritedColumn = new GroupNameColumn<Permissions>() {
             @Override
             protected Object[] getRawValue(Permissions object) {
                 return new Object[] { getDetailModel().getEntity(), object.getad_element_id(), object.getOwnerName() };
             }
         };
-        getTable().addColumn(groupColumn, constants.inheritedPermission());
+        inheritedColumn.makeSortable();
+        getTable().addColumn(inheritedColumn, constants.inheritedPermission());
 
         getTable().addActionButton(new WebAdminButtonDefinition<Permissions>(constants.removePermission()) {
             @Override
