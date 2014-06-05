@@ -111,18 +111,6 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         privateForceRemoveCommand = value;
     }
 
-    private UICommand privateActivateCommand;
-
-    public UICommand getActivateCommand()
-    {
-        return privateActivateCommand;
-    }
-
-    private void setActivateCommand(UICommand value)
-    {
-        privateActivateCommand = value;
-    }
-
     private UICommand privateGuideCommand;
 
     public UICommand getGuideCommand()
@@ -195,7 +183,6 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         tempVar.setIsExecutionAllowed(true);
         setForceRemoveCommand(tempVar);
         setRecoveryStorageCommand(new UICommand("RecoveryStorage", this)); //$NON-NLS-1$
-        setActivateCommand(new UICommand("Activate", this)); //$NON-NLS-1$
         setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
 
         updateActionAvailability();
@@ -529,10 +516,6 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             }
         }),
                 ((StoragePool) getSelectedItem()).getId());
-    }
-
-    public void activate()
-    {
     }
 
     public void onRemove()
@@ -881,19 +864,6 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null
                 || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1));
 
-        getActivateCommand().setIsExecutionAllowed(items.size() > 0);
-        if (getActivateCommand().getIsExecutionAllowed())
-        {
-            for (StoragePool a : items)
-            {
-                if (a.getStatus() == StoragePoolStatus.Up || a.getStatus() == StoragePoolStatus.Uninitialized)
-                {
-                    getActivateCommand().setIsExecutionAllowed(false);
-                    break;
-                }
-            }
-        }
-
         getRecoveryStorageCommand().setIsExecutionAllowed(storagePoolItem != null && items.size() == 1
                 && !storagePoolItem.isLocal() && storagePoolItem.getStatus() != StoragePoolStatus.Uninitialized);
 
@@ -956,10 +926,6 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         else if (command == getForceRemoveCommand())
         {
             forceRemove();
-        }
-        else if (command == getActivateCommand())
-        {
-            activate();
         }
         else if (command == getGuideCommand())
         {
