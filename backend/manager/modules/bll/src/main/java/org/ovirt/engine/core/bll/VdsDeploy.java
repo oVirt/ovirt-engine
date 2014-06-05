@@ -60,6 +60,7 @@ import org.ovirt.otopi.dialog.SoftError;
 import org.ovirt.ovirt_host_deploy.constants.Const;
 import org.ovirt.ovirt_host_deploy.constants.Displays;
 import org.ovirt.ovirt_host_deploy.constants.GlusterEnv;
+import org.ovirt.ovirt_host_deploy.constants.KdumpEnv;
 import org.ovirt.ovirt_host_deploy.constants.OpenStackEnv;
 import org.ovirt.ovirt_host_deploy.constants.VdsmEnv;
 import org.ovirt.ovirt_host_deploy.constants.VirtEnv;
@@ -115,6 +116,8 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
 
     private OpenstackNetworkProviderProperties _openStackAgentProperties = null;
     private MessagingConfiguration _messagingConfiguration = null;
+
+    private boolean fenceKdumpSupported;
 
     /**
      * set vds object with unique id.
@@ -561,6 +564,50 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             _setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_OPENVSWITCH_CONFIG_PREFIX + "OVS/bridge_mappings",
                 _openStackAgentProperties.getAgentConfiguration().getNetworkMappings()
+            );
+            return true;
+        }},
+        new Callable<Boolean>() { public Boolean call() throws Exception {
+            fenceKdumpSupported = (Boolean)_parser.cliEnvironmentGet(KdumpEnv.SUPPORTED);
+            return true;
+        }},
+        new Callable<Boolean>() { public Boolean call() throws Exception {
+            if (_vds.isPmKdumpDetection() && !fenceKdumpSupported) {
+                _messages.post(
+                        InstallerMessages.Severity.WARNING,
+                        "Kdump detection is not supported by host!"
+                );
+            }
+
+            _parser.cliEnvironmentSet(
+                    KdumpEnv.ENABLE,
+                    _vds.isPmKdumpDetection() && fenceKdumpSupported
+            );
+            return true;
+        }},
+        new Callable<Boolean>() { public Boolean call() throws Exception {
+            String destinationAddress = Config.<String>getValue(ConfigValues.FenceKdumpDestinationAddress);
+            if (StringUtils.isBlank(destinationAddress)) {
+                // destination address not entered, use engine FQDN
+                destinationAddress = EngineLocalConfig.getInstance().getHost();
+            }
+            _parser.cliEnvironmentSet(
+                    KdumpEnv.DESTINATION_ADDRESS,
+                    destinationAddress
+            );
+            return true;
+        }},
+        new Callable<Boolean>() { public Boolean call() throws Exception {
+            _parser.cliEnvironmentSet(
+                    KdumpEnv.DESTINATION_PORT,
+                    Config.<Integer>getValue(ConfigValues.FenceKdumpDestinationPort)
+            );
+            return true;
+        }},
+        new Callable<Boolean>() { public Boolean call() throws Exception {
+            _parser.cliEnvironmentSet(
+                    KdumpEnv.MESSAGE_INTERVAL,
+                    Config.<Integer>getValue(ConfigValues.FenceKdumpMessageInterval)
             );
             return true;
         }},
