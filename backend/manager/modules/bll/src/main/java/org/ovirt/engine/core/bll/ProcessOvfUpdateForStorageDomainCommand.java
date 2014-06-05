@@ -51,6 +51,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
     private StorageDomain storageDomain;
     private int ovfDiskCount;
     private String postUpdateDescription;
+    private Date updateDate;
 
     public ProcessOvfUpdateForStorageDomainCommand(T parameters) {
         super(parameters);
@@ -109,7 +110,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
                         getParameters().getStoragePoolId());
     }
 
-    private String getPostUpdateOvfStoreDescription(Date updateDate, long size) {
+    private String getPostUpdateOvfStoreDescription(long size) {
         if (postUpdateDescription == null) {
             postUpdateDescription = generateOvfStoreDescription(updateDate, true, size);
         }
@@ -129,7 +130,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
         return buildJson(description, false);
     }
 
-    private String generateInfoFileData(Date updateDate) {
+    private String generateInfoFileData() {
         Map<String, Object> data = new HashMap<>();
         data.put(OvfInfoFileConstants.LastUpdated, updateDate.toString());
         data.put(OvfInfoFileConstants.Domains, Arrays.asList(getParameters().getStorageDomainId()));
@@ -144,11 +145,11 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
         }
     }
 
-    private byte[] buildOvfInfoFileByteArray(List<Guid> vmAndTemplatesIds, Date updateDate) {
+    private byte[] buildOvfInfoFileByteArray(List<Guid> vmAndTemplatesIds) {
         ByteArrayOutputStream bufferedOutputStream = new ByteArrayOutputStream();
 
         try (InMemoryTar inMemoryTar = new InMemoryTar(bufferedOutputStream)) {
-            inMemoryTar.addTarEntry(generateInfoFileData(updateDate).getBytes(),
+            inMemoryTar.addTarEntry(generateInfoFileData().getBytes(),
                     "info.json");
             int i = 0;
             while (i < vmAndTemplatesIds.size()) {
@@ -176,14 +177,14 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
             return;
         }
 
+        updateDate = new Date();
+
         List<Guid> vmAndTemplatesIds =
                 getStorageDomainDAO().getVmAndTemplatesIdsByStorageDomainId(getParameters().getStorageDomainId(),
                         false,
                         false);
 
-        Date updateDate = new Date();
-
-        byte[] bytes = buildOvfInfoFileByteArray(vmAndTemplatesIds, updateDate);
+        byte[] bytes = buildOvfInfoFileByteArray(vmAndTemplatesIds);
 
         Pair<StorageDomainOvfInfo, DiskImage> lastOvfStoreForUpdate = domainOvfStoresInfoForUpdate.getLast();
 
@@ -202,7 +203,6 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
         for (Pair<StorageDomainOvfInfo, DiskImage> pair : domainOvfStoresInfoForUpdate) {
             shouldUpdateLastOvfStore |=
                     performOvfUpdateForDomain(bytes,
-                            updateDate,
                             pair.getFirst(),
                             pair.getSecond(),
                             vmAndTemplatesIds);
@@ -212,7 +212,6 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
         // backup (if we did)
         if (shouldUpdateLastOvfStore && lastOvfStoreForUpdate != null) {
             performOvfUpdateForDomain(bytes,
-                    updateDate,
                     lastOvfStoreForUpdate.getFirst(),
                     lastOvfStoreForUpdate.getSecond(),
                     vmAndTemplatesIds);
@@ -241,7 +240,6 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
     }
 
     private boolean performOvfUpdateForDomain(byte[] ovfData,
-            Date updateDate,
             StorageDomainOvfInfo storageDomainOvfInfo,
             DiskImage ovfDisk,
             List<Guid> vmAndTemplatesIds) {
@@ -279,7 +277,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
                 storageDomainOvfInfo.setStoredOvfIds(vmAndTemplatesIds);
                 storageDomainOvfInfo.setLastUpdated(updateDate);
                 setOvfVolumeDescription(storagePoolId, storageDomainId,
-                        diskId, volumeId, getPostUpdateOvfStoreDescription(updateDate, size));
+                        diskId, volumeId, getPostUpdateOvfStoreDescription(size));
                 getStorageDomainOvfInfoDao().update(storageDomainOvfInfo);
                 getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValueBase.getInternalVdsmTaskIdList());
                 return true;
