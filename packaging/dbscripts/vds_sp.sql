@@ -889,7 +889,9 @@ BEGIN
     BEGIN
         RETURN QUERY SELECT vds.*
         FROM vds
-        WHERE (status = v_status) AND (storage_pool_id = v_storage_pool_id);
+        INNER JOIN vds_groups vdsgroup ON vds.vds_group_id = vdsgroup.vds_group_id
+        WHERE (vds.status = v_status) AND (vds.storage_pool_id = v_storage_pool_id)
+        AND vdsgroup.virt_service = true;
     END;
     RETURN;
 END; $procedure$
