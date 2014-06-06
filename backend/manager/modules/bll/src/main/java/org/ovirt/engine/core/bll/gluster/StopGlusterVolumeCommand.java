@@ -52,6 +52,11 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_CANNOT_STOP_REBALANCE_IN_PROGRESS);
         }
 
+        if (getGlusterTaskUtils().isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK)
+                && getGlusterTaskUtils().isTaskStatus(volume, JobExecutionStatus.STARTED)) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_CANNOT_STOP_REMOVE_BRICK_IN_PROGRESS);
+        }
+
         return true;
     }
 
