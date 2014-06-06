@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.quota;
 
+import java.util.Comparator;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -42,17 +44,17 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
     private void initTable(final ApplicationConstants constants, final ApplicationMessages messages) {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new TextColumnWithTooltip<QuotaStorage>() {
+        TextColumnWithTooltip<QuotaStorage> nameColumn = new TextColumnWithTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
                 return object.getStorageName() == null || object.getStorageName().equals("") ? constants.utlQuotaAllStoragesQuotaPopup()
                         : object.getStorageName();
             }
-        },
-                constants.nameQuotaStorage(),
-                "400px"); //$NON-NLS-1$
+        };
+        nameColumn.makeSortable();
+        getTable().addColumn(nameColumn, constants.nameQuotaStorage(), "400px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithEditableTooltip<QuotaStorage>() {
+        TextColumnWithEditableTooltip<QuotaStorage> usedColumn = new TextColumnWithEditableTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
                 if (object.getStorageSizeGB() == null) {
@@ -75,7 +77,13 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
                 textCellWithEditableTooltip.setTitle(constants.quotaCalculationsMessage());
                 return textCellWithEditableTooltip;
             }
-        },
-                constants.usedStorageTotalQuotaStorage(), "400px"); //$NON-NLS-1$
+        };
+        usedColumn.makeSortable(new Comparator<QuotaStorage>() {
+            @Override
+            public int compare(QuotaStorage quotaStorage1, QuotaStorage quotaStorage2) {
+                return quotaStorage1.getStorageSizeGBUsage().compareTo(quotaStorage2.getStorageSizeGBUsage());
+            }
+        });
+        getTable().addColumn(usedColumn, constants.usedStorageTotalQuotaStorage(), "400px"); //$NON-NLS-1$
     }
 }

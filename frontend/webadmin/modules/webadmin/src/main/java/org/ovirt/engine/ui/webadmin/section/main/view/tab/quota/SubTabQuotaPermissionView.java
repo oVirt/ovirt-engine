@@ -43,6 +43,7 @@ public class SubTabQuotaPermissionView extends AbstractSubTabTableView<Quota, Pe
                 return object.getOwnerName();
             }
         };
+        userColumn.makeSortable();
         getTable().addColumn(userColumn, constants.userPermission());
 
         TextColumnWithTooltip<Permissions> roleColumn = new TextColumnWithTooltip<Permissions>() {
@@ -51,6 +52,7 @@ public class SubTabQuotaPermissionView extends AbstractSubTabTableView<Quota, Pe
                 return object.getRoleName();
             }
         };
+        roleColumn.makeSortable();
         getTable().addColumn(roleColumn, constants.rolePermission());
 
         TextColumnWithTooltip<Permissions> permissionColumn = new ObjectNameColumn<Permissions>() {
@@ -61,6 +63,7 @@ public class SubTabQuotaPermissionView extends AbstractSubTabTableView<Quota, Pe
                 };
             }
         };
+        permissionColumn.makeSortable();
         getTable().addColumn(permissionColumn, constants.inheretedFromPermission());
 
         getTable().addActionButton(new WebAdminButtonDefinition<Permissions>(constants.addPermission()) {

@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.core.searchbackend.QuotaConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
@@ -45,19 +46,23 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
 
         getTable().addColumn(new QuotaDcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
+        TextColumnWithTooltip<Quota> nameColumn = new TextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
                 return object.getQuotaName() == null ? "" : object.getQuotaName(); //$NON-NLS-1$
             }
-        }, constants.nameQuota(), "120px"); //$NON-NLS-1$
+        };
+        nameColumn.makeSortable(QuotaConditionFieldAutoCompleter.NAME);
+        getTable().addColumn(nameColumn, constants.nameQuota(), "120px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
+        TextColumnWithTooltip<Quota> descriptionColumn = new TextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
                 return object.getDescription() == null ? "" : object.getDescription(); //$NON-NLS-1$
             }
-        }, constants.descriptionQuota(), "120px"); //$NON-NLS-1$
+        };
+        descriptionColumn.makeSortable(QuotaConditionFieldAutoCompleter.DESCRIPTION);
+        getTable().addColumn(descriptionColumn, constants.descriptionQuota(), "120px"); //$NON-NLS-1$
 
         getTable().addColumn(new QuotaPercentColumn<Quota>() {
             @Override

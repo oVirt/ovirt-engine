@@ -3,21 +3,21 @@ package org.ovirt.engine.core.searchbackend;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 
 public class QuotaConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
-    private static final String name = "NAME";
-    private static final String storagePoolName = "STORAGEPOOLNAME";
-    private static final String description = "DESCRIPTION";
-    private static final String thresholdVdsGroupPercentage = "THRESHOLDVDSGROUPPERCENTAGE";
-    private static final String thresholdStoragePercentage = "THRESHOLDSTORAGEPERCENTAGE";
-    private static final String graceVdsGrouPercentage = "GRACEVDSGROUPPERCENTAGE";
-    private static final String graceStoragePercentage = "GRACESTORAGEPERCENTAGE";
+    public static final String NAME = "NAME";
+    public static final String STORAGEPOOLNAME = "STORAGEPOOLNAME";
+    public static final String DESCRIPTION = "DESCRIPTION";
+    public static final String thresholdVdsGroupPercentage = "THRESHOLDVDSGROUPPERCENTAGE";
+    public static final String thresholdStoragePercentage = "THRESHOLDSTORAGEPERCENTAGE";
+    public static final String graceVdsGrouPercentage = "GRACEVDSGROUPPERCENTAGE";
+    public static final String graceStoragePercentage = "GRACESTORAGEPERCENTAGE";
 
     private static final String enforcementType = "ENFORCEMENTTYPE";
 
     public QuotaConditionFieldAutoCompleter() {
         // Building the basic verbs dict.
-        mVerbs.add(name);
-        mVerbs.add(storagePoolName);
-        mVerbs.add(description);
+        mVerbs.add(NAME);
+        mVerbs.add(STORAGEPOOLNAME);
+        mVerbs.add(DESCRIPTION);
         mVerbs.add(thresholdStoragePercentage);
         mVerbs.add(thresholdVdsGroupPercentage);
         mVerbs.add(graceStoragePercentage);
@@ -28,9 +28,9 @@ public class QuotaConditionFieldAutoCompleter extends BaseConditionFieldAutoComp
         buildCompletions();
 
         // Building the types dict.
-        getTypeDictionary().put(name, String.class);
-        getTypeDictionary().put(storagePoolName, String.class);
-        getTypeDictionary().put(description, String.class);
+        getTypeDictionary().put(NAME, String.class);
+        getTypeDictionary().put(STORAGEPOOLNAME, String.class);
+        getTypeDictionary().put(DESCRIPTION, String.class);
         getTypeDictionary().put(thresholdStoragePercentage, Integer.class);
         getTypeDictionary().put(thresholdVdsGroupPercentage, Integer.class);
         getTypeDictionary().put(graceStoragePercentage, Integer.class);
@@ -38,9 +38,9 @@ public class QuotaConditionFieldAutoCompleter extends BaseConditionFieldAutoComp
         getTypeDictionary().put(enforcementType, QuotaEnforcementTypeEnum.class);
 
         // building the ColumnName dict.
-        columnNameDict.put(name, "quota_name");
-        columnNameDict.put(storagePoolName, "storage_pool_name");
-        columnNameDict.put(description, "description");
+        columnNameDict.put(NAME, "quota_name");
+        columnNameDict.put(STORAGEPOOLNAME, "storage_pool_name");
+        columnNameDict.put(DESCRIPTION, "description");
         columnNameDict.put(thresholdVdsGroupPercentage, "threshold_vds_group_percentage");
         columnNameDict.put(thresholdStoragePercentage, "threshold_storage_percentage");
         columnNameDict.put(graceStoragePercentage, "grace_storage_percentage");
