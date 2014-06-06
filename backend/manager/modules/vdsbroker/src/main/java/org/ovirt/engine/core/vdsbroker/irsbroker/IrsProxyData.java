@@ -884,7 +884,7 @@ public class IrsProxyData {
 
                         // intentionally unreachable code
                         if (destSpmStatus != null && destSpmStatus.getSpmStatus() == SpmStatus.SPM) {
-                            if (spmVdsId != selectedVds.argvalue.getId() && spmVds != null
+                            if (!spmVdsId.equals(selectedVds.argvalue.getId()) && spmVds != null
                                     && spmVds.getStatus() == VDSStatus.Up) {
                                 selectedVds.argvalue = spmVds;
                                 startSpm = false;
