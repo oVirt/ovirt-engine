@@ -52,8 +52,6 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameter
 public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
 
-    protected boolean _isLastMaster;
-
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         Scope scope = getParameters().isSkipLock() ? Scope.None : Scope.Execution;
@@ -213,17 +211,19 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 getParameters().isInactive() ? StorageDomainStatus.Locked : StorageDomainStatus.PreparingForMaintenance);
 
         final StorageDomain newMaster;
+        final boolean isLastMaster;
 
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
             newMaster = electNewMaster();
-            proceedStorageDomainTreatmentByDomainType(newMaster, true);
+            isLastMaster = proceedStorageDomainTreatmentByDomainType(newMaster, true);
         } else {
             newMaster = null;
+            isLastMaster = false;
         }
 
         final Guid newMasterId = newMaster != null ? newMaster.getId() : Guid.Empty;
 
-        if (_isLastMaster) {
+        if (isLastMaster) {
             executeInNewTransaction(new TransactionMethod<Object>() {
                 @Override
                 public Object runInTransaction() {
@@ -253,7 +253,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             spm = getVdsDAO().get(getStoragePool().getSpmVdsId());
         }
 
-        if (_isLastMaster) {
+        if (isLastMaster) {
             if (spm != null) {
                 final VDSReturnValue stopSpmReturnValue = runVdsCommand(VDSCommandType.SpmStopOnIrs,
                         new SpmStopOnIrsVDSCommandParameters(getStoragePool().getId()));
@@ -278,7 +278,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         @Override
                         public EventResult call() {
                             runSynchronizeOperation(new AfterDeactivateSingleAsyncOperationFactory(),
-                                    _isLastMaster,
+                                    isLastMaster,
                                     newMasterId);
                             return null;
                         }
@@ -294,7 +294,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             public Object runInTransaction() {
                 if (getParameters().isInactive()) {
                     map.setStatus(StorageDomainStatus.Inactive);
-                } else if (_isLastMaster) {
+                } else if (isLastMaster) {
                     map.setStatus(StorageDomainStatus.Maintenance);
                 } else {
                     log.info("Domain '{}' will remain in '{}' status until deactivated on all hosts",
@@ -343,43 +343,46 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
      * In case of master domain this method decide if to move master to other domain or move pool to maintenance (since
      * there is no master domain)
      *
+     * @param newMaster The selected new master domain
      * @param lockNewMaster If true the new master domain will be locked
+     * @return true if newMaster is the last master
      */
-    protected void proceedStorageDomainTreatmentByDomainType(final StorageDomain newMaster,
-                                                             final boolean lockNewMaster) {
-        if (newMaster != null) {
-            newMaster.getStorageStaticData().setLastTimeUsedAsMaster(System.currentTimeMillis());
-
-            if (newMaster.getStorageDomainType() != StorageDomainType.Master) {
-                executeInNewTransaction(new TransactionMethod<Object>() {
-
-                    @Override
-                    public Object runInTransaction() {
-                        StoragePoolIsoMap newMasterMap = newMaster.getStoragePoolIsoMapData();
-                        getCompensationContext().snapshotEntityUpdated(newMaster.getStorageStaticData());
-                        newMaster.setStorageDomainType(StorageDomainType.Master);
-                        if (lockNewMaster) {
-                            newMasterMap.setStatus(StorageDomainStatus.Unknown);
-                            getCompensationContext().snapshotEntityStatus(newMasterMap);
-                            newMaster.setStatus(StorageDomainStatus.Locked);
-                            getStoragePoolIsoMapDAO().updateStatus(newMasterMap.getId(), newMasterMap.getStatus());
-                        }
-                        updateStorageDomainStaticData(newMaster.getStorageStaticData());
-                        getCompensationContext().snapshotEntityUpdated(getStorageDomain().getStorageStaticData());
-                        getStorageDomain().setStorageDomainType(StorageDomainType.Data);
-                        updateStorageDomainStaticData(getStorageDomain().getStorageStaticData());
-                        getCompensationContext().stateChanged();
-                        return null;
-                    }
-                });
-            } else {
-                updateStorageDomainStaticData(newMaster.getStorageStaticData());
-            }
-
-            updateStoragePoolMasterDomainVersionInDiffTransaction();
-        } else {
-            _isLastMaster = true;
+    protected boolean proceedStorageDomainTreatmentByDomainType(final StorageDomain newMaster,
+                                                                final boolean lockNewMaster) {
+        if (newMaster == null) {
+            return true;
         }
+
+        newMaster.getStorageStaticData().setLastTimeUsedAsMaster(System.currentTimeMillis());
+
+        if (newMaster.getStorageDomainType() != StorageDomainType.Master) {
+            executeInNewTransaction(new TransactionMethod<Object>() {
+                @Override
+                public Object runInTransaction() {
+                    StoragePoolIsoMap newMasterMap = newMaster.getStoragePoolIsoMapData();
+                    getCompensationContext().snapshotEntityUpdated(newMaster.getStorageStaticData());
+                    newMaster.setStorageDomainType(StorageDomainType.Master);
+                    if (lockNewMaster) {
+                        newMasterMap.setStatus(StorageDomainStatus.Unknown);
+                        getCompensationContext().snapshotEntityStatus(newMasterMap);
+                        newMaster.setStatus(StorageDomainStatus.Locked);
+                        getStoragePoolIsoMapDAO().updateStatus(newMasterMap.getId(), newMasterMap.getStatus());
+                    }
+                    updateStorageDomainStaticData(newMaster.getStorageStaticData());
+                    getCompensationContext().snapshotEntityUpdated(getStorageDomain().getStorageStaticData());
+                    getStorageDomain().setStorageDomainType(StorageDomainType.Data);
+                    updateStorageDomainStaticData(getStorageDomain().getStorageStaticData());
+                    getCompensationContext().stateChanged();
+                    return null;
+                }
+            });
+        } else {
+            updateStorageDomainStaticData(newMaster.getStorageStaticData());
+        }
+
+        updateStoragePoolMasterDomainVersionInDiffTransaction();
+
+        return false;
     }
 
     private void updateStorageDomainStaticData(StorageDomainStatic storageDomainStatic) {

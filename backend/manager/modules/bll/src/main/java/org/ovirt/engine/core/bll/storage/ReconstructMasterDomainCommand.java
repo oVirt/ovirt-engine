@@ -41,6 +41,8 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     protected StorageDomain newMasterStorageDomain;
     protected Guid newMasterStorageDomainId;
 
+    protected boolean isLastMaster;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -110,7 +112,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     }
 
     protected boolean reconstructMaster() {
-        proceedStorageDomainTreatmentByDomainType(getNewMasterStorageDomain(), false);
+        isLastMaster = proceedStorageDomainTreatmentByDomainType(getNewMasterStorageDomain(), false);
 
         // To issue a reconstructMaster you need to set the domain inactive unless the selected domain is the current master
         if (getParameters().isInactive() && !getStorageDomain().getId().equals(getNewMasterStorageDomainId())) {
@@ -125,7 +127,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             });
         }
 
-        if (_isLastMaster) {
+        if (isLastMaster) {
             return stopSpm();
         }
 
@@ -166,16 +168,16 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         boolean reconstructOpSucceeded = reconstructMaster();
         setActionReturnValue(reconstructOpSucceeded);
         connectAndRefreshAllUpHosts(reconstructOpSucceeded);
-        if (!_isLastMaster && reconstructOpSucceeded && !FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getCompatibilityVersion())) {
+        if (!isLastMaster && reconstructOpSucceeded && !FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getCompatibilityVersion())) {
             // all vms/templates metadata should be copied to the new master domain, so we need
             // to perform increment of the db version for all the vms in the storage pool.
             // currently this method is used for both templates and vms.
             getVmStaticDAO().incrementDbGenerationForAllInStoragePool(getStoragePoolId());
         }
-        if (_isLastMaster) {
+        if (isLastMaster) {
             getCompensationContext().resetCompensation();
         }
-        setSucceeded(!_isLastMaster && reconstructOpSucceeded);
+        setSucceeded(!isLastMaster && reconstructOpSucceeded);
 
         if (getSucceeded()) {
             runVdsCommand(VDSCommandType.MarkPoolInReconstructMode,
@@ -233,9 +235,9 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     }
 
     private void connectAndRefreshAllUpHosts(final boolean commandSucceeded) {
-        if (_isLastMaster || !commandSucceeded) {
+        if (isLastMaster || !commandSucceeded) {
             log.warn("skipping connect and refresh for all hosts, last master '{}', command status '{}'",
-                    _isLastMaster, commandSucceeded);
+                    isLastMaster, commandSucceeded);
             return;
         }
 
@@ -292,7 +294,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? _isLastMaster ? AuditLogType.RECONSTRUCT_MASTER_FAILED_NO_MASTER
+        return getSucceeded() ? isLastMaster ? AuditLogType.RECONSTRUCT_MASTER_FAILED_NO_MASTER
                 : AuditLogType.RECONSTRUCT_MASTER_DONE : AuditLogType.RECONSTRUCT_MASTER_FAILED;
     }
 }
