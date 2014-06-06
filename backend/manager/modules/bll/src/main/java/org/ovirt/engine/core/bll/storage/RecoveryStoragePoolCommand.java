@@ -3,8 +3,10 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.RecoveryStoragePoolParameters;
+import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -27,7 +29,7 @@ import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
 
 @NonTransactiveCommandAttribute
-public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<RecoveryStoragePoolParameters> {
+public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<ReconstructMasterParameters> {
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -38,7 +40,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
         super(commandId);
     }
 
-    public RecoveryStoragePoolCommand(RecoveryStoragePoolParameters parameters) {
+    public RecoveryStoragePoolCommand(ReconstructMasterParameters parameters) {
         super(parameters);
     }
 
@@ -55,7 +57,12 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = checkStoragePool() && super.canDoAction();
+        boolean returnValue = checkStoragePool();
+
+        if (!validate(new StorageDomainValidator(getStorageDomain()).isInProcess())
+                || !validate(new StoragePoolValidator(getStoragePool()).isAnyDomainInProcess())) {
+            return false;
+        }
 
         if (returnValue) {
             if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
@@ -77,12 +84,12 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
                 }
             }
         }
-        return returnValue;
+
+        return returnValue && initializeVds();
     }
 
     private StorageDomain loadTargetedMasterDomain() {
-        return getStorageDomainDAO().get(
-                _newMasterStorageDomainId);
+        return getStorageDomainDAO().get(getParameters().getNewMasterDomainId());
     }
 
     @Override
@@ -93,11 +100,13 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
 
     @Override
     protected void executeCommand() {
-        if (StorageHelperDirector.getInstance().getItem(getNewMaster(false).getStorageType())
-                .connectStorageToDomainByVdsId(getNewMaster(false), getVds().getId())) {
+        StorageDomain newMasterDomain = loadTargetedMasterDomain();
+
+        if (StorageHelperDirector.getInstance().getItem(newMasterDomain.getStorageType())
+                .connectStorageToDomainByVdsId(newMasterDomain, getVds().getId())) {
 
             ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(getParameters().getStoragePoolId(),
-                    _newMasterStorageDomainId,
+                    getParameters().getNewMasterDomainId(),
                     null,
                     EventType.RECOVERY, ""),
                     new Callable<EventResult>() {
@@ -105,8 +114,8 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
                         public EventResult call() {
                             getParameters().setStorageDomainId(getMasterDomainIdFromDb());
                             StoragePoolIsoMap domainPoolMap =
-                                    new StoragePoolIsoMap(getParameters()
-                                            .getNewMasterDomainId(),
+                                    new StoragePoolIsoMap(
+                                            getParameters().getNewMasterDomainId(),
                                             getParameters().getStoragePoolId(),
                                             StorageDomainStatus.Active);
                             DbFacade.getInstance()

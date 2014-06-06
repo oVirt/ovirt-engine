@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.RecoveryStoragePoolParameters;
+import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -573,7 +573,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
                             new ArrayList<VdcActionParametersBase>();
                     for (StorageDomain a : items)
                     {
-                        parameters.add(new RecoveryStoragePoolParameters(((StoragePool) getSelectedItem()).getId(),
+                        parameters.add(new ReconstructMasterParameters(((StoragePool) getSelectedItem()).getId(),
                                 a.getId()));
                     }
                     windowModel.startProgress(null);
