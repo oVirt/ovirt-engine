@@ -45,6 +45,7 @@ public class SubTabQuotaUserView extends AbstractSubTabTableView<Quota, Permissi
                 return object.getOwnerName();
             }
         };
+        userColumn.makeSortable();
         getTable().addColumn(userColumn, constants.userUser(), "400px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Permissions> permissionColumn = new ObjectNameColumn<Permissions>() {
@@ -55,6 +56,7 @@ public class SubTabQuotaUserView extends AbstractSubTabTableView<Quota, Permissi
                 };
             }
         };
+        permissionColumn.makeSortable();
         getTable().addColumn(permissionColumn, constants.inheritedFromUser(), "400px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<Permissions>(constants.addUser()) {
