@@ -881,9 +881,8 @@ public class IrsProxyData {
                                 .getReturnValue();
                         log.infoFormat("SpmStatus on vds {0}: {1}", spmVdsId, destSpmStatus == null ? "NULL"
                                 : destSpmStatus.getSpmStatus().toString());
-                        /**
-                         * intentional unreachable code
-                         */
+
+                        // intentionally unreachable code
                         if (destSpmStatus != null && destSpmStatus.getSpmStatus() == SpmStatus.SPM) {
                             if (spmVdsId != selectedVds.argvalue.getId() && spmVds != null
                                     && spmVds.getStatus() == VDSStatus.Up) {
