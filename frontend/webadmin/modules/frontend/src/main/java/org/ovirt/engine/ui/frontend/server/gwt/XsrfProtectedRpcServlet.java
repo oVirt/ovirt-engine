@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.frontend.server.gwt;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 
 import javax.servlet.ServletException;
@@ -81,8 +82,13 @@ public class XsrfProtectedRpcServlet extends AbstractXsrfProtectedRpcServlet {
                     "Unable to verify XSRF cookie"); //$NON-NLS-1$
         }
 
-        String expectedToken = StringUtils.toHexString(
-                Md5Utils.getMd5Digest(sessionCookie.getValue().getBytes()));
+        String expectedToken;
+        try {
+            expectedToken = StringUtils.toHexString(
+                    Md5Utils.getMd5Digest(sessionCookie.getValue().getBytes("UTF8"))); //$NON-NLS-1$
+        } catch (UnsupportedEncodingException e) {
+            throw new RpcTokenException("Unable to determine XSRF token from cookie"); //$NON-NLS-1$
+        }
         XsrfToken xsrfToken = (XsrfToken) token;
 
         if (!expectedToken.equals(xsrfToken.getToken())) {

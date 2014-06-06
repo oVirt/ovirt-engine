@@ -1,13 +1,8 @@
 package org.ovirt.engine.ui.frontend.server.gwt;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.ui.frontend.communication.XsrfRpcRequestBuilder;
 
@@ -25,8 +20,6 @@ public abstract class AbstractXsrfProtectedRpcServlet extends RpcServlet {
      * Serial version UID for serialization.
      */
     static final long serialVersionUID = -7274292100456700624L;
-
-    private RpcToken token;
 
     /**
      * The default constructor used by service implementations that extend this class. The servlet will delegate AJAX
@@ -47,26 +40,22 @@ public abstract class AbstractXsrfProtectedRpcServlet extends RpcServlet {
         super(delegate);
     }
 
-    @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        extractTokenFromRequest(req);
-        super.service(req, resp);
-    }
-
     @SuppressWarnings("unchecked")
-    private void extractTokenFromRequest(HttpServletRequest req) {
-        List<String> header = Collections.list(req.getHeaders(XsrfRpcRequestBuilder.XSRF_TOKEN_HEADER));
+    private XsrfToken extractTokenFromRequest() {
+        List<String> header =
+                Collections.list(getThreadLocalRequest().getHeaders(XsrfRpcRequestBuilder.XSRF_TOKEN_HEADER));
+        XsrfToken result = null;
         if (header != null && header.size() == 1) {
-            this.token = new XsrfToken(header.get(0));
+            result = new XsrfToken(header.get(0));
         }
+        return result;
     }
 
     @Override
     protected void onAfterRequestDeserialized(RPCRequest rpcRequest) {
         if (shouldValidateXsrfToken(rpcRequest.getMethod())) {
-            validateXsrfToken(this.token, rpcRequest.getMethod());
+            validateXsrfToken(extractTokenFromRequest(), rpcRequest.getMethod());
         }
-        this.token = null;
     }
 
     /**
