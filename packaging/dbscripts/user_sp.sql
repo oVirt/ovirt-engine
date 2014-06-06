@@ -31,11 +31,48 @@ INSERT INTO users(department, domain, email, groups, name, note, role, active, s
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION UpdateUserImpl(
+	v_department VARCHAR(255) ,
+	v_domain VARCHAR(255),
+	v_email VARCHAR(255) ,
+	v_groups VARCHAR(4000),
+	v_name VARCHAR(255) ,
+	v_note VARCHAR(255) ,
+	v_role VARCHAR(255) ,
+	v_active BOOLEAN,
+	v_surname VARCHAR(255) ,
+	v_user_id UUID,
+	v_username VARCHAR(255),
+	v_group_ids VARCHAR(2048),
+        v_external_id TEXT,
+	v_namespace VARCHAR(2048))
+RETURNS INTEGER
+
+	--The [users] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
+   AS $procedure$
+DECLARE
+	updated_rows INT;
+BEGIN
+      UPDATE users
+      SET department = v_department,domain = v_domain,
+      email = v_email,groups = v_groups,name = v_name,note = v_note,
+      role = v_role,active = v_active,surname = v_surname,
+      username = v_username,
+      group_ids = v_group_ids,
+      external_id = v_external_id,
+      namespace = v_namespace,
+      _update_date = CURRENT_TIMESTAMP
+      WHERE user_id = v_user_id;
+      GET DIAGNOSTICS updated_rows = ROW_COUNT;
+      RETURN updated_rows;
+
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 
-
-Create or replace FUNCTION UpdateUser(v_department VARCHAR(255) ,
+Create or replace FUNCTION UpdateUser(
+	v_department VARCHAR(255) ,
 	v_domain VARCHAR(255),
 	v_email VARCHAR(255) ,
 	v_groups VARCHAR(4000),
@@ -55,23 +92,39 @@ RETURNS VOID
 	--The [users] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
    AS $procedure$
 BEGIN
-      UPDATE users
-      SET department = v_department,domain = v_domain,
-      email = v_email,groups = v_groups,name = v_name,note = v_note,
-      role = v_role,active = v_active,surname = v_surname,
-      username = v_username,
-      last_admin_check_status = v_last_admin_check_status,
-      group_ids = v_group_ids,
-      external_id = v_external_id,
-      namespace = v_namespace,
-      _update_date = CURRENT_TIMESTAMP
+      PERFORM UpdateUserImpl(v_department, v_domain, v_email, v_groups, v_name, v_note, v_role, v_active, v_surname, v_user_id, v_username, v_group_ids, v_external_id, v_namespace);
+      UPDATE users SET
+      last_admin_check_status = v_last_admin_check_status
       WHERE user_id = v_user_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
-
-
-
+Create or replace FUNCTION InsertOrUpdateUser(
+	v_department VARCHAR(255) ,
+	v_domain VARCHAR(255),
+	v_email VARCHAR(255) ,
+	v_groups VARCHAR,
+	v_name VARCHAR(255) ,
+	v_note VARCHAR(255) ,
+	v_role VARCHAR(255) ,
+	v_active BOOLEAN,
+	v_surname VARCHAR(255) ,
+	v_user_id UUID,
+	v_username VARCHAR(255),
+	v_group_ids VARCHAR(2048),
+	v_external_id TEXT,
+	v_namespace VARCHAR(2048))
+RETURNS VOID
+   AS $procedure$
+DECLARE
+   updated_rows INT;
+BEGIN
+       SELECT UpdateUserImpl(v_department, v_domain, v_email, v_groups, v_name, v_note, v_role, v_active, v_surname, v_user_id, v_username, v_group_ids, v_external_id, v_namespace) into updated_rows;
+       if (updated_rows = 0) THEN
+	    PERFORM InsertUser(v_department, v_domain, v_email, v_groups, v_name, v_note, v_role, v_active, v_surname, v_user_id, v_username, v_group_ids, v_external_id, v_namespace);
+        End If;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION DeleteUser(v_user_id UUID)
 RETURNS VOID

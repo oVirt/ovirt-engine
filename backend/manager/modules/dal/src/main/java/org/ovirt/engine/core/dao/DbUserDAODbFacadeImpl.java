@@ -164,4 +164,9 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
         getCallsHandler().executeModification("DeleteUser", parameterSource);
     }
 
+    @Override
+    public void saveOrUpdate(DbUser user) {
+        new SimpleJdbcCall(jdbcTemplate).withProcedureName("InsertOrUpdateUser").execute(new DbUserMapSqlParameterSource(user));
+    }
+
 }

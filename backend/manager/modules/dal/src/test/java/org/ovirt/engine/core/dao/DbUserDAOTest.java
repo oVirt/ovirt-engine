@@ -223,6 +223,29 @@ public class DbUserDAOTest extends BaseDAOTestCase {
         assertEquals(existingUser, result);
     }
 
+    @Test
+    public void testSaveOrUpdateExisting() {
+        int sizeBeforeSave = dao.getAll().size();
+        existingUser.setFirstName("changedname");
+        existingUser.setLastName("changedsurname");
+        dao.saveOrUpdate(existingUser);
+        int sizeAfterSave = dao.getAll().size();
+        DbUser result = dao.get(existingUser.getId());
+        assertEquals(existingUser, result);
+        assertEquals(0, sizeAfterSave - sizeBeforeSave);
+
+    }
+
+    @Test
+    public void testSaveOrUpdateNew() {
+        int sizeBeforeSave = dao.getAll().size();
+        dao.saveOrUpdate(newUser);
+        DbUser result = dao.getByUsername(newUser.getLoginName());
+        int sizeAfterSave = dao.getAll().size();
+        assertEquals(newUser, result);
+        assertEquals(1, sizeAfterSave - sizeBeforeSave);
+    }
+
     /**
      * Ensures that inserting an user with no external id fails, as it has a
      * not null constraint.
