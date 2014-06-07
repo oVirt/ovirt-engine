@@ -8,7 +8,6 @@ import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
-import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -25,7 +24,6 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
-import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
@@ -53,9 +51,6 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         try {
             // Create authentication profiles for all the domains that exist in the database:
             // TODO: remove this later, and rely only on the custom and built in extensions directories configuration
-
-            EngineExtensionsManager.getInstance().engineInitialize();
-            AuthenticationProfileRepository.getInstance();
             DbUserCacheManager.getInstance().init();
             TaskManagerUtil.initAsyncTaskManager();
             ResourceManager.getInstance().init();

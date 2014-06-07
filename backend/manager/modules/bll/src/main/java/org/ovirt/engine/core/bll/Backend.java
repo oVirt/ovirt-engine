@@ -20,6 +20,7 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interceptors.ThreadLocalSessionCleanerInterceptor;
@@ -72,6 +73,7 @@ import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
+import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.osinfo.OsInfoPreferencesLoader;
@@ -245,6 +247,9 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                 1, quotaCacheIntervalInMinutes, TimeUnit.MINUTES);
         //initializes attestation
         initAttestation();
+        EngineExtensionsManager.getInstance().engineInitialize();
+        AuthenticationProfileRepository.getInstance();
+
     }
 
     private void initAttestation() {
