@@ -295,6 +295,9 @@ public class KerberosLdapAuthz implements Extension {
                 Authz.GroupRecord.ID,
                 group.getid()
                 ).mput(
+                        Authz.GroupRecord.NAMESPACE,
+                        NAMESPACE
+                ).mput(
                         Authz.GroupRecord.NAME,
                         group.getname()
                 );
