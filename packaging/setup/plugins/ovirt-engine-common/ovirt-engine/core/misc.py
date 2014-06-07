@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,20 +16,31 @@
 #
 
 
-"""ovirt-engine-common core plugin."""
+import gettext
+_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 from otopi import util
+from otopi import plugin
 
 
-from . import misc
-from . import engine
+from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import engineconstants as oenginecons
 
 
 @util.export
-def createPlugins(context):
-    misc.Plugin(context=context)
-    engine.Plugin(context=context)
+class Plugin(plugin.PluginBase):
+
+    def __init__(self, context):
+        super(Plugin, self).__init__(context=context)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+    )
+    def _setup(self):
+        self.environment[
+            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
+        ].append(oenginecons)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

@@ -22,11 +22,13 @@
 from otopi import util
 
 
+from . import misc
 from . import protocols
 
 
 @util.export
 def createPlugins(context):
+    misc.Plugin(context=context)
     protocols.Plugin(context=context)
 
 
