@@ -40,7 +40,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     private InitializationType initializationType;
 
-    private Map<VmDevice, Map<String, String>> runtimeDeviceCustomProperties;
+    private Map<VmDeviceId, Map<String, String>> runtimeDeviceCustomProperties;
 
     private ArchitectureType clusterArch;
 
@@ -68,11 +68,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         vmStatic.setPredefinedProperties(predefinedProperties);
     }
 
-    public Map<VmDevice, Map<String, String>> getRuntimeDeviceCustomProperties() {
+    public Map<VmDeviceId, Map<String, String>> getRuntimeDeviceCustomProperties() {
         return runtimeDeviceCustomProperties;
     }
 
-    public void setRuntimeDeviceCustomProperties(Map<VmDevice, Map<String, String>> runtimeDeviceCustomProperties) {
+    public void setRuntimeDeviceCustomProperties(Map<VmDeviceId, Map<String, String>> runtimeDeviceCustomProperties) {
         this.runtimeDeviceCustomProperties = runtimeDeviceCustomProperties;
     }
 
@@ -93,7 +93,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         balloonEnabled = true;
         snapshots = new ArrayList<Snapshot>();
         initializationType = InitializationType.None;
-        runtimeDeviceCustomProperties = new HashMap<VmDevice, Map<String, String>>();
+        runtimeDeviceCustomProperties = new HashMap<VmDeviceId, Map<String, String>>();
         vmtCreationDate = new Date(0);
         storagePoolId = Guid.Empty;
     }

@@ -503,7 +503,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(provider);
                 Map<String, String> deviceProperties = providerProxy.allocate(network, vnicProfile, iface);
 
-                getVm().getRuntimeDeviceCustomProperties().put(vmDevice, deviceProperties);
+                getVm().getRuntimeDeviceCustomProperties().put(vmDevice.getId(), deviceProperties);
             }
         }
     }

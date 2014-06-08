@@ -11,6 +11,7 @@ import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.compat.Guid;
 
 @SuppressWarnings("serial")
@@ -31,6 +32,6 @@ public abstract class JsonVmMixIn extends VM {
 
     @JsonIgnore
     @Override
-    public abstract Map<VmDevice, Map<String, String>> getRuntimeDeviceCustomProperties();
+    public abstract Map<VmDeviceId, Map<String, String>> getRuntimeDeviceCustomProperties();
 
 }

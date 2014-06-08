@@ -665,7 +665,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
 
         customProperties.putAll(vmDevice.getCustomProperties());
-        Map<String, String> runtimeCustomProperties = vm.getRuntimeDeviceCustomProperties().get(vmDevice);
+        Map<String, String> runtimeCustomProperties = vm.getRuntimeDeviceCustomProperties().get(vmDevice.getId());
         if (runtimeCustomProperties != null) {
             customProperties.putAll(runtimeCustomProperties);
         }
