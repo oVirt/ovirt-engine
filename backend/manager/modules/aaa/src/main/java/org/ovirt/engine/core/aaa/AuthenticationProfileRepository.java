@@ -8,6 +8,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
@@ -20,6 +22,7 @@ public class AuthenticationProfileRepository implements Observer {
     private static final String AUTHN_AUTHZ_PLUGIN = "ovirt.engine.aaa.authn.authz.plugin";
     private static final String AUTHN_MAPPING_PLUGIN = "ovirt.engine.aaa.authn.mapping.plugin";
 
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationProfileRepository.class);
 
     private static volatile AuthenticationProfileRepository instance = null;
     private volatile Map<String, AuthenticationProfile> profiles = null;
@@ -63,26 +66,26 @@ public class AuthenticationProfileRepository implements Observer {
         profiles = createProfiles();
     }
 
-    private Map<String, AuthenticationProfile> createProfiles() throws ConfigurationException {
+    private Map<String, AuthenticationProfile> createProfiles() {
 
         // Get the extensions that correspond to authn (authentication) service.
         // For each extension - get the relevant authn extension.
 
         Map<String, AuthenticationProfile> results = new HashMap<>();
         for (ExtensionProxy authnExtension : EngineExtensionsManager.getInstance().getExtensionsByService(AUTHN_SERVICE)) {
-            String mapperName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(AUTHN_MAPPING_PLUGIN);
-            String authzName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(AUTHN_AUTHZ_PLUGIN);
-            if (authzName == null) {
-                throw new ConfigurationException(String.format("Authz plugin for %1$s does not exist",
-                        authnExtension.getContext().<String> get(Base.ContextKeys.INSTANCE_NAME)));
-            }
-            AuthenticationProfile profile = new AuthenticationProfile(
-                    authnExtension,
-                    EngineExtensionsManager.getInstance().getExtensionByName(authzName),
-                    mapperName != null ? EngineExtensionsManager.getInstance().getExtensionByName(mapperName) : null
-                    );
+            try {
+                String mapperName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(AUTHN_MAPPING_PLUGIN);
+                String authzName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(AUTHN_AUTHZ_PLUGIN);
+                AuthenticationProfile profile = new AuthenticationProfile(
+                        authnExtension,
+                        EngineExtensionsManager.getInstance().getExtensionByName(authzName),
+                        mapperName != null ? EngineExtensionsManager.getInstance().getExtensionByName(mapperName) : null
+                        );
 
-            results.put(profile.getName(), profile);
+                results.put(profile.getName(), profile);
+            } catch (ConfigurationException e) {
+                log.debug("Ignoring", e);
+            }
         }
         return results;
     }
