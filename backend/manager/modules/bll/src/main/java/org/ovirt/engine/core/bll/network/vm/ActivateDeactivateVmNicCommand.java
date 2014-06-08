@@ -152,7 +152,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                 getProviderProxy().allocate(getNetwork(), vnicProfile, getParameters().getNic());
 
         if (runtimeProperties != null) {
-            getVm().getRuntimeDeviceCustomProperties().put(vmDevice, runtimeProperties);
+            getVm().getRuntimeDeviceCustomProperties().put(vmDevice.getId(), runtimeProperties);
         }
     }
 
