@@ -3246,8 +3246,14 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$detailMessage it has insufficient free memory to run the VM")
     String VAR__DETAIL__NOT_ENOUGH_MEMORY();
 
+    @DefaultStringValue("$detailMessage cannot accommodate memory of VM's pinned virtual NUMA nodes within host's physical NUMA nodes.")
+    String VAR__DETAIL__NOT_MEMORY_PINNED_NUMA();
+
     @DefaultStringValue("$detailMessage it has insufficient CPU cores to run the VM")
     String VAR__DETAIL__NOT_ENOUGH_CORES();
+
+    @DefaultStringValue("$detailMessage it has insufficient NUMA node free memory to run the VM")
+    String VAR__DETAIL__NUMA_PINNING_FAILED();
 
     @DefaultStringValue("There are no hosts to use. Check that the cluster contains at least one host in Up state.")
     String SCHEDULING_NO_HOSTS();
