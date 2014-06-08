@@ -25,7 +25,7 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
         } else if (getVds().getStatus() != VDSStatus.PendingApproval
                 && getVds().getStatus() != VDSStatus.InstallFailed
                 && getVds().getStatus() != VDSStatus.InstallingOS) {
-            addCanDoActionMessage(VdcBllMessages.VDS_APPROVE_VDS_IN_WRONG_STATUS.toString());
+            addCanDoActionMessage(VdcBllMessages.VDS_APPROVE_VDS_IN_WRONG_STATUS);
             returnValue = false;
         }
         return returnValue ? super.canDoAction() : false;

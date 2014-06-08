@@ -119,7 +119,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 returnValue =
                     returnValue && IsPowerManagementLegal(getParameters().getVdsStaticData(), compatibilityVersion);
             } else {
-                addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE.toString());
+                addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE);
             }
         } else {
             addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);

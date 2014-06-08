@@ -110,13 +110,13 @@ public class UpdateStoragePoolCommandTest {
     @Test
     public void nameExists() {
         newPoolNameIsAlreadyTaken();
-        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST.toString());
+        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
     }
 
     @Test
     public void hasDomains() {
         domainListNotEmpty();
-        canDoActionFailed(VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS.toString());
+        canDoActionFailed(VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
     }
 
     @Test
@@ -145,7 +145,7 @@ public class UpdateStoragePoolCommandTest {
         storagePoolWithLowerVersion();
         addNonDefaultClusterToPool();
         addNetworkToPool();
-        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION.toString());
+        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -154,7 +154,7 @@ public class UpdateStoragePoolCommandTest {
         addNonDefaultClusterToPool();
         addHostsToCluster();
         addNetworkToPool();
-        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION.toString());
+        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -173,13 +173,13 @@ public class UpdateStoragePoolCommandTest {
         addNonDefaultClusterToPool();
         addManagementNetworkToPool();
         setupNetworkValidator(false);
-        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION.toString());
+        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
     public void versionHigherThanCluster() {
         storagePoolWithVersionHigherThanCluster();
-        canDoActionFailed(VdcBllMessages.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS.toString());
+        canDoActionFailed(VdcBllMessages.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS);
     }
 
     @Test
@@ -213,7 +213,7 @@ public class UpdateStoragePoolCommandTest {
         mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultVdsGroupID, DEFAULT_VDS_GROUP_ID);
         addDefaultClusterToPool();
         storagePoolWithLocalFS();
-        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS.toString());
+        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
     }
 
     private void newPoolNameIsAlreadyTaken() {
@@ -349,8 +349,8 @@ public class UpdateStoragePoolCommandTest {
         when(networkDao.getAllForDataCenter(any(Guid.class))).thenReturn(networks);
     }
 
-    private void canDoActionFailed(final String reason) {
+    private void canDoActionFailed(final VdcBllMessages reason) {
         assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(reason));
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(reason.toString()));
     }
 }

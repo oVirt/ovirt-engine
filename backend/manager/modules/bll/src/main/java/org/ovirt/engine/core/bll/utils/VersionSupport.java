@@ -32,8 +32,8 @@ public class VersionSupport implements Serializable {
         return result;
     }
 
-    public static String getUnsupportedVersionMessage() {
-        return VdcBllMessages.ACTION_TYPE_FAILED_GIVEN_VERSION_NOT_SUPPORTED.toString();
+    public static VdcBllMessages getUnsupportedVersionMessage() {
+        return VdcBllMessages.ACTION_TYPE_FAILED_GIVEN_VERSION_NOT_SUPPORTED;
     }
 
     /**
