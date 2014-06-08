@@ -1588,16 +1588,16 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks are attached to more than one Network Interface: ${NETWORKS_ALREADY_ATTACHED_TO_IFACES_LIST}.")
     String NETWORKS_ALREADY_ATTACHED_TO_IFACES();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following Network Interfaces don't exist on the Host: ${NETWORK_INTERFACES_DONT_EXIST_LIST}.")
+    @DefaultStringValue("Cannot ${action} ${type}. The following Network Interfaces do not exist on the Host: ${NETWORK_INTERFACES_DONT_EXIST_LIST}.")
     String NETWORK_INTERFACES_DONT_EXIST();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks don't exist in the Host's Cluster: ${NETWORKS_DONT_EXIST_IN_CLUSTER_LIST}.")
+    @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks do not exist in the Host's Cluster: ${NETWORKS_DONT_EXIST_IN_CLUSTER_LIST}.")
     String NETWORKS_DONT_EXIST_IN_CLUSTER();
 
     @DefaultStringValue("Cannot ${action} ${type}. The following Network Interfaces can have only a single VM Logical Network, or at most one non-VM Logical Network and/or several VLAN Logical Networks: ${NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_LIST}.")
     String NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following Bonds consist of less than two Network Interfaces: ${NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST}.")
+    @DefaultStringValue("Cannot ${action} ${type}. The following bonds consist of less than two Network Interfaces: ${NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST}.")
     String NETWORK_BONDS_INVALID_SLAVE_COUNT();
 
     @DefaultStringValue("Cannot ${action} ${type}. The following VMs are actively using the Logical Network: ${NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST}. Please stop the VMs and try again.")
@@ -1606,7 +1606,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. STP can only be enabled on VM Networks.")
     String NON_VM_NETWORK_CANNOT_SUPPORT_STP();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks don't have the same MTU value: ${NETWORK_MTU_DIFFERENCES_LIST}.")
+    @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks do not have the same MTU value: ${NETWORK_MTU_DIFFERENCES_LIST}.")
     String NETWORK_MTU_DIFFERENCES();
 
     @DefaultStringValue("Cannot ${action} ${type}. Overriding MTU is not supported for this Data Center's compatibility version.")
@@ -1615,7 +1615,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Migration network is not supported for this cluster version.")
     String ACTION_TYPE_FAILED_MIGRATION_NETWORK_IS_NOT_SUPPORTED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The provider doesn't exist in the system.")
+    @DefaultStringValue("Cannot ${action} ${type}. The provider does not exist in the system.")
     String ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST();
 
     @DefaultStringValue("Cannot ${action} ${type}. Several external networks (${NETWORK_NAMES_COUNTER}) are being used by virtual machines and/or templates:\n${NETWORK_NAMES}\n - Please resolve the external networks usage first and try again.")
@@ -3198,16 +3198,16 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("iSCSI bond description must not exceed 4000 characters")
     String VALIDATION_ISCSI_BOND_DESCRIPTION_MAX();
 
-    @DefaultStringValue("iSCSI Bond name must be formed from alpha-numeric characters or \"-_.\"")
+    @DefaultStringValue("iSCSI bond name must be formed from alpha-numeric characters, periods (.), hyphens (-), and underscores (_).")
     String VALIDATION_ISCSI_BOND_NAME_INVALID_CHARACTER();
 
-    @DefaultStringValue("iSCSI Bond description must be formed only from alpha-numeric characters and special characters that conform to the standard ASCII character set.")
+    @DefaultStringValue("iSCSI bond description must be formed only from alpha-numeric characters and special characters that conform to the standard ASCII character set.")
     String VALIDATION_SCSI_BOND_DESCRIPTION_INVALID();
 
     @DefaultStringValue("Cannot ${action} ${type}. iSCSI bond with the same name already exists in the Data Center.")
     String ISCSI_BOND_WITH_SAME_NAME_EXIST_IN_DATA_CENTER();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The specified iSCSI bond doesn't exist.")
+    @DefaultStringValue("Cannot ${action} ${type}. The specified iSCSI bond does not exist.")
     String ISCSI_BOND_NOT_EXIST();
 
     @DefaultStringValue("Cannot ${action} ${type}. An IDE disk can't be read-only.")
