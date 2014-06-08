@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.AttachedStorageDomainResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
+import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -63,7 +64,7 @@ public class BackendAttachedStorageDomainsResource
         }
 
         return performCreate(VdcActionType.AttachStorageDomainToPool,
-                               new DetachStorageDomainFromPoolParameters(storageDomainId, dataCenterId),
+                               new AttachStorageDomainToPoolParameters(storageDomainId, dataCenterId),
                                new StorageDomainIdResolver(storageDomainId));
     }
 

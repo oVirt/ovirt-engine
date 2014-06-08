@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -22,7 +23,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParametersBase> extends
+public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoolParameters> extends
         StorageDomainCommandBase<T> {
     private StoragePoolIsoMap map;
 
@@ -96,7 +97,9 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
                             return null;
                         }
                     });
-                    attemptToActivateDomain();
+                    if (getParameters().getActivate()) {
+                        attemptToActivateDomain();
+                    }
                     setSucceeded(true);
                 }
             }

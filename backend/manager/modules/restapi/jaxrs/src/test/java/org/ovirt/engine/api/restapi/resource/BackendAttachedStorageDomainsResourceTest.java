@@ -14,6 +14,7 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -51,7 +52,7 @@ public class BackendAttachedStorageDomainsResourceTest
         setUpGetConnection(1);
 
         setUpCreationExpectations(VdcActionType.AttachStorageDomainToPool,
-                                  DetachStorageDomainFromPoolParameters.class,
+                                  AttachStorageDomainToPoolParameters.class,
                                   new String[] { "StorageDomainId", "StoragePoolId" },
                                   new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
                                   true,
@@ -92,7 +93,7 @@ public class BackendAttachedStorageDomainsResourceTest
                 getEntityStatic(0));
 
         setUpCreationExpectations(VdcActionType.AttachStorageDomainToPool,
-                                  DetachStorageDomainFromPoolParameters.class,
+                                  AttachStorageDomainToPoolParameters.class,
                                   new String[] { "StorageDomainId", "StoragePoolId" },
                                   new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
                                   true,
@@ -125,7 +126,7 @@ public class BackendAttachedStorageDomainsResourceTest
 
     private void doTestBadAdd(boolean canDo, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AttachStorageDomainToPool,
-                                           DetachStorageDomainFromPoolParameters.class,
+                                           AttachStorageDomainToPoolParameters.class,
                                            new String[] { "StorageDomainId", "StoragePoolId" },
                                            new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
                                            canDo,

@@ -22,7 +22,7 @@ import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
+import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -75,9 +75,9 @@ public class AttachStorageDomainToPoolCommandTest {
 
     @Test
     public void statusSetInMap() {
-        StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(Guid.newGuid(), Guid.newGuid());
-        AttachStorageDomainToPoolCommand<StorageDomainPoolParametersBase> cmd =
-                spy(new AttachStorageDomainToPoolCommand<StorageDomainPoolParametersBase>(params));
+        AttachStorageDomainToPoolParameters params = new AttachStorageDomainToPoolParameters(Guid.newGuid(), Guid.newGuid());
+        AttachStorageDomainToPoolCommand<AttachStorageDomainToPoolParameters> cmd =
+                spy(new AttachStorageDomainToPoolCommand<AttachStorageDomainToPoolParameters>(params));
 
         doReturn(dbFacade).when(cmd).getDbFacade();
         doNothing().when(cmd).attemptToActivateDomain();

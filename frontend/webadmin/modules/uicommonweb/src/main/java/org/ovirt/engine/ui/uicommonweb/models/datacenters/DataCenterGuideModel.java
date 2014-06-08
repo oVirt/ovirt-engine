@@ -7,9 +7,9 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
+import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
-import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -1191,7 +1191,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId)
     {
-        Frontend.getInstance().runAction(VdcActionType.AttachStorageDomainToPool, new StorageDomainPoolParametersBase(storageId,
+        Frontend.getInstance().runAction(VdcActionType.AttachStorageDomainToPool, new AttachStorageDomainToPoolParameters(storageId,
                 dataCenterId),
                 null,
                 this);
