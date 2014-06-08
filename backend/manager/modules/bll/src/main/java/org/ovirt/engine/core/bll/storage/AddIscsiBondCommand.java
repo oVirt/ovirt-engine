@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.validator.IscsiBondValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AddIscsiBondParameters;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -26,8 +27,14 @@ public class AddIscsiBondCommand<T extends AddIscsiBondParameters> extends BaseI
 
     @Override
     protected boolean canDoAction() {
+        if (!FeatureSupported.isIscsiMultipathingSupported(getStoragePool().getcompatibility_version())) {
+            return failCanDoAction(VdcBllMessages.ISCSI_BOND_NOT_SUPPORTED);
+        }
+
         IscsiBondValidator validator = new IscsiBondValidator();
-        return validate(validator.iscsiBondWithTheSameNameExistInDataCenter(getIscsiBond()));
+        return validate(validator.iscsiBondWithTheSameNameExistInDataCenter(getIscsiBond())) &&
+                validate(validator.validateAddedLogicalNetworks(getIscsiBond())) &&
+                validate(validator.validateAddedStorageConnections(getIscsiBond()));
     }
 
     @Override
