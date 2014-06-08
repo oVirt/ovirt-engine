@@ -8,8 +8,10 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
@@ -86,6 +88,11 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     @Path(value = "host.selectedItem")
     @WithElementId("host")
     ListModelListBoxEditor<VDS> hostListEditor;
+
+    @UiField(provided = true)
+    @Path(value = "activateDomain.entity")
+    @WithElementId("activateDomainEditor")
+    EntityModelCheckBoxEditor activateDomainEditor;
 
     @Ignore
     @UiField
@@ -172,6 +179,8 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                 return formattedString;
             }
         });
+
+        activateDomainEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void addStyles() {
@@ -189,6 +198,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         storageTypeListEditor.setLabel(constants.storagePopupStorageTypeLabel());
         formatListEditor.setLabel(constants.storagePopupFormatTypeLabel());
         hostListEditor.setLabel(constants.storagePopupHostLabel());
+        activateDomainEditor.setLabel(constants.activateDomainLabel());
     }
 
     @Override

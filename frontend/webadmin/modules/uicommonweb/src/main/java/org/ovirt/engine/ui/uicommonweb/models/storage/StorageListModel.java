@@ -205,6 +205,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     public String path;
     public StorageDomainType domainType = StorageDomainType.values()[0];
     public StorageType storageType;
+    public Boolean activateDomain;
     public boolean removeConnection;
 
     @Override
@@ -650,7 +651,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
-                            host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole(), StorageType.NFS }))).run();
+                            host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole(), StorageType.NFS, model.getActivateDomain().getEntity() }))).run();
         }
         else if (model.getSelectedItem() instanceof LocalStorageModel)
         {
@@ -659,7 +660,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
-                            host.getId(), localModel.getPath().getEntity(), localModel.getRole(), StorageType.LOCALFS }))).run();
+                            host.getId(), localModel.getPath().getEntity(), localModel.getRole(), StorageType.LOCALFS, model.getActivateDomain().getEntity() }))).run();
         }
         else if (model.getSelectedItem() instanceof PosixStorageModel)
         {
@@ -668,7 +669,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
-                            host.getId(), posixModel.getPath().getEntity(), posixModel.getRole(), StorageType.POSIXFS}))).run();
+                            host.getId(), posixModel.getPath().getEntity(), posixModel.getRole(), StorageType.POSIXFS, model.getActivateDomain().getEntity() }))).run();
         }
         else
         {
@@ -1876,10 +1877,15 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
     }
 
-    private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId)
+    private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId) {
+        attachStorageToDataCenter(storageId, dataCenterId, activateDomain);
+    }
+
+    private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId, Boolean activateDomain)
     {
-        Frontend.getInstance().runAction(VdcActionType.AttachStorageDomainToPool, new AttachStorageDomainToPoolParameters(storageId,
-            dataCenterId), null, this);
+        AttachStorageDomainToPoolParameters params = new AttachStorageDomainToPoolParameters(storageId, dataCenterId);
+        params.setActivate(activateDomain);
+        Frontend.getInstance().runAction(VdcActionType.AttachStorageDomainToPool, params, null, this);
     }
 
     private void importFileStorage(TaskContext context)
@@ -1894,6 +1900,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         path = (String) data.get(2);
         domainType = (StorageDomainType) data.get(3);
         storageType = (StorageType) data.get(4);
+        activateDomain = (Boolean) data.get(5);
 
         importFileStorageInit();
     }
@@ -2050,7 +2057,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     StorageModel model = (StorageModel) storageListModel.getWindow();
                     StoragePool dataCenter = model.getDataCenter().getSelectedItem();
                     if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                        storageListModel.attachStorageToDataCenter(sdToAdd1.getId(), dataCenter.getId());
+                        storageListModel.attachStorageToDataCenter(sdToAdd1.getId(), dataCenter.getId(), activateDomain);
                         onFinish(storageListModel.context, true, storageListModel.storageModel, null);
                     } else {
                         postImportFileStorage(storageListModel.context, true, storageListModel.storageModel, null);

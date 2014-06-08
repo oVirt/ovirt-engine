@@ -183,6 +183,16 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         privateHash = value;
     }
 
+    private EntityModel<Boolean> activateDomain;
+
+    public EntityModel<Boolean> getActivateDomain() {
+        return activateDomain;
+    }
+
+    public void setActivateDomain(EntityModel<Boolean> activateDomain) {
+        this.activateDomain = activateDomain;
+    }
+
     public StorageModel(StorageModelBehavior behavior)
     {
         this.behavior = behavior;
@@ -207,6 +217,8 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         setFormat(new ListModel<StorageFormatType>());
         setAvailableStorageItems(new ListModel<IStorageModel>());
         getAvailableStorageItems().getSelectedItemChangedEvent().addListener(this);
+        setActivateDomain(new EntityModel<Boolean>(true));
+        getActivateDomain().setIsAvailable(false);
 
         localFSPath = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
     }
@@ -218,6 +230,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
 
         setHash(getHashName() + new Date());
         behavior.setHash(getHash());
+        behavior.initialize();
 
         initDataCenter();
     }

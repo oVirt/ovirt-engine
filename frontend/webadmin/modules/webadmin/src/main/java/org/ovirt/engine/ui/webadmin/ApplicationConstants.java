@@ -302,6 +302,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Use Host")
     String storagePopupHostLabel();
 
+    @DefaultStringValue("Activate Domain in Data Center")
+    String activateDomainLabel();
+
     @DefaultStringValue("Export Path")
     String storagePopupNfsPathLabel();
 

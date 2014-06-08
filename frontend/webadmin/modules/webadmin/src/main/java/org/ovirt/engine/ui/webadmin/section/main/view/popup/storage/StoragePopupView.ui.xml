@@ -99,7 +99,10 @@
 					<e:ListModelListBoxEditor ui:field="storageTypeListEditor" addStyleNames="{style.storageTypeListEditor}"/>
 					<e:ListModelListBoxEditor ui:field="formatListEditor" addStyleNames="{style.formatListEditor}"/>
 				</g:HorizontalPanel>
-				<e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.hostListEditor}"/>
+                <g:HorizontalPanel>
+                    <e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.hostListEditor}"/>
+                    <ge:EntityModelCheckBoxEditor ui:field="activateDomainEditor" />
+                </g:HorizontalPanel>
 				<g:FlowPanel ui:field="specificStorageTypePanel" addStyleNames="{style.specificStorageTypePanel}"></g:FlowPanel>
 			</g:FlowPanel>
 		</d:content>

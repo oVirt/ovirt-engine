@@ -22,6 +22,13 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
     }
 
     @Override
+    public void initialize() {
+        super.initialize();
+        getModel().getActivateDomain().setEntity(false);
+        getModel().getActivateDomain().setIsAvailable(true);
+    }
+
+    @Override
     public void updateItemsAvailability()
     {
         super.updateItemsAvailability();
