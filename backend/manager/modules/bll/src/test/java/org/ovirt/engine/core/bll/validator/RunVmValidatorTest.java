@@ -7,6 +7,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,11 +43,17 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 @RunWith(MockitoJUnitRunner.class)
 public class RunVmValidatorTest {
 
+    private static final int _64_BIT_OS = 13;
+
+    public static final int MEMORY_LIMIT_32_BIT = 32000;
+    public static final int MEMORY_LIMIT_64_BIT = 640000;
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.VdsSelectionAlgorithm, "General", "0"),
             mockConfig(ConfigValues.PredefinedVMProperties, "3.0", "0"),
-            mockConfig(ConfigValues.UserDefinedVMProperties, "3.0", "0")
+            mockConfig(ConfigValues.UserDefinedVMProperties, "3.0", "0"),
+            mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, "3.3", MEMORY_LIMIT_32_BIT),
+            mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, "3.3", MEMORY_LIMIT_64_BIT)
             );
 
     @Spy
@@ -95,8 +103,8 @@ public class RunVmValidatorTest {
     @Test
     public void testVmFailNoDisks() {
         validateResult(runVmValidator.validateBootSequence(new VM(), null, new ArrayList<Disk>(), null),
-                false,
-                VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK);
+                       false,
+                       VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK);
     }
 
     @Test
@@ -221,6 +229,31 @@ public class RunVmValidatorTest {
                 true,
                 false,
                 VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA);
+    }
+
+    private void mockOsRepository() {
+        OsRepository osRepository = mock(OsRepository.class);
+        when(osRepository.get64bitOss()).thenReturn(new ArrayList<Integer>() {{ add(_64_BIT_OS); }});
+        when(runVmValidator.getOsRepository()).thenReturn(osRepository);
+    }
+
+    @Test
+    public void test32BitMemoryExceedsLimit() {
+        VM vm = new VM();
+        vm.setVdsGroupCompatibilityVersion(Version.v3_3);
+        vm.setVmMemSizeMb(MEMORY_LIMIT_32_BIT + 1);
+        mockOsRepository();
+        validateResult(runVmValidator.validateMemorySize(vm), false, VdcBllMessages.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
+    }
+
+    @Test
+    public void test64BitMemoryExceedsLimit() {
+        VM vm = new VM();
+        vm.setVdsGroupCompatibilityVersion(Version.v3_3);
+        vm.setVmMemSizeMb(MEMORY_LIMIT_64_BIT + 1);
+        vm.setVmOs(_64_BIT_OS);
+        mockOsRepository();
+        validateResult(runVmValidator.validateMemorySize(vm), false, VdcBllMessages.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
     }
 
     private void canRunVmAsStateless(boolean autoStartUp,

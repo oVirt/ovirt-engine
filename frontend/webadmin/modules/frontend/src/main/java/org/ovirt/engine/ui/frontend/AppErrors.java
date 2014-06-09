@@ -3249,4 +3249,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Operation not supported by QEMU.")
     String ACTION_TYPE_FAILED_QEMU_UNSUPPORTED_OPERATION();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Memory size exceeds supported limit for given cluster version.")
+    String ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT();
 }

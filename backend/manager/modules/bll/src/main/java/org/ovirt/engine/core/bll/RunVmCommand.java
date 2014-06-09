@@ -852,8 +852,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected RunVmValidator getRunVmValidator() {
-        return new RunVmValidator(getVm(), getParameters(),
-                isInternalExecution(), getActiveIsoDomainId());
+        return new RunVmValidator(getVm(), getParameters(), isInternalExecution(), getActiveIsoDomainId());
     }
 
     protected Guid getActiveIsoDomainId() {

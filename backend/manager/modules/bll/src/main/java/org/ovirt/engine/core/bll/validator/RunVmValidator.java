@@ -39,9 +39,11 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
@@ -61,6 +63,7 @@ public class RunVmValidator {
     private RunVmParams runVmParam;
     private boolean isInternalExecution;
     private Guid activeIsoDomainId;
+    private OsRepository osRepository;
 
     private List<Disk> cachedVmDisks;
     private List<DiskImage> cachedVmImageDisks;
@@ -68,12 +71,12 @@ public class RunVmValidator {
     private List<Network> cachedClusterNetworks;
     private Set<String> cachedClusterNetworksNames;
 
-    public RunVmValidator(VM vm, RunVmParams rumVmParam, boolean isInternalExecution,
-            Guid activeIsoDomainId) {
+    public RunVmValidator(VM vm, RunVmParams rumVmParam, boolean isInternalExecution, Guid activeIsoDomainId) {
         this.vm = vm;
         this.runVmParam = rumVmParam;
         this.isInternalExecution = isInternalExecution;
         this.activeIsoDomainId = activeIsoDomainId;
+        this.osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
     }
 
     /**
@@ -118,8 +121,21 @@ public class RunVmValidator {
                 validate(validateStatelessVm(vm, getVmDisks(), runVmParam.getRunAsStateless()), messages) &&
                 validate(validateStorageDomains(vm, isInternalExecution, getVmImageDisks()), messages) &&
                 validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
+                validate(validateMemorySize(vm), messages) &&
                 SchedulingManager.getInstance().canSchedule(
                         vdsGroup, vm, vdsBlackList, vdsWhiteList, destVds, messages);
+    }
+
+    protected ValidationResult validateMemorySize(VM vm) {
+        final ConfigValues configKey = getOsRepository().get64bitOss().contains(vm.getOs())
+                ? ConfigValues.VM64BitMaxMemorySizeInMB
+                : ConfigValues.VM32BitMaxMemorySizeInMB;
+        final int maxSize = Config.getValue(configKey, vm.getVdsGroupCompatibilityVersion().getValue());
+        if (vm.getMemSizeMb() > maxSize) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
+        }
+
+        return ValidationResult.VALID;
     }
 
     /**
@@ -550,5 +566,9 @@ public class RunVmValidator {
         }
 
         return cachedClusterNetworksNames;
+    }
+
+    public OsRepository getOsRepository() {
+        return osRepository;
     }
 }
