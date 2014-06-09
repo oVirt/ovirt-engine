@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.HasStoragePool;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -23,6 +24,13 @@ import org.ovirt.engine.core.compat.Match;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
+import org.ovirt.engine.core.searchbackend.SyntaxChecker;
+import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
+import org.ovirt.engine.core.searchbackend.SyntaxContainer;
+import org.ovirt.engine.core.searchbackend.SyntaxError;
+import org.ovirt.engine.core.searchbackend.SyntaxObject;
+import org.ovirt.engine.core.searchbackend.SyntaxObjectType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -56,6 +64,11 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
     private static final Logger logger = Logger.getLogger(SearchableListModel.class.getName());
     private static final String PAGE_STRING_REGEX = "[\\s]+page[\\s]+[1-9]+[0-9]*[\\s]*$"; //$NON-NLS-1$
     private static final String PAGE_NUMBER_REGEX = "[1-9]+[0-9]*$"; //$NON-NLS-1$
+
+    // Syntax checker singleton instance.
+    // Note: must be static since SyntaxCheckerFactory.createUISyntaxChecker method
+    // works with single syntax checker instance (uiSyntaxChecker) for the entire UI.
+    private static ISyntaxChecker syntaxChecker;
 
     private UICommand privateSearchCommand;
     private HandlerRegistration timerChangeHandler;
@@ -292,6 +305,15 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
         // should have paging will set it explicitly in their constructors.
         getSearchNextPageCommand().setIsAvailable(false);
         getSearchPreviousPageCommand().setIsAvailable(false);
+
+        if (syntaxChecker == null) {
+            syntaxChecker = SyntaxCheckerFactory.createUISyntaxChecker(
+                    (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.AuthenticationMethod));
+        }
+    }
+
+    protected ISyntaxChecker getSyntaxChecker() {
+        return syntaxChecker;
     }
 
     /**
@@ -719,20 +741,18 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
     protected void syncSearch() {
     }
 
-    // Field to sort by within the search query, or null for undefined sort order
     private String sortBy;
-
-    // Sort direction for server-side sorting, effective only when sortBy != null
     private boolean sortAscending;
 
     /**
      * Updates current server-side sort options, performing {@link #refresh} if necessary.
+     *
+     * @param sortBy
+     *            Field to sort by via the search query or {@code null} for undefined sort.
+     * @param sortAscending
+     *            Sort direction, effective only when {@code sortBy} is not {@code null}.
      */
     public void updateSortOptions(String sortBy, boolean sortAscending) {
-        if (!supportsServerSideSorting()) {
-            return;
-        }
-
         boolean shouldRefresh = !ObjectUtils.objectsEqual(this.sortBy, sortBy)
                 || this.sortAscending != sortAscending;
 
@@ -745,17 +765,28 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
     }
 
     /**
-     * Returns the given search query with current server-side sort options applied.
+     * Clears current server-side sort options.
      */
-    protected String applySortOptions(String searchQuery) {
-        StringBuilder result = new StringBuilder(searchQuery);
+    public void clearSortOptions() {
+        this.sortBy = null;
+        this.sortAscending = false;
+    }
+
+    /**
+     * Returns the given search string with current server-side sort options applied.
+     *
+     * @param searchString
+     *            Search string to update with current server-side sort options.
+     */
+    protected String applySortOptions(String searchString) {
+        String result = searchString;
 
         if (sortBy != null) {
-            result.append(" SORTBY ").append(sortBy) //$NON-NLS-1$
-                    .append(" ").append(sortAscending ? "ASC" : "DESC"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            result += " " + SyntaxChecker.SORTBY + " " + sortBy //$NON-NLS-1$ //$NON-NLS-2$
+                    + " " + (sortAscending ? SyntaxChecker.SORTDIR_ASC : SyntaxChecker.SORTDIR_DESC); //$NON-NLS-1$
         }
 
-        return result.toString();
+        return result;
     }
 
     /**
@@ -763,6 +794,34 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
      */
     public boolean supportsServerSideSorting() {
         return false;
+    }
+
+    /**
+     * Returns {@code true} if this model's {@linkplain #getSearchString search string}
+     * allows the use of server-side sorting.
+     * <p>
+     * This method returns {@code false} if:
+     * <ul>
+     * <li>search string contains syntax error(s)
+     * <li>search string contains {@code SORTBY} syntax object
+     * </ul>
+     * Otherwise, this method returns {@code true}.
+     */
+    public boolean isSearchValidForServerSideSorting() {
+        String search = getSearchString();
+        SyntaxContainer syntaxResult = getSyntaxChecker().analyzeSyntaxState(search, true);
+
+        if (syntaxResult.getError() != SyntaxError.NO_ERROR) {
+            return false;
+        }
+
+        for (SyntaxObject syntaxObject : syntaxResult) {
+            if (syntaxObject.getType() == SyntaxObjectType.SORTBY) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override

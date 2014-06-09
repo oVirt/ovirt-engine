@@ -9,12 +9,17 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
 import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
 import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -234,6 +239,30 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             table.enableColumnWidthPersistence(clientStorage, dataProvider.getModel());
         }
 
+        // When UiCommon models are (re)initialized, register search string change listener
+        eventBus.addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
+            @Override
+            public void onUiCommonInit(UiCommonInitEvent event) {
+                addModelSearchStringChangeListener(dataProvider.getModel());
+            }
+        });
+        addModelSearchStringChangeListener(dataProvider.getModel());
+    }
+
+    void addModelSearchStringChangeListener(final SearchableListModel<?> model) {
+        if (model.supportsServerSideSorting()) {
+            model.getPropertyChangedEvent().addListener(new IEventListener() {
+                @Override
+                public void eventRaised(org.ovirt.engine.ui.uicompat.Event ev, Object sender, EventArgs args) {
+                    if ("SearchString".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+                        if (!model.isSearchValidForServerSideSorting()) {
+                            model.clearSortOptions();
+                            clearColumnSort();
+                        }
+                    }
+                }
+            });
+        }
     }
 
     protected void updateTableControls() {
@@ -392,37 +421,52 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             @SuppressWarnings("unchecked")
             @Override
             public void onColumnSort(ColumnSortEvent event) {
-                Object model = getDataProvider().getModel();
+                SearchableListModel<?> model = getDataProvider().getModel();
                 Column<?, ?> column = event.getColumn();
 
-                if (model instanceof SearchableListModel) {
-                    SearchableListModel<T> searchableModel = (SearchableListModel<T>) model;
-                    SortableColumn<T, ?> sortedColumn = null;
-
-                    // Sorted column can be null (which indicates no sort)
-                    if (column instanceof SortableColumn) {
-                        sortedColumn = (SortableColumn<T, ?>) column;
-                    }
+                if (column instanceof SortableColumn) {
+                    SortableColumn<T, ?> sortedColumn = (SortableColumn<T, ?>) column;
+                    boolean sortApplied = false;
 
                     // Apply server-side sorting, if supported by the model
-                    if (searchableModel.supportsServerSideSorting()) {
-                        String sortBy = (sortedColumn != null) ? sortedColumn.getSortBy() : null;
-                        searchableModel.updateSortOptions(sortBy, event.isSortAscending());
+                    if (model.supportsServerSideSorting()) {
+                        if (model.isSearchValidForServerSideSorting()) {
+                            model.updateSortOptions(sortedColumn.getSortBy(), event.isSortAscending());
+                            sortApplied = true;
+                        } else {
+                            model.clearSortOptions();
+                        }
                     }
 
                     // Otherwise, fall back to client-side sorting
                     else {
-                        Comparator<? super T> comparator = (sortedColumn != null) ? sortedColumn.getComparator() : null;
-                        searchableModel.setComparator(comparator, event.isSortAscending());
+                        Comparator<? super T> comparator = sortedColumn.getComparator();
+                        if (comparator != null) {
+                           ((SearchableListModel<T>) model).setComparator(comparator, event.isSortAscending());
+                            sortApplied = true;
+                        }
                     }
 
-                    // Synchronize column sort info
+                    // Update column sort status, redrawing table headers if necessary
                     ColumnSortInfo columnSortInfo = event.getColumnSortList().get(0);
-                    tableHeader.getColumnSortList().push(columnSortInfo);
-                    table.getColumnSortList().push(columnSortInfo);
+                    if (sortApplied) {
+                        pushColumnSort(columnSortInfo);
+                    } else {
+                        clearColumnSort();
+                    }
                 }
             }
         });
+    }
+
+    void pushColumnSort(ColumnSortInfo columnSortInfo) {
+        tableHeader.getColumnSortList().push(columnSortInfo);
+        table.getColumnSortList().push(columnSortInfo);
+    }
+
+    void clearColumnSort() {
+        tableHeader.getColumnSortList().clear();
+        table.getColumnSortList().clear();
     }
 
     void enforceScrollPosition() {

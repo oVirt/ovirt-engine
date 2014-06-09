@@ -4,22 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
-import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
 import org.ovirt.engine.core.searchbackend.SyntaxObjectType;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
 public class SearchSuggestModel extends SearchableListModel
 {
-    private final ISyntaxChecker syntaxChecker;
-
     @Override
     public List getItems()
     {
@@ -73,10 +67,6 @@ public class SearchSuggestModel extends SearchableListModel
     public SearchSuggestModel()
     {
         setItems(new ObservableCollection<Object>());
-        syntaxChecker =
-                SyntaxCheckerFactory.createUISyntaxChecker((String)
-                        AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.AuthenticationMethod));
-
         setIsTimerDisabled(true);
     }
 
@@ -98,7 +88,7 @@ public class SearchSuggestModel extends SearchableListModel
     {
         getItems().clear();
 
-        SyntaxContainer syntax = syntaxChecker.getCompletion(search);
+        SyntaxContainer syntax = getSyntaxChecker().getCompletion(search);
 
         int lastHandledIndex = syntax.getLastHandledIndex();
         String pf = search.substring(0, lastHandledIndex);

@@ -21,7 +21,13 @@ import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class SyntaxChecker implements ISyntaxChecker {
+
     public static final String TAG_COLUMN_NAME_IN_CRITERIA = "tag_name";
+
+    public static final String SORTBY = "SORTBY";
+    public static final String SORTDIR_ASC = "ASC";
+    public static final String SORTDIR_DESC = "DESC";
+
     private SearchObjectAutoCompleter mSearchObjectAC;
     private BaseAutoCompleter mColonAC;
     private BaseAutoCompleter mPluralAC;
@@ -43,9 +49,9 @@ public class SyntaxChecker implements ISyntaxChecker {
         mSearchObjectAC = new SearchObjectAutoCompleter();
         mColonAC = new BaseAutoCompleter(":");
         mPluralAC = new BaseAutoCompleter("S");
-        mSortbyAC = new BaseAutoCompleter("SORTBY");
+        mSortbyAC = new BaseAutoCompleter(SORTBY);
         mPageAC = new BaseAutoCompleter("PAGE");
-        mSortDirectionAC = new BaseAutoCompleter("ASC", "DESC");
+        mSortDirectionAC = new BaseAutoCompleter(SORTDIR_ASC, SORTDIR_DESC);
         mAndAC = new BaseAutoCompleter("AND");
         mOrAC = new BaseAutoCompleter("OR");
         mDotAC = new BaseAutoCompleter(".");
