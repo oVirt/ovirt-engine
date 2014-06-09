@@ -1297,12 +1297,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Storage Domain doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST();
 
-    @DefaultStringValue("Cannot ${action} ${type}. There are VMs which contain disks related to other storage domains. The VMs are: ${vms}.")
-    String ACTION_TYPE_FAILED_STORAGE_CONTAINS_VMS_WITH_DISKS_ON_OTHER_DOMAINS();
-
-    @DefaultStringValue("Cannot ${action} ${type}. There are Templates which contain disks related to other storage domains. The Templates are: ${vmTemplates}.")
-    String ACTION_TYPE_FAILED_STORAGE_CONTAINS_TEMPLATES_WITH_DISKS_ON_OTHER_DOMAINS();
-
     @DefaultStringValue("Cannot ${action} ${type}. Cannot change Storage Domain type.")
     String ACTION_TYPE_FAILED_CANNOT_CHANGE_STORAGE_DOMAIN_TYPE();
 

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
@@ -173,11 +172,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     protected boolean canDetachStorageDomainWithVmsAndDisks(StorageDomain storageDomain) {
         if (!storageDomain.getStorageDomainType().isDataDomain()) {
             return true;
-        }
-        StorageDomainValidator storageValidator = new StorageDomainValidator(storageDomain);
-        if (!validate(storageValidator.hasVmsWithDisksOnOtherStorageDomains()) ||
-                !validate(storageValidator.hasTempaltesWithDisksOnOtherStorageDomains())) {
-            return false;
         }
 
         List<VM> vmRelatedToDomain = getVMsForStorageDomain(storageDomain.getId());
