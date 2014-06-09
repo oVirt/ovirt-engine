@@ -3015,7 +3015,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Invalid QoS name (name must be formed of \"a-z0-9A-Z\" or \"-_ \")")
     String QOS_NAME_INVALID();
 
-    @DefaultStringValue("QoS name length must be under 255 characters.")
+    @DefaultStringValue("QoS name length must be under 50 characters.")
     String QOS_NAME_TOO_LONG();
 
     @DefaultStringValue("Cannot ${action}. New disk size cannot be smaller than the current.")

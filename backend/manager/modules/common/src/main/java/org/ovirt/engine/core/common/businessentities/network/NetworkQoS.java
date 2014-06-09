@@ -19,7 +19,7 @@ public class NetworkQoS extends IVdcQueryable implements Serializable, BusinessE
     private static final long serialVersionUID = 1122772549710787758L;
 
     @NotNull(message = "QOS_NAME_NOT_NULL")
-    @Size(min = 1, max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE, message = "QOS_NAME_TOO_LONG")
+    @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_QOS_NAME_SIZE, message = "QOS_NAME_TOO_LONG")
     @ValidI18NName(message = "QOS_NAME_INVALID")
     private String name;
 
