@@ -173,13 +173,13 @@ public class AdElementListModel extends SearchableListModel
         setIsTimerDisabled(true);
 
 
-        AsyncDataProvider.getDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getAAAProfilesList(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object result) {
                 populateDomains((List<String>) result);
             }
-        }), false);
+        }));
 
 
         AsyncDataProvider.getRoleList(new AsyncQuery(this, new INewAsyncCallback() {

@@ -204,6 +204,7 @@ public enum VdcQueryType implements Serializable {
 
     // Public services
     GetDomainList(VdcQueryAuthType.User),
+    GetAAAProfileList(VdcQueryAuthType.User),
     RegisterVds(VdcQueryAuthType.User),
     CheckDBConnection(VdcQueryAuthType.User),
     ValidateSession(VdcQueryAuthType.User),

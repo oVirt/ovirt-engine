@@ -1060,7 +1060,7 @@ public class VmInitModel extends Model {
         // Can't use domain since onSuccess is async call and it have
         // a different stack call.
         currentDomain = domain;
-        AsyncDataProvider.getDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getAAAProfilesList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1074,7 +1074,6 @@ public class VmInitModel extends Model {
                             getSysprepDomain().setSelectedItem(currentDomain);
                         }
                     }
-                }),
-                true);
+                }));
     }
 }

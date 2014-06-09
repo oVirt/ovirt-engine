@@ -927,7 +927,7 @@ public abstract class RunOnceModel extends Model
 
     private void updateDomainList() {
         // Update Domain list
-        AsyncDataProvider.getDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getAAAProfilesList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -942,7 +942,7 @@ public abstract class RunOnceModel extends Model
                             getSysPrepDomainName().setSelectedItem(selectedDomain);
                         }
                     }
-                }), true);
+                }));
     }
 
     public void sysPrepListBoxChanged() {

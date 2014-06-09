@@ -608,7 +608,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @Override
     public VdcQueryReturnValue runPublicQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
         switch (actionType) {
-        case GetDomainList:
+        case GetAAAProfileList:
         case RegisterVds:
         case CheckDBConnection:
         case ValidateSession:

@@ -90,7 +90,6 @@ import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetConnectionsByDataCenterAndStorageTypeParameters;
 import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
-import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
@@ -441,7 +440,7 @@ public final class AsyncDataProvider {
         return diskInterfaces;
     }
 
-    public static void getDomainListViaPublic(AsyncQuery aQuery, boolean filterInternalDomain) {
+    public static void getAAAProfilesListViaPublic(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -450,9 +449,7 @@ public final class AsyncDataProvider {
                         : new ArrayList<String>();
             }
         };
-        GetDomainListParameters tempVar = new GetDomainListParameters();
-        tempVar.setFilterInternalDomain(filterInternalDomain);
-        Frontend.getInstance().runPublicQuery(VdcQueryType.GetDomainList, tempVar, aQuery);
+        Frontend.getInstance().runPublicQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
     }
 
     public static void getIsoDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId) {
@@ -1252,7 +1249,7 @@ public final class AsyncDataProvider {
         }
     }
 
-    public static void getDomainList(AsyncQuery aQuery, boolean filterInternalDomain) {
+    public static void getAAAProfilesList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1261,9 +1258,7 @@ public final class AsyncDataProvider {
                         : new ArrayList<String>();
             }
         };
-        GetDomainListParameters tempVar = new GetDomainListParameters();
-        tempVar.setFilterInternalDomain(filterInternalDomain);
-        Frontend.getInstance().runQuery(VdcQueryType.GetDomainList, tempVar, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
     }
 
     public static void getRoleList(AsyncQuery aQuery) {

@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
@@ -1380,7 +1380,7 @@ public class UnitVmModel extends Model {
         Frontend.getInstance().subscribe(new VdcQueryType[] { VdcQueryType.GetStorageDomainsByStoragePoolId,
                 VdcQueryType.GetImagesListByStoragePoolId,
                 VdcQueryType.GetDefaultTimeZone, VdcQueryType.GetStoragePoolsByClusterService,
-                VdcQueryType.GetDomainList, VdcQueryType.GetConfigurationValue,
+                VdcQueryType.GetAAAProfileList, VdcQueryType.GetConfigurationValue,
                 VdcQueryType.GetVdsGroupsByStoragePoolId, VdcQueryType.GetVmTemplatesByStoragePoolId,
                 VdcQueryType.GetVmTemplatesDisks, VdcQueryType.GetStorageDomainsByVmTemplateId,
                 VdcQueryType.GetStorageDomainById, VdcQueryType.GetDataCentersWithPermittedActionOnClusters,

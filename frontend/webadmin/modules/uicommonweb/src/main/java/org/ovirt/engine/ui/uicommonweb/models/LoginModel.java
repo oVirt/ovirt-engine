@@ -203,7 +203,7 @@ public class LoginModel extends Model
 
             }
         };
-        AsyncDataProvider.getDomainListViaPublic(_asyncQuery, false);
+        AsyncDataProvider.getAAAProfilesListViaPublic(_asyncQuery);
     }
 
     @Override
