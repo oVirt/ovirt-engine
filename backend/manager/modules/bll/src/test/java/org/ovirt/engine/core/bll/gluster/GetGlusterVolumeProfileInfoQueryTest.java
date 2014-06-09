@@ -111,7 +111,7 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     private List<BrickProfileDetails> getBrickProfileDetails() {
         BrickProfileDetails profileDetails = new BrickProfileDetails();
         profileDetails.setBrickId(Guid.newGuid());
-        profileDetails.setStatsInfo(getStatsInfo());
+        profileDetails.setProfileStats(getStatsInfo());
         return Collections.singletonList(profileDetails);
     }
 

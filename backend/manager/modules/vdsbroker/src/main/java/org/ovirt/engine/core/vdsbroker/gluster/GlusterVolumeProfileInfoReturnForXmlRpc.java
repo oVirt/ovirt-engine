@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.FopStats;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileInfo;
-import org.ovirt.engine.core.common.businessentities.gluster.NfsProfileDetails;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileStats;
 import org.ovirt.engine.core.common.businessentities.gluster.ProfileStatsType;
 import org.ovirt.engine.core.common.businessentities.gluster.StatsInfo;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -76,17 +76,17 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
         }
     }
 
-    private List<NfsProfileDetails> prepareNfsProfileDetails(Object[] nfsServerProfileDetails) {
-        List<NfsProfileDetails> nfsProfileDetails = new ArrayList<NfsProfileDetails>();
+    private List<GlusterVolumeProfileStats> prepareNfsProfileDetails(Object[] nfsServerProfileDetails) {
+        List<GlusterVolumeProfileStats> nfsProfileDetails = new ArrayList<GlusterVolumeProfileStats>();
         for(Object nfsObject : nfsServerProfileDetails) {
-            NfsProfileDetails nfsDetails = new NfsProfileDetails();
+            GlusterVolumeProfileStats nfsDetails = new GlusterVolumeProfileStats();
             Map<String, Object> nfsProfile = (Map<String, Object>) nfsObject;
-            nfsDetails.setNfsServerIp((String) nfsProfile.get(NFS));
+            nfsDetails.setIdentity((String) nfsProfile.get(NFS));
 
             List<StatsInfo> statsInfo = new ArrayList<StatsInfo>();
             statsInfo.add(getStatInfo((Map<String, Object>) nfsProfile.get(CUMULATIVE_STATS), CUMULATIVE_STATS));
             statsInfo.add(getStatInfo((Map<String, Object>) nfsProfile.get(INTERVAL_STATS), INTERVAL_STATS));
-            nfsDetails.setStatsInfo(statsInfo);
+            nfsDetails.setProfileStats(statsInfo);
             nfsProfileDetails.add(nfsDetails);
         }
         return nfsProfileDetails;
@@ -107,7 +107,7 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
             List<StatsInfo> statsInfo = new ArrayList<StatsInfo>();
             statsInfo.add(getStatInfo((Map<String, Object>) brickProfile.get(CUMULATIVE_STATS), CUMULATIVE_STATS));
             statsInfo.add(getStatInfo((Map<String, Object>) brickProfile.get(INTERVAL_STATS), INTERVAL_STATS));
-            brickProfileDetail.setStatsInfo(statsInfo);
+            brickProfileDetail.setProfileStats(statsInfo);
             brickProfileDetailsList.add(brickProfileDetail);
         }
         return brickProfileDetailsList;

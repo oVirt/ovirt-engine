@@ -15,7 +15,7 @@ public class GlusterVolumeProfileInfo implements Serializable {
     private static final long serialVersionUID = -768822766895441186L;
     private Guid volumeId;
     private List<BrickProfileDetails> brickProfileDetails;
-    private List<NfsProfileDetails> nfsProfileDetails;
+    private List<GlusterVolumeProfileStats> nfsProfileDetails;
 
     public GlusterVolumeProfileInfo() {
     }
@@ -36,11 +36,11 @@ public class GlusterVolumeProfileInfo implements Serializable {
         this.brickProfileDetails = brickProfileDetails;
     }
 
-    public List<NfsProfileDetails> getNfsProfileDetails() {
+    public List<GlusterVolumeProfileStats> getNfsProfileDetails() {
         return nfsProfileDetails;
     }
 
-    public void setNfsProfileDetails(List<NfsProfileDetails> nfsProfileDetails) {
+    public void setNfsProfileDetails(List<GlusterVolumeProfileStats> nfsProfileDetails) {
         this.nfsProfileDetails = nfsProfileDetails;
     }
 

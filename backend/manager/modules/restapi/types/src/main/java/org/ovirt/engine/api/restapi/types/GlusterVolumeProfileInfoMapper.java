@@ -54,8 +54,8 @@ public class GlusterVolumeProfileInfoMapper {
                 fromEntity.getBrickProfileDetails()) {
                 BrickProfileDetail brickprofileDetail = new BrickProfileDetail();
                 brickprofileDetail.setBrick(new GlusterBrick());
-                brickprofileDetail.getBrick().setBrickDir(brickDetailEntity.getBrickName());
-                mapProfileDetails(brickDetailEntity.getStatsInfo(), brickprofileDetail);
+                brickprofileDetail.getBrick().setBrickDir(brickDetailEntity.getName());
+                mapProfileDetails(brickDetailEntity.getProfileStats(), brickprofileDetail);
                 brickprofileDetails.getBrickProfileDetail().add(brickprofileDetail);
             }
         }
@@ -63,11 +63,11 @@ public class GlusterVolumeProfileInfoMapper {
 
         NfsProfileDetails nfsprofileDetails = new NfsProfileDetails();
         if (fromEntity.getNfsProfileDetails() != null) {
-            for (org.ovirt.engine.core.common.businessentities.gluster.NfsProfileDetails nfsDetailEntity:
+            for (org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileStats nfsDetailEntity:
                 fromEntity.getNfsProfileDetails()) {
                 NfsProfileDetail nfsprofileDetail = new NfsProfileDetail();
-                nfsprofileDetail.setNfsServerIp(nfsDetailEntity.getNfsServerIp());
-                mapProfileDetails(nfsDetailEntity.getStatsInfo(), nfsprofileDetail);
+                nfsprofileDetail.setNfsServerIp(nfsDetailEntity.getName());
+                mapProfileDetails(nfsDetailEntity.getProfileStats(), nfsprofileDetail);
                 nfsprofileDetails.getNfsProfileDetail().add(nfsprofileDetail);
             }
         }
