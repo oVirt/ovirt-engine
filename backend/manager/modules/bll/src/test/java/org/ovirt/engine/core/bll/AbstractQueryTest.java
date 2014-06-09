@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
 public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> {
 
@@ -23,7 +22,6 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
     /** Sets up a mock user a spy query with it, and the generic query parameters */
     @Before
     public void setUp() throws Exception {
-        ThreadLocalParamsContainer.setHttpSessionId("session");
         setUpMockQueryParameters();
         setUpSpyQuery();
     }

@@ -75,6 +75,11 @@ public class VdcActionParametersBase implements Serializable {
         imagesParameters = new ArrayList<VdcActionParametersBase>();
     }
 
+    public VdcActionParametersBase(String engineSessionId) {
+        this();
+        sessionid = engineSessionId;
+    }
+
     public Guid getCommandId() {
         return commandId;
     }

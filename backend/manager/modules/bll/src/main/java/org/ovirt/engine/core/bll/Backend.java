@@ -69,7 +69,6 @@ import org.ovirt.engine.core.searchbackend.OsValueAutoCompleter;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ErrorTranslatorImpl;
 import org.ovirt.engine.core.utils.OsRepositoryImpl;
-import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
@@ -463,7 +462,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     protected VdcQueryReturnValue runQueryImpl(VdcQueryType actionType, VdcQueryParametersBase parameters,
             boolean isPerformUserCheck) {
         if (isPerformUserCheck) {
-            String sessionId = addSessionToContext(parameters);
+            String sessionId = parameters.getSessionId();
             if (StringUtils.isEmpty(sessionId)
                     || SessionDataContainer.getInstance().getUser(sessionId, parameters.getRefresh()) == null) {
                 return getErrorQueryReturnValue(VdcBllMessages.USER_IS_NOT_LOGGED_IN);
@@ -483,25 +482,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         command.execute();
         return command.getQueryReturnValue();
 
-    }
-
-    private static String addSessionToContext(VdcQueryParametersBase parameters) {
-        String sessionId = parameters.getHttpSessionId();
-        boolean isAddToContext = true;
-        if (StringUtils.isEmpty(sessionId)) {
-            sessionId = parameters.getSessionId();
-        }
-        // This is a workaround for front end
-        // Where no session, try to get Id of session which was attached to
-        // request
-        if (StringUtils.isEmpty(sessionId)) {
-            sessionId = ThreadLocalParamsContainer.getHttpSessionId();
-            isAddToContext = false;
-        }
-        if (!StringUtils.isEmpty(sessionId) && isAddToContext) {
-            ThreadLocalParamsContainer.setHttpSessionId(sessionId);
-        }
-        return sessionId;
     }
 
     @Override
@@ -536,14 +516,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             boolean isRunOnlyIfAllCanDoPass,
             boolean isWaitForResult,
             ExecutionContext executionContext) {
-        String sessionId = ThreadLocalParamsContainer.getHttpSessionId();
-        if (!StringUtils.isEmpty(sessionId)) {
-            for (VdcActionParametersBase parameter : parameters) {
-                if (StringUtils.isEmpty(parameter.getSessionId())) {
-                    parameter.setSessionId(sessionId);
-                }
-            }
-        }
         MultipleActionsRunner runner = MultipleActionsRunnersFactory.createMultipleActionsRunner(actionType,
                 parameters, isInternal);
         runner.setExecutionContext(executionContext);
@@ -611,6 +583,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         case GetAAAProfileList:
         case RegisterVds:
         case CheckDBConnection:
+        case GetValueBySession:
         case ValidateSession:
             return runQueryImpl(actionType, parameters, false);
         case GetConfigurationValue:

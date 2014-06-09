@@ -14,7 +14,6 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
@@ -74,25 +73,19 @@ public class ThreadPoolUtil {
     private static class InternalWrapperRunnable implements Runnable {
 
         private Runnable job;
-        private DbUser user;
-        private String httpSessionId;
 
         /**
          * Identifies the correlation-id associated with the thread invoker
          */
         private String correlationId;
 
-        public InternalWrapperRunnable(Runnable job, DbUser vdcUser, String httpSessionId, String correlationId) {
+        public InternalWrapperRunnable(Runnable job, String correlationId) {
             this.job = job;
-            this.user = vdcUser;
-            this.httpSessionId = httpSessionId;
             this.correlationId = correlationId;
         }
 
         @Override
         public void run() {
-            ThreadLocalParamsContainer.setUser(user);
-            ThreadLocalParamsContainer.setHttpSessionId(httpSessionId);
             ThreadLocalParamsContainer.setCorrelationId(correlationId);
             job.run();
         }
@@ -102,8 +95,6 @@ public class ThreadPoolUtil {
     private static class InternalCallable<V> implements Callable<V> {
 
         private Callable<V> job;
-        private DbUser user;
-        private String httpSessionId;
 
         /**
          * Identifies the correlation-id associated with the thread invoker
@@ -112,15 +103,11 @@ public class ThreadPoolUtil {
 
         public InternalCallable(Callable<V> job) {
             this.job = job;
-            this.user = ThreadLocalParamsContainer.getUser();
-            this.httpSessionId = ThreadLocalParamsContainer.getHttpSessionId();
             this.correlationId = ThreadLocalParamsContainer.getCorrelationId();
         }
 
         @Override
         public V call() throws Exception {
-            ThreadLocalParamsContainer.setUser(user);
-            ThreadLocalParamsContainer.setHttpSessionId(httpSessionId);
             ThreadLocalParamsContainer.setCorrelationId(correlationId);
             return job.call();
         }
@@ -165,8 +152,6 @@ public class ThreadPoolUtil {
     public static void execute(Runnable command) {
         try {
             es.submit(new InternalWrapperRunnable(command,
-                    ThreadLocalParamsContainer.getUser(),
-                    ThreadLocalParamsContainer.getHttpSessionId(),
                     ThreadLocalParamsContainer.getCorrelationId()));
         } catch (RejectedExecutionException e) {
             log.warn("The thread pool is out of limit. A submitted task was rejected");

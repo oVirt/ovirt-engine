@@ -161,6 +161,7 @@ public enum VdcActionType {
     // UserAndGroupsCommands
     LoginUser(406, ActionGroup.LOGIN, false, QuotaDependency.NONE),
     LogoutUser(408, false, QuotaDependency.NONE),
+    LogoutBySession(410, false, QuotaDependency.NONE),
     RemoveUser(409, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     RemoveGroup(415, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     ChangeUserPassword(416, QuotaDependency.NONE),
@@ -357,7 +358,9 @@ public enum VdcActionType {
 
     // Audit Log
     RemoveAuditLogById(2100, false, QuotaDependency.NONE),
-    ClearAllDismissedAuditLogs(2101, false, QuotaDependency.NONE);
+    ClearAllDismissedAuditLogs(2101, false, QuotaDependency.NONE),
+
+    SetDataOnSession(3000, false, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;

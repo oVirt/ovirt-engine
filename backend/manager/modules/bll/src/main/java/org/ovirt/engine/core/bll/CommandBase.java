@@ -165,7 +165,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected CommandBase(T parameters) {
         _parameters = parameters;
         // get the user from the session if the user is logged in
-        DbUser user = SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId(), true);
+        DbUser user = SessionDataContainer.getInstance().getUser(parameters.getSessionId(), true);
         if (user != null) {
             setCurrentUser(user);
         } else
@@ -1378,6 +1378,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             _returnValue = createReturnValue();
         }
         return _returnValue;
+    }
+
+    public void setReturnValue(VdcReturnValueBase returnValue) {
+        _returnValue = returnValue;
     }
 
     protected VdcActionType getActionType() {

@@ -91,16 +91,13 @@ public class CommandBaseTest {
     @After
     public void clearEnvironment() {
         ThreadLocalParamsContainer.clean();
-        SessionDataContainer.getInstance().removeSession();
         SessionDataContainer.getInstance().removeSession(session);
-        ThreadLocalParamsContainer.setHttpSessionId(session);
     }
 
     /** Testing the constructor, which adds the user id to the thread local container */
     @Test
     public void testConstructor() {
         session = RandomStringUtils.random(10);
-        ThreadLocalParamsContainer.setHttpSessionId(session);
 
         DbUser user = mock(DbUser.class);
         when(user.getId()).thenReturn(Guid.EVERYONE);
@@ -115,7 +112,6 @@ public class CommandBaseTest {
 
         // Check the session
         assertEquals("wrong user id on command", user.getId(), command.getUserId());
-        assertEquals("wrong user id on threadlocal", user, ThreadLocalParamsContainer.getUser());
     }
 
     /**

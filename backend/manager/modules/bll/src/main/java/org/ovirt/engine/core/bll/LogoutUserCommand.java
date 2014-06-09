@@ -30,7 +30,7 @@ public class LogoutUserCommand<T extends LogoutUserParameters> extends CommandBa
 
     @Override
     protected void executeCommand() {
-        ExtensionProxy authn = SessionDataContainer.getInstance().getAuthn();
+        ExtensionProxy authn = SessionDataContainer.getInstance().getAuthn(getParameters().getSessionId());
 
         if (authn != null) {
             if ((authn.getContext().<Long> get(Authn.ContextKeys.CAPABILITIES) & Authn.Capabilities.LOGOUT) != 0) {
@@ -39,15 +39,10 @@ public class LogoutUserCommand<T extends LogoutUserParameters> extends CommandBa
                         Authn.InvokeCommands.LOGOUT
                         ).mput(
                                 Authn.InvokeKeys.PRINCIPAL,
-                                SessionDataContainer.getInstance().getPrincipal()
+                                SessionDataContainer.getInstance().getPrincipal(getParameters().getSessionId())
                         ));
             }
-
-            if (!"".equals(getParameters().getSessionId())) {
-                SessionDataContainer.getInstance().removeSession(getParameters().getSessionId());
-            } else {
-                SessionDataContainer.getInstance().removeSession();
-            }
+            SessionDataContainer.getInstance().removeSession(getParameters().getSessionId());
         }
         setSucceeded(true);
     }

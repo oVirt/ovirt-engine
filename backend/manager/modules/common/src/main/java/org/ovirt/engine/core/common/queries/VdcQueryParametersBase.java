@@ -29,6 +29,12 @@ public class VdcQueryParametersBase implements Serializable {
         refresh = true;
     }
 
+    public VdcQueryParametersBase(String sessionId) {
+        this();
+        this.sessionId = sessionId;
+
+    }
+
     public String getSessionId() {
         return sessionId;
     }

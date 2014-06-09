@@ -1,13 +1,7 @@
 <FindBugsFilter>
-       <!--
-        findbugs complain that we are exposing a field that is supposed to be
-	immutable. 
-	This configuration is read only, and rather than performing an 
-	arrays copy, we prefer to ignore this warning
-       -->
      <Match>
-       <Class name="org.ovirt.engine.core.aaa.kerberos.KerberosJaasConfiguration" />
-       <Method name="getAppConfigurationEntry"/>
-       <Bug code="RV"/>
+       <Class name="org.ovirt.engine.core.aaa.filters.FiltersHelper"/>
+       <Method name="isAuthenticated"/>
+       <Bug code="Bx"/>
      </Match>
 </FindBugsFilter>

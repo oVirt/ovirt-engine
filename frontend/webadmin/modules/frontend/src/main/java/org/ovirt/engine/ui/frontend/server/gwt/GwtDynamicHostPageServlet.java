@@ -20,6 +20,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.ovirt.engine.core.branding.BrandingFilter;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -110,7 +111,8 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         request.setAttribute(MD5Attributes.ATTR_BASE_CONTEXT_PATH.getKey(),
                 getValueObject(ServletUtils.getBaseContextPath(request)));
         // Set attribute for userInfo object
-        DbUser loggedInUser = getLoggedInUser(request.getSession().getId());
+        DbUser loggedInUser =
+                getLoggedInUser(getEngineSessionId(request));
         if (loggedInUser != null) {
             request.setAttribute(MD5Attributes.ATTR_USER_INFO.getKey(), getUserInfoObject(loggedInUser));
             request.setAttribute(MD5Attributes.ATTR_SSO_TOKEN.getKey(), getValueObject(request.getSession().getId()));
@@ -134,6 +136,11 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         } catch (NoSuchAlgorithmException ex) {
             throw new ServletException(ex);
         }
+    }
+
+    protected String getEngineSessionId(final HttpServletRequest request) {
+        return (String) request.getSession()
+                .getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
     }
 
     /**

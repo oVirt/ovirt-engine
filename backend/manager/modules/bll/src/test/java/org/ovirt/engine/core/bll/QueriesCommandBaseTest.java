@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jgroups.util.UUID;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -88,8 +89,7 @@ public class QueriesCommandBaseTest {
                         DbUser user = mock(DbUser.class);
                         when(user.getId()).thenReturn(guid);
                         when(user.isAdmin()).thenReturn(isUserAdmin);
-                        ThreadLocalParamsContainer.setHttpSessionId(sessionId);
-                        ThreadLocalParamsContainer.setUser(user);
+                        SessionDataContainer.getInstance().setUser(sessionId, user);
 
                         // Mock-Set the query as admin/user
                         ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(params);
@@ -103,8 +103,7 @@ public class QueriesCommandBaseTest {
                                 shouldBeAbleToRunQuery,
                                 query.getQueryReturnValue().getSucceeded());
 
-                        ThreadLocalParamsContainer.clean();
-                        SessionDataContainer.getInstance().removeSession();
+                        SessionDataContainer.getInstance().removeSession(sessionId);
                     }
                 }
             }
@@ -115,9 +114,12 @@ public class QueriesCommandBaseTest {
     public void testGetUserID() {
         DbUser user = mock(DbUser.class);
         when(user.getId()).thenReturn(Guid.EVERYONE);
+        String session = UUID.randomUUID().toString();
+        SessionDataContainer.getInstance().setUser(session, user);
+        VdcQueryParametersBase params = new VdcQueryParametersBase(session);
+        params.setRefresh(false);
+        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(params);
 
-        ThreadLocalParamsContainer.setUser(user);
-        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(new VdcQueryParametersBase());
 
         assertEquals("wrong guid", Guid.EVERYONE, query.getUserID());
     }
@@ -135,8 +137,6 @@ public class QueriesCommandBaseTest {
     @After
     public void clearSession() {
         ThreadLocalParamsContainer.clean();
-        ThreadLocalParamsContainer.setHttpSessionId("session");
-        SessionDataContainer.getInstance().removeSession();
     }
 
     /** A stub class that will cause the {@link VdcQueryType#Unknown} to be used */

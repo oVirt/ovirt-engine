@@ -1,32 +1,13 @@
 package org.ovirt.engine.core.utils;
 
-import org.ovirt.engine.core.common.businessentities.DbUser;
+
 
 public class ThreadLocalParamsContainer {
-
-    private static ThreadLocal<String> httpSessionId = new ThreadLocal<>();
-    private static ThreadLocal<DbUser> userKeeper = new ThreadLocal<>();
 
     /**
      * Identifies the correlation-id associated with the current thread
      */
-    private static ThreadLocal<String> correlationId = new ThreadLocal<String>();
-
-    public static void setHttpSessionId(String sessionId) {
-        httpSessionId.set(sessionId);
-    }
-
-    public static String getHttpSessionId() {
-        return httpSessionId.get();
-    }
-
-    public static void setUser(DbUser user) {
-        userKeeper.set(user);
-    }
-
-    public static DbUser getUser() {
-        return userKeeper.get();
-    }
+    private static final ThreadLocal<String> correlationId = new ThreadLocal<String>();
 
     /**
      * Set the value of the correlation-ID of the current thread and the value to be printed in the logger and past to
@@ -44,8 +25,6 @@ public class ThreadLocalParamsContainer {
     }
 
     public static void clean() {
-        httpSessionId.remove();
-        userKeeper.remove();
         correlationId.remove();
     }
 

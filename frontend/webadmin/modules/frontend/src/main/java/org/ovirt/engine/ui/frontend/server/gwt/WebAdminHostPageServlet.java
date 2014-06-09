@@ -48,7 +48,7 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
         ServletException {
         // Set attribute for applicationMode object
-        Integer applicationMode = getApplicationMode(request.getSession().getId());
+        Integer applicationMode = getApplicationMode(getEngineSessionId(request));
         request.setAttribute(ATTR_APPLICATION_MODE, getApplicationModeObject(applicationMode));
 
         // Set attribute for pluginDefinitions array
@@ -56,7 +56,7 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
         request.setAttribute(ATTR_PLUGIN_DEFS, getPluginDefinitionsArray(pluginData));
 
         // Set attribute for engineSessionTimeout object
-        Integer engineSessionTimeout = getEngineSessionTimeout(request.getSession().getId());
+        Integer engineSessionTimeout = getEngineSessionTimeout(getEngineSessionId(request));
         request.setAttribute(ATTR_ENGINE_SESSION_TIMEOUT, getEngineSessionTimeoutObject(engineSessionTimeout));
 
         super.doGet(request, response);

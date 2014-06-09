@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -71,6 +72,10 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     private ExtMap authRecord;
 
+    private String engineSessionId;
+
+    private String principal;
+
     public LoginBaseCommand(T parameters) {
         super(parameters);
     }
@@ -92,14 +97,12 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     @Override
     protected void executeCommand() {
-        // add user session
         setActionReturnValue(getCurrentUser());
-
         getReturnValue().setLoginResult(LoginResult.Autheticated);
+        getReturnValue().setSessionId(engineSessionId);
         // Permissions for this user might been changed since last login so
         // update his isAdmin flag accordingly
         updateUserData();
-
         setSucceeded(true);
     }
    @Override
@@ -112,113 +115,101 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     }
 
     protected boolean attachUserToSession() {
-        if (!StringUtils.isEmpty(getParameters().getSessionId())) {
-            SessionDataContainer.getInstance().setUser(getParameters().getSessionId(), getCurrentUser());
-        } else {
-            if (!SessionDataContainer.getInstance().setUser(getCurrentUser())) {
-                return failCanDoAction(VdcBllMessages.USER_CANNOT_LOGIN_SESSION_MISSING);
-            }
-
-            SessionDataContainer.getInstance().refresh();
-
-            int userSessionHardLimit = Config.<Integer> getValue(ConfigValues.UserSessionHardLimit);
-            Date validTo = userSessionHardLimit != 0 ? DateUtils.addMinutes(new Date(), userSessionHardLimit) : null;
-            if (authRecord.<String> get(AuthRecord.VALID_TO) != null) {
-                try {
-                    Date fromExtension =
-                            new SimpleDateFormat("yyyyMMddHHmmssZ").parse(authRecord.<String> get(AuthRecord.VALID_TO));
-                    if (validTo != null) {
-                        validTo = validTo.compareTo(fromExtension) < 0 ? validTo : fromExtension;
-                    } else {
-                        validTo = fromExtension;
-                    }
-                } catch (ParseException e) {
-                    log.warn("Error parsing AuthRecord.VALID_TO . Default VALID_TO value will be set on session");
-                    log.debug("Exception is ", e);
-                }
-            }
-            SessionDataContainer.getInstance().setHardLimit(validTo);
+        engineSessionId = UUID.randomUUID().toString();
+        SessionDataContainer.getInstance().setUser(engineSessionId, getCurrentUser());
+        SessionDataContainer.getInstance().refresh(engineSessionId);
+        SessionDataContainer.getInstance().setAuthn(engineSessionId, authnExtension);
+        if (principal != null) {
+            SessionDataContainer.getInstance().setPrincipal(engineSessionId, principal);
         }
+        // Add the user password to the session, as it will be needed later
+        // when trying to log on to virtual machines:
+        if (getParameters().getPassword() != null) {
+            SessionDataContainer.getInstance().setPassword(engineSessionId, getParameters().getPassword());
+        }
+
+        int userSessionHardLimit = Config.<Integer> getValue(ConfigValues.UserSessionHardLimit);
+        Date validTo = userSessionHardLimit != 0 ? DateUtils.addMinutes(new Date(), userSessionHardLimit) : null;
+        if (authRecord.<String> get(AuthRecord.VALID_TO) != null) {
+            try {
+                Date fromExtension =
+                        new SimpleDateFormat("yyyyMMddHHmmssZ").parse(authRecord.<String> get(AuthRecord.VALID_TO));
+                if (validTo != null) {
+                    validTo = validTo.compareTo(fromExtension) < 0 ? validTo : fromExtension;
+                } else {
+                    validTo = fromExtension;
+                }
+            } catch (ParseException e) {
+                log.warn("Error parsing AuthRecord.VALID_TO . Default VALID_TO value will be set on session");
+                log.debug("Exception is ", e);
+            }
+        }
+        SessionDataContainer.getInstance().setHardLimit(engineSessionId, validTo);
         return true;
     }
 
     protected boolean isUserCanBeAuthenticated() {
-        // Check if the user is already logged in:
-        DbUser dbUser = SessionDataContainer.getInstance().getUser(false);
-        if (dbUser != null) {
-            addCanDoActionMessage(VdcBllMessages.USER_IS_ALREADY_LOGGED_IN);
-            return false;
-        }
-
-        // Verify that the login name and password have been provided:
-        String loginName = getParameters().getLoginName();
-        if (loginName == null) {
-            log.errorFormat(
-                "Can't login user because no login name has been provided."
-            );
-            addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
-            return false;
-        }
-        String password = getParameters().getPassword();
-        if (password == null) {
-            log.errorFormat(
-                "Can't login user \"{0}\" because no password has been provided.",
-                loginName
-            );
-            return false;
-        }
-
-        // Check that the authentication profile name has been provided:
-        String profileName = getParameters().getProfileName();
-        if (profileName == null) {
-            log.errorFormat(
-                "Can't login user \"{0}\" because no authentication profile name has been provided.",
-                loginName
-            );
-            addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
-            return false;
-        }
-
-        // Check that the authentication profile exists:
-        profile = AuthenticationProfileRepository.getInstance().getProfile(profileName);
+        profile = AuthenticationProfileRepository.getInstance().getProfile(getParameters().getProfileName());
         if (profile == null) {
             log.errorFormat(
-                "Can't login user \"{0}\" because authentication profile \"{1}\" doesn't exist.",
-                loginName, profileName
-            );
+                    "Can't login because authentication profile \"{1}\" doesn't exist.",
+                    profile
+                    );
             addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
             return false;
         }
 
         // Check that the authenticator provided by the profile supports password authentication:
         authnExtension = profile.getAuthn();
-        SessionDataContainer.getInstance().setAuthn(authnExtension);
-        if (!isPasswordAuth()) {
-            log.errorFormat(
-                "Can't login user \"{0}\" because the authentication profile \"{1}\" doesn't support password " +
-                "authentication.",
-                loginName, profileName
-            );
-            addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
-            return false;
-        }
-        DbUser curUser = null;
-        String curPassword = null;
-        SessionDataContainer sessionDataContainer = SessionDataContainer.getInstance();
-        if (StringUtils.isEmpty(getParameters().getSessionId())) {
-            curUser = sessionDataContainer.getUser(false);
-            curPassword = sessionDataContainer.getPassword();
-        } else {
-            curUser = sessionDataContainer.getUser(getParameters().getSessionId(), false);
-            curPassword = sessionDataContainer.getPassword(getParameters().getSessionId());
-        }
-        // verify that in auto login mode , user is not taken from session.
-        if (curUser != null && !StringUtils.isEmpty(curPassword)) {
-            loginName = curUser.getLoginName();
-            password = curPassword;
+        authRecord = (ExtMap) getParameters().getAuthRecord();
+        if (authRecord == null) {
+
+            // Verify that the login name and password have been provided:
+            String loginName = getParameters().getLoginName();
+            if (loginName == null) {
+                log.errorFormat(
+                        "Can't login user because no login name has been provided."
+                        );
+                addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
+                return false;
+            }
+            String password = getParameters().getPassword();
+            if (password == null) {
+                log.errorFormat(
+                        "Can't login user \"{0}\" because no password has been provided.",
+                        loginName
+                        );
+                return false;
+            }
+
+            if (!isPasswordAuth()) {
+                log.errorFormat(
+                        "Can't login user \"{0}\" because the authentication profile \"{1}\" doesn't support password "
+                                +
+                                "authentication.",
+                        loginName, profile.getName()
+                        );
+                addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
+                return false;
+            }
+            DbUser curUser = null;
+            String curPassword = null;
+            SessionDataContainer sessionDataContainer = SessionDataContainer.getInstance();
+            if (StringUtils.isEmpty(getParameters().getSessionId())) {
+                curUser = sessionDataContainer.getUser(engineSessionId, false);
+                curPassword = sessionDataContainer.getPassword(engineSessionId);
+            } else {
+                curUser = sessionDataContainer.getUser(getParameters().getSessionId(), false);
+                curPassword = sessionDataContainer.getPassword(getParameters().getSessionId());
+            }
+            // verify that in auto login mode , user is not taken from session.
+            if (curUser != null && !StringUtils.isEmpty(curPassword)) {
+                loginName = curUser.getLoginName();
+                password = curPassword;
+            }
+            authRecord = authenticate(loginName, password);
         }
         // Perform the actual authentication:
-        authRecord = authenticate(loginName, password);
         if (authRecord != null) {
             DirectoryUser directoryUser =
                     AuthzUtils.fetchPrincipalRecord(profile.getAuthz(), authRecord);
@@ -228,7 +219,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                                 +
                                 "directory.",
                         authRecord.<String> get(Authn.AuthRecord.PRINCIPAL),
-                        profileName
+                        profile.getName()
                         );
                 addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
                 return false;
@@ -236,7 +227,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
 
             // Check that the user exists in the database, if it doesn't exist then we need to add it now:
-            dbUser =
+            DbUser dbUser =
                     getDbUserDAO().getByExternalId(
                             AuthzUtils.getName(profile.getAuthz()),
                             directoryUser.getId());
@@ -268,10 +259,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             log.debugFormat("Checking if user {0} is an admin, result {1}", dbUser.getLoginName(), isAdmin);
             dbUser.setAdmin(isAdmin);
             setCurrentUser(dbUser);
-
-            // Add the user password to the session, as it will be needed later
-            // when trying to log on to virtual machines:
-            SessionDataContainer.getInstance().setPassword(password);
             return true;
         }
         return false;
@@ -344,10 +331,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                         password
                 ));
 
-        String principal = outputMap.<String> get(Authn.InvokeKeys.PRINCIPAL);
-        if (principal != null) {
-            SessionDataContainer.getInstance().setPrincipal(principal);
-        }
+        principal = outputMap.<String> get(Authn.InvokeKeys.PRINCIPAL);
         int authResult = outputMap.<Integer>get(Authn.InvokeKeys.RESULT);
         if (authResult != Authn.AuthResult.SUCCESS) {
             log.infoFormat(

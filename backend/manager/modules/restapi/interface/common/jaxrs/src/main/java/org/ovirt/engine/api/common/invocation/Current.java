@@ -29,7 +29,7 @@ import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
 @ServerInterceptor
 public class Current implements PostProcessInterceptor {
 
-    private static ThreadLocal<Map<Class<?>, Object>> currents = new ThreadLocal<Map<Class<?>, Object>>();
+    private static final ThreadLocal<Map<Class<?>, Object>> currents = new ThreadLocal<Map<Class<?>, Object>>();
 
     @Override
     public void postProcess(ServerResponse response) {

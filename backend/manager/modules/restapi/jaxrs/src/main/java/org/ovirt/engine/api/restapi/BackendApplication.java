@@ -26,8 +26,6 @@ import javax.ws.rs.core.Application;
 
 import org.apache.log4j.Logger;
 import org.ovirt.engine.api.common.invocation.Current;
-import org.ovirt.engine.api.common.security.auth.BasicAuthorizationScheme;
-import org.ovirt.engine.api.common.security.auth.Challenger;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.logging.RequestPayloadLogger;
@@ -65,7 +63,7 @@ import org.ovirt.engine.api.restapi.resource.validation.JsonExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.MalformedIdExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.resource.validation.XmlMessageBodyReader;
-import org.ovirt.engine.api.restapi.security.auth.LoginValidator;
+import org.ovirt.engine.api.restapi.security.auth.SessionProcessor;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
@@ -146,20 +144,11 @@ public class BackendApplication extends Application {
         addResource(new BackendSystemPermissionsResource());
         addResource(VmHelper.getInstance());
 
-        // Authentication singletons:
-        final BasicAuthorizationScheme scheme = new BasicAuthorizationScheme();
-        final LoginValidator validator = new LoginValidator();
-        validator.setBackend(backend);
-        validator.setCurrent(current);
-        validator.setSessionHelper(sessionHelper);
-        singletons.add(validator);
-
-        final Challenger challenger = new Challenger();
-        challenger.setRealm("ENGINE");
-        challenger.setScheme(scheme);
-        challenger.setValidator(validator);
-        challenger.setCurrent(current);
-        singletons.add(challenger);
+        final SessionProcessor processor = new SessionProcessor();
+        processor.setBackend(backend);
+        processor.setCurrent(current);
+        processor.setSessionHelper(sessionHelper);
+        singletons.add(processor);
 
         // Logging infrastructure:
         singletons.add(new RequestVerbLogger());

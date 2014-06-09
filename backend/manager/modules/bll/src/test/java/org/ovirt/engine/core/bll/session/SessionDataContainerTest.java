@@ -1,10 +1,8 @@
 package org.ovirt.engine.core.bll.session;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
@@ -18,7 +16,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
 /**
  * A test case for the {@link SessionDataContainer} class.
@@ -44,37 +41,17 @@ public class SessionDataContainerTest {
 
     @After
     public void clearSession() {
-        container.removeSession();
         container.removeSession(TEST_SESSION_ID);
-        ThreadLocalParamsContainer.setHttpSessionId(null);
     }
 
     @Test
     public void testGetDataAndSetDataWithEmptySession() {
-        ThreadLocalParamsContainer.setHttpSessionId("");
-        assertFalse("Set should fail with an empty session",
-                container.setData(TEST_KEY, TEST_VALUE));
-        assertNull("Get should return null with an empty session", container.getData(TEST_KEY, false));
+        assertNull("Get should return null with an empty session", container.getData("", TEST_KEY, false));
     }
 
     @Test
     public void testGetDataAndSetDataWithFullSession() {
-        ThreadLocalParamsContainer.setHttpSessionId(TEST_SESSION_ID);
-        assertTrue("Set should fail with an empty session",
-                container.setData(TEST_KEY, TEST_VALUE));
-        assertEquals("Get should return null with an empty session",
-                TEST_VALUE,
-                container.getData(TEST_KEY, false));
-        assertEquals("Get should return the value with a given session",
-                TEST_VALUE,
-                container.getData(TEST_SESSION_ID, TEST_KEY, false));
-    }
-
-    @Test
-    public void testGetDataAndSetDataWithSessionParam() {
-        ThreadLocalParamsContainer.setHttpSessionId("");
         container.setData(TEST_SESSION_ID, TEST_KEY, TEST_VALUE);
-        assertNull("Get should return null with an empty session", container.getData(TEST_KEY, false));
         assertEquals("Get should return the value with a given session",
                 TEST_VALUE,
                 container.getData(TEST_SESSION_ID, TEST_KEY, false));
@@ -89,16 +66,6 @@ public class SessionDataContainerTest {
                 container.getUser(TEST_SESSION_ID, false));
     }
 
-    @Test
-    public void testGetUserAndSetUserWithoutSessionParam() {
-        ThreadLocalParamsContainer.setHttpSessionId(TEST_SESSION_ID);
-        DbUser user = mock(DbUser.class);
-        container.setUser(user);
-        assertEquals("Get should return the value with a given session",
-                user,
-                container.getUser(false));
-    }
-
     /* Tests for session management */
 
     @Test
@@ -109,25 +76,6 @@ public class SessionDataContainerTest {
         assertNull("Get should return null since the session was removed",
                 container.getData(TEST_SESSION_ID, TEST_KEY, false));
     }
-
-    @Test
-    public void testRemoveWithoutParam() {
-        // Set some data on the test sessions
-        container.setData(TEST_SESSION_ID, TEST_KEY, TEST_VALUE);
-
-        // Remove unset session and see it has no effect on the test session
-        container.removeSession();
-        assertEquals("Get should return the value since the session was not removed",
-                TEST_VALUE,
-                container.getData(TEST_SESSION_ID, TEST_KEY, false));
-
-        // Remove the test session and see it has effect
-        ThreadLocalParamsContainer.setHttpSessionId(TEST_SESSION_ID);
-        container.removeSession();
-        assertNull("Get should return the value since the session was removed",
-                container.getData(TEST_SESSION_ID, TEST_KEY, false));
-    }
-
     /* Tests for clearedExpiredSessions */
 
     @Test

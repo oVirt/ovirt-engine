@@ -12,8 +12,10 @@ import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -50,7 +52,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
             VdcQueryParametersBase searchParameters) {
         log.debug("Server: RunQuery invoked!"); //$NON-NLS-1$
         debugQuery(search, searchParameters);
-        searchParameters.setSessionId(getSession().getId());
+        searchParameters.setSessionId(getEngineSessionId());
         return getBackend().runQuery(search, searchParameters);
     }
 
@@ -107,7 +109,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         log.debug("Server: RunMultipleAction invoked! [amount of actions: " + multipleParams.size() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
         for (VdcActionParametersBase params : multipleParams) {
-            params.setSessionId(getSession().getId());
+            params.setSessionId(getEngineSessionId());
         }
 
         ArrayList<VdcReturnValueBase> returnValues =
@@ -121,7 +123,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
             VdcActionParametersBase params) {
         log.debug("Server: RunAction invoked!"); //$NON-NLS-1$
         debugAction(actionType, params);
-        params.setSessionId(getSession().getId());
+        params.setSessionId(getEngineSessionId());
 
         if (noBackend) {
             VdcReturnValueBase rValue = new VdcReturnValueBase();
@@ -132,11 +134,15 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         return getBackend().runAction(actionType, params);
     }
 
+    private String getEngineSessionId() {
+        return (String) getSession().getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
+    }
+
     @Override
     public DbUser getLoggedInUser() {
         VdcQueryParametersBase queryParams = new VdcQueryParametersBase();
-        queryParams.setSessionId(getSession().getId());
-        queryParams.setHttpSessionId(getSession().getId());
+        queryParams.setSessionId(getEngineSessionId());
+        queryParams.setHttpSessionId(getEngineSessionId());
 
         VdcQueryReturnValue vqrv = runQuery(VdcQueryType.GetUserBySessionId,
                 queryParams);
@@ -157,7 +163,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     @Override
     public VdcReturnValueBase logOff(DbUser userToLogoff) {
         LogoutUserParameters params = new LogoutUserParameters(userToLogoff.getId());
-        params.setSessionId(getSession().getId());
+        params.setSessionId(getEngineSessionId());
         VdcReturnValueBase returnValue = getBackend().logoff(params);
         return returnValue;
     }
@@ -172,11 +178,12 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         HttpSession newSession = getSession();
         assert !newSession.equals(originalSession) : "new session the same as old session"; //$NON-NLS-1$
 
-        params.setSessionId(getSession().getId());
+        params.setSessionId(getEngineSessionId());
         params.setActionType(loginType);
-        VdcReturnValueBase returnValue = getBackend().login(params);
+        VdcLoginReturnValueBase returnValue = (VdcLoginReturnValueBase) getBackend().login(params);
         if (returnValue.getSucceeded()) {
             this.getThreadLocalResponse().addHeader("OVIRT-SSO-TOKEN", getSession().getId()); //$NON-NLS-1$
+            getSession().setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY, returnValue.getSessionId()); //$NON-NLS-1$)
         }
         return returnValue;
     }
