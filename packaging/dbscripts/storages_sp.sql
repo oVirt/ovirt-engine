@@ -652,19 +652,53 @@ BEGIN
    END;
 
    BEGIN
+      -- All the VMs/Templates which have disks both on the specified domain and other domains.
+      CREATE TEMPORARY TABLE ENTITY_IDS_ON_OTHER_STORAGE_DOMAINS_TEMPORARY_TABLE AS
+      SELECT DISTINCT vm_static.vm_guid
+      FROM vm_static
+      INNER JOIN (-- Join vm_static only with VMs and Templates that have images on the storage domain v_storage_domain_id
+                  SELECT vm_static.vm_guid
+                  FROM vm_static
+                  INNER JOIN vm_device vd ON vd.vm_id = vm_static.vm_guid
+                  INNER JOIN images i ON i.image_group_id = vd.device_id
+                  INNER JOIN STORAGE_DOMAIN_MAP_TABLE ON i.image_guid = STORAGE_DOMAIN_MAP_TABLE.image_id) vm_guids_with_disks_on_storage_domain ON vm_static.vm_guid = vm_guids_with_disks_on_storage_domain.vm_guid
+      -- With all the VMs which have images on the storage domain, get all of their images and check if there is an image on another storage domain.
+      INNER JOIN vm_device vd ON vd.vm_id = vm_static.vm_guid
+      INNER JOIN images i ON i.image_group_id = vd.device_id
+      INNER JOIN image_storage_domain_map on i.image_guid = image_storage_domain_map.image_id
+      WHERE image_storage_domain_map.storage_domain_id != v_storage_domain_id;
+	  exception when others then
+         truncate table ENTITY_IDS_ON_OTHER_STORAGE_DOMAINS_TEMPORARY_TABLE;
+         INSERT INTO ENTITY_IDS_ON_OTHER_STORAGE_DOMAINS_TEMPORARY_TABLE
+         SELECT DISTINCT vm_static.vm_guid
+         FROM vm_static
+         INNER JOIN (SELECT vm_static.vm_guid
+                     FROM vm_static
+                     INNER JOIN vm_device vd ON vd.vm_id = vm_static.vm_guid
+                     INNER JOIN images i ON i.image_group_id = vd.device_id
+                     INNER JOIN STORAGE_DOMAIN_MAP_TABLE ON i.image_guid = STORAGE_DOMAIN_MAP_TABLE.image_id) vm_guids_with_disks_on_storage_domain ON vm_static.vm_guid = vm_guids_with_disks_on_storage_domain.vm_guid
+         INNER JOIN vm_device vd ON vd.vm_id = vm_static.vm_guid
+         INNER JOIN images i ON i.image_group_id = vd.device_id
+         INNER JOIN image_storage_domain_map on i.image_guid = image_storage_domain_map.image_id
+         WHERE image_storage_domain_map.storage_domain_id != v_storage_domain_id;
+   END;
+
+   BEGIN
       -- Templates with any images residing on only the specified storage domain
       CREATE TEMPORARY TABLE TEMPLATES_IDS_TEMPORARY_TABLE AS select vm_device.vm_id as vm_guid
          from images_storage_domain_view
          JOIN vm_device ON vm_device.device_id = images_storage_domain_view.disk_id
          JOIN STORAGE_DOMAIN_MAP_TABLE ON STORAGE_DOMAIN_MAP_TABLE.image_id = images_storage_domain_view.image_guid
-         where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
+         where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id
+           AND vm_device.vm_id not in (SELECT vm_guid from ENTITY_IDS_ON_OTHER_STORAGE_DOMAINS_TEMPORARY_TABLE);
       exception when others then
          truncate table TEMPLATES_IDS_TEMPORARY_TABLE;
          insert into TEMPLATES_IDS_TEMPORARY_TABLE select vm_device.vm_id as vm_guid
          from images_storage_domain_view
          JOIN vm_device ON vm_device.device_id = images_storage_domain_view.disk_id
          JOIN STORAGE_DOMAIN_MAP_TABLE ON STORAGE_DOMAIN_MAP_TABLE.image_id = images_storage_domain_view.image_guid
-         where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
+         where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id
+           AND vm_device.vm_id not in (SELECT vm_guid from ENTITY_IDS_ON_OTHER_STORAGE_DOMAINS_TEMPORARY_TABLE);
    END;
 
    -- Add also Template Versions based on the selected templates
@@ -677,12 +711,14 @@ BEGIN
      -- Vms which resides on the storage domain
      CREATE TEMPORARY TABLE VM_IDS_TEMPORARY_TABLE AS select vm_id,vm_images_view.entity_type as entity_type from vm_images_view
             JOIN vm_device ON vm_device.device_id = vm_images_view.disk_id
-            WHERE v_storage_domain_id in (SELECT * FROM fnsplitteruuid(storage_id));
+            WHERE v_storage_domain_id in (SELECT * FROM fnsplitteruuid(storage_id))
+              AND vm_id not in (SELECT vm_guid from ENTITY_IDS_ON_OTHER_STORAGE_DOMAINS_TEMPORARY_TABLE);
      exception when others then
      truncate table VM_IDS_TEMPORARY_TABLE;
      insert into VM_IDS_TEMPORARY_TABLE select vm_id,vm_images_view.entity_type as entity_type from vm_images_view
             JOIN vm_device ON vm_device.device_id = vm_images_view.disk_id
-            WHERE v_storage_domain_id in (SELECT * FROM fnsplitteruuid(storage_id));
+            WHERE v_storage_domain_id in (SELECT * FROM fnsplitteruuid(storage_id))
+              AND vm_id not in (SELECT vm_guid from ENTITY_IDS_ON_OTHER_STORAGE_DOMAINS_TEMPORARY_TABLE);
    END;
 
    delete FROM permissions where object_id in (select vm_id as vm_guid from VM_IDS_TEMPORARY_TABLE where entity_type <> 'TEMPLATE');
@@ -693,6 +729,9 @@ BEGIN
    delete FROM vm_interface where vmt_guid in(select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
    delete FROM permissions where object_id in (select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
    delete FROM vm_static where vm_guid in(select vm_id as vm_guid from VM_IDS_TEMPORARY_TABLE where entity_type <> 'TEMPLATE');
+
+   -- Delete devices which are related to VMs/Templates with Multiple Storage Domain (VMs/Templates which has not removed)
+   delete FROM vm_device where device_id in (select disk_id from STORAGE_DOMAIN_MAP_TABLE);
 
    -- Delete pools and snapshots of pools based on templates from the storage domain to be removed
    delete FROM snapshots where vm_id in (select vm_guid FROM vm_static where vmt_guid in (select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE));
