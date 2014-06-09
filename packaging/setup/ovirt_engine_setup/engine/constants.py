@@ -50,8 +50,6 @@ class FileLocations(object):
     OVIRT_ENGINE_SERVICE_CONFIG = config.ENGINE_SERVICE_CONFIG
     OVIRT_ENGINE_SERVICE_CONFIG_DEFAULTS = \
         config.ENGINE_SERVICE_CONFIG_DEFAULTS
-    OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIG = \
-        config.ENGINE_WEBSOCKET_PROXY_CONFIG
     OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG = \
         config.ENGINE_NOTIFIER_SERVICE_CONFIG
 
@@ -149,11 +147,11 @@ class FileLocations(object):
         OVIRT_ENGINE_PKIKEYSDIR,
         'apache.key.nopass',
     )
-    OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_STORE = os.path.join(
+    OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_STORE = os.path.join(
         OVIRT_ENGINE_PKIKEYSDIR,
         'websocket-proxy.p12',
     )
-    OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_KEY = os.path.join(
+    OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_KEY = os.path.join(
         OVIRT_ENGINE_PKIKEYSDIR,
         'websocket-proxy.key.nopass',
     )
@@ -173,7 +171,7 @@ class FileLocations(object):
         OVIRT_ENGINE_PKICERTSDIR,
         'apache.cer',
     )
-    OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_CERT = os.path.join(
+    OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_CERT = os.path.join(
         OVIRT_ENGINE_PKICERTSDIR,
         'websocket-proxy.cer',
     )
@@ -276,14 +274,6 @@ class FileLocations(object):
         '10-setup-pki.conf',
     )
 
-    OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIGD = (
-        '%s.d' % OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIG
-    )
-    OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIG_SETUP = os.path.join(
-        OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIGD,
-        '10-setup.conf',
-    )
-
     OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIGD = (
         '%s.d' % OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG
     )
@@ -317,8 +307,6 @@ class Defaults(object):
     DEFAULT_SYSTEM_MEMCHECK_RECOMMENDED_MB = 16384
     DEFAULT_SYSTEM_MEMCHECK_THRESHOLD = 90
 
-    DEFAULT_WEBSOCKET_PROXY_PORT = 6100
-
     DEFAULT_CONFIG_APPLICATION_MODE = 'Both'
     DEFAULT_CONFIG_STORAGE_TYPE = 'NFS'
 
@@ -337,8 +325,6 @@ class Defaults(object):
 
 @util.export
 class Stages(object):
-    CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION = \
-        'setup.config.websocket-proxy.customization'
 
     SYSTEM_NFS_CONFIG_AVAILABLE = 'osetup.system.nfs.available'
 
@@ -357,6 +343,8 @@ class Stages(object):
 
     MEMORY_CHECK = 'osetup.memory.check'
 
+    CA_AVAILABLE = 'osetup.pki.ca.available'
+
 
 @util.export
 @util.codegen
@@ -368,8 +356,8 @@ class Const(object):
 
     ENGINE_SERVICE_NAME = 'ovirt-engine'
 
-    WEBSOCKET_PROXY_SERVICE_NAME = 'ovirt-websocket-proxy'
     FENCE_KDUMP_LISTENER_SERVICE_NAME = 'ovirt-fence-kdump-listener'
+
     PKI_PASSWORD = 'mypass'
     MINIMUM_SPACE_ISODOMAIN_MB = 350
     ISO_DOMAIN_IMAGE_UID = '11111111-1111-1111-1111-111111111111'
@@ -576,10 +564,6 @@ class PKIEnv(object):
 @osetupattrsclass
 class ConfigEnv(object):
 
-    WEBSOCKET_PROXY_HOST = 'OVESETUP_CONFIG/websocketProxyHost'
-
-    WEBSOCKET_PROXY_PORT = 'OVESETUP_CONFIG/websocketProxyPort'
-
     @osetupattrs(
         postinstallfile=True,
     )
@@ -626,15 +610,6 @@ class ConfigEnv(object):
         'OVESETUP_CONFIG/isoDomainDefaultMountPoint'
 
     MAC_RANGE_POOL = 'OVESETUP_CONFIG/macRangePool'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('Configure WebSocket Proxy'),
-        postinstallfile=True,
-    )
-    def WEBSOCKET_PROXY_CONFIG(self):
-        return 'OVESETUP_CONFIG/websocketProxyConfig'
 
     @osetupattrs(
         answerfile=True,

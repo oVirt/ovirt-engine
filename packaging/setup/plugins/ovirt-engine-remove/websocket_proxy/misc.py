@@ -28,7 +28,8 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.websocket_proxy import constants as owspcons
+from ovirt_engine_setup import dialog
 
 
 @util.export
@@ -36,18 +37,59 @@ class Plugin(plugin.PluginBase):
     """Websocket-proxy plugin."""
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+    )
+    def _init(self):
+        self.environment.setdefault(
+            owspcons.RemoveEnv.REMOVE_WSP,
+            None
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.REMOVE_CUSTOMIZATION_COMMON,
+        condition=lambda self: not self.environment[
+            osetupcons.RemoveEnv.REMOVE_ALL
+        ],
+    )
+    def _customization(self):
+        if self.environment[
+            owspcons.RemoveEnv.REMOVE_WSP
+        ] is None:
+            self.environment[
+                owspcons.RemoveEnv.REMOVE_WSP
+            ] = dialog.queryBoolean(
+                dialog=self.dialog,
+                name='OVESETUP_REMOVE_ENGINE',
+                note=_(
+                    'Do you want to remove the WebSocket proxy? '
+                    '(@VALUES@) [@DEFAULT@]: '
+                ),
+                prompt=True,
+                true=_('Yes'),
+                false=_('No'),
+                default=True,
+            )
+            if self.environment[owspcons.RemoveEnv.REMOVE_WSP]:
+                self.environment[osetupcons.RemoveEnv.REMOVE_OPTIONS].append(
+                    owspcons.Const.WEBSOCKET_PROXY_PACKAGE_NAME
+                )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
-            self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE] and
-            not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
+            (
+                self.environment[osetupcons.RemoveEnv.REMOVE_ALL] or
+                self.environment[owspcons.RemoveEnv.REMOVE_WSP]
+            ) and not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
         ),
     )
     def _misc(self):
         if self.services.exists(
-            name=oenginecons.Const.WEBSOCKET_PROXY_SERVICE_NAME
+            name=owspcons.Const.WEBSOCKET_PROXY_SERVICE_NAME
         ):
             self.services.startup(
-                name=oenginecons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
+                name=owspcons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
                 state=False,
             )
 

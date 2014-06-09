@@ -20,6 +20,8 @@
 
 
 import os
+
+
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -31,9 +33,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine import constants as oenginecons
-from ovirt_engine_setup.engine_common \
-    import constants as oengcommcons
+from ovirt_engine_setup.websocket_proxy import constants as owspcons
 from ovirt_engine_setup import dialog
 
 
@@ -44,40 +44,32 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._needStart = False
-        self._enabled = False
+        self._enabled = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
         self.environment.setdefault(
-            oenginecons.ConfigEnv.WEBSOCKET_PROXY_CONFIG,
+            owspcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG,
             None
         )
         self.environment.setdefault(
-            oenginecons.ConfigEnv.WEBSOCKET_PROXY_PORT,
-            oenginecons.Defaults.DEFAULT_WEBSOCKET_PROXY_PORT
+            owspcons.ConfigEnv.WEBSOCKET_PROXY_PORT,
+            osetupcons.Defaults.DEFAULT_WEBSOCKET_PROXY_PORT
         )
         self.environment.setdefault(
-            oenginecons.ConfigEnv.WEBSOCKET_PROXY_HOST,
+            owspcons.ConfigEnv.WEBSOCKET_PROXY_HOST,
             'localhost'
         )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_LATE_SETUP,
+        stage=plugin.Stages.STAGE_SETUP,
     )
-    def _late_setup(self):
-        if (
-            not os.path.exists(
-                oenginecons.FileLocations.
-                OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_STORE
-            )
-            # Do not check if service exists. when upgrading from
-            # 3.2 it will not exist at this point, but is Required
-            # by the package so will be installed.
-            # be installed separately from the engine.
-        ):
-            self._enabled = True
+    def _setup(self):
+        self.environment[
+            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
+        ].append(owspcons)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_LATE_SETUP,
@@ -92,23 +84,22 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=oenginecons.Stages.CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION,
+        name=owspcons.Stages.CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION,
         condition=lambda self: self._enabled,
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
         ),
         after=(
-            oengcommcons.Stages.DB_CONNECTION_STATUS,
             osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
         ),
     )
     def _customization(self):
 
         if self.environment[
-            oenginecons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
+            owspcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
         ] is None:
             self.environment[
-                oenginecons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
+                owspcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
             ] = dialog.queryBoolean(
                 dialog=self.dialog,
                 name='OVESETUP_CONFIG_WEBSOCKET_PROXY',
@@ -120,21 +111,20 @@ class Plugin(plugin.PluginBase):
                 default=True,
             )
         self._enabled = self.environment[
-            oenginecons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
+            owspcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
         ]
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: self.environment[
-            oenginecons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
+            owspcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
         ],
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
         ),
         after=(
-            oengcommcons.Stages.DB_CONNECTION_STATUS,
             osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
-            oenginecons.Stages.CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION,
+            owspcons.Stages.CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION,
         ),
     )
     def _customization_firewall(self):
@@ -148,7 +138,7 @@ class Plugin(plugin.PluginBase):
             osetupcons.NetEnv.FIREWALLD_SUBST
         ].update({
             '@WEBSOCKET_PROXY_PORT@': self.environment[
-                oenginecons.ConfigEnv.WEBSOCKET_PROXY_PORT
+                owspcons.ConfigEnv.WEBSOCKET_PROXY_PORT
             ],
         })
 
@@ -156,72 +146,68 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self._enabled,
         after=(
-            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
-            osetupcons.Stages.CA_AVAILABLE,
+            owspcons.Stages.CA_AVAILABLE,
+        ),
+        priority=plugin.Stages.PRIORITY_HIGH
+    )
+    def _check_separate(self):
+        self.logger.info(_('Configuring WebSocket Proxy'))
+        if (
+            not os.path.exists(
+                owspcons.FileLocations.
+                OVIRT_ENGINE_PKI_ENGINE_CERT
+            )
+        ):
+            self._on_separate_h = True
+            self.dialog.note(
+                text=_(
+                    "\n"
+                    "ATTENTION\n"
+                    "\n"
+                    "Manual actions are required on the engine host\n"
+                    "in order to enroll certs for this host "
+                    "and configure the engine about it.\n"
+                )
+            )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        name=owspcons.Stages.REMOTE_VDC,
+        condition=lambda self: (
+            self._enabled and
+            not os.path.exists(
+                owspcons.FileLocations.
+                OVIRT_ENGINE_PKI_ENGINE_CERT
+            )
+        ),
+        after=(
+            owspcons.Stages.CA_AVAILABLE,
         ),
     )
-    def _misc(self):
-
-        self.logger.info(_('Configuring WebSocket Proxy'))
-
-        self.execute(
-            args=(
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
-                '--name=%s' % 'websocket-proxy',
-                '--password=%s' % (
-                    self.environment[oenginecons.PKIEnv.STORE_PASS],
-                ),
-                '--subject=/C=%s/O=%s/CN=%s' % (
-                    self.environment[oenginecons.PKIEnv.COUNTRY],
-                    self.environment[oenginecons.PKIEnv.ORG],
-                    self.environment[osetupcons.ConfigEnv.FQDN],
-                ),
+    def _misc_VDC(self):
+        self.dialog.note(
+            text=_(
+                "Please execute this command on the engine host: \n"
+                "engine-config -s WebSocketProxy={fqdn}:{port}\n\n"
+            ).format(
+                fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
+                port=self.environment[
+                    owspcons.ConfigEnv.WEBSOCKET_PROXY_PORT
+                ],
             ),
         )
-        self.environment[
-            otopicons.CoreEnv.MODIFIED_FILES
-        ].extend(
-            (
-                (
-                    oenginecons.FileLocations.
-                    OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_CERT
-                ),
-                (
-                    oenginecons.FileLocations.
-                    OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_STORE
-                ),
-            )
-        )
 
-        rc, stdout, stderr = self.execute(
-            args=(
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
-                '--name=websocket-proxy',
-                '--passin=%s' % self.environment[
-                    oenginecons.PKIEnv.STORE_PASS
-                ],
-                '--key=-',
-            ),
-            logStreams=False,
-        )
-
-        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-            filetransaction.FileTransaction(
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_KEY,
-                mode=0o600,
-                owner=self.environment[osetupcons.SystemEnv.USER_ENGINE],
-                enforcePermissions=True,
-                content=stdout,
-                modifiedList=self.environment[
-                    otopicons.CoreEnv.MODIFIED_FILES
-                ],
-            )
-        )
-
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        condition=lambda self: (
+            self._enabled,
+        ),
+    )
+    def _misc_config(self):
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=(
-                    oenginecons.FileLocations.
+                    owspcons.FileLocations.
                     OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIG_SETUP
                 ),
                 content=(
@@ -233,18 +219,18 @@ class Plugin(plugin.PluginBase):
                     "SSL_ONLY=True\n"
                 ).format(
                     port=self.environment[
-                        oenginecons.ConfigEnv.WEBSOCKET_PROXY_PORT
+                        owspcons.ConfigEnv.WEBSOCKET_PROXY_PORT
                     ],
                     certificate=(
-                        oenginecons.FileLocations.
+                        owspcons.FileLocations.
                         OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_CERT
                     ),
                     key=(
-                        oenginecons.FileLocations.
+                        owspcons.FileLocations.
                         OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_KEY
                     ),
                     engine_cert=(
-                        oenginecons.FileLocations.
+                        owspcons.FileLocations.
                         OVIRT_ENGINE_PKI_ENGINE_CERT
                     ),
                 ),
@@ -268,11 +254,11 @@ class Plugin(plugin.PluginBase):
     def _closeup(self):
         for state in (False, True):
             self.services.state(
-                name=oenginecons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
+                name=owspcons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
                 state=state,
             )
         self.services.startup(
-            name=oenginecons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
+            name=owspcons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
             state=True,
         )
 

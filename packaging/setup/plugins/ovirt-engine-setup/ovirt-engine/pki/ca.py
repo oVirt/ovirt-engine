@@ -167,7 +167,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        name=osetupcons.Stages.CA_AVAILABLE,
+        name=oenginecons.Stages.CA_AVAILABLE,
         condition=lambda self: self._enabled,
     )
     def _misc(self):
@@ -259,7 +259,7 @@ class Plugin(plugin.PluginBase):
             },
         )
 
-        for name in ('engine', 'apache', 'jboss'):
+        for name in ('engine', 'apache', 'jboss', 'websocket-proxy'):
             self.execute(
                 (
                     oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
@@ -293,6 +293,40 @@ class Plugin(plugin.PluginBase):
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_STORE,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_CERT_CONF,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF,
+                (
+                    oenginecons.FileLocations.
+                    OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_CERT
+                ),
+                (
+                    oenginecons.FileLocations.
+                    OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_STORE
+                ),
+            )
+        )
+
+        rc, stdout, stderr = self.execute(
+            args=(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                '--name=websocket-proxy',
+                '--passin=%s' % self.environment[
+                    oenginecons.PKIEnv.STORE_PASS
+                ],
+                '--key=-',
+            ),
+            logStreams=False,
+        )
+
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            filetransaction.FileTransaction(
+                oenginecons.FileLocations.
+                OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_KEY,
+                mode=0o600,
+                owner=self.environment[osetupcons.SystemEnv.USER_ENGINE],
+                enforcePermissions=True,
+                content=stdout,
+                modifiedList=self.environment[
+                    otopicons.CoreEnv.MODIFIED_FILES
+                ],
             )
         )
 

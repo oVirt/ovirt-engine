@@ -206,7 +206,7 @@ class Plugin(plugin.PluginBase):
                     'name': 'WebSocketProxy',
                     'value': '%s:%s' % (
                         'localhost',
-                        oenginecons.Defaults.DEFAULT_WEBSOCKET_PROXY_PORT,
+                        osetupcons.Defaults.DEFAULT_WEBSOCKET_PROXY_PORT,
                     ),
                 },
                 {

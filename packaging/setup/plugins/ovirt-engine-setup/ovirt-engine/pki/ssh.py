@@ -98,7 +98,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         name=osetupcons.Stages.SSH_KEY_AVAILABLE,
         after=(
-            osetupcons.Stages.CA_AVAILABLE,
+            oenginecons.Stages.CA_AVAILABLE,
         ),
         condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )

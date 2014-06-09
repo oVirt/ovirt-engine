@@ -984,6 +984,7 @@ fi
 %files setup-plugin-websocket-proxy
 
 %{engine_data}/firewalld/websocket-proxy/
+%{engine_data}/setup/ovirt_engine_setup/websocket_proxy/
 %{engine_data}/setup/plugins/*/websocket_proxy/
 
 %files setup-plugin-allinone

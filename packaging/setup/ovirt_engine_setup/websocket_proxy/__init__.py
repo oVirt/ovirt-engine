@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2014 Red Hat, Inc.
+# Copyright (C) 2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,21 +16,10 @@
 #
 
 
-"""Engine Config."""
+"""ovirt_engine_setup module."""
 
-ENGINE_SYSCONFDIR = '@ENGINE_ETC@'
-ENGINE_SERVICE_CONFIG = '@ENGINE_VARS@'
-ENGINE_SERVICE_CONFIG_DEFAULTS = '@ENGINE_DEFAULTS@'
-ENGINE_NOTIFIER_SERVICE_CONFIG = '@ENGINE_NOTIFIER_VARS@'
-ENGINE_PKIDIR = '@ENGINE_PKI@'
-ENGINE_DATADIR = '@ENGINE_USR@'
-ENGINE_LOCALSTATEDIR = '@ENGINE_VAR@'
-ENGINE_LOG = '@ENGINE_LOG@'
-PACKAGE_NAME = '@PACKAGE_NAME@'
-PACKAGE_VERSION = '@PACKAGE_VERSION@'
-DISPLAY_VERSION = '@DISPLAY_VERSION@'
-RPM_VERSION = '@RPM_VERSION@'
-RPM_RELEASE = '@RPM_RELEASE@'
+
+__all__ = []
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

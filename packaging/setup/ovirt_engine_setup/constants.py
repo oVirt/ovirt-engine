@@ -175,6 +175,7 @@ class FileLocations(object):
 class Defaults(object):
     DEFAULT_SYSTEM_USER_ENGINE = 'ovirt'
     DEFAULT_SYSTEM_GROUP_ENGINE = 'ovirt'
+    DEFAULT_WEBSOCKET_PROXY_PORT = 6100
 
 
 @util.export
@@ -184,7 +185,7 @@ class Stages(object):
     CONFIG_PROTOCOLS_CUSTOMIZATION = 'osetup.config.protocols.customization'
     CONFIG_APPLICATION_MODE_AVAILABLE = \
         'osetup.config.applicationMode.available'
-    CA_AVAILABLE = 'osetup.pki.ca.available'
+
     SSH_KEY_AVAILABLE = 'osetup.pki.ssh.available'
 
     SYSTEM_SYSCTL_CONFIG_AVAILABLE = 'osetup.system.sysctl.available'

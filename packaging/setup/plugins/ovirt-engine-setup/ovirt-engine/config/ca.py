@@ -51,7 +51,7 @@ class Plugin(plugin.PluginBase):
         name=oengcommcons.Stages.CONFIG_DB_ENCRYPTION_AVAILABLE,
         after=(
             oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
-            osetupcons.Stages.CA_AVAILABLE,
+            oenginecons.Stages.CA_AVAILABLE,
         ),
         condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
