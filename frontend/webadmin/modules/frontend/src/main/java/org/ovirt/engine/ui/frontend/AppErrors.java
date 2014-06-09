@@ -3110,4 +3110,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. A VirtIO-SCSI LUN disk can't be read-only.")
     String ACTION_TYPE_FAILED_VIRT_IO_SCSI_INTERFACE_FOR_LUN_DISKS_DOES_NOT_SUPPORT_READ_ONLY_ATTR();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Memory size exceeds supported limit for given cluster version.")
+    String ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT();
 }
