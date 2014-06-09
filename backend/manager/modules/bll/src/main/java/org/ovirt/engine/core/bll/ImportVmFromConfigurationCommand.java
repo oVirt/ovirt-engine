@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -15,7 +14,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.log.Log;
@@ -42,26 +40,10 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
 
     @Override
     protected boolean canDoAction() {
-        if (isImagesAlreadyOnTarget()) {
-            if (ovfEntityData == null && !getParameters().isImportAsNewEntity()) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
-                return false;
-            }
-            if (vmFromConfiguration == null) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
-                return false;
-            }
-            setStorageDomainId(ovfEntityData.getStorageDomainId());
-            if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive())) {
-                return false;
-            }
-            setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), getVm().getImages());
-            if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED,
-                        String.format("$domainId %1$s", getParameters().getStorageDomainId()),
-                        String.format("$domainType %1$s", getStorageDomain().getStorageDomainType()));
-            }
+        if (isImagesAlreadyOnTarget() && !validateUnregisteredEntity(vmFromConfiguration, ovfEntityData)) {
+            return false;
         }
+        setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), getVm().getImages());
         return super.canDoAction();
     }
 
