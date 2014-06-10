@@ -681,6 +681,17 @@ public class BackendVmResourceTest
     }
 
     @Test
+    public void testLogon() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.VmLogon,
+                                           VmOperationParameterBase.class,
+                                           new String[] { "VmId" },
+                                           new Object[] { GUIDS[0] }));
+
+        Action action = new Action();
+        verifyActionResponse(resource.logon(action));
+    }
+
+    @Test
     public void testMigrateWithHostId() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.MigrateVmToServer,
                                            MigrateVmToServerParameters.class,

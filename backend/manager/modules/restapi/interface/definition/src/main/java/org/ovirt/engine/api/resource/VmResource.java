@@ -150,6 +150,13 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
     @Path("maintenance")
     public Response maintenance(Action action);
 
+    @POST
+    @Formatted
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("logon")
+    public Response logon(Action action);
+
     @Path("applications")
     public VmApplicationsResource getApplicationsResource();
 

@@ -495,6 +495,18 @@ actions:
     urlparams: {}
     headers:
       Correlation-Id: {value: 'any string', required: false}
+- name: /vms/{vm:id}/logon|rel=logon
+  description: Perform automatic logon on the VM using the guest agent.
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+        description: Perform automatic logon on the VM using the guest agent.
+    urlparams: {}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
 - name: /vms/{vm:id}/cdroms|rel=get
   description: get all the cdroms for a virtual machine
   request:

@@ -457,6 +457,14 @@ public class BackendVmResource extends
         return action.getTicket();
     }
 
+    @Override
+    public Response logon(Action action) {
+        final Response response = doAction(VdcActionType.VmLogon,
+                new VmOperationParameterBase(guid),
+                action);
+        return response;
+    }
+
     protected RunVmOnceParams map(VM vm, RunVmOnceParams params) {
         return getMapper(VM.class, RunVmOnceParams.class).map(vm, params);
     }
