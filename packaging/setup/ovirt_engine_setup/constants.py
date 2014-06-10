@@ -439,16 +439,18 @@ class RemoveEnv(object):
     @osetupattrs(
         answerfile=True,
     )
-    def REMOVE_DATABASE(self):
-        return 'OVESETUP_REMOVE/database'
+    def REMOVE_ALL(self):
+        return 'OVESETUP_REMOVE/removeAll'
 
     @osetupattrs(
         answerfile=True,
     )
-    def REMOVE_ALL(self):
-        return 'OVESETUP_REMOVE/removeAll'
+    def REMOVE_OPTIONS(self):
+        return 'OVESETUP_REMOVE/removeOptions'
 
     FILES_TO_REMOVE = 'OVESETUP_REMOVE/filesToRemove'
+
+    REMOVE_SPEC_OPTION_GROUP_LIST = 'OVESETUP_REMOVE/specOptionGroupList'
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

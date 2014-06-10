@@ -175,6 +175,14 @@ class Plugin(plugin.PluginBase):
             osetupcons.RemoveEnv.FILES_TO_REMOVE,
             []
         )
+
+        # TODO: check if we need to allow to override this by answer file.
+        # Using a list here won't allow you to override this
+        self.environment.setdefault(
+            osetupcons.RemoveEnv.REMOVE_SPEC_OPTION_GROUP_LIST,
+            []
+        )
+
         self._infos = sorted(
             glob.glob(
                 os.path.join(
@@ -217,32 +225,39 @@ class Plugin(plugin.PluginBase):
                     if msg == template:
                         msg = description
                     self._descriptions[group] = msg
-                    add_group = (
-                        self.environment[
-                            osetupcons.RemoveEnv.REMOVE_ALL
-                        ] or
-                        not config.getboolean(section, 'optional')
-                    )
+
+                    add_group = self.environment[
+                        osetupcons.RemoveEnv.REMOVE_ALL
+                    ]
+                    if not add_group:
+                        if group in self.environment[
+                            osetupcons.RemoveEnv.REMOVE_SPEC_OPTION_GROUP_LIST
+                        ]:
+                            add_group = True
+
                     if (
                         not add_group and
                         interactive and
                         group not in already_asked
                     ):
-                        already_asked.append(group)
-                        add_group = dialog.queryBoolean(
-                            dialog=self.dialog,
-                            name='OVESETUP_REMOVE_GROUP/' + group,
-                            note=_(
-                                'Do you want to remove {description}? '
-                                '(@VALUES@) [@DEFAULT@]: '
-                            ).format(
-                                description=msg,
-                            ),
-                            prompt=True,
-                            true=_('Yes'),
-                            false=_('No'),
-                            default=False,
-                        )
+                        if group in self.environment[
+                            osetupcons.RemoveEnv.REMOVE_SPEC_OPTION_GROUP_LIST
+                        ]:
+                            already_asked.append(group)
+                            add_group = dialog.queryBoolean(
+                                dialog=self.dialog,
+                                name='OVESETUP_REMOVE_GROUP/' + group,
+                                note=_(
+                                    'Do you want to remove {description}? '
+                                    '(@VALUES@) [@DEFAULT@]: '
+                                ).format(
+                                    description=msg,
+                                ),
+                                prompt=True,
+                                true=_('Yes'),
+                                false=_('No'),
+                                default=False,
+                            )
                     if add_group:
                         self.environment[
                             osetupcons.RemoveEnv.

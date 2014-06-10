@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -62,9 +62,10 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        condition=lambda self: not self.environment[
-            osetupcons.CoreEnv.DEVELOPER_MODE
-        ],
+        condition=lambda self: (
+            self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE] and
+            not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
+        ),
     )
     def _misc(self):
         self.services.startup(

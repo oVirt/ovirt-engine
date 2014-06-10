@@ -47,7 +47,7 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.RemoveEnv.REMOVE_DATABASE,
+            oenginecons.RemoveEnv.REMOVE_ENGINE_DATABASE,
             None
         )
         self._bkpfile = None
@@ -57,20 +57,16 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.REMOVE_CUSTOMIZATION_COMMON,
         ),
+        condition=lambda self: (
+            self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE]
+        ),
     )
     def _customization(self):
         if self.environment[
-            osetupcons.RemoveEnv.REMOVE_ALL
-        ]:
-            self.environment[
-                osetupcons.RemoveEnv.REMOVE_DATABASE
-            ] = True
-
-        if self.environment[
-            osetupcons.RemoveEnv.REMOVE_DATABASE
+            oenginecons.RemoveEnv.REMOVE_ENGINE_DATABASE
         ] is None:
             self.environment[
-                osetupcons.RemoveEnv.REMOVE_DATABASE
+                oenginecons.RemoveEnv.REMOVE_ENGINE_DATABASE
             ] = dialog.queryBoolean(
                 dialog=self.dialog,
                 name='OVESETUP_ENGINE_DB_REMOVE',
@@ -88,7 +84,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
             self.environment[oenginecons.EngineDBEnv.PASSWORD] is not None and
-            self.environment[osetupcons.RemoveEnv.REMOVE_DATABASE]
+            self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE_DATABASE]
         ),
         after=(
             oengcommcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,

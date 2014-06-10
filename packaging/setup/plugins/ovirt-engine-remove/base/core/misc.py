@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,6 +31,9 @@ from otopi import plugin
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import dialog
+
+
+from ovirt_engine_setup.engine import constants as oenginecons
 
 
 @util.export
@@ -71,6 +74,10 @@ class Plugin(plugin.PluginBase):
             osetupcons.RemoveEnv.REMOVE_ALL,
             None
         )
+        self.environment.setdefault(
+            osetupcons.RemoveEnv.REMOVE_OPTIONS,
+            []
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -94,6 +101,7 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.REMOVE_CUSTOMIZATION_COMMON,
+        priority=plugin.Stages.PRIORITY_HIGH
     )
     def _customization(self):
         if self.environment[
@@ -113,6 +121,8 @@ class Plugin(plugin.PluginBase):
                 false=_('No'),
                 default=True,
             )
+        if self.environment[osetupcons.RemoveEnv.REMOVE_ALL]:
+            self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
@@ -121,15 +131,33 @@ class Plugin(plugin.PluginBase):
         if self.environment[
             osetupcons.CoreEnv.REMOVE
         ] is None:
+            if self.environment[osetupcons.RemoveEnv.REMOVE_ALL]:
+                cnote = _(
+                    'All the installed ovirt components are about to be '
+                    'removed, data will be lost (@VALUES@) [@DEFAULT@]: '
+                )
+            elif self.environment[osetupcons.RemoveEnv.REMOVE_OPTIONS]:
+                cnote = _(
+                    '{clist} is/are about to be removed, data will be lost '
+                    '(@VALUES@) [@DEFAULT@]: '
+                ).format(
+                    clist=', '.join(
+                        self.environment[
+                            osetupcons.RemoveEnv.REMOVE_OPTIONS
+                        ]
+                    )
+                )
+            else:
+                raise RuntimeError(
+                    _('Nothing to remove')
+                )
+
             self.environment[
                 osetupcons.CoreEnv.REMOVE
             ] = dialog.queryBoolean(
                 dialog=self.dialog,
                 name='OVESETUP_CORE_REMOVE',
-                note=_(
-                    'Installed ovirt components are about to be removed, '
-                    'data will be lost (@VALUES@) [@DEFAULT@]: '
-                ),
+                note=cnote,
                 prompt=True,
                 true=_('OK'),
                 false=_('Cancel'),

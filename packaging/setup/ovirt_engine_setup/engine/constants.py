@@ -758,4 +758,21 @@ class AsyncTasksEnv(object):
         return 'OVESETUP_ASYNC/clearTasksWait'
 
 
+@util.export
+@util.codegen
+@osetupattrsclass
+class RemoveEnv(object):
+    @osetupattrs(
+        answerfile=True,
+    )
+    def REMOVE_ENGINE(self):
+        return 'OVESETUP_REMOVE/removeEngine'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def REMOVE_ENGINE_DATABASE(self):
+        return 'OVESETUP_REMOVE/engineDatabase'
+
+
 # vim: expandtab tabstop=4 shiftwidth=4

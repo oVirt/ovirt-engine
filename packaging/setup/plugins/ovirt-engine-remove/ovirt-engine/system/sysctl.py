@@ -42,6 +42,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
+        condition=lambda self: (
+            self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE]
+        ),
     )
     def _misc(self):
         if (
@@ -61,6 +64,9 @@ class Plugin(plugin.PluginBase):
         ),
         after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
+        ),
+        condition=lambda self: (
+            self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE]
         ),
     )
     def _closeup(self):
