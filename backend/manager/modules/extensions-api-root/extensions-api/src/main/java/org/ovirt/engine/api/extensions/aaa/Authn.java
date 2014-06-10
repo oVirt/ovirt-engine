@@ -291,7 +291,7 @@ public class Authn {
         /**
          * Session valid to.
          * Application should expire session at most at this time.
-         * Format: "yyyy-MM-dd HH:mm:ssZ".
+         * Format: "yyyyMMddHHmmssZ".
          */
         public static final ExtKey VALID_TO = new ExtKey("AAA_AUTHN_AUTH_RECORD_VALID_TO", String.class, "b332d076-5f4d-419f-8fdf-015579f4dfa6");
     }
