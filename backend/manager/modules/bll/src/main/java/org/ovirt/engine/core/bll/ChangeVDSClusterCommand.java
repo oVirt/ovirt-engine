@@ -118,7 +118,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
 
         // CPU flags are null if oVirt node cluster is changed during approve process.
-        if (!StringUtils.isEmpty(vds.getCpuFlags())) {
+        if (getTargetCluster().supportsVirtService() && !StringUtils.isEmpty(vds.getCpuFlags())) {
             if (vds.getCpuName() == null) {
                 return failCanDoAction(VdcBllMessages.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION);
             }
