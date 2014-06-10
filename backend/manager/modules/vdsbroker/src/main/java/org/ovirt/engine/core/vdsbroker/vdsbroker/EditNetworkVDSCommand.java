@@ -5,9 +5,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
+import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> extends VdsBrokerCommand<P> {
     public EditNetworkVDSCommand(P parameters) {
@@ -55,7 +54,7 @@ public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ex
         Network network = getParameters().getNetwork();
         if (network != null) {
             if (network.getMtu() == 0) {
-                options.put("mtu", Config.<Integer> getValue(ConfigValues.DefaultMtu).toString());
+                options.put("mtu", NetworkUtils.getDefaultMtu().toString());
             } else {
                 options.put("mtu", String.valueOf(network.getMtu()));
             }

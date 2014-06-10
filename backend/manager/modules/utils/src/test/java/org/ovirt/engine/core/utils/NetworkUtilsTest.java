@@ -22,12 +22,15 @@ public class NetworkUtilsTest {
 
     private static final String MANAGEMENT_NETWORK = "mgmt";
 
+    private static final int DEFAULT_MTU = 1500;
+
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.ManagementNetwork, MANAGEMENT_NETWORK));
+            MockConfigRule.mockConfig(ConfigValues.ManagementNetwork, MANAGEMENT_NETWORK),
+            MockConfigRule.mockConfig(ConfigValues.DefaultMtu, DEFAULT_MTU));
 
     @Test
     public void calculateNetworkImplementationDetailsNoNetworkName() throws Exception {
@@ -74,10 +77,10 @@ public class NetworkUtilsTest {
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsNetworkIsSyncWithMtuUnset() throws Exception {
+    public void calculateNetworkImplementationDetailsNetworkDefaultMtuOutOfSync() throws Exception {
         VdsNetworkInterface iface = createNetworkDevice();
         calculateNetworkImplementationDetailsAndAssertSync(iface,
-                true,
+                false,
                 iface.getNetworkName(),
                 iface.isBridged(),
                 0,
@@ -86,10 +89,10 @@ public class NetworkUtilsTest {
     }
 
     /**
-     * Cover a case when MTU is unset & other network parameters out of cync, which is not covered by other tests.
+     * Cover a case when MTU is unset & other network parameters out of sync, which is not covered by other tests.
      */
     @Test
-    public void calculateNetworkImplementationDetailsNetworkOutOfSyncWithMtuUnset() throws Exception {
+    public void calculateNetworkImplementationDetailsNetworkDefaultMtuAndVmNetworkOutOfSync() throws Exception {
         VdsNetworkInterface iface = createNetworkDevice();
         calculateNetworkImplementationDetailsAndAssertSync(iface,
                 false,

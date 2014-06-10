@@ -23,6 +23,10 @@ public final class NetworkUtils {
         return Config.<String> getValue(ConfigValues.ManagementNetwork);
     }
 
+    public static Integer getDefaultMtu() {
+        return Config.<Integer> getValue(ConfigValues.DefaultMtu);
+    }
+
     /**
     * Returns the underlying interface name of a given nic
     *
@@ -131,7 +135,7 @@ public final class NetworkUtils {
     }
 
     public static boolean isNetworkInSync(VdsNetworkInterface iface, Network network, NetworkQoS qos) {
-        return (network.getMtu() == 0 || iface.getMtu() == network.getMtu())
+        return ((network.getMtu() == 0 && iface.getMtu() == getDefaultMtu()) || iface.getMtu() == network.getMtu())
                 && Objects.equals(iface.getVlanId(), network.getVlanId())
                 && iface.isBridged() == network.isVmNetwork()
                 && (isQosInSync(iface, qos) || iface.isQosOverridden());

@@ -50,6 +50,7 @@ public class SetupNetworksHelperTest {
 
     private static final String BOND_NAME = "bond0";
     private static final String MANAGEMENT_NETWORK_NAME = "management";
+    private static final int DEFAULT_MTU = 1500;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.ManagementNetwork,
@@ -72,7 +73,8 @@ public class SetupNetworksHelperTest {
             mockConfig(ConfigValues.UserDefinedNetworkCustomProperties, Version.v3_4.toString(), ""),
             mockConfig(ConfigValues.UserDefinedNetworkCustomProperties,
                     Version.v3_5.toString(),
-                    "bridge_opts=^[^\\s=]+=[^\\s=]+(\\s+[^\\s=]+=[^\\s=]+)*$"));
+                    "bridge_opts=^[^\\s=]+=[^\\s=]+(\\s+[^\\s=]+=[^\\s=]+)*$"),
+            mockConfig(ConfigValues.DefaultMtu, DEFAULT_MTU));
 
     @Mock
     private NetworkDao networkDAO;
