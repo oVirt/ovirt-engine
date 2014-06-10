@@ -44,7 +44,10 @@ public class Authz {
          * @see QueryFlags
          * */
         public static final ExtKey QUERY_FLAGS = new ExtKey("AAA_AUTHZ_QUERY_FLAGS", Integer.class, "97d226e9-8d87-49a0-9a7f-af689320907b");
-        /** Principal record. */
+        /**
+         * Principal record.
+         * @see PrincipalRecord
+         */
         public static final ExtKey PRINCIPAL_RECORD = new ExtKey("AAA_AUTHZ_PRINCIPAL_RECORD", ExtMap.class, "ebc0d5ca-f1ea-402c-86ae-a8ecbdadd6b5");
         /**
          * AuthResult of operation.
@@ -114,6 +117,7 @@ public class Authz {
          * </p>
          *
          * @see Authn.AuthRecord
+         * @see PrincipalRecord
          */
         public static final ExtUUID FETCH_PRINCIPAL_RECORD = new ExtUUID("AAA_AUTHZ_FETCH_PRINCIPAL_RECORD", "5a5bf9bb-9336-4376-a823-26efe1ba26df");
         /**

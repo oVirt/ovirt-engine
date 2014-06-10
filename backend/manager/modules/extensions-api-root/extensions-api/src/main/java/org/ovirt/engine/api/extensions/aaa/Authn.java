@@ -41,11 +41,17 @@ public class Authn {
         public static final ExtKey PRINCIPAL = new ExtKey("AAA_AUTHN_PRINCIPAL", String.class, "bc637d1d-f93f-45e1-bd04-646c6dc38279");
         /** Credentials to use. */
         public static final ExtKey CREDENTIALS = new ExtKey("AAA_AUTHN_CREDENTIALS", String.class, "03b96485-4bb5-4592-8167-810a5c909706", ExtKey.Flags.SENSITIVE);
-        /** Credentials to change. */
+        /** Credentials to change into. */
         public static final ExtKey CREDENTIALS_NEW = new ExtKey("AAA_AUTHN_CREDENTIALS_NEW", String.class, "3455434d-63ab-42b0-b17b-a92621dd6dd1", ExtKey.Flags.SENSITIVE);
-        /** HttpServletRequest. */
+        /*
+         * HttpServletRequest.
+         * Used for negitiatation.
+         */
         public static final ExtKey HTTP_SERVLET_REQUEST = new ExtKey("AAA_AUTHN_HTTP_SERVLET_REQUEST", Object.class, "e1cd5eb2-8f63-4617-bcd4-9863bbc788d7");
-        /** HttpServletResponse. */
+        /**
+         * HttpServletResponse.
+         * Used for negitiatation.
+         */
         public static final ExtKey HTTP_SERVLET_RESPONSE = new ExtKey("AAA_AUTHN_HTTP_SERVLET_RESPONSE", Object.class, "834598d4-4b27-4588-8176-72f57d5ac007");
         /**
          * User message.
