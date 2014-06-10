@@ -205,12 +205,6 @@ public class Authz {
          * @see GroupRecord
          */
         public static final ExtKey GROUPS = new ExtKey("AAA_AUTHZ_PRINCIPAL_GROUPS", List/*<GroupRecord>*/.class, "738ec045-aade-478f-90f9-13f4aa229a54");
-        /**
-         * Roles.
-         * List of {@link RoleRecord}.
-         * @see RoleRecord
-         */
-        public static final ExtKey ROLES = new ExtKey("AAA_AUTHZ_PRINCIPAL_ROLES", List/*<RoleRecord>*/.class, "739b5ecc-6776-408d-b332-53e0adb4a753");
     }
 
     /**
@@ -231,26 +225,6 @@ public class Authz {
          * @see GroupRecord
          */
         public static final ExtKey GROUPS = new ExtKey("AAA_AUTHZ_GROUP_GROUPS", List/*<GroupRecord>*/.class, "c4f34760-084b-4f29-b9cf-e77bb539ec18");
-        /**
-         * Roles.
-         * List of {@link RoleRecord}.
-         * @see RoleRecord
-         */
-        public static final ExtKey ROLES = new ExtKey("AAA_AUTHZ_GROUP_ROLES", List/*<RoleRecord>*/.class, "20bf622b-07a8-4e8b-825e-70633618db07");
-    }
-
-    /**
-     * Role record.
-     */
-    public static class RoleRecord {
-        /** Namespace. */
-        public static final ExtKey NAMESPACE = new ExtKey("AAA_AUTHZ_GROUP_NAMESPACE", String.class, "183fb40e-a825-45f8-a655-b6270566fa2e");
-        /** Group unique (within provider) id. */
-        public static final ExtKey ID = new ExtKey("AAA_AUTHZ_ROLE_ID", String.class, "fbd391cc-29b6-41a5-af42-6ef8c4ed8652");
-        /** Group name. */
-        public static final ExtKey NAME = new ExtKey("AAA_AUTHZ_ROLE_NAME", String.class, "2b41f95e-7880-49e4-bfda-51da0ea0ba1a");
-        /** Display name. */
-        public static final ExtKey DISPLAY_NAME = new ExtKey("AAA_AUTHZ_ROLE_DISPLAY_NAME", String.class, "6383c483-e262-4157-a7cd-4720663efd1e");
     }
 
     /**
