@@ -2198,6 +2198,7 @@ public class UnitVmModel extends Model {
     {
         EntityModel<BootSequence> entityModel = getFirstBootDevice().getSelectedItem();
         BootSequence firstDevice = entityModel.getEntity();
+        EntityModel<BootSequence> prevItem = null;
 
         List<EntityModel<BootSequence>> list = new ArrayList<EntityModel<BootSequence>>();
         for (EntityModel<BootSequence> item : getFirstBootDevice().getItems())
@@ -2205,6 +2206,9 @@ public class UnitVmModel extends Model {
             if (item.getEntity() != firstDevice)
             {
                 list.add(item);
+                if (getSecondBootDevice().getSelectedItem() != null && item.getEntity() == getSecondBootDevice().getSelectedItem().getEntity()) {
+                    prevItem = item;
+                }
             }
         }
 
@@ -2215,7 +2219,11 @@ public class UnitVmModel extends Model {
         list.add(0, noneOption);
 
         getSecondBootDevice().setItems(list);
-        getSecondBootDevice().setSelectedItem(noneOption);
+        if (prevItem != null) {
+            getSecondBootDevice().setSelectedItem(prevItem);
+        } else {
+            getSecondBootDevice().setSelectedItem(noneOption);
+        }
     }
 
     private void provisioning_SelectedItemChanged(Object sender, EventArgs args)
