@@ -4,12 +4,14 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 
 /**
@@ -54,6 +56,10 @@ public class StoragePoolValidator {
         return DbFacade.getInstance().getVdsGroupDao();
     }
 
+    public StoragePoolIsoMapDAO getStoragePoolIsoMapDao() {
+        return DbFacade.getInstance().getStoragePoolIsoMapDao();
+    }
+
     public ValidationResult isNotLocalfsWithDefaultCluster() {
         if (storagePool.isLocal() && containsDefaultCluster()) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
@@ -81,4 +87,16 @@ public class StoragePoolValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult isAnyDomainInProcess() {
+        List<StoragePoolIsoMap> poolIsoMaps = getStoragePoolIsoMapDao().getAllForStoragePool(storagePool.getId());
+
+        for (StoragePoolIsoMap domainIsoMap : poolIsoMaps) {
+            if (domainIsoMap.getStatus() != null && domainIsoMap.getStatus().isStorageDomainInProcess()) {
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
+                        String.format("$status %1$s", domainIsoMap.getStatus()));
+            }
+        }
+
+        return ValidationResult.VALID;
+    }
 }

@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
@@ -237,5 +238,16 @@ public class StorageDomainValidator {
 
     private static interface SizeAssessment {
         public double getSizeForDisk(DiskImage diskImage);
+    }
+
+    public ValidationResult isInProcess() {
+        StoragePoolIsoMap domainIsoMap = storageDomain.getStoragePoolIsoMapData();
+
+        if (domainIsoMap.getStatus() != null && domainIsoMap.getStatus().isStorageDomainInProcess()) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
+                    String.format("$status %1$s", domainIsoMap.getStatus()));
+        }
+
+        return ValidationResult.VALID;
     }
 }

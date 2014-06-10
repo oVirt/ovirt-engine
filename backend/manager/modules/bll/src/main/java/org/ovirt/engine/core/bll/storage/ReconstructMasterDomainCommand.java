@@ -6,6 +6,8 @@ import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -61,13 +63,12 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         return lockProperties;
     }
 
-    private boolean checkIsDomainLocked(StoragePoolIsoMap domainMap) {
-        if (domainMap.getStatus() != null && domainMap.getStatus().isStorageDomainInProcess()) {
-            addInvalidSDStatusMessage(StorageDomainStatus.Locked);
-            return true;
-        }
+    protected StorageDomainValidator createStorageDomainValidator() {
+        return new StorageDomainValidator(getStorageDomain());
+    }
 
-        return false;
+    protected StoragePoolValidator createStoragePoolValidator() {
+        return new StoragePoolValidator(getStoragePool());
     }
 
     @Override
@@ -75,16 +76,12 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         // This check is done here to handle a race in which the returned domain from
         // getStorageDomain() is with LOCKED status. Having this domain with LOCKED status might
         // cause to the command to apply the compensation data and leave the domain as LOCKED.
-        if (checkIsDomainLocked(getStorageDomain().getStoragePoolIsoMapData())) {
+        if (!validate(createStorageDomainValidator().isInProcess())) {
             return false;
         }
 
-        List<StoragePoolIsoMap> poolDomains = DbFacade.getInstance()
-                .getStoragePoolIsoMapDao().getAllForStoragePool(getStoragePool().getId());
-        for (StoragePoolIsoMap poolDomain : poolDomains) {
-            if (checkIsDomainLocked(poolDomain)) {
-                return false;
-            }
+        if (!validate(createStoragePoolValidator().isAnyDomainInProcess())) {
+            return false;
         }
 
         return initializeVds();
@@ -95,12 +92,6 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RECONSTRUCT_MASTER);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
     }
-
-    protected void addInvalidSDStatusMessage(StorageDomainStatus status) {
-        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
-        addCanDoActionMessageVariable("status", status);
-    }
-
 
     protected boolean reconstructMaster() {
         proceedStorageDomainTreatmentByDomainType(true);
