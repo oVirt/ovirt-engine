@@ -40,4 +40,5 @@ public class GlusterConstants {
     public static final String FAILURE_MESSAGE = "failuremessage";
     public static final String JOB_STATUS = "status";
     public static final String JOB_INFO = "info";
+    public static final String NO_SERVER = "NO SERVER";
 }
