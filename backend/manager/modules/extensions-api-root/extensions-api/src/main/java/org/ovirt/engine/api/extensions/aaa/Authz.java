@@ -41,7 +41,7 @@ public class Authz {
         public static final ExtKey PAGE_SIZE = new ExtKey("AAA_AUTHZ_PAGE_SIZE", Integer.class, "03197cd2-2d0f-4636-bd88-f65c4a543efe");
         /**
          * Flag to determine how entries will be queried.
-         * @See QueryFlags
+         * @see QueryFlags
          * */
         public static final ExtKey QUERY_FLAGS = new ExtKey("AAA_AUTHZ_QUERY_FLAGS", Integer.class, "97d226e9-8d87-49a0-9a7f-af689320907b");
         /** Principal record. */
