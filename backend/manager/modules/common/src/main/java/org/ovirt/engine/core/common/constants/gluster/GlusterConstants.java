@@ -51,4 +51,5 @@ public class GlusterConstants {
     public static final String VOLUME_SNAPSHOT_MAX_HARD_LIMIT = "snap-max-hard-limit";
     public static final String VOLUME_SNAPSHOT_NAME = "snapname";
     public static final String VDS_GROUP_NAME = "VdsGroupName";
+    public static final String NO_SERVER = "NO SERVER";
 }

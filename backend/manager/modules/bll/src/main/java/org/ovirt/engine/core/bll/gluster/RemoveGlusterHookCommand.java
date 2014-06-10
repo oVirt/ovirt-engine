@@ -63,6 +63,7 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
            if (vds.getStatus() != VDSStatus.Up) {
                 setVdsName(vds.getName());
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP);
+                addCanDoActionMessage(String.format("$%1$s %2$s", "VdsName", vds.getName()));
                 return false;
             }
         }
