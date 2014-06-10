@@ -14,8 +14,6 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoadException;
@@ -24,6 +22,9 @@ import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.Extension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class is responsible for loading the required {@code Configuration} in order to create an extension. It holds
  * the logic of ordering and solving conflicts during loading the configuration
@@ -31,7 +32,7 @@ import org.ovirt.engine.api.extensions.Extension;
 public class ExtensionsManager extends Observable {
 
     public static final ExtKey TRACE_LOG_CONTEXT_KEY = new ExtKey("EXTENSION_MANAGER_TRACE_LOG",
-            Log.class,
+            Logger.class,
             "863db666-3ea7-4751-9695-918a3197ad83");
     public static final ExtKey CAUSE_OUTPUT_KEY = new ExtKey("EXTENSION_MANAGER_CAUSE_OUTPUT_KEY", Throwable.class, "894e1c86-518b-40a2-a92b-29ea1eb0403d");
 
@@ -116,8 +117,8 @@ public class ExtensionsManager extends Observable {
         }
     }
 
-    private static final Log log = LogFactory.getLog(ExtensionsManager.class.getName());
-    private static final Log traceLog = LogFactory.getLog(getTraceLog());
+    private static final Logger log = LoggerFactory.getLogger(ExtensionsManager.class.getName());
+    private static final Logger traceLog = LoggerFactory.getLogger(ExtensionsManager.class.getName() + ".trace");
 
     private static final Map<String, BindingsLoader> bindingsLoaders = new HashMap<String, BindingsLoader>() {
         {
@@ -146,7 +147,7 @@ public class ExtensionsManager extends Observable {
     }
 
     private void dumpConfig(ExtensionProxy extension) {
-        Log logger = extension.getContext().<Log> get(TRACE_LOG_CONTEXT_KEY);
+        Logger logger = extension.getContext().<Logger> get(TRACE_LOG_CONTEXT_KEY);
         if (logger.isDebugEnabled()) {
             List sensitive = extension.getContext().<List>get(Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS);
             logger.debug("Config BEGIN");
@@ -217,10 +218,10 @@ public class ExtensionsManager extends Observable {
 
             entry.extension.getContext().put(
                     TRACE_LOG_CONTEXT_KEY,
-                    LogFactory.getLog(
+                    LoggerFactory.getLogger(
                             String.format(
                                     "%1$s.%2$s.%3$s",
-                                    getTraceLog(),
+                                    traceLog.getName(),
                                     entry.extension.getContext().get(Base.ContextKeys.EXTENSION_NAME),
                                     entry.extension.getContext().get(Base.ContextKeys.INSTANCE_NAME)
                                     )
@@ -241,10 +242,6 @@ public class ExtensionsManager extends Observable {
         setChanged();
         notifyObservers();
         return entry.name;
-    }
-
-    public static String getTraceLog() {
-        return ExtensionsManager.class.getName() + ".trace";
     }
 
     public ExtMap getGlobalContext() {
@@ -299,13 +296,7 @@ public class ExtensionsManager extends Observable {
                             )
                     );
         } catch (Exception ex) {
-            log.error(
-                    String.format(
-                            "Error in activating extension %1$s. Exception message is %2$s",
-                            entry.name,
-                            ex.getMessage()
-                            )
-                    );
+            log.error("Error in activating extension {}. Exception message is {}", entry.name, ex.getMessage());
             if (log.isDebugEnabled()) {
                 log.debug(ex.toString(), ex);
             }
@@ -352,8 +343,7 @@ public class ExtensionsManager extends Observable {
         for (ExtensionEntry entry : loadedEntries.values()) {
             if (entry.extension != null) {
                 ExtMap context = entry.extension.getContext();
-                log.info(String.format(
-                    "Instance name: '%1$s', Extension name: '%2$s', Version: '%3$s', Notes: '%4$s', License: '%5$s', Home: '%6$s', Author '%7$s', Build interface Version: '%8$s',  File: '%9$s', Initialized: '%10$s'",
+                log.info("Instance name: '{}', Extension name: '{}', Version: '{}', Notes: '{}', License: '{}', Home: '{}', Author '{}', Build interface Version: '{}',  File: '{}', Initialized: '{}'",
                     emptyIfNull(context.get(Base.ContextKeys.INSTANCE_NAME)),
                     emptyIfNull(context.get(Base.ContextKeys.EXTENSION_NAME)),
                     emptyIfNull(context.get(Base.ContextKeys.VERSION)),
@@ -364,7 +354,7 @@ public class ExtensionsManager extends Observable {
                     emptyIfNull(context.get(Base.ContextKeys.BUILD_INTERFACE_VERSION)),
                     entry.getFileName(),
                     entry.initialized
-                ));
+                        );
             }
         }
         log.info("End of enabled extensions list");

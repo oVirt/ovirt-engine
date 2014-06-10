@@ -30,6 +30,7 @@
     <module name="org.ovirt.engine.core.uutils"/>
     <module name="org.postgresql"/>
     <module name="org.springframework"/>
+    <module name="org.slf4j"/>
   </dependencies>
 
 </module>

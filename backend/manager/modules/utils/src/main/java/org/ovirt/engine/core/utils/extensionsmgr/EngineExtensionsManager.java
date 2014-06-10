@@ -21,15 +21,15 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 public class EngineExtensionsManager extends ExtensionsManager {
 
     private static final String ENGINE_EXTENSION_ENABLED = "ENGINE_EXTENSION_ENABLED_";
 
     private static volatile EngineExtensionsManager instance = null;
-    private static Log log = LogFactory.getLog(EngineExtensionsManager.class);
+    private static Logger log = LoggerFactory.getLogger(EngineExtensionsManager.class);
     private final Set<String> multipleValuesKeys = new HashSet<>(Arrays.asList(
             "AdUserName",
             "AdUserId",
@@ -62,8 +62,8 @@ public class EngineExtensionsManager extends ExtensionsManager {
 
         for (File directory : EngineLocalConfig.getInstance().getExtensionsDirectories()) {
             if (!directory.exists()) {
-                log.warn(String.format("The directory '%1$s' cotaning configuration files does not exist.",
-                        directory.getAbsolutePath()));
+                log.warn("The directory '{}' cotaning configuration files does not exist.",
+                        directory.getAbsolutePath());
             } else {
 
                 // The order of the files inside the directory is relevant, as the objects are created in

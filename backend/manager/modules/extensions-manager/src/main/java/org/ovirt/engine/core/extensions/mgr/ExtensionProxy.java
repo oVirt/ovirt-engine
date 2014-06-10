@@ -1,10 +1,9 @@
 package org.ovirt.engine.core.extensions.mgr;
 
-import org.apache.commons.logging.Log;
-
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.Extension;
+import org.slf4j.Logger;
 
 public class ExtensionProxy implements Extension {
 
@@ -13,7 +12,7 @@ public class ExtensionProxy implements Extension {
     private final ExtMap context;
 
     private void dumpMap(String prefix, ExtMap map) {
-        Log logger = context.<Log> get(ExtensionsManager.TRACE_LOG_CONTEXT_KEY);
+        Logger logger = context.<Logger> get(ExtensionsManager.TRACE_LOG_CONTEXT_KEY);
         if (logger.isDebugEnabled()) {
             logger.debug(prefix + " BEGIN");
             logger.debug(map.toString());
