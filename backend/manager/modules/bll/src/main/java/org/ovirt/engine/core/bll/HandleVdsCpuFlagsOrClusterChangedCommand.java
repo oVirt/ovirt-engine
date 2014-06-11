@@ -5,11 +5,13 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -84,6 +86,8 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                     grp.setcpu_name(sc.getCpuName());
                     grp.setArchitecture(sc.getArchitecture());
 
+                    updateMigrateOnError(grp);
+
                     // use suppress in order to update group even if action fails
                     // (out of the transaction)
                     VdsGroupOperationParameters tempVar = new VdsGroupOperationParameters(grp);
@@ -121,6 +125,25 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
             }
         }
         setSucceeded(true);
+    }
+
+    private void updateMigrateOnError(VDSGroup group) {
+        ArchitectureType arch = getArchitecture(group);
+
+        boolean isMigrationSupported = FeatureSupported.isMigrationSupported(arch, group.getcompatibility_version());
+
+        if (!isMigrationSupported) {
+            group.setMigrateOnError(MigrateOnErrorOptions.NO);
+        }
+    }
+
+    protected ArchitectureType getArchitecture(VDSGroup group) {
+        if (StringUtils.isNotEmpty(group.getcpu_name())) {
+            return CpuFlagsManagerHandler.getArchitectureByCpuName(group.getcpu_name(),
+                    group.getcompatibility_version());
+        }
+
+        return group.getArchitecture();
     }
 
     @Override
