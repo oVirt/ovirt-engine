@@ -143,7 +143,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 
 import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 
-/**                                                                                                       H
+/**
  * WebAdmin {@code Ginjector} extension interface.
  */
 public interface ClientGinjectorExtension {
