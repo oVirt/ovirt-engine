@@ -45,8 +45,8 @@ __pycache__
 
 # Files generated from templates
 ###########################
-ovirt-engine.spec
 build/python-check.sh
+ovirt-engine.spec
 packaging/bin/engine-prolog.sh
 packaging/bin/ovirt-engine-log-setup-event.sh
 packaging/bin/pki-common.sh
@@ -64,6 +64,8 @@ packaging/services/*/*.sysv
 packaging/services/*/config.py
 packaging/setup/bin/ovirt-engine-setup.env
 packaging/setup/ovirt_engine_setup/config.py
+packaging/setup/ovirt_engine_setup/engine/engineconfig.py
+packaging/setup/ovirt_engine_setup/engine_common/enginecommonconfig.py
 packaging/sys-etc/logrotate.d/ovirt-engine
 packaging/sys-etc/logrotate.d/ovirt-engine-notifier
 packaging/sys-etc/logrotate.d/ovirt-engine-setup
