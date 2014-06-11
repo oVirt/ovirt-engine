@@ -314,6 +314,14 @@ public class BackendResource extends BaseBackendResource {
                          config.toString());
     }
 
+    @SuppressWarnings("serial")
+    protected <T> T getFenceConfigurationValue(Class<T> clz, ConfigurationValues config, final Version version) {
+        return getEntity(clz,
+                VdcQueryType.GetFenceConfigurationValue,
+                new GetConfigurationValueParameters(config, asString(version)),
+                config.toString());
+    }
+
     protected <T> T getConfigurationValueDefault(Class<T> clz, ConfigurationValues config) {
         return getEntity(clz,
                 VdcQueryType.GetConfigurationValue,

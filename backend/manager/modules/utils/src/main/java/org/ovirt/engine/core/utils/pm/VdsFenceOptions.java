@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.utils.log.Log;
@@ -75,8 +76,8 @@ public class VdsFenceOptions implements Serializable {
      * alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port
      */
     private void CacheFencingAgentsOptionMapping() {
-        String localfencingOptionMapping = Config.<String> getValue(ConfigValues.VdsFenceOptionMapping, version);
-        String[] agentsOptionsStr = localfencingOptionMapping.split(Pattern.quote(SEMICOLON), -1);
+        String localFencingOptionMapping = FenceConfigHelper.getFenceConfigurationValue(ConfigValues.VdsFenceOptionMapping.name(), version);
+        String[] agentsOptionsStr = localFencingOptionMapping.split(Pattern.quote(SEMICOLON), -1);
         for (String agentOptionsStr : agentsOptionsStr) {
             String[] parts = agentOptionsStr.split(Pattern.quote(COLON), -1);
             if (parts.length == 2) {
@@ -270,7 +271,7 @@ public class VdsFenceOptions implements Serializable {
      * @return string , the agent real name to be used
      */
     public static String getRealAgent(String agent) {
-        String agentMapping = Config.<String> getValue(ConfigValues.FenceAgentMapping);
+        String agentMapping = FenceConfigHelper.getFenceConfigurationValue(ConfigValues.FenceAgentMapping.name(), ConfigCommon.defaultConfigurationVersion);
         String realAgent = agent;
         // result has the format [<agent>=<real agent>[,]]*
         String[] settings = agentMapping.split(Pattern.quote(COMMA), -1);
@@ -297,10 +298,10 @@ public class VdsFenceOptions implements Serializable {
      * @return String the options after adding default agent parameters
      */
     public static String getDefaultAgentOptions(String agent, String fenceOptions) {
-        String agentdefaultParams = Config.<String> getValue(ConfigValues.FenceAgentDefaultParams);
+        String agentDefaultParams = FenceConfigHelper.getFenceConfigurationValue(ConfigValues.FenceAgentDefaultParams.name(), ConfigCommon.defaultConfigurationVersion);
         StringBuilder realOptions = new StringBuilder(fenceOptions);
         // result has the format [<agent>:param=value[,]...;]*
-        String[] params = agentdefaultParams.split(Pattern.quote(SEMICOLON), -1);
+        String[] params = agentDefaultParams.split(Pattern.quote(SEMICOLON), -1);
         for (String agentOptionsStr : params) {
             String[] parts = agentOptionsStr.split(Pattern.quote(COLON), -1);
             if (parts.length == 2) {

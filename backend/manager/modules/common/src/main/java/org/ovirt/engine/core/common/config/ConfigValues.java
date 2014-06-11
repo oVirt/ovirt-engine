@@ -111,8 +111,16 @@ public enum ConfigValues {
     VdsFenceType,
     @Reloadable
     @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    CustomVdsFenceType,
+    @Reloadable
+    @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port")
     VdsFenceOptionMapping,
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    CustomVdsFenceOptionMapping,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("secure=bool,port=int,slot=int")
@@ -820,8 +828,18 @@ public enum ConfigValues {
 
     @Reloadable
     @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    CustomFenceAgentMapping,
+
+    @Reloadable
+    @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ilo3:lanplus,power_wait=4")
     FenceAgentDefaultParams,
+
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    CustomFenceAgentDefaultParams,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("admin")

@@ -1991,9 +1991,9 @@ public final class AsyncDataProvider {
                 return list;
             }
         };
-        GetConfigurationValueParameters tempVar = new GetConfigurationValueParameters(ConfigurationValues.VdsFenceType);
-        tempVar.setVersion(version != null ? version.toString() : getDefaultConfigurationVersion());
-        getConfigFromCache(tempVar, aQuery);
+        GetConfigurationValueParameters param = new GetConfigurationValueParameters(ConfigurationValues.VdsFenceType);
+        param.setVersion(version != null ? version.toString() : getDefaultConfigurationVersion());
+        Frontend.getInstance().runQuery(VdcQueryType.GetFenceConfigurationValue, param, aQuery);
     }
 
     public static void getPmOptions(AsyncQuery aQuery, String pmType, String version) {
