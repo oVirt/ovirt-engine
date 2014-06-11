@@ -18,7 +18,7 @@ public interface DisksResource extends ReadOnlyDevicesResource<Disk, Disks> {
 
     @Path("{identity}")
     @Override
-    public DiskResource getDeviceSubResource(@PathParam("identity") String id);
+    public MovableCopyableDiskResource getDeviceSubResource(@PathParam("identity") String id);
 
     @POST
     @Formatted

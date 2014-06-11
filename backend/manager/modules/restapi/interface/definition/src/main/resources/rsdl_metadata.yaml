@@ -1139,7 +1139,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
-  name: /disks/{disk:id}/move|rel=move
+- name: /disks/{disk:id}/move|rel=move
   description: move a disk to a different storage domain
   request:
     body:
@@ -1153,7 +1153,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
-  name: /disks/{disk:id}/copy|rel=copy
+- name: /disks/{disk:id}/copy|rel=copy
   description: copy a disk to a different storage domain
   request:
     body:
