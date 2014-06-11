@@ -6,10 +6,10 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.queries.UnregisteredEntitiesQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
-public class GetUnregisteredVmTemplatesQuery<P extends UnregisteredEntitiesQueryParameters> extends GetUnregisteredEntitiesQuery<P> {
+public class GetUnregisteredVmTemplatesQuery<P extends IdQueryParameters> extends GetUnregisteredEntitiesQuery<P> {
     public GetUnregisteredVmTemplatesQuery(P parameters) {
         super(parameters);
     }

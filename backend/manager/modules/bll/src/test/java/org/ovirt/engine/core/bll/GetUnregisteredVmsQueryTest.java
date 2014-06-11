@@ -12,13 +12,13 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
-import org.ovirt.engine.core.common.queries.UnregisteredEntitiesQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDAO;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 /** A test case for the {@link GetUnregisteredVmsQuery} class. */
-public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<UnregisteredEntitiesQueryParameters, GetUnregisteredVmsQuery<? extends UnregisteredEntitiesQueryParameters>> {
+public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParameters, GetUnregisteredVmsQuery<? extends IdQueryParameters>> {
 
     Guid storageDomainId = Guid.newGuid();
     VmEntityType entityType = VmEntityType.VM;
@@ -35,49 +35,11 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<UnregisteredE
 
     @Test
     public void testExecuteQueryGetAllEntitiesCommand() throws OvfReaderException {
-        when(getQueryParameters().getEntityGuidList()).thenReturn(null);
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<VM> result = (List<VM>) getQuery().getQueryReturnValue().getReturnValue();
+        List<VM> result = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of VMs in result", 2, result.size());
-    }
-
-    @Test
-    public void testExecuteQueryCommandGetFirstEntity() throws OvfReaderException {
-        List<Guid> listGuids = new ArrayList<Guid>();
-        listGuids.add(newVmGuid);
-        when(getQueryParameters().getEntityGuidList()).thenReturn(listGuids);
-        getQuery().executeQueryCommand();
-
-        @SuppressWarnings("unchecked")
-        List<VM> result = (List<VM>) getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of VMs in result", 1, result.size());
-        assertEquals("VM guid is not correct", newVmGuid, result.get(0).getId());
-    }
-
-    @Test
-    public void testExecuteQueryCommandGetSecondEntity() throws OvfReaderException {
-        List<Guid> listGuids = new ArrayList<Guid>();
-        listGuids.add(newVmGuid2);
-        when(getQueryParameters().getEntityGuidList()).thenReturn(listGuids);
-        getQuery().executeQueryCommand();
-
-        @SuppressWarnings("unchecked")
-        List<VM> result = (List<VM>) getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of VMs in result", 1, result.size());
-        assertEquals("VM guid is not correct", newVmGuid2, result.get(0).getId());
-    }
-
-    @Test
-    public void testExecuteQueryCommandGetEmptyList() throws OvfReaderException {
-        List<Guid> listGuids = new ArrayList<Guid>();
-        when(getQueryParameters().getEntityGuidList()).thenReturn(listGuids);
-        getQuery().executeQueryCommand();
-
-        @SuppressWarnings("unchecked")
-        List<VM> result = (List<VM>) getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of VMs in result", 0, result.size());
     }
 
     private void mockQueryParameters() {

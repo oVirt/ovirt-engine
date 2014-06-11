@@ -14,7 +14,7 @@ import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.common.queries.UnregisteredEntitiesQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -32,7 +32,7 @@ public class BackendStorageDomainVmsResource
         if (QueryHelper.hasMatrixParam(getUriInfo(), UNREGISTERED_CONSTRAINT_PARAMETER)) {
             List<org.ovirt.engine.core.common.businessentities.VM> unregisteredVms =
                     getBackendCollection(VdcQueryType.GetUnregisteredVms,
-                            new UnregisteredEntitiesQueryParameters(storageDomainId));
+                            new IdQueryParameters(storageDomainId));
             List<VM> collection = new ArrayList<VM>();
             for (org.ovirt.engine.core.common.businessentities.VM entity : unregisteredVms) {
                 VM vm = map(entity);

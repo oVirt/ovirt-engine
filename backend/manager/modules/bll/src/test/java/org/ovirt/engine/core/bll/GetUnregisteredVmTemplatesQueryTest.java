@@ -12,13 +12,13 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.queries.UnregisteredEntitiesQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDAO;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 /** A test case for the {@link GetUnregisteredVmTemplatesQuery} class. */
-public class GetUnregisteredVmTemplatesQueryTest extends AbstractQueryTest<UnregisteredEntitiesQueryParameters, GetUnregisteredVmTemplatesQuery<? extends UnregisteredEntitiesQueryParameters>> {
+public class GetUnregisteredVmTemplatesQueryTest extends AbstractQueryTest<IdQueryParameters, GetUnregisteredVmTemplatesQuery<? extends IdQueryParameters>> {
 
     Guid storageDomainId = Guid.newGuid();
     VmEntityType entityType = VmEntityType.TEMPLATE;
@@ -35,49 +35,11 @@ public class GetUnregisteredVmTemplatesQueryTest extends AbstractQueryTest<Unreg
 
     @Test
     public void testExecuteQueryGetAllEntitiesCommand() throws OvfReaderException {
-        when(getQueryParameters().getEntityGuidList()).thenReturn(null);
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<VmTemplate> result = (List<VmTemplate>) getQuery().getQueryReturnValue().getReturnValue();
+        List<VmTemplate> result = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of Templates in result", 2, result.size());
-    }
-
-    @Test
-    public void testExecuteQueryCommandGetFirstEntity() throws OvfReaderException {
-        List<Guid> listGuids = new ArrayList<Guid>();
-        listGuids.add(newVmTemplateGuid);
-        when(getQueryParameters().getEntityGuidList()).thenReturn(listGuids);
-        getQuery().executeQueryCommand();
-
-        @SuppressWarnings("unchecked")
-        List<VmTemplate> result = (List<VmTemplate>) getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of Templates in result", 1, result.size());
-        assertEquals("Template guid is not correct", newVmTemplateGuid, result.get(0).getId());
-    }
-
-    @Test
-    public void testExecuteQueryCommandGetSecondEntity() throws OvfReaderException {
-        List<Guid> listGuids = new ArrayList<Guid>();
-        listGuids.add(newVmTemplateGuid2);
-        when(getQueryParameters().getEntityGuidList()).thenReturn(listGuids);
-        getQuery().executeQueryCommand();
-
-        @SuppressWarnings("unchecked")
-        List<VmTemplate> result = (List<VmTemplate>) getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of Templates in result", 1, result.size());
-        assertEquals("Template guid is not correct", newVmTemplateGuid2, result.get(0).getId());
-    }
-
-    @Test
-    public void testExecuteQueryCommandGetEmptyList() throws OvfReaderException {
-        List<Guid> listGuids = new ArrayList<Guid>();
-        when(getQueryParameters().getEntityGuidList()).thenReturn(listGuids);
-        getQuery().executeQueryCommand();
-
-        @SuppressWarnings("unchecked")
-        List<VmTemplate> result = (List<VmTemplate>) getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of Templates in result", 0, result.size());
     }
 
     private void mockQueryParameters() {

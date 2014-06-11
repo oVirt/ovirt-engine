@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.common.queries.UnregisteredEntitiesQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -36,7 +36,7 @@ public class BackendStorageDomainTemplatesResource
         if (QueryHelper.hasMatrixParam(getUriInfo(), UNREGISTERED_CONSTRAINT_PARAMETER)) {
             List<org.ovirt.engine.core.common.businessentities.VmTemplate> unregisteredTemplates =
                     getBackendCollection(VdcQueryType.GetUnregisteredVmTemplates,
-                            new UnregisteredEntitiesQueryParameters(storageDomainId));
+                            new IdQueryParameters(storageDomainId));
             List<Template> collection = new ArrayList<Template>();
             for (org.ovirt.engine.core.common.businessentities.VmTemplate entity : unregisteredTemplates) {
                 Template vmTemplate = map(entity);
