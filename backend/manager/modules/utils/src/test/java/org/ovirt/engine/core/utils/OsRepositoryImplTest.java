@@ -46,6 +46,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/resources/minimum/ram").put("value.3.1", "512");
         preferences.node("/os/rhel7/resources/maximum/ram").put("value", "2048");
         preferences.node("/os/rhel7/devices/display/protocols").put("value", "vnc/cirrus,qxl/qxl");
+        preferences.node("/os/rhel7/devices/balloon/enabled").put("value", "true");
         preferences.node("/os/rhel7/sysprepPath").put("value", PATH_TO_SYSPREP);
         preferences.node("/os/rhel7/productKey").put("value", SOME_PRODUCT_KEY);
         preferences.node("/os/rhel7/devices/audio").put("value", SOUND_DEVICE);
@@ -164,6 +165,12 @@ public class OsRepositoryImplTest {
 
         assertTrue(isSizeCorrect);
         assertTrue(containsSameElements);
+    }
+
+    @Test
+    public void testIsBalloonEnabled() throws Exception {
+        assertTrue(OsRepositoryImpl.INSTANCE.isBalloonEnabled(777, null));
+        assertTrue(OsRepositoryImpl.INSTANCE.getBalloonSupportMap().get(777).get(null));
     }
 
     public void testGetMaxPciDevices() throws Exception {

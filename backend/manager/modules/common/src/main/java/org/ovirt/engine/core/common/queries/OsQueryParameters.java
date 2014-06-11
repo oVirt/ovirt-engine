@@ -39,6 +39,8 @@ public class OsQueryParameters extends VdcQueryParametersBase {
 
     public enum OsRepositoryVerb {
         GetDisplayTypes,
+        GetBalloonSupportMap,
+        IsBalloonEnabled,
         HasNicHotplugSupport,
         GetNicHotplugSupportMap,
         GetDiskHotpluggableInterfacesMap,

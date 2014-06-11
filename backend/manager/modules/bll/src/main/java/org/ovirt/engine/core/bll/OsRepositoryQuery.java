@@ -48,6 +48,12 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
             case GetDisplayTypes:
                 setReturnValue(osRepository.getDisplayTypes());
                 break;
+            case GetBalloonSupportMap:
+                setReturnValue(osRepository.getBalloonSupportMap());
+            break;
+            case IsBalloonEnabled:
+                setReturnValue(osRepository.isBalloonEnabled(getParameters().getOsId(), getParameters().getVersion()));
+            break;
             case HasNicHotplugSupport:
                 setReturnValue(osRepository.hasNicHotplugSupport(getParameters().getOsId(), getParameters().getVersion()));
                 break;

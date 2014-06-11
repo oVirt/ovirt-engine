@@ -1243,7 +1243,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected boolean isBalloonEnabled() {
-        return getParameters().isBalloonEnabled();
+        Boolean balloonEnabled = getParameters().isBalloonEnabled();
+        return balloonEnabled != null ? balloonEnabled :
+            osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
+                    getVdsGroup().getcompatibility_version());
     }
 
     protected boolean hasWatchdog() {

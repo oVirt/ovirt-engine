@@ -307,9 +307,8 @@ public class BackendVmsResource extends
         params.setVmPayload(getPayload(vm));
         params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
                 vm.getVirtioScsi().isEnabled() : null);
-        if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
-            params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
-        }
+        params.setBalloonEnabled(vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning() ?
+                vm.getMemoryPolicy().isBallooning() : null);
 
         params.setConsoleEnabled(vm.isSetConsole() && vm.getConsole().isSetEnabled()
                 ? vm.getConsole().isEnabled()

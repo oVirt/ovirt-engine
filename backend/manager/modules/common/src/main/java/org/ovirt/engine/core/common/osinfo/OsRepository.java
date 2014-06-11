@@ -112,6 +112,20 @@ public interface OsRepository {
     public VmDeviceType getDisplayDevice(int osId, Version version, DisplayType displayType);
 
     /**
+     * @return map (osId -> compatibility version -> Boolean) that indicates balloon disabled for all OSs and
+     * compatibility versions
+     */
+    public Map<Integer, Map<Version, Boolean>> getBalloonSupportMap();
+
+    /**
+     * Checks if is recommended enable the OS balloon.
+     * @param osId
+     * @param version
+     * @return an boolean
+     */
+    public boolean isBalloonEnabled(int osId, Version version);
+
+    /**
      * Checks if that OS network devices support hotplug.
      * @param osId
      * @param version

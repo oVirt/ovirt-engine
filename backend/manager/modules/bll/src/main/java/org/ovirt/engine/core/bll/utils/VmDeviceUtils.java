@@ -88,7 +88,7 @@ public class VmDeviceUtils {
                 }
             }
             updateUSBSlots(oldVmBase, entity);
-            updateMemoryBalloon(entity, params.isBalloonEnabled());
+            updateMemoryBalloon(entity, isBalloonEnabled(params));
             updateAudioDevice(oldVm.getStaticData(), entity, oldVm.getVdsGroupCompatibilityVersion(), params.isSoundDeviceEnabled());
             updateSmartcardDevice(oldVm, entity);
             updateConsoleDevice(entity, params.isConsoleEnabled());
@@ -1013,6 +1013,13 @@ public class VmDeviceUtils {
 
     private static boolean isDiskOrInterface(VmDevice vmDevice) {
         return VmDeviceCommonUtils.isDisk(vmDevice) || VmDeviceCommonUtils.isBridge(vmDevice);
+    }
+
+    private static boolean isBalloonEnabled(VmManagementParametersBase params) {
+        Boolean balloonEnabled = params.isBalloonEnabled();
+        return balloonEnabled != null ? balloonEnabled :
+            osRepository.isBalloonEnabled(params.getVmStaticData().getOsId(),
+                    ClusterUtils.getCompatibilityVersion(params.getVmStaticData()));
     }
 
     public static boolean isVirtioScsiControllerAttached(Guid vmId) {

@@ -23,7 +23,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private VmPayload payload;
     private boolean clearPayload;
-    private boolean balloonEnabled;
+    private Boolean balloonEnabled;
     private VM vm;
     private VmWatchdog watchdog;
     private VmRngDevice rngDevice;
@@ -66,7 +66,6 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     public VmManagementParametersBase() {
         privateStorageDomainId = Guid.Empty;
         consoleEnabled = Boolean.FALSE;
-        balloonEnabled = true;
     }
 
     public VmManagementParametersBase(VmStatic vmStatic) {
@@ -74,7 +73,6 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
         _vmStatic = vmStatic;
         privateStorageDomainId = Guid.Empty;
         consoleEnabled = Boolean.FALSE;
-        balloonEnabled = true;
     }
 
     public VmManagementParametersBase(VM vm) {
@@ -153,11 +151,11 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
         this.clearPayload = clearPayload;
     }
 
-    public boolean isBalloonEnabled() {
+    public Boolean isBalloonEnabled() {
         return balloonEnabled;
     }
 
-    public void setBalloonEnabled(boolean isBallonEnabled) {
+    public void setBalloonEnabled(Boolean isBallonEnabled) {
         this.balloonEnabled = isBallonEnabled;
     }
 

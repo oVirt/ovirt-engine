@@ -93,7 +93,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.setCdPath("");
         this.setFloppyPath("");
         this.setDiskSize(0);
-        balloonEnabled = true;
         snapshots = new ArrayList<Snapshot>();
         initializationType = InitializationType.None;
         runtimeDeviceCustomProperties = new HashMap<VmDevice, Map<String, String>>();

@@ -350,6 +350,29 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public Map<Integer, Map<Version, Boolean>> getBalloonSupportMap() {
+        Map<Integer, Map<Version, Boolean>> balloonSupportMap = new HashMap<Integer, Map<Version, Boolean>>();
+        Set<Version> versionsWithNull = new HashSet<Version>(Version.ALL);
+        versionsWithNull.add(null);
+
+        Set<Integer> osIds = new HashSet<Integer>(getOsIds());
+        for (Integer osId : osIds) {
+            balloonSupportMap.put(osId, new HashMap<Version, Boolean>());
+
+            for (Version ver : versionsWithNull) {
+                balloonSupportMap.get(osId).put(ver, isBalloonEnabled(osId, ver));
+            }
+        }
+
+        return balloonSupportMap;
+    }
+
+    @Override
+    public boolean isBalloonEnabled(int osId, Version version) {
+        return getBoolean(getValueByVersion(idToUnameLookup.get(osId), "devices.balloon.enabled", version), false);
+    }
+
+    @Override
     public boolean hasNicHotplugSupport(int osId, Version version) {
         return getBoolean(getValueByVersion(idToUnameLookup.get(osId), "devices.network.hotplugSupport", version), false);
     }
