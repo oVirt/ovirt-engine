@@ -77,8 +77,7 @@ public final class VdcActionUtils {
         vdsMatrix.put(
                 VDSStatus.NonOperational,
                 EnumSet.of(VdcActionType.RemoveVds,
-                        VdcActionType.ApproveVds,
-                        VdcActionType.RefreshHostCapabilities));
+                        VdcActionType.ApproveVds));
         vdsMatrix.put(
                 VDSStatus.PendingApproval,
                 EnumSet.of(VdcActionType.UpdateVds,

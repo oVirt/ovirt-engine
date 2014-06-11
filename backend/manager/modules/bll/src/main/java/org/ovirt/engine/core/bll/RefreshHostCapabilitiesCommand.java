@@ -41,9 +41,9 @@ public class RefreshHostCapabilitiesCommand<T extends VdsActionParameters> exten
 
     private ValidationResult hostStatusValid() {
         VDSStatus hostStatus = getVds().getStatus();
-        if (hostStatus != VDSStatus.Maintenance && hostStatus != VDSStatus.Up) {
+        if (hostStatus != VDSStatus.Maintenance && hostStatus != VDSStatus.Up && hostStatus != VDSStatus.NonOperational) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
-                    VdcBllMessages.VAR__HOST_STATUS__UP_OR_MAINTENANCE.name());
+                    VdcBllMessages.VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL.name());
         }
 
         return ValidationResult.VALID;

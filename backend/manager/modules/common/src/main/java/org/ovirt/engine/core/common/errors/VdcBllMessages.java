@@ -108,7 +108,6 @@ public enum VdcBllMessages {
     // Host statuses replacements
     VAR__HOST_STATUS__UP,
     VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL,
-    VAR__HOST_STATUS__UP_OR_MAINTENANCE,
 
     VAR__VM_STATUS__UP,
     VAR__VM_STATUS__UNASSIGNED,

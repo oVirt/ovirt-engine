@@ -991,9 +991,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$hostStatus Up, Maintenance or Non operational")
     String VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL();
 
-    @DefaultStringValue("$hostStatus 'Up' or 'Maintenance'")
-    String VAR__HOST_STATUS__UP_OR_MAINTENANCE();
-
     @DefaultStringValue("$vmStatus Up")
     String VAR__VM_STATUS__UP();
 
