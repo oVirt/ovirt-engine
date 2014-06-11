@@ -522,8 +522,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
         VDSGroup cluster = getModel().getSelectedCluster();
-        getModel().getCustomPropertySheet().setKeyValueString(getModel().getCustomPropertiesKeysList()
-                .get(cluster.getcompatibility_version()));
+        if (getModel().getCustomPropertiesKeysList() != null) {
+            getModel().getCustomPropertySheet().setKeyValueString(getModel().getCustomPropertiesKeysList()
+                    .get(cluster.getcompatibility_version()));
+        }
     }
 
     public int maxCpus = 0;
