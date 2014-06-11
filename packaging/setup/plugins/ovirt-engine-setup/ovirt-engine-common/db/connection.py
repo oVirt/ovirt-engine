@@ -31,7 +31,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup.engine_common \
-    import enginecommonconstants as oengcommcons
+    import constants as oengcommcons
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine_common import database
 from ovirt_engine_setup import dialog

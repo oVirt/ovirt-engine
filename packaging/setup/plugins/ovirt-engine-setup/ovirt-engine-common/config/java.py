@@ -31,7 +31,7 @@ from ovirt_engine import java
 
 
 from ovirt_engine_setup.engine_common \
-    import enginecommonconstants as oengcommcons
+    import constants as oengcommcons
 
 
 @util.export

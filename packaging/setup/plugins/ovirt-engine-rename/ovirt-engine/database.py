@@ -32,7 +32,7 @@ from otopi import transaction
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine_common \
-    import enginecommonconstants as oengcommcons
+    import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
 from ovirt_engine_setup.engine import vdcoption
 from ovirt_engine_setup import domains

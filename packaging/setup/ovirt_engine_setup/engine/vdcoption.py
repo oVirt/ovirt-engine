@@ -28,7 +28,7 @@ from M2Crypto import RSA
 from otopi import util
 
 
-from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine import constants as oenginecons
 
 
 @util.export

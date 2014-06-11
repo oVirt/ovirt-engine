@@ -32,7 +32,7 @@ from ovirt_engine_setup.constants import osetupattrsclass
 from ovirt_engine_setup.constants import osetupattrs
 
 
-from . import engineconfig
+from . import config
 
 
 @util.export
@@ -41,18 +41,18 @@ class FileLocations(object):
     LOCALSTATEDIR = '/var'
     DATADIR = '/usr/share'
 
-    OVIRT_ENGINE_SYSCONFDIR = engineconfig.ENGINE_SYSCONFDIR
-    OVIRT_ENGINE_PKIDIR = engineconfig.ENGINE_PKIDIR
-    OVIRT_ENGINE_DATADIR = engineconfig.ENGINE_DATADIR
-    OVIRT_ENGINE_LOCALSTATEDIR = engineconfig.ENGINE_LOCALSTATEDIR
-    OVIRT_ENGINE_LOGDIR = engineconfig.ENGINE_LOG
-    OVIRT_ENGINE_SERVICE_CONFIG = engineconfig.ENGINE_SERVICE_CONFIG
+    OVIRT_ENGINE_SYSCONFDIR = config.ENGINE_SYSCONFDIR
+    OVIRT_ENGINE_PKIDIR = config.ENGINE_PKIDIR
+    OVIRT_ENGINE_DATADIR = config.ENGINE_DATADIR
+    OVIRT_ENGINE_LOCALSTATEDIR = config.ENGINE_LOCALSTATEDIR
+    OVIRT_ENGINE_LOGDIR = config.ENGINE_LOG
+    OVIRT_ENGINE_SERVICE_CONFIG = config.ENGINE_SERVICE_CONFIG
     OVIRT_ENGINE_SERVICE_CONFIG_DEFAULTS = \
-        engineconfig.ENGINE_SERVICE_CONFIG_DEFAULTS
+        config.ENGINE_SERVICE_CONFIG_DEFAULTS
     OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIG = \
-        engineconfig.ENGINE_WEBSOCKET_PROXY_CONFIG
+        config.ENGINE_WEBSOCKET_PROXY_CONFIG
     OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG = \
-        engineconfig.ENGINE_NOTIFIER_SERVICE_CONFIG
+        config.ENGINE_NOTIFIER_SERVICE_CONFIG
 
     OVIRT_ENGINE_BINDIR = os.path.join(
         OVIRT_ENGINE_DATADIR,

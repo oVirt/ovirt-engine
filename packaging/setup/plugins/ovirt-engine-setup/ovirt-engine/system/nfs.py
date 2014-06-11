@@ -34,9 +34,9 @@ from otopi import filetransaction
 
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common \
-    import enginecommonconstants as oengcommcons
+    import constants as oengcommcons
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup import dialog
 

@@ -189,8 +189,8 @@ GENERATED = \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.sysv \
 	packaging/setup/bin/ovirt-engine-setup.env \
 	packaging/setup/ovirt_engine_setup/config.py \
-	packaging/setup/ovirt_engine_setup/engine/engineconfig.py \
-	packaging/setup/ovirt_engine_setup/engine_common/enginecommonconfig.py \
+	packaging/setup/ovirt_engine_setup/engine/config.py \
+	packaging/setup/ovirt_engine_setup/engine_common/config.py \
 	packaging/sys-etc/logrotate.d/ovirt-engine \
 	packaging/sys-etc/logrotate.d/ovirt-engine-notifier \
 	packaging/sys-etc/logrotate.d/ovirt-engine-setup \

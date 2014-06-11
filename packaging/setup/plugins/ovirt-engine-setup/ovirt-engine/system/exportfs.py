@@ -32,7 +32,7 @@ from otopi import constants as otopicons
 from otopi import filetransaction
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine import engineconstants as oenginecons
+from ovirt_engine_setup.engine import constants as oenginecons
 
 
 @util.export

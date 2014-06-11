@@ -29,7 +29,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup.engine_common \
-    import enginecommonconstants as oengcommcons
+    import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
 
 

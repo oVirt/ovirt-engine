@@ -27,7 +27,7 @@ _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 from otopi import util
 
-from . import enginecommonconfig
+from . import config
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.constants import classproperty
 from ovirt_engine_setup.constants import osetupattrsclass
@@ -36,7 +36,7 @@ from ovirt_engine_setup.constants import osetupattrs
 
 @util.export
 class FileLocations(object):
-    OVIRT_ENGINE_COMMON_DATADIR = enginecommonconfig.ENGINE_COMMON_DATADIR
+    OVIRT_ENGINE_COMMON_DATADIR = config.ENGINE_COMMON_DATADIR
 
     JBOSS_HOME = os.path.join(
         osetupcons.FileLocations.DATADIR,
