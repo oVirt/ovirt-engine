@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -79,6 +80,8 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     @Override
     public void template_SelectedItemChanged() {
         getModel().setIsDisksAvailable(true);
+        VmTemplate template = getModel().getTemplate().getSelectedItem();
+        updateRngDevice(template.getId());
     }
 
     @Override

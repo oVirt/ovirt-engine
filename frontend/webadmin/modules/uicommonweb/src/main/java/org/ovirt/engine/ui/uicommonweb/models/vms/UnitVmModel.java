@@ -245,6 +245,13 @@ public class UnitVmModel extends Model {
             getInitrd_path().setIsChangable(false);
             getKernel_parameters().setIsChangable(false);
 
+            // ==Random Generator Tab==
+            getIsRngEnabled().setIsChangable(false);
+            getRngPeriod().setIsChangable(false);
+            getRngBytes().setIsChangable(false);
+            getRngSourceRandom().setIsChangable(false);
+            getRngSourceHwrng().setIsChangable(false);
+
             // ==Custom Properties Tab==
             getCustomProperties().setIsChangable(false);
 

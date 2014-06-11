@@ -140,13 +140,13 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         model.getRngSourceRandom().setIsChangable(randomSourceAvailable);
-        if (randomSourceAvailable) {
-            model.getRngSourceRandom().setMessage(messages.rngSourceNotSupportedByCluster(VmRngDevice.Source.RANDOM.toString()));
+        if (!randomSourceAvailable) {
+            model.getRngSourceRandom().setChangeProhibitionReason(messages.rngSourceNotSupportedByCluster(VmRngDevice.Source.RANDOM.toString()));
         }
 
         model.getRngSourceHwrng().setIsChangable(hwrngSourceAvailable);
-        if (hwrngSourceAvailable) {
-            model.getRngSourceHwrng().setMessage(messages.rngSourceNotSupportedByCluster(VmRngDevice.Source.HWRNG.toString()));
+        if (!hwrngSourceAvailable) {
+            model.getRngSourceHwrng().setChangeProhibitionReason(messages.rngSourceNotSupportedByCluster(VmRngDevice.Source.HWRNG.toString()));
         }
     }
 
