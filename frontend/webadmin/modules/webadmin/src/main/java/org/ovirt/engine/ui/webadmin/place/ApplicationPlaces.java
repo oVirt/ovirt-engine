@@ -89,6 +89,12 @@ public class ApplicationPlaces {
     public static final String storageTemplateBackupSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
             + "template_import"; //$NON-NLS-1$
 
+    public static final String storageVmRegisterSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
+            + "vm_register"; //$NON-NLS-1$
+
+    public static final String storageTemplateRegisterSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
+            + "template_register"; //$NON-NLS-1$
+
     public static final String storageVmSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
             + "virtual_machines"; //$NON-NLS-1$
 

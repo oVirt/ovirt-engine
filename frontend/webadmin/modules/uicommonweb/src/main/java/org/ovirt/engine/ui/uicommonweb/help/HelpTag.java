@@ -200,6 +200,10 @@ public enum HelpTag {
 
     images("images", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
+    vm_register("register_vms", HelpTagType.WEBADMIN), //$NON-NLS-1$
+
+    template_register("register_templates", HelpTagType.WEBADMIN), //$NON-NLS-1$
+
     import_conflict("import_conflict", HelpTagType.WEBADMIN, "during import of a VM/Template: A dialog that warns that there is a name conflict between the import candidate and an existing VM/Template in the system"), //$NON-NLS-1$ //$NON-NLS-2$
 
     import_images("import_images", HelpTagType.WEBADMIN, "[Glance integration] Storage main tab -> Images sub-tab (only for 'ISO' storage domain) -> 'Import Image(s)' dialog"), //$NON-NLS-1$ //$NON-NLS-2$

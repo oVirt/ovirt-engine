@@ -60,4 +60,9 @@ public class ImportVmData extends ImportEntityData {
     public void setCollapseSnapshots(EntityModel collapseSnapshots) {
         this.collapseSnapshots = collapseSnapshots;
     }
+
+    @Override
+    public String getName() {
+        return ((VM) getEntity()).getName();
+    }
 }

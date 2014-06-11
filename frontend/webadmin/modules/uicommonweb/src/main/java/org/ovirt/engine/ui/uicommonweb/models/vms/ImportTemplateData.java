@@ -12,4 +12,9 @@ public class ImportTemplateData extends ImportEntityData {
     public VmTemplate getTemplate() {
         return (VmTemplate) getEntity();
     }
+
+    @Override
+    public String getName() {
+        return ((VmTemplate) getEntity()).getName();
+    }
 }

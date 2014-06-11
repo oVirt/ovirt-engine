@@ -34,4 +34,6 @@ public abstract class ImportEntityData {
     public void setClone(EntityModel clone) {
         this.clone = clone;
     }
+
+    public abstract String getName();
 }

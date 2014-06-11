@@ -30,6 +30,8 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterTemplateListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageVmListModel;
@@ -309,6 +311,26 @@ public class StorageModule extends AbstractGinModule {
                 }
             }
         };
+    }
+
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<VM, StorageListModel, StorageRegisterVmListModel> getStorageRegisterVmListProvider(
+            EventBus eventBus, Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<VM, StorageListModel, StorageRegisterVmListModel>(
+                eventBus, defaultConfirmPopupProvider,
+                StorageListModel.class,
+                StorageRegisterVmListModel.class);
+    }
+
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<VmTemplate, StorageListModel, StorageRegisterTemplateListModel> getStorageRegisterTemplateListProvider(
+            EventBus eventBus, Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<VmTemplate, StorageListModel, StorageRegisterTemplateListModel>(
+                eventBus, defaultConfirmPopupProvider,
+                StorageListModel.class,
+                StorageRegisterTemplateListModel.class);
     }
 
     @Provides

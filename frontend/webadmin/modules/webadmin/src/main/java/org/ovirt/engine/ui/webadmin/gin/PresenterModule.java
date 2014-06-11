@@ -199,6 +199,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabSto
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageIsoPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStoragePermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageRegisterTemplatePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageRegisterVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageSnapshotPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageTemplateBackupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageTemplatePresenter;
@@ -425,6 +427,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageE
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageIsoView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStoragePermissionView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageRegisterTemplateView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageRegisterVmView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageSnapshotView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageTemplateBackupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageTemplateView;
@@ -643,6 +647,14 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabStorageTemplateBackupPresenter.ViewDef.class,
                 SubTabStorageTemplateBackupView.class,
                 SubTabStorageTemplateBackupPresenter.ProxyDef.class);
+        bindPresenter(SubTabStorageRegisterVmPresenter.class,
+                SubTabStorageRegisterVmPresenter.ViewDef.class,
+                SubTabStorageRegisterVmView.class,
+                SubTabStorageRegisterVmPresenter.ProxyDef.class);
+        bindPresenter(SubTabStorageRegisterTemplatePresenter.class,
+                SubTabStorageRegisterTemplatePresenter.ViewDef.class,
+                SubTabStorageRegisterTemplateView.class,
+                SubTabStorageRegisterTemplatePresenter.ProxyDef.class);
         bindPresenter(SubTabStorageVmPresenter.class,
                 SubTabStorageVmPresenter.ViewDef.class,
                 SubTabStorageVmView.class,

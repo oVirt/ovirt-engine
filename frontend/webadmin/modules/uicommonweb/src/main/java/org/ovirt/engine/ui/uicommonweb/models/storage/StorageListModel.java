@@ -189,6 +189,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private EntityModel vmBackupModel;
     private EntityModel templateBackupModel;
     private ListModel dcListModel;
+    private ListModel vmRegisterListModel;
+    private ListModel templateRegisterListModel;
     private ListModel vmListModel;
     private ListModel templateListModel;
     private ListModel isoListModel;
@@ -225,6 +227,12 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         templateBackupModel = new TemplateBackupModel();
         templateBackupModel.setIsAvailable(false);
 
+        vmRegisterListModel = new StorageRegisterVmListModel();
+        vmRegisterListModel.setIsAvailable(false);
+
+        templateRegisterListModel = new StorageRegisterTemplateListModel();
+        templateRegisterListModel.setIsAvailable(false);
+
         vmListModel = new StorageVmListModel();
         vmListModel.setIsAvailable(false);
 
@@ -245,6 +253,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         list.add(dcListModel);
         list.add(vmBackupModel);
         list.add(templateBackupModel);
+        list.add(vmRegisterListModel);
+        list.add(templateRegisterListModel);
         list.add(vmListModel);
         list.add(templateListModel);
         list.add(isoListModel);
@@ -1065,6 +1075,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             vmListModel.setIsAvailable(isDataStorage);
             templateListModel.setIsAvailable(isDataStorage);
+            vmRegisterListModel.setIsAvailable(isDataStorage);
+            templateRegisterListModel.setIsAvailable(isDataStorage);
             diskListModel.setIsAvailable(isDataStorage);
             snapshotListModel.setIsAvailable(isDataStorage);
 

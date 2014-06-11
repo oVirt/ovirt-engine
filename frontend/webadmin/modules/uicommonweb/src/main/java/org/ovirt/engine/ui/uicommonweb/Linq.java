@@ -60,6 +60,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicompat.DateTimeUtils;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
@@ -1350,6 +1351,15 @@ public final class Linq
                 }
             }
             return lexoNumeric.compare(pu1.getName(), pu2.getName());
+        }
+    }
+
+    public final static class ImportEntityComparator implements Comparator<ImportEntityData>, Serializable {
+        final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+        @Override
+        public int compare(ImportEntityData entity1, ImportEntityData entity2) {
+            return lexoNumeric.compare(entity1.getName(), entity2.getName());
         }
     }
 }
