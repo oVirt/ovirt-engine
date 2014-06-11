@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -116,8 +117,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
         boolean initSucceeded = true;
 
-        // host is UP, remove kdump status
-        getDbFacade().getVdsKdumpStatusDao().remove(getVdsId());
+        initHostKdumpDetectionStatus();
 
         /* Host is UP, re-set the policy controlled power management flag */
         getVds().setPowerManagementControlledByPolicy(true);
@@ -533,6 +533,18 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                     e.getMessage());
             glusterPeerProbeSucceeded = false;
             return false;
+        }
+    }
+
+    private void initHostKdumpDetectionStatus() {
+        // host is UP, remove kdump status
+        getDbFacade().getVdsKdumpStatusDao().remove(getVdsId());
+
+        if (getVds().isPmKdumpDetection() &&
+                getVds().getKdumpStatus() != KdumpStatus.ENABLED) {
+            AuditLogableBase base = new AuditLogableBase();
+            base.setVds(getVds());
+            AuditLogDirector.log(base, AuditLogType.KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS);
         }
     }
 }
