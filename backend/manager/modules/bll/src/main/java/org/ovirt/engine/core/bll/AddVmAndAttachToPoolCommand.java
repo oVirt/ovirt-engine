@@ -73,6 +73,11 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         parameters.setConsoleEnabled(getParameters().isConsoleEnabled());
         parameters.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
 
+        if (getParameters().isUpdateRngDevice()) {
+            parameters.setUpdateRngDevice(true);
+            parameters.setRngDevice(getParameters().getRngDevice());
+        }
+
         return Backend.getInstance().runInternalAction(VdcActionType.AddVm,
                         parameters,
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));

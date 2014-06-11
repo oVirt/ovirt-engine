@@ -128,7 +128,7 @@ public class VmRngDevice extends VmDevice implements Serializable {
 
     public Source getSource() {
         try {
-            return Source.valueOf((String) getSpecParams().get(SOURCE_STRING));
+            return Source.valueOf(((String) getSpecParams().get(SOURCE_STRING)).toUpperCase());
         } catch (Exception e) {
             return Source.RANDOM;
         }

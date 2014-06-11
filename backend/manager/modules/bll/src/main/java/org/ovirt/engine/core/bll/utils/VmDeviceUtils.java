@@ -362,6 +362,9 @@ public class VmDeviceUtils {
                     break;
 
                 case RNG:
+                    if (hasVmRngDevice(dstId)) {
+                        continue; // don't copy rng device if we already have it
+                    }
                     specParams.putAll(device.getSpecParams());
                     break;
 
@@ -1036,6 +1039,11 @@ public class VmDeviceUtils {
 
     public static boolean isSoundDeviceEnabled(Guid vmId) {
         return !getSoundDevices(vmId).isEmpty();
+    }
+
+    public static boolean hasVmRngDevice(Guid vmId) {
+        return !DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,
+                VmDeviceGeneralType.RNG).isEmpty();
     }
 
     public static List<VmDevice> getSoundDevices(Guid vmId) {
