@@ -234,7 +234,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                         );
                 addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
                 AcctUtils.reportRecords(
-                        Acct.ReportReason.PRINCIPAL_WAS_NOT_FOUND,
+                        Acct.ReportReason.PRINCIPAL_NOT_FOUND,
                         loginName,
                         authRecord,
                         null,

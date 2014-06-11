@@ -68,7 +68,7 @@ public class Acct {
          * Authz Principal record was not found.
          * Will have {@link PrincipalRecord}.
          */
-        public static final int PRINCIPAL_WAS_NOT_FOUND = 2;
+        public static final int PRINCIPAL_NOT_FOUND = 2;
         /**
          * Login failed by any reason but locked.
          * Will have {@link PrincipalRecord}.
