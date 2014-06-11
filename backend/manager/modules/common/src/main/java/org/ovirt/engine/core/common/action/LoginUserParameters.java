@@ -8,7 +8,8 @@ import org.ovirt.engine.core.aaa.AuthType;
 public class LoginUserParameters extends VdcActionParametersBase implements Serializable {
     private static final long serialVersionUID = -1660445011620552804L;
 
-    private static class AuthenticationInformation {
+    private static class AuthenticationInformation implements Serializable {
+        private static final long serialVersionUID = -3144932226242786617L;
         private String loginName;
         private String password;
         private transient Object authRecord;
