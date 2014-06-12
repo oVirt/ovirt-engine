@@ -125,7 +125,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 }
                 getParameters().setImages(images);
                 getVmTemplate().setImages(images);
-                ensureDomainMap(getParameters().getImages(), getParameters().getDestDomainId());
+                ensureDomainMap(getImages(), getParameters().getDestDomainId());
                 HashMap<Guid, DiskImage> imageMap = new HashMap<Guid, DiskImage>();
                 for (DiskImage image : images) {
                     if (Guid.Empty.equals(image.getVmSnapshotId())) {
@@ -177,10 +177,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
 
         if (retVal) {
-            retVal = validateNoDuplicateDiskImages(getParameters().getImages());
+            retVal = validateNoDuplicateDiskImages(getImages());
         }
 
-        if (retVal && getParameters().getImages() != null && !getParameters().getImages().isEmpty() && !isImagesAlreadyOnTarget()) {
+        if (retVal && getImages() != null && !getImages().isEmpty() && !isImagesAlreadyOnTarget()) {
             Map<StorageDomain, Integer> domainMap = getSpaceRequirementsForStorageDomains(
                     new ArrayList<DiskImage>(getVmTemplate().getDiskImageMap().values()));
             if (domainMap.isEmpty()) {
@@ -248,7 +248,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     private void initImportClonedTemplateDisks() {
-        for (DiskImage image : getParameters().getImages()) {
+        for (DiskImage image : getImages()) {
             if (getParameters().isImportAsNewEntity()) {
                 generateNewDiskId(image);
                 updateManagedDeviceMap(image, getVmTemplate().getManagedDeviceMap());
@@ -265,6 +265,11 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
 
         return true;
+    }
+
+    @Override
+    protected List<DiskImage> getImages() {
+        return getParameters().getImages();
     }
 
     /**
@@ -301,9 +306,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             }
         });
 
-        boolean doesVmTemplateContainImages = !getParameters().getImages().isEmpty();
+        boolean doesVmTemplateContainImages = !getImages().isEmpty();
         if (doesVmTemplateContainImages && !isImagesAlreadyOnTarget()) {
-            moveOrCopyAllImageGroups(getVmTemplateId(), getParameters().getImages());
+            moveOrCopyAllImageGroups(getVmTemplateId(), getImages());
         }
 
         VmDeviceUtils.addImportedDevices(getVmTemplate(), getParameters().isImportAsNewEntity());
@@ -395,7 +400,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         int count = 1;
-        for (DiskImage image : getParameters().getImages()) {
+        for (DiskImage image : getImages()) {
             image.setActive(true);
             image_storage_domain_map map = BaseImagesCommand.saveImage(image);
             getCompensationContext().snapshotNewEntity(image.getImage());

@@ -156,9 +156,12 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         if (entityFromConfiguration == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
         }
-        setStorageDomainId(ovfEntityData.getStorageDomainId());
-        if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive())) {
-            return false;
+
+        for (DiskImage image : getImages()) {
+            setStorageDomainId(image.getStorageIds().get(0));
+            if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive())) {
+                return false;
+            }
         }
         if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED,
@@ -166,6 +169,10 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     String.format("$domainType %1$s", getStorageDomain().getStorageDomainType()));
         }
         return true;
+    }
+
+    protected List<DiskImage> getImages() {
+        return null;
     }
 
     protected boolean isImagesAlreadyOnTarget() {
@@ -349,10 +356,13 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         if (imageToDestinationDomainMap == null) {
             imageToDestinationDomainMap = new HashMap<Guid, Guid>();
         }
-        if (imageToDestinationDomainMap.isEmpty() && images != null && defaultDomainId != null
-                && !Guid.Empty.equals(defaultDomainId)) {
+        if (imageToDestinationDomainMap.isEmpty() && images != null && defaultDomainId != null) {
             for (DiskImage image : images) {
-                imageToDestinationDomainMap.put(image.getId(), defaultDomainId);
+                if (isImagesAlreadyOnTarget()) {
+                    imageToDestinationDomainMap.put(image.getId(), image.getStorageIds().get(0));
+                } else if (!Guid.Empty.equals(defaultDomainId)) {
+                    imageToDestinationDomainMap.put(image.getId(), defaultDomainId);
+                }
             }
         }
     }

@@ -247,11 +247,12 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_UNREGISTERED_NOT_COLLAPSED);
         }
 
-        setSourceDomainId(getParameters().getSourceDomainId());
-        StorageDomainValidator validator = new StorageDomainValidator(getSourceDomain());
-        if (validator.isDomainExistAndActive().isValid() && !isImagesAlreadyOnTarget()
-                && getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+        if (!isImagesAlreadyOnTarget()) {
+            setSourceDomainId(getParameters().getSourceDomainId());
+            StorageDomainValidator validator = new StorageDomainValidator(getSourceDomain());
+            if (validator.isDomainExistAndActive().isValid() && getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            }
         }
 
         List<VM> vms = getVmsFromExportDomain();
@@ -272,7 +273,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             setVm(vm);
 
             // Iterate over all the VM images (active image and snapshots)
-            for (DiskImage image : getVm().getImages()) {
+            for (DiskImage image : getImages()) {
                 if (Guid.Empty.equals(image.getVmSnapshotId())) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
                 }
@@ -309,10 +310,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 // work properly.
                 // we fix it to DestDomainId in
                 // MoveOrCopyAllImageGroups();
-                image.setStorageIds(new ArrayList<Guid>(Arrays.asList(getParameters().getSourceDomainId())));
+                image.setStorageIds(new ArrayList<Guid>(Arrays.asList(getSourceDomainId(image))));
             }
 
-            Map<Guid, List<DiskImage>> images = ImagesHandler.getImagesLeaf(getVm().getImages());
+            Map<Guid, List<DiskImage>> images = ImagesHandler.getImagesLeaf(getImages());
             for (Map.Entry<Guid, List<DiskImage>> entry : images.entrySet()) {
                 Guid id = entry.getKey();
                 List<DiskImage> diskList = entry.getValue();
@@ -620,12 +621,16 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         return true;
     }
 
+    protected Guid getSourceDomainId(DiskImage image) {
+        return getParameters().getSourceDomainId();
+    }
+
     protected boolean checkImagesGUIDsLegal() {
-        for (DiskImage image : getVm().getImages()) {
+        for (DiskImage image : getImages()) {
             Guid imageGUID = image.getImageId();
             Guid storagePoolId = image.getStoragePoolId() != null ? image.getStoragePoolId()
                     : Guid.Empty;
-            Guid storageDomainId = getParameters().getSourceDomainId();
+            Guid storageDomainId = getSourceDomainId(image);
             Guid imageGroupId = image.getId() != null ? image.getId() : Guid.Empty;
 
             VDSReturnValue retValue = Backend
@@ -830,7 +835,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     protected void addVmImagesAndSnapshots() {
-        Map<Guid, List<DiskImage>> images = ImagesHandler.getImagesLeaf(getVm().getImages());
+        Map<Guid, List<DiskImage>> images = ImagesHandler.getImagesLeaf(getImages());
 
         if (getParameters().getCopyCollapse()) {
             Guid snapshotId = Guid.newGuid();
@@ -868,7 +873,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             getVm().setSnapshots(Arrays.asList(snapshot));
         } else {
             Guid snapshotId = null;
-            for (DiskImage disk : getVm().getImages()) {
+            for (DiskImage disk : getImages()) {
                 disk.setActive(false);
                 setDiskStorageDomainInfo(disk);
 
@@ -1290,6 +1295,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             }
         }
         return list;
+    }
+
+    @Override
+    protected List<DiskImage> getImages() {
+        return getVm().getImages();
     }
 
     ///////////////////////////////////////

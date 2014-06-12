@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
@@ -94,8 +95,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         super.executeCommand();
         if (getSucceeded()) {
             if (isImagesAlreadyOnTarget()) {
-                getUnregisteredOVFDataDao().removeEntity(ovfEntityData.getEntityId(),
-                        ovfEntityData.getStorageDomainId());
+                getUnregisteredOVFDataDao().removeEntity(ovfEntityData.getEntityId(), null);
             } else if (!vmDisksToAttach.isEmpty()) {
                 AuditLogDirector.log(this, attemptToAttachDisksToImportedVm(vmDisksToAttach));
             }
@@ -128,4 +128,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         return AuditLogType.VM_IMPORT_FROM_CONFIGURATION_EXECUTED_SUCCESSFULLY;
     }
 
+    protected Guid getSourceDomainId(DiskImage image) {
+        return image.getStorageIds().get(0);
+    }
 }

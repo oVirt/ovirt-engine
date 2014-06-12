@@ -39,13 +39,13 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     @Override
     protected boolean canDoAction() {
         initVmTemplate();
-        if (isImagesAlreadyOnTarget() && !validateUnregisteredEntity(vmTemplateFromConfiguration, ovfEntityData)) {
-            return false;
-        }
         ArrayList<DiskImage> disks = new ArrayList(getVmTemplate().getDiskTemplateMap().values());
         setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), disks);
         getParameters().setImages(disks);
         getVmTemplate().setImages(disks);
+        if (isImagesAlreadyOnTarget() && !validateUnregisteredEntity(vmTemplateFromConfiguration, ovfEntityData)) {
+            return false;
+        }
         return super.canDoAction();
     }
 
@@ -74,7 +74,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     public void executeCommand() {
         super.executeCommand();
         if (isImagesAlreadyOnTarget()) {
-            getUnregisteredOVFDataDao().removeEntity(ovfEntityData.getEntityId(), ovfEntityData.getStorageDomainId());
+            getUnregisteredOVFDataDao().removeEntity(ovfEntityData.getEntityId(), null);
         }
         setActionReturnValue(getVmTemplate().getId());
     }
