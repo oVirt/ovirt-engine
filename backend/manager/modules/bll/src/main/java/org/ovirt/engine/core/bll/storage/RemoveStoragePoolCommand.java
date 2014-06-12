@@ -85,9 +85,23 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             }
         }
 
-        getStoragePoolDAO().remove(getStoragePool().getId());
+        removeDataCenter();
         MacPoolManager.getInstance().freeMacs(macsToRemove);
         setSucceeded(true);
+    }
+
+    private void removeDataCenter() {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+            @Override
+            public Void runInTransaction() {
+                getCompensationContext().snapshotEntity(getStoragePool());
+                getStoragePoolDAO().remove(getStoragePool().getId());
+                getCompensationContext().stateChanged();
+
+                return null;
+            }
+        });
     }
 
     private void removeNetworks() {
@@ -187,17 +201,10 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             }
         });
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                getCompensationContext().snapshotEntity(getStoragePool());
-                handleDestroyStoragePoolCommand();
-                getCompensationContext().stateChanged();
-                return null;
-            }
-        });
+        handleDestroyStoragePoolCommand();
 
         setSucceeded(true);
+
         if (!getStoragePool().isLocal()) {
             for (VDS vds : vdss) {
                 StorageHelperDirector.getInstance().getItem(masterDomain.getStorageType())
