@@ -195,6 +195,7 @@ Requires:	%{name}-tools = %{version}-%{release}
 Requires:	%{name}-userportal = %{version}-%{release}
 Requires:	%{name}-webadmin-portal = %{version}-%{release}
 Requires:	%{name}-websocket-proxy >= %{version}-%{release}
+Requires:	fop
 Requires:	java
 Requires:	java-1.7.0-openjdk >= 1:1.7.0.9-2.3.3.2
 Requires:	jpackage-utils
@@ -697,7 +698,19 @@ while read dst src; do
 	rm -f "%{buildroot}${dst}"
 	ln -s "${src}" "%{buildroot}${dst}"
 done << __EOF__
+org/apache/commons/io/main/commons-io.jar
 org/apache/ws/commons/main/ws-commons-util.jar
+org/apache/xmlgraphics/batik/main/batik-awt-util.jar batik/batik-awt-util.jar
+org/apache/xmlgraphics/batik/main/batik-bridge.jar batik/batik-bridge.jar
+org/apache/xmlgraphics/batik/main/batik-css.jar batik/batik-css.jar
+org/apache/xmlgraphics/batik/main/batik-ext.jar batik/batik-ext.jar
+org/apache/xmlgraphics/batik/main/batik-extension.jar batik/batik-extension.jar
+org/apache/xmlgraphics/batik/main/batik-gvt.jar batik/batik-gvt.jar
+org/apache/xmlgraphics/batik/main/batik-svg-dom.jar batik/batik-svg-dom.jar
+org/apache/xmlgraphics/batik/main/batik-transcoder.jar batik/batik-transcoder.jar
+org/apache/xmlgraphics/batik/main/batik-util.jar batik/batik-util.jar
+org/apache/xmlgraphics/commons/main/xmlgraphics-commons.jar
+org/apache/xmlgraphics/fop/main/fop.jar
 org/ovirt/otopi/main/otopi.jar otopi/otopi.jar
 org/ovirt/ovirt-host-deploy/main/ovirt-host-deploy.jar ovirt-host-deploy/ovirt-host-deploy.jar
 org/ovirt/vdsm-jsonrpc-java/main/vdsm-jsonrpc-java-client.jar vdsm-jsonrpc-java/vdsm-jsonrpc-java-client.jar
@@ -713,6 +726,8 @@ com/woorea/openstack/sdk/main/quantum-client.jar openstack-java-sdk/quantum-clie
 com/woorea/openstack/sdk/main/quantum-model.jar openstack-java-sdk/quantum-model.jar
 com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/resteasy-connector.jar
 org/aopalliance/main/aopalliance.jar
+org/apache/avalon/framework/main/avalon-framework-api.jar
+org/apache/avalon/framework/main/avalon-framework-impl.jar
 org/apache/commons/compress/main/commons-compress.jar
 org/apache/commons/configuration/main/commons-configuration.jar commons-configuration.jar
 org/apache/commons/httpclient/main/commons-httpclient.jar
@@ -734,6 +749,10 @@ org/springframework/main/spring-ldap-core.jar spring-ldap/spring-ldap-core.jar
 org/springframework/main/spring-tx.jar springframework/spring-tx.jar
 org/tukaani/xz/main/xz.jar
 %endif
+%endif
+%if 0%{?rhel}
+org/apache/avalon/framework/main/avalon-framework-api.jar avalon-framework.jar
+org/apache/avalon/framework/main/avalon-framework-impl.jar avalon-framework.jar
 %endif
 __EOF__
 

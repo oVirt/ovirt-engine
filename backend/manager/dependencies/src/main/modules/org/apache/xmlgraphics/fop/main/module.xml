@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.1" name="org.apache.xmlgraphics.fop">
+
+  <resources>
+    <resource-root path="fop.jar"/>
+  </resources>
+
+  <dependencies>
+    <module name="javax.api"/>
+    <module name="javax.servlet.api"/>
+    <module name="org.apache.avalon.framework"/>
+    <module name="org.apache.commons.io"/>
+    <module name="org.apache.commons.logging"/>
+    <module name="org.apache.xalan"/>
+    <module name="org.apache.xmlgraphics.batik"/>
+    <module name="org.apache.xmlgraphics.commons"/>
+  </dependencies>
+
+</module>
+

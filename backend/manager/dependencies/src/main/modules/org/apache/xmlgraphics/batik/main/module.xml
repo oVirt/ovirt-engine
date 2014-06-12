@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.1" name="org.apache.xmlgraphics.batik">
+
+  <resources>
+    <resource-root path="batik-awt-util.jar"/>
+    <resource-root path="batik-bridge.jar"/>
+    <resource-root path="batik-css.jar"/>
+    <resource-root path="batik-ext.jar"/>
+    <resource-root path="batik-extension.jar"/>
+    <resource-root path="batik-gvt.jar"/>
+    <resource-root path="batik-svg-dom.jar"/>
+    <resource-root path="batik-transcoder.jar"/>
+    <resource-root path="batik-util.jar"/>
+  </resources>
+
+</module>
+

@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.resource.gluster;
 
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -95,6 +96,12 @@ public interface GlusterVolumeResource extends MeasurableResource {
     @GET
     @Formatted
     @Path("profilestatistics")
+    @Produces({
+        ApiMediaType.APPLICATION_XML,
+        ApiMediaType.APPLICATION_JSON,
+        ApiMediaType.APPLICATION_X_YAML,
+        ApiMediaType.APPLICATION_PDF
+    })
     public GlusterVolumeProfileDetails getProfileStatistics();
 
     /**
