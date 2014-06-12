@@ -1,8 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
@@ -19,7 +17,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
 public class VnicProfileVmListModel extends SearchableListModel
 {
 
@@ -27,6 +24,8 @@ public class VnicProfileVmListModel extends SearchableListModel
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
         setHashName("virtual_machines"); //$NON-NLS-1$
+
+        setComparator(new Linq.VmComparator());
 
         updateActionAvailability();
     }
@@ -44,15 +43,6 @@ public class VnicProfileVmListModel extends SearchableListModel
     protected void onEntityChanged() {
         super.onEntityChanged();
         getSearchCommand().execute();
-    }
-
-    @Override
-    public void setItems(Collection value) {
-        if (value != null) {
-            List<VM> itemList = (List<VM>) value;
-            Collections.sort(itemList, new Linq.VmComparator());
-        }
-        super.setItems(value);
     }
 
     @Override
@@ -75,7 +65,7 @@ public class VnicProfileVmListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                VnicProfileVmListModel.this.setItems((List<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                setItems((Collection<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 

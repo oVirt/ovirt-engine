@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.profiles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -44,12 +42,14 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
     public VnicProfileListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfilesTitle());
         setHelpTag(HelpTag.vnicProfiles);
-        setHashName("vnicProfiles"); //$NON-NLS-1$
+        setHashName("vnicProfiles"); //$NON-NLS-1$)
 
         setDefaultSearchString("VnicProfile:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         // setSearchObjects(new String[] { SearchObjects.PROFILE_OBJ_NAME, SearchObjects.PROFILE_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);
+
+        setComparator(new Linq.VnicProfileViewComparator());
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
@@ -135,8 +135,8 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
                 @Override
                 public void onSuccess(Object model, Object ReturnValue)
                 {
-                    ArrayList<Network> networks =
-                            (ArrayList<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                    Collection<Network> networks =
+                            (Collection<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
                     profileModel.getNetwork().setItems(networks);
 
@@ -158,7 +158,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
         }
     }
 
-    private Network findNetwork(Guid networkId, List<Network> networks) {
+    private Network findNetwork(Guid networkId, Iterable<Network> networks) {
         for (Network network : networks) {
             if (networkId.equals(network.getId())) {
                 return network;
@@ -209,7 +209,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
                 @Override
                 public void onSuccess(Object model, Object returnValue)
                 {
-                    setItems((List<VnicProfileView>) returnValue);
+                    setItems((Collection<VnicProfileView>) returnValue);
                 }
             };
             AsyncDataProvider.getVnicProfilesByNetworkId(asyncQuery, network.getId());
@@ -227,7 +227,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
                 @Override
                 public void onSuccess(Object model, Object returnValue)
                 {
-                    setItems((List<VnicProfileView>) returnValue);
+                    setItems((Collection<VnicProfileView>) returnValue);
                 }
             };
             AsyncDataProvider.getVnicProfilesByDcId(asyncQuery, dc.getId());
@@ -247,9 +247,8 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
     }
 
     private void updateActionAvailability() {
-        List tempVar = getSelectedItems();
-        ArrayList selectedItems =
-                (ArrayList) ((tempVar != null) ? tempVar : new ArrayList());
+        Collection<VnicProfileView> tempVar = getSelectedItems();
+        Collection<VnicProfileView> selectedItems = ((tempVar != null) ? tempVar : new ArrayList());
 
         getEditCommand().setIsExecutionAllowed(selectedItems.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0);
@@ -295,14 +294,6 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
     @Override
     public VnicProfileView getEntity() {
         return (VnicProfileView) super.getEntity();
-    }
-
-    @Override
-    public void setItems(Collection value) {
-        if (value != null) {
-            Collections.sort((List<VnicProfileView>) value, new Linq.VnicProfileViewComparator());
-        }
-        super.setItems(value);
     }
 
     @Override
