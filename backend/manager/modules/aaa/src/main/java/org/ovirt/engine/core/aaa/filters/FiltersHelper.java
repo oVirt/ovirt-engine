@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.aaa.filters;
 
-import java.util.Collections;
+import java.util.Enumeration;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.http.HeaderElement;
+import org.apache.http.message.BasicHeaderValueParser;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 
@@ -38,7 +40,20 @@ public class FiltersHelper {
     }
 
     public static boolean isPersistentAuth(HttpServletRequest req) {
-        return Collections.list(req.getHeaders(FiltersHelper.Constants.HEADER_PREFER)).contains("persistent-auth");
+        Enumeration<String> headerValues = req.getHeaders(Constants.HEADER_PREFER);
+        while (headerValues.hasMoreElements()) {
+            String headerValue = headerValues.nextElement();
+            HeaderElement[] headerElements = BasicHeaderValueParser.parseElements(headerValue, null);
+            if (headerElements != null) {
+                for (HeaderElement headerElement : headerElements) {
+                    String elementName = headerElement.getName();
+                    if ("persistent-auth".equalsIgnoreCase(elementName)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 }
