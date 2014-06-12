@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import java.util.Comparator;
+
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
+
 
 /**
  * Column for displaying text using {@link TextCellWithTooltip}.
@@ -34,5 +38,20 @@ public abstract class TextColumnWithTooltip<T> extends SortableColumn<T, String>
 
     public void setTitle(String tooltipText) {
         getCell().setTitle(tooltipText);
+    }
+
+    /**
+     * Enables default <em>client-side</em> sorting for this column, by the String ordering of the displayed text.
+     */
+    public void makeSortable() {
+        makeSortable(new Comparator<T>() {
+
+            private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+            @Override
+            public int compare(T arg0, T arg1) {
+                return lexoNumeric.compare(getValue(arg0), getValue(arg1));
+            }
+        });
     }
 }
