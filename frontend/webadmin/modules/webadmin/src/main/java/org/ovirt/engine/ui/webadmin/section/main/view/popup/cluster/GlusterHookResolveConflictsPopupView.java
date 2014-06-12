@@ -186,7 +186,12 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
         statusEditor = new EntityModelLabelEditor<GlusterHookStatus>(new EnumRenderer<GlusterHookStatus>(), new Parser<GlusterHookStatus>() {
             @Override
             public GlusterHookStatus parse(CharSequence text) throws ParseException {
-                return GlusterHookStatus.valueOf(text.toString().toUpperCase());
+                if(text == null || text.toString().isEmpty()) {
+                    return null;
+                }
+                else {
+                    return GlusterHookStatus.valueOf(text.toString().toUpperCase());
+                }
             }
         });
 
