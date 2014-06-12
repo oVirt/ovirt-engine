@@ -63,6 +63,7 @@ import org.ovirt.engine.api.restapi.resource.validation.JaxbExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.JaxbMarshallExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.JsonExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.MalformedIdExceptionMapper;
+import org.ovirt.engine.api.restapi.resource.validation.MappingExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.resource.validation.XmlMessageBodyReader;
 import org.ovirt.engine.api.restapi.security.auth.SessionProcessor;
@@ -169,6 +170,7 @@ public class BackendApplication extends Application {
         singletons.add(new JaxbMarshallExceptionMapper());
         singletons.add(new JsonExceptionMapper());
         singletons.add(new InvalidValueExceptionMapper());
+        singletons.add(new MappingExceptionMapper());
     }
 
     private void addResource(final BackendResource resource) {

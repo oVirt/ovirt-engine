@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.ovirt.engine.api.common.util.PackageExplorer;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
+import org.ovirt.engine.api.restapi.utils.MappingException;
 
 /**
  * Discovers and manages type mappers.
@@ -111,19 +112,18 @@ public class MappingLocator {
 
         @Override
         public Object map(Object from, Object template) {
-            Object ret = null;
             try {
                 // REVISIT support non-static mapping methods also
-                ret = method.invoke(null, from, template);
+                return to.cast(method.invoke(null, from, template));
             } catch (InvocationTargetException ite) {
               if (ite.getTargetException() instanceof MalformedIdException) {
                    throw (MalformedIdException) ite.getTargetException();
+              } else {
+                  throw new MappingException(ite);
               }
-            } catch (Exception e) {
-                // REVISIT logging, fallback null-mapping
-                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                throw new MappingException(e);
             }
-            return to.cast(ret);
         }
 
         public String toString() {
