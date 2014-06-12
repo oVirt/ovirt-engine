@@ -13,7 +13,7 @@ public class ProviderNetworkListModel extends SearchableListModel {
 
     private static final String CMD_DISCOVER = "Discover"; //$NON-NLS-1$
 
-    private UICommand privateDiscoverCommand;
+    private UICommand discoverCommand;
 
     public ProviderNetworkListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().providerNetworksTitle());
@@ -24,11 +24,11 @@ public class ProviderNetworkListModel extends SearchableListModel {
     }
 
     public UICommand getDiscoverCommand() {
-        return privateDiscoverCommand;
+        return discoverCommand;
     }
 
     private void setDiscoverCommand(UICommand value) {
-        privateDiscoverCommand = value;
+        discoverCommand = value;
     }
 
     @Override
