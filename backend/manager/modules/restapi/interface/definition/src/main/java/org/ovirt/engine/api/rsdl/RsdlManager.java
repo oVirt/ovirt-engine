@@ -70,8 +70,8 @@ public class RsdlManager {
 
     public static RSDL loadRsdl(ApplicationMode applicationMode) throws IOException {
         String fileName =
-                applicationMode == ApplicationMode.AllModes ? ("/" + RsdlIOManager.RSDL_RESOURCE_NAME)
-                        : ("/" + RsdlIOManager.GLUSTER_RSDL_RESOURCE_NAME);
+                applicationMode == ApplicationMode.GlusterOnly ? ("/" + RsdlIOManager.GLUSTER_RSDL_RESOURCE_NAME)
+                        : ("/" + RsdlIOManager.RSDL_RESOURCE_NAME);
         InputStream rsdlAsStrem = null;
         try {
             rsdlAsStrem = RsdlIOManager.loadAsStream(fileName);

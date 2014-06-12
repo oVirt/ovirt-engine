@@ -17,6 +17,7 @@ import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetValueBySessionQueryParameters;
@@ -59,9 +60,9 @@ public class SessionProcessor implements PreProcessInterceptor, PostProcessInter
         this.request = request;
 
         sessionHelper.setSessionId(engineSessionId);
-        current.set(backend.runPublicQuery(VdcQueryType.GetConfigurationValue,
+        current.set(ApplicationMode.from((Integer) backend.runPublicQuery(VdcQueryType.GetConfigurationValue,
                 new GetConfigurationValueParameters(ConfigurationValues.ApplicationMode,
-                        ConfigCommon.defaultConfigurationVersion)));
+                        ConfigCommon.defaultConfigurationVersion)).getReturnValue()));
         current.set(backend.runPublicQuery(
                 VdcQueryType.GetValueBySession,
                 new GetValueBySessionQueryParameters(engineSessionId, "user")
