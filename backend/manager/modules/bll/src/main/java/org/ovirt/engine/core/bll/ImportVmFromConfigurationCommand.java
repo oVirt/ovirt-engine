@@ -96,6 +96,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         if (getSucceeded()) {
             if (isImagesAlreadyOnTarget()) {
                 getUnregisteredOVFDataDao().removeEntity(ovfEntityData.getEntityId(), null);
+                AuditLogDirector.log(this, AuditLogType.VM_IMPORT_FROM_CONFIGURATION_EXECUTED_SUCCESSFULLY);
             } else if (!vmDisksToAttach.isEmpty()) {
                 AuditLogDirector.log(this, attemptToAttachDisksToImportedVm(vmDisksToAttach));
             }
