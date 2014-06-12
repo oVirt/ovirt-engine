@@ -10,7 +10,9 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> extends CommandBase<T>  {
 
     private VmBase cachedEntity = null;
+    private VmEntityType templateType = null;
     private List<VmDevice> cachedRngDevices = null;
 
     protected AbstractRngDeviceCommand(T parameters) {
@@ -34,9 +37,14 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
         Guid vmId = parameters.getRngDevice().getVmId();
         setVmId(vmId);
 
-        cachedEntity = getParameters().isVm()
-                ? getVmStaticDAO().get(vmId)
-                : getVmTemplateDAO().get(vmId);
+        if (getParameters().isVm()) {
+            cachedEntity = getVmStaticDAO().get(vmId);
+        } else {
+            VmTemplate template = getVmTemplateDAO().get(vmId);
+            templateType = template.getTemplateType();
+            cachedEntity = template;
+        }
+
         if (cachedEntity != null) {
             setVdsGroupId(cachedEntity.getVdsGroupId());
         }
@@ -88,6 +96,10 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
 
     protected VmDeviceDAO getVmDeviceDao() {
         return getDbFacade().getVmDeviceDao();
+    }
+
+    protected VmEntityType getTemplateType() {
+        return templateType;
     }
 
 }

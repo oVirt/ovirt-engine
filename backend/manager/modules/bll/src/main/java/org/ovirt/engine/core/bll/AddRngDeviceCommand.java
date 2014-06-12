@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -16,7 +17,7 @@ public class AddRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParam
             return false;
         }
 
-        if (!isRngSupportedByCluster()) {
+        if (!isRngSupportedByCluster() && getTemplateType() != VmEntityType.INSTANCE_TYPE) {
             return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }
 
