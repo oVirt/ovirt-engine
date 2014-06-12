@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.RegisterEntityPopupView.WidgetStyle">
+        .containerPanel {
+            border: 1px solid #333;
+            margin: 5px;
+        }
+
+        .containerPanelInner {
+            margin: 5px;
+            overflow: auto;
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+        }
+
+        .cellSelectBox {
+            width: 90%;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="930px" height="650px">
+        <d:content>
+            <g:SplitLayoutPanel ui:field="splitLayoutPanel" width="100%">
+                <g:center>
+                    <g:SimplePanel addStyleNames="{style.containerPanel}">
+                        <g:FlowPanel addStyleNames="{style.containerPanelInner}">
+                            <e:EntityModelCellTable ui:field="entityTable"/>
+                        </g:FlowPanel>
+                    </g:SimplePanel>
+                </g:center>
+                <g:south size="265">
+                    <g:SimplePanel addStyleNames="{style.containerPanel}">
+                        <g:SimplePanel addStyleNames="{style.containerPanelInner}">
+                            <g:SimplePanel ui:field="entityInfoContainer" />
+                        </g:SimplePanel>
+                    </g:SimplePanel>
+                </g:south>
+            </g:SplitLayoutPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
+</ui:UiBinder>

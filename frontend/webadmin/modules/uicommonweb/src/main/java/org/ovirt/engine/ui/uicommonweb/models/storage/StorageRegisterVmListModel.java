@@ -9,6 +9,8 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import java.util.ArrayList;
@@ -21,6 +23,21 @@ public class StorageRegisterVmListModel extends StorageRegisterEntityListModel {
         setTitle(ConstantsManager.getInstance().getConstants().vmImportTitle());
         setHelpTag(HelpTag.vm_register);
         setHashName("vm_register"); //$NON-NLS-1$
+    }
+
+    @Override
+    RegisterEntityModel createRegisterEntityModel() {
+        RegisterVmModel model = new RegisterVmModel();
+        model.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
+        model.setHelpTag(HelpTag.register_virtual_machine);
+        model.setHashName("register_virtual_machine"); //$NON-NLS-1$
+
+        return model;
+    }
+
+    @Override
+    ImportEntityData createImportEntityData(Object entity) {
+        return new ImportVmData((VM) entity);
     }
 
     @Override

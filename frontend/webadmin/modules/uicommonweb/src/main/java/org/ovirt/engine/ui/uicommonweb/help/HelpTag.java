@@ -218,6 +218,10 @@ public enum HelpTag {
 
     import_virtual_machine("import_virtual_machine", HelpTagType.WEBADMIN, "Storage Tab > Import VM > Import Virtual Machine(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    register_template("register_template", HelpTagType.WEBADMIN, "Storage Tab > Import Template > Import Template(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    register_virtual_machine("register_virtual_machine", HelpTagType.WEBADMIN, "Storage Tab > Import VM > Import Virtual Machine(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+
     install_host("install_host", HelpTagType.WEBADMIN, "Host Tab > General Sub-Tab > Install Host"), //$NON-NLS-1$ //$NON-NLS-2$
 
     iscsi_bundles("iscsi_bundles", HelpTagType.UNKNOWN), //$NON-NLS-1$

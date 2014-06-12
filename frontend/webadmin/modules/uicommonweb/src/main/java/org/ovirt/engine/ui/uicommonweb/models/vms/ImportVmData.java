@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -59,6 +60,11 @@ public class ImportVmData extends ImportEntityData {
 
     public void setCollapseSnapshots(EntityModel collapseSnapshots) {
         this.collapseSnapshots = collapseSnapshots;
+    }
+
+    @Override
+    public ArchitectureType getArchType() {
+        return ((VM) getEntity()).getClusterArch();
     }
 
     @Override

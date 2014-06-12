@@ -9,6 +9,8 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import java.util.ArrayList;
@@ -21,6 +23,21 @@ public class StorageRegisterTemplateListModel extends StorageRegisterEntityListM
         setTitle(ConstantsManager.getInstance().getConstants().templateImportTitle());
         setHelpTag(HelpTag.template_register);
         setHashName("template_register"); //$NON-NLS-1$
+    }
+
+    @Override
+    RegisterEntityModel createRegisterEntityModel() {
+        RegisterTemplateModel model = new RegisterTemplateModel();
+        model.setTitle(ConstantsManager.getInstance().getConstants().importTemplatesTitle());
+        model.setHelpTag(HelpTag.register_template);
+        model.setHashName("register_template"); //$NON-NLS-1$
+
+        return model;
+    }
+
+    @Override
+    ImportEntityData createImportEntityData(Object entity) {
+        return new ImportTemplateData((VmTemplate) entity);
     }
 
     @Override

@@ -43,6 +43,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.ImportExportImagePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterTemplatePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterVmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDestroyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
@@ -316,22 +318,44 @@ public class StorageModule extends AbstractGinModule {
     @Provides
     @Singleton
     public SearchableDetailModelProvider<VM, StorageListModel, StorageRegisterVmListModel> getStorageRegisterVmListProvider(
-            EventBus eventBus, Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+            EventBus eventBus, Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<RegisterVmPopupPresenterWidget> registerEntityPopupProvider) {
         return new SearchableDetailTabModelProvider<VM, StorageListModel, StorageRegisterVmListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 StorageListModel.class,
-                StorageRegisterVmListModel.class);
+                StorageRegisterVmListModel.class) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(
+                    StorageRegisterVmListModel source, UICommand lastExecutedCommand, Model windowModel) {
+                if (lastExecutedCommand == getModel().getImportCommand()) {
+                    return registerEntityPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+        };
     }
 
     @Provides
     @Singleton
     public SearchableDetailModelProvider<VmTemplate, StorageListModel, StorageRegisterTemplateListModel> getStorageRegisterTemplateListProvider(
-            EventBus eventBus, Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+            EventBus eventBus, Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<RegisterTemplatePopupPresenterWidget> registerEntityPopupProvider) {
         return new SearchableDetailTabModelProvider<VmTemplate, StorageListModel, StorageRegisterTemplateListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 StorageListModel.class,
-                StorageRegisterTemplateListModel.class);
-    }
+                StorageRegisterTemplateListModel.class) {
+        @Override
+        public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(
+                StorageRegisterTemplateListModel source, UICommand lastExecutedCommand, Model windowModel) {
+            if (lastExecutedCommand == getModel().getImportCommand()) {
+                return registerEntityPopupProvider.get();
+            } else {
+                return super.getModelPopup(source, lastExecutedCommand, windowModel);
+            }
+        }
+    };
+}
 
     @Provides
     @Singleton
