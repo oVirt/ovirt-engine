@@ -94,7 +94,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         super.executeCommand();
         if (getSucceeded()) {
             if (isImagesAlreadyOnTarget()) {
-                getUnregisteredOVFDataDao().removeEntity(ovfEntityData.getEntityId(), ovfEntityData.getStorageDomainId());
+                getUnregisteredOVFDataDao().removeEntity(ovfEntityData.getEntityId(),
+                        ovfEntityData.getStorageDomainId());
             } else if (!vmDisksToAttach.isEmpty()) {
                 AuditLogDirector.log(this, attemptToAttachDisksToImportedVm(vmDisksToAttach));
             }
@@ -108,7 +109,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         vm.getDiskList().clear();
     }
 
-    private AuditLogType attemptToAttachDisksToImportedVm(Collection<Disk> disks){
+    private AuditLogType attemptToAttachDisksToImportedVm(Collection<Disk> disks) {
         List<String> failedDisks = new LinkedList<>();
         for (Disk disk : disks) {
             AttachDetachVmDiskParameters params = new AttachDetachVmDiskParameters(getVm().getId(),
