@@ -1839,7 +1839,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Group")
     String groupUser();
 
-    @DefaultStringValue("e-mail")
+    @DefaultStringValue("E-mail")
     String emailUser();
 
     @DefaultStringValue("Add")
