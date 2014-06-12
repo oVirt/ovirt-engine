@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -136,10 +136,9 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
         updateActionAvailability();
     }
 
-    @SuppressWarnings("rawtypes")
     private void updateActionAvailability() {
-        List tempVar = getSelectedItems();
-        List selectedItems = (tempVar != null) ? tempVar : new ArrayList();
+        Collection<Provider> tempVar = getSelectedItems();
+        Collection<Provider> selectedItems = (tempVar != null) ? tempVar : new ArrayList();
 
         getEditCommand().setIsExecutionAllowed(selectedItems.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0);
