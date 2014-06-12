@@ -762,10 +762,33 @@ public class UnitVmModel extends Model {
     private NotChangableForVmInPoolEntityModel<Boolean> isConsoleDeviceEnabled;
 
     public void setRngDevice(VmRngDevice dev) {
-        rngBytes.setEntity(dev.getBytes() == null ? null : dev.getBytes());
-        rngPeriod.setEntity(dev.getPeriod() == null ? null : dev.getPeriod());
-        rngSourceRandom.setEntity(dev.getSource() == VmRngDevice.Source.RANDOM);
-        rngSourceHwrng.setEntity(dev.getSource() == VmRngDevice.Source.HWRNG);
+        maybeSetEntity(rngBytes, dev.getBytes() == null ? null : dev.getBytes());
+        maybeSetEntity(rngPeriod, dev.getPeriod() == null ? null : dev.getPeriod());
+        maybeSetEntity(rngSourceRandom, dev.getSource() == VmRngDevice.Source.RANDOM);
+        maybeSetEntity(rngSourceHwrng, dev.getSource() == VmRngDevice.Source.HWRNG);
+
+        // post check - at least one source must be selected
+        // if, for example, instance type has forbidden source checked, maybeSetEntity doesn't select any source, which
+        // is invalid
+        if (!Boolean.TRUE.equals(rngSourceRandom.getEntity()) && !Boolean.TRUE.equals(rngSourceHwrng.getEntity())) {
+            getBehavior().deactivateInstanceTypeManager();
+
+            EntityModel[] entityModels = {rngSourceRandom, rngSourceHwrng};
+            for (EntityModel entityModel : entityModels) {
+                if (entityModel.getIsAvailable() && entityModel.getIsChangable()) {
+                    entityModel.setEntity(Boolean.TRUE); // select first available
+                    break;
+                }
+            }
+
+            getBehavior().activateInstanceTypeManager();
+        }
+    }
+
+    private <T> void maybeSetEntity(EntityModel<T> entityModel, T value) {
+        if (entityModel != null && entityModel.getIsChangable() && entityModel.getIsAvailable()) {
+            entityModel.setEntity(value);
+        }
     }
 
     public VmRngDevice generateRngDevice() {

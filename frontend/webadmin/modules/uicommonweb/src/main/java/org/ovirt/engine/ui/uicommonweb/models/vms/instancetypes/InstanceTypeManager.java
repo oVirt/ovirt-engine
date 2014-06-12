@@ -4,6 +4,8 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -308,6 +310,31 @@ public abstract class InstanceTypeManager {
                             deactivate();
                             getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) ((VdcQueryReturnValue)returnValue).getReturnValue());
                             activate();
+                            updateRngDevice(vmBase);
+                        }
+                    }
+            ));
+        } else {
+            updateRngDevice(vmBase);
+        }
+
+    }
+
+    private void updateRngDevice(final VmBase vmBase) {
+        if (model.getIsRngEnabled().getIsChangable() && model.getIsRngEnabled().getIsAvailable()) {
+            Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(vmBase.getId()), new AsyncQuery(
+                    this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object returnValue) {
+                            deactivate();
+                            List<VmDevice> rngDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                            getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
+                            if (!rngDevices.isEmpty()) {
+                                VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
+                                getModel().setRngDevice(rngDevice);
+                            }
+                            activate();
                             updateVirtioScsi(vmBase);
                         }
                     }
@@ -315,7 +342,6 @@ public abstract class InstanceTypeManager {
         } else {
             updateVirtioScsi(vmBase);
         }
-
     }
 
     private void updateVirtioScsi(VmBase vmBase) {
@@ -376,13 +402,13 @@ public abstract class InstanceTypeManager {
         maybeSetEntity(model.getIsSingleQxlEnabled(), vmBase.getSingleQxlPci());
     }
 
-    private void maybeSetSelectedItem(ListModel listModel, Object value) {
+    private <T> void maybeSetSelectedItem(ListModel<T> listModel, T value) {
         if (listModel != null && listModel.getIsChangable() && listModel.getIsAvailable()) {
             listModel.setSelectedItem(value);
         }
     }
 
-    private void maybeSetEntity(EntityModel listModel, Object value) {
+    private <T> void maybeSetEntity(EntityModel<T> listModel, T value) {
         if (listModel != null && listModel.getIsChangable() && listModel.getIsAvailable()) {
             listModel.setEntity(value);
         }

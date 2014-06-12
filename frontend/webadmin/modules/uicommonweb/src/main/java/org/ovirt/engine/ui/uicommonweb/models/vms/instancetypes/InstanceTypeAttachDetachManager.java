@@ -161,7 +161,12 @@ public class InstanceTypeAttachDetachManager implements IEventListener {
                         model.getWatchdogAction(),
                         model.getMinAllocatedMemory(),
                         model.getMemoryBalloonDeviceEnabled(),
-                        model.getIsVirtioScsiEnabled()
+                        model.getIsVirtioScsiEnabled(),
+                        model.getIsRngEnabled(),
+                        model.getRngBytes(),
+                        model.getRngPeriod(),
+                        model.getRngSourceRandom(),
+                        model.getRngSourceHwrng()
                 }
         );
 

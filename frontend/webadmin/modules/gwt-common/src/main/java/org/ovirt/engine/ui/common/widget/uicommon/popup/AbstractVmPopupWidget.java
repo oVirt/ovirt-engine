@@ -521,7 +521,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField(provided = true)
     @WithElementId
-    public EntityModelWidgetWithInfo<String> isRngEnabledCheckboxWithInfoIcon;
+    public EntityModelDetachableWidgetWithInfo<String> isRngEnabledCheckboxWithInfoIcon;
 
     @UiField
     @Ignore
@@ -846,10 +846,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isConsoleDeviceEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer(), true);
 
         isRngEnabledEditor = new EntityModelCheckBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
-        StringEntityModelLabel rnglabel = new StringEntityModelLabel();
-        rnglabel.setText(constants.rngDevEnabled());
-        isRngEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo<String>(rnglabel, isRngEnabledEditor);
-        isRngEnabledCheckboxWithInfoIcon.setExplanation(SafeHtmlUtils.fromTrustedString(constants.rngDevExplanation()));
         rngPeriodEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         rngBytesEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         rngSourceRandom = new EntityModelRadioButtonEditor("rndBackendModel"); //$NON-NLS-1$
@@ -926,6 +922,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         overrideMigrationDowntimeEditor.getContentWidgetContainer().getElement().getStyle().setWidth(20, Unit.PX);
         isVirtioScsiEnabledWithDetachable = new EntityModelDetachableWidget(isVirtioScsiEnabled, Align.RIGHT);
         migrationModeEditorWithDetachable = new EntityModelDetachableWidget(migrationModeEditor, Align.RIGHT);
+
+        StringEntityModelLabel rnglabel = new StringEntityModelLabel();
+        rnglabel.setText(constants.rngDevEnabled());
+        isRngEnabledCheckboxWithInfoIcon = new EntityModelDetachableWidgetWithInfo<String>(rnglabel, isRngEnabledEditor);
+        isRngEnabledCheckboxWithInfoIcon.setExplanation(SafeHtmlUtils.fromTrustedString(constants.rngDevExplanation()));
     }
 
     protected void initialize() {
@@ -1965,7 +1966,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 isVirtioScsiEnabledWithDetachable,
                 detachableMemSizeEditor,
                 overrideMigrationDowntimeEditorWithDetachable,
-                watchdogLabel
+                watchdogLabel,
+                isRngEnabledCheckboxWithInfoIcon
         );
     }
 

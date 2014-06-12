@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
@@ -111,6 +113,21 @@ public class ExistingInstanceTypeModelBehavior extends InstanceTypeModelBehavior
                 }
             }
         }), instanceType.getId());
+
+       Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(instanceType.getId()), new AsyncQuery(
+               this,
+               new INewAsyncCallback() {
+                   @Override
+                   public void onSuccess(Object model, Object returnValue) {
+                       List<VmDevice> rngDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                       getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
+                       if (!rngDevices.isEmpty()) {
+                           VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
+                           getModel().setRngDevice(rngDevice);
+                       }
+                   }
+               }
+       ));
     }
 
     protected void initSoundCard(Guid id) {

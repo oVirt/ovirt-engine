@@ -231,6 +231,7 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
         addInstanceTypeParameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
 
         setVmWatchdogToParams(model, addInstanceTypeParameters);
+        setRngDeviceToParams(model, addInstanceTypeParameters);
 
         getWindow().startProgress(null);
 
@@ -262,6 +263,7 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
         updateInstanceTypeParameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
 
         setVmWatchdogToParams(model, updateInstanceTypeParameters);
+        setRngDeviceToParams(model, updateInstanceTypeParameters);
 
         getWindow().startProgress(null);
 
@@ -391,6 +393,11 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
             vmWatchdog.setModel(wdModel);
             updateVmParams.setWatchdog(vmWatchdog);
         }
+    }
+
+    private void setRngDeviceToParams(UnitVmModel model, VmTemplateParametersBase parameters) {
+        parameters.setUpdateRngDevice(true);
+        parameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
     }
 
     public UICommand getNewInstanceTypeCommand() {
