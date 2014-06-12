@@ -8,6 +8,7 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,6 +30,7 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
             result.setCommandType(VdcActionType.forValue(resultSet.getInt("command_type")));
             result.setRootCommandId(Guid.createGuidFromString(resultSet.getString("root_command_id")));
             result.setActionParameters(deserializeParameters(resultSet.getString("action_parameters"), resultSet.getString("action_parameters_class")));
+            result.setReturnValue(deserializeReturnValue(resultSet.getString("return_value"), resultSet.getString("return_value_class")));
             result.setCommandStatus(getCommandStatus(resultSet.getString("status")));
             result.setCallBackEnabled(resultSet.getBoolean("callback_enabled"));
             result.setCallBackNotified(resultSet.getBoolean("callback_notified"));
@@ -57,11 +59,27 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
                 .addValue("action_parameters", serializeParameters(entity.getActionParameters()))
                 .addValue("action_parameters_class", entity.getActionParameters() == null ? null : entity.getActionParameters().getClass().getName())
                 .addValue("status", entity.getCommandStatus().toString())
-                .addValue("callback_enabled", entity.isCallBackEnabled());
+                .addValue("callback_enabled", entity.isCallBackEnabled())
+                .addValue("return_value", serializeReturnValue(entity.getReturnValue()))
+                .addValue("return_value_class", entity.getReturnValue() == null ? null : entity.getReturnValue().getClass().getName());
+    }
+
+    private String serializeReturnValue(VdcReturnValueBase retVal) {
+        return SerializationFactory.getSerializer().serialize(retVal);
     }
 
     private String serializeParameters(VdcActionParametersBase params) {
         return SerializationFactory.getSerializer().serialize(params);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static VdcReturnValueBase deserializeReturnValue(String payload, String className) {
+        if (className == null) {
+            return null;
+        }
+        Class<Serializable> retValueClass = (Class<Serializable>) ReflectionUtils.getClassFor(className);
+        return (VdcReturnValueBase) SerializationFactory.getDeserializer().deserialize(payload,
+                retValueClass);
     }
 
     @SuppressWarnings("unchecked")

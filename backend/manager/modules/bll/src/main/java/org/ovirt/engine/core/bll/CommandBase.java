@@ -2101,7 +2101,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         getActionType(),
                         getParameters(),
                         commandStatus,
-                        enableCallBack));
+                        enableCallBack,
+                        getReturnValue()));
     }
 
     protected void removeCommand() {

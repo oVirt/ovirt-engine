@@ -167,6 +167,11 @@ public class TaskManagerUtil {
         return coco.executeAsyncCommand(actionType, parameters);
     }
 
+    public static VdcReturnValueBase getCommandReturnValue(Guid cmdId) {
+        CommandEntity cmdEnity = coco.getCommandEntity(cmdId);
+        return cmdEnity == null ? null : cmdEnity.getReturnValue();
+    }
+
     private static AsyncTaskManager getAsyncTaskManager() {
         return AsyncTaskManager.getInstance(coco);
     }

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,6 +16,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
     private Guid rootCommandId;
     private VdcActionType commandType;
     private VdcActionParametersBase actionParameters;
+    private VdcReturnValueBase returnValue;
     private Date createdAt;
     private CommandStatus commandStatus = CommandStatus.UNKNOWN;
     private boolean callBackEnabled = false;
@@ -112,7 +114,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
         this.callBackNotified = callBackNotified;
     }
 
-    public static CommandEntity buildCommandEntity(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status, boolean callBackEnabled) {
+    public static CommandEntity buildCommandEntity(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status, boolean callBackEnabled, VdcReturnValueBase returnValue) {
         CommandEntity entity = new CommandEntity();
         entity.setId(commandId);
         entity.setRootCommandId(rootCommandId);
@@ -120,6 +122,15 @@ public class CommandEntity implements BusinessEntity<Guid> {
         entity.setActionParameters(params);
         entity.setCommandStatus(status);
         entity.setCallBackEnabled(callBackEnabled);
+        entity.setReturnValue(returnValue);
         return entity;
+    }
+
+    public VdcReturnValueBase getReturnValue() {
+        return returnValue;
+    }
+
+    public void setReturnValue(VdcReturnValueBase returnValue) {
+        this.returnValue = returnValue;
     }
 }

@@ -103,14 +103,14 @@ public class CommandExecutor {
     }
 
     private VdcReturnValueBase executeCommand(final CommandBase<?> command) {
+        command.persistCommand(command.getParameters().getParentCommand(), true);
         CommandCallBack callBack = command.getCallBack();
         if (callBack != null) {
-            command.persistCommand(command.getParameters().getParentCommand(), true);
             cmdCallBackMap.put(command.getCommandId(), callBack);
         }
         VdcReturnValueBase result = BackendUtils.getBackendCommandObjectsHandler(log).runAction(command, null);
+        updateCommand(command, result);
         if (callBack != null) {
-            updateCommandStatus(command, result);
             callBack.executed(result);
         }
         return result;
@@ -125,15 +125,17 @@ public class CommandExecutor {
         }
     }
 
-    private void updateCommandStatus(final CommandBase<?> command,
-                                     final VdcReturnValueBase result) {
+    private void updateCommand(final CommandBase<?> command,
+                               final VdcReturnValueBase result) {
+        CommandEntity cmdEntity = coco.getCommandEntity(command.getCommandId());
+        cmdEntity.setReturnValue(result);
         if (!result.getCanDoAction()) {
-            command.setCommandStatus(CommandStatus.FAILED);
-            return;
+            cmdEntity.setCommandStatus(CommandStatus.FAILED);
+        } else
+        if (CommandStatus.ACTIVE_SYNC.equals(cmdEntity.getCommandStatus())) {
+            cmdEntity.setCommandStatus(result.getSucceeded() ? CommandStatus.SUCCEEDED : CommandStatus.FAILED);
         }
-        if (CommandStatus.ACTIVE_SYNC.equals(coco.getCommandStatus(command.getCommandId()))) {
-            command.setCommandStatus(result.getSucceeded() ? CommandStatus.SUCCEEDED : CommandStatus.FAILED);
-        }
+        coco.persistCommand(cmdEntity);
     }
 
 }
