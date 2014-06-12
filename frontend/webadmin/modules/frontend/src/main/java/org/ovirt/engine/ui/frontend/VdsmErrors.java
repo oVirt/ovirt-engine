@@ -801,6 +801,18 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Failed to get status of gluster volume remove bricks")
     String GlusterVolumeRemoveBrickStatusFailed();
 
+    @DefaultStringValue("Command failed due to gluster libgfapi exception")
+    String GlusterLibgfapiException();
+
+    @DefaultStringValue("Failed to get gluster volume size info")
+    String GlfsStatvfsException();
+
+    @DefaultStringValue("Command failed while mounting gluster volume")
+    String GlfsInitException();
+
+    @DefaultStringValue("Command failed while unmounting gluster volume")
+    String GlfsFiniException();
+
     @DefaultStringValue("Reverting back to last known saved configuration.")
     String SETUP_NETWORKS_ROLLBACK();
 }

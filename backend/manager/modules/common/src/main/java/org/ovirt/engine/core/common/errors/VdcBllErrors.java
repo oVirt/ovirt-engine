@@ -395,6 +395,10 @@ public enum VdcBllErrors {
     GlusterHookRemoveFailed(4510),
     GlusterServicesActionFailed(4550),
     GlusterServiceActionNotSupported(4551),
+    GlusterLibgfapiException(4570),
+    GlfsStatvfsException(4571),
+    GlfsInitException(4572),
+    GlfsFiniException(4573),
 
     UnicodeArgumentException(4900),
 
