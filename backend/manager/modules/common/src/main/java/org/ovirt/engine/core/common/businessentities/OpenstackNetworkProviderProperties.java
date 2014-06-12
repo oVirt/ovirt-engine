@@ -21,10 +21,10 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
     /**
      * Convenience method to know if the plugin represented is Linux Bridge.
      *
-     * @return <code>true</code> iff the plugin type represents a Linux Bridge plugin.
+     * @return <code>false</code> the Linux Bridge plugin is deprecated and replaced by ml2.
      */
     public final boolean isLinuxBridge() {
-        return OpenstackNetworkPluginType.LINUX_BRIDGE.name().equals(getPluginType());
+        return false;
     }
 
     /**

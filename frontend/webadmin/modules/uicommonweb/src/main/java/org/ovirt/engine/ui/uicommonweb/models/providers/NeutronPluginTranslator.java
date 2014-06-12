@@ -19,9 +19,11 @@ public class NeutronPluginTranslator {
         pluginForDisplay = new HashMap<String, OpenstackNetworkPluginType>();
         displayStrings = new ArrayList<String>();
         for (OpenstackNetworkPluginType plugin : OpenstackNetworkPluginType.values()) {
-            String displayString = EnumTranslator.createAndTranslate(plugin);
-            pluginForDisplay.put(displayString.toLowerCase(), plugin);
-            displayStrings.add(displayString);
+            if (plugin != OpenstackNetworkPluginType.LINUX_BRIDGE) {
+                String displayString = EnumTranslator.createAndTranslate(plugin);
+                pluginForDisplay.put(displayString.toLowerCase(), plugin);
+                displayStrings.add(displayString);
+            }
         }
         Collections.sort(displayStrings, new LexoNumericComparator());
     }
