@@ -15,8 +15,8 @@ public class AdGroupConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put("GROUPNAME", String.class);
 
         // building the ColumnName Dict
-        columnNameDict.put("NAME", "cn");
-        columnNameDict.put("GROUPNAME", "cn");
+        columnNameDict.put("NAME", "$CN");
+        columnNameDict.put("GROUPNAME", "$CN");
 
         // Building the autoCompletion Dict
         buildCompletions();

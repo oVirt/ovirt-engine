@@ -37,7 +37,7 @@ public class AdGroupConditionFieldAutoCompleterTest {
     @Test
     public void testGetDbFieldName() {
         IConditionFieldAutoCompleter comp = new AdGroupConditionFieldAutoCompleter();
-        assertEquals("cn", "cn", comp.getDbFieldName("NAME"));
+        assertEquals("$CN", "$CN", comp.getDbFieldName("NAME"));
         assertNull("name", comp.getDbFieldType("name"));
         assertNull("22", comp.getDbFieldType("22"));
     }

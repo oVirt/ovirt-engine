@@ -62,7 +62,7 @@ public class KerberosLdapAuthz implements Extension {
         keysToAttributes.put(Authz.PrincipalRecord.TITLE, "$TITLE");
         keysToAttributes.put(Authz.PrincipalRecord.ID, "$USER_ID");
         keysToAttributes.put(Authz.GroupRecord.ID, "$GROUP_ID");
-        keysToAttributes.put(Authz.GroupRecord.NAME, "cn");
+        keysToAttributes.put(Authz.GroupRecord.NAME, "$CN");
         operatorsToChars.put(Authz.QueryFilterOperator.AND, '&');
         operatorsToChars.put(Authz.QueryFilterOperator.OR, '|');
         operatorsToChars.put(Authz.QueryFilterOperator.NOT, '!');

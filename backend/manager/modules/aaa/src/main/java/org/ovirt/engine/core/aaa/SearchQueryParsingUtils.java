@@ -35,7 +35,7 @@ public class SearchQueryParsingUtils {
         attributesToKeys.put("sn", Authz.PrincipalRecord.LAST_NAME);
         attributesToKeys.put("$DEPARTMENT", Authz.PrincipalRecord.DEPARTMENT);
         attributesToKeys.put("$TITLE", Authz.PrincipalRecord.TITLE);
-        attributesToKeys.put("cn", Authz.GroupRecord.NAME);
+        attributesToKeys.put("$CN", Authz.GroupRecord.NAME);
         attributesToKeys.put("$PRINCIPAL_NAME", Authz.PrincipalRecord.NAME);
     }
 
