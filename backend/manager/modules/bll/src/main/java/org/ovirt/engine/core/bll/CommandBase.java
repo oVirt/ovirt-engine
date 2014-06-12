@@ -1614,13 +1614,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return TaskManagerUtil.concreteCreateTask(taskId, this, asyncTaskCreationInfo, parentCommand);
     }
 
-    private AsyncTasks getAsyncTask(
-            Guid taskId,
-            AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
-        return TaskManagerUtil.getAsyncTask(taskId, this, asyncTaskCreationInfo, parentCommand);
-    }
-
     public VdcActionParametersBase getParentParameters(VdcActionType parentCommand) {
         VdcActionParametersBase parentParameters = getParametersForTask(parentCommand, getParameters());
         if (parentParameters.getParametersCurrentUser() == null && getCurrentUser() != null) {
@@ -1633,17 +1626,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         return TaskManagerUtil.createAsyncTask(this, asyncTaskCreationInfo, parentCommand);
-    }
-
-    /** @return The type of task that should be created for this command. Commands that do not create async tasks should throw a {@link UnsupportedOperationException} */
-    private AsyncTaskType internalGetTaskType() {
-        if (hasTaskHandlers()) {
-            if (getParameters().getExecutionReason() == CommandExecutionReason.REGULAR_FLOW) {
-                return getCurrentTaskHandler().getTaskType();
-            }
-            return getCurrentTaskHandler().getRevertTaskType();
-        }
-        return getTaskType();
     }
 
     /** @return The type of task that should be created for this command.
