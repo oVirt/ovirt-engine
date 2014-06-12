@@ -2,8 +2,7 @@ package org.ovirt.engine.ui.common.widget.profile;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
@@ -27,10 +26,10 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstances
     private String elementId = DOM.createUniqueId();
 
     private Collection<VnicProfileView> vnicProfiles;
-    private final Set<VmNetworkInterface> vnics;
+    private final List<VmNetworkInterface> vnics;
 
     public ProfilesInstanceTypeEditor() {
-        vnics = new HashSet<VmNetworkInterface>();
+        vnics = new ArrayList<VmNetworkInterface>();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 
