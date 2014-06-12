@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -25,7 +24,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
-@SuppressWarnings("unused")
 public class NetworkHostListModel extends SearchableListModel
 {
     private UICommand setupNetworksCommand;
@@ -37,6 +35,22 @@ public class NetworkHostListModel extends SearchableListModel
         setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
         setHelpTag(HelpTag.hosts);
         setHashName("hosts"); //$NON-NLS-1$
+
+        setComparator(new Comparator<PairQueryable<VdsNetworkInterface, VDS>>() {
+
+            @Override
+            public int compare(PairQueryable<VdsNetworkInterface, VDS> arg0,
+                    PairQueryable<VdsNetworkInterface, VDS> arg1) {
+                int compareValue =
+                        arg0.getSecond().getVdsGroupName().compareTo(arg1.getSecond().getVdsGroupName());
+
+                if (compareValue != 0) {
+                    return compareValue;
+                }
+
+                return arg0.getSecond().getName().compareTo(arg1.getSecond().getName());
+            }
+        });
 
         setSetupNetworksCommand(new UICommand("SetupNetworks", this)); //$NON-NLS-1$
 
@@ -79,7 +93,7 @@ public class NetworkHostListModel extends SearchableListModel
                         }
                         setItems(items);
                     } else if (NetworkHostFilter.attached.equals(getViewFilterType())) {
-                        initAttachedInterfaces((List<PairQueryable<VdsNetworkInterface, VDS>>) returnList);
+                        initAttachedInterfaces((Collection<PairQueryable<VdsNetworkInterface, VDS>>) returnList);
                     }
                 }
             }
@@ -97,8 +111,8 @@ public class NetworkHostListModel extends SearchableListModel
         setIsQueryFirstTime(false);
     }
 
-    private void initAttachedInterfaces(final List<PairQueryable<VdsNetworkInterface, VDS>> items) {
-        if (StringUtils.isEmpty(getEntity().getLabel()) || items.isEmpty()) {
+    private void initAttachedInterfaces(final Collection<PairQueryable<VdsNetworkInterface, VDS>> items) {
+        if (StringUtils.isEmpty(getEntity().getLabel()) || items == null || items.isEmpty()) {
             setItems(items);
             return;
         }
@@ -127,27 +141,6 @@ public class NetworkHostListModel extends SearchableListModel
 
     public Boolean isInterfaceAttachedByLabel(VdsNetworkInterface iface) {
         return attachedByLabelInterfaces != null && attachedByLabelInterfaces.contains(iface);
-    }
-
-    @Override
-    public void setItems(Collection value) {
-        Collections.sort((List<PairQueryable<VdsNetworkInterface, VDS>>) value,
-                new Comparator<PairQueryable<VdsNetworkInterface, VDS>>() {
-
-                    @Override
-                    public int compare(PairQueryable<VdsNetworkInterface, VDS> arg0,
-                            PairQueryable<VdsNetworkInterface, VDS> arg1) {
-                        int compareValue =
-                                arg0.getSecond().getVdsGroupName().compareTo(arg1.getSecond().getVdsGroupName());
-
-                        if (compareValue != 0) {
-                            return compareValue;
-                        }
-
-                        return arg0.getSecond().getName().compareTo(arg1.getSecond().getName());
-                    }
-                });
-        super.setItems(value);
     }
 
     public void setupNetworks() {
@@ -185,11 +178,15 @@ public class NetworkHostListModel extends SearchableListModel
     }
 
     private void updateActionAvailability() {
-        List<PairQueryable<VdsNetworkInterface, VDS>> selectedItems =
+        Collection<PairQueryable<VdsNetworkInterface, VDS>> selectedItems =
                 getSelectedItems() != null ? getSelectedItems() : new ArrayList();
 
         getSetupNetworksCommand().setIsExecutionAllowed(selectedItems.size() == 1
-                && selectedItems.get(0).getSecond().getVdsGroupCompatibilityVersion().compareTo(Version.v3_1) >= 0);
+                && selectedItems.iterator()
+                        .next()
+                        .getSecond()
+                        .getVdsGroupCompatibilityVersion()
+                        .compareTo(Version.v3_1) >= 0);
     }
 
     @Override

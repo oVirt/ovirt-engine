@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -22,7 +21,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVmTemplateInterfaceModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
 public class NetworkTemplateListModel extends SearchableListModel
 {
     private UICommand removeCommand;
@@ -42,6 +40,22 @@ public class NetworkTemplateListModel extends SearchableListModel
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
         setHelpTag(HelpTag.templates);
         setHashName("templates"); //$NON-NLS-1$
+
+        setComparator(new Comparator<PairQueryable<VmNetworkInterface, VmTemplate>>() {
+
+            @Override
+            public int compare(PairQueryable<VmNetworkInterface, VmTemplate> paramT1,
+                    PairQueryable<VmNetworkInterface, VmTemplate> paramT2) {
+                int compareValue =
+                        paramT1.getSecond().getVdsGroupName().compareTo(paramT2.getSecond().getVdsGroupName());
+
+                if (compareValue != 0) {
+                    return compareValue;
+                }
+
+                return paramT1.getSecond().getName().compareTo(paramT2.getSecond().getName());
+            }
+        });
 
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         updateActionAvailability();
@@ -75,30 +89,6 @@ public class NetworkTemplateListModel extends SearchableListModel
     }
 
     @Override
-    public void setItems(Collection value) {
-        if (value != null) {
-            List<PairQueryable<VmNetworkInterface, VmTemplate>> itemList =
-                    (List<PairQueryable<VmNetworkInterface, VmTemplate>>) value;
-            Collections.sort(itemList, new Comparator<PairQueryable<VmNetworkInterface, VmTemplate>>() {
-
-                @Override
-                public int compare(PairQueryable<VmNetworkInterface, VmTemplate> paramT1,
-                        PairQueryable<VmNetworkInterface, VmTemplate> paramT2) {
-                    int compareValue =
-                            paramT1.getSecond().getVdsGroupName().compareTo(paramT2.getSecond().getVdsGroupName());
-
-                    if (compareValue != 0) {
-                        return compareValue;
-                    }
-
-                    return paramT1.getSecond().getName().compareTo(paramT2.getSecond().getName());
-                }
-            });
-        }
-        super.setItems(value);
-    }
-
-    @Override
     public void search()
     {
         if (getEntity() != null)
@@ -121,7 +111,7 @@ public class NetworkTemplateListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                NetworkTemplateListModel.this.setItems((List<PairQueryable<VmNetworkInterface, VmTemplate>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                setItems((Collection<PairQueryable<VmNetworkInterface, VmTemplate>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 

@@ -43,6 +43,15 @@ public class NetworkClusterListModel extends SearchableListModel
         setHelpTag(HelpTag.clusters);
         setHashName("clusters"); //$NON-NLS-1$
 
+        setComparator(new Comparator<PairQueryable<VDSGroup, NetworkCluster>>() {
+
+            @Override
+            public int compare(PairQueryable<VDSGroup, NetworkCluster> arg0,
+                    PairQueryable<VDSGroup, NetworkCluster> arg1) {
+                return arg0.getFirst().getName().compareTo(arg1.getFirst().getName());
+            }
+        });
+
         setManageCommand(new UICommand("Manage", this)); //$NON-NLS-1$
     }
 
@@ -60,8 +69,8 @@ public class NetworkClusterListModel extends SearchableListModel
 
     private ClusterNetworkManageModel createManageList() {
         List<ClusterNetworkModel> networkManageModelList = new ArrayList<ClusterNetworkModel>();
-        List<PairQueryable<VDSGroup, NetworkCluster>> items =
-                (List<PairQueryable<VDSGroup, NetworkCluster>>) getItems();
+        Iterable<PairQueryable<VDSGroup, NetworkCluster>> items =
+                (Iterable<PairQueryable<VDSGroup, NetworkCluster>>) getItems();
 
         for (PairQueryable<VDSGroup, NetworkCluster> item : items) {
             Network network = (Network) Cloner.clone(getEntity());
@@ -128,27 +137,13 @@ public class NetworkClusterListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                NetworkClusterListModel.this.setItems((List<PairQueryable<VDSGroup, NetworkCluster>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                setItems((Collection<PairQueryable<VDSGroup, NetworkCluster>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 
         IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         params.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetVdsGroupsAndNetworksByNetworkId, params, asyncQuery);
-    }
-
-    @Override
-    public void setItems(Collection value) {
-        Collections.sort((List<PairQueryable<VDSGroup, NetworkCluster>>) value,
-                new Comparator<PairQueryable<VDSGroup, NetworkCluster>>() {
-
-                    @Override
-                    public int compare(PairQueryable<VDSGroup, NetworkCluster> arg0,
-                            PairQueryable<VDSGroup, NetworkCluster> arg1) {
-                        return arg0.getFirst().getName().compareTo(arg1.getFirst().getName());
-                    }
-                });
-        super.setItems(value);
     }
 
     @Override

@@ -2,8 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
@@ -22,7 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVnicProfileModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
 public class NetworkProfileListModel extends SearchableListModel
 {
     private UICommand newCommand;
@@ -33,6 +30,8 @@ public class NetworkProfileListModel extends SearchableListModel
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfilesTitle());
         setHelpTag(HelpTag.profiles);
         setHashName("profiles"); //$NON-NLS-1$
+
+        setComparator(new Linq.VnicProfileViewComparator());
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
@@ -149,7 +148,7 @@ public class NetworkProfileListModel extends SearchableListModel
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                NetworkProfileListModel.this.setItems((List<VnicProfileView>) returnValue);
+                setItems((Collection<VnicProfileView>) returnValue);
             }
         };
         AsyncDataProvider.getVnicProfilesByNetworkId(asyncQuery, getEntity().getId());
@@ -182,14 +181,6 @@ public class NetworkProfileListModel extends SearchableListModel
     protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
-    }
-
-    @Override
-    public void setItems(Collection value) {
-        if (value != null) {
-            Collections.sort((List<VnicProfileView>) value, new Linq.VnicProfileViewComparator());
-        }
-        super.setItems(value);
     }
 
     @Override

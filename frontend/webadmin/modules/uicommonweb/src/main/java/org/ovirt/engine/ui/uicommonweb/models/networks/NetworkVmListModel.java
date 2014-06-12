@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -26,7 +25,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVmInterfaceModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
 public class NetworkVmListModel extends SearchableListModel
 {
     private UICommand removeCommand;
@@ -36,6 +34,22 @@ public class NetworkVmListModel extends SearchableListModel
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
         setHashName("virtual_machines"); //$NON-NLS-1$
+
+        setComparator(new Comparator<PairQueryable<VmNetworkInterface, VM>>() {
+
+            @Override
+            public int compare(PairQueryable<VmNetworkInterface, VM> paramT1,
+                    PairQueryable<VmNetworkInterface, VM> paramT2) {
+                int compareValue =
+                        paramT1.getSecond().getVdsGroupName().compareTo(paramT2.getSecond().getVdsGroupName());
+
+                if (compareValue != 0) {
+                    return compareValue;
+                }
+
+                return paramT1.getSecond().getName().compareTo(paramT2.getSecond().getName());
+            }
+        });
 
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
@@ -67,29 +81,6 @@ public class NetworkVmListModel extends SearchableListModel
     }
 
     @Override
-    public void setItems(Collection value) {
-        if (value != null) {
-            List<PairQueryable<VmNetworkInterface, VM>> itemList = (List<PairQueryable<VmNetworkInterface, VM>>) value;
-            Collections.sort(itemList, new Comparator<PairQueryable<VmNetworkInterface, VM>>() {
-
-                @Override
-                public int compare(PairQueryable<VmNetworkInterface, VM> paramT1,
-                        PairQueryable<VmNetworkInterface, VM> paramT2) {
-                    int compareValue =
-                            paramT1.getSecond().getVdsGroupName().compareTo(paramT2.getSecond().getVdsGroupName());
-
-                    if (compareValue != 0) {
-                        return compareValue;
-                    }
-
-                    return paramT1.getSecond().getName().compareTo(paramT2.getSecond().getName());
-                }
-            });
-        }
-        super.setItems(value);
-    }
-
-    @Override
     public void search() {
         if (getEntity() != null)
         {
@@ -111,7 +102,7 @@ public class NetworkVmListModel extends SearchableListModel
             public void onSuccess(Object model, Object ReturnValue)
             {
                 if (model.equals(getViewFilterType())) {
-                    NetworkVmListModel.this.setItems((List<PairQueryable<VmNetworkInterface, VM>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                    setItems((Collection<PairQueryable<VmNetworkInterface, VM>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
                 }
             }
         };
@@ -137,7 +128,7 @@ public class NetworkVmListModel extends SearchableListModel
 
     private void updateActionAvailability() {
         ArrayList<VM> vms = new ArrayList<VM>();
-        List<PairQueryable<VmNetworkInterface, VM>> selectedItems =
+        Iterable<PairQueryable<VmNetworkInterface, VM>> selectedItems =
                 getSelectedItems() != null ? getSelectedItems() : new ArrayList();
         for (PairQueryable<VmNetworkInterface, VM> item : selectedItems)
         {
@@ -151,7 +142,7 @@ public class NetworkVmListModel extends SearchableListModel
     }
 
     private boolean canRemoveVnics() {
-        List<PairQueryable<VmNetworkInterface, VM>> selectedItems =
+        Iterable<PairQueryable<VmNetworkInterface, VM>> selectedItems =
                 getSelectedItems() != null ? getSelectedItems() : new ArrayList();
 
         for (PairQueryable<VmNetworkInterface, VM> pair : selectedItems)
