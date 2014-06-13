@@ -292,6 +292,7 @@ public abstract class InstanceTypeManager {
     private void postDoUpdateManagedFieldsFrom(VmBase vmBase) {
         if (isNextRunConfigurationExists()) {
             deactivate();
+            getModel().getIsSoundcardEnabled().setEntity(isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.SOUND.getName()));
             getModel().getIsConsoleDeviceEnabled().setEntity(isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.CONSOLE.getName()));
             activate();
         }
