@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -15,6 +12,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -29,6 +27,11 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VirtioScsiUtil;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Base class which takes care about copying the proper fields from instance type/template/vm static to the VM.
@@ -221,6 +224,20 @@ public abstract class InstanceTypeManager {
         }
     }
 
+    private VmDevice findVmDeviceByName(Map<Guid, VmDevice> vmManagedDeviceMap, String name) {
+        for (VmDevice vmDevice : vmManagedDeviceMap.values()) {
+            if (vmDevice.getDevice().equals(name)) {
+                return vmDevice;
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isVmDeviceExists(Map<Guid, VmDevice> vmManagedDeviceMap, String name) {
+        return findVmDeviceByName(vmManagedDeviceMap, name) != null;
+    }
+
     protected void doUpdateManagedFieldsFrom(final VmBase vmBase) {
         if (vmBase == null) {
             model.stopProgress();
@@ -347,6 +364,11 @@ public abstract class InstanceTypeManager {
     }
 
     private void updateVirtioScsi(VmBase vmBase) {
+        if (isNextRunConfigurationExists()) {
+            getModel().getIsVirtioScsiEnabled().setEntity(isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.VIRTIOSCSI.getName()));
+            return;
+        }
+
         virtioScsiUtil.updateVirtioScsiEnabled(vmBase.getId(), getModel().getOSType().getSelectedItem(), new VirtioScsiUtil.VirtioScasiEnablingFinished() {
             @Override
             public void beforeUpdates() {
@@ -438,4 +460,6 @@ public abstract class InstanceTypeManager {
      * It can be an instance type, a template or a VM's static data
      */
     protected abstract VmBase getSource();
+
+    protected boolean isNextRunConfigurationExists() { return false; }
 }

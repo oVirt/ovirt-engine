@@ -37,6 +37,9 @@ public class ExistingVmInstanceTypeManager extends VmInstanceTypeManager {
     }
 
     @Override
+    protected boolean isNextRunConfigurationExists() { return vm.isNextRunConfigurationExists(); }
+
+    @Override
     protected ProfileBehavior getNetworkProfileBehavior() {
         return networkBehavior;
     }
