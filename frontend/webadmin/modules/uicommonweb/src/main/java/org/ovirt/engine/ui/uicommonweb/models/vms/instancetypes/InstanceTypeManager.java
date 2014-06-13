@@ -275,6 +275,7 @@ public abstract class InstanceTypeManager {
                 deactivate();
                 getModel().getIsSoundcardEnabled().setEntity((Boolean) returnValue);
                 activate();
+
                 Frontend.getInstance().runQuery(VdcQueryType.GetConsoleDevices, new IdQueryParameters(vmBase.getId()), new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
@@ -282,12 +283,21 @@ public abstract class InstanceTypeManager {
                         List<String> consoleDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
                         getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
                         activate();
-                        updateWatchdog(vmBase);
+                        postDoUpdateManagedFieldsFrom(vmBase);
                     }
                 }));
-
             }
         }), vmBase.getId());
+    }
+
+    private void postDoUpdateManagedFieldsFrom(VmBase vmBase) {
+        if (isNextRunConfigurationExists()) {
+            deactivate();
+            getModel().getIsConsoleDeviceEnabled().setEntity(isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.CONSOLE.getName()));
+            activate();
+        }
+
+        updateWatchdog(vmBase);
     }
 
     private void updateWatchdog(final VmBase vmBase) {
