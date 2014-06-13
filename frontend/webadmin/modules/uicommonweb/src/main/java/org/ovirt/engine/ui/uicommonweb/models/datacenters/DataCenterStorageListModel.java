@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -476,7 +477,7 @@ public class DataCenterStorageListModel extends SearchableListModel
             ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
             for (StorageDomain a : items)
             {
-                pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
+                pb.add(new AttachStorageDomainToPoolParameters(a.getId(), getEntity().getId()));
             }
 
             Frontend.getInstance().runMultipleAction(VdcActionType.AttachStorageDomainToPool, pb);
