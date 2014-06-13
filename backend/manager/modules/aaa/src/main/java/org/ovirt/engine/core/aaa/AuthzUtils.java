@@ -34,9 +34,6 @@ public class AuthzUtils {
                 ).mput(
                         Authn.InvokeKeys.AUTH_RECORD,
                         authRecord
-                ).mput(
-                        Authz.InvokeKeys.QUERY_FLAGS,
-                        Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE
                 )).<ExtMap> get(Authz.InvokeKeys.PRINCIPAL_RECORD);
     }
 

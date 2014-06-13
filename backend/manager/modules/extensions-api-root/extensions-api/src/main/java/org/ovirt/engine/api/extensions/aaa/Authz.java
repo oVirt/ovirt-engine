@@ -105,7 +105,6 @@ public class Authz {
          * Input:
          * <ul>
          * <li>{@link Authn.InvokeKeys#AUTH_RECORD}[M] - authentication record.</li>
-         * <li>{@link InvokeKeys#QUERY_FLAGS}[O] - query flags.</li>
          * </ul>
          * </p>
          *
