@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.SerializationExeption;
@@ -45,6 +46,7 @@ public class JsonObjectDeserializer implements Deserializer {
         formattedMapper.getDeserializationConfig().addMixInAnnotations(VmBase.class, JsonVmBaseMixIn.class);
         formattedMapper.getDeserializationConfig().addMixInAnnotations(VmStatic.class, JsonVmStaticMixIn.class);
         formattedMapper.getDeserializationConfig().addMixInAnnotations(RunVmParams.class, JsonRunVmParamsMixIn.class);
+        formattedMapper.getDeserializationConfig().addMixInAnnotations(VdcFault.class, JsonVdcFaultMixIn.class);
 
         formattedMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         formattedMapper.enableDefaultTyping();
