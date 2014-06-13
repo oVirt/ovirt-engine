@@ -6,12 +6,14 @@ import org.ovirt.engine.api.model.InstanceTypes;
 import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.InstanceTypeResource;
 import org.ovirt.engine.api.resource.InstanceTypesResource;
+import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -108,7 +110,20 @@ public class BackendInstanceTypesResource
             model.setVirtioScsi(new VirtIOSCSI());
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(entity.getId()).isEmpty());
+
+        List<VmRngDevice> rngDevices = getRngDevices(entity.getId());
+        if (rngDevices != null && !rngDevices.isEmpty()) {
+            model.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));
+        }
+
         return model;
+    }
+
+    private List<VmRngDevice> getRngDevices(Guid id) {
+        return getEntity(List.class,
+            VdcQueryType.GetRngDevice,
+            new IdQueryParameters(id),
+            "GetRngDevice", true);
     }
 
     private List<String> getConsoleDevicesForEntity(Guid id) {

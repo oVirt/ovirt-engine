@@ -39,18 +39,8 @@ public class BackendTemplateResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
-        setUpGetRngDeviceExpectations(new int[]{0});
 
         super.testUpdate();
-    }
-
-    @Override
-    public void testGetConsoleAware(boolean allContent) throws Exception {
-        if (allContent) {
-            setUpGetRngDeviceExpectations(new int[]{0});
-        }
-
-        super.testGetConsoleAware(allContent);
     }
 
     protected org.ovirt.engine.core.common.businessentities.VDSGroup getVdsGroupEntity() {

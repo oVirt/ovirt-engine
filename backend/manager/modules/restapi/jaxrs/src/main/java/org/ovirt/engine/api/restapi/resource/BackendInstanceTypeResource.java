@@ -10,11 +10,13 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.InstanceTypeResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
+import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -57,6 +59,7 @@ public class BackendInstanceTypeResource
             model.setVirtioScsi(new VirtIOSCSI());
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(entity.getId()).isEmpty());
+        setRngDevice(model);
         return model;
     }
 
@@ -77,6 +80,17 @@ public class BackendInstanceTypeResource
         return inject(new BackendCreationResource(oid));
     }
 
+    private void setRngDevice(InstanceType model) {
+        List<VmRngDevice> rngDevices = getEntity(List.class,
+            VdcQueryType.GetRngDevice,
+            new IdQueryParameters(Guid.createGuidFromString(model.getId())),
+            "GetRngDevice", true);
+
+        if (rngDevices != null && !rngDevices.isEmpty()) {
+            model.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));
+        }
+    }
+
     private List<String> getConsoleDevicesForEntity(Guid id) {
         return getEntity(List.class,
                 VdcQueryType.GetConsoleDevices,
@@ -90,7 +104,13 @@ public class BackendInstanceTypeResource
             org.ovirt.engine.core.common.businessentities.InstanceType updated = getMapper(modelType, org.ovirt.engine.core.common.businessentities.InstanceType.class).map(incoming, entity);
             updated.setUsbPolicy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy(), Version.getLast()));
 
-            return getMapper(modelType, UpdateVmTemplateParameters.class).map(incoming, new UpdateVmTemplateParameters((VmTemplate) updated));
+            UpdateVmTemplateParameters updateParams = new UpdateVmTemplateParameters((VmTemplate) updated);
+            if (incoming.isSetRngDevice()) {
+                updateParams.setUpdateRngDevice(true);
+                updateParams.setRngDevice(RngDeviceMapper.map(incoming.getRngDevice(), null));
+            }
+
+            return getMapper(modelType, UpdateVmTemplateParameters.class).map(incoming, updateParams);
         }
     }
 }

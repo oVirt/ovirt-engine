@@ -160,7 +160,6 @@ public class BackendTemplatesResourceTest
 
     public void testAdd() throws Exception {
         setUpGetConsoleExpectations(new int[]{0, 0, 0});
-        setUpGetRngDeviceExpectations(new int[]{0, 0});
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    IdQueryParameters.class,
@@ -553,14 +552,6 @@ public class BackendTemplatesResourceTest
     @Override
     protected List<Template> getCollection() {
         return collection.list().getTemplates();
-    }
-
-    protected void testListAllConsoleAware(boolean allContent) throws Exception {
-        if (allContent) {
-            setUpGetRngDeviceExpectations(new int[]{0, 1, 2});
-        }
-
-        super.testListAllConsoleAware(allContent);
     }
 
     @Override

@@ -100,6 +100,7 @@ public abstract class BackendTemplateBasedResourceTest<
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
             setUpGetConsoleExpectations(new int[]{0});
             setUpGetVirtioScsiExpectations(new int[]{0});
+            setUpGetRngDeviceExpectations(new int [] {0});
         }
         control.replay();
 
@@ -139,6 +140,7 @@ public abstract class BackendTemplateBasedResourceTest<
         setUpGetEntityExpectations(2);
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[]{0});
+        setUpGetRngDeviceExpectations(new int[]{0});
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,
