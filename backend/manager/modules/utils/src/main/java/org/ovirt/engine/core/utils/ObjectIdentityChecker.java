@@ -87,7 +87,7 @@ public class ObjectIdentityChecker {
         return permitted.contains(name);
     }
 
-    private boolean IsFieldUpdatable(Enum<?> status, String name, Object fieldContainer) {
+    public boolean IsFieldUpdatable(Enum<?> status, String name, Object fieldContainer) {
         boolean returnValue = true;
         if (!IsFieldUpdatable(name)) {
             if (fieldContainer != null && container != null

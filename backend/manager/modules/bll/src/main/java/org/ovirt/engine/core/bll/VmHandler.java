@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,17 +14,20 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.EditableField;
 import org.ovirt.engine.core.common.businessentities.EditableOnVm;
 import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
@@ -85,26 +90,33 @@ public class VmHandler {
                 VmBase.class,
                 VM.class,
                 VmStatic.class,
-                VmDynamic.class };
+                VmDynamic.class,
+                VmManagementParametersBase.class };
 
         osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
         mUpdateVmsStatic =
                 new ObjectIdentityChecker(VmHandler.class, Arrays.asList(inspectedClassNames));
 
-        for (Pair<EditableField, String> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
+        for (Pair<EditableField, Field> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
                 (inspectedClassNames))) {
-            mUpdateVmsStatic.AddPermittedFields(pair.getSecond());
+            mUpdateVmsStatic.AddPermittedFields(pair.getSecond().getName());
         }
 
-        for (Pair<EditableOnVm, String> pair : BaseHandler.extractAnnotatedFields(EditableOnVm.class, inspectedClassNames)) {
-            mUpdateVmsStatic.AddPermittedFields(pair.getSecond());
+        for (Pair<EditableOnVm, Field> pair : BaseHandler.extractAnnotatedFields(EditableOnVm.class, inspectedClassNames)) {
+            mUpdateVmsStatic.AddPermittedFields(pair.getSecond().getName());
         }
 
-        for (Pair<EditableOnVmStatusField, String> pair : BaseHandler.extractAnnotatedFields(EditableOnVmStatusField.class,
+        for (Pair<EditableOnVmStatusField, Field> pair : BaseHandler.extractAnnotatedFields(EditableOnVmStatusField.class,
                 inspectedClassNames)) {
-            mUpdateVmsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond());
+            mUpdateVmsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
         }
+
+        for (Pair<EditableDeviceOnVmStatusField, Field> pair : BaseHandler.extractAnnotatedFields(EditableDeviceOnVmStatusField.class,
+                inspectedClassNames)) {
+            mUpdateVmsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
+        }
+
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.MigrateVm);
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.MigrateVmToServer);
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.InternalMigrateVm);
@@ -129,6 +141,10 @@ public class VmHandler {
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination) {
         return mUpdateVmsStatic.IsUpdateValid(source, destination);
+    }
+
+    public static boolean isUpdateValidForVmDevice(String fieldName, VMStatus status) {
+        return mUpdateVmsStatic.IsFieldUpdatable(status, fieldName, null);
     }
 
     public static boolean copyNonEditableFieldsToDestination(VmStatic source, VmStatic destination) {
@@ -735,5 +751,46 @@ public class VmHandler {
                 vmBase.setTimeZone(Config.<String> getValue(ConfigValues.DefaultGeneralTimeZone));
             }
         }
+    }
+
+    public static boolean isUpdateValidForVmDevices(Guid vmId, VMStatus vmStatus, Object objectWithEditableDeviceFields) {
+        if (objectWithEditableDeviceFields == null) {
+            return true;
+        }
+        return getVmDevicesFieldsToUpdateOnNextRun(vmId, vmStatus, objectWithEditableDeviceFields).isEmpty();
+    }
+
+    public static List<Pair<EditableDeviceOnVmStatusField, Boolean>> getVmDevicesFieldsToUpdateOnNextRun(
+            Guid vmId, VMStatus vmStatus, Object objectWithEditableDeviceFields) {
+        List<Pair<EditableDeviceOnVmStatusField, Boolean>> fieldList = new ArrayList<>();
+
+        List<Pair<EditableDeviceOnVmStatusField , Field>> pairList = BaseHandler.extractAnnotatedFields(
+                EditableDeviceOnVmStatusField.class, objectWithEditableDeviceFields.getClass());
+
+        for (Pair<EditableDeviceOnVmStatusField, Field> pair : pairList) {
+            EditableDeviceOnVmStatusField annotation = pair.getFirst();
+            Field field = pair.getSecond();
+            field.setAccessible(true);
+
+            Boolean isEnabled = null;
+            try {
+                isEnabled = (Boolean) field.get(objectWithEditableDeviceFields);
+            } catch (IllegalAccessException | ClassCastException e) {
+                e.printStackTrace();
+                log.warn("VmHandler:: isUpdateValidForVmDevices: Reflection error");
+            }
+
+            if (isEnabled == null ||
+                    !VmDeviceUtils.vmDeviceChanged(vmId, annotation.generalType(),
+                            annotation.type().getName(), isEnabled)) {
+                continue;
+            }
+
+            if (!VmHandler.isUpdateValidForVmDevice(field.getName(), vmStatus)) {
+                fieldList.add(new Pair<>(annotation, isEnabled));
+            }
+        }
+
+        return fieldList;
     }
 }

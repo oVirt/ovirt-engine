@@ -2021,7 +2021,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             getcurrentVm().setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
             if (selectedItem.isRunningOrPaused()) {
-                AsyncDataProvider.isNextRunConfigurationChanged(editedVm, getcurrentVm(), new AsyncQuery(this,
+                AsyncDataProvider.isNextRunConfigurationChanged(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery(this,
                         new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object thisModel, Object returnValue) {
@@ -2086,14 +2086,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             {
                                 VM vm = vmListModel.getcurrentVm();
 
-                                VmManagementParametersBase updateVmParams = new VmManagementParametersBase(vm);
-                                setVmWatchdogToParams(model, updateVmParams);
-                                updateVmParams.setSoundDeviceEnabled(model.getIsSoundcardEnabled()
-                                        .getEntity());
-                                updateVmParams.setBalloonEnabled(balloonEnabled(model));
-                                updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-                                updateVmParams.setApplyChangesLater(applyCpuChangesLater);
-                                setRngDeviceToParams(model, updateVmParams);
+                                VmManagementParametersBase updateVmParams = vmListModel.getUpdateVmParameters(applyCpuChangesLater);
 
                                 Frontend.getInstance().runAction(VdcActionType.UpdateVm,
                                         updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), vmListModel);
@@ -2111,20 +2104,25 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             model.startProgress(null);
 
-            VM vm = getcurrentVm();
-
-            VmManagementParametersBase updateVmParams = new VmManagementParametersBase(vm);
-
-            setVmWatchdogToParams(model, updateVmParams);
-            updateVmParams.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-            updateVmParams.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-            updateVmParams.setBalloonEnabled(balloonEnabled(model));
-            updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-            updateVmParams.setApplyChangesLater(applyCpuChangesLater);
-            setRngDeviceToParams(model, updateVmParams);
+            VmManagementParametersBase updateVmParams = getUpdateVmParameters(applyCpuChangesLater);
 
             Frontend.getInstance().runAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
         }
+    }
+
+    public VmManagementParametersBase getUpdateVmParameters(boolean applyCpuChangesLater) {
+        UnitVmModel model = (UnitVmModel) getWindow();
+        VmManagementParametersBase updateVmParams = new VmManagementParametersBase(getcurrentVm());
+
+        setVmWatchdogToParams(model, updateVmParams);
+        updateVmParams.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        updateVmParams.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+        updateVmParams.setBalloonEnabled(balloonEnabled(model));
+        updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+        updateVmParams.setApplyChangesLater(applyCpuChangesLater);
+        setRngDeviceToParams(model, updateVmParams);
+
+        return updateVmParams;
     }
 
     private void saveNewVm(final UnitVmModel model) {
