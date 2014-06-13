@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcEventNotificationUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -683,9 +684,9 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetVmNextRunConfiguration, new IdQueryParameters(vmId), aQuery);
     }
 
-    public void isNextRunConfigurationChanged(VM original, VM updated, AsyncQuery aQuery) {
+    public void isNextRunConfigurationChanged(VM original, VM updated, VmManagementParametersBase updateVmParameters, AsyncQuery aQuery) {
         Frontend.getInstance().runQuery(VdcQueryType.GetVmUpdatesOnNextRunExists,
-                new GetVmUpdatesOnNextRunExistsParameters(original, updated), aQuery);
+                new GetVmUpdatesOnNextRunExistsParameters(original, updated, updateVmParameters), aQuery);
     }
 
     public void getDataCenterList(AsyncQuery aQuery) {

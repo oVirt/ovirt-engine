@@ -1,14 +1,5 @@
 package org.ovirt.engine.core.bll.utils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -18,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -31,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -39,6 +32,15 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class VmDeviceUtils {
     private static VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDao();
@@ -1079,5 +1081,79 @@ public class VmDeviceUtils {
     public static List<VmDevice> getVirtioScsiControllers(Guid vmId, Guid userID, boolean isFiltered) {
         return dao.getVmDeviceByVmIdTypeAndDevice(
                 vmId, VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI.getName(), userID, isFiltered);
+    }
+
+    /**
+     * Determines whether a VM device change has been request by the user.
+     * @param deviceType VmDeviceGeneralType.
+     * @param device VmDeviceType name.
+     * @param deviceEnabled indicates whether the user asked to enable the device.
+     * @return true if a change has been requested; otherwise, false
+     */
+    public static boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceType, String device, boolean deviceEnabled) {
+        List<VmDevice> vmDevices = device != null ?
+                dao.getVmDeviceByVmIdTypeAndDevice(vmId, deviceType, device):
+                dao.getVmDeviceByVmIdAndType(vmId, deviceType);
+
+        return deviceEnabled == vmDevices.isEmpty();
+    }
+
+    public static boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceType, boolean deviceEnabled) {
+        return vmDeviceChanged(vmId, deviceType, null, deviceEnabled);
+    }
+
+    /**
+     * Returns a map (device ID to VmDevice) of devices that are relevant for next run by examining
+     * properties that are annotated by EditableDeviceOnVmStatusField.
+     * @param vm the relevant VM
+     * @param objectWithEditableDeviceFields object that contains properties which are annotated with
+     *                                       EditableDeviceField (e.g. parameters file)
+     * @return a map of device ID to VmDevice object of relevant devices for next run
+     */
+    public static Map<Guid, VmDevice> getVmDevicesForNextRun(VM vm, Object objectWithEditableDeviceFields) {
+        VmDeviceUtils.setVmDevices(vm.getStaticData());
+        Map<Guid, VmDevice> vmManagedDeviceMap = vm.getManagedVmDeviceMap();
+
+        List<Pair<EditableDeviceOnVmStatusField, Boolean>> fieldList =
+                VmHandler.getVmDevicesFieldsToUpdateOnNextRun(vm.getId(), objectWithEditableDeviceFields);
+
+        // Add the enabled devices and remove the disabled ones
+        for (Pair<EditableDeviceOnVmStatusField, Boolean> pair : fieldList) {
+            final EditableDeviceOnVmStatusField field = pair.getFirst();
+            Boolean isEnabled = pair.getSecond();
+
+            if (Boolean.TRUE.equals(isEnabled)) {
+                VmDevice device =
+                        new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
+                                field.generalType(),
+                                field.type().getName(),
+                                "",
+                                0,
+                                new HashMap<String, Object>(),
+                                true,
+                                true,
+                                field.isReadOnly(),
+                                "",
+                                null,
+                                null);
+
+                vmManagedDeviceMap.put(device.getDeviceId(), device);
+            }
+            else {
+                vmManagedDeviceMap.remove(getVmDeviceIdByName(vmManagedDeviceMap, field.type().getName()));
+            }
+        }
+
+        return vmManagedDeviceMap;
+    }
+
+    private static Guid getVmDeviceIdByName(Map<Guid, VmDevice> vmManagedDeviceMap, String name) {
+        for (Map.Entry<Guid, VmDevice> entry : vmManagedDeviceMap.entrySet()) {
+            if (entry.getValue().getDevice().equals(name)) {
+                return entry.getKey();
+            }
+        }
+
+        return null;
     }
 }

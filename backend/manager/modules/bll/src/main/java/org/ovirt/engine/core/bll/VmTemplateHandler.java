@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -35,13 +36,13 @@ public class VmTemplateHandler {
         final Class<?>[] inspectedClassNames = new Class<?>[] { VmBase.class, VmTemplate.class };
         mUpdateVmTemplate = new ObjectIdentityChecker(VmTemplateHandler.class);
 
-        for (Pair<EditableField, String> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
+        for (Pair<EditableField, Field> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
                                                                                    (inspectedClassNames))) {
-            mUpdateVmTemplate.AddPermittedFields(pair.getSecond());
+            mUpdateVmTemplate.AddPermittedFields(pair.getSecond().getName());
         }
 
-        for (Pair<EditableOnTemplate, String> pair : BaseHandler.extractAnnotatedFields(EditableOnTemplate.class, inspectedClassNames)) {
-            mUpdateVmTemplate.AddPermittedFields(pair.getSecond());
+        for (Pair<EditableOnTemplate, Field> pair : BaseHandler.extractAnnotatedFields(EditableOnTemplate.class, inspectedClassNames)) {
+            mUpdateVmTemplate.AddPermittedFields(pair.getSecond().getName());
         }
     }
 

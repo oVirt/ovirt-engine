@@ -198,6 +198,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         VM vm = new VM();
         vm.setStaticData(getParameters().getVmStaticData());
+
         // create new snapshot with new configuration
         new SnapshotsManager().addSnapshot(Guid.newGuid(),
                 "Next Run configuration snapshot",
@@ -207,6 +208,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 true,
                 StringUtils.EMPTY,
                 Collections.EMPTY_LIST,
+                VmDeviceUtils.getVmDevicesForNextRun(getVm(), getParameters()),
                 getCompensationContext());
     }
 
@@ -522,12 +524,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (getParameters().isConsoleEnabled() != null && !getVm().isDown()
-                && vmDeviceChanged(VmDeviceGeneralType.CONSOLE, getParameters().isConsoleEnabled())) {
+                && vmDeviceChanged(getVmId(), VmDeviceGeneralType.CONSOLE, getParameters().isConsoleEnabled())) {
             return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN, "$device console");
         }
 
         if (getParameters().isSoundDeviceEnabled() != null && !getVm().isDown()
-                && vmDeviceChanged(VmDeviceGeneralType.SOUND, getParameters().isSoundDeviceEnabled())) {
+                && vmDeviceChanged(getVmId(), VmDeviceGeneralType.SOUND, getParameters().isSoundDeviceEnabled())) {
             return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN, "$device sound");
         }
 
@@ -559,7 +561,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (getParameters().isVirtioScsiEnabled() != null
                 && !getVm().isDown()
-                && vmDeviceChanged(VmDeviceGeneralType.CONTROLLER,
+                && vmDeviceChanged(getVmId(), VmDeviceGeneralType.CONTROLLER,
                         VmDeviceType.VIRTIOSCSI.getName(),
                         getParameters().isVirtioScsiEnabled())) {
             return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN, "$device VirtIO-SCSI");
@@ -589,27 +591,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 getReturnValue().getCanDoActionMessages());
     }
 
-    private boolean vmDeviceChanged(VmDeviceGeneralType deviceType, boolean deviceEnabled) {
-        List<VmDevice> vmDevices = getVmDeviceDao().getVmDeviceByVmIdAndType(getParameters().getVmId(),
-                deviceType);
-
-        return deviceEnabled == vmDevices.isEmpty();
-    }
-
-    /**
-     * Determines whether a VM device change has been request by the user.
-     * @param deviceType VmDeviceGeneralType.
-     * @param device VmDeviceType name.
-     * @param deviceEnabled indicates whether the user asked to enable the device.
-     * @return true if a change has been requested; otherwise, false
-     */
-    private boolean vmDeviceChanged(VmDeviceGeneralType deviceType, String device, boolean deviceEnabled) {
-        List<VmDevice> vmDevices = getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(getParameters().getVmId(),
-                deviceType, device);
-
-        return deviceEnabled == vmDevices.isEmpty();
-    }
-
     private boolean isVmExist() {
         return getParameters().getVmStaticData() != null && getVm() != null;
     }
@@ -628,8 +609,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private boolean isRunningConfigurationNeeded() {
         return getVm().isNextRunConfigurationExists() ||
                 !VmHandler.isUpdateValid(getVm().getStaticData(),
-                getParameters().getVmStaticData(),
-                getVm().getStatus());
+                        getParameters().getVmStaticData(),
+                        getVm().getStatus()) ||
+                !VmHandler.isUpdateValidForVmDevices(getVmId(), getParameters());
     }
 
     @Override
@@ -779,4 +761,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return getParameters().getWatchdog() != null;
     }
 
+    protected boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceType, boolean deviceEnabled) {
+        return VmDeviceUtils.vmDeviceChanged(vmId, deviceType, deviceEnabled);
+    }
+
+    protected boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceType, String device, boolean deviceEnabled) {
+        return VmDeviceUtils.vmDeviceChanged(vmId, deviceType, device, deviceEnabled);
+    }
 }

@@ -1158,7 +1158,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             gettempVm().setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
             if (selectedItem.isRunningOrPaused()) {
-                AsyncDataProvider.getInstance().isNextRunConfigurationChanged(editedVm, gettempVm(), new AsyncQuery(this,
+                AsyncDataProvider.getInstance().isNextRunConfigurationChanged(editedVm, gettempVm(), getUpdateVmParameters(false), new AsyncQuery(this,
                         new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object thisModel, Object returnValue) {
@@ -1204,11 +1204,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {
-                            VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
-                            param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-                            param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                            param.setApplyChangesLater(applyCpuChangesLater);
-                            setRngDeviceToParams(model, param);
+                            VmManagementParametersBase param = getUpdateVmParameters(applyCpuChangesLater);
 
                             Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
                         }
@@ -1216,15 +1212,22 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
         else
         {
-            VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
-            param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-            param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-            setRngDeviceToParams(model, param);
-            param.setApplyChangesLater(applyCpuChangesLater);
-            setRngDeviceToParams(model, param);
-
+            VmManagementParametersBase param = getUpdateVmParameters(applyCpuChangesLater);
             Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
         }
+    }
+
+    private VmManagementParametersBase getUpdateVmParameters(boolean applyCpuChangesLater) {
+        UnitVmModel model = (UnitVmModel) getWindow();
+        VmManagementParametersBase params = new VmManagementParametersBase(gettempVm());
+
+        params.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+        setRngDeviceToParams(model, params);
+        params.setApplyChangesLater(applyCpuChangesLater);
+        setRngDeviceToParams(model, params);
+
+        return params;
     }
 
     private void setRngDeviceToParams(UnitVmModel model, VmManagementParametersBase parameters) {

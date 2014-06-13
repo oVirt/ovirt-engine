@@ -34,6 +34,7 @@ public class GetVmUpdatesOnNextRunExistsQuery<P extends GetVmUpdatesOnNextRunExi
         vmPropertiesUtils.separateCustomPropertiesToUserAndPredefined(
                 dstVm.getVdsGroupCompatibilityVersion(), dstStatic);
 
-        setReturnValue(!VmHandler.isUpdateValid(srcStatic, dstStatic, VMStatus.Up));
+        setReturnValue(!VmHandler.isUpdateValid(srcStatic, dstStatic, VMStatus.Up) ||
+                !VmHandler.isUpdateValidForVmDevices(srcVm.getId(), getParameters().getUpdateVmParameters()));
     }
 }

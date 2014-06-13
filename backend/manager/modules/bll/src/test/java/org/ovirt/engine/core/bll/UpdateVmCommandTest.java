@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -300,10 +299,10 @@ public class UpdateVmCommandTest {
         doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
         doReturn(true).when(command).areUpdatedFieldsLegal();
 
-        doReturn(Collections.emptyList()).when(vmDeviceDAO).getVmDeviceByVmIdAndType(
-                any(Guid.class), any(VmDeviceGeneralType.class));
-        doReturn(Collections.singletonList(new VmDevice())).when(vmDeviceDAO).getVmDeviceByVmIdTypeAndDevice(
-                vm.getId(), VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI.getName());
+        doReturn(false).when(command).vmDeviceChanged(
+                any(Guid.class), any(VmDeviceGeneralType.class), any(Boolean.class));
+        doReturn(true).when(command).vmDeviceChanged(
+                vm.getId(), VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI.getName(), false);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN);
@@ -318,10 +317,10 @@ public class UpdateVmCommandTest {
         doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
         doReturn(true).when(command).areUpdatedFieldsLegal();
 
-        doReturn(Collections.emptyList()).when(vmDeviceDAO).getVmDeviceByVmIdAndType(
-                any(Guid.class), any(VmDeviceGeneralType.class));
-        doReturn(Collections.emptyList()).when(vmDeviceDAO).getVmDeviceByVmIdTypeAndDevice(
-                any(Guid.class), any(VmDeviceGeneralType.class), any(String.class));
+        doReturn(false).when(command).vmDeviceChanged(
+                any(Guid.class), any(VmDeviceGeneralType.class), any(Boolean.class));
+        doReturn(false).when(command).vmDeviceChanged(
+                any(Guid.class), any(VmDeviceGeneralType.class), any(String.class), any(Boolean.class));
 
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }

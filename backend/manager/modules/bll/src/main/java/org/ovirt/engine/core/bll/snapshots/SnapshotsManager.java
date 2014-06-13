@@ -285,7 +285,7 @@ public class SnapshotsManager {
                 snapshotType, vm, true, memoryVolume, disks, compensationContext);
     }
 
-    /**
+    /**addSnapshot
      * Save snapshot to DB with compensation data.
      *
      * @param snapshotId
@@ -313,10 +313,32 @@ public class SnapshotsManager {
             String memoryVolume,
             List<DiskImage> disks,
             final CompensationContext compensationContext) {
+        return addSnapshot(snapshotId,
+                description,
+                snapshotStatus,
+                snapshotType,
+                vm,
+                saveVmConfiguration,
+                memoryVolume,
+                disks,
+                null,
+                compensationContext);
+    }
+
+    public Snapshot addSnapshot(Guid snapshotId,
+                                String description,
+                                SnapshotStatus snapshotStatus,
+                                SnapshotType snapshotType,
+                                VM vm,
+                                boolean saveVmConfiguration,
+                                String memoryVolume,
+                                List<DiskImage> disks,
+                                Map<Guid, VmDevice> vmDevices,
+                                final CompensationContext compensationContext) {
         final Snapshot snapshot = new Snapshot(snapshotId,
                 snapshotStatus,
                 vm.getId(),
-                saveVmConfiguration ? generateVmConfiguration(vm, disks) : null,
+                saveVmConfiguration ? generateVmConfiguration(vm, disks, vmDevices) : null,
                 snapshotType,
                 description,
                 new Date(),
@@ -335,7 +357,7 @@ public class SnapshotsManager {
      *            The VM to generate configuration from.
      * @return A String containing the VM configuration.
      */
-    protected String generateVmConfiguration(VM vm, List<DiskImage> disks) {
+    protected String generateVmConfiguration(VM vm, List<DiskImage> disks, Map<Guid, VmDevice> vmDevices) {
         if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
             vm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
         }
@@ -345,7 +367,12 @@ public class SnapshotsManager {
             vm.setVmtName(t.getName());
         }
 
-        VmDeviceUtils.setVmDevices(vm.getStaticData());
+        if (vmDevices == null) {
+            VmDeviceUtils.setVmDevices(vm.getStaticData());
+        } else {
+            vm.getStaticData().setManagedDeviceMap(vmDevices);
+        }
+
         if (disks == null) {
             disks = ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(vm.getId()), false, true, true);
         }

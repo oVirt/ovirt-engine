@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,12 +38,12 @@ public class VdsHandler extends BaseHandler {
                 new ObjectIdentityChecker(VdsHandler.class, Arrays.asList(inspectedClasses));
 
 
-        for (Pair<EditableField, String> pair : extractAnnotatedFields(EditableField.class, inspectedClasses)) {
-            mUpdateVdsStatic.AddPermittedFields(pair.getSecond());
+        for (Pair<EditableField, Field> pair : extractAnnotatedFields(EditableField.class, inspectedClasses)) {
+            mUpdateVdsStatic.AddPermittedFields(pair.getSecond().getName());
         }
 
-        for (Pair<EditableOnVdsStatus, String> pair : extractAnnotatedFields(EditableOnVdsStatus.class, inspectedClasses)) {
-            mUpdateVdsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond());
+        for (Pair<EditableOnVdsStatus, Field> pair : extractAnnotatedFields(EditableOnVdsStatus.class, inspectedClasses)) {
+            mUpdateVdsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
         }
     }
 
