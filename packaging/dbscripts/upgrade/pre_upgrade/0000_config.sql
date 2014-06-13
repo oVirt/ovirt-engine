@@ -787,6 +787,7 @@ select fn_db_add_config_value('KdumpStartedTimeout','30','general');
 
 select fn_db_add_config_value('AlertOnNumberOfLVs','300','general');
 
+select fn_db_add_config_value('CSRFProtection','false','general');
 
 ------------------------------------------------------------------------------------
 --                  Update with override section
