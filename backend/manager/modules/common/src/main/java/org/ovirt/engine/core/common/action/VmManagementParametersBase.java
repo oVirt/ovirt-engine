@@ -5,11 +5,14 @@ import java.util.HashMap;
 import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmManagementParametersBase extends VmOperationParameterBase {
@@ -61,6 +64,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
      * - Add VM - defaulted to true for cluster >= 3.3
      * - Update VM - preserve current configuration
      */
+    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.CONTROLLER, type = VmDeviceType.VIRTIOSCSI)
     private Boolean virtioScsiEnabled;
 
     public VmManagementParametersBase() {

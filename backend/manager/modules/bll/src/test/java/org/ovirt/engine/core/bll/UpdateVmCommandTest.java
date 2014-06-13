@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -287,25 +286,6 @@ public class UpdateVmCommandTest {
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
-    }
-
-    @Test
-    public void testCannotDisableVirtioScsiForRunningVM() {
-        prepareVmToPassCanDoAction();
-        command.getParameters().setVirtioScsiEnabled(false);
-        vm.setStatus(VMStatus.Up);
-        mockDiskDaoGetAllForVm(Collections.<Disk> emptyList(), true);
-
-        doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
-        doReturn(true).when(command).areUpdatedFieldsLegal();
-
-        doReturn(false).when(command).vmDeviceChanged(
-                any(Guid.class), any(VmDeviceGeneralType.class), any(Boolean.class));
-        doReturn(true).when(command).vmDeviceChanged(
-                vm.getId(), VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI.getName(), false);
-
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN);
     }
 
     @Test

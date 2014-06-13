@@ -56,7 +56,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVm;
@@ -557,14 +556,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     return failCanDoAction(VdcBllMessages.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
                 }
             }
-        }
-
-        if (getParameters().isVirtioScsiEnabled() != null
-                && !getVm().isDown()
-                && vmDeviceChanged(getVmId(), VmDeviceGeneralType.CONTROLLER,
-                        VmDeviceType.VIRTIOSCSI.getName(),
-                        getParameters().isVirtioScsiEnabled())) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN, "$device VirtIO-SCSI");
         }
 
         if (vmFromParams.getMinAllocatedMem() > vmFromParams.getMemSizeMb()) {
