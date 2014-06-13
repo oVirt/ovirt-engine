@@ -3,25 +3,38 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
+import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MacPool extends IVdcQueryable implements BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -7952435653821354188L;
 
+    @NotNull(groups = { UpdateEntity.class })
     private Guid id;
 
+    @NotEmpty(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY")
     private String name;
 
     private boolean allowDuplicateMacAddresses;
 
     private String description;
 
-    @NotEmpty
+    @Valid
+    @NotEmpty(message = "ACTION_TYPE_FAILED_MAC_POOL_MUST_HAVE_RANGE")
+    @NotNull(message = "ACTION_TYPE_FAILED_MAC_POOL_MUST_HAVE_RANGE")
     private List<MacRange> ranges = new ArrayList<MacRange>();
 
     private boolean defaultPool;
+
+    @Override
+    public Object getQueryableId() {
+        return getId();
+    }
 
     @Override
     public Guid getId() {

@@ -3,7 +3,9 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MacRange implements Serializable {
@@ -11,10 +13,14 @@ public class MacRange implements Serializable {
 
     private Guid macPoolId;
 
-    @NotNull
+    @Pattern(regexp = VmNic.UNICAST_MAC_ADDRESS_FORMAT,
+            message = VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID)
+    @NotNull(message= "VALIDATION.VM.NETWORK.MAC.ADDRESS.NOT_NULL")
     private String macFrom;
 
-    @NotNull
+    @Pattern(regexp = VmNic.UNICAST_MAC_ADDRESS_FORMAT,
+            message = VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID)
+    @NotNull(message = "VALIDATION.VM.NETWORK.MAC.ADDRESS.NOT_NULL")
     private String macTo;
 
     public String getMacFrom() {

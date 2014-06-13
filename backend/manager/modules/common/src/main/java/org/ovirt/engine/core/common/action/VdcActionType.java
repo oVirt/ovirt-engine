@@ -364,7 +364,12 @@ public enum VdcActionType {
     RemoveAuditLogById(2100, false, QuotaDependency.NONE),
     ClearAllDismissedAuditLogs(2101, false, QuotaDependency.NONE),
 
-    SetDataOnSession(3000, false, QuotaDependency.NONE);
+    SetDataOnSession(3000, false, QuotaDependency.NONE),
+
+    // Mac Pool
+    AddMacPool(3100, ActionGroup.CONFIGURE_ENGINE, false, QuotaDependency.NONE),
+    UpdateMacPool(3101, ActionGroup.CONFIGURE_ENGINE, false, QuotaDependency.NONE),
+    RemoveMacPool(3102, ActionGroup.CONFIGURE_ENGINE, false, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;

@@ -29,6 +29,13 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     protected void addStoragePoolToDb() {
         getStoragePool().setId(Guid.newGuid());
         getStoragePool().setStatus(StoragePoolStatus.Uninitialized);
+
+        Guid requestedMacPoolId = getStoragePool().getMacPoolId();
+        Guid macPoolIdToUse = requestedMacPoolId == null
+                ? getDbFacade().getMacPoolDao().getDefaultPool().getId()
+                : requestedMacPoolId;
+
+        getStoragePool().setMacPoolId(macPoolIdToUse);
         getStoragePoolDAO().save(getStoragePool());
     }
 

@@ -83,9 +83,9 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             }
         }
 
+        getMacPool().freeMacs(macsToRemove);
         removeDataCenter();
 
-        getMacPool().freeMacs(macsToRemove);
         setSucceeded(true);
     }
 

@@ -37,6 +37,24 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Not enough MAC addresses left in MAC Address Pool.")
     String MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES();
 
+    @DefaultStringValue("Cannot ${action} ${type}. ${type} cannot be removed, because some data center is still using it.")
+    String ACTION_TYPE_FAILED_CANNOT_REMOVE_STILL_USED_MAC_POOL();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Default ${type} cannot be removed.")
+    String ACTION_TYPE_FAILED_CANNOT_REMOVE_DEFAULT_MAC_POOL();
+
+    @DefaultStringValue("Cannot ${action} ${type}. ${type} does not exist.")
+    String ACTION_TYPE_FAILED_MAC_POOL_DOES_NOT_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Changing default ${type} is not supported.")
+    String ACTION_TYPE_FAILED_CHANGING_DEFAULT_MAC_POOL_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Setting default ${type} is not supported.")
+    String ACTION_TYPE_FAILED_SETTING_DEFAULT_MAC_POOL_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. ${type} must contain at least one mac range.")
+    String ACTION_TYPE_FAILED_MAC_POOL_MUST_HAVE_RANGE();
+
     @DefaultStringValue("Cannot delete Template. Template is being used by the following VMs: ${vmsList}.")
     String VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM();
 
@@ -786,6 +804,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$type Data Center")
     String VAR__TYPE__STORAGE__POOL();
+
+    @DefaultStringValue("$type MAC Pool")
+    String VAR__TYPE__MAC__POOL();
 
     @DefaultStringValue("$type User to VM")
     String VAR__TYPE__USER_FROM_VM();
