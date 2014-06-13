@@ -1857,5 +1857,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     CustomFencePowerWaitParam,
 
+    /**
+     * If the values is {@code true} then the RESTAPI will accept requests to create CSRF protected sessions, otherwise
+     * all sessions will be unprotected, regardless of what the client requests.
+     */
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    CSRFProtection,
+
     Invalid
 }
