@@ -53,7 +53,7 @@ class Plugin(plugin.PluginBase):
     )
     def _misc(self):
         self.services.startup(
-            name=osetupcons.Const.FENCE_KDUMP_LISTENER_SERVICE_NAME,
+            name=oenginecons.Const.FENCE_KDUMP_LISTENER_SERVICE_NAME,
             state=False,
         )
 

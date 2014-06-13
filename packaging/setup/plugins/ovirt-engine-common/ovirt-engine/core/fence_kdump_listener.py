@@ -28,7 +28,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine_common import constants as oengcommcons
+from ovirt_engine_setup.engine import constants as oenginecons
 
 
 @util.export
@@ -46,11 +46,11 @@ class Plugin(plugin.PluginBase):
     )
     def _transactionBegin(self):
         if self.services.exists(
-            name=oengcommcons.Const.FENCE_KDUMP_LISTENER_SERVICE_NAME,
+            name=oenginecons.Const.FENCE_KDUMP_LISTENER_SERVICE_NAME,
         ):
             self.logger.info(_('Stopping ovirt-fence-kdump-listener service'))
             self.services.state(
-                name=oengcommcons.Const.FENCE_KDUMP_LISTENER_SERVICE_NAME,
+                name=oenginecons.Const.FENCE_KDUMP_LISTENER_SERVICE_NAME,
                 state=False
             )
 
