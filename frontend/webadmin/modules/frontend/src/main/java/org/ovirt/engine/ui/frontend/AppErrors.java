@@ -94,9 +94,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("There was an attempt to change VM values while the VM is not down. Please shut down the VM in order to modify these properties.")
     String VM_CANNOT_UPDATE_ILLEGAL_FIELD();
 
-    @DefaultStringValue("Failed updating the properties of the VM. VM should be in status Down in order to change the ${device} device.")
-    String VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN();
-
     @DefaultStringValue("VM is configured to be 'Network bootable', but no Network Interface is configured.\nAlternatives:\n-Select a different boot device (using the 'Run Once' command or 'Edit VM' command on Boot Option Sub-Tab).\n-Configure Network Interface and rerun the VM.")
     String VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK();
 
