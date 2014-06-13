@@ -274,7 +274,7 @@ public class KerberosLdapAuthz implements Extension {
                         user.getSurName()
                 ).mput(
                         Authz.PrincipalRecord.NAME,
-                        user.getUserName()
+                        removeUpnSuffix(user.getUserName())
                 ).mput(
                         Authz.PrincipalRecord.TITLE,
                         user.getTitle()
@@ -326,7 +326,7 @@ public class KerberosLdapAuthz implements Extension {
                     String.format(
                             "(%1$s%2$s%3$s)", keysToAttributes.get(key),
                             operatorsToChars.get(queryFilterRecord.get(QueryFilterRecord.OPERATOR)),
-                            queryFilterRecord.get(key)
+                            removeUpnSuffix(queryFilterRecord.get(key).toString())
                             )
                     );
         } else {
@@ -343,6 +343,10 @@ public class KerberosLdapAuthz implements Extension {
             query.append(")");
         }
         return query;
+    }
+
+    private String removeUpnSuffix(String value) {
+        return value.contains("@") ? value.substring(0, value.indexOf("@")) : value;
     }
 
 }
