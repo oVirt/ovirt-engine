@@ -522,11 +522,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(VdcBllMessages.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
         }
 
-        if (getParameters().isConsoleEnabled() != null && !getVm().isDown()
-                && vmDeviceChanged(getVmId(), VmDeviceGeneralType.CONSOLE, getParameters().isConsoleEnabled())) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN, "$device console");
-        }
-
         if (getParameters().isSoundDeviceEnabled() != null && !getVm().isDown()
                 && vmDeviceChanged(getVmId(), VmDeviceGeneralType.SOUND, getParameters().isSoundDeviceEnabled())) {
             return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN, "$device sound");

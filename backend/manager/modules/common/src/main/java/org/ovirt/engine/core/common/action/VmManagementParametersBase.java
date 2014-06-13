@@ -56,6 +56,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
      * This parameter is used to decide if to create console device or not if it is null then: for add vm don't add
      * console device for update the current configuration will remain
      */
+    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.CONSOLE, type = VmDeviceType.CONSOLE)
     private Boolean consoleEnabled;
 
     /*
