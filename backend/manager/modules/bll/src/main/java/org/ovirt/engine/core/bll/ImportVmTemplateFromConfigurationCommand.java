@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
@@ -25,7 +26,6 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     public ImportVmTemplateFromConfigurationCommand(T parameters) {
         super(parameters);
-        setCommandShouldBeLogged(false);
     }
 
     @Override
@@ -77,5 +77,12 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
             getUnregisteredOVFDataDao().removeEntity(ovfEntityData.getEntityId(), null);
         }
         setActionReturnValue(getVmTemplate().getId());
+        setSucceeded(true);
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.TEMPLATE_IMPORT_FROM_CONFIGURATION_SUCCESS :
+                AuditLogType.TEMPLATE_IMPORT_FROM_CONFIGURATION_FAILED;
     }
 }
