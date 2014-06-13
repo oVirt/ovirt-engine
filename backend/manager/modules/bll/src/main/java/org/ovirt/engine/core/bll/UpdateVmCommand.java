@@ -522,11 +522,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(VdcBllMessages.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
         }
 
-        if (getParameters().isSoundDeviceEnabled() != null && !getVm().isDown()
-                && vmDeviceChanged(getVmId(), VmDeviceGeneralType.SOUND, getParameters().isSoundDeviceEnabled())) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN, "$device sound");
-        }
-
         if (!isCpuSharesValid(vmFromParams)) {
             return failCanDoAction(VdcBllMessages.QOS_CPU_SHARES_OUT_OF_RANGE);
         }
@@ -747,11 +742,4 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return getParameters().getWatchdog() != null;
     }
 
-    protected boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceType, boolean deviceEnabled) {
-        return VmDeviceUtils.vmDeviceChanged(vmId, deviceType, deviceEnabled);
-    }
-
-    protected boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceType, String device, boolean deviceEnabled) {
-        return VmDeviceUtils.vmDeviceChanged(vmId, deviceType, device, deviceEnabled);
-    }
 }
