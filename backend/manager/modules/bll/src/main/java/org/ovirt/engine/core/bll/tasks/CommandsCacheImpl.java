@@ -5,7 +5,10 @@ import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 import java.util.List;
 import java.util.Set;
@@ -47,15 +50,30 @@ public class CommandsCacheImpl implements CommandsCache {
     }
 
     @Override
-    public void remove(Guid commandId) {
+    public void remove(final Guid commandId) {
         commandMap.remove(commandId);
-        DbFacade.getInstance().getCommandEntityDao().remove(commandId);
+        TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Object>() {
+
+            @Override
+            public Void runInTransaction() {
+                DbFacade.getInstance().getCommandEntityDao().remove(commandId);
+                return null;
+            }
+        });
+
     }
 
     @Override
-    public void put(CommandEntity cmdEntity) {
+    public void put(final CommandEntity cmdEntity) {
         commandMap.put(cmdEntity.getId(), cmdEntity);
-        DbFacade.getInstance().getCommandEntityDao().saveOrUpdate(cmdEntity);
+        TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Object>() {
+
+            @Override
+            public Void runInTransaction() {
+                DbFacade.getInstance().getCommandEntityDao().saveOrUpdate(cmdEntity);
+                return null;
+            }
+        });
     }
 
     public void removeAllCommandsBeforeDate(DateTime cutoff) {
@@ -69,17 +87,30 @@ public class CommandsCacheImpl implements CommandsCache {
         if (cmdEntity != null) {
             cmdEntity.setCommandStatus(status);
             if (taskType.equals(AsyncTaskType.notSupported) || cmdEntity.isCallBackEnabled()) {
-                DbFacade.getInstance().getCommandEntityDao().saveOrUpdate(cmdEntity);
+                TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Object>() {
+
+                    @Override
+                    public Void runInTransaction() {
+                        DbFacade.getInstance().getCommandEntityDao().saveOrUpdate(cmdEntity);
+                        return null;
+                    }
+                });
             }
         }
     }
 
 
-    public void updateCallBackNotified(Guid commandId) {
+    public void updateCallBackNotified(final Guid commandId) {
         CommandEntity cmdEntity = get(commandId);
         if (cmdEntity != null) {
             cmdEntity.setCallBackNotified(true);
-            DbFacade.getInstance().getCommandEntityDao().updateNotified(commandId);
+            TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    DbFacade.getInstance().getCommandEntityDao().updateNotified(commandId);
+                    return null;
+                }
+            });
         }
     }
 }

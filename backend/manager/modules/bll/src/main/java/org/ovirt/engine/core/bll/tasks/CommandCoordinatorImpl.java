@@ -32,11 +32,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class CommandCoordinatorImpl extends CommandCoordinator {
 
@@ -63,6 +60,9 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         commandsCache.put(cmdEntity);
         if (cmdEntity.isCallBackEnabled()) {
             buildCmdHierarchy(cmdEntity);
+            if (!cmdEntity.isCallBackNotified()) {
+                cmdExecutor.addToCallBackMap(cmdEntity);
+            }
         }
     }
 
@@ -147,13 +147,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     }
 
     public void updateCallBackNotified(final Guid commandId) {
-        TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                commandsCache.updateCallBackNotified(commandId);
-                return null;
-            }
-        });
+        commandsCache.updateCallBackNotified(commandId);
     }
 
     public List<Guid> getChildCommandIds(Guid cmdId) {
@@ -180,7 +174,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     }
 
     private void buildCmdHierarchy(CommandEntity cmdEntity) {
-        if (!Guid.isNullOrEmpty(cmdEntity.getRootCommandId())) {
+        if (!Guid.isNullOrEmpty(cmdEntity.getRootCommandId()) && !cmdEntity.getId().equals(cmdEntity.getRootCommandId())) {
             childHierarchy.putIfAbsent(cmdEntity.getRootCommandId(), new ArrayList<Guid>());
             if (!childHierarchy.get(cmdEntity.getRootCommandId()).contains(cmdEntity.getId())) {
                 childHierarchy.get(cmdEntity.getRootCommandId()).add(cmdEntity.getId());

@@ -77,15 +77,22 @@ public class CommandExecutor {
         if (!cmdExecutorInitialized) {
             synchronized(LOCK) {
                 if (!cmdExecutorInitialized) {
-                    CommandBase<?> cmd;
                     for (CommandEntity cmdEntity : coco.getCommandsWithCallBackEnabled()) {
                         if (!cmdEntity.isCallBackNotified()) {
-                            cmd = coco.retrieveCommand(cmdEntity.getId());
-                            cmdCallBackMap.put(cmdEntity.getId(), cmd.getCallBack());
+                            addToCallBackMap(cmdEntity);
                         }
                     }
                     cmdExecutorInitialized = true;
                 }
+            }
+        }
+    }
+
+    public void addToCallBackMap(CommandEntity cmdEntity) {
+        if (!cmdCallBackMap.containsKey(cmdEntity.getId())) {
+            CommandBase<?> cmd = coco.retrieveCommand(cmdEntity.getId());
+            if (cmd != null && cmd.getCallBack() != null) {
+                cmdCallBackMap.put(cmdEntity.getId(), cmd.getCallBack());
             }
         }
     }

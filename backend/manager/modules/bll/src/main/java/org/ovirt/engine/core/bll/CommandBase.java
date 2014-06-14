@@ -2095,7 +2095,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     public void persistCommand(VdcActionType parentCommand, boolean enableCallBack) {
         VdcActionParametersBase parentParameters = getParentParameters(parentCommand);
-        TaskManagerUtil.persistCommand(
+        Transaction transaction = TransactionSupport.suspend();
+        try {
+            TaskManagerUtil.persistCommand(
                 CommandEntity.buildCommandEntity(getCommandId(),
                         parentParameters.getCommandId(),
                         getActionType(),
@@ -2103,10 +2105,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         commandStatus,
                         enableCallBack,
                         getReturnValue()));
+        } finally {
+            TransactionSupport.resume(transaction);
+        }
     }
 
     protected void removeCommand() {
-        TaskManagerUtil.removeCommand(getCommandId());
+        Transaction transaction = TransactionSupport.suspend();
+        try {
+            TaskManagerUtil.removeCommand(getCommandId());
+        } finally {
+            TransactionSupport.resume(transaction);
+        }
     }
 
     public void setCommandStatus(CommandStatus status) {
@@ -2116,7 +2126,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     public void setCommandStatus(CommandStatus status, boolean updateDB) {
         this.commandStatus = status;
         if (updateDB) {
-            TaskManagerUtil.updateCommandStatus(getCommandId(), getTaskType(), commandStatus);
+            Transaction transaction = TransactionSupport.suspend();
+            try {
+                TaskManagerUtil.updateCommandStatus(getCommandId(), getTaskType(), commandStatus);
+            } finally {
+                TransactionSupport.resume(transaction);
+            }
         }
     }
 

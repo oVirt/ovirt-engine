@@ -251,7 +251,11 @@ public class CoCoAsyncTaskHelper {
 
             @Override
             public Void runInTransaction() {
-                coco.persistCommand(map(asyncTask, coco.getCommandEntity(asyncTask.getCommandId())));
+                CommandEntity cmdEntity = coco.getCommandEntity(asyncTask.getCommandId());
+                if (asyncTask.getstatus() == AsyncTaskStatusEnum.finished) {
+                    cmdEntity.setCommandStatus(CommandStatus.SUCCEEDED);
+                }
+                coco.persistCommand(map(asyncTask, cmdEntity));
                 DbFacade.getInstance().getAsyncTaskDao().saveOrUpdate(asyncTask);
                 return null;
             }

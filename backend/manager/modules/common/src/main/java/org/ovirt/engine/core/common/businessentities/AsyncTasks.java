@@ -18,7 +18,7 @@ public class AsyncTasks implements Serializable {
     private Date startTime;
     private Guid vdsmTaskId;
     private Guid storagePoolId;
-    private VdcActionParametersBase taskParameters;
+    private VdcActionParametersBase actionParameters;
     private Guid taskId;
     private Guid commandId;
     private Guid stepId;
@@ -52,7 +52,7 @@ public class AsyncTasks implements Serializable {
         this.result = result;
         this.status = status;
         this.vdsmTaskId = vdsmTaskId;
-        this.taskParameters = taskParameters;
+        this.actionParameters = parentParameters;
         this.stepId = stepId;
         this.startTime = new Date();
         this.commandId = commandId;
@@ -63,7 +63,7 @@ public class AsyncTasks implements Serializable {
         cmdEntity.setId(commandId);
         cmdEntity.setRootCommandId(rootCommandId);
         cmdEntity.setCommandStatus(cmdStatus);
-        cmdEntity.setActionParameters(parentParameters);
+        cmdEntity.setActionParameters(taskParameters);
         cmdEntity.setCommandType(getEndActionType());
     }
 
@@ -118,19 +118,19 @@ public class AsyncTasks implements Serializable {
     }
 
     public VdcActionParametersBase getActionParameters() {
-        return cmdEntity.getActionParameters();
+        return actionParameters;
     }
 
     public void setActionParameters(VdcActionParametersBase value) {
-        cmdEntity.setActionParameters(value);
+        this.actionParameters = value;
     }
 
     public VdcActionParametersBase getTaskParameters() {
-        return taskParameters;
+        return cmdEntity.getActionParameters();
     }
 
-    public void setTaskParameters(VdcActionParametersBase taskParameters) {
-        this.taskParameters = taskParameters;
+    public void setTaskParameters(VdcActionParametersBase value) {
+        cmdEntity.setActionParameters(value);
     }
 
     public Guid getStepId() {
