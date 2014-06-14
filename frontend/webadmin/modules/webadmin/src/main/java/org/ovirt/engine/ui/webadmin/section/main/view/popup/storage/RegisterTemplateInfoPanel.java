@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
+import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
@@ -17,6 +18,10 @@ public class RegisterTemplateInfoPanel extends RegisterEntityInfoPanel {
 
     private ImportTemplateGeneralSubTabView generalView;
     private TemplateGeneralModel templateGeneralModel;
+
+    public RegisterTemplateInfoPanel(RegisterEntityModel model) {
+        super(model);
+    }
 
     @Override
     protected void init() {

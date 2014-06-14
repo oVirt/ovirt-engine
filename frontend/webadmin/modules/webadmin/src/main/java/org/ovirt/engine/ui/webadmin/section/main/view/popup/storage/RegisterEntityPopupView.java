@@ -76,8 +76,8 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
         asWidget().enableResizeSupport(true);
     }
 
-    abstract void createEntityTable(RegisterEntityModel model);
-    abstract void createInfoPanel();
+    abstract protected void createEntityTable(RegisterEntityModel model);
+    abstract protected void createInfoPanel(RegisterEntityModel model);
 
     private void initTables() {
         // Create the entities main table
@@ -90,7 +90,7 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
 
     private void createTables(RegisterEntityModel model) {
         createEntityTable(model);
-        createInfoPanel();
+        createInfoPanel(model);
         entityTable.asEditor().edit(model.getEntities());
     }
 
@@ -128,6 +128,13 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
         });
 
         model.getClusterQuotasMap().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                refreshEntityTable();
+            }
+        });
+
+        model.getStorageQuota().getItemsChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 refreshEntityTable();
@@ -176,7 +183,7 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
                 List<Quota> quotas = registerEntityModel.getClusterQuotasMap().getEntity().get(clusterId);
 
                 object.getClusterQuota().setItems(quotas);
-                ((CustomSelectionCell) getCell()).setOptions(object.getClusterQuotaNames());
+                ((CustomSelectionCell) getCell()).setOptions(registerEntityModel.getQuotaNames(quotas));
 
                 return object.getClusterQuota().getSelectedItem() != null ?
                         object.getClusterQuota().getSelectedItem().getQuotaName() : constants.empty();
@@ -185,7 +192,7 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
         column.setFieldUpdater(new FieldUpdater<ImportEntityData, String>() {
             @Override
             public void update(int index, ImportEntityData object, String value) {
-                object.selectClusterQuotaByName(value);
+                registerEntityModel.selectQuotaByName(value, object.getClusterQuota());
 
             }
         });

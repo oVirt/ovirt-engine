@@ -1,11 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -33,14 +36,20 @@ public abstract class RegisterEntityModel extends Model {
     private ListModel<ImportEntityData> entities;
     private ListModel<VDSGroup> cluster;
     private EntityModel<Map<Guid, List<Quota>>> clusterQuotasMap;
+    private EntityModel<Map<Guid, Quota>> diskQuotaMap;
+    private ListModel<Quota> storageQuota;
     private Guid storageDomainId;
     private StoragePool storagePool;
 
     public RegisterEntityModel() {
         setEntities(new ListModel());
         setCluster(new ListModel());
+
         setClusterQuotasMap(new EntityModel<Map<Guid, List<Quota>>>());
         getClusterQuotasMap().setEntity(new HashMap<Guid, List<Quota>>());
+        setDiskQuotaMap(new EntityModel<Map<Guid, Quota>>());
+        getDiskQuotaMap().setEntity(new HashMap<Guid, Quota>());
+        setStorageQuota(new ListModel());
     }
 
     protected abstract void onSave();
@@ -84,6 +93,7 @@ public abstract class RegisterEntityModel extends Model {
                         getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
 
                         updateClusterQuota(clusters);
+                        updateStorageQuota();
                     }
                 }), storagePool.getId(), true, false);
 
@@ -91,7 +101,24 @@ public abstract class RegisterEntityModel extends Model {
         }), storageDomainId);
     }
 
-    public void updateClusterQuota(ArrayList<VDSGroup> clusters) {
+    private void updateStorageQuota() {
+        if (!isQuotaEnabled()) {
+            return;
+        }
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
+                new IdQueryParameters(storageDomainId), new AsyncQuery(this, new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object innerModel, Object innerReturnValue) {
+                        ArrayList<Quota> quotas =
+                                (ArrayList<Quota>) ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
+                        getStorageQuota().setItems(quotas);
+                        getStorageQuota().setSelectedItem(Linq.firstOrDefault(quotas));
+                    }
+                }));
+    }
+
+    private void updateClusterQuota(ArrayList<VDSGroup> clusters) {
         if (!isQuotaEnabled()) {
             return;
         }
@@ -116,6 +143,46 @@ public abstract class RegisterEntityModel extends Model {
                 getClusterQuotasMap().setEntity(clusterQuotasMap);
             }
         });
+    }
+
+    public void selectQuotaByName(String name, ListModel<Quota> listModel) {
+        for (Quota quota : listModel.getItems()) {
+            if (quota.getQuotaName().equals(name)) {
+                listModel.setSelectedItem(quota);
+                break;
+            }
+        }
+    }
+
+    public List<String> getQuotaNames(List<Quota> quotas) {
+        List<String> names = new ArrayList<String>();
+        if (quotas != null) {
+            for (Quota quota : quotas) {
+                names.add(quota.getQuotaName());
+            }
+        }
+        return names;
+    }
+
+    public Quota getQuotaByName(String name, List<Quota> quotas) {
+        for (Quota quota : quotas) {
+            if (quota.getQuotaName().equals(name)) {
+                return quota;
+            }
+        }
+        return null;
+    }
+
+    protected void updateDiskQuotas(List<Disk> disks) {
+        for (Disk disk : disks) {
+            Quota quota = getDiskQuotaMap().getEntity().get(disk.getId());
+            if (quota == null) {
+                quota = getStorageQuota().getSelectedItem();
+            }
+            if (quota != null) {
+                ((DiskImage) disk).setQuotaId(quota.getId());
+            }
+        }
     }
 
     @Override
@@ -170,6 +237,22 @@ public abstract class RegisterEntityModel extends Model {
 
     public void setClusterQuotasMap(EntityModel<Map<Guid, List<Quota>>> clusterQuotasMap) {
         this.clusterQuotasMap = clusterQuotasMap;
+    }
+
+    public EntityModel<Map<Guid, Quota>> getDiskQuotaMap() {
+        return diskQuotaMap;
+    }
+
+    public void setDiskQuotaMap(EntityModel<Map<Guid, Quota>> diskQuotaMap) {
+        this.diskQuotaMap = diskQuotaMap;
+    }
+
+    public ListModel<Quota> getStorageQuota() {
+        return storageQuota;
+    }
+
+    public void setStorageQuota(ListModel<Quota> storageQuota) {
+        this.storageQuota = storageQuota;
     }
 
     public boolean isQuotaEnabled() {

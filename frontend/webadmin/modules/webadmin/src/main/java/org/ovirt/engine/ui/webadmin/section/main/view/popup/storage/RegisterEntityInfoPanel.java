@@ -2,13 +2,19 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.view.client.NoSelectionModel;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.DiskImageStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
@@ -19,6 +25,7 @@ import org.ovirt.engine.ui.common.widget.table.column.SumUpColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -27,6 +34,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import org.ovirt.engine.ui.webadmin.widget.table.column.CustomSelectionCell;
 
 public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
 
@@ -38,8 +46,11 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
     protected EntityModelCellTable<ListModel> nicsTable;
     protected EntityModelCellTable<ListModel> appsTable;
 
-    public RegisterEntityInfoPanel() {
+    protected RegisterEntityModel registerEntityModel;
+
+    public RegisterEntityInfoPanel(RegisterEntityModel registerEntityModel) {
         super(templates.TAB_BAR_HEIGHT, Style.Unit.PX);
+        this.registerEntityModel = registerEntityModel;
 
         init();
         addStyles();
@@ -113,7 +124,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
                 return object.getCreationDate();
             }
         };
-        disksTable.addColumn(dateCreatedColumn, constants.creationDateDisk(), "80px"); //$NON-NLS-1$
+        disksTable.addColumn(dateCreatedColumn, constants.creationDateDisk(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> descriptionColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
@@ -121,11 +132,47 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
                 return object.getDiskDescription();
             }
         };
-        disksTable.addColumn(descriptionColumn, constants.descriptionDisk(), "80px"); //$NON-NLS-1$
+        disksTable.addColumn(descriptionColumn, constants.descriptionDisk(), "100px"); //$NON-NLS-1$
+
+        if (registerEntityModel.isQuotaEnabled()) {
+            disksTable.addColumn(getDiskQuotaColumn(), constants.quotaVm(), "100px"); //$NON-NLS-1$
+        }
 
         disksTable.setRowData(new ArrayList<EntityModel>());
         disksTable.setWidth("100%", true); //$NON-NLS-1$
         disksTable.setSelectionModel(new NoSelectionModel());
+    }
+
+    private Column getDiskQuotaColumn() {
+        CustomSelectionCell customSelectionCell = new CustomSelectionCell(new ArrayList<String>());
+        customSelectionCell.setStyle("input-group col-xs-11"); //$NON-NLS-1$
+
+        Column column = new Column<DiskImage, String>(customSelectionCell) {
+            @Override
+            public String getValue(DiskImage disk) {
+                List<Quota> quotas = (List<Quota>) registerEntityModel.getStorageQuota().getItems();
+                if (quotas == null || quotas.isEmpty()) {
+                    return constants.empty();
+                }
+
+                Map<Guid, Quota> diskQuotaMap = registerEntityModel.getDiskQuotaMap().getEntity();
+                if (diskQuotaMap.get(disk.getId()) == null) {
+                    diskQuotaMap.put(disk.getId(), quotas.get(0));
+                    ((CustomSelectionCell) getCell()).setOptions(registerEntityModel.getQuotaNames(quotas));
+                }
+
+                return diskQuotaMap.get(disk.getId()).getQuotaName();
+            }
+        };
+        column.setFieldUpdater(new FieldUpdater<DiskImage, String>() {
+            @Override
+            public void update(int index, DiskImage disk, String value) {
+                Quota quota = registerEntityModel.getQuotaByName(value, (List<Quota>) registerEntityModel.getStorageQuota().getItems());
+                registerEntityModel.getDiskQuotaMap().getEntity().put(disk.getId(), quota);
+            }
+        });
+
+        return column;
     }
 
     protected void initNicsTable() {

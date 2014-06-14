@@ -89,8 +89,8 @@ public class RegisterVmPopupView extends RegisterEntityPopupView
     }
 
     @Override
-    void createInfoPanel() {
-        registerEntityInfoPanel = new RegisterVmInfoPanel();
+    protected void createInfoPanel(RegisterEntityModel model) {
+        registerEntityInfoPanel = new RegisterVmInfoPanel(model);
         entityInfoContainer.add(registerEntityInfoPanel);
     }
 

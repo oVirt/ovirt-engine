@@ -89,8 +89,8 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView
     }
 
     @Override
-    void createInfoPanel() {
-        registerEntityInfoPanel = new RegisterTemplateInfoPanel();
+    protected void createInfoPanel(RegisterEntityModel model) {
+        registerEntityInfoPanel = new RegisterTemplateInfoPanel(model);
         entityInfoContainer.add(registerEntityInfoPanel);
     }
 

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
+import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
@@ -16,6 +17,10 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel {
 
     private ImportVmGeneralSubTabView generalView;
     private VmGeneralModel vmGeneralModel;
+
+    public RegisterVmInfoPanel(RegisterEntityModel model) {
+        super(model);
+    }
 
     @Override
     protected void init() {

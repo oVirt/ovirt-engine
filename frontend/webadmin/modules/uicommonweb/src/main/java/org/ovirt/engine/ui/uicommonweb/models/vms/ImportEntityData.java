@@ -81,25 +81,6 @@ public abstract class ImportEntityData extends EntityModel {
         return names;
     }
 
-    public void selectClusterQuotaByName(String name) {
-        for (Quota quota : getClusterQuota().getItems()) {
-            if (quota.getQuotaName().equals(name)) {
-                getClusterQuota().setSelectedItem(quota);
-                break;
-            }
-        }
-    }
-
-    public List<String> getClusterQuotaNames() {
-        List<String> names = new ArrayList<String>();
-        if (getClusterQuota().getItems() != null) {
-            for (Quota quota : getClusterQuota().getItems()) {
-                names.add(quota.getQuotaName());
-            }
-        }
-        return names;
-    }
-
     public abstract ArchitectureType getArchType();
 
     public abstract String getName();
