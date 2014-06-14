@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -20,12 +21,14 @@ public class RegisterTemplateModel extends RegisterEntityModel {
         for (ImportEntityData entityData : getEntities().getItems()) {
             BusinessEntity<Guid> entity = (BusinessEntity<Guid>) entityData.getEntity();
             VDSGroup vdsGroup = entityData.getCluster().getSelectedItem();
+            Quota quota = isQuotaEnabled() ? entityData.getClusterQuota().getSelectedItem() : null;
 
             ImportVmTemplateParameters params = new ImportVmTemplateParameters();
             params.setContainerId(entity.getId());
             params.setStorageDomainId(getStorageDomainId());
-            params.setVdsGroupId(vdsGroup != null ? vdsGroup.getId() : null);
             params.setImagesExistOnTargetStorageDomain(true);
+            params.setVdsGroupId(vdsGroup != null ? vdsGroup.getId() : null);
+            params.setQuotaId(quota != null ? quota.getId() : null);
 
             parameters.add(params);
         }

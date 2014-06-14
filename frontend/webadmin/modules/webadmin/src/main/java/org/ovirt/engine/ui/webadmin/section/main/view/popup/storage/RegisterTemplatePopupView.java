@@ -27,7 +27,7 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView
     }
 
     @Override
-    protected void createEntityTable() {
+    protected void createEntityTable(RegisterEntityModel model) {
         TextColumnWithTooltip<Object> nameColumn = new TextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
@@ -82,6 +82,10 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView
         entityTable.addColumn(diskColumn, constants.disksVm(), "50px"); //$NON-NLS-1$
 
         entityTable.addColumn(getClusterColumn(), constants.clusterVm(), "150px"); //$NON-NLS-1$
+
+        if (model.isQuotaEnabled()) {
+            entityTable.addColumn(getClusterQuotaColumn(), constants.quotaVm(), "150px"); //$NON-NLS-1$
+        }
     }
 
     @Override

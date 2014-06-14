@@ -1,31 +1,46 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class RegisterEntityModel extends Model {
 
     private UICommand cancelCommand;
     private ListModel<ImportEntityData> entities;
     private ListModel<VDSGroup> cluster;
+    private EntityModel<Map<Guid, List<Quota>>> clusterQuotasMap;
     private Guid storageDomainId;
+    private StoragePool storagePool;
 
     public RegisterEntityModel() {
         setEntities(new ListModel());
         setCluster(new ListModel());
+        setClusterQuotasMap(new EntityModel<Map<Guid, List<Quota>>>());
+        getClusterQuotasMap().setEntity(new HashMap<Guid, List<Quota>>());
     }
 
     protected abstract void onSave();
@@ -49,7 +64,7 @@ public abstract class RegisterEntityModel extends Model {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 ArrayList<StoragePool> storagePools = (ArrayList<StoragePool>) returnValue;
-                StoragePool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
+                storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
                 if (storagePool == null) {
                     return;
                 }
@@ -67,10 +82,40 @@ public abstract class RegisterEntityModel extends Model {
 
                         getCluster().setItems(clusters);
                         getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
+
+                        updateClusterQuota(clusters);
                     }
                 }), storagePool.getId(), true, false);
+
             }
         }), storageDomainId);
+    }
+
+    public void updateClusterQuota(ArrayList<VDSGroup> clusters) {
+        if (!isQuotaEnabled()) {
+            return;
+        }
+
+        List<VdcQueryType> queries = new ArrayList<VdcQueryType>();
+        List<VdcQueryParametersBase> params = new ArrayList<VdcQueryParametersBase>();
+        for (VDSGroup cluster : clusters) {
+            queries.add(VdcQueryType.GetAllRelevantQuotasForVdsGroup);
+            params.add(new IdQueryParameters(cluster.getId()));
+        }
+
+        Frontend.getInstance().runMultipleQueries(queries, params, new IFrontendMultipleQueryAsyncCallback() {
+            @Override
+            public void executed(FrontendMultipleQueryAsyncResult result) {
+                Map<Guid, List<Quota>> clusterQuotasMap = new HashMap<Guid, List<Quota>>();
+                for (int i = 0; i < result.getReturnValues().size(); i++) {
+                    List<Quota> quotas = result.getReturnValues().get(i).getReturnValue();
+                    Guid clusterId = ((IdQueryParameters) result.getParameters().get(i)).getId();
+
+                    clusterQuotasMap.put(clusterId, quotas);
+                }
+                getClusterQuotasMap().setEntity(clusterQuotasMap);
+            }
+        });
     }
 
     @Override
@@ -117,5 +162,17 @@ public abstract class RegisterEntityModel extends Model {
 
     public void setStorageDomainId(Guid storageDomainId) {
         this.storageDomainId = storageDomainId;
+    }
+
+    public EntityModel<Map<Guid, List<Quota>>> getClusterQuotasMap() {
+        return clusterQuotasMap;
+    }
+
+    public void setClusterQuotasMap(EntityModel<Map<Guid, List<Quota>>> clusterQuotasMap) {
+        this.clusterQuotasMap = clusterQuotasMap;
+    }
+
+    public boolean isQuotaEnabled() {
+        return storagePool.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED;
     }
 }

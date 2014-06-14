@@ -1,7 +1,10 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -21,7 +24,6 @@ import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
@@ -49,8 +51,7 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
 
     protected RegisterEntityInfoPanel registerEntityInfoPanel;
 
-    @UiField
-    WidgetStyle style;
+    private RegisterEntityModel registerEntityModel;
 
     @UiField
     SplitLayoutPanel splitLayoutPanel;
@@ -70,16 +71,12 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
         initTables();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
-        addStyles();
         driver.initialize(this);
 
-        createEntityTable();
-        createInfoPanel();
         asWidget().enableResizeSupport(true);
     }
 
-    abstract void createEntityTable();
+    abstract void createEntityTable(RegisterEntityModel model);
     abstract void createInfoPanel();
 
     private void initTables() {
@@ -91,17 +88,21 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
         splitLayoutPanel = new SplitLayoutPanel(4);
     }
 
-    private void addStyles() {
+    private void createTables(RegisterEntityModel model) {
+        createEntityTable(model);
+        createInfoPanel();
+        entityTable.asEditor().edit(model.getEntities());
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void refreshEntityTable() {
+        entityTable.asEditor().edit(entityTable.asEditor().flush());
+        entityTable.redraw();
     }
 
     @Override
-    public void edit(RegisterEntityModel model) {
+    public void edit(final RegisterEntityModel model) {
+        registerEntityModel = model;
         driver.edit(model);
-
-        entityTable.asEditor().edit(model.getEntities());
 
         model.getEntities().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
@@ -112,17 +113,26 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
             }
         });
 
+        model.getCluster().getItemsChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                createTables(model);
+            }
+        });
+
         model.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                refreshTable();
+                refreshEntityTable();
             }
         });
-    }
 
-    private void refreshTable() {
-        entityTable.asEditor().edit(entityTable.asEditor().flush());
-        entityTable.redraw();
+        model.getClusterQuotasMap().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                refreshEntityTable();
+            }
+        });
     }
 
     @Override
@@ -132,7 +142,7 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
 
     protected Column getClusterColumn() {
         CustomSelectionCell customSelectionCell = new CustomSelectionCell(new ArrayList<String>());
-        customSelectionCell.setStyle(style.cellSelectBox());
+        customSelectionCell.setStyle("input-group col-xs-11"); //$NON-NLS-1$
 
         Column column = new Column<ImportEntityData, String>(customSelectionCell) {
             @Override
@@ -147,14 +157,39 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
             @Override
             public void update(int index, ImportEntityData object, String value) {
                 object.selectClusterByName(value);
-
+                refreshEntityTable();
             }
         });
 
         return column;
     }
 
-    interface WidgetStyle extends CssResource {
-        String cellSelectBox();
+    protected Column getClusterQuotaColumn() {
+        CustomSelectionCell customSelectionCell = new CustomSelectionCell(new ArrayList<String>());
+        customSelectionCell.setStyle("input-group col-xs-11"); //$NON-NLS-1$
+
+        Column column = new Column<ImportEntityData, String>(customSelectionCell) {
+            @Override
+            public String getValue(ImportEntityData object) {
+                Guid clusterId = object.getCluster().getSelectedItem() != null ?
+                        object.getCluster().getSelectedItem().getId() : null;
+                List<Quota> quotas = registerEntityModel.getClusterQuotasMap().getEntity().get(clusterId);
+
+                object.getClusterQuota().setItems(quotas);
+                ((CustomSelectionCell) getCell()).setOptions(object.getClusterQuotaNames());
+
+                return object.getClusterQuota().getSelectedItem() != null ?
+                        object.getClusterQuota().getSelectedItem().getQuotaName() : constants.empty();
+            }
+        };
+        column.setFieldUpdater(new FieldUpdater<ImportEntityData, String>() {
+            @Override
+            public void update(int index, ImportEntityData object, String value) {
+                object.selectClusterQuotaByName(value);
+
+            }
+        });
+
+        return column;
     }
 }

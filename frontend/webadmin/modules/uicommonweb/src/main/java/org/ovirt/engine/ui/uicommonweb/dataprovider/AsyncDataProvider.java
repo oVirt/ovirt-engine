@@ -885,6 +885,22 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void getAllQuotasByClusterId(AsyncQuery aQuery, Guid clusterId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source == null) {
+                    return new ArrayList<Quota>();
+                }
+                return (ArrayList<Quota>) source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
+                new IdQueryParameters(clusterId),
+                aQuery);
+    }
+
     public static void isSoundcardEnabled(AsyncQuery aQuery, Guid vmId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
