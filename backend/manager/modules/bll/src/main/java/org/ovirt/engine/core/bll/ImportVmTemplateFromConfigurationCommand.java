@@ -62,6 +62,13 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 getParameters().setVmTemplate(vmTemplateFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());
+
+                // For quota, update disks when required
+                if (getParameters().getDiskTemplateMap() != null) {
+                    ArrayList imageList = new ArrayList<>(getParameters().getDiskTemplateMap().values());
+                    vmTemplateFromConfiguration.setDiskList(imageList);
+                    ensureDomainMap(imageList, getParameters().getDestDomainId());
+                }
             } catch (OvfReaderException e) {
                 log.errorFormat("failed to parse a given ovf configuration: \n" + ovfEntityData.getOvfData(), e);
             }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -73,6 +74,16 @@ public class ImportVmTemplateParameters extends MoveOrCopyParameters implements 
 
     public void setVdsGroupId(Guid value) {
         privateVdsGroupId = value;
+    }
+
+    private HashMap<Guid, DiskImage> diskTemplateMap;
+
+    public HashMap<Guid, DiskImage> getDiskTemplateMap() {
+        return diskTemplateMap;
+    }
+
+    public void setDiskTemplateMap(HashMap<Guid, DiskImage> diskTemplateMap) {
+        this.diskTemplateMap = diskTemplateMap;
     }
 
     public ImportVmTemplateParameters() {

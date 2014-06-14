@@ -78,6 +78,11 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
                 getParameters().setVm(vmFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());
+
+                // For quota, update disks when required
+                if (getParameters().getDiskMap() != null) {
+                    vmFromConfiguration.setDiskMap(getParameters().getDiskMap());
+                }
             } catch (OvfReaderException e) {
                 log.errorFormat("failed to parse a given ovf configuration: \n" + ovfEntityData.getOvfData(), e);
             }

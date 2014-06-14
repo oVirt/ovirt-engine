@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -15,6 +17,7 @@ public class ImportVmParameters extends MoveVmParameters implements Serializable
     private Guid sourceDomainId;
     private Guid destDomainId;
     private Guid vdsGroupId;
+    private Map<Guid, Disk> diskMap;
 
     public ImportVmParameters() {
         sourceDomainId = Guid.Empty;
@@ -62,6 +65,14 @@ public class ImportVmParameters extends MoveVmParameters implements Serializable
 
     public void setSourceDomainId(Guid sourceDomainId) {
         this.sourceDomainId = sourceDomainId;
+    }
+
+    public Map<Guid, Disk> getDiskMap() {
+        return diskMap;
+    }
+
+    public void setDiskMap(Map<Guid, Disk> diskMap) {
+        this.diskMap = diskMap;
     }
 
 }

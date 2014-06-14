@@ -52,9 +52,9 @@ public enum VdcActionType {
     ActivateDeactivateVmNic(42, QuotaDependency.NONE),
     AddVmFromSnapshot(52, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
     CloneVm(53, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
-    ImportVmFromConfiguration(43, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
+    ImportVmFromConfiguration(43, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
     UpdateVmVersion(44, QuotaDependency.NONE),
-    ImportVmTemplateFromConfiguration(45, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
+    ImportVmTemplateFromConfiguration(45, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
     ProcessDownVm(45, QuotaDependency.NONE),
     // VdsCommands
     ProvisionVds(100, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
