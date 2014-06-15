@@ -37,6 +37,7 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.Disk;
@@ -111,6 +112,8 @@ import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.CapabiliyResource;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
+import org.ovirt.engine.api.resource.CpuProfileResource;
+import org.ovirt.engine.api.resource.CpuProfilesResource;
 import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.DataCentersResource;
 import org.ovirt.engine.api.resource.DeviceResource;
@@ -465,6 +468,9 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(DiskProfileResource.class, DiskProfilesResource.class);
         TYPES.put(DiskProfile.class, map);
+
+        map = new ParentToCollectionMap(CpuProfileResource.class, CpuProfilesResource.class);
+        TYPES.put(CpuProfile.class, map);
 
     }
 

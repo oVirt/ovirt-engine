@@ -5,6 +5,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendClustersResource.SUB_
 
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
+import org.ovirt.engine.api.resource.AssignedCpuProfilesResource;
 import org.ovirt.engine.api.resource.AssignedNetworksResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.ClusterResource;
@@ -84,4 +85,8 @@ public class BackendClusterResource extends AbstractBackendSubResource<Cluster, 
         return inject(new BackendAffinityGroupsResource(id));
     }
 
+    @Override
+    public AssignedCpuProfilesResource getCpuProfilesResource() {
+        return inject(new BackendAssignedCpuProfilesResource(id));
+    }
 }

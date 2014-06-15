@@ -37,6 +37,7 @@ import org.ovirt.engine.api.restapi.resource.BackendBookmarksResource;
 import org.ovirt.engine.api.restapi.resource.BackendCapabilitiesResource;
 import org.ovirt.engine.api.restapi.resource.BackendClustersResource;
 import org.ovirt.engine.api.restapi.resource.BackendDataCentersResource;
+import org.ovirt.engine.api.restapi.resource.BackendCpuProfilesResource;
 import org.ovirt.engine.api.restapi.resource.BackendDiskProfilesResource;
 import org.ovirt.engine.api.restapi.resource.BackendDisksResource;
 import org.ovirt.engine.api.restapi.resource.BackendEventsResource;
@@ -148,6 +149,7 @@ public class BackendApplication extends Application {
         addResource(new BackendSchedulingPolicyUnitsResource());
         addResource(new BackendSystemPermissionsResource());
         addResource(new BackendDiskProfilesResource());
+        addResource(new BackendCpuProfilesResource());
         addResource(VmHelper.getInstance());
 
         final SessionProcessor processor = new SessionProcessor();

@@ -41,4 +41,7 @@ public interface ClusterResource extends UpdatableResource<Cluster> {
 
     @Path("affinitygroups")
     public AffinityGroupsResource getAffinityGroupsResource();
+
+    @Path("cpuprofiles")
+    public AssignedCpuProfilesResource getCpuProfilesResource();
 }
