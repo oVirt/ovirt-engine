@@ -43,6 +43,7 @@ public class SubTabVnicProfileVmView extends AbstractSubTabTableView<VnicProfile
                 return object.getName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameVm(), "300px"); //$NON-NLS-1$
 
     }
