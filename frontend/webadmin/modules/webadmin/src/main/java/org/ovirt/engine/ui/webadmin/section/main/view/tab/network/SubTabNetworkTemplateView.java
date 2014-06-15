@@ -45,6 +45,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
                 return object.getSecond().getName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameTemplate(), "400px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> statusColumn = new EnumColumn<PairQueryable<VmNetworkInterface, VmTemplate>, VmTemplateStatus>() {
@@ -53,6 +54,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
                 return object.getSecond().getStatus();
             }
         };
+        statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusTemplate(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> clusterColumn = new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>>() {
@@ -61,6 +63,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
                 return object.getSecond().getVdsGroupName();
             }
         };
+        clusterColumn.makeSortable();
         getTable().addColumn(clusterColumn, constants.clusterTemplate(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> vnicNameColumn = new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>>() {
@@ -69,6 +72,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
                 return object.getFirst().getName();
             }
         };
+        vnicNameColumn.makeSortable();
         getTable().addColumn(vnicNameColumn, constants.vnicNetworkTemplate(), "150px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<VmNetworkInterface, VmTemplate>>(constants.removeInterface()) {

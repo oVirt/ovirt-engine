@@ -38,6 +38,7 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
                         return object.getName();
                     }
                 };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameExternalSubnet(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<ExternalSubnet> cidrColumn =
@@ -47,6 +48,7 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
                 return object.getCidr();
             }
         };
+        cidrColumn.makeSortable();
         getTable().addColumn(cidrColumn, constants.cidrExternalSubnet(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<ExternalSubnet> ipVersionColumn =
@@ -56,6 +58,7 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
                 return object.getIpVersion();
             }
         };
+        ipVersionColumn.makeSortable();
         getTable().addColumn(ipVersionColumn, constants.ipVersionExternalSubnet(), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<ExternalSubnet> gatewayColumn =
@@ -65,7 +68,7 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
                         return object.getGateway();
                     }
                 };
-
+        gatewayColumn.makeSortable();
         getTable().addColumn(gatewayColumn, constants.gatewayExternalSubnet(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<ExternalSubnet> dnsServersColumn =
@@ -75,7 +78,7 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
                         return StringUtils.join(object.getDnsServers(), ", "); //$NON-NLS-1$
                     }
                 };
-
+        dnsServersColumn.makeSortable();
         getTable().addColumn(dnsServersColumn, constants.dnsServersExternalSubnet(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<ExternalSubnet> externalIdColumn =
@@ -85,7 +88,7 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
                 return object.getId();
             }
         };
-
+        externalIdColumn.makeSortable();
         getTable().addColumn(externalIdColumn, constants.externalIdExternalSubnet(), "300px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<ExternalSubnet>(constants.newNetworkExternalSubnet()) {

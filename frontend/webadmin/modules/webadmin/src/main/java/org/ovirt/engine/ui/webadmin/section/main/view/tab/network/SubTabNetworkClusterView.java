@@ -64,6 +64,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                 return object.getFirst().getName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameCluster(), "400px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>> versionColumn = new TextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>>() {
@@ -72,6 +73,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                 return object.getFirst().getcompatibility_version().getValue();
             }
         };
+        versionColumn.makeSortable();
         getTable().addColumn(versionColumn, constants.comptVersCluster(), "130px"); //$NON-NLS-1$
 
         CheckboxColumn<PairQueryable<VDSGroup, NetworkCluster>> attachedColumn =
@@ -151,13 +153,14 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
 
         getTable().addColumn(netRoleColumn, constants.roleNetCluster(), "120px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>> dsecriptionColumn = new TextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>>() {
+        TextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>> descriptionColumn = new TextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>>() {
             @Override
             public String getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
                 return object.getFirst().getdescription();
             }
         };
-        getTable().addColumn(dsecriptionColumn, constants.descriptionCluster(), "400px"); //$NON-NLS-1$
+        descriptionColumn.makeSortable();
+        getTable().addColumn(descriptionColumn, constants.descriptionCluster(), "400px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<VDSGroup, NetworkCluster>>(constants.assignUnassignNetwork()) {
             @Override
