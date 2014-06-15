@@ -124,7 +124,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     }
 
     public void removeAllCommandsInHierarchy(final Guid commandId) {
-        for (Guid childCmdId : getChildCommandIds(commandId)) {
+        for (Guid childCmdId : new ArrayList<Guid>(getChildCommandIds(commandId))) {
             removeAllCommandsInHierarchy(childCmdId);
         }
         removeCommand(commandId);
