@@ -3096,6 +3096,18 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. QoS element not found.")
     String ACTION_TYPE_FAILED_QOS_NOT_FOUND();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Profile not exists.")
+    String ACTION_TYPE_FAILED_PROFILE_NOT_EXISTS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Profile name is in use.")
+    String ACTION_TYPE_FAILED_PROFILE_NAME_IN_USE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Cannot change profile.")
+    String ACTION_TYPE_FAILED_CANNOT_CHANGE_PROFILE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Profile is in use.")
+    String ACTION_TYPE_FAILED_PROFILE_IN_USE();
+
     @DefaultStringValue("Cannot ${action}. New disk size cannot be smaller than the current.")
     String ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL();
 
