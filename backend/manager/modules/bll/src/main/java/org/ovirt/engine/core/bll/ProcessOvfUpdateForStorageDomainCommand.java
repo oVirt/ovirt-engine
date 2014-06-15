@@ -123,7 +123,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
         description.put(OvfInfoFileConstants.DiskDescription, OvfInfoFileConstants.OvfStoreDescriptionLabel);
         description.put(OvfInfoFileConstants.Domains, Arrays.asList(getParameters().getStorageDomainId()));
         description.put(OvfInfoFileConstants.IsUpdated, isUpdated);
-        description.put(OvfInfoFileConstants.LastUpdated, updateDate.toString());
+        description.put(OvfInfoFileConstants.LastUpdated, updateDate != null ? updateDate.toString() : null);
         if (size != null) {
             description.put(OvfInfoFileConstants.Size, size);
         }
