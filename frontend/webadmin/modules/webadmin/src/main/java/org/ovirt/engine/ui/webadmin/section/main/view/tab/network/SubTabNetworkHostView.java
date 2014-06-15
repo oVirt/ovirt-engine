@@ -238,6 +238,8 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
             }
         });
         speedColumn.makeSortable();
+        nicRxColumn.makeSortable();
+        nicTxColumn.makeSortable();
     }
 }
 
