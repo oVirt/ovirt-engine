@@ -1,9 +1,10 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
-import com.google.gwt.text.shared.Parser;
-import com.google.gwt.text.shared.Renderer;
 import org.ovirt.engine.ui.common.widget.editor.AbstractValueBoxWithLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EnterIgnoringFocusHandler;
+
+import com.google.gwt.text.shared.Parser;
+import com.google.gwt.text.shared.Renderer;
 
 public class EntityModelTextAreaEditor<T> extends AbstractValueBoxWithLabelEditor<T, EntityModelTextArea<T>> {
 
@@ -24,7 +25,10 @@ public class EntityModelTextAreaEditor<T> extends AbstractValueBoxWithLabelEdito
             @Override
             protected void enterPressed() {
                 super.enterPressed();
-                getContentWidget().setText(getContentWidget().getText() + '\n'); //$NON-NLS-1$
+                int pos = getContentWidget().getCursorPos();
+                getContentWidget().setText(getContentWidget().getText().substring(0, pos) + '\n'
+                        + getContentWidget().getText().substring(pos)); //$NON-NLS-1$
+                getContentWidget().setCursorPos(pos + 1);
             }
         };
 
