@@ -141,6 +141,7 @@ import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.dao.qos.QosBaseDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
@@ -982,6 +983,9 @@ public class DbFacade {
         return getDao(StorageQosDao.class);
     }
 
+    public QosBaseDao getQosBaseDao() {
+        return getDao(QosBaseDao.class);
+    }
     /**
      * Returns the singleton instance of {@link PolicyUnitDao}.
      *

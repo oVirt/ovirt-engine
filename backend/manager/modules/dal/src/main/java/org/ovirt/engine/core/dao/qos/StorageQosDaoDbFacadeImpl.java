@@ -9,8 +9,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 public class StorageQosDaoDbFacadeImpl extends QosBaseDaoFacadeImpl<StorageQos> implements StorageQosDao {
-    private static final StorageDaoDbFacadaeImplMapper MAPPER = new StorageDaoDbFacadaeImplMapper();
-
     public StorageQosDaoDbFacadeImpl() {
         super(QosType.STORAGE);
     }
@@ -30,10 +28,11 @@ public class StorageQosDaoDbFacadeImpl extends QosBaseDaoFacadeImpl<StorageQos> 
 
     @Override
     protected RowMapper<StorageQos> createEntityRowMapper() {
-        return MAPPER;
+        return StorageDaoDbFacadaeImplMapper.MAPPER;
     }
 
     protected static class StorageDaoDbFacadaeImplMapper extends QosBaseDaoFacadaeImplMapper<StorageQos> {
+        public static final StorageDaoDbFacadaeImplMapper MAPPER = new StorageDaoDbFacadaeImplMapper();
 
         @Override
         protected StorageQos createQosEntity(ResultSet rs) throws SQLException {
