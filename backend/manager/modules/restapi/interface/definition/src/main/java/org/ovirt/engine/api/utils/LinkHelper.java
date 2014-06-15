@@ -40,6 +40,7 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Event;
@@ -67,8 +68,8 @@ import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Permit;
-import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Role;
@@ -114,6 +115,8 @@ import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.DataCentersResource;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.DevicesResource;
+import org.ovirt.engine.api.resource.DiskProfileResource;
+import org.ovirt.engine.api.resource.DiskProfilesResource;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.DiskSnapshotResource;
 import org.ovirt.engine.api.resource.DiskSnapshotsResource;
@@ -217,7 +220,6 @@ import org.ovirt.engine.api.resource.gluster.GlusterHookResource;
 import org.ovirt.engine.api.resource.gluster.GlusterHooksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumeResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
-
 /**
  * Contains a static addLinks() method which constructs any href attributes
  * and action links required by a representation.
@@ -460,6 +462,9 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(QosResource.class, QoSsResource.class, DataCenter.class);
         TYPES.put(QoS.class, map);
+
+        map = new ParentToCollectionMap(DiskProfileResource.class, DiskProfilesResource.class);
+        TYPES.put(DiskProfile.class, map);
 
     }
 

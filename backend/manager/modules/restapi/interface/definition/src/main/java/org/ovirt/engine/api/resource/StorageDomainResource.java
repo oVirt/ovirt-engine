@@ -51,4 +51,7 @@ public interface StorageDomainResource extends UpdatableResource<StorageDomain> 
 
     @Path("disksnapshots")
     public DiskSnapshotsResource getDiskSnapshotsResource();
+
+    @Path("diskprofiles")
+    public AssignedDiskProfilesResource getDiskProfilesResource();
 }

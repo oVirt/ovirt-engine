@@ -88,8 +88,16 @@ public class FeaturesHelper {
             addFeatureDiskSnapshotsResourceInStorageDomainContext(features);
             addInstanceTypesFeature(features);
             addNumaNodesFeature(features);
+            addDiskProfilesFeature(features);
         }
         return features;
+    }
+
+    private void addDiskProfilesFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Disk Profiles");
+        feature.setDescription("Configuring Disk's profile, for Storage Domain and QoS");
+        features.getFeature().add(feature);
     }
 
     private void addFeatureSchedulingPolicy(Features features) {

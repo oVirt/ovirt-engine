@@ -5674,3 +5674,146 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
+- name: /diskprofiles|rel=get
+  description: get the list of all disk profiles in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /diskprofiles/{diskprofile:id}|rel=get
+  description: get the details of the specified disk profile in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /diskprofiles/{diskprofile:id}|rel=delete
+  description: delete the specified disk profile in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /diskprofiles/{diskprofile:id}|rel=update
+  description: update the specified disk profile in the system
+  request:
+    body:
+      parameterType: DiskProfile
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {diskprofile.name: 'xs:string',
+                           diskprofile.description: 'xs:string',
+                           diskprofile.qos.id: 'xs:string'}
+        description: update the specified disk profile in the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /diskprofiles|rel=add
+  description: add a new disk profile to the system
+  request:
+    body:
+      parameterType: DiskProfile
+      signatures:
+      - mandatoryArguments: {diskprofile.storagedomain.id: 'xs:string', diskprofile.name: 'xs:string'}
+        optionalArguments: {diskprofile.description: 'xs:string',
+                           diskprofile.qos.id: 'xs:string'}
+        description: add a new disk profile to the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /diskprofiles/{diskprofile:id}/permissions|rel=get
+  description: get the list of all permissions on the disk profile in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /diskprofiles/{diskprofile:id}/permissions/{permission:id}|rel=get
+  description: get details of the specified permission on the disk profile in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /diskprofiles/{diskprofile:id}/permissions/{permission:id}|rel=delete
+  description: delete the specified permission for the disk profile
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /diskprofiles/{diskprofile:id}/permissions|rel=add
+  description: add a new permission on the disk profile in the system
+  request:
+    body:
+      parameterType: Permission
+      signatures:
+      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
+        optionalArguments: {}
+        description: add a new user level permission on the disk profile in the system
+      - mandatoryArguments: {permission.group.id: 'xs:string', permission.role.id: 'xs:string'}
+        optionalArguments: {}
+        description: add a new group level permission on the disk profile in the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /storagedomains/{storagedomain:id}/diskprofiles|rel=get
+  description: get the list of all disk profiles for the storage domain
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /storagedomains/{storagedomain:id}/diskprofiles/{diskprofile:id}|rel=get
+  description: get the details of the specified disk profile for the storage domain
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /storagedomains/{storagedomain:id}/diskprofiles/{diskprofile:id}|rel=delete
+  description: delete the specified disk profile for the storage domain
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /storagedomains/{storagedomain:id}/diskprofiles|rel=add
+  description: add a new disk profile for the storage domain
+  request:
+    body:
+      parameterType: DiskProfile
+      signatures:
+      - mandatoryArguments: {diskprofile.name: 'xs:string'}
+        optionalArguments: {diskprofile.description: 'xs:string',
+                           diskprofile.qos.id: 'xs:string'}
+        description: add a new disk profile for the storage domain
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}

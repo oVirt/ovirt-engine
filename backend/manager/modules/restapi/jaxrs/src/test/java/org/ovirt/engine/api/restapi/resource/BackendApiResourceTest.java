@@ -121,6 +121,7 @@ public class BackendApiResourceTest extends Assert {
         "jobs",
         "storageconnections",
         "vnicprofiles",
+        "diskprofiles",
         "schedulingpolicyunits",
         "schedulingpolicies",
         "permissions"
@@ -180,6 +181,7 @@ public class BackendApiResourceTest extends Assert {
         BASE_PATH + "/jobs",
         BASE_PATH + "/storageconnections",
         BASE_PATH + "/vnicprofiles",
+        BASE_PATH + "/diskprofiles",
         BASE_PATH + "/schedulingpolicyunits",
         BASE_PATH + "/schedulingpolicies",
         BASE_PATH + "/permissions"
