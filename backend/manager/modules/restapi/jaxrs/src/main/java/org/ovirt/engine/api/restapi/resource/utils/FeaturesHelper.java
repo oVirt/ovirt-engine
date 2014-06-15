@@ -90,8 +90,16 @@ public class FeaturesHelper {
             addNumaNodesFeature(features);
             addMacPoolsFeature(features);
             addDiskProfilesFeature(features);
+            addCpuProfilesFeature(features);
         }
         return features;
+    }
+
+    private void addCpuProfilesFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Cpu Profiles");
+        feature.setDescription("Configuring Cpu's profile, for Cluster and QoS");
+        features.getFeature().add(feature);
     }
 
     private void addDiskProfilesFeature(Features features) {

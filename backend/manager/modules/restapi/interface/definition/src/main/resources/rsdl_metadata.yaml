@@ -5902,3 +5902,146 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /cpuprofiles|rel=get
+  description: get the list of all cpu profiles in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /cpuprofiles/{cpuprofile:id}|rel=get
+  description: get the details of the specified cpu profile in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /cpuprofiles/{cpuprofile:id}|rel=delete
+  description: delete the specified cpu profile in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /cpuprofiles/{cpuprofile:id}|rel=update
+  description: update the specified cpu profile in the system
+  request:
+    body:
+      parameterType: CpuProfile
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {cpuprofile.name: 'xs:string',
+                           cpuprofile.description: 'xs:string',
+                           cpuprofile.qos.id: 'xs:string'}
+        description: update the specified cpu profile in the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /cpuprofiles|rel=add
+  description: add a new cpu profile to the system
+  request:
+    body:
+      parameterType: CpuProfile
+      signatures:
+      - mandatoryArguments: {cpuprofile.cluster.id: 'xs:string', cpuprofile.name: 'xs:string'}
+        optionalArguments: {cpuprofile.description: 'xs:string',
+                           cpuprofile.qos.id: 'xs:string'}
+        description: add a new cpu profile to the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /cpuprofiles/{cpuprofile:id}/permissions|rel=get
+  description: get the list of all permissions on the cpu profile in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /cpuprofiles/{cpuprofile:id}/permissions/{permission:id}|rel=get
+  description: get details of the specified permission on the cpu profile in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /cpuprofiles/{cpuprofile:id}/permissions/{permission:id}|rel=delete
+  description: delete the specified permission for the cpu profile
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /cpuprofiles/{cpuprofile:id}/permissions|rel=add
+  description: add a new permission on the cpu profile in the system
+  request:
+    body:
+      parameterType: Permission
+      signatures:
+      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
+        optionalArguments: {}
+        description: add a new user level permission on the cpu profile in the system
+      - mandatoryArguments: {permission.group.id: 'xs:string', permission.role.id: 'xs:string'}
+        optionalArguments: {}
+        description: add a new group level permission on the cpu profile in the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /clusters/{cluster:id}/cpuprofiles|rel=get
+  description: get the list of all cpu profiles for the cluster
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /clusters/{cluster:id}/cpuprofiles/{cpuprofile:id}|rel=get
+  description: get the details of the specified cpu profile for the cluster
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /clusters/{cluster:id}/cpuprofiles/{cpuprofile:id}|rel=delete
+  description: delete the specified cpu profile for the cluster
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /clusters/{cluster:id}/cpuprofiles|rel=add
+  description: add a new cpu profile for the cluster
+  request:
+    body:
+      parameterType: CpuProfile
+      signatures:
+      - mandatoryArguments: {cpuprofile.name: 'xs:string'}
+        optionalArguments: {cpuprofile.description: 'xs:string',
+                           cpuprofile.qos.id: 'xs:string'}
+        description: add a new cpu profile for the cluster
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}

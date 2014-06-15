@@ -4799,4 +4799,35 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
+  <!-- Cpu Profiles -->
+  <xs:element name="cpu_profile" type="CpuProfile"/>
+
+  <xs:element name="cpu_profiles" type="CpuProfiles" />
+
+  <xs:complexType name="CpuProfile">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="qos" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="cluster" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="CpuProfiles">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="CpuProfiles"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="cpu_profile" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 </xs:schema>

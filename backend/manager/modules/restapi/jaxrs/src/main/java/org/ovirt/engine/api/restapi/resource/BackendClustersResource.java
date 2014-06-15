@@ -26,7 +26,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
         implements ClustersResource {
 
     static final String[] SUB_COLLECTIONS = { "networks", "permissions", "glustervolumes", "glusterhooks",
-            "affinitygroups" };
+            "affinitygroups", "cpuprofiles" };
     static final String[] VIRT_ONLY_MODE_COLLECTIONS_TO_HIDE = {"glustervolumes", "glusterhooks" };
     public BackendClustersResource() {
         super(Cluster.class, VDSGroup.class, SUB_COLLECTIONS);
