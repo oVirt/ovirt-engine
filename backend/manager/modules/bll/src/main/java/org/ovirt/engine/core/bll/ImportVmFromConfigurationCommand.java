@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -17,6 +19,8 @@ import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.utils.linq.Function;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
@@ -82,11 +86,21 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
                 // For quota, update disks when required
                 if (getParameters().getDiskMap() != null) {
                     vmFromConfiguration.setDiskMap(getParameters().getDiskMap());
+                    vmFromConfiguration.setImages(getDiskImageListFromDiskMap(getParameters().getDiskMap()));
                 }
             } catch (OvfReaderException e) {
                 log.errorFormat("failed to parse a given ovf configuration: \n" + ovfEntityData.getOvfData(), e);
             }
         }
+    }
+
+    private ArrayList<DiskImage> getDiskImageListFromDiskMap(Map<Guid, Disk> diskMap) {
+        return new ArrayList<>(LinqUtils.foreach(diskMap.values(), new Function<Disk, DiskImage>() {
+            @Override
+            public DiskImage eval(Disk disk) {
+                return (DiskImage) disk;
+            }
+        }));
     }
 
     private void setDisksToBeAttached(VM vmFromConfiguration) {
