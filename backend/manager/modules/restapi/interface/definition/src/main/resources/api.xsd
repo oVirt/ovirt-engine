@@ -4765,4 +4765,35 @@
   <xs:element name="iscsi_bond" type="IscsiBond"/>
 
   <xs:element name="iscsi_bonds" type="IscsiBonds"/>
+  
+  <!-- Disk Profiles -->
+  <xs:element name="disk_profile" type="DiskProfile"/>
+
+  <xs:element name="disk_profiles" type="DiskProfiles" />
+
+  <xs:complexType name="DiskProfile">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="qos" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="storage_domain" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DiskProfiles">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="DiskProfiles"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="disk_profile" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 </xs:schema>

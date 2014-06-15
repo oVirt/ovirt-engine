@@ -31,7 +31,7 @@ public class BackendQossResource extends AbstractBackendCollectionResource<QoS, 
 
     @Override
     public QoSs list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetAllQosByStoragePoolIdAndType,
+        return mapCollection(getBackendCollection(VdcQueryType.GetAllQosByStoragePoolId,
                 new QosQueryParameterBase(dataCenterId)));
     }
 

@@ -51,7 +51,7 @@ public class BackendStorageDomainsResource
         implements StorageDomainsResource {
 
     static final String[] SUB_COLLECTIONS = { "permissions", "files", "templates", "vms", "disks",
-            "storageconnections", "images", "disksnapshots" };
+            "storageconnections", "images", "disksnapshots", "diskprofiles" };
 
     private StorageDomain storageDomain = null; // utility variable; used in the context of a single activation of
                                                 // remove()

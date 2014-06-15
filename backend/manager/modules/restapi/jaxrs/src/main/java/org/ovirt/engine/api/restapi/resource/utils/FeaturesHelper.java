@@ -89,8 +89,16 @@ public class FeaturesHelper {
             addInstanceTypesFeature(features);
             addNumaNodesFeature(features);
             addMacPoolsFeature(features);
+            addDiskProfilesFeature(features);
         }
         return features;
+    }
+
+    private void addDiskProfilesFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Disk Profiles");
+        feature.setDescription("Configuring Disk's profile, for Storage Domain and QoS");
+        features.getFeature().add(feature);
     }
 
     private void addFeatureSchedulingPolicy(Features features) {
