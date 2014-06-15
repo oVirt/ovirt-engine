@@ -15,8 +15,10 @@ import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
 public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionParametesBase> extends
         CommandBase<T> {
@@ -56,7 +58,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
             String mailAddress = (StringUtils.isEmpty(event_subscriber.getmethod_address())) ? user.getEmail()
                     : event_subscriber.getmethod_address();
 
-            if (StringUtils.isEmpty(mailAddress) || !ValidatMailAddress(mailAddress)) {
+            if (!isEmailValid(mailAddress)) {
                 addCanDoActionMessage(VdcBllMessages.USER_DOES_NOT_HAVE_A_VALID_EMAIL);
                 retValue = false;
             }
@@ -141,15 +143,23 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
     /**
      * Determines whether [is valid email] [the specified input email].
      *
-     * @param inputEmail
+     * @param email
      *            The input email.
      * @return <c>true</c> if [is valid email] [the specified input email];
      *         otherwise, <c>false</c>.
      */
-    protected static boolean ValidatMailAddress(String inputEmail) {
-        final String strRegex = "^[\\w-]+(?:\\.[\\w-]+)*@(?:[\\w-]+\\.)+[a-zA-Z]{2,7}$";
-        Regex re = new Regex(strRegex);
-        return re.IsMatch(inputEmail);
+    protected static boolean isEmailValid(String email) {
+        boolean valid = false;
+        try {
+            if (email == null){
+                throw new AddressException();
+            }
+            new InternetAddress(email, true);
+            valid = true;
+        } catch (AddressException ignored) {
+
+        }
+        return valid;
     }
 
     private static boolean ValidateSubscription(Iterable<event_subscriber> subscriptions, event_subscriber current) {
