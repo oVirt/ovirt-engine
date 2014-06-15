@@ -1,7 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -10,6 +17,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public abstract class StorageRegisterEntityListModel extends SearchableListModel {
@@ -80,6 +88,25 @@ public abstract class StorageRegisterEntityListModel extends SearchableListModel
         if (getEntity() != null) {
             super.search();
         }
+    }
+
+    protected <T extends IVdcQueryable> void syncSearch(VdcQueryType vdcQueryType, final Comparator<T> comparator) {
+        if (getEntity() == null) {
+            return;
+        }
+
+        IdQueryParameters parameters = new IdQueryParameters((getEntity()).getId());
+        parameters.setRefresh(getIsQueryFirstTime());
+
+        Frontend.getInstance().runQuery(vdcQueryType, parameters,
+                new AsyncQuery(this, new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object ReturnValue) {
+                        List<T> entities = (ArrayList<T>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                        Collections.sort(entities, comparator);
+                        setItems(entities);
+                    }
+                }));
     }
 
     @Override
