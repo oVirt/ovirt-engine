@@ -2,9 +2,13 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.ExternalVariable;
+import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.KdumpFlowStatus;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
@@ -14,12 +18,14 @@ import org.ovirt.engine.core.common.businessentities.VdsKdumpStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ThreadUtils;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 
 /**
  * Tries to detect if host is kdumping.
@@ -78,6 +84,29 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
         }
     }
 
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return FenceVdsBaseCommand.createFenceExclusiveLocksMap(getVdsId());
+    }
+
+    private void executeFenceVdsManuallyAction() {
+        FenceVdsManualyParameters fenceVdsManuallyParams = new FenceVdsManualyParameters(false);
+        fenceVdsManuallyParams.setStoragePoolId(getVds().getStoragePoolId());
+        fenceVdsManuallyParams.setVdsId(getVdsId());
+        fenceVdsManuallyParams.setSessionId(getParameters().getSessionId());
+        fenceVdsManuallyParams.setParentCommand(VdcActionType.RestartVds);
+
+        // if fencing succeeded, call to reset irs in order to try select new spm
+        Backend.getInstance().runInternalAction(
+                VdcActionType.FenceVdsManualy,
+                fenceVdsManuallyParams,
+                new CommandContext(
+                        getExecutionContext(),
+                        new EngineLock(getExclusiveLocks(), null)
+                )
+        );
+    }
+
     private KdumpDetectionResult detectHostKdumping() {
         VdsKdumpStatus kdumpStatus;
         int messageInterval = Config.<Integer>getValue(ConfigValues.FenceKdumpMessageInterval) * 1000;
@@ -118,6 +147,9 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
 
                     // restart VMs running on Vds
                     restartVdsVms();
+
+                    // execute all actions needed to manual fence the host (without PM fencing)
+                    executeFenceVdsManuallyAction();
                 }
 
                 if (kdumpStatus.getStatus() == KdumpFlowStatus.FINISHED) {
