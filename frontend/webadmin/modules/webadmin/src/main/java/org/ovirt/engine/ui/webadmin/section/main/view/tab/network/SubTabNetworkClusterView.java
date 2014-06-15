@@ -88,7 +88,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                 return false;
             }
         };
-
+        attachedColumn.makeSortable();
         getTable().addColumn(attachedColumn, constants.attachedNetworkCluster(), "120px"); //$NON-NLS-1$
 
         getTable().addColumn(new NetworkClusterStatusColumn(), constants.networkStatus(), "120px"); //$NON-NLS-1$
@@ -108,6 +108,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                 return false;
             }
         };
+        netRequiredColumn.makeSortable();
         getTable().addColumn(netRequiredColumn, constants.requiredNetCluster(), "120px"); //$NON-NLS-1$
 
         SafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VDSGroup, NetworkCluster>> netRoleColumn =
