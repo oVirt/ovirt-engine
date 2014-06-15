@@ -53,10 +53,10 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
 
         switch (notificationMethod) {
         case SMTP:
-            String mailAdress = (StringUtils.isEmpty(event_subscriber.getmethod_address())) ? user.getEmail()
+            String mailAddress = (StringUtils.isEmpty(event_subscriber.getmethod_address())) ? user.getEmail()
                     : event_subscriber.getmethod_address();
 
-            if (StringUtils.isEmpty(mailAdress) || !ValidatMailAddress(mailAdress)) {
+            if (StringUtils.isEmpty(mailAddress) || !ValidatMailAddress(mailAddress)) {
                 addCanDoActionMessage(VdcBllMessages.USER_DOES_NOT_HAVE_A_VALID_EMAIL);
                 retValue = false;
             }
