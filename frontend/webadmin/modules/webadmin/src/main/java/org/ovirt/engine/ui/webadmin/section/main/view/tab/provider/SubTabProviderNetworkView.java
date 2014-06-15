@@ -44,6 +44,7 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
                 return object.getName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameNetwork(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<NetworkView> externalIdColumn =
@@ -53,6 +54,7 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
                         return object.getProvidedBy().getExternalId();
                     }
                 };
+        externalIdColumn.makeSortable();
         getTable().addColumn(externalIdColumn, constants.externalIdProviderNetwork(), "300px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<NetworkView> dcColumn = new TextColumnWithTooltip<NetworkView>() {
@@ -61,6 +63,7 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
                 return object.getDataCenterName();
             }
         };
+        dcColumn.makeSortable();
         getTable().addColumn(dcColumn, constants.dataCenterProviderNetwork(), "200px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.importNetwork()) {
