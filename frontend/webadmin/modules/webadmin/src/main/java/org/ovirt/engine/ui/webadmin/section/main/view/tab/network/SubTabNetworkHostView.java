@@ -1,10 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
@@ -224,6 +226,17 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         clusterColumn.makeSortable();
         dcColumn.makeSortable();
         nicStatusColumn.makeSortable(new SimpleStatusColumnComparator<PairQueryable<VdsNetworkInterface, VDS>>(nicStatusColumn));
+        nicColumn.makeSortable(new Comparator<PairQueryable<VdsNetworkInterface, VDS>>() {
+
+            private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+            @Override
+            public int compare(PairQueryable<VdsNetworkInterface, VDS> o1, PairQueryable<VdsNetworkInterface, VDS> o2) {
+                String name1 = (o1.getFirst() == null) ? null : o1.getFirst().getName();
+                String name2 = (o2.getFirst() == null) ? null : o2.getFirst().getName();
+                return lexoNumeric.compare(name1, name2);
+            }
+        });
         speedColumn.makeSortable();
     }
 }
