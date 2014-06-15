@@ -9,7 +9,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -266,5 +268,12 @@ public final class NetworkUtils {
         }
 
         return displayNetwork;
+    }
+
+    /**
+     * @return A unique host name representation
+     */
+    public static String getUniqueHostName(VDS host) {
+        return host.getHostName() + "-" + DigestUtils.md5Hex(host.getId().toByteArray()).substring(0, 6);
     }
 }

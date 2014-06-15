@@ -497,6 +497,14 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
         }},
         new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
         public Boolean call() throws Exception {
+            _parser.cliEnvironmentSet(
+                    OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/host",
+                    NetworkUtils.getUniqueHostName(_vds)
+                );
+            return true;
+        }},
+        new Callable<Boolean>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
+        public Boolean call() throws Exception {
             _setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/" + _messagingConfiguration.getBrokerType().getHostKey(),
                 _messagingConfiguration.getAddress()
