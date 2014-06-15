@@ -70,3 +70,13 @@ RETURN QUERY SELECT *
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetAllQosForStoragePool(v_storage_pool_id UUID) RETURNS SETOF qos STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT *
+   FROM qos
+   WHERE storage_pool_id = v_storage_pool_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+

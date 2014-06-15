@@ -16,7 +16,7 @@ public abstract class QosQueryBase extends QueriesCommandBase<QosQueryParameterB
     protected QosDao<?> getQosDao() {
         QosType qosType = getParameters().getQosType();
         if (qosType == null) {
-            qosType = QosType.STORAGE;
+            return getDbFacade().getQosBaseDao();
         }
         switch (qosType) {
         case STORAGE:
@@ -24,6 +24,7 @@ public abstract class QosQueryBase extends QueriesCommandBase<QosQueryParameterB
             break;
 
         default:
+            log.debugFormat("Not handled QoS type: {0}", qosType);
             break;
         }
         return qosDao;

@@ -12,10 +12,9 @@ import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * Base abstract class for QoS objects
- * derived class will hold qos limit according to type.
+ * Base class for QoS objects derived class will hold qos limit according to type.
  */
-public abstract class QosBase extends IVdcQueryable implements BusinessEntity<Guid>, Serializable {
+public class QosBase extends IVdcQueryable implements BusinessEntity<Guid>, Serializable {
     private static final long serialVersionUID = 1122772549710787678L;
     private Guid id = Guid.Empty;
     private QosType qosType;
@@ -53,7 +52,9 @@ public abstract class QosBase extends IVdcQueryable implements BusinessEntity<Gu
      *
      * @return object summary
      */
-    public abstract String getString();
+    public String getString() {
+        return toString();
+    }
 
     /**
      * Check whether specific derived QoS values are equal.
@@ -61,7 +62,10 @@ public abstract class QosBase extends IVdcQueryable implements BusinessEntity<Gu
      * @param other
      * @return are equals
      */
-    public abstract boolean equalValues(QosBase other);
+    public boolean equalValues(QosBase other) {
+        // no extra values, should be called for the derivative classes.
+        return false;
+    }
 
     @Override
     public Guid getId() {

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 
 public enum QosType implements Identifiable {
+    ALL(0),
     STORAGE(1);
 
     private int value;
