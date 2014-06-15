@@ -24,15 +24,23 @@ public class StorageDomainValidator {
     private static final long INITIAL_BLOCK_ALLOCATION_SIZE = 1024L * 1024L * 1024L;
     private static final long EMPTY_QCOW_HEADER_SIZE = 1024L * 1024L;
 
-    private StorageDomain storageDomain;
+    private final StorageDomain storageDomain;
 
     public StorageDomainValidator(StorageDomain domain) {
         storageDomain = domain;
     }
 
-    public ValidationResult isDomainExistAndActive() {
+    public ValidationResult isDomainExist() {
         if (storageDomain == null) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+        }
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult isDomainExistAndActive() {
+        ValidationResult domainExistValidation = isDomainExist();
+        if (!ValidationResult.VALID.equals(domainExistValidation)) {
+            return domainExistValidation;
         }
         if (storageDomain.getStatus() != StorageDomainStatus.Active) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,

@@ -362,6 +362,12 @@ public enum VdcQueryType implements Serializable {
 
     GetAllDisksPartialDataByVmId(VdcQueryAuthType.User),
     GetVmTemplateCount,
+
+    //Disk Profiles
+    GetDiskProfileById,
+    GetAllDiskProfiles,
+    GetDiskProfilesByStorageDomainId,
+
     // Default type instead of having to null check
     Unknown(VdcQueryAuthType.User);
 

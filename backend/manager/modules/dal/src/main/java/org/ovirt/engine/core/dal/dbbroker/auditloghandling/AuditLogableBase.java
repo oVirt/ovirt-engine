@@ -48,6 +48,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -659,6 +660,10 @@ public class AuditLogableBase extends TimeoutBase {
 
     public AuditLogDAO getAuditLogDao() {
         return getDbFacade().getAuditLogDao();
+    }
+
+    public DiskProfileDao getDiskProfileDao() {
+        return getDbFacade().getDiskProfileDao();
     }
 
     protected DbFacade getDbFacade() {
