@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import java.util.Comparator;
+
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 import com.google.gwt.cell.client.Cell.Context;
@@ -11,10 +13,9 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.view.client.CellPreviewEvent;
 
-public abstract class CheckboxColumn<T> extends Column<T, Boolean> {
+public abstract class CheckboxColumn<T> extends SortableColumn<T, Boolean> {
 
     private boolean isCentralized = false;
     private boolean multipleSelectionAllowed = true;
@@ -114,5 +115,24 @@ public abstract class CheckboxColumn<T> extends Column<T, Boolean> {
 
     protected String getDisabledMessage(T object) {
         return null;
+    }
+
+    /**
+     * Enables default <em>client-side</em> sorting for this column, by displaying values of false before true.
+     */
+    public void makeSortable() {
+        makeSortable(new Comparator<T>() {
+
+            @Override
+            public int compare(T o1, T o2) {
+                boolean value1 = (getValue(o1) == null) ? false : getValue(o1);
+                boolean value2 = (getValue(o2) == null) ? false : getValue(o2);
+                if (value1 == value2) {
+                    return 0;
+                } else {
+                    return value1 ? 1 : -1;
+                }
+            }
+        });
     }
 }
