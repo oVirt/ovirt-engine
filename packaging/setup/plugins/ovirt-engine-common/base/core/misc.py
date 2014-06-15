@@ -46,6 +46,7 @@ class Plugin(plugin.PluginBase):
         before=(
             otopicons.Stages.CORE_CONFIG_INIT,
         ),
+        priority=plugin.Stages.PRIORITY_HIGH - 20,
     )
     def _preinit(self):
         self.environment.setdefault(
