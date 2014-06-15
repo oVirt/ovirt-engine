@@ -909,7 +909,6 @@ public class VmInitModel extends Model {
         }
         vmInit.setDnsServers(getDnsServers().getEntity());
         vmInit.setDnsSearch(getDnsSearchDomains().getEntity());
-        vmInit.setCustomScript(getCustomScript().getEntity());
 
         return vmInit;
     }

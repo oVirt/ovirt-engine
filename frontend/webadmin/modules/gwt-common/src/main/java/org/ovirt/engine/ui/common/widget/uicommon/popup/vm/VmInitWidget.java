@@ -531,7 +531,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         regenerateKeysEnabledEditor.addStyleName(customizableStyle.primaryOption());
         networkExpanderContent.addStyleName(customizableStyle.primaryOption());
 
-        customScriptEditor.setContentWidgetStyleName(customizableStyle.primaryOption());
         customScriptEditor.setContentWidgetStyleName(customizableStyle.customScript());
 
         authenticationExpanderContent.addStyleName(customizableStyle.expanderContent());
