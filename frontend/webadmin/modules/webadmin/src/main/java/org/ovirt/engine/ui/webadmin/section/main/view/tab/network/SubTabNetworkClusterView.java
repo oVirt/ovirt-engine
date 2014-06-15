@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlWithSafeHtmlTooltipColumn;
+import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparator;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
@@ -92,7 +93,9 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         attachedColumn.makeSortable();
         getTable().addColumn(attachedColumn, constants.attachedNetworkCluster(), "120px"); //$NON-NLS-1$
 
-        getTable().addColumn(new NetworkClusterStatusColumn(), constants.networkStatus(), "120px"); //$NON-NLS-1$
+        NetworkClusterStatusColumn statusColumn = new NetworkClusterStatusColumn();
+        statusColumn.makeSortable(new SimpleStatusColumnComparator<PairQueryable<VDSGroup, NetworkCluster>>(statusColumn));
+        getTable().addColumn(statusColumn, constants.networkStatus(), "120px"); //$NON-NLS-1$
 
         CheckboxColumn<PairQueryable<VDSGroup, NetworkCluster>> netRequiredColumn =
                 new CheckboxColumn<PairQueryable<VDSGroup, NetworkCluster>>(true) {

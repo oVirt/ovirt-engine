@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import java.util.Comparator;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
@@ -8,6 +10,7 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -16,8 +19,8 @@ public class NicActivateStatusColumn<T> extends SafeHtmlWithSafeHtmlTooltipColum
     CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
     CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
     CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
-    @Override
-    public SafeHtml getValue(T object) {
+
+    private ImageResource getImage(T object) {
         VmNetworkInterface vnic = null;
         if (object instanceof VmNetworkInterface) {
             vnic = (VmNetworkInterface) object;
@@ -26,12 +29,28 @@ public class NicActivateStatusColumn<T> extends SafeHtmlWithSafeHtmlTooltipColum
         }
 
         if (vnic != null) {
-            return vnic.isPlugged() && vnic.isLinked() ?
-                    SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.upImage()).getHTML())
-                    : SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.downImage()).getHTML());
+            return vnic.isPlugged() && vnic.isLinked() ? resources.upImage() : resources.downImage();
         }
 
         return null;
+    }
+
+    public void makeSortable() {
+        makeSortable(new Comparator<T>() {
+
+            private final SimpleStatusImageComparator imageComparator = new SimpleStatusImageComparator();
+
+            @Override
+            public int compare(T o1, T o2) {
+                return imageComparator.compare(getImage(o1), getImage(o2));
+            }
+        });
+    }
+
+    @Override
+    public SafeHtml getValue(T object) {
+        ImageResource image = getImage(object);
+        return (image == null) ? null : SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(image).getHTML());
     }
 
     @Override
