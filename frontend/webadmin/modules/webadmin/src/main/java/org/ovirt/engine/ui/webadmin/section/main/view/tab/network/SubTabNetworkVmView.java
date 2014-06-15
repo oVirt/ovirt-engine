@@ -207,6 +207,8 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         fqdnColumn.makeSortable();
         nicActivateStatusColumn.makeSortable();
         vnicNameColumn.makeSortable();
+        rxColumn.makeSortable();
+        txColumn.makeSortable();
         descriptionColumn.makeSortable();
     }
 
