@@ -15,6 +15,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -33,6 +34,7 @@ import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
 import com.woorea.openstack.quantum.Quantum;
 import com.woorea.openstack.quantum.model.Networks;
 import com.woorea.openstack.quantum.model.Port;
+import com.woorea.openstack.quantum.model.Port.Binding;
 import com.woorea.openstack.quantum.model.Subnet;
 import com.woorea.openstack.quantum.model.Subnets;
 
@@ -229,11 +231,13 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     }
 
     @Override
-    public Map<String, String> allocate(Network network, VnicProfile vnicProfile, VmNic nic) {
+    public Map<String, String> allocate(Network network, VnicProfile vnicProfile, VmNic nic, VDS host) {
         try {
             Port port = locatePort(nic);
 
             List<String> securityGroups = getSecurityGroups(vnicProfile);
+            String hostId = NetworkUtils.getUniqueHostName(host);
+
             if (port == null) {
                 com.woorea.openstack.quantum.model.Network externalNetwork =
                         getExternalNetwork(network.getProvidedBy());
@@ -246,12 +250,25 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
                 portForCreate.setDeviceOwner(DEVICE_OWNER);
                 portForCreate.setDeviceId(nic.getId().toString());
                 portForCreate.setSecurityGroups(securityGroups);
+                portForCreate.setBinding(new Binding());
+                portForCreate.getBinding().setHostId(hostId);
                 port = getClient().ports().create(portForCreate).execute();
-            } else if (securityGroupsChanged(port.getSecurityGroups(), securityGroups)) {
-                Port portForUpdate = new PortForUpdate();
-                portForUpdate.setId(port.getId());
-                portForUpdate.setSecurityGroups(securityGroups);
-                port = getClient().ports().update(portForUpdate).execute();
+            } else {
+                boolean securityGroupsChanged = securityGroupsChanged(port.getSecurityGroups(), securityGroups);
+                boolean hostChanged = hostChanged(port, hostId);
+
+                if (securityGroupsChanged || hostChanged) {
+                    Port portForUpdate = new PortForUpdate();
+                    portForUpdate.setId(port.getId());
+                    portForUpdate.setSecurityGroups(securityGroupsChanged ? securityGroups : port.getSecurityGroups());
+
+                    if (hostChanged) {
+                        portForUpdate.setBinding(new Binding());
+                        portForUpdate.getBinding().setHostId(hostId);
+                    }
+
+                    port = getClient().ports().update(portForUpdate).execute();
+                }
             }
 
             Map<String, String> runtimeProperties = new HashMap<>();
@@ -270,6 +287,10 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
 
     private com.woorea.openstack.quantum.model.Network getExternalNetwork(ProviderNetwork providerNetwork) {
         return getClient().networks().show(providerNetwork.getExternalId()).execute();
+    }
+
+    private boolean hostChanged(Port port, String hostId) {
+        return port.getBinding() == null || !StringUtils.equals(port.getBinding().getHostId(), hostId);
     }
 
     private boolean securityGroupsChanged(List<String> existingSecurityGroups, List<String> desiredSecurityGroups) {

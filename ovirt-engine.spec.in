@@ -109,7 +109,7 @@
 %global vdsm_uid 36
 %global vdsm_user vdsm
 
-%global openstack_java_version 3.0.4
+%global openstack_java_version 3.0.5
 
 # Macro to create an user:
 #

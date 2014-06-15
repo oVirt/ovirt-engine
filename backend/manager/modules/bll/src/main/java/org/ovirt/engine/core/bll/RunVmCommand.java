@@ -500,6 +500,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             getVm().setKernelUrl(getIsoPrefixFilePath(getVm().getKernelUrl()));
         }
 
+        initParametersForExternalNetworks();
+
         VMStatus vmStatus = (VMStatus) getBackend()
                 .getResourceManager()
                 .RunAsyncVdsCommand(VDSCommandType.CreateVm, buildCreateVmParameters(), this).getReturnValue();
@@ -527,6 +529,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected void initParametersForExternalNetworks() {
+        if (getVm().getInterfaces().isEmpty()) {
+            return;
+        }
+
         Map<VmDeviceId, VmDevice> nicDevices =
                 Entities.businessEntitiesById(getDbFacade().getVmDeviceDao().getVmDeviceByVmIdAndType(getVmId(),
                         VmDeviceGeneralType.INTERFACE));
@@ -538,7 +544,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (network != null && network.isExternal() && vmDevice.getIsPlugged()) {
                 Provider<?> provider = getDbFacade().getProviderDao().get(network.getProvidedBy().getProviderId());
                 NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(provider);
-                Map<String, String> deviceProperties = providerProxy.allocate(network, vnicProfile, iface);
+                Map<String, String> deviceProperties = providerProxy.allocate(network, vnicProfile, iface, getVds());
 
                 getVm().getRuntimeDeviceCustomProperties().put(vmDevice.getId(), deviceProperties);
             }
@@ -680,10 +686,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         VmHandler.updateVmGuestAgentVersion(getVm());
 
         getVm().setCpuName(getVdsGroup().getcpu_name());
-
-        if (!getVm().getInterfaces().isEmpty()) {
-            initParametersForExternalNetworks();
-        }
 
         if (getFlow() != RunVmFlow.RESUME_HIBERNATE) {
             getVm().setHibernationVolHandle(getMemoryFromSnapshot());
