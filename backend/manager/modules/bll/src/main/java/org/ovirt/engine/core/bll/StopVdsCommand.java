@@ -81,7 +81,11 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
     @Override
     protected void handleSpecificCommandActions() {
         if (mVmList.size() > 0) {
-            restartVdsVms();
+            RestartVdsVmsOperation restartVmsOper = new RestartVdsVmsOperation(
+                    getExecutionContext(),
+                    getVds()
+            );
+            restartVmsOper.restartVms(mVmList);
             Backend.getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.UpdateVdsVMsCleared,

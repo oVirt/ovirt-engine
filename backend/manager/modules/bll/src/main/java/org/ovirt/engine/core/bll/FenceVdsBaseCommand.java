@@ -11,18 +11,14 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
-import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -30,9 +26,7 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -444,60 +438,6 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      */
     protected FenceExecutor createExecutorForProxyCheck() {
         return new FenceExecutor(getVds(), FenceActionType.Status);
-    }
-
-    protected void destroyVmOnDestination(VM vm) {
-        if (vm.getStatus() == VMStatus.MigratingFrom) {
-            try {
-                if (vm.getMigratingToVds() != null) {
-                    Backend.getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(
-                                    VDSCommandType.DestroyVm,
-                                    new DestroyVmVDSCommandParameters(new Guid(vm.getMigratingToVds().toString()), vm
-                                            .getId(), true, false, 0));
-                    log.infoFormat("Stopped migrating vm: {0} on vds: {1}", vm.getName(), vm.getMigratingToVds());
-                }
-            } catch (RuntimeException ex) {
-                log.infoFormat("Could not stop migrating vm: {0} on vds: {1}, Error: {2}", vm.getName(),
-                        vm.getMigratingToVds(), ex.getMessage());
-                // intentionally ignored
-            }
-        }
-    }
-
-    protected void restartVdsVms() {
-        List<Guid> autoStartVmIdsToRerun = new ArrayList<>();
-        // restart all running vms of a failed vds.
-        for (VM vm : mVmList) {
-            destroyVmOnDestination(vm);
-            VDSReturnValue returnValue = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.SetVmStatus,
-                            new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down, VmExitStatus.Error));
-            // Write that this VM was shut down by host reboot or manual fence
-            if (returnValue != null && returnValue.getSucceeded()) {
-                LogSettingVmToDown(getVds().getId(), vm.getId());
-            }
-            setVmId(vm.getId());
-            setVmName(vm.getName());
-            setVm(vm);
-            Backend.getInstance().runInternalAction(VdcActionType.ProcessDownVm,
-                    new IdParameters(vm.getId()),
-                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-
-            // Handle highly available VMs
-            if (vm.isAutoStartup()) {
-                autoStartVmIdsToRerun.add(vm.getId());
-            }
-        }
-        if (!autoStartVmIdsToRerun.isEmpty()) {
-            AutoStartVmsRunner.getInstance().addVmsToRun(autoStartVmIdsToRerun);
-        }
-        setVm(null);
-        setVmId(Guid.Empty);
-        setVmName(null);
     }
 
     protected void setStatus() {
