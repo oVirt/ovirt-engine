@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.ViewRadioGroup;
 import org.ovirt.engine.ui.common.widget.table.column.RxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlWithSafeHtmlTooltipColumn;
+import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparator;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostFilter;
@@ -222,6 +223,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         nameColumn.makeSortable();
         clusterColumn.makeSortable();
         dcColumn.makeSortable();
+        nicStatusColumn.makeSortable(new SimpleStatusColumnComparator<PairQueryable<VdsNetworkInterface, VDS>>(nicStatusColumn));
         speedColumn.makeSortable();
     }
 }
