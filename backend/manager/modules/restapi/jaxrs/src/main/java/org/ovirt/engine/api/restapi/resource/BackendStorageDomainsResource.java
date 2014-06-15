@@ -47,12 +47,14 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainsResource
-    extends AbstractBackendCollectionResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain>
-    implements StorageDomainsResource {
+        extends AbstractBackendCollectionResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain>
+        implements StorageDomainsResource {
 
-    static final String[] SUB_COLLECTIONS = { "permissions", "files", "templates", "vms", "disks" , "storageconnections", "images", "disksnapshots" };
+    static final String[] SUB_COLLECTIONS = { "permissions", "files", "templates", "vms", "disks",
+            "storageconnections", "images", "disksnapshots" };
 
-    private StorageDomain storageDomain = null; //utility variable; used in the context of a single activation of remove()
+    private StorageDomain storageDomain = null; // utility variable; used in the context of a single activation of
+                                                // remove()
 
     private final EntityIdResolver<Guid> ID_RESOLVER =
             new QueryIdResolver<Guid>(VdcQueryType.GetStorageDomainById, IdQueryParameters.class);
@@ -76,20 +78,24 @@ public class BackendStorageDomainsResource
         return inject(new BackendStorageDomainResource(id, this));
     }
 
-    private Response addDomain(VdcActionType action, StorageDomain model, StorageDomainStatic entity, Guid hostId, StorageServerConnections connection) {
+    private Response addDomain(VdcActionType action,
+            StorageDomain model,
+            StorageDomainStatic entity,
+            Guid hostId,
+            StorageServerConnections connection) {
         Response response = null;
         boolean isConnNew = false;
         if (connection.getstorage_type().isFileDomain() && StringUtils.isEmpty(connection.getid())) {
-                isConnNew = true;
-                connection.setid(addStorageServerConnection(connection, hostId));
+            isConnNew = true;
+            connection.setid(addStorageServerConnection(connection, hostId));
         }
         entity.setStorage(connection.getid());
         if (action == VdcActionType.AddNFSStorageDomain) {
             org.ovirt.engine.core.common.businessentities.StorageDomain existing =
-                getExistingStorageDomain(hostId,
-                                         entity.getStorageType(),
-                                         entity.getStorageDomainType(),
-                                         connection);
+                    getExistingStorageDomain(hostId,
+                            entity.getStorageType(),
+                            entity.getStorageDomainType(),
+                            connection);
             if (existing != null) {
                 entity = existing.getStorageStaticData();
                 action = VdcActionType.AddExistingFileStorageDomain;
@@ -112,16 +118,15 @@ public class BackendStorageDomainsResource
         return response;
     }
 
-
     private Response addSAN(StorageDomain model, StorageType storageType, StorageDomainStatic entity, Guid hostId) {
         boolean overrideLuns = model.getStorage().isSetOverrideLuns() ? model.getStorage().isOverrideLuns() : false;
 
         return performCreate(VdcActionType.AddSANStorageDomain,
-                               getSanAddParams(entity,
-                                               hostId,
-                                               getLunIds(model.getStorage(), storageType, hostId),
-                                               overrideLuns),
-                               ID_RESOLVER);
+                getSanAddParams(entity,
+                        hostId,
+                        getLunIds(model.getStorage(), storageType, hostId),
+                        overrideLuns),
+                ID_RESOLVER);
     }
 
     private ArrayList<String> getLunIds(Storage storage, StorageType storageType, Guid hostId) {
@@ -130,18 +135,18 @@ public class BackendStorageDomainsResource
         if (storage.isSetLogicalUnits()) {
             logicalUnits = storage.getLogicalUnits();
         } else if (storage.isSetVolumeGroup() &&
-                   storage.getVolumeGroup().isSetLogicalUnits()) {
+                storage.getVolumeGroup().isSetLogicalUnits()) {
             logicalUnits = storage.getVolumeGroup().getLogicalUnits();
         }
 
         ArrayList<String> lunIds = new ArrayList<String>();
         for (LogicalUnit unit : logicalUnits) {
             validateParameters(unit, 4, "id");
-            //if the address and target were not supplied, we understand from this that
-            //the user assumes that the host is already logged-in to the target of this lun.
-            //so in this case we do not need (and do not have the required information) to login
-            //to the target.
-            if ( (storageType == StorageType.ISCSI) && (!isConnectionAssumed(unit)) ){
+            // if the address and target were not supplied, we understand from this that
+            // the user assumes that the host is already logged-in to the target of this lun.
+            // so in this case we do not need (and do not have the required information) to login
+            // to the target.
+            if ((storageType == StorageType.ISCSI) && (!isConnectionAssumed(unit))) {
                 connectStorageToHost(hostId, storageType, unit);
             }
             lunIds.add(unit.getId());
@@ -151,17 +156,18 @@ public class BackendStorageDomainsResource
     }
 
     private boolean isConnectionAssumed(LogicalUnit unit) {
-        //either 'target' and 'address' should both be provided, or none. Validate this
-        if ( (unit.getAddress()!=null || unit.getTarget()!=null) ) {
+        // either 'target' and 'address' should both be provided, or none. Validate this
+        if ((unit.getAddress() != null || unit.getTarget() != null)) {
             validateParameters(unit, "address", "target");
         }
-        boolean connectionAssumed = (unit.getAddress()==null || unit.getTarget()==null);
+        boolean connectionAssumed = (unit.getAddress() == null || unit.getTarget() == null);
         return connectionAssumed;
     }
 
     /**
-     * This is a work-around for a VDSM bug. The call to GetDeviceList causes a necessary
-     * refresh in the VDSM, without which the creation will fail.
+     * This is a work-around for a VDSM bug. The call to GetDeviceList causes a necessary refresh in the VDSM, without
+     * which the creation will fail.
+     *
      * @param hostId
      */
     private void refreshHostStorage(Guid hostId) {
@@ -169,7 +175,13 @@ public class BackendStorageDomainsResource
     }
 
     private void connectStorageToHost(Guid hostId, StorageType storageType, LogicalUnit unit) {
-        StorageServerConnections cnx = StorageDomainHelper.getConnection(storageType, unit.getAddress(), unit.getTarget(), unit.getUsername(), unit.getPassword(), unit.getPort());
+        StorageServerConnections cnx =
+                StorageDomainHelper.getConnection(storageType,
+                        unit.getAddress(),
+                        unit.getTarget(),
+                        unit.getUsername(),
+                        unit.getPassword(),
+                        unit.getPort());
         performAction(VdcActionType.ConnectStorageToVds,
                 new StorageServerConnectionParametersBase(cnx, hostId));
     }
@@ -183,15 +195,15 @@ public class BackendStorageDomainsResource
         StorageServerConnections cnx = null;
 
         if (!storageConnectionFromUser.isSetId()) {
-             validateParameters(storageDomain, "storage.type");
-             cnx = mapToCnx(storageDomain);
-             if(cnx.getstorage_type().isFileDomain()) {
-                 validateParameters(storageConnectionFromUser, "path");
-             }
+            validateParameters(storageDomain, "storage.type");
+            cnx = mapToCnx(storageDomain);
+            if (cnx.getstorage_type().isFileDomain()) {
+                validateParameters(storageConnectionFromUser, "path");
+            }
         }
         else {
-             cnx = getStorageServerConnection(storageConnectionFromUser.getId());
-             storageDomain.getStorage().setType(mapType(cnx.getstorage_type()));
+            cnx = getStorageServerConnection(storageConnectionFromUser.getId());
+            storageDomain.getStorage().setType(mapType(cnx.getstorage_type()));
         }
         StorageDomainStatic entity = mapToStatic(storageDomain);
         Response resp = null;
@@ -202,7 +214,7 @@ public class BackendStorageDomainsResource
             break;
         case NFS:
             if (!storageConnectionFromUser.isSetId()) {
-               validateParameters(storageDomain.getStorage(), "address");
+                validateParameters(storageDomain.getStorage(), "address");
             }
             resp = addDomain(VdcActionType.AddNFSStorageDomain, storageDomain, entity, hostId, cnx);
             break;
@@ -234,7 +246,7 @@ public class BackendStorageDomainsResource
 
     @Override
     public Response remove(String id, StorageDomain storageDomain) {
-        if (storageDomain==null) {
+        if (storageDomain == null) {
             Fault fault = new Fault();
             fault.setReason("storage-domain parameter is missing");
             throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(fault).build());
@@ -253,30 +265,32 @@ public class BackendStorageDomainsResource
     }
 
     @Override
-    protected StorageDomain map(org.ovirt.engine.core.common.businessentities.StorageDomain entity, StorageDomain template) {
+    protected StorageDomain map(org.ovirt.engine.core.common.businessentities.StorageDomain entity,
+            StorageDomain template) {
         StorageDomain model = super.map(entity, template);
 
         // Mapping the connection properties only in case it is a non-filtered session
         if (!isFiltered()) {
             switch (entity.getStorageType()) {
-                case ISCSI:
-                    mapVolumeGroupIscsi(model, entity);
-                    break;
-                case FCP:
-                    mapVolumeGroupFcp(model, entity);
-                    break;
-                case NFS:
-                case LOCALFS:
-                case POSIXFS:
-                    mapNfsOrLocalOrPosix(model, entity);
-                    break;
-                }
+            case ISCSI:
+                mapVolumeGroupIscsi(model, entity);
+                break;
+            case FCP:
+                mapVolumeGroupFcp(model, entity);
+                break;
+            case NFS:
+            case LOCALFS:
+            case POSIXFS:
+                mapNfsOrLocalOrPosix(model, entity);
+                break;
+            }
         }
 
         return model;
     }
 
-    protected void mapNfsOrLocalOrPosix(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
+    protected void mapNfsOrLocalOrPosix(StorageDomain model,
+            org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         final Storage storage = model.getStorage();
         StorageServerConnections cnx = getStorageServerConnection(entity.getStorage());
         if (cnx.getconnection().contains(":")) {
@@ -288,22 +302,23 @@ public class BackendStorageDomainsResource
         }
         storage.setMountOptions(cnx.getMountOptions());
         storage.setVfsType(cnx.getVfsType());
-        if (cnx.getNfsRetrans()!=null) {
+        if (cnx.getNfsRetrans() != null) {
             storage.setNfsRetrans(cnx.getNfsRetrans().intValue());
         }
-        if (cnx.getNfsTimeo()!=null) {
+        if (cnx.getNfsTimeo() != null) {
             storage.setNfsTimeo(cnx.getNfsTimeo().intValue());
         }
-        if (cnx.getNfsVersion()!=null) {
+        if (cnx.getNfsVersion() != null) {
             storage.setNfsVersion(StorageDomainMapper.map(cnx.getNfsVersion(), null));
         }
     }
 
-    protected void mapVolumeGroupIscsi(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
+    protected void mapVolumeGroupIscsi(StorageDomain model,
+            org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         VolumeGroup vg = model.getStorage().getVolumeGroup();
         for (LUNs lun : getLunsByVgId(vg.getId())) {
             List<StorageServerConnections> lunConnections = lun.getLunConnections();
-            if (lunConnections!=null) {
+            if (lunConnections != null) {
                 for (StorageServerConnections cnx : lunConnections) {
                     LogicalUnit unit = map(lun);
                     unit = map(cnx, unit);
@@ -313,7 +328,8 @@ public class BackendStorageDomainsResource
         }
     }
 
-    protected void mapVolumeGroupFcp(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
+    protected void mapVolumeGroupFcp(StorageDomain model,
+            org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         VolumeGroup vg = model.getStorage().getVolumeGroup();
         for (LUNs lun : getLunsByVgId(vg.getId())) {
             LogicalUnit unit = map(lun);
@@ -341,7 +357,7 @@ public class BackendStorageDomainsResource
         StorageDomains collection = new StorageDomains();
         for (org.ovirt.engine.core.common.businessentities.StorageDomain entity : entities) {
             StorageDomain storageDomain = map(entity);
-            //status is only relevant in the context of a data-center, so it can either be 'Unattached' or null.
+            // status is only relevant in the context of a data-center, so it can either be 'Unattached' or null.
             if (StorageDomainSharedStatus.Unattached.equals(entity.getStorageDomainSharedStatus())) {
                 storageDomain.setStatus(StatusUtils.create(StorageDomainStatus.UNATTACHED));
             } else {
@@ -360,55 +376,55 @@ public class BackendStorageDomainsResource
     private Guid getHostId(StorageDomain storageDomain) {
         // presence of host ID or name already validated
         return storageDomain.getHost().isSetId()
-               ? new Guid(storageDomain.getHost().getId())
-               : storageDomain.getHost().isSetName()
+                ? new Guid(storageDomain.getHost().getId())
+                : storageDomain.getHost().isSetName()
                         ? getEntity(VdsStatic.class,
                                 VdcQueryType.GetVdsStaticByName,
                                 new NameQueryParameters(storageDomain.getHost().getName()),
                                 "Hosts: name=" + storageDomain.getHost().getName()).getId()
-                 : null;
+                        : null;
     }
 
     private String addStorageServerConnection(StorageServerConnections cnx, Guid hostId) {
         return performAction(VdcActionType.AddStorageServerConnection,
-                             new StorageServerConnectionParametersBase(cnx, hostId),
-                             String.class);
+                new StorageServerConnectionParametersBase(cnx, hostId),
+                String.class);
     }
 
     private String removeStorageServerConnection(StorageServerConnections cnx, Guid hostId) {
         return performAction(VdcActionType.RemoveStorageServerConnection,
-                             new StorageServerConnectionParametersBase(cnx, hostId),
-                             String.class);
+                new StorageServerConnectionParametersBase(cnx, hostId),
+                String.class);
     }
 
     private StorageServerConnections getStorageServerConnection(String id) {
         return getEntity(StorageServerConnections.class,
-                         VdcQueryType.GetStorageServerConnectionById,
-                         new StorageServerConnectionQueryParametersBase(id),
-                         "Storage server connection: id=" + id);
+                VdcQueryType.GetStorageServerConnectionById,
+                new StorageServerConnectionQueryParametersBase(id),
+                "Storage server connection: id=" + id);
     }
 
     private List<LUNs> getLunsByVgId(String vgId) {
         return asCollection(LUNs.class,
-                            getEntity(List.class,
-                                      VdcQueryType.GetLunsByVgId,
-                                      new GetLunsByVgIdParameters(vgId),
-                                      "LUNs for volume group: id=" + vgId));
+                getEntity(List.class,
+                        VdcQueryType.GetLunsByVgId,
+                        new GetLunsByVgIdParameters(vgId),
+                        "LUNs for volume group: id=" + vgId));
     }
 
     private org.ovirt.engine.core.common.businessentities.StorageDomain getExistingStorageDomain(Guid hostId,
-                                                           StorageType storageType,
-                                                           StorageDomainType domainType,
-                                                           StorageServerConnections cnx) {
+            StorageType storageType,
+            StorageDomainType domainType,
+            StorageServerConnections cnx) {
         List<org.ovirt.engine.core.common.businessentities.StorageDomain> existing =
-            asCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
-                         getEntity(ArrayList.class,
-                                   VdcQueryType.GetExistingStorageDomainList,
-                                   new GetExistingStorageDomainListParameters(hostId,
-                                                                              storageType,
-                                                                              domainType,
-                                                                              cnx.getconnection()),
-                                   "Existing storage domains: path=" + cnx.getconnection()));
+                asCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
+                        getEntity(ArrayList.class,
+                                VdcQueryType.GetExistingStorageDomainList,
+                                new GetExistingStorageDomainListParameters(hostId,
+                                        storageType,
+                                        domainType,
+                                        cnx.getconnection()),
+                                "Existing storage domains: path=" + cnx.getconnection()));
         return existing.size() != 0 ? existing.get(0) : null;
     }
 
@@ -419,9 +435,9 @@ public class BackendStorageDomainsResource
     }
 
     private AddSANStorageDomainParameters getSanAddParams(StorageDomainStatic entity,
-                                                          Guid hostId,
-                                                          ArrayList<String> lunIds,
-                                                          boolean force) {
+            Guid hostId,
+            ArrayList<String> lunIds,
+            boolean force) {
         AddSANStorageDomainParameters params = new AddSANStorageDomainParameters(entity);
         params.setVdsId(hostId);
         params.setLunIds(lunIds);
@@ -446,7 +462,8 @@ public class BackendStorageDomainsResource
     }
 
     @Override
-    protected StorageDomain doPopulate(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
+    protected StorageDomain doPopulate(StorageDomain model,
+            org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         return model;
     }
 }

@@ -46,10 +46,13 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendStorageDomainResource extends
         AbstractBackendSubResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain> implements StorageDomainResource {
 
-    private BackendStorageDomainsResource parent;
+    private final BackendStorageDomainsResource parent;
 
     public BackendStorageDomainResource(String id, BackendStorageDomainsResource parent) {
-        super(id, StorageDomain.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class, SUB_COLLECTIONS);
+        super(id,
+                StorageDomain.class,
+                org.ovirt.engine.core.common.businessentities.StorageDomain.class,
+                SUB_COLLECTIONS);
         this.parent = parent;
     }
 
@@ -66,7 +69,8 @@ public class BackendStorageDomainResource extends
     @Override
     public StorageDomain update(StorageDomain incoming) {
         validateEnums(StorageDomain.class, incoming);
-        QueryIdResolver<Guid> storageDomainResolver = new QueryIdResolver<Guid>(VdcQueryType.GetStorageDomainById, IdQueryParameters.class);
+        QueryIdResolver<Guid> storageDomainResolver =
+                new QueryIdResolver<Guid>(VdcQueryType.GetStorageDomainById, IdQueryParameters.class);
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = getEntity(storageDomainResolver, true);
         StorageDomain model = map(entity, new StorageDomain());
         StorageType storageType = entity.getStorageType();
@@ -82,12 +86,12 @@ public class BackendStorageDomainResource extends
         }
 
         return addLinks(performUpdate(incoming,
-                                      entity,
-                                      model,
-                                      storageDomainResolver,
-                                      VdcActionType.UpdateStorageDomain,
-                                      new UpdateParametersProvider()),
-                        new String[]{"templates", "vms"});
+                entity,
+                model,
+                storageDomainResolver,
+                VdcActionType.UpdateStorageDomain,
+                new UpdateParametersProvider()),
+                new String[] { "templates", "vms" });
     }
 
     @Override
@@ -101,8 +105,9 @@ public class BackendStorageDomainResource extends
     }
 
     public static synchronized boolean isIsoDomain(org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain) {
-        org.ovirt.engine.core.common.businessentities.StorageDomainType type =  storageDomain.getStorageDomainType();
-        return type != null && type == org.ovirt.engine.core.common.businessentities.StorageDomainType.ISO ? true : false;
+        org.ovirt.engine.core.common.businessentities.StorageDomainType type = storageDomain.getStorageDomainType();
+        return type != null && type == org.ovirt.engine.core.common.businessentities.StorageDomainType.ISO ? true
+                : false;
     }
 
     public static synchronized boolean isExportDomain(StorageDomain storageDomain) {
@@ -118,12 +123,14 @@ public class BackendStorageDomainResource extends
     public static synchronized String[] getLinksToExclude(StorageDomain storageDomain) {
         return isIsoDomain(storageDomain) ? new String[] { "templates", "vms", "disks", "storageconnections", "images" }
                 : isExportDomain(storageDomain) ? new String[] { "files", "storageconnections", "images" }
-                    : isImageDomain(storageDomain) ? new String[] { "templates", "vms", "files", "disks", "storageconnections" }
-                        : new String[] { "templates", "vms", "files", "images" };
+                        : isImageDomain(storageDomain) ? new String[] { "templates", "vms", "files", "disks",
+                                "storageconnections" }
+                                : new String[] { "templates", "vms", "files", "images" };
     }
 
     /**
      * if user added new LUNs - extend the storage domain.
+     *
      * @param incoming
      */
     private void extendStorageDomain(StorageDomain incoming, StorageDomain storageDomain, StorageType storageType) {
@@ -133,20 +140,29 @@ public class BackendStorageDomainResource extends
         boolean overrideLuns = incoming.getStorage().isSetOverrideLuns() ?
                 incoming.getStorage().isOverrideLuns() : false;
         if (!newLuns.isEmpty()) {
-            //If there are new LUNs, this means the user wants to extend the storage domain.
-            //Supplying a host is necessary for this operation, but not for regular update
-            //of storage-domain. So only now is the time for this validation.
+            // If there are new LUNs, this means the user wants to extend the storage domain.
+            // Supplying a host is necessary for this operation, but not for regular update
+            // of storage-domain. So only now is the time for this validation.
             validateParameters(incoming, "host.id|name");
             addLunsToStorageDomain(incoming, storageType, newLuns, overrideLuns);
-            //Remove the new LUNs from the incoming LUns before update, since they have already been dealt with.
+            // Remove the new LUNs from the incoming LUns before update, since they have already been dealt with.
             incomingLuns.removeAll(newLuns);
         }
     }
 
-    private void addLunsToStorageDomain(StorageDomain incoming, StorageType storageType, List<LogicalUnit> newLuns, boolean overrideLuns) {
+    private void addLunsToStorageDomain(StorageDomain incoming,
+            StorageType storageType,
+            List<LogicalUnit> newLuns,
+            boolean overrideLuns) {
         for (LogicalUnit lun : newLuns) {
             if (lun.isSetAddress() && lun.isSetTarget()) {
-                StorageServerConnections connection = StorageDomainHelper.getConnection(storageType, lun.getAddress(), lun.getTarget(), lun.getUsername(), lun.getPassword(), lun.getPort());
+                StorageServerConnections connection =
+                        StorageDomainHelper.getConnection(storageType,
+                                lun.getAddress(),
+                                lun.getTarget(),
+                                lun.getUsername(),
+                                lun.getPassword(),
+                                lun.getPort());
                 performAction(VdcActionType.ConnectStorageToVds,
                         new StorageServerConnectionParametersBase(connection, getHostId(incoming)));
             }
@@ -159,33 +175,37 @@ public class BackendStorageDomainResource extends
         performAction(VdcActionType.ExtendSANStorageDomain, params);
     }
 
-    //This is a work-around for a VDSM bug. The call to GetDeviceList causes a refresh in the VDSM, without which the creation will fail.
+    // This is a work-around for a VDSM bug. The call to GetDeviceList causes a refresh in the VDSM, without which the
+    // creation will fail.
     private void refreshVDSM(StorageDomain incoming) {
-        getEntity(Object.class, VdcQueryType.GetDeviceList, new GetDeviceListQueryParameters(getHostId(incoming), StorageType.ISCSI), "");
+        getEntity(Object.class, VdcQueryType.GetDeviceList, new GetDeviceListQueryParameters(getHostId(incoming),
+                StorageType.ISCSI), "");
     }
 
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                                                             VdcQueryType.GetPermissionsForObject,
-                                                             new GetPermissionsForObjectParameters(guid),
-                                                             StorageDomain.class,
-                                                             VdcObjectType.Storage));
+                VdcQueryType.GetPermissionsForObject,
+                new GetPermissionsForObjectParameters(guid),
+                StorageDomain.class,
+                VdcObjectType.Storage));
     }
 
     @Override
-    protected StorageDomain map(org.ovirt.engine.core.common.businessentities.StorageDomain entity, StorageDomain template) {
+    protected StorageDomain map(org.ovirt.engine.core.common.businessentities.StorageDomain entity,
+            StorageDomain template) {
         return parent.map(entity, template);
     }
 
-
     @Override
-    protected StorageDomain doPopulate(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
+    protected StorageDomain doPopulate(StorageDomain model,
+            org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         return model;
     }
 
     @Override
-    protected StorageDomain deprecatedPopulate(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
+    protected StorageDomain deprecatedPopulate(StorageDomain model,
+            org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         if (StorageDomainSharedStatus.Unattached.equals(entity.getStorageDomainSharedStatus())) {
             model.setStatus(StatusUtils.create(StorageDomainStatus.UNATTACHED));
         } else {
@@ -195,24 +215,27 @@ public class BackendStorageDomainResource extends
     }
 
     private List<LogicalUnit> getIncomingLuns(Storage storage) {
-        //user may pass the LUNs under Storage, or Storage-->VolumeGroup; both are supported.
-        return !storage.getLogicalUnits().isEmpty() ? storage.getLogicalUnits() : storage.getVolumeGroup().getLogicalUnits();
+        // user may pass the LUNs under Storage, or Storage-->VolumeGroup; both are supported.
+        return !storage.getLogicalUnits().isEmpty() ? storage.getLogicalUnits() : storage.getVolumeGroup()
+                .getLogicalUnits();
     }
 
     private Guid getHostId(StorageDomain storageDomain) {
         // presence of host ID or name already validated
         return storageDomain.getHost().isSetId()
-               ? new Guid(storageDomain.getHost().getId())
-               : storageDomain.getHost().isSetName()
+                ? new Guid(storageDomain.getHost().getId())
+                : storageDomain.getHost().isSetName()
                         ? getEntity(VdsStatic.class,
                                 VdcQueryType.GetVdsStaticByName,
                                 new NameQueryParameters(storageDomain.getHost().getName()),
                                 "Hosts: name=" + storageDomain.getHost().getName()).getId()
-                 : null;
+                        : null;
 
     }
 
-    private ExtendSANStorageDomainParameters createParameters(Guid storageDomainId, List<LogicalUnit> newLuns, boolean force) {
+    private ExtendSANStorageDomainParameters createParameters(Guid storageDomainId,
+            List<LogicalUnit> newLuns,
+            boolean force) {
         ExtendSANStorageDomainParameters params = new ExtendSANStorageDomainParameters();
         params.setStorageDomainId(storageDomainId);
         ArrayList<String> lunIds = new ArrayList<String>();
@@ -248,13 +271,17 @@ public class BackendStorageDomainResource extends
     protected class UpdateParametersProvider implements
             ParametersProvider<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain> {
         @Override
-        public VdcActionParametersBase getParameters(StorageDomain incoming, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
-            //save SD type before mapping
-            org.ovirt.engine.core.common.businessentities.StorageDomainType currentType = entity.getStorageStaticData()==null ? null : entity.getStorageStaticData().getStorageDomainType();
+        public VdcActionParametersBase getParameters(StorageDomain incoming,
+                org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
+            // save SD type before mapping
+            org.ovirt.engine.core.common.businessentities.StorageDomainType currentType =
+                    entity.getStorageStaticData() == null ? null : entity.getStorageStaticData().getStorageDomainType();
             StorageDomainStatic updated = getMapper(modelType, StorageDomainStatic.class).map(
                     incoming, entity.getStorageStaticData());
-            //if SD type was 'Master', and user gave 'Data', they are the same, this is not a real update, so exchange data back to master.
-            if (currentType==org.ovirt.engine.core.common.businessentities.StorageDomainType.Master && updated.getStorageDomainType()==org.ovirt.engine.core.common.businessentities.StorageDomainType.Data) {
+            // if SD type was 'Master', and user gave 'Data', they are the same, this is not a real update, so exchange
+            // data back to master.
+            if (currentType == org.ovirt.engine.core.common.businessentities.StorageDomainType.Master
+                    && updated.getStorageDomainType() == org.ovirt.engine.core.common.businessentities.StorageDomainType.Data) {
                 updated.setStorageDomainType(org.ovirt.engine.core.common.businessentities.StorageDomainType.Master);
             }
             return new StorageDomainManagementParameter(updated);
@@ -281,6 +308,7 @@ public class BackendStorageDomainResource extends
         return inject(new BackendStorageDomainServerConnectionsResource(guid));
     }
 
+    @Override
     public ImagesResource getImagesResource() {
         return inject(new BackendStorageDomainImagesResource(guid));
     }
@@ -289,4 +317,5 @@ public class BackendStorageDomainResource extends
     public DiskSnapshotsResource getDiskSnapshotsResource() {
         return inject(new BackendStorageDomainDiskSnapshotsResource(guid));
     }
+
 }

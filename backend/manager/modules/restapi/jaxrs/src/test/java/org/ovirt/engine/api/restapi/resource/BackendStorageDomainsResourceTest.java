@@ -98,11 +98,11 @@ public class BackendStorageDomainsResourceTest
     public void testRemoveWithHostId() throws Exception {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
-                                           RemoveStorageDomainParameters.class,
-                                           new String[] { "StorageDomainId", "VdsId", "DoFormat" },
-                                           new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
-                                           true,
-                                           true));
+                RemoveStorageDomainParameters.class,
+                new String[] { "StorageDomainId", "VdsId", "DoFormat" },
+                new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
+                true,
+                true));
 
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setHost(new Host());
@@ -122,11 +122,11 @@ public class BackendStorageDomainsResourceTest
     public void testRemoveWithFormat() throws Exception {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
-                                           RemoveStorageDomainParameters.class,
-                                           new String[] { "StorageDomainId", "VdsId", "DoFormat" },
-                                           new Object[] { GUIDS[0], GUIDS[1], Boolean.TRUE },
-                                           true,
-                                           true));
+                RemoveStorageDomainParameters.class,
+                new String[] { "StorageDomainId", "VdsId", "DoFormat" },
+                new Object[] { GUIDS[0], GUIDS[1], Boolean.TRUE },
+                true,
+                true));
 
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setHost(new Host());
@@ -139,11 +139,11 @@ public class BackendStorageDomainsResourceTest
     public void testRemoveWithDestroy() throws Exception {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.ForceRemoveStorageDomain,
-                                           StorageDomainParametersBase.class,
-                                           new String[] { "StorageDomainId", "VdsId"},
-                                           new Object[] { GUIDS[0], GUIDS[1]},
-                                           true,
-                                           true));
+                StorageDomainParametersBase.class,
+                new String[] { "StorageDomainId", "VdsId" },
+                new Object[] { GUIDS[0], GUIDS[1] },
+                true,
+                true));
 
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setHost(new Host());
@@ -163,11 +163,11 @@ public class BackendStorageDomainsResourceTest
                 setUpVDStatic(1));
 
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
-                                           RemoveStorageDomainParameters.class,
-                                           new String[] { "StorageDomainId", "VdsId", "DoFormat" },
-                                           new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
-                                           true,
-                                           true));
+                RemoveStorageDomainParameters.class,
+                new String[] { "StorageDomainId", "VdsId", "DoFormat" },
+                new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
+                true,
+                true));
 
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setHost(new Host());
@@ -199,11 +199,11 @@ public class BackendStorageDomainsResourceTest
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
-                                           RemoveStorageDomainParameters.class,
-                                           new String[] { "StorageDomainId", "VdsId", "DoFormat" },
-                                           new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
-                                           canDo,
-                                           success));
+                RemoveStorageDomainParameters.class,
+                new String[] { "StorageDomainId", "VdsId", "DoFormat" },
+                new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
+                canDo,
+                success));
 
         try {
             StorageDomain storageDomain = new StorageDomain();
@@ -229,28 +229,28 @@ public class BackendStorageDomainsResourceTest
         host.setId(GUIDS[0].toString());
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
-                                   StorageServerConnectionQueryParametersBase.class,
-                                   new String[] { "ServerConnectionId" },
-                                   new Object[] { GUIDS[POSIX_IDX].toString() },
-                                   setUpPosixStorageServerConnection(POSIX_IDX));
+                StorageServerConnectionQueryParametersBase.class,
+                new String[] { "ServerConnectionId" },
+                new Object[] { GUIDS[POSIX_IDX].toString() },
+                setUpPosixStorageServerConnection(POSIX_IDX));
         setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
-                                   StorageServerConnectionQueryParametersBase.class,
-                                   new String[] { "ServerConnectionId" },
-                                   new Object[] { GUIDS[POSIX_IDX].toString() },
-                                   setUpPosixStorageServerConnection(POSIX_IDX));
+                StorageServerConnectionQueryParametersBase.class,
+                new String[] { "ServerConnectionId" },
+                new Object[] { GUIDS[POSIX_IDX].toString() },
+                setUpPosixStorageServerConnection(POSIX_IDX));
 
         setUpCreationExpectations(VdcActionType.AddPosixFsStorageDomain,
-                                  StorageDomainManagementParameter.class,
-                                  new String[] { "VdsId" },
-                                  new Object[] { GUIDS[0] },
-                                  true,
-                                  true,
-                                  GUIDS[POSIX_IDX],
-                                  VdcQueryType.GetStorageDomainById,
-                                  IdQueryParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[POSIX_IDX] },
-                                  getEntity(POSIX_IDX));
+                StorageDomainManagementParameter.class,
+                new String[] { "VdsId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true,
+                GUIDS[POSIX_IDX],
+                VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[POSIX_IDX] },
+                getEntity(POSIX_IDX));
 
         StorageDomain model = new StorageDomain();
         model.setName(getSafeEntry(POSIX_IDX, NAMES));
@@ -284,7 +284,7 @@ public class BackendStorageDomainsResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "StorageDomain", "add", "storage");
+            verifyIncompleteException(wae, "StorageDomain", "add", "storage");
         }
     }
 
@@ -311,39 +311,40 @@ public class BackendStorageDomainsResourceTest
 
     public void doTestAddStorageDomain(int idx, Host host, boolean existing) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
-                                           StorageServerConnectionParametersBase.class,
-                                           new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
-                                           new Object[] { ADDRESSES[idx] + ":" + PATHS[idx], STORAGE_TYPES_MAPPED[idx], GUIDS[0] },
-                                           true,
-                                           true,
-                                           GUIDS[idx].toString(),
-                                           false));
+                StorageServerConnectionParametersBase.class,
+                new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
+                new Object[] { ADDRESSES[idx] + ":" + PATHS[idx], STORAGE_TYPES_MAPPED[idx], GUIDS[0] },
+                true,
+                true,
+                GUIDS[idx].toString(),
+                false));
 
         setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
-                                   StorageServerConnectionQueryParametersBase.class,
-                                   new String[] { "ServerConnectionId" },
-                                   new Object[] { GUIDS[idx].toString() },
-                                   setUpStorageServerConnection(idx));
+                StorageServerConnectionQueryParametersBase.class,
+                new String[] { "ServerConnectionId" },
+                new Object[] { GUIDS[idx].toString() },
+                setUpStorageServerConnection(idx));
 
         setUpGetEntityExpectations(VdcQueryType.GetExistingStorageDomainList,
-                                   GetExistingStorageDomainListParameters.class,
-                                   new String[] { "VdsId", "StorageType", "StorageDomainType", "Path" },
-                                   new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[idx], TYPES_MAPPED[idx], ADDRESSES[idx] + ":" + PATHS[idx] },
-                                   getExistingStorageDomains(existing));
+                GetExistingStorageDomainListParameters.class,
+                new String[] { "VdsId", "StorageType", "StorageDomainType", "Path" },
+                new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[idx], TYPES_MAPPED[idx],
+                        ADDRESSES[idx] + ":" + PATHS[idx] },
+                getExistingStorageDomains(existing));
 
-
-        setUpCreationExpectations(!existing ? VdcActionType.AddNFSStorageDomain : VdcActionType.AddExistingFileStorageDomain,
-                                  StorageDomainManagementParameter.class,
-                                  new String[] {},
-                                  new Object[] {},
-                                  true,
-                                  true,
-                                  GUIDS[idx],
-                                  VdcQueryType.GetStorageDomainById,
-                                  IdQueryParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[idx] },
-                                  getEntity(idx));
+        setUpCreationExpectations(!existing ? VdcActionType.AddNFSStorageDomain
+                : VdcActionType.AddExistingFileStorageDomain,
+                StorageDomainManagementParameter.class,
+                new String[] {},
+                new Object[] {},
+                true,
+                true,
+                GUIDS[idx],
+                VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[idx] },
+                getEntity(idx));
 
         StorageDomain model = getModel(idx);
         model.setHost(host);
@@ -357,32 +358,32 @@ public class BackendStorageDomainsResourceTest
     @Test
     public void testAddLocalStorageDomain() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
-                                           StorageServerConnectionParametersBase.class,
-                                           new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
-                                           new Object[] { PATHS[LOCAL_IDX], STORAGE_TYPES_MAPPED[LOCAL_IDX], GUIDS[0] },
-                                           true,
-                                           true,
-                                           GUIDS[LOCAL_IDX].toString(),
-                                           false));
+                StorageServerConnectionParametersBase.class,
+                new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
+                new Object[] { PATHS[LOCAL_IDX], STORAGE_TYPES_MAPPED[LOCAL_IDX], GUIDS[0] },
+                true,
+                true,
+                GUIDS[LOCAL_IDX].toString(),
+                false));
 
         setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
-                                   StorageServerConnectionQueryParametersBase.class,
-                                   new String[] { "ServerConnectionId" },
-                                   new Object[] { GUIDS[LOCAL_IDX].toString() },
-                                   setUpLocalStorageServerConnection(LOCAL_IDX));
+                StorageServerConnectionQueryParametersBase.class,
+                new String[] { "ServerConnectionId" },
+                new Object[] { GUIDS[LOCAL_IDX].toString() },
+                setUpLocalStorageServerConnection(LOCAL_IDX));
 
         setUpCreationExpectations(VdcActionType.AddLocalStorageDomain,
-                                  StorageDomainManagementParameter.class,
-                                  new String[] { "VdsId" },
-                                  new Object[] { GUIDS[0] },
-                                  true,
-                                  true,
-                                  GUIDS[LOCAL_IDX],
-                                  VdcQueryType.GetStorageDomainById,
-                                  IdQueryParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[LOCAL_IDX] },
-                                  getEntity(LOCAL_IDX));
+                StorageDomainManagementParameter.class,
+                new String[] { "VdsId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true,
+                GUIDS[LOCAL_IDX],
+                VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[LOCAL_IDX] },
+                getEntity(LOCAL_IDX));
 
         StorageDomain model = getModel(LOCAL_IDX);
         model.getStorage().setAddress(null);
@@ -398,38 +399,38 @@ public class BackendStorageDomainsResourceTest
     @Test
     public void testAddPosixStorageDomain() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
-                                           StorageServerConnectionParametersBase.class,
-                                           new String[] { "StorageServerConnection.connection",
-                                                   "StorageServerConnection.storage_type",
-                                                   "StorageServerConnection.MountOptions",
-                                                   "StorageServerConnection.VfsType",
-                                                   "VdsId" },
-                                           new Object[] { ADDRESSES[POSIX_IDX] + ":" + PATHS[POSIX_IDX],
-                                                   STORAGE_TYPES_MAPPED[POSIX_IDX],
-                                                   MOUNT_OPTIONS[POSIX_IDX], VFS_TYPES[POSIX_IDX], GUIDS[0] },
-                                           true,
-                                           true,
-                                           GUIDS[POSIX_IDX].toString(),
-                                           false));
+                StorageServerConnectionParametersBase.class,
+                new String[] { "StorageServerConnection.connection",
+                        "StorageServerConnection.storage_type",
+                        "StorageServerConnection.MountOptions",
+                        "StorageServerConnection.VfsType",
+                        "VdsId" },
+                new Object[] { ADDRESSES[POSIX_IDX] + ":" + PATHS[POSIX_IDX],
+                        STORAGE_TYPES_MAPPED[POSIX_IDX],
+                        MOUNT_OPTIONS[POSIX_IDX], VFS_TYPES[POSIX_IDX], GUIDS[0] },
+                true,
+                true,
+                GUIDS[POSIX_IDX].toString(),
+                false));
 
         setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
-                                   StorageServerConnectionQueryParametersBase.class,
-                                   new String[] { "ServerConnectionId" },
-                                   new Object[] { GUIDS[POSIX_IDX].toString() },
-                                   setUpPosixStorageServerConnection(POSIX_IDX));
+                StorageServerConnectionQueryParametersBase.class,
+                new String[] { "ServerConnectionId" },
+                new Object[] { GUIDS[POSIX_IDX].toString() },
+                setUpPosixStorageServerConnection(POSIX_IDX));
 
         setUpCreationExpectations(VdcActionType.AddPosixFsStorageDomain,
-                                  StorageDomainManagementParameter.class,
-                                  new String[] { "VdsId" },
-                                  new Object[] { GUIDS[0] },
-                                  true,
-                                  true,
-                                  GUIDS[POSIX_IDX],
-                                  VdcQueryType.GetStorageDomainById,
-                                  IdQueryParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[POSIX_IDX] },
-                                  getEntity(POSIX_IDX));
+                StorageDomainManagementParameter.class,
+                new String[] { "VdsId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true,
+                GUIDS[POSIX_IDX],
+                VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[POSIX_IDX] },
+                getEntity(POSIX_IDX));
 
         StorageDomain model = getModel(POSIX_IDX);
         model.setHost(new Host());
@@ -449,13 +450,13 @@ public class BackendStorageDomainsResourceTest
         model.setHost(host);
 
         setUriInfo(setUpActionExpectations(VdcActionType.ConnectStorageToVds,
-                                           StorageServerConnectionParametersBase.class,
-                                           new String[] { "StorageServerConnection.connection", "VdsId" },
-                                           new Object[] { ADDRESSES[0], GUIDS[0] },
-                                           true,
-                                           true,
-                                           GUIDS[0].toString(),
-                                           false));
+                StorageServerConnectionParametersBase.class,
+                new String[] { "StorageServerConnection.connection", "VdsId" },
+                new Object[] { ADDRESSES[0], GUIDS[0] },
+                true,
+                true,
+                GUIDS[0].toString(),
+                false));
 
         setUpGetEntityExpectations(VdcQueryType.GetDeviceList,
                 GetDeviceListQueryParameters.class,
@@ -464,23 +465,23 @@ public class BackendStorageDomainsResourceTest
                 "this return value isn't used");
 
         setUpGetEntityExpectations(VdcQueryType.GetLunsByVgId,
-                                   GetLunsByVgIdParameters.class,
-                                   new String[] { "VgId" },
-                                   new Object[] { GUIDS[GUIDS.length-1].toString() },
-                                   setUpLuns());
+                GetLunsByVgIdParameters.class,
+                new String[] { "VgId" },
+                new Object[] { GUIDS[GUIDS.length - 1].toString() },
+                setUpLuns());
 
         setUpCreationExpectations(VdcActionType.AddSANStorageDomain,
-                                  AddSANStorageDomainParameters.class,
-                                  new String[] { "VdsId" },
-                                  new Object[] { GUIDS[0] },
-                                  true,
-                                  true,
-                                  GUIDS[0],
-                                  VdcQueryType.GetStorageDomainById,
-                                  IdQueryParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[0] },
-                                  getIscsiEntity());
+                AddSANStorageDomainParameters.class,
+                new String[] { "VdsId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true,
+                GUIDS[0],
+                VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                getIscsiEntity());
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
@@ -508,23 +509,23 @@ public class BackendStorageDomainsResourceTest
 
         List<LUNs> luns = setUpLuns();
         setUpGetEntityExpectations(VdcQueryType.GetLunsByVgId,
-                                   GetLunsByVgIdParameters.class,
-                                   new String[] { "VgId" },
-                                   new Object[] { GUIDS[GUIDS.length-1].toString() },
-                                   luns);
+                GetLunsByVgIdParameters.class,
+                new String[] { "VgId" },
+                new Object[] { GUIDS[GUIDS.length - 1].toString() },
+                luns);
 
         setUpCreationExpectations(VdcActionType.AddSANStorageDomain,
-                                  AddSANStorageDomainParameters.class,
-                                  new String[] { "VdsId" },
-                                  new Object[] { GUIDS[0] },
-                                  true,
-                                  true,
-                                  GUIDS[0],
-                                  VdcQueryType.GetStorageDomainById,
-                                  IdQueryParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[0] },
-                                  getIscsiEntity());
+                AddSANStorageDomainParameters.class,
+                new String[] { "VdsId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true,
+                GUIDS[0],
+                VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                getIscsiEntity());
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
@@ -541,7 +542,7 @@ public class BackendStorageDomainsResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "StorageDomain", "add", "host.id|name");
+            verifyIncompleteException(wae, "StorageDomain", "add", "host.id|name");
         }
     }
 
@@ -558,33 +559,33 @@ public class BackendStorageDomainsResourceTest
     private void doTestBadAddStorageDomain(boolean canDo, boolean success, String detail)
             throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
-                                           StorageServerConnectionParametersBase.class,
-                                           new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
-                                           new Object[] { ADDRESSES[0] + ":" + PATHS[0], STORAGE_TYPES_MAPPED[0], GUIDS[0] },
-                                           true,
-                                           true,
-                                           GUIDS[0].toString(),
-                                           false));
+                StorageServerConnectionParametersBase.class,
+                new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
+                new Object[] { ADDRESSES[0] + ":" + PATHS[0], STORAGE_TYPES_MAPPED[0], GUIDS[0] },
+                true,
+                true,
+                GUIDS[0].toString(),
+                false));
 
         setUpActionExpectations(VdcActionType.RemoveStorageServerConnection,
-                                   StorageServerConnectionParametersBase.class,
-                                   new String[] { },
-                                   new Object[] { },
-                                   true,
-                                   true, null, false);
+                StorageServerConnectionParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                true,
+                true, null, false);
 
         setUpGetEntityExpectations(VdcQueryType.GetExistingStorageDomainList,
-                                   GetExistingStorageDomainListParameters.class,
-                                   new String[] { "VdsId", "StorageType", "StorageDomainType", "Path" },
-                                   new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[0], TYPES_MAPPED[0], ADDRESSES[0] + ":" + PATHS[0] },
-                                   new ArrayList<StorageDomainStatic>());
+                GetExistingStorageDomainListParameters.class,
+                new String[] { "VdsId", "StorageType", "StorageDomainType", "Path" },
+                new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[0], TYPES_MAPPED[0], ADDRESSES[0] + ":" + PATHS[0] },
+                new ArrayList<StorageDomainStatic>());
 
         setUpActionExpectations(VdcActionType.AddNFSStorageDomain,
-                                StorageDomainManagementParameter.class,
-                                new String[] {},
-                                new Object[] {},
-                                canDo,
-                                success);
+                StorageDomainManagementParameter.class,
+                new String[] {},
+                new Object[] {},
+                canDo,
+                success);
 
         StorageDomain model = getModel(0);
         model.setHost(new Host());
@@ -610,13 +611,13 @@ public class BackendStorageDomainsResourceTest
 
     private void doTestBadCnxAdd(boolean canDo, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
-                                           StorageServerConnectionParametersBase.class,
-                                           new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
-                                           new Object[] { ADDRESSES[0] + ":" + PATHS[0], STORAGE_TYPES_MAPPED[0], GUIDS[0] },
-                                           canDo,
-                                           success,
-                                           GUIDS[0].toString(),
-                                           true));
+                StorageServerConnectionParametersBase.class,
+                new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
+                new Object[] { ADDRESSES[0] + ":" + PATHS[0], STORAGE_TYPES_MAPPED[0], GUIDS[0] },
+                canDo,
+                success,
+                GUIDS[0].toString(),
+                true));
 
         StorageDomain model = getModel(0);
         model.setHost(new Host());
@@ -644,7 +645,7 @@ public class BackendStorageDomainsResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "StorageDomain", "add", "storage.type");
+            verifyIncompleteException(wae, "StorageDomain", "add", "storage.type");
         }
     }
 
@@ -663,7 +664,7 @@ public class BackendStorageDomainsResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Storage", "add", "address");
+            verifyIncompleteException(wae, "Storage", "add", "address");
         }
     }
 
@@ -726,10 +727,12 @@ public class BackendStorageDomainsResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class), index);
+        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class),
+                index);
     }
 
-    static org.ovirt.engine.core.common.businessentities.StorageDomain setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomain entity, int index) {
+    static org.ovirt.engine.core.common.businessentities.StorageDomain setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomain entity,
+            int index) {
         expect(entity.getId()).andReturn(getSafeEntry(index, GUIDS)).anyTimes();
         expect(entity.getStorageName()).andReturn(getSafeEntry(index, NAMES)).anyTimes();
         // REVIST No descriptions for storage domains
@@ -761,12 +764,14 @@ public class BackendStorageDomainsResourceTest
     }
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getIscsiEntity() {
-        org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity =
+                control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
         expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
         expect(entity.getStorageName()).andReturn(NAMES[0]).anyTimes();
         expect(entity.getStorageDomainType()).andReturn(TYPES_MAPPED[0]).anyTimes();
-        expect(entity.getStorageType()).andReturn(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI).anyTimes();
-        expect(entity.getStorage()).andReturn(GUIDS[GUIDS.length-1].toString()).anyTimes();
+        expect(entity.getStorageType()).andReturn(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI)
+                .anyTimes();
+        expect(entity.getStorage()).andReturn(GUIDS[GUIDS.length - 1].toString()).anyTimes();
         return entity;
     }
 
@@ -785,7 +790,8 @@ public class BackendStorageDomainsResourceTest
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.StorageDomain> getExistingStorageDomains(boolean existing) {
-        List<org.ovirt.engine.core.common.businessentities.StorageDomain> ret = new ArrayList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
+        List<org.ovirt.engine.core.common.businessentities.StorageDomain> ret =
+                new ArrayList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
         if (existing) {
             ret.add(new org.ovirt.engine.core.common.businessentities.StorageDomain());
         }
@@ -820,7 +826,7 @@ public class BackendStorageDomainsResourceTest
             assertEquals(3, model.getLinks().size());
             assertEquals("files", model.getLinks().get(1).getRel());
 
-        } else if(model.getType().equals(TYPES[2].value())){
+        } else if (model.getType().equals(TYPES[2].value())) {
             assertEquals(5, model.getLinks().size());
             assertEquals("templates", model.getLinks().get(1).getRel());
             assertEquals("vms", model.getLinks().get(2).getRel());
@@ -850,7 +856,7 @@ public class BackendStorageDomainsResourceTest
         assertNotNull(model.getStorage());
         assertEquals(StorageType.ISCSI.value(), model.getStorage().getType());
         assertNotNull(model.getStorage().getVolumeGroup());
-        assertEquals(GUIDS[GUIDS.length-1].toString(), model.getStorage().getVolumeGroup().getId());
+        assertEquals(GUIDS[GUIDS.length - 1].toString(), model.getStorage().getVolumeGroup().getId());
         assertTrue(model.getStorage().getVolumeGroup().isSetLogicalUnits());
         assertNotNull(model.getStorage().getVolumeGroup().getLogicalUnits().get(0));
         assertEquals(LUN, model.getStorage().getVolumeGroup().getLogicalUnits().get(0).getId());
