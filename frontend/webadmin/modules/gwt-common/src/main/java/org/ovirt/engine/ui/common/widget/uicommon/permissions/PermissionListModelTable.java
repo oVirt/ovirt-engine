@@ -33,6 +33,7 @@ public class PermissionListModelTable<P extends PermissionListModel> extends Abs
                 return object.getOwnerName();
             }
         };
+        userColumn.makeSortable();
         getTable().addColumn(userColumn, constants.userPermission(), "300px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Permissions> roleColumn = new TextColumnWithTooltip<Permissions>() {
@@ -41,6 +42,7 @@ public class PermissionListModelTable<P extends PermissionListModel> extends Abs
                 return object.getRoleName();
             }
         };
+        roleColumn.makeSortable();
         getTable().addColumn(roleColumn, constants.rolePermission(), "300px"); //$NON-NLS-1$
 
         getTable().addActionButton(new UiCommandButtonDefinition<Permissions>(getEventBus(), constants.addPermission()) {

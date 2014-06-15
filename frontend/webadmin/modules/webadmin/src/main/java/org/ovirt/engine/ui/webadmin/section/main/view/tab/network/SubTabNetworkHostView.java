@@ -207,6 +207,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         getTable().enableColumnResizing();
         initTableOverhead();
         handleRadioButtonClick(null);
+        initSorting();
 
         getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<VdsNetworkInterface, VDS>>(constants.setupHostNetworksInterface()) {
             @Override
@@ -214,6 +215,13 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
                 return getDetailModel().getSetupNetworksCommand();
             }
         });
+    }
+
+    private void initSorting() {
+        nameColumn.makeSortable();
+        clusterColumn.makeSortable();
+        dcColumn.makeSortable();
+        speedColumn.makeSortable();
     }
 }
 

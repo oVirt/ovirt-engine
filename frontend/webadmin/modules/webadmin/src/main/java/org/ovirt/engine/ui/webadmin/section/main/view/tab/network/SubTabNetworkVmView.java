@@ -188,6 +188,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         getTable().enableColumnResizing();
         initTableOverhead();
         handleRadioButtonClick(null);
+        initSorting();
 
         getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<VmNetworkInterface, VM>>(constants.removeInterface()) {
             @Override
@@ -196,6 +197,15 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
             }
         });
 
+    }
+
+    private void initSorting() {
+        nameColumn.makeSortable();
+        clusterColumn.makeSortable();
+        ipColumn.makeSortable();
+        fqdnColumn.makeSortable();
+        vnicNameColumn.makeSortable();
+        descriptionColumn.makeSortable();
     }
 
 }
