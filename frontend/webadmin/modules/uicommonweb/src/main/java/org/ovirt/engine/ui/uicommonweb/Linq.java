@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Identifiable;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -80,6 +81,22 @@ public final class Linq
             long yid = y.getaudit_log_id();
 
             return Long.valueOf(xid).compareTo(yid);
+        }
+    }
+
+    public final static class IdentifiableComparator<T extends Identifiable> implements Comparator<T>, Serializable {
+
+        private static final long serialVersionUID = 1698501567658288106L;
+
+        @Override
+        public int compare(T o1, T o2) {
+            if (o1 == o2) {
+                return 0;
+            } else if (o1 == null || o2 == null) {
+                return (o1 == null) ? -1 : 1;
+            } else {
+                return o1.getValue() - o2.getValue();
+            }
         }
     }
 
