@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -151,7 +152,26 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                         return NetworkRoleColumnHelper.getTooltip(imagesToText);
                     }
                 };
+        netRoleColumn.makeSortable(new Comparator<PairQueryable<VDSGroup, NetworkCluster>>() {
 
+            private int calculateValue(NetworkCluster networkCluster) {
+                int res = 0;
+                if (networkCluster != null) {
+                    if (networkCluster.isDisplay()) {
+                        res += 2;
+                    }
+                    if (networkCluster.isMigration()) {
+                        res += 1;
+                    }
+                }
+                return res;
+            }
+
+            @Override
+            public int compare(PairQueryable<VDSGroup, NetworkCluster> o1, PairQueryable<VDSGroup, NetworkCluster> o2) {
+                return calculateValue(o1.getSecond()) - calculateValue(o2.getSecond());
+            }
+        });
         getTable().addColumn(netRoleColumn, constants.roleNetCluster(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>> descriptionColumn = new TextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>>() {

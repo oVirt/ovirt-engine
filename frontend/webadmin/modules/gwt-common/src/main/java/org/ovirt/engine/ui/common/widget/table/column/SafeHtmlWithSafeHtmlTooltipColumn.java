@@ -8,12 +8,11 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class SafeHtmlWithSafeHtmlTooltipColumn<T> extends Column<T, SafeHtml>{
+public abstract class SafeHtmlWithSafeHtmlTooltipColumn<T> extends SortableColumn<T, SafeHtml>{
 
     public SafeHtmlWithSafeHtmlTooltipColumn() {
         super(new AbstractCell<SafeHtml>(BrowserEvents.MOUSEOVER, BrowserEvents.MOUSEOUT) {
