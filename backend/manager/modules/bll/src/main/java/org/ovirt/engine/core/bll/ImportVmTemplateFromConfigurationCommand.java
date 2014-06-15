@@ -41,7 +41,6 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         initVmTemplate();
         ArrayList<DiskImage> disks = new ArrayList(getVmTemplate().getDiskTemplateMap().values());
         setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), disks);
-        getParameters().setImages(disks);
         getVmTemplate().setImages(disks);
         if (isImagesAlreadyOnTarget() && !validateUnregisteredEntity(vmTemplateFromConfiguration, ovfEntityData)) {
             return false;
@@ -75,6 +74,12 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         }
         setVdsGroupId(getParameters().getVdsGroupId());
         setStoragePoolId(getVdsGroup().getStoragePoolId());
+    }
+
+    @Override
+    protected ArrayList<DiskImage> getImages() {
+        return new ArrayList<>(getParameters().getDiskTemplateMap() != null ?
+                getParameters().getDiskTemplateMap().values() : getVmTemplate().getDiskTemplateMap().values());
     }
 
     @Override
