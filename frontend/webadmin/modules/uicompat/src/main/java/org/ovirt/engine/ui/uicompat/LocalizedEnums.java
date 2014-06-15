@@ -756,6 +756,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcObjectType___VdsGroups();
 
+    String VdcObjectType___Network();
+
     String VdcObjectType___VM();
 
     String VdcObjectType___VmPool();
