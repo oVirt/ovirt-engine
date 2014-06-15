@@ -50,7 +50,7 @@ public abstract class SafeHtmlWithSafeHtmlTooltipColumn<T> extends Column<T, Saf
 
         if (BrowserEvents.MOUSEOVER.equals(event.getType())) {
             SafeHtml tooltipHtml = getTooltip(object);
-            if (!"".equals(tooltipHtml.asString())) { //$NON-NLS-1$
+            if (tooltipHtml != null && !tooltipHtml.asString().isEmpty()) {
                 tooltipPanel.setText(getTooltip(object));
             }
         }
