@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Calendar;
+import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.ExternalVariable;
@@ -8,11 +9,13 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.KdumpFlowStatus;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsKdumpStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -60,6 +63,21 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
                 && fkAlive.getUpdateDate().getTime() + listenerTimeoutInterval >= System.currentTimeMillis();
     }
 
+    private void restartVdsVms() {
+        List<VM> vms = getVmDAO().getAllRunningForVds(getVdsId());
+        if (!vms.isEmpty()) {
+            RestartVdsVmsOperation restartVmsOper = new RestartVdsVmsOperation(
+                    getExecutionContext(),
+                    getVds()
+            );
+            restartVmsOper.restartVms(vms);
+            Backend.getInstance()
+                    .getResourceManager()
+                    .RunVdsCommand(VDSCommandType.UpdateVdsVMsCleared,
+                            new UpdateVdsVMsClearedVDSCommandParameters(getVds().getId()));
+        }
+    }
+
     private KdumpDetectionResult detectHostKdumping() {
         VdsKdumpStatus kdumpStatus;
         int messageInterval = Config.<Integer>getValue(ConfigValues.FenceKdumpMessageInterval) * 1000;
@@ -97,6 +115,9 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
                             .RunVdsCommand(VDSCommandType.SetVdsStatus,
                                     new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Kdumping)
                             );
+
+                    // restart VMs running on Vds
+                    restartVdsVms();
                 }
 
                 if (kdumpStatus.getStatus() == KdumpFlowStatus.FINISHED) {
