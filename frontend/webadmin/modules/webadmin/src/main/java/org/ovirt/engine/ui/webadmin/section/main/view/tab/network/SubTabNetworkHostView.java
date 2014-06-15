@@ -218,6 +218,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     }
 
     private void initSorting() {
+        hostStatus.makeSortable();
         nameColumn.makeSortable();
         clusterColumn.makeSortable();
         dcColumn.makeSortable();

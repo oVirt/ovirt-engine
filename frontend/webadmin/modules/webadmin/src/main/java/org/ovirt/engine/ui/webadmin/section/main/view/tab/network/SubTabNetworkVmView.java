@@ -200,6 +200,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
     }
 
     private void initSorting() {
+        vmStatusColumn.makeSortable();
         nameColumn.makeSortable();
         clusterColumn.makeSortable();
         ipColumn.makeSortable();
