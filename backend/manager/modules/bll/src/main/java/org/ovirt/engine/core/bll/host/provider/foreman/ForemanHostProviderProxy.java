@@ -2,9 +2,11 @@ package org.ovirt.engine.core.bll.host.provider.foreman;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -78,7 +80,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             runHttpMethod(httpClient, httpMethod);
             ForemanHostWrapper fhw = objectMapper.readValue(httpMethod.getResponseBody(), ForemanHostWrapper.class);
             return mapHosts(Arrays.asList(fhw.getResults()));
-        } catch (Exception e) {
+        } catch (IOException e) {
             return null;
         }
     }
@@ -89,7 +91,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             ForemanDiscoveredHostWrapper fdw =
                     objectMapper.readValue(httpMethod.getResponseBody(), ForemanDiscoveredHostWrapper.class);
             return mapDiscoveredHosts(Arrays.asList(fdw.getResults()));
-        } catch (Exception e) {
+        } catch (IOException e) {
             return null;
         }
     }
@@ -100,7 +102,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             ForemanHostGroupWrapper fhgw =
                     objectMapper.readValue(httpMethod.getResponseBody(), ForemanHostGroupWrapper.class);
             return mapHostGroups(Arrays.asList(fhgw.getResults()));
-        } catch (Exception e) {
+        } catch (IOException e) {
             return null;
         }
     }
@@ -111,7 +113,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             ForemanOperatingSystemWrapper fosw =
                     objectMapper.readValue(httpMethod.getResponseBody(), ForemanOperatingSystemWrapper.class);
             return mapOperationSystem(Arrays.asList(fosw.getResults()));
-        } catch (Exception e) {
+        } catch (IOException e) {
             return null;
         }
     }
@@ -122,7 +124,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             ForemanComputerResourceWrapper fcrw =
                     objectMapper.readValue(httpMethod.getResponseBody(), ForemanComputerResourceWrapper.class);
             return mapComputeResource(Arrays.asList(fcrw.getResults()));
-        } catch (Exception e) {
+        } catch (IOException e) {
             return null;
         }
     }
@@ -296,14 +298,14 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
 
             @Override
             public void writeRequest(OutputStream outputStream) throws IOException {
-                PrintWriter pr = new PrintWriter(outputStream);
+                PrintWriter pr = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
                 pr.println(entityBody);
                 pr.flush();
             }
 
             @Override
             public long getContentLength() {
-                return entityBody.getBytes().length;
+                return entityBody.getBytes(StandardCharsets.UTF_8).length;
             }
 
             @Override
