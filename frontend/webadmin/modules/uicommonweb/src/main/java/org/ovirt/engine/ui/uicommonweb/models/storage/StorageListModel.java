@@ -1067,6 +1067,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             boolean isDataCenterAvailable = storage.getStorageType() != StorageType.GLANCE;
             boolean isGeneralAvailable = storage.getStorageType() != StorageType.GLANCE;
 
+            boolean isRegsiterEntityListModelSelected =
+                    getActiveDetailModel() == vmRegisterListModel || getActiveDetailModel() == templateRegisterListModel;
+            boolean isRegisterSubtabsAvailable = isDataStorage &&
+                    (storage.isContainsUnregisteredEntities() || isRegsiterEntityListModelSelected);
+
             generalModel.setIsAvailable(isGeneralAvailable);
             dcListModel.setIsAvailable(isDataCenterAvailable);
 
@@ -1075,8 +1080,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             vmListModel.setIsAvailable(isDataStorage);
             templateListModel.setIsAvailable(isDataStorage);
-            vmRegisterListModel.setIsAvailable(isDataStorage);
-            templateRegisterListModel.setIsAvailable(isDataStorage);
+            vmRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
+            templateRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             diskListModel.setIsAvailable(isDataStorage);
             snapshotListModel.setIsAvailable(isDataStorage);
 
