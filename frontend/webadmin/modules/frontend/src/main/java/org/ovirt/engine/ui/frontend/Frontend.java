@@ -789,7 +789,7 @@ public class Frontend implements HasHandlers {
                             failureCallback.executed(result);
                         }
                     }
-                }, state, !aggregateErrors);
+                }, state, !aggregateErrors || failureCallback != null);
     }
 
     /**
