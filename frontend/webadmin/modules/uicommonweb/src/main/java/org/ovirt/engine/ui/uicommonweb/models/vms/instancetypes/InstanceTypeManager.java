@@ -198,8 +198,8 @@ public abstract class InstanceTypeManager {
             boolean customInstanceTypeSelected = model.getInstanceTypes().getSelectedItem() instanceof CustomInstanceType;
 
             if (sender == model.getTemplate() && customInstanceTypeSelected) {
-                // only if the instance type is not selected use the template
-                updateInstanceTypeFieldsFrom(model.getTemplate().getSelectedItem());
+                // returns the VM/Pool's static data or the template (depending on the specific new/existing manager)
+                updateInstanceTypeFieldsFrom(getSource());
             } else if (sender == model.getInstanceTypes() && !customInstanceTypeSelected) {
                 // the instance type is in fact a template
                 updateInstanceTypeFieldsFrom((VmTemplate) model.getInstanceTypes().getSelectedItem());
@@ -209,7 +209,7 @@ public abstract class InstanceTypeManager {
 
         }
 
-        private void updateInstanceTypeFieldsFrom(VmTemplate template) {
+        private void updateInstanceTypeFieldsFrom(VmBase template) {
             if (template == null) {
                 return;
             }
