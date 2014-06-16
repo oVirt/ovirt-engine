@@ -186,7 +186,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
                 PermissionsOperationsParameters permParams = new PermissionsOperationsParameters(perm);
                 permParams.setShouldBeLogged(false);
                 permParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
-                VdcReturnValueBase vdcReturnValueFromAddPerm = Backend.getInstance().runInternalAction(VdcActionType.AddPermission,
+                VdcReturnValueBase vdcReturnValueFromAddPerm = runInternalAction(VdcActionType.AddPermission,
                         permParams,
                         new CommandContext(getCompensationContext()));
                 if (!vdcReturnValueFromAddPerm.getSucceeded()) {
@@ -212,7 +212,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             runVmParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
             runVmParams.setRunAsStateless(true);
             ExecutionContext runVmContext = createRunVmContext();
-            VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
+            VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.RunVm,
                     runVmParams, new CommandContext(runVmContext));
 
             getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());

@@ -60,7 +60,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         if (shouldBeFenced) {
             getParameters().setParentCommand(VdcActionType.VdsNotRespondingTreatment);
             VdcReturnValueBase retVal =
-                    Backend.getInstance().runInternalAction(VdcActionType.VdsKdumpDetection,
+                    runInternalAction(VdcActionType.VdsKdumpDetection,
                             getParameters(),
                             ExecutionHandler.createInternalJobContext());
 
@@ -102,7 +102,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         if (getVds().getSpmStatus() != VdsSpmStatus.None) {
             log.infoFormat("Fence failed on vds {0} which is spm of pool {1} - moving pool to non operational",
                     getVds().getName(), getVds().getStoragePoolId());
-            Backend.getInstance().runInternalAction(
+            runInternalAction(
                     VdcActionType.SetStoragePoolStatus,
                     new SetStoragePoolStatusParameters(getVds().getStoragePoolId(), StoragePoolStatus.NotOperational,
                             AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM));

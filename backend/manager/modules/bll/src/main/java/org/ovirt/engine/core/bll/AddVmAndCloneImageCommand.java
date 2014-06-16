@@ -252,7 +252,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
      * @return
      */
     protected VdcReturnValueBase executeChildCopyingCommand(VdcActionParametersBase parameters) {
-        VdcReturnValueBase result = Backend.getInstance().runInternalAction(
+        VdcReturnValueBase result = runInternalAction(
                 getChildActionType(),
                         parameters,
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));

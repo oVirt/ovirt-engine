@@ -140,7 +140,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             tempVar.setCompensationEnabled(true);
             CompensationContext compensationContext = getCompensationContext();
             VdcReturnValueBase addVdsSpmIdReturn =
-                    Backend.getInstance().runInternalAction(VdcActionType.AddVdsSpmId,
+                    runInternalAction(VdcActionType.AddVdsSpmId,
                             tempVar,
                             new CommandContext(compensationContext));
             if (!addVdsSpmIdReturn.getSucceeded()) {
@@ -189,7 +189,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
-                    Backend.getInstance().runInternalAction(VdcActionType.InstallVdsInternal,
+                    runInternalAction(VdcActionType.InstallVdsInternal,
                             installVdsParameters,
                             new CommandContext(installCtx));
                 }
@@ -228,7 +228,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<VdcReturnValueBase>() {
                     @Override
                     public VdcReturnValueBase runInTransaction() {
-                        return Backend.getInstance().runInternalAction(VdcActionType.RemoveVds,
+                        return runInternalAction(VdcActionType.RemoveVds,
                                 new RemoveVdsParameters(oVirtId));
                     }
                 });

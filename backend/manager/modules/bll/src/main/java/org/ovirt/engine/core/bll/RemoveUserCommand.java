@@ -49,7 +49,7 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
                 .getAllDirectPermissionsForAdElement(id)) {
             PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters(permission);
             tempVar.setShouldBeLogged(false);
-            Backend.getInstance().runInternalAction(VdcActionType.RemovePermission,
+            runInternalAction(VdcActionType.RemovePermission,
                     tempVar,
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         }

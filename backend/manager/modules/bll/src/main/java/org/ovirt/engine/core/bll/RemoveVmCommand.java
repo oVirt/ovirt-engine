@@ -264,7 +264,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     protected VdcReturnValueBase removeVmImages(List<DiskImage> images) {
         VdcReturnValueBase vdcRetValue =
-                Backend.getInstance().runInternalAction(VdcActionType.RemoveAllVmImages,
+                runInternalAction(VdcActionType.RemoveAllVmImages,
                         buildRemoveAllVmImagesParameters(images),
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 

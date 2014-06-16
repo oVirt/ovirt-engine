@@ -98,7 +98,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         if ((getParameters()).getClearVMs() && result) {
             VdsActionParameters tempVar = new VdsActionParameters(_problematicVds.getId());
             tempVar.setSessionId(getParameters().getSessionId());
-            Backend.getInstance().runInternalAction(VdcActionType.ClearNonResponsiveVdsVms,
+            runInternalAction(VdcActionType.ClearNonResponsiveVdsVms,
                     tempVar,
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         }

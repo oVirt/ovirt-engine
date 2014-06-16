@@ -92,7 +92,7 @@ public class DetachNetworksFromClusterCommand<T extends ClusterNetworksParameter
         }
 
         NetworkParametersBuilder.updateParametersSequencing(parameters);
-        getBackend().runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
+        runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
     }
 
     @Override

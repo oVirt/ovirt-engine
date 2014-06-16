@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.storage.ConnectAllHostsToLunCommand.ConnectAllHostsToLunCommandReturnValue;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -85,7 +84,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         }
 
         final ConnectAllHostsToLunCommandReturnValue connectResult =
-                (ConnectAllHostsToLunCommandReturnValue) Backend.getInstance().runInternalAction(
+                (ConnectAllHostsToLunCommandReturnValue) runInternalAction(
                         VdcActionType.ConnectAllHostsToLun,
                         new ExtendSANStorageDomainParameters(getParameters().getStorageDomainId(), getParameters()
                                 .getLunIds()));

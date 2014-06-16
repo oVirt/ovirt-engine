@@ -73,7 +73,7 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
             StopVmParameters stopVmParams = new StopVmParameters(getVmId(), StopVmTypeEnum.CANNOT_SHUTDOWN);
             // stopVmParams.ParametersCurrentUser = CurrentUser;
             stopVmParams.setSessionId(getParameters().getSessionId());
-            Backend.getInstance().runInternalAction(VdcActionType.StopVm, stopVmParams);
+            runInternalAction(VdcActionType.StopVm, stopVmParams);
         }
 
         setSucceeded(true);

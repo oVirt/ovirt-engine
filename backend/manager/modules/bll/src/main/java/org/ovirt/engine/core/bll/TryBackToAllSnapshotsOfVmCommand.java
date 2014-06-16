@@ -174,7 +174,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 public Void runInTransaction() {
                     for (DiskImage image : filteredImages) {
                         VdcReturnValueBase vdcReturnValue =
-                                Backend.getInstance().runInternalAction(VdcActionType.TryBackToSnapshot,
+                                runInternalAction(VdcActionType.TryBackToSnapshot,
                                         buildTryBackToSnapshotParameters(newActiveSnapshotId, image),
                                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 

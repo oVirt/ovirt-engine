@@ -55,7 +55,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         parameters.setSessionId(getParameters().getSessionId());
         parameters.setDontAttachToDefaultTag(true);
 
-        return Backend.getInstance().runInternalAction(VdcActionType.AddVmFromScratch,
+        return runInternalAction(VdcActionType.AddVmFromScratch,
                         parameters,
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
     }
@@ -78,7 +78,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
             parameters.setRngDevice(getParameters().getRngDevice());
         }
 
-        return Backend.getInstance().runInternalAction(VdcActionType.AddVm,
+        return runInternalAction(VdcActionType.AddVm,
                         parameters,
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
     }
@@ -87,7 +87,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         AddVmToPoolParameters parameters = new AddVmToPoolParameters(getParameters().getPoolId(),
                 vmStatic.getId());
         parameters.setShouldBeLogged(false);
-        setSucceeded(Backend.getInstance().runInternalAction(VdcActionType.AddVmToPool, parameters).getSucceeded());
+        setSucceeded(runInternalAction(VdcActionType.AddVmToPool, parameters).getSucceeded());
         addVmPermission();
     }
 }

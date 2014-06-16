@@ -129,7 +129,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         for (int i=0; i<getParameters().getVmsCount(); i++) {
             String currentVmName = generateUniqueVmName();
             VdcReturnValueBase returnValue =
-                    Backend.getInstance().runInternalAction(VdcActionType.AddVmAndAttachToPool,
+                    runInternalAction(VdcActionType.AddVmAndAttachToPool,
                             buildAddVmAndAttachToPoolParameters(poolId, currentVmName),
                             createAddVmStepContext(currentVmName));
 

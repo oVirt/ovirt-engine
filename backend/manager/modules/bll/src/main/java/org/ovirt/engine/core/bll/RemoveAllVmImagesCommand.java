@@ -54,7 +54,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         for (final DiskImage image : images) {
             if (mImagesToBeRemoved.contains(image.getImageId())) {
                 VdcReturnValueBase vdcReturnValue =
-                        Backend.getInstance().runInternalAction(VdcActionType.RemoveImage,
+                        runInternalAction(VdcActionType.RemoveImage,
                                 buildRemoveImageParameters(image),
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 

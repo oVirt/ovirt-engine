@@ -32,7 +32,7 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
             storageDomainParametersBase.setParentCommand(getActionType());
             storageDomainParametersBase.setParentParameters(getParameters());
             VdcReturnValueBase vdcReturnValueBase =
-                    Backend.getInstance().runInternalAction(VdcActionType.CreateOvfVolumeForStorageDomain,
+                    runInternalAction(VdcActionType.CreateOvfVolumeForStorageDomain,
                             storageDomainParametersBase);
             getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValueBase.getInternalVdsmTaskIdList());
         }

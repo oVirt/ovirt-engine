@@ -185,7 +185,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private void setNonOperational(NonOperationalReason reason, Map<String, String> customLogValues) {
         SetNonOperationalVdsParameters tempVar =
                 new SetNonOperationalVdsParameters(getVds().getId(), reason, customLogValues);
-        Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext());
+        runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext());
     }
 
     private boolean InitializeStorage() {
@@ -199,7 +199,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             connectPoolSucceeded = true;
         } else {
             ConnectHostToStoragePoolServersParameters params = new ConnectHostToStoragePoolServersParameters(getStoragePool(), getVds());
-            Backend.getInstance().runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, params);
+            runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, params);
             returnValue = connectHostToPool();
             connectPoolSucceeded = returnValue;
         }

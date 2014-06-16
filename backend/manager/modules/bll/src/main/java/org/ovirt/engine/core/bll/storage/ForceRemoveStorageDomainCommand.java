@@ -39,7 +39,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                     ReconstructMasterParameters tempVar = new ReconstructMasterParameters(getStoragePool().getId(),
                             getStorageDomain().getId(), false);
                     tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-                    Backend.getInstance().runInternalAction(VdcActionType.ReconstructMasterDomain, tempVar);
+                    runInternalAction(VdcActionType.ReconstructMasterDomain, tempVar);
                 }
                 // try to force detach first
                 DetachStorageDomainVDSCommandParameters tempVar2 = new DetachStorageDomainVDSCommandParameters(

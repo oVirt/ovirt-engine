@@ -69,7 +69,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                     p.setRevertDbOperationScope(ImageDbOperationScope.NONE);
                     p.setShouldLockImageOnRevert(false);
                     p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getStorageIds().get(0));
-                    VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
+                    VdcReturnValueBase vdcRetValue = runInternalAction(
                                     VdcActionType.CopyImageGroup,
                                     p,
                                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));

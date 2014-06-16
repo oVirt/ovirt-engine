@@ -5,45 +5,31 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.InternalMigrateVmParameters;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.VmsComparer;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.eventqueue.Event;
-import org.ovirt.engine.core.common.eventqueue.EventQueue;
-import org.ovirt.engine.core.common.eventqueue.EventResult;
-import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
-import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
-import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 
 @NonTransactiveCommandAttribute
 public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends VdsCommand<T> {
@@ -131,7 +117,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
             // if HAOnly is true check that vm is HA (auto_startup should be true)
             if (vm.getStatus() != VMStatus.MigratingFrom && (!HAOnly || (HAOnly && vm.isAutoStartup()))) {
                 VdcReturnValueBase result =
-                        Backend.getInstance().runInternalAction(VdcActionType.InternalMigrateVm,
+                        runInternalAction(VdcActionType.InternalMigrateVm,
                                 new InternalMigrateVmParameters(vm.getId(), getActionType()),
                                 createMigrateVmContext(parentContext, vm));
                 if (!result.getCanDoAction() || !(((Boolean) result.getActionReturnValue()).booleanValue())) {
@@ -215,46 +201,6 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         }
 
         return returnValue;
-    }
-
-    public static void processStorageOnVdsInactive(final VDS vds) {
-
-        // Clear the problematic timers since the VDS is in maintenance so it doesn't make sense to check it
-        // anymore.
-        if (!Guid.Empty.equals(vds.getStoragePoolId())) {
-            clearDomainCache(vds);
-
-            StoragePool storage_pool = DbFacade.getInstance()
-                    .getStoragePoolDao()
-                    .get(vds.getStoragePoolId());
-            if (StoragePoolStatus.Uninitialized != storage_pool
-                    .getStatus()) {
-                Backend.getInstance().getResourceManager()
-                        .RunVdsCommand(
-                                VDSCommandType.DisconnectStoragePool,
-                                new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
-                                        vds.getStoragePoolId(), vds.getVdsSpmId()));
-                HostStoragePoolParametersBase params =
-                        new HostStoragePoolParametersBase(storage_pool, vds);
-                Backend.getInstance().runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, params);
-            }
-        }
-    }
-
-    /**
-     * The following method will clear a cache for problematic domains, which were reported by vds
-     * @param vds
-     */
-    private static void clearDomainCache(final VDS vds) {
-        ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(vds.getStoragePoolId(),
-                null, vds.getId(), EventType.VDSCLEARCACHE, ""),
-                new Callable<EventResult>() {
-                    @Override
-                    public EventResult call() {
-                        IrsBrokerCommand.clearVdsFromCache(vds.getStoragePoolId(), vds.getId(), vds.getName());
-                        return new EventResult(true, EventType.VDSCLEARCACHE);
-                    }
-                });
     }
 
     @Override

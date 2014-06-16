@@ -422,7 +422,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             getCompensationContext().stateChanged();
         }
         VdcReturnValueBase tmpRetValue =
-                Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch,
+                runInternalAction(VdcActionType.AddImageFromScratch,
                         parameters,
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
         // Setting lock to null because the lock is released in the child command
@@ -566,7 +566,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (Boolean.TRUE.equals(getParameters().getPlugDiskToVm()) && getVm() != null &&  getVm().getStatus() != VMStatus.Down)    {
             HotPlugDiskToVmParameters params = new HotPlugDiskToVmParameters(getVmId(), getParameters().getDiskInfo().getId());
             params.setShouldBeLogged(false);
-            VdcReturnValueBase returnValue = Backend.getInstance().runInternalAction(VdcActionType.HotPlugDiskToVm, params);
+            VdcReturnValueBase returnValue = runInternalAction(VdcActionType.HotPlugDiskToVm, params);
             if (!returnValue.getSucceeded()) {
                 AuditLogDirector.log(this, AuditLogType.USER_FAILED_HOTPLUG_DISK);
             }

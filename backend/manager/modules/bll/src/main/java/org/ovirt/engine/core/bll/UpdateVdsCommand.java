@@ -149,7 +149,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             tempVar.setProviderId(getParameters().getProviderId());
             tempVar.setNetworkMappings(getParameters().getNetworkMappings());
             tempVar.setAuthMethod(getParameters().getAuthMethod());
-            ArrayList<VdcReturnValueBase> resultList = Backend.getInstance().runInternalMultipleActions(
+            ArrayList<VdcReturnValueBase> resultList = runInternalMultipleActions(
                     actionType,
                     new ArrayList<VdcActionParametersBase>(Arrays
                             .asList(tempVar)));

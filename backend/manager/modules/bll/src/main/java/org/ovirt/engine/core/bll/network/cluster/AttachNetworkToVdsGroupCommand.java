@@ -91,7 +91,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
         if (!parameters.isEmpty()) {
             NetworkParametersBuilder.updateParametersSequencing(parameters);
-            getBackend().runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
+            runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
         }
     }
 

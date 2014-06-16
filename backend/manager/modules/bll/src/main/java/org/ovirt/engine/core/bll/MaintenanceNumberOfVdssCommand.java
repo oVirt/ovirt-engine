@@ -108,7 +108,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             tempVar.setSessionId(getParameters().getSessionId());
             tempVar.setCorrelationId(getParameters().getCorrelationId());
             VdcReturnValueBase result =
-                    Backend.getInstance().runInternalAction(VdcActionType.MaintenanceVds,
+                    runInternalAction(VdcActionType.MaintenanceVds,
                             tempVar,
                             ExecutionHandler.createInternalJobContext());
             if (!result.getCanDoAction()) {

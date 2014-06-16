@@ -271,7 +271,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
             uploadStreamParameters.setParentParameters(getParameters());
 
             VdcReturnValueBase vdcReturnValueBase =
-                    Backend.getInstance().runInternalAction(VdcActionType.UploadStream, uploadStreamParameters);
+                    runInternalAction(VdcActionType.UploadStream, uploadStreamParameters);
             if (vdcReturnValueBase.getSucceeded()) {
                 storageDomainOvfInfo.setStatus(StorageDomainOvfInfoStatus.UPDATED);
                 storageDomainOvfInfo.setStoredOvfIds(vmAndTemplatesIds);

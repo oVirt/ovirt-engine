@@ -60,7 +60,7 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
         } else if (getParameters().getFallbackToPowerManagement() && getVds().getpm_enabled()) {
             FenceVdsActionParameters parameters = new FenceVdsActionParameters(getVds().getId(), FenceActionType.Stop);
             parameters.setKeepPolicyPMEnabled(getParameters().getKeepPolicyPMEnabled());
-            Backend.getInstance().runInternalAction(VdcActionType.StopVds,
+            runInternalAction(VdcActionType.StopVds,
                     parameters,
                     ExecutionHandler.createInternalJobContext());
         }

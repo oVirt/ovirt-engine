@@ -62,7 +62,7 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
 
         // restore all snapshots
         VdcReturnValueBase vdcReturn =
-                Backend.getInstance().runInternalAction(VdcActionType.RestoreAllSnapshots,
+                runInternalAction(VdcActionType.RestoreAllSnapshots,
                         buildRestoreAllSnapshotsParameters(imagesList),
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
         return vdcReturn.getSucceeded();

@@ -271,7 +271,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     protected void executeCommand() {
         if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
             VdcReturnValueBase vdcReturnValue =
-                            Backend.getInstance().runInternalAction(VdcActionType.RemoveImage,
+                            runInternalAction(VdcActionType.RemoveImage,
                                     buildRemoveImageParameters(getDiskImage()),
                                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             if (vdcReturnValue.getSucceeded()) {

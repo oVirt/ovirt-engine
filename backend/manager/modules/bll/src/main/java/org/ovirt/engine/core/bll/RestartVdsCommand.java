@@ -108,7 +108,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         fenceVdsManuallyParams.setParentCommand(VdcActionType.RestartVds);
 
         // if fencing succeeded, call to reset irs in order to try select new spm
-        Backend.getInstance().runInternalAction(VdcActionType.FenceVdsManualy, fenceVdsManuallyParams, getContext());
+        runInternalAction(VdcActionType.FenceVdsManualy, fenceVdsManuallyParams, getContext());
     }
 
     private VdcReturnValueBase executeVdsFenceAction(final Guid vdsId,
@@ -122,7 +122,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         if (getParameters().getParentCommand() != VdcActionType.VdsNotRespondingTreatment && getVds().getStatus() == VDSStatus.Maintenance) {
             params.setChangeHostToMaintenanceOnStart(true);
         }
-        return Backend.getInstance().runInternalAction(action, params, getContext());
+        return runInternalAction(action, params, getContext());
     }
 
     private CommandContext getContext() {

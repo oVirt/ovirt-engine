@@ -231,7 +231,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         params.setParentCommand(getActionType());
         params.setParentParameters(getParameters());
         params.setCommandType(taskType);
-        returnValue = Backend.getInstance().runInternalAction(
+        returnValue = runInternalAction(
                 taskType,
                 params,
                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));

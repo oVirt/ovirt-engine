@@ -93,7 +93,7 @@ public class AttachNetworksToClusterCommand<T extends ClusterNetworksParameters>
         }
 
         NetworkParametersBuilder.updateParametersSequencing(parameters);
-        getBackend().runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
+        runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
     }
 
     @Override

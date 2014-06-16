@@ -78,7 +78,7 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
             }
         });
 
-        VdcReturnValueBase attachAction = Backend.getInstance().runInternalAction(
+        VdcReturnValueBase attachAction = runInternalAction(
                 VdcActionType.AttachActionGroupsToRole,
                 new ActionGroupsToRoleParameter(getRole().getId(), getParameters().getActionGroups()));
         if (!attachAction.getCanDoAction() || !attachAction.getSucceeded()) {

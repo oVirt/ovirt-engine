@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import javax.ejb.DependsOn;
 import javax.ejb.Local;
@@ -45,8 +46,11 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.eventqueue.Event;
+import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
+import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StartSpiceVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -56,12 +60,16 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.Ticketing;
+import org.ovirt.engine.core.utils.ejb.BeanProxyType;
+import org.ovirt.engine.core.utils.ejb.BeanType;
+import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.MonitoringStrategyFactory;
+import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 
 @Stateless(name = "VdsEventListener")
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
@@ -72,11 +80,53 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void vdsMovedToMaintenance(VDS vds) {
         try {
-            MaintenanceVdsCommand.processStorageOnVdsInactive(vds);
+            processStorageOnVdsInactive(vds);
         } finally {
             ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, true);
         }
     }
+
+
+    private void processStorageOnVdsInactive(final VDS vds) {
+
+        // Clear the problematic timers since the VDS is in maintenance so it doesn't make sense to check it
+        // anymore.
+        if (!Guid.Empty.equals(vds.getStoragePoolId())) {
+            clearDomainCache(vds);
+
+            StoragePool storage_pool = DbFacade.getInstance()
+                    .getStoragePoolDao()
+                    .get(vds.getStoragePoolId());
+            if (StoragePoolStatus.Uninitialized != storage_pool
+                    .getStatus()) {
+                Backend.getInstance().getResourceManager()
+                        .RunVdsCommand(
+                                VDSCommandType.DisconnectStoragePool,
+                                new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
+                                        vds.getStoragePoolId(), vds.getVdsSpmId()));
+                HostStoragePoolParametersBase params =
+                        new HostStoragePoolParametersBase(storage_pool, vds);
+                Backend.getInstance().runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, params);
+            }
+        }
+    }
+
+    /**
+     * The following method will clear a cache for problematic domains, which were reported by vds
+     * @param vds
+     */
+    private void clearDomainCache(final VDS vds) {
+        ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(vds.getStoragePoolId(),
+                null, vds.getId(), EventType.VDSCLEARCACHE, ""),
+                new Callable<EventResult>() {
+                    @Override
+                    public EventResult call() {
+                        IrsBrokerCommand.clearVdsFromCache(vds.getStoragePoolId(), vds.getId(), vds.getName());
+                        return new EventResult(true, EventType.VDSCLEARCACHE);
+                    }
+                });
+    }
+
 
     @Override
     public EventResult storageDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {

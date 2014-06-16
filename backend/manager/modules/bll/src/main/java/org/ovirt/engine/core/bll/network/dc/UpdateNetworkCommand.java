@@ -93,7 +93,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
         if (!parameters.isEmpty()) {
             NetworkParametersBuilder.updateParametersSequencing(parameters);
-            getBackend().runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
+            runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
         }
     }
 

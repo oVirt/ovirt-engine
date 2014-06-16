@@ -109,7 +109,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                 tempVar.setParentCommand(VdcActionType.AddVmFromScratch);
                 tempVar.setEntityInfo(getParameters().getEntityInfo());
                 tempVar.setParentParameters(getParameters());
-                tmpRetValue = Backend.getInstance().runInternalAction(
+                tmpRetValue = runInternalAction(
                                 VdcActionType.AddImageFromScratch,
                                 tempVar,
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));

@@ -45,7 +45,7 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends StorageDomainParam
         diskParameters.setParentCommand(getParameters().getParentCommand());
         diskParameters.setParentParameters(getParameters().getParentParameters());
         diskParameters.setShouldRemainIllegalOnFailedExecution(true);
-        VdcReturnValueBase vdcReturnValueBase = Backend.getInstance().runInternalAction(VdcActionType.AddDisk, diskParameters,
+        VdcReturnValueBase vdcReturnValueBase = runInternalAction(VdcActionType.AddDisk, diskParameters,
                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         Guid createdId = (Guid)vdcReturnValueBase.getActionReturnValue();
 

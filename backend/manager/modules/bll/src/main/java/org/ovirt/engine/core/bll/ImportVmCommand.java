@@ -724,7 +724,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             List<Guid> guids = GuidUtils.getGuidListFromString(memoryVolumes);
 
             // copy the memory dump image
-            VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
+            VdcReturnValueBase vdcRetValue = runInternalAction(
                     VdcActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
                             containerId, guids.get(0), guids.get(2), guids.get(3)),
@@ -735,7 +735,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
 
             // copy the memory configuration (of the VM) image
-            vdcRetValue = Backend.getInstance().runInternalAction(
+            vdcRetValue = runInternalAction(
                     VdcActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForMemoryConfImage(
                             containerId, guids.get(0), guids.get(4), guids.get(5)),
@@ -791,7 +791,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     @Override
     protected void moveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         for (DiskImage disk : disks) {
-            VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
+            VdcReturnValueBase vdcRetValue = runInternalAction(
                     VdcActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForDisk(disk, containerID),
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));

@@ -63,7 +63,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
                 && perms.getrole_id().equals(PredefinedRoles.ENGINE_USER.getId())) {
             VM vm = getVmDAO().get(perms.getObjectId());
             if (vm != null && vm.getVmPoolId() != null) {
-                Backend.getInstance().runInternalAction(VdcActionType.DetachUserFromVmFromPool,
+                runInternalAction(VdcActionType.DetachUserFromVmFromPool,
                         new VmPoolSimpleUserParameters(vm.getVmPoolId(), userId, vm.getId()),
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             }

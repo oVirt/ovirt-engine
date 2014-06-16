@@ -93,7 +93,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
             }
             VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
             for (DiskImage disk : getVmTemplate().getDiskTemplateMap().values()) {
-                VdcReturnValueBase result = Backend.getInstance().runInternalAction(
+                VdcReturnValueBase result = runInternalAction(
                                 VdcActionType.CreateCloneOfTemplate,
                                 buildCreateCloneOfTemplateParameters(disk),
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));

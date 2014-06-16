@@ -229,7 +229,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             addVdsSpmIdParams.setSessionId(getParameters().getSessionId());
             addVdsSpmIdParams.setCompensationEnabled(true);
             VdcReturnValueBase addVdsSpmIdReturn =
-                    Backend.getInstance().runInternalAction(VdcActionType.AddVdsSpmId,
+                    runInternalAction(VdcActionType.AddVdsSpmId,
                             addVdsSpmIdParams,
                             new CommandContext(getCompensationContext()));
             if (!addVdsSpmIdReturn.getSucceeded()) {
