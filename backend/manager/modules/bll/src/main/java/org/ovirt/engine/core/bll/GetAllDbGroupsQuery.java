@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class GetAllAdGroupsQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
-    public GetAllAdGroupsQuery(P parameters) {
+public class GetAllDbGroupsQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+    public GetAllDbGroupsQuery(P parameters) {
         super(parameters);
     }
 
