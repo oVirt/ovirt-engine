@@ -34,10 +34,6 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
         VmNic iface = getVmNicDao().get(getParameters().getInterfaceId());
 
         if (iface != null) {
-            new ExternalNetworkManager(iface).deallocateIfExternal();
-
-            // return mac to pool
-            MacPoolManager.getInstance().freeMac(iface.getMacAddress());
             interfaceName = iface.getName();
 
             // Get Interface type.
@@ -45,6 +41,11 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
             if (interType != null) {
                 addCustomValue("InterfaceType", interType);
             }
+
+            new ExternalNetworkManager(iface).deallocateIfExternal();
+
+            // return mac to pool
+            MacPoolManager.getInstance().freeMac(iface.getMacAddress());
         }
 
         // remove from db
