@@ -1896,7 +1896,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId, Boolean activateDomain)
     {
         AttachStorageDomainToPoolParameters params = new AttachStorageDomainToPoolParameters(storageId, dataCenterId);
-        params.setActivate(activateDomain);
+        if (activateDomain != null) {
+            params.setActivate(activateDomain);
+        }
         Frontend.getInstance().runAction(VdcActionType.AttachStorageDomainToPool, params, null, this);
     }
 
