@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.expect;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -23,8 +24,10 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSnapshotsResourceTest
@@ -32,6 +35,12 @@ public class BackendSnapshotsResourceTest
 
     public BackendSnapshotsResourceTest() {
         super(new BackendSnapshotsResource(VM_ID), null, "");
+    }
+
+    @Override
+    public void setUp() {
+        super.setUp();
+        mockOsRepository();
     }
 
     static final Guid[] SNAPSHOT_IDS = GUIDS;
@@ -275,4 +284,9 @@ public class BackendSnapshotsResourceTest
         return vm;
     }
 
+    private void mockOsRepository() {
+        OsRepository mockOsRepository = control.createMock(OsRepository.class);
+        expect(mockOsRepository.getUniqueOsNames()).andReturn(new HashMap<Integer, String>()).anyTimes();
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, mockOsRepository);
+    }
 }
