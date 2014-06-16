@@ -27,7 +27,7 @@ public class EntityModelTextAreaEditor<T> extends AbstractValueBoxWithLabelEdito
                 super.enterPressed();
                 int pos = getContentWidget().getCursorPos();
                 getContentWidget().setText(getContentWidget().getText().substring(0, pos) + '\n'
-                        + getContentWidget().getText().substring(pos)); //$NON-NLS-1$
+                        + getContentWidget().getText().substring(pos + getContentWidget().getSelectionLength())); //$NON-NLS-1$
                 getContentWidget().setCursorPos(pos + 1);
             }
         };
