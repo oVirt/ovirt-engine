@@ -1,1 +1,2 @@
 org.ovirt.engine.api.resteasy.json.JsonProvider
+org.ovirt.engine.api.xml.JAXBMessageBodyReader
