@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -15,17 +16,24 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
+import java.util.Set;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.RunVmCommand.RunVmFlow;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -40,11 +48,15 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -54,9 +66,10 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Theories.class)
 public class RunVmCommandTest {
 
     @ClassRule
@@ -77,6 +90,9 @@ public class RunVmCommandTest {
 
     @Mock
     private StoragePoolDAO spDao;
+
+    @Mock
+    private VmDeviceDAO deviceDao;
 
     @Mock
     private BackendInternal backend;
@@ -303,7 +319,13 @@ public class RunVmCommandTest {
     }
 
     @Before
+    public void initMockitoAnnotations() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Before
     public void createCommand() {
+
         when(osRepository.isWindows(Mockito.anyInt())).thenReturn(false);
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
 
@@ -331,10 +353,51 @@ public class RunVmCommandTest {
         vm.setStatus(VMStatus.Down);
         doReturn(new StoragePool()).when(command).getStoragePool();
         doReturn(vm).when(command).getVm();
+        doReturn(true).when(command).checkRngDeviceClusterCompatibility();
         doReturn(true).when(command).checkPayload(any(VmPayload.class), anyString());
         doReturn(new VDSGroup()).when(command).getVdsGroup();
         assertTrue(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
+    }
+
+    @DataPoints
+    public static VmRngDevice.Source[] rngSources = VmRngDevice.Source.values();
+    @DataPoints
+    public static Set<VmRngDevice.Source>[] rngSourcesSubsets;
+
+    static {
+        HashSet<VmRngDevice.Source> sourcesEmpty = new HashSet<>();
+        HashSet<VmRngDevice.Source> sourcesRandom = new HashSet<>();
+        sourcesRandom.add(VmRngDevice.Source.RANDOM);
+        HashSet<VmRngDevice.Source> sourcesHwRng = new HashSet<>();
+        sourcesHwRng.add(VmRngDevice.Source.HWRNG);
+        HashSet<VmRngDevice.Source> sourcesAll = new HashSet<>();
+        sourcesAll.add(VmRngDevice.Source.RANDOM);
+        sourcesAll.add(VmRngDevice.Source.HWRNG);
+
+        rngSourcesSubsets = new Set[] { sourcesEmpty, sourcesRandom, sourcesHwRng, sourcesAll };
+    }
+
+    @Theory
+    public void testCanDoActionUnsupportedRng(VmRngDevice.Source vmRngSource, Set<VmRngDevice.Source> clusterReqSources) {
+        final VM vm = new VM();
+        vm.setStatus(VMStatus.Down);
+        doReturn(vm).when(command).getVm();
+
+        VDSGroup cluster = mock(VDSGroup.class);
+        when(cluster.getRequiredRngSources()).thenReturn(clusterReqSources);
+        doReturn(cluster).when(command).getVdsGroup();
+
+        VmRngDevice rngDevice = new VmRngDevice();
+        rngDevice.setSource(vmRngSource);
+        VmDevice rngAsDevice = new VmDevice();
+        rngAsDevice.setSpecParams(rngDevice.getSpecParams());
+        when(deviceDao.getVmDeviceByVmIdTypeAndDevice(command.getVmId(), VmDeviceGeneralType.RNG, VmDeviceType.VIRTIO.getName()))
+                .thenReturn(Collections.singletonList(rngAsDevice));
+
+        doReturn(deviceDao).when(command).getVmDeviceDao();
+
+        Assert.assertThat(command.canDoAction(), is(clusterReqSources.contains(vmRngSource)));
     }
 
     @Test

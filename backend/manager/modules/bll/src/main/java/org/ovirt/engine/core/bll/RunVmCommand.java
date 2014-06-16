@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
@@ -840,6 +841,31 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             }
 
             getVm().setVmPayload(getParameters().getVmPayload());
+        }
+
+        if (!checkRngDeviceClusterCompatibility()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Checks whether rng device of vm is required by cluster, which is requirement for running vm.
+     *
+     * @return true if the source of vm rng device is required by cluster (and therefore supported by hosts in cluster)
+     */
+    boolean checkRngDeviceClusterCompatibility() {
+        List<VmDevice> rngDevs =
+                getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(getVmId(), VmDeviceGeneralType.RNG, VmDeviceType.VIRTIO.getName());
+
+        if (!rngDevs.isEmpty()) {
+            VmRngDevice rngDev = new VmRngDevice(rngDevs.get(0));
+
+            if (!getVdsGroup().getRequiredRngSources().contains(rngDev.getSource())) {
+                return false;
+            }
         }
 
         return true;
