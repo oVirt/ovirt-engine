@@ -679,6 +679,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void edit(final HostModel object) {
         driver.edit(object);
         setTabIndexes(0);

@@ -49,6 +49,7 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
         addRadioButtonsListeners(model);
     }
 
+    @SuppressWarnings("unchecked")
     private void addRadioButtonsListeners(final HostModel model) {
         registerHandler(
                 ((HostPopupView)getView()).rbDiscoveredHost.addClickHandler(new ClickHandler() {
@@ -70,6 +71,7 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
                 }));
     }
 
+    @SuppressWarnings("unchecked")
     private void addPowerManagementListener(final HostModel model) {
         model.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
@@ -85,6 +87,7 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
         });
     }
 
+    @SuppressWarnings("unchecked")
     private void addCiscoUcsPmTypeListener(final HostModel model) {
         model.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
@@ -117,6 +120,8 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
             }
         }));
     }
+
+    @SuppressWarnings("unchecked")
     private void addHostProviderListener(final HostModel model) {
         model.getProviderSearchFilter().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
