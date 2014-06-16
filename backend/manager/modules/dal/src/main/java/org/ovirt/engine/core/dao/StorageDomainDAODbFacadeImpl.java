@@ -165,6 +165,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
             entity.setStorageDomainSharedStatus(
                     StorageDomainSharedStatus.forValue(rs.getInt("storage_domain_shared_status")));
             entity.setAutoRecoverable(rs.getBoolean("recoverable"));
+            entity.setContainsUnregisteredEntities(rs.getBoolean("contains_unregistered_entities"));
             entity.setLastTimeUsedAsMaster(rs.getLong("last_time_used_as_master"));
             return entity;
         }

@@ -16,10 +16,13 @@ SELECT     storage_domain_static.id as id,
 			storage_domain_static.storage_type as storage_type,
                         storage_domain_static.storage_domain_format_type as storage_domain_format_type,
             storage_domain_static.last_time_used_as_master as last_time_used_as_master,
-			storage_pool.name as storage_pool_name
+			storage_pool.name as storage_pool_name,
+			unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities
 FROM        storage_domain_static LEFT OUTER JOIN
 storage_pool_iso_map on storage_pool_iso_map.storage_id = storage_domain_static.id
-LEFT OUTER JOIN storage_pool ON storage_pool.id = storage_pool_iso_map.storage_pool_id;
+LEFT OUTER JOIN storage_pool ON storage_pool.id = storage_pool_iso_map.storage_pool_id
+LEFT OUTER JOIN (SELECT DISTINCT storage_domain_id
+                 FROM unregistered_ovf_of_entities) AS unregistered_entities ON unregistered_entities.storage_domain_id = storage_domain_static.id;
 
 CREATE OR REPLACE VIEW vms_for_disk_view
 AS
@@ -76,7 +79,8 @@ SELECT images.image_guid as image_guid,
     disk_image_dynamic.flush_latency_seconds as flush_latency_seconds,
     base_disks.alignment as alignment,
     base_disks.last_alignment_scan as last_alignment_scan,
-    EXISTS (SELECT 1 FROM storage_domains_ovf_info WHERE images.image_group_id = storage_domains_ovf_info.ovf_disk_id) as ovf_store
+    EXISTS (SELECT 1 FROM storage_domains_ovf_info WHERE images.image_group_id = storage_domains_ovf_info.ovf_disk_id) as ovf_store,
+    storage_domain_static_view.contains_unregistered_entities as contains_unregistered_entities
 FROM
 images
 left outer join disk_image_dynamic on images.image_guid = disk_image_dynamic.image_id
@@ -284,11 +288,14 @@ storage_domain_static.id as id,
                 storage_domain_static.storage_domain_format_type as storage_domain_format_type,
         storage_domain_static.last_time_used_as_master as last_time_used_as_master,
         fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_pool_iso_map.status,storage_domain_static.storage_domain_type) as storage_domain_shared_status,
-	storage_domain_static.recoverable as recoverable
+	storage_domain_static.recoverable as recoverable,
+	unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities
 FROM    storage_domain_static
 INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
 LEFT OUTER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_iso_map.storage_id
-LEFT OUTER JOIN storage_pool ON storage_pool_iso_map.storage_pool_id = storage_pool.id;
+LEFT OUTER JOIN storage_pool ON storage_pool_iso_map.storage_pool_id = storage_pool.id
+LEFT OUTER JOIN (SELECT DISTINCT storage_domain_id
+                 FROM unregistered_ovf_of_entities) AS unregistered_entities ON unregistered_entities.storage_domain_id = storage_domain_static.id;
 
 
 
@@ -307,11 +314,14 @@ storage_domain_static.id as id, storage_domain_static.storage as storage, storag
 		fn_get_actual_images_size_by_storage(storage_domain_static.id) as actual_images_size,
 	        null as status,
         fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_pool_iso_map.status,storage_domain_static.storage_domain_type) as storage_domain_shared_status,
-		storage_domain_static.recoverable as recoverable
+		storage_domain_static.recoverable as recoverable,
+		unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities
 FROM
 storage_domain_static
 INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
-LEFT OUTER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_iso_map.storage_id;
+LEFT OUTER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_iso_map.storage_id
+LEFT OUTER JOIN (SELECT DISTINCT storage_domain_id
+                 FROM unregistered_ovf_of_entities) AS unregistered_entities ON unregistered_entities.storage_domain_id = storage_domain_static.id;
 
 
 CREATE OR REPLACE VIEW storage_domains_for_search
@@ -331,7 +341,8 @@ SELECT
                 fn_get_disk_commited_value_by_storage(storage_domain_static.id) as commited_disk_size,
 		fn_get_actual_images_size_by_storage(storage_domain_static.id) as actual_images_size,
                 fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,status_table.status,storage_domain_static.storage_domain_type) as storage_domain_shared_status,
-                storage_domain_static.recoverable as recoverable
+                storage_domain_static.recoverable as recoverable,
+                unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities
 FROM
                 storage_domain_static
 INNER JOIN
@@ -340,7 +351,9 @@ LEFT OUTER JOIN
                 (SELECT storage_pool_id,storage_id, count(storage_id) > 1 as is_multi_domain, max(status) AS status
                  FROM storage_pool_iso_map
                  GROUP BY storage_id, storage_pool_id) AS status_table ON storage_domain_static.id=status_table.storage_id
-LEFT OUTER JOIN storage_pool ON status_table.storage_pool_id = storage_pool.id;
+LEFT OUTER JOIN storage_pool ON status_table.storage_pool_id = storage_pool.id
+LEFT OUTER JOIN (SELECT DISTINCT storage_domain_id
+                 FROM unregistered_ovf_of_entities) AS unregistered_entities ON unregistered_entities.storage_domain_id = storage_domain_static.id;
 
 
 

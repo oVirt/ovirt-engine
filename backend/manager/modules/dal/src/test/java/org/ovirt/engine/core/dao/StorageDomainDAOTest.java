@@ -461,6 +461,19 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
                 domains.get(0).getId(),
                 new Guid("c2211b56-8869-41cd-84e1-78d7cb96f31d"));
     }
+
+    @Test
+    public void testContainsUnregisteredEntities() {
+        StorageDomain storageDomain = dao.get(FixturesTool.STORAGE_DOAMIN_NFS2_1);
+        assertTrue(storageDomain.isContainsUnregisteredEntities());
+    }
+
+    @Test
+    public void testNotContainsUnregisteredEntities() {
+        StorageDomain storageDomain = dao.get(EXISTING_DOMAIN_ID);
+        assertFalse(storageDomain.isContainsUnregisteredEntities());
+    }
+
     /**
      * Asserts the result from {@link StorageDomainDAO#getAll()} is correct without filtering
      *

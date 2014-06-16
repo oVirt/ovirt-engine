@@ -41,6 +41,8 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
 
     private boolean autoRecoverable;
 
+    private boolean containsUnregisteredEntities;
+
     private String storagePoolName;
 
     private transient long lastTimeUsedAsMaster;
@@ -128,6 +130,14 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
         this.autoRecoverable = autoRecoverable;
     }
 
+    public boolean isContainsUnregisteredEntities() {
+        return containsUnregisteredEntities;
+    }
+
+    public void setContainsUnregisteredEntities(boolean containsUnregisteredEntities) {
+        this.containsUnregisteredEntities = containsUnregisteredEntities;
+    }
+
     public long getLastTimeUsedAsMaster() {
         return lastTimeUsedAsMaster;
     }
@@ -158,6 +168,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + (autoRecoverable ? 0 : 1);
+        result = prime * result + (containsUnregisteredEntities ? 0 : 1);
         result = prime * result + ((connection == null) ? 0 : connection.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((storage == null) ? 0 : storage.hashCode());
@@ -182,6 +193,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
         StorageDomainStatic other = (StorageDomainStatic) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
                 && autoRecoverable == other.autoRecoverable
+                && containsUnregisteredEntities == other.containsUnregisteredEntities
                 && ObjectUtils.objectsEqual(connection, other.connection)
                 && ObjectUtils.objectsEqual(name, other.name)
                 && ObjectUtils.objectsEqual(storage, other.storage)

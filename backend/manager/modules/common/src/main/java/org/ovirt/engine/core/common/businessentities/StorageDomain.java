@@ -299,6 +299,14 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
         staticData.setAutoRecoverable(autoRecoverable);
     }
 
+    public boolean isContainsUnregisteredEntities() {
+        return staticData.isContainsUnregisteredEntities();
+    }
+
+    public void setContainsUnregisteredEntities(boolean containsUnregisteredEntities) {
+        staticData.setContainsUnregisteredEntities(containsUnregisteredEntities);
+    }
+
     public long getLastTimeUsedAsMaster() {
         return staticData.getLastTimeUsedAsMaster();
     }
