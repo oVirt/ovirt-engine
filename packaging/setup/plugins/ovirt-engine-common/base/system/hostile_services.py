@@ -28,6 +28,7 @@ _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 from otopi import util
 from otopi import plugin
 
+
 from ovirt_engine_setup import constants as osetupcons
 
 
@@ -82,21 +83,30 @@ class Plugin(plugin.PluginBase):
                     )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_CLEANUP,
+        stage=plugin.Stages.STAGE_CLOSEUP,
         condition=lambda self: (
             self._enabled and
-            self.environment.get(
-                osetupcons.CoreEnv.REMOVE,
-                False
-            )
+            self.environment[
+                osetupcons.CoreEnv.ACTION
+            ] != osetupcons.Const.ACTION_REMOVE
         ),
     )
     def _closeup(self):
+        """
+        Ensure that services we stopped while upgrading are
+        restarted and will start at reboot.
+        """
         for service in self._toStart:
-            self.services.state(
-                name=service,
-                state=True
-            )
+            if self.services.exists(service):
+                self.services.state(
+                    name=service,
+                    state=True
+                )
+                # See https://bugzilla.redhat.com/1083551
+                self.services.startup(
+                    name=service,
+                    state=True
+                )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
