@@ -280,6 +280,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     break;
                 case VirtIO:
                     struct.put(VdsProperties.INTERFACE, VdsProperties.Virtio);
+                    if (disk.getDiskStorageType() == DiskStorageType.LUN) {
+                        struct.put(VdsProperties.Device, VmDeviceType.LUN.getName());
+                    }
                     break;
                 case VirtIO_SCSI:
                     struct.put(VdsProperties.INTERFACE, VdsProperties.Scsi);
