@@ -163,35 +163,13 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             return false;
         }
 
-        return (super.canDoAction() && canRemoveVm());
-    }
-
-    @Override
-    protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-    }
-
-    public static boolean isVmRunning(Guid vmId) {
-        VM vm = DbFacade.getInstance().getVmDao().get(vmId);
-        if (vm != null) {
-            return vm.isRunningOrPaused() || vm.getStatus() == VMStatus.Unknown;
-        }
-        return false;
-    }
-
-    private boolean isVmInPool(Guid vmId) {
-        return getVm().getVmPoolId() != null;
-    }
-
-    private boolean canRemoveVm() {
         if (isVmRunning(getVmId()) || (getVm().getStatus() == VMStatus.NotResponding)) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
         }
         if (getVm().getStatus() == VMStatus.Suspended) {
             return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_VM_WHEN_STATUS_IS_NOT_DOWN);
         }
-        if (isVmInPool(getVmId())) {
+        if (getVm().getVmPoolId() != null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
         }
 
@@ -244,6 +222,20 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         }
 
         return true;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+    }
+
+    public static boolean isVmRunning(Guid vmId) {
+        VM vm = DbFacade.getInstance().getVmDao().get(vmId);
+        if (vm != null) {
+            return vm.isRunningOrPaused() || vm.getStatus() == VMStatus.Unknown;
+        }
+        return false;
     }
 
     private boolean canRemoveVmWithDetachDisks() {
