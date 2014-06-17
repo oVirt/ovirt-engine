@@ -22,7 +22,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
             return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_ADD_RUNNING_VM_TO_POOL);
         }
 
-        if (getVmPoolDAO().getVmPoolMapByVmGuid(getParameters().getVmId()) != null) {
+        if (getVm().getVmPoolId() != null) {
             return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_ATTACHED_TO_POOL);
         }
 

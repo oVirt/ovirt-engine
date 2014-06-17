@@ -2,16 +2,14 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
-import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> extends VmPoolCommandBase<T> {
     public RemoveVmFromPoolCommand(T parameters) {
         super(parameters);
         setVmId(parameters.getVmId());
-        VmPoolMap map = getVmPoolDAO().getVmPoolMapByVmGuid(parameters.getVmId());
-        if (map != null) {
-            setVmPoolId(map.getvm_pool_id());
+        if (getVm() != null) {
+            setVmPoolId(getVm().getVmPoolId());
         }
     }
 
@@ -21,7 +19,7 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
-        if (getVmPoolDAO().getVmPoolMapByVmGuid(getVmId()) == null) {
+        if (getVmPoolId() == null) {
             return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_DETACH_VM_NOT_ATTACHED_TO_POOL);
         }
 

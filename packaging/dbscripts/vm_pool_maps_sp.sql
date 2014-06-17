@@ -68,19 +68,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVm_pool_mapByvm_guid(v_vm_guid UUID) RETURNS SETOF vm_pool_map STABLE
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT vm_pool_map.*
-      FROM vm_pool_map
-      WHERE vm_guid = v_vm_guid;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
 Create or replace FUNCTION GetVm_pool_mapByvm_pool_id(v_vm_pool_id UUID) RETURNS SETOF vm_pool_map STABLE
    AS $procedure$
 BEGIN

@@ -11,8 +11,8 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmPoolDAOTest extends BaseDAOTestCase {
@@ -28,13 +28,14 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
     private VmPool deletableVmPool;
     private VmPool newVmPool;
     private VmPoolMap newVmPoolMap;
-    private VmPoolMap existingVmPoolMap;
+    private VmDAO vmDao;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
         dao = dbFacade.getVmPoolDao();
+        vmDao = dbFacade.getVmDao();
 
         existingVmPool = dao.get(EXISTING_VM_POOL_ID);
         deletableVmPool = dao.get(DELETABLE_VM_POOL_ID);
@@ -44,24 +45,16 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
         newVmPool.setVmPoolDescription("This is a new VM pool.");
         newVmPool.setVdsGroupId(VDS_GROUP_ID);
 
-        existingVmPoolMap = dao.getVmPoolMapByVmGuid(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
-        newVmPoolMap =
-                new VmPoolMap(FREE_VM_ID, existingVmPool.getVmPoolId());
+        newVmPoolMap = new VmPoolMap(FREE_VM_ID, EXISTING_VM_POOL_ID);
     }
 
     @Test
     public void testRemoveVmFromPool() {
-        int before = dao.getVmPoolsMapByVmPoolId(existingVmPoolMap.getvm_pool_id()).size();
+        assertNotNull(vmDao.get(EXISTING_VM_ID).getVmPoolId());
 
         dao.removeVmFromVmPool(EXISTING_VM_ID);
 
-        int after = dao.getVmPoolsMapByVmPoolId(existingVmPoolMap.getvm_pool_id()).size();
-
-        assertEquals(before - 1, after);
-
-        VmPoolMap result = dao.getVmPoolMapByVmGuid(EXISTING_VM_ID);
-
-        assertNull(result);
+        assertNull(vmDao.get(EXISTING_VM_ID).getVmPoolId());
     }
 
     /**
@@ -205,27 +198,12 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
     }
 
     @Test
-    public void testGetVmPoolMap() {
-        VmPoolMap result = dao.getVmPoolMapByVmGuid(EXISTING_VM_ID);
-
-        assertNotNull(result);
-        assertEquals(existingVmPoolMap, result);
-    }
-
-    @Test
     public void testAddVmToPool() {
-        int before = dao.getVmPoolsMapByVmPoolId(newVmPoolMap.getvm_pool_id()).size();
+        assertNull(vmDao.get(FREE_VM_ID).getVmPoolId());
 
         dao.addVmToPool(newVmPoolMap);
 
-        int after = dao.getVmPoolsMapByVmPoolId(newVmPoolMap.getvm_pool_id()).size();
-
-        assertEquals(before + 1, after);
-
-        VmPoolMap result = dao.getVmPoolMapByVmGuid(newVmPoolMap.getvm_guid());
-
-        assertNotNull(result);
-        assertEquals(newVmPoolMap, result);
+        assertNotNull(vmDao.get(FREE_VM_ID).getVmPoolId());
     }
 
     @Test

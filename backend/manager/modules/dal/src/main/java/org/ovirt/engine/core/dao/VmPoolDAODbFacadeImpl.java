@@ -116,13 +116,6 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public VmPoolMap getVmPoolMapByVmGuid(Guid vmId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_guid", vmId);
-
-        return getCallsHandler().executeRead("GetVm_pool_mapByvm_guid", VmPoolMapRowMapper.instance, parameterSource);
-    }
-
-    @Override
     public void addVmToPool(VmPoolMap map) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_guid", map.getvm_guid())
                 .addValue("vm_pool_id", map.getvm_pool_id());

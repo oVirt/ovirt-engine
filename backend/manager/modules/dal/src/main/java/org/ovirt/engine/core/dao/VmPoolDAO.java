@@ -92,8 +92,6 @@ public interface VmPoolDAO extends DAO, SearchDAO<VmPool> {
      */
     void remove(Guid vmPool);
 
-    VmPoolMap getVmPoolMapByVmGuid(Guid vmId);
-
     void addVmToPool(VmPoolMap map);
 
     List<VmPoolMap> getVmPoolsMapByVmPoolId(Guid vmPoolId);

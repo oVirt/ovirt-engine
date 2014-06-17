@@ -263,7 +263,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                 DbFacade.getInstance().getSnapshotDao().exists(getVmId(), SnapshotType.STATELESS)) {
             return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPEND_STATELESS_VM);
         }
-        if (DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(getVmId()) != null) {
+        if (getVm().getVmPoolId() != null) {
             return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPEND_VM_FROM_POOL);
         }
         if (getStorageDomainId().equals(Guid.Empty)) {
