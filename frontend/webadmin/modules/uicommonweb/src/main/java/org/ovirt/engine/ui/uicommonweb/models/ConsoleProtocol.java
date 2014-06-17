@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,7 +66,7 @@ public enum ConsoleProtocol {
     }
 
     public static List<ConsoleProtocol> getProtocolsByPriority() {
-        List<ConsoleProtocol> consoleProtocols = Arrays.asList(ConsoleProtocol.values());
+        List<ConsoleProtocol> consoleProtocols = new ArrayList(Arrays.asList(ConsoleProtocol.values()));
         Collections.sort(consoleProtocols, new PriorityComparator());
         return consoleProtocols;
     }
