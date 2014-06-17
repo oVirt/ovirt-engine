@@ -164,8 +164,9 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         }
 
         if (!StringUtils.isEmpty(getParameters().getSessionId())) {
-            VmPayload payload = getBackend().runInternalQuery(VdcQueryType.GetVmPayload,
-                    new IdQueryParameters(getVmTemplateId())).getReturnValue();
+            IdQueryParameters p = new IdQueryParameters(getVmTemplateId());
+            p.setSessionId(getParameters().getSessionId());
+            VmPayload payload = getBackend().runInternalQuery(VdcQueryType.GetVmPayload, p).getReturnValue();
 
             if (payload != null) {
                 addVmParams.setVmPayload(payload);
