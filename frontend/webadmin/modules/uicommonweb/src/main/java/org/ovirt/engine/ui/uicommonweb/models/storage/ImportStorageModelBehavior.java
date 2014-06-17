@@ -25,7 +25,6 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
     public void initialize() {
         super.initialize();
         getModel().getActivateDomain().setEntity(false);
-        getModel().getActivateDomain().setIsAvailable(true);
     }
 
     @Override
@@ -34,6 +33,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
         super.updateItemsAvailability();
 
         StoragePool dataCenter = getModel().getDataCenter().getSelectedItem();
+        updateAvailabilityByDatacenter(dataCenter);
 
         for (IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems()))
         {
@@ -72,6 +72,14 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
                 postUpdateItemsAvailability(item, false);
             }
         }
+    }
+
+    private void updateAvailabilityByDatacenter(StoragePool datacenter) {
+        if (datacenter == null) {
+            return;
+        }
+
+        getModel().getActivateDomain().setIsAvailable(!StorageModel.UnassignedDataCenterId.equals(datacenter.getId()));
     }
 
     public void postUpdateItemsAvailability(IStorageModel item, boolean isNoStorageAttached)
