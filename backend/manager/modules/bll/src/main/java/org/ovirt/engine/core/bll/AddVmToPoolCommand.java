@@ -1,14 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolCommandBase<T> {
     public AddVmToPoolCommand(T parameters) {
@@ -16,58 +12,33 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
         super.setVmId(parameters.getVmId());
     }
 
-    /**
-     * Vm can be added to pool only if it not attach to user.
-     *
-     * @param vmId
-     *            The vm id.
-     * @param messages
-     *            The messages.
-     * @param poolId
-     *            The pool id.
-     * @return <c>true</c> if this instance [can add vm to pool] the specified
-     *         vm id; otherwise, <c>false</c>.
-     */
-    public static boolean canAddVmToPool(Guid vmId, ArrayList<String> messages, Guid poolId) {
-        boolean returnValue = true;
-
-        boolean isRunning = RemoveVmCommand.isVmRunning(vmId);
-        if (isRunning) {
-            returnValue = false;
-            if (messages != null) {
-                messages.add(VdcBllMessages.VM_POOL_CANNOT_ADD_RUNNING_VM_TO_POOL.toString());
-            }
-        }
-        if (DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(vmId) != null) {
-            returnValue = false;
-            if (messages != null) {
-                messages.add(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_ATTACHED_TO_POOL.toString());
-            }
-        }
-        if (poolId != null) {
-            VM vm = DbFacade.getInstance().getVmDao().get(vmId);
-            if (vm != null) {
-                VmPool pool = DbFacade.getInstance().getVmPoolDao().get(poolId);
-                if (pool != null) {
-                    if (messages != null && !pool.getVdsGroupId().equals(vm.getVdsGroupId())) {
-                        messages.add(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_DIFFERENT_CLUSTER.toString());
-                    }
-                }
-            }
-
-        }
-        return returnValue;
-    }
-
     @Override
     protected boolean canDoAction() {
-        return canAddVmToPool(getParameters().getVmId(), getReturnValue().getCanDoActionMessages(), getParameters()
-                .getVmPoolId());
+        if (getVm() == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
+
+        if (RemoveVmCommand.isVmRunning(getParameters().getVmId())) {
+            return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_ADD_RUNNING_VM_TO_POOL);
+        }
+
+        if (getVmPoolDAO().getVmPoolMapByVmGuid(getParameters().getVmId()) != null) {
+            return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_ATTACHED_TO_POOL);
+        }
+
+        if (getParameters().getVmPoolId() != null) {
+            VmPool pool = getVmPoolDAO().get(getParameters().getVmPoolId());
+            if (pool != null && !pool.getVdsGroupId().equals(getVm().getVdsGroupId())) {
+                return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_DIFFERENT_CLUSTER);
+            }
+        }
+
+        return true;
     }
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getVmPoolDao().addVmToPool(new VmPoolMap(getVmId(), getVmPoolId()));
+        getVmPoolDAO().addVmToPool(new VmPoolMap(getVmId(), getVmPoolId()));
         setSucceeded(true);
     }
 
