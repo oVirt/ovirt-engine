@@ -94,15 +94,13 @@
 					<e:ListModelListBoxEditor ui:field="datacenterListEditor" addStyleNames="{style.datacenterListEditor}"/>
 					<g:Image ui:field="datacenterAlertIcon" resource='{resources.alertImage}' visible="false" addStyleNames="{style.dataCenterAlertIcon}"/>
 					<ge:StringEntityModelTextBoxEditor ui:field="commentEditor" addStyleNames="{style.commentEditor}"/>
-				</g:HorizontalPanel>
+                    <ge:EntityModelCheckBoxEditor ui:field="activateDomainEditor" />
+                </g:HorizontalPanel>
 				<g:HorizontalPanel addStyleNames="{style.obrand_storageTypePanel}">
 					<e:ListModelListBoxEditor ui:field="storageTypeListEditor" addStyleNames="{style.storageTypeListEditor}"/>
 					<e:ListModelListBoxEditor ui:field="formatListEditor" addStyleNames="{style.formatListEditor}"/>
 				</g:HorizontalPanel>
-                <g:HorizontalPanel>
-                    <e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.hostListEditor}"/>
-                    <ge:EntityModelCheckBoxEditor ui:field="activateDomainEditor" />
-                </g:HorizontalPanel>
+                <e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.hostListEditor}"/>
 				<g:FlowPanel ui:field="specificStorageTypePanel" addStyleNames="{style.specificStorageTypePanel}"></g:FlowPanel>
 			</g:FlowPanel>
 		</d:content>
