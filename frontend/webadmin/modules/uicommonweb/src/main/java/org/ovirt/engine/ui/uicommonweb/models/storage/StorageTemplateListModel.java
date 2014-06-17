@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -83,8 +84,10 @@ public class StorageTemplateListModel extends SearchableListModel
             public void onSuccess(Object model, Object ReturnValue)
             {
                 StorageTemplateListModel templateModel = (StorageTemplateListModel) model;
-                templateModel.setItems((ArrayList<VmTemplate>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-                templateModel.setIsEmpty(((List) templateModel.getItems()).size() == 0);
+                ArrayList<VmTemplate> templates = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                Collections.sort(templates, new Linq.VmTemplateComparator());
+                templateModel.setItems(templates);
+                templateModel.setIsEmpty(templates.size() == 0);
             }
         };
 
