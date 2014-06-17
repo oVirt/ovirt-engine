@@ -58,7 +58,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -628,14 +627,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         // in case of new version of a template, update vms marked to use latest
         if (isTemplateVersion()) {
-            String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "onTimerHandleVdsRecovering", new Class[0],
+            String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "updateVmVersion", new Class[0],
                     new Object[0], 0, TimeUnit.SECONDS);
             updateVmsJobIdMap.put(getParameters().getBaseTemplateId(), jobId);
         }
     }
 
-    @OnTimerMethodAnnotation("onTimerHandleVdsRecovering")
-    public void onTimerHandleVdsRecovering() {
+    @OnTimerMethodAnnotation("updateVmVersion")
+    public void updateVmVersion() {
         for (Guid vmId : getVmDAO().getVmIdsForVersionUpdate(getParameters().getBaseTemplateId())) {
             // if the job was removed, stop executing, we probably have new version creation going on
             if (!updateVmsJobIdMap.containsKey(getParameters().getBaseTemplateId())) {
@@ -643,8 +642,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
             UpdateVmVersionParameters params = new UpdateVmVersionParameters(vmId);
             params.setSessionId(getParameters().getSessionId());
-            // execute in new transaction, as failure here should not fail template creation
-            params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
             getBackend().runInternalAction(VdcActionType.UpdateVmVersion, params);
         }
         updateVmsJobIdMap.remove(getParameters().getBaseTemplateId());
