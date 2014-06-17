@@ -35,14 +35,12 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -163,7 +161,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             return false;
         }
 
-        if (isVmRunning(getVmId()) || (getVm().getStatus() == VMStatus.NotResponding)) {
+        if (getVm().isRunningOrPaused() || getVm().getStatus() == VMStatus.Unknown || getVm().getStatus() == VMStatus.NotResponding) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
         }
         if (getVm().getStatus() == VMStatus.Suspended) {
@@ -228,14 +226,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-    }
-
-    public static boolean isVmRunning(Guid vmId) {
-        VM vm = DbFacade.getInstance().getVmDao().get(vmId);
-        if (vm != null) {
-            return vm.isRunningOrPaused() || vm.getStatus() == VMStatus.Unknown;
-        }
-        return false;
     }
 
     private boolean canRemoveVmWithDetachDisks() {

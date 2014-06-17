@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -18,7 +19,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
-        if (RemoveVmCommand.isVmRunning(getParameters().getVmId())) {
+        if (getVm().isRunningOrPaused() || getVm().getStatus() == VMStatus.Unknown) {
             return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_ADD_RUNNING_VM_TO_POOL);
         }
 

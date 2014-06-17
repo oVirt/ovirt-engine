@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> extends VmPoolCommandBase<T> {
@@ -23,7 +24,7 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
             return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_DETACH_VM_NOT_ATTACHED_TO_POOL);
         }
 
-        if (RemoveVmCommand.isVmRunning(getParameters().getVmId())) {
+        if (getVm().isRunningOrPaused() || getVm().getStatus() == VMStatus.Unknown) {
             return failCanDoAction(VdcBllMessages.VM_POOL_CANNOT_REMOVE_RUNNING_VM_FROM_POOL);
         }
 
